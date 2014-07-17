@@ -25,11 +25,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.browser.Browser;
 
-public class SamplePart {
+public class Welcome {
 
 	private Text txtInput;
-	private TableViewer tableViewer;
 
 	@Inject
 	private MDirtyable dirty;
@@ -47,20 +48,18 @@ public class SamplePart {
 			}
 		});
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		tableViewer = new TableViewer(parent);
-
-		tableViewer.add("Sample item 1");
-		tableViewer.add("Sample item 2");
-		tableViewer.add("Sample item 3");
-		tableViewer.add("Sample item 4");
-		tableViewer.add("Sample item 5");
-		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Browser browser = new Browser(parent, SWT.NONE);
+		browser.setUrl("https://github.com/neo-anderson/NLPUtils-application/blob/master/README.md");
+		GridData gd_browser = new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1);
+		gd_browser.widthHint = 500;
+		gd_browser.heightHint = 450;
+		browser.setLayoutData(gd_browser);
 	}
 
 	@Focus
 	public void setFocus() {
-		tableViewer.getTable().setFocus();
+		//tableViewer.getTable().setFocus();
 	}
 
 	@Persist

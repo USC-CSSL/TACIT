@@ -4,11 +4,10 @@
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_-nuFI_zGEeOdn9ViPpOXDA">
       <children xsi:type="advanced:Perspective" xmi:id="_-nuFJPzGEeOdn9ViPpOXDA">
         <children xsi:type="basic:PartSashContainer" xmi:id="_-nuFJfzGEeOdn9ViPpOXDA" elementId="">
-          <children xsi:type="basic:PartStack" xmi:id="_-nuFJvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.partstack">
-            <children xsi:type="basic:Part" xmi:id="_-nuFJ_zGEeOdn9ViPpOXDA" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.SamplePart" label="Settings"/>
-            <children xsi:type="basic:Part" xmi:id="_H8fX4PzOEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.part.0" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Output" label="Output"/>
+          <children xsi:type="basic:PartStack" xmi:id="_-nuFJvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.partstack" containerData="500">
+            <children xsi:type="basic:Part" xmi:id="_-nuFJ_zGEeOdn9ViPpOXDA" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Welcome" label="Welcome"/>
           </children>
-          <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
+          <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" containerData="150" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
             <children xsi:type="basic:Part" xmi:id="_VZHDoAfHEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.console" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Console" label="Console"/>
             <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.error" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.ErrorLog" label="Error Log"/>
           </children>
@@ -21,7 +20,12 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFH_zGEeOdn9ViPpOXDA" label="Save" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/save_edit.png" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIPzGEeOdn9ViPpOXDA" label="Quit" command="_-nteDPzGEeOdn9ViPpOXDA"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" label="Plugins"/>
+      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.utilities" label="Utilities"/>
+      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" label="Plugins">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.0" label="Add Plugin"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.1" label="Remove Plugin"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_WkqrkA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.2" label="Global Plugin Settings"/>
+      </children>
       <children xsi:type="menu:Menu" xmi:id="_-nuFIfzGEeOdn9ViPpOXDA" label="Help">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIvzGEeOdn9ViPpOXDA" label="About" command="_-nuFGfzGEeOdn9ViPpOXDA"/>
       </children>

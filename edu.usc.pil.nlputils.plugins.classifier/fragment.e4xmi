@@ -6,7 +6,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_yyGc0AhJEeSFfNIWaBOnnw" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
     <elements xsi:type="commands:Handler" xmi:id="_mG01UAhPEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.plugins.classifier.handler.openClassifer" contributionURI="bundleclass://edu.usc.pil.nlputils.plugins.classifier/edu.usc.pil.nlputils.plugins.classifier.handlers.OpenClassifier" command="_Y4PtcAhKEeSFfNIWaBOnnw"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zabBEAhJEeSFfNIWaBOnnw" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.plugins">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zabBEAhJEeSFfNIWaBOnnw" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.utilities">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_0yVyEAhQEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.plugins.classifier.handledmenuitem.openClassifier" label="Classifier" command="_Y4PtcAhKEeSFfNIWaBOnnw"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_SqMyoAhREeSFfNIWaBOnnw" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
