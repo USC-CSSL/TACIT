@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_-nteAPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.application" bindingContexts="_-nteCfzGEeOdn9ViPpOXDA">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_-nteAfzGEeOdn9ViPpOXDA" label="edu.usc.pil.nlputils.application" width="550" height="650">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_-nuFI_zGEeOdn9ViPpOXDA">
+      <children xsi:type="advanced:Perspective" xmi:id="_-nuFJPzGEeOdn9ViPpOXDA">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_-nuFJfzGEeOdn9ViPpOXDA" elementId="">
+          <children xsi:type="basic:PartStack" xmi:id="_-nuFJvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.partstack">
+            <children xsi:type="basic:Part" xmi:id="_-nuFJ_zGEeOdn9ViPpOXDA" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.SamplePart" label="Settings"/>
+            <children xsi:type="basic:Part" xmi:id="_H8fX4PzOEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.part.0" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Output" label="Output"/>
+          </children>
+          <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
+            <children xsi:type="basic:Part" xmi:id="_VZHDoAfHEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.console" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Console" label="Console"/>
+            <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.error" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.ErrorLog" label="Error Log"/>
+          </children>
+        </children>
+      </children>
+    </children>
+    <mainMenu xmi:id="_-nuFHPzGEeOdn9ViPpOXDA" elementId="menu:org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_-nuFHfzGEeOdn9ViPpOXDA" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFHvzGEeOdn9ViPpOXDA" label="Open" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/sample.png" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFH_zGEeOdn9ViPpOXDA" label="Save" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/save_edit.png" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIPzGEeOdn9ViPpOXDA" label="Quit" command="_-nteDPzGEeOdn9ViPpOXDA"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" label="Plugins"/>
+      <children xsi:type="menu:Menu" xmi:id="_-nuFIfzGEeOdn9ViPpOXDA" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIvzGEeOdn9ViPpOXDA" label="About" command="_-nuFGfzGEeOdn9ViPpOXDA"/>
+      </children>
+    </mainMenu>
+    <trimBars xmi:id="_-nuFKPzGEeOdn9ViPpOXDA">
+      <children xsi:type="menu:ToolBar" xmi:id="_-nusIPzGEeOdn9ViPpOXDA" elementId="toolbar:org.eclipse.ui.main.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIfzGEeOdn9ViPpOXDA" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/sample.png" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIvzGEeOdn9ViPpOXDA" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/save_edit.png" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
+      </children>
+    </trimBars>
+  </children>
+  <handlers xmi:id="_-nuFEPzGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.quitCommand" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.handlers.QuitHandler" command="_-nteDPzGEeOdn9ViPpOXDA"/>
+  <handlers xmi:id="_-nuFFPzGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.openCommand" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.handlers.OpenHandler" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
+  <handlers xmi:id="_-nuFF_zGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.saveCommand" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.handlers.SaveHandler" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
+  <handlers xmi:id="_-nuFGvzGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.aboutCommand" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.handlers.AboutHandler" command="_-nuFGfzGEeOdn9ViPpOXDA"/>
+  <bindingTables xmi:id="_-nuFEfzGEeOdn9ViPpOXDA" bindingContext="_-nteCfzGEeOdn9ViPpOXDA">
+    <bindings xmi:id="_-nuFEvzGEeOdn9ViPpOXDA" keySequence="M1+Q" command="_-nteDPzGEeOdn9ViPpOXDA"/>
+    <bindings xmi:id="_-nuFFfzGEeOdn9ViPpOXDA" keySequence="M1+O" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
+    <bindings xmi:id="_-nuFGPzGEeOdn9ViPpOXDA" keySequence="M1+S" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
+    <bindings xmi:id="_-nuFG_zGEeOdn9ViPpOXDA" keySequence="M1+A" command="_-nuFGfzGEeOdn9ViPpOXDA"/>
+  </bindingTables>
+  <rootContext xmi:id="_-nteCfzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_-nteCvzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_-nteC_zGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <commands xmi:id="_-nteDPzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
+  <commands xmi:id="_-nuFE_zGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.open" commandName="openCommand"/>
+  <commands xmi:id="_-nuFFvzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
+  <commands xmi:id="_-nuFGfzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
+  <addons xmi:id="_-nteAvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_-nteA_zGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_-nteBPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_-nteBfzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_-nteBvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_-nteB_zGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_-nteCPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>
