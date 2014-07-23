@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>edu.usc.pil.nlputils.plugins.classifier</name>
+	<name>edu.usc.pil.nlputils.plugins.nbclassifier</name>
 	<comment></comment>
 	<projects>
 	</projects>

@@ -3,7 +3,6 @@
 
 <product name="edu.usc.pil.nlputils.application" id="edu.usc.pil.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -14,7 +13,6 @@
 
    <windowImages/>
 
-
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -22,15 +20,13 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
       <plugin id="edu.usc.pil.nlputils.application"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.classifier"/>
+      <plugin id="edu.usc.pil.nlputils.plugins.nbclassifier"/>
       <plugin id="edu.usc.pil.nlputils.plugins.wordcount"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>

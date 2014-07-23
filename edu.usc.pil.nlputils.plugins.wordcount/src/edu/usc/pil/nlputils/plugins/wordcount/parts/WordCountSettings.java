@@ -8,6 +8,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.layout.GridLayout;
@@ -218,12 +220,16 @@ public class WordCountSettings {
 		txtDelimiters.setBounds(135, 30, 288, 21);
 		txtDelimiters.setText(" .,;'\\\"!-()[]{}:?");
 		
-		final Button btnStemming = new Button(grpPreprocessing, SWT.CHECK);
-		btnStemming.setBounds(10, 90, 141, 16);
+		Composite composite = new Composite(grpPreprocessing, SWT.NONE);
+		composite.setBounds(4, 83, 419, 31);
+		
+		final Button btnStemming = new Button(composite, SWT.RADIO);
+		btnStemming.setSelection(true);
+		btnStemming.setBounds(4, 9, 141, 16);
 		btnStemming.setText("LIWC Style Stemming");
 		
-		final Button btnSnowball = new Button(grpPreprocessing, SWT.CHECK);
-		btnSnowball.setBounds(176, 90, 203, 16);
+		final Button btnSnowball = new Button(composite, SWT.RADIO);
+		btnSnowball.setBounds(183, 9, 188, 16);
 		btnSnowball.setText("Snowball (Porter 2) Stemming");
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -250,8 +256,12 @@ public class WordCountSettings {
 				int returnCode = -1;
 				String errorMessage = "Word Count failed. Please try again.";
 				WordCount wc = new WordCount();
-				logger.info("Analyze button clicked. "+txtInputFile.getText()+" "+txtDictionary.getText()+" "+txtStopWords.getText()+" "+txtOutputFile.getText()+" "+txtDelimiters.getText()+" "+btnYes.getSelection());
 				
+				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
+				IEclipseContext iEclipseContext = context;
+				ContextInjectionFactory.inject(wc,iEclipseContext);
+				
+				logger.info("Analyze button clicked. "+txtInputFile.getText()+" "+txtDictionary.getText()+" "+txtStopWords.getText()+" "+txtOutputFile.getText()+" "+txtDelimiters.getText()+" "+btnYes.getSelection());				
 				
 				
 				try {
@@ -268,10 +278,16 @@ public class WordCountSettings {
 					errorMessage = "Please check the stop words file path.";
 				if (returnCode == -5) 
 					errorMessage = "The output file path is incorrect or the file already exists.";
-					
+				if (returnCode == -6)
+					errorMessage = "The SPSS output file path is incorrect or the file already exists.";
+				if (returnCode == 0)
+					errorMessage = "Word Count Completed Successfully.";
+				
+				appendLog(errorMessage);
+				
 				if (returnCode == 0){
 					MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
-					message.setMessage("Word Count Complete");
+					message.setMessage(errorMessage);
 					message.setText("Success");
 					message.open();
 				} else{
@@ -280,6 +296,7 @@ public class WordCountSettings {
 					message.setText("Error");
 					message.open();
 				}
+				
 			}
 		});
 		btnAnalyze.setText("Analyze");
@@ -299,5 +316,24 @@ public class WordCountSettings {
 	@Focus
 	public void onFocus() {
 		//TODO Your code here
+	}
+	
+	@Inject IEclipseContext context;
+	private void appendLog(String message){
+		IEclipseContext parent = context.getParent();
+		//System.out.println(parent.get("consoleMessage"));
+		String currentMessage = (String) parent.get("consoleMessage"); 
+		if (currentMessage==null)
+			parent.set("consoleMessage", message);
+		else {
+			if (currentMessage.equals(message)) {
+				// Set the param to null before writing the message if it is the same as the previous message. 
+				// Else, the change handler will not be called.
+				parent.set("consoleMessage", null);
+				parent.set("consoleMessage", message);
+			}
+			else
+				parent.set("consoleMessage", message);
+		}
 	}
 }

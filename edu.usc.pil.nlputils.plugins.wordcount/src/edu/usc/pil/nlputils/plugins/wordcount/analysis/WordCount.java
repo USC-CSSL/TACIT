@@ -16,7 +16,10 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Shell;
 
 import snowballstemmer.PorterStemmer;
@@ -48,6 +51,8 @@ public class WordCount {
 		this.doWordDistribution = doWordDistribution;
 		this.doSnowballStemming = doSnowBallStemming;
 		
+		appendLog("Processing...");
+		
 		if (stopWordsFile.equals(null) || stopWordsFile.equals(""))
 			this.doStopWords=false;
 		else
@@ -55,12 +60,18 @@ public class WordCount {
 		// An error flag to check the error conditions
 		boolean error = false;
 		
+		if (inputFiles==null){
+			logger.warning("Please select the input file(s).");
+			error = true;
+			return -2;
+		}
+		
 		// Checking the dictionary
 		File dFile = new File(dictionaryFile);
 		if (!dFile.exists() || dFile.isDirectory()) {
 			logger.warning("Please check the dictionary file path.");
 			error = true;
-			returnCode = -3;
+			return -3;
 		}
 		
 		// Checking the output path
@@ -68,17 +79,19 @@ public class WordCount {
 		if (outputFile=="" || oFile.exists() || oFile.isDirectory()) {
 			logger.warning("The output file path is incorrect or the file already exists.");
 			error = true;
-			returnCode = -5;
+			return -5;
 		}
 		
 		
 		// Checking the spss path
 		File spssFile = new File(outputFile+".dat");
+		if (doSpss) {
 				if (outputFile=="" || spssFile.exists() || spssFile.isDirectory()) {
 					logger.warning("The SPSS output file path is incorrect or the file already exists.");
 					error = true;
-					returnCode = -6;
+					return -6;
 				}
+		}
 				
 		
 		// StopWords is optional
@@ -87,7 +100,7 @@ public class WordCount {
 			if (!sFile.exists() || sFile.isDirectory()) {
 				logger.warning("Please check the stop words file path.");
 				error = true;
-				returnCode = -4;
+				return -4;
 			}
 		}
 			
@@ -100,12 +113,14 @@ public class WordCount {
 		long startTime = System.currentTimeMillis();
 		buildCategorizer(dFile);
 		logger.info("Finished building the dictionary trie in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+		appendLog("Finished building the dictionary trie in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		
 		// Create Stop Words Set if doStopWords is true
 		if (doStopWords){
 			startTime = System.currentTimeMillis();
 			stopWordSetBuild(sFile);
 			logger.info("Finished building the Stop Words Set in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+			appendLog("Finished building the Stop Words Set in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		}
 		
 		// Write the titles in the output file.
@@ -148,6 +163,7 @@ public class WordCount {
 	public void countWords(String inputFile, File oFile, File spssFile) throws IOException{
 		File iFile = new File(inputFile);
 		logger.info("Current input file - "+inputFile);
+		appendLog("Current input file - "+inputFile);
 		// For calculating Category wise distribution of each word.
 		HashMap<String,HashSet<String>> wordCategories = new HashMap<String, HashSet<String>>();
 		
@@ -170,6 +186,8 @@ public class WordCount {
 		br.close();
 		logger.info("Total number of words - "+totalWords);
 		logger.info("Finished building hashmap in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+		appendLog("Total number of words - "+totalWords);
+		appendLog("Finished building hashmap in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		
 		// Calculate Category-wise count
 		HashMap<String,Integer> catCount = new HashMap<String, Integer>();
@@ -178,6 +196,7 @@ public class WordCount {
 		String currCategoryName = "";
 		// Search each input word in the trie prefix tree categorizer (dictionary).
 		for (String currWord : map.keySet()){
+			
 			currCategories = categorizer.query(currWord);
 			// If the word is in the trie, update the dictionary words count and the per-category count
 			if (currCategories!=null){
@@ -374,7 +393,8 @@ public class WordCount {
 		bw.write(titles.toString());
 		bw.newLine();
 		bw.close();
-		logger.info("Created the output File.");
+		logger.info("Building the output File.");
+		appendLog("Building the output File.");
 	}
 	
 	public void buildSpssFile(File spssFile) throws IOException{
@@ -389,7 +409,7 @@ public class WordCount {
 		bw.write(titles.toString());
 		bw.newLine();
 		bw.close();
-		logger.info("Created the SPSS output File.");
+		//logger.info("Created the SPSS output File.");
 	}
 	
 	public void finalizeSpssFile(File spssFile) throws IOException{
@@ -400,6 +420,7 @@ public class WordCount {
 		bw.newLine();
 		bw.close();
 		logger.info("Created the SPSS output File.");
+		appendLog("Created the SPSS output File.");
 	}
 
 	public void writeToSpss(File spssFile, String docName, int totalCount, float wps, float sixltr, float dic, HashMap<String,Integer> catCount) throws IOException{
@@ -443,6 +464,7 @@ public class WordCount {
 		bw.newLine();
 		bw.close();
 		logger.info("CSV File Updated Successfully");
+		appendLog("CSV File Updated Successfully");
 	}
 
 	public void buildCategorizer(File dFile) throws IOException {
@@ -450,6 +472,7 @@ public class WordCount {
 		String currentLine=br.readLine();
 		if (currentLine == null) {
 			logger.warning("The dictionary file is empty");
+			appendLog("The dictionary file is empty");
 		}
 		if (currentLine.equals("%"))
 			while ((currentLine=br.readLine()) != null && !currentLine.equals("%"))
@@ -457,6 +480,7 @@ public class WordCount {
 		
 		if (currentLine == null){
 			logger.warning("The dictionary file does not have categorized words");
+			appendLog("The dictionary file does not have categorized words");
 		} else {
 			while ((currentLine=br.readLine())!=null) {
 				ArrayList<Integer> categories = new ArrayList<Integer>();
@@ -487,12 +511,14 @@ public class WordCount {
 		
 		while (st.hasMoreTokens()){
 			String currentWord = st.nextToken();
-			
 			//Do Porter2/Snowball Stemming if enabled
 			if (doSnowballStemming){
 				stemmer.setCurrent(currentWord);
+				String stemmedWord = "";
 				if(stemmer.stem())
-					currentWord = stemmer.getCurrent();
+					 stemmedWord = stemmer.getCurrent();
+				if (!stemmedWord.equals(""))
+					currentWord = stemmedWord;
 			}
 			
 			// If stop word, ignore
@@ -517,4 +543,12 @@ public class WordCount {
 		return ret;
 	}
 	
+	
+	// This function updates the consoleMessage parameter of the context.
+	@Inject IEclipseContext context;
+	private void appendLog(String message){
+		IEclipseContext parent = context.getParent();
+		parent.set("consoleMessage", message);
+	}
+
 }

@@ -50,7 +50,7 @@ public class Welcome {
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Browser browser = new Browser(parent, SWT.NONE);
-		browser.setUrl("https://github.com/neo-anderson/NLPUtils-application/blob/master/README.md");
+		browser.setUrl("https://github.com/neo-anderson/NLPUtils-application/wiki/What's-New!");
 		GridData gd_browser = new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1);
 		gd_browser.widthHint = 500;
 		gd_browser.heightHint = 450;

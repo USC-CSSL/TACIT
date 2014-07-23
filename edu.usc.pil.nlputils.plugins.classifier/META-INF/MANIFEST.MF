@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Classifiers
-Bundle-SymbolicName: edu.usc.pil.nlputils.plugins.classifier;singleton:=true
+Bundle-SymbolicName: edu.usc.pil.nlputils.plugins.nbclassifier;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.di;bundle-version="1.0.0",
@@ -12,3 +12,5 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  javax.annotation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.e4.ui.model.application.ui.basic
+Bundle-ClassPath: weka.jar,
+ .

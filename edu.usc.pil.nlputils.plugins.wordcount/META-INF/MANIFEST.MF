@@ -17,3 +17,4 @@ Export-Package: edu.usc.pil.nlputils.plugins.wordcount.handlers,
 Bundle-ClassPath: .,
  commons-lang3-3.3.2.jar,
  SnowballStemmer.jar
+Import-Package: org.eclipse.e4.core.contexts
