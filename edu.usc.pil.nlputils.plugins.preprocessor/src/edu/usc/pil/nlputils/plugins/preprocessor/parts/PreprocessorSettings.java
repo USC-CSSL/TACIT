@@ -23,6 +23,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import edu.usc.pil.nlputils.plugins.preprocessor.process.Preprocess;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class PreprocessorSettings {
 	private String[] inputFiles;
@@ -88,6 +91,11 @@ public class PreprocessorSettings {
 				FileDialog sfd = new FileDialog(shell,SWT.OPEN);
 				sfd.open();
 				stopwordsFile = sfd.getFilterPath()+"\\"+sfd.getFileName();
+				if (stopwordsFile.length()<2){
+					stopwordsFile = "";
+				} else{
+					System.out.println(stopwordsFile);
+				}
 				txtStopWords.setText(stopwordsFile);
 			}
 		});
@@ -140,9 +148,25 @@ public class PreprocessorSettings {
 		
 		txtDelimiters = new Text(grpPreprocessing, SWT.BORDER);
 		txtDelimiters.setText(" .,;'\\\"!-()[]{}:?");
-		txtDelimiters.setBounds(176, 26, 219, 21);
+		txtDelimiters.setBounds(176, 26, 249, 21);
+		
+		final Combo cmbStemLang = new Combo(grpPreprocessing, SWT.NONE);
+		cmbStemLang.setEnabled(false);
+		cmbStemLang.setItems(new String[] {"Auto Detect Language", "EN", "DE"});
+		cmbStemLang.setBounds(275, 63, 150, 23);
+		cmbStemLang.setText("Auto Detect Language");
+		
 		
 		final Button btnStemming = new Button(grpPreprocessing, SWT.CHECK);
+		btnStemming.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnStemming.getSelection())
+					cmbStemLang.setEnabled(true);
+				else
+					cmbStemLang.setEnabled(false);
+			}
+		});
 		btnStemming.setText("Stemming");
 		btnStemming.setBounds(176, 65, 93, 16);
 		
@@ -150,11 +174,12 @@ public class PreprocessorSettings {
 		btnDoLowercase.setBounds(10, 65, 143, 16);
 		btnDoLowercase.setText("Convert to Lowercase");
 		
+		
 		Button btnPreprocess = new Button(grpPreprocessing, SWT.NONE);
 		btnPreprocess.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				Preprocess pp = new Preprocess(inputFiles, stopwordsFile, outputDirectory, txtSuffix.getText(), txtDelimiters.getText(), btnDoLowercase.getSelection(), btnStemming.getSelection());
+				Preprocess pp = new Preprocess(inputFiles, stopwordsFile, outputDirectory, txtSuffix.getText(), txtDelimiters.getText(), btnDoLowercase.getSelection(), btnStemming.getSelection(),cmbStemLang.getText());
 				
 				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
@@ -163,18 +188,19 @@ public class PreprocessorSettings {
 				try{
 					long startTime = System.currentTimeMillis();
 					int result = pp.doPreprocess();
-					if (result == -1 || result == -2)
+					if (result == -1 || result == -2 || result == -3)
 						appendLog("Preprocessing failed.");
 					else
 						appendLog("Preprocessing completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-				} catch (IOException ioe){
+				} catch (Exception ioe){
 					ioe.printStackTrace();
 				}
 			}
 		});
 		btnPreprocess.setBounds(10, 101, 75, 25);
 		btnPreprocess.setText("PreProcess");
-		//TODO Your code here
+		
+		
 	}
 	
 	private void appendLog(String message){

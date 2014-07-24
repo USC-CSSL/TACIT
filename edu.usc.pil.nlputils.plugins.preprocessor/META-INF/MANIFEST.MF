@@ -13,5 +13,8 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.model.workbench;bundle-version="1.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: SnowballStemmer.jar,
- .
+ .,
+ jsonic-1.2.0.jar,
+ langdetect.jar,
+ profiles/
 Import-Package: org.eclipse.e4.core.contexts
