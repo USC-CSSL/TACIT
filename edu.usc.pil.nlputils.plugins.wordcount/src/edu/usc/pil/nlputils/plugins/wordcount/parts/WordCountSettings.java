@@ -65,7 +65,7 @@ public class WordCountSettings {
 		new Label(parent, SWT.NONE);
 		
 		Label lblInputFile = new Label(parent, SWT.NONE);
-		lblInputFile.setText("Input File");
+		lblInputFile.setText("Input File(s)");
 		new Label(parent, SWT.NONE);
 		
 		txtInputFile = new Text(parent, SWT.BORDER);
