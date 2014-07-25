@@ -152,7 +152,7 @@ public class PreprocessorSettings {
 		
 		final Combo cmbStemLang = new Combo(grpPreprocessing, SWT.NONE);
 		cmbStemLang.setEnabled(false);
-		cmbStemLang.setItems(new String[] {"Auto Detect Language", "EN", "DE"});
+		cmbStemLang.setItems(new String[] {"Auto Detect Language", "EN", "DE", "FR", "IT", "DA", "NL", "FI", "HU", "NO", "TR"});
 		cmbStemLang.setBounds(275, 63, 150, 23);
 		cmbStemLang.setText("Auto Detect Language");
 		

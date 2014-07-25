@@ -3,13 +3,9 @@ package edu.usc.pil.nlputils.plugins.preprocessor.process;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 
 import javax.inject.Inject;
@@ -20,10 +16,18 @@ import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 
+import snowballstemmer.DanishStemmer;
+import snowballstemmer.DutchStemmer;
 import snowballstemmer.EnglishStemmer;
-import snowballstemmer.PorterStemmer;
+import snowballstemmer.FinnishStemmer;
+import snowballstemmer.FrenchStemmer;
+import snowballstemmer.HungarianStemmer;
+import snowballstemmer.ItalianStemmer;
+import snowballstemmer.NorwegianStemmer;
+//import snowballstemmer.PorterStemmer;
 import snowballstemmer.SnowballStemmer;
 import snowballstemmer.GermanStemmer;
+import snowballstemmer.TurkishStemmer;
 
 public class Preprocess {
 	private boolean doLowercase = false;
@@ -85,21 +89,13 @@ public class Preprocess {
 			try{
 			DetectorFactory.loadProfile("C:\\Users\\45W1N\\NLPUtils-application\\edu.usc.pil.nlputils.plugins.preprocessor\\profiles");
 			} catch (com.cybozu.labs.langdetect.LangDetectException ex){
-				ex.printStackTrace();
-				System.out.println(ex.getCode());
+				//ex.printStackTrace();
+				System.out.println("Exception code - "+ex.getCode());
+				//ex.getCode().toString() -> is not visible!
 			}
 		} else{
 			doLangDetect = false;
-			switch(stemLang){
-			case "EN":
-				appendLog("Language set to English");
-				stemmer = new EnglishStemmer();
-				break;
-			case "DE":
-				appendLog("Language set to German");
-				stemmer = new GermanStemmer();
-				break;
-			}
+			stemmer = stemSelect(stemLang);
 		}
 		}
 		
@@ -154,6 +150,42 @@ public class Preprocess {
 		return 1;
 	}
 
+	private SnowballStemmer stemSelect(String lang){
+		switch(lang.toUpperCase()){
+		case "EN":
+			appendLog("Language - English.");
+			return new EnglishStemmer();
+		case "DE":
+			appendLog("Language - German.");
+			return new GermanStemmer();
+		case "FR":
+			appendLog("Language - French.");
+			return new FrenchStemmer();
+		case "IT":
+			appendLog("Language - Italian.");
+			return new ItalianStemmer();
+		case "DA":
+			appendLog("Language - Dannish.");
+			return new DanishStemmer();
+		case "NL":
+			appendLog("Language - Dutch.");
+			return new DutchStemmer();
+		case "FI":
+			appendLog("Language - Finnish.");
+			return new FinnishStemmer();
+		case "HU":
+			appendLog("Language - Hungarian.");
+			return new HungarianStemmer();
+		case "NO":
+			appendLog("Language - Norwegian.");
+			return new NorwegianStemmer();
+		case "TR":
+			appendLog("Language - Turkish.");
+			return new TurkishStemmer();
+		}
+		return null;
+	}
+	
 	private SnowballStemmer findLangStemmer(File iFile) throws IOException, LangDetectException {
 		BufferedReader br = new BufferedReader(new FileReader(iFile));
 		String sampleText="";
@@ -163,18 +195,11 @@ public class Preprocess {
 				break;
 			sampleText = sampleText+ currentLine.trim().replace('\n', ' ');
 		}
+		appendLog("Detecting language...");
 		Detector detector = DetectorFactory.create();
 		detector.append(sampleText);
 		String lang = detector.detect();
-		switch(lang.toUpperCase()){
-		case "EN":
-			appendLog("Detected Language - English.");
-			return new EnglishStemmer();
-		case "DE":
-			appendLog("Detected Language - German.");
-			return new GermanStemmer();
-		}
-		return null;
+		return stemSelect(lang);
 	}
 
 	private String stem(String currentLine) {
