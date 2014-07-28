@@ -28,6 +28,7 @@
       <plugin id="edu.usc.pil.nlputils.application"/>
       <plugin id="edu.usc.pil.nlputils.plugins.nbclassifier"/>
       <plugin id="edu.usc.pil.nlputils.plugins.preprocessor"/>
+      <plugin id="edu.usc.pil.nlputils.plugins.svmClassifier"/>
       <plugin id="edu.usc.pil.nlputils.plugins.wordcount"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>

@@ -181,7 +181,7 @@ public class PreprocessorSettings {
 			public void mouseUp(MouseEvent e) {
 				Preprocess pp = new Preprocess(inputFiles, stopwordsFile, outputDirectory, txtSuffix.getText(), txtDelimiters.getText(), btnDoLowercase.getSelection(), btnStemming.getSelection(),cmbStemLang.getText());
 				
-				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
+				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(pp,iEclipseContext);
 				
