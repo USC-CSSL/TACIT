@@ -26,8 +26,32 @@ public class SvmClassifier {
 	private String dateString;
 	private File modelFile;
 	private boolean doLowercase = true;
-	
+	private boolean doStopWords = true;
 	private String intermediatePath;
+	
+	public SvmClassifier(boolean doLowercase, String delimiters, String stopwordsFile) throws IOException{
+		this.delimiters = delimiters;
+		this.doLowercase = doLowercase;
+		
+			if (stopwordsFile != null && !stopwordsFile.isEmpty()){
+				// If stopwordsFile is not given, doStopWords is false by default. Check only if it's not empty
+				File sFile = new File(stopwordsFile);
+				if (!sFile.exists() || sFile.isDirectory()){
+					System.out.println("Error in stopwords file path "+sFile.getAbsolutePath());
+					appendLog("Error in stopwords file path "+sFile.getAbsolutePath());
+				} else {
+					doStopWords = true;
+					String currentLine;
+					BufferedReader br = new BufferedReader(new FileReader(sFile));
+					while ((currentLine = br.readLine())!=null){
+						stopWordsSet.add(currentLine.trim().toLowerCase());
+					}
+					br.close();
+				}
+				
+		}
+	}
+	
 	// Should convert each text file to wordcount (Bag of words) map (bag of words)
 	public HashMap<String, Integer> fileToBow (File inputFile) throws IOException{
 		HashMap<String, Integer> hashMap = new HashMap<String,Integer>();
@@ -46,7 +70,9 @@ public class SvmClassifier {
 		String input = fullFile.toString();
 		for (char c:delimiters.toCharArray())
 			input = input.replace(c, ' ');
-		input = removeStopWords(input);
+		
+		if (doStopWords)
+			input = removeStopWords(input);
 		//System.out.println(input);
 		for (String word: input.split("\\s+")){
 			if(!hashMap.containsKey(word))
@@ -199,7 +225,7 @@ public class SvmClassifier {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		SvmClassifier svm = new SvmClassifier();
+		SvmClassifier svm = new SvmClassifier(true," .,;'\"!-()[]{}:?",null);
 		File folder1 = new File("c:\\test\\svm\\ham");
 		File folder2 = new File("c:\\test\\svm\\spam");
 		File formatFile = new File("c:\\test\\svm\\formatted"+".train");

@@ -4,9 +4,9 @@ import java.io.IOException;
 
 public class SvmTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		SvmClassifier svm = new SvmClassifier();
+		SvmClassifier svm = new SvmClassifier(true, " .,;'\"!-()[]{}:?",null);
 		try {
 		//svm.train("HAM", "c:\\spam_training\\ham", "SPAM", "c:\\spam_training\\spam");
 			svm.train("HAM", "c:\\test\\svm\\small\\ham", "SPAM", "c:\\test\\svm\\small\\spam");
