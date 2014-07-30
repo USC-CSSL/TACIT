@@ -37,12 +37,12 @@ public class SvmClassifierSettings {
 	@Inject IEclipseContext context;
 	private Text txtTestFolder1;
 	private Text txtTestFolder2;
-	private Text text_2;
+	private Text txtClassifyInput;
 	private Text txtOutputFile;
 	private Text txtDelimiters;
 	private Text text_1;
 	private Text txtStopWords;
-	private Text txtCOutputPath;
+	private Text txtClassifyOutput;
 	public SvmClassifierSettings() {
 		//TODO Your code here
 	}
@@ -53,9 +53,9 @@ public class SvmClassifierSettings {
 		parent.setLayout(new GridLayout(7, false));
 		
 		Group grpInputSettings = new Group(parent, SWT.NONE);
-		grpInputSettings.setText("Input Settings");
+		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpInputSettings.heightHint = 192;
+		gd_grpInputSettings.heightHint = 238;
 		gd_grpInputSettings.widthHint = 436;
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
@@ -146,6 +146,15 @@ public class SvmClassifierSettings {
 		Label lblStopWordsFile = new Label(grpPreprocessingOptions, SWT.NONE);
 		lblStopWordsFile.setBounds(25, 59, 98, 15);
 		lblStopWordsFile.setText("Stop Words File");
+		
+		Button btnTermFreqencyTf = new Button(grpInputSettings, SWT.RADIO);
+		btnTermFreqencyTf.setSelection(true);
+		btnTermFreqencyTf.setBounds(10, 219, 199, 16);
+		btnTermFreqencyTf.setText("Term Freqency TF (Word Count)");
+		
+		final Button btnTfidf = new Button(grpInputSettings, SWT.RADIO);
+		btnTfidf.setBounds(238, 219, 90, 16);
+		btnTfidf.setText("TF.IDF");
 		
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE);
 		tabFolder.setSingle(false);
@@ -247,7 +256,7 @@ public class SvmClassifierSettings {
 				ContextInjectionFactory.inject(svm,iEclipseContext);
 
 				int selection = tabFolder.getSelectionIndex();
-				svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText());
+				svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection());
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
@@ -289,33 +298,80 @@ public class SvmClassifierSettings {
 		lblFolder_2.setBounds(10, 32, 97, 15);
 		lblFolder_2.setText("Directory Path");
 		
-		text_2 = new Text(grpClassifyMode, SWT.BORDER);
-		text_2.setBounds(135, 26, 234, 21);
+		txtClassifyInput = new Text(grpClassifyMode, SWT.BORDER);
+		txtClassifyInput.setBounds(135, 26, 234, 21);
 		
 		Label label_1 = new Label(grpClassifyMode, SWT.NONE);
 		label_1.setText("Output File");
 		label_1.setBounds(10, 66, 59, 15);
 		
-		txtCOutputPath = new Text(grpClassifyMode, SWT.BORDER);
-		txtCOutputPath.setBounds(135, 63, 234, 21);
+		txtClassifyOutput = new Text(grpClassifyMode, SWT.BORDER);
+		txtClassifyOutput.setBounds(135, 63, 234, 21);
 		
 		Button button_6 = new Button(grpClassifyMode, SWT.NONE);
 		button_6.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				/*
-				DirectoryDialog cd = new DirectoryDialog(shell, SWT.SAVE);
-				cd.open();
-				txtCOutputPath.setText(cd.getFilterPath());
-				*/
+				txtClassifyOutput.setText("");
+				FileDialog fd = new FileDialog(shell,SWT.SAVE);
+				fd.open();
+				String oFile = fd.getFileName();
+				String dir = fd.getFilterPath();
+				txtClassifyOutput.setText(dir+"\\"+oFile);
 			}
 		});
 		button_6.setText("...");
 		button_6.setBounds(370, 61, 21, 25);
 		
 		Button btnClassify = new Button(grpClassifyMode, SWT.NONE);
+		btnClassify.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				long currentTime = System.currentTimeMillis();
+				
+				try {
+				SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());
+				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
+				IEclipseContext iEclipseContext = context;
+				ContextInjectionFactory.inject(svm,iEclipseContext);
+
+				int selection = tabFolder.getSelectionIndex();
+				svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection());
+				if(selection == 0){
+					System.out.println("Test Mode");
+					appendLog("Test Mode");
+					svm.predict(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText());
+					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText(),txtOutputFile.getText());
+				} else if (selection == 1){
+					System.out.println("Classification Mode");
+					appendLog("Classification Mode");
+					svm.classify(txtLabel1.getText(), txtLabel2.getText(), txtClassifyInput.getText());
+					svm.outputPredictedOnly(txtLabel1.getText(), txtLabel2.getText(), txtClassifyInput.getText(), txtClassifyOutput.getText());
+				}
+				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
+				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
+				} catch (IOException ie) {
+					ie.printStackTrace();
+				}
+
+			}
+		});
 		btnClassify.setText("Classify");
 		btnClassify.setBounds(10, 95, 52, 25);
+		
+		Button button_7 = new Button(grpClassifyMode, SWT.NONE);
+		button_7.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				DirectoryDialog fd1 = new DirectoryDialog(shell);
+				fd1.open();
+				String fp1Directory = fd1.getFilterPath();
+				txtClassifyInput.setText(fp1Directory);
+				
+			}
+		});
+		button_7.setBounds(370, 24, 21, 25);
+		button_7.setText("...");
 		//TODO Your code here
 	}
 	

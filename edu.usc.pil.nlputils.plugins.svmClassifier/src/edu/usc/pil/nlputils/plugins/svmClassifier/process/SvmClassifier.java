@@ -22,6 +22,7 @@ import edu.usc.pil.nlputils.plugins.svmClassifier.utilities.Convertor;
 public class SvmClassifier {
 	private int featureMapIndex=0;		// Keeps track of num of features for calculating the index of the next word
 	private HashMap<String,Integer> featureMap = new HashMap<String,Integer>();		// Stores Numerical ID for each word
+	private HashMap<String,Integer> dfMap = new HashMap<String,Integer>();		// Number of documents that contains each word
 	private HashSet<String> stopWordsSet = new HashSet<String>();
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	private String dateString;
@@ -30,6 +31,7 @@ public class SvmClassifier {
 	private boolean doStopWords = true;
 	private String intermediatePath;
 	private int noOfDocuments = 0;
+	private boolean doTfidf = false;
 	
 	public SvmClassifier(boolean doLowercase, String delimiters, String stopwordsFile) throws IOException{
 		this.delimiters = delimiters;
@@ -54,9 +56,38 @@ public class SvmClassifier {
 		}
 	}
 	
+	public void buildDfMap(File inputFile) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(inputFile));
+		String currentLine;
+		StringBuilder fullFile = new StringBuilder();
+		while ((currentLine = br.readLine())!=null){
+			if (doLowercase){
+				currentLine = currentLine.toLowerCase();
+			}
+			fullFile.append(currentLine+' ');
+		}
+		String input = fullFile.toString();
+		for (char c:delimiters.toCharArray())
+			input = input.replace(c, ' ');
+		if (doStopWords)
+			input = removeStopWords(input);
+		HashSet<String> wordSet = new HashSet<String>();
+		for (String word:input.split("\\s+")){
+			wordSet.add(word);
+		}
+		for (String word:wordSet){
+			if (!(dfMap.containsKey(word))){
+				dfMap.put(word, 1);
+			} else {
+				dfMap.put(word, dfMap.get(word)+1);
+			}
+		}
+		br.close();
+	}
+	
 	// Should convert each text file to wordcount (Bag of words) map (bag of words)
-	public HashMap<String, Integer> fileToBow (File inputFile) throws IOException{
-		HashMap<String, Integer> hashMap = new HashMap<String,Integer>();
+	public HashMap<String, Double> fileToBow (File inputFile) throws IOException{
+		HashMap<String, Double> hashMap = new HashMap<String,Double>();
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
 		String currentLine;
 		
@@ -78,15 +109,27 @@ public class SvmClassifier {
 		//System.out.println(input);
 		for (String word: input.split("\\s+")){
 			if(!hashMap.containsKey(word))
-				hashMap.put(word, 1);
+				hashMap.put(word, (double)1);
 			else{
 				hashMap.put(word, hashMap.get(word)+1);
 			}
 		}
 		
 		// If TF.IDF method, multiply each hashMap value with IDF. IDF = log10( noOfDocuments / no of documents containing the current word)
-		
-		System.out.println(hashMap);
+		if (doTfidf){
+		double tfidf=0;
+		for (String word:hashMap.keySet()){
+			Integer docsContaining;
+			if ((docsContaining = dfMap.get(word))!=null){
+				tfidf = hashMap.get(word) * (Math.log10(noOfDocuments / (double)docsContaining));
+				//System.out.println(word+" - "+noOfDocuments+"/"+(double)docsContaining);
+			} else {
+				continue;		// If new word, none of the training documents will contain it. So, skip.
+			}
+			hashMap.put(word, tfidf);
+		}
+		}
+		//System.out.println(hashMap);
 		br.close();
 		return hashMap;
 	}
@@ -103,8 +146,8 @@ public class SvmClassifier {
 		return returnString.toString();
 	}
 	
-	public String BowToString(HashMap<String,Integer> bow){
-		TreeMap<Integer,Integer> integerMap = new TreeMap<Integer,Integer>();
+	public String BowToString(HashMap<String,Double> bow){
+		TreeMap<Integer,Double> integerMap = new TreeMap<Integer,Double>();
 		for (String word:bow.keySet()){
 			if (featureMap.containsKey(word)){
 				integerMap.put(featureMap.get(word), bow.get(word));
@@ -124,8 +167,8 @@ public class SvmClassifier {
 		return sb.toString().trim();
 	}
 	
-	public String BowToTestString(HashMap<String,Integer> bow){
-		TreeMap<Integer,Integer> integerMap = new TreeMap<Integer,Integer>();
+	public String BowToTestString(HashMap<String,Double> bow){
+		TreeMap<Integer,Double> integerMap = new TreeMap<Integer,Double>();
 		for (String word:bow.keySet()){
 			if (featureMap.containsKey(word)){
 				integerMap.put(featureMap.get(word), bow.get(word));
@@ -140,7 +183,7 @@ public class SvmClassifier {
 		return sb.toString().trim();
 	}
 
-	public int train(String label1, String folderPath1, String label2, String folderPath2) throws IOException{
+	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf) throws IOException{
 		int ret = 0;
 		File folder1 = new File(folderPath1);
 		File folder2 = new File(folderPath2);
@@ -149,17 +192,33 @@ public class SvmClassifier {
 		intermediatePath = System.getProperty("user.dir")+"\\"+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 		modelFile = new File(intermediatePath+".model");
 		File trainFile = new File(intermediatePath+".train");
+		this.doTfidf = doTfidf;
 
+		// if TFIDF method, build df map
+		dfMap.clear();
+		noOfDocuments = 0;
+		if (doTfidf){
+		for (File file:folder1.listFiles()){
+			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
+			buildDfMap(file);
+		}
+		for (File file:folder2.listFiles()){
+			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
+			buildDfMap(file);
+		}
+		//System.out.println("dfmap -"+dfMap);
+		System.out.println("Finished building document frequency map.");
+		appendLog("Finished building document frequency map.");
+		}
+		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
 		
 		for (File file:folder1.listFiles()){
-			noOfDocuments = noOfDocuments+1;
 			System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:folder2.listFiles()){
-			noOfDocuments = noOfDocuments+1;
 			System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();
@@ -215,6 +274,32 @@ public class SvmClassifier {
 		System.out.println("Created output file "+outputFilePath);
 		appendLog("Created output file "+outputFilePath);
 		bw.close();
+		brt.close();
+		return ret;
+	}
+	
+	public int outputPredictedOnly(String label1, String label2, String inputPath, String outputFilePath) throws IOException{
+		int ret = 0;
+		File dir = new File (inputPath);
+		String tempOut = intermediatePath+".out";
+		BufferedReader brt = new BufferedReader(new FileReader(new File(tempOut)));
+		File outputFile = new File(outputFilePath);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+		bw.write("File Name,Predicted Class\n");
+		String predictedLabel;
+		for (File file:dir.listFiles()){
+			String currPrediction = brt.readLine();
+			if (currPrediction.equals("1.0")){
+				predictedLabel = label1;
+			} else{
+				predictedLabel = label2;
+			}
+			bw.write(file.getAbsolutePath()+","+predictedLabel+"\n");
+		}
+		System.out.println("Created output file "+outputFilePath);
+		appendLog("Created output file "+outputFilePath);
+		bw.close();
+		brt.close();
 		return ret;
 	}
 			
@@ -223,6 +308,24 @@ public class SvmClassifier {
 		File folder1 = new File(folderPath1);
 		File folder2 = new File(folderPath2);
 		
+		
+		// if TFIDF method, clear and rebuild df map
+				dfMap.clear();
+				noOfDocuments = 0;
+				if (doTfidf){
+				for (File file:folder1.listFiles()){
+					noOfDocuments = noOfDocuments + 1;
+					buildDfMap(file);
+				}
+				for (File file:folder2.listFiles()){
+					noOfDocuments = noOfDocuments + 1;
+					buildDfMap(file);
+				}
+				//System.out.println("dfmap -"+dfMap);
+				System.out.println("Finished building document frequency map.");
+				appendLog("Finished building document frequency map.");
+				}
+				
 		// Create a test file just like the training file was created.
 		// Use the existing featureMap, ignore new words.
 		File testFile = new File(intermediatePath+".test");
@@ -249,22 +352,70 @@ public class SvmClassifier {
 		predict_arguments[2] = intermediatePath+".out";
 		int[] result = svm_predict.main(predict_arguments);
 		int correct = result[0], total = result[1];
+		System.out.println("Created SVM output file - "+intermediatePath+".out");
+		appendLog("Created SVM output file - "+intermediatePath+".out");
 		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		//System.out.println(featureMap.toString());
 		return ret;
 	}
 	
-	public void classify(String testFile, String modelFile, String outputFilePath) throws IOException{
+	public int classify(String label1, String label2, String inputPath) throws IOException{
+		int ret = 0;
+		File folder = new File(inputPath);
+		
+		// if TFIDF method, clear and rebuild df map
+				dfMap.clear();
+				noOfDocuments = 0;
+				if (doTfidf){
+				for (File file:folder.listFiles()){
+					noOfDocuments = noOfDocuments + 1;
+					buildDfMap(file);
+				}
+				//System.out.println("dfmap -"+dfMap);
+				System.out.println("Finished building document frequency map.");
+				appendLog("Finished building document frequency map.");
+				}
+				
+		// Create a test file just like the training file was created.
+		// Use the existing featureMap, ignore new words.
+		File testFile = new File(intermediatePath+".test");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(testFile));
+		
+		for (File file:folder.listFiles()){
+			System.out.println("Reading File "+file.toString());
+			bw.write("0 "+BowToTestString(fileToBow(file)));
+			bw.newLine();
+		}
+
+		System.out.println("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		appendLog("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		bw.close();
+		System.out.println("Model file loaded - "+modelFile.getAbsolutePath());
+		appendLog("Model file loaded - "+modelFile.getAbsolutePath());
 		String[] predict_arguments = new String[3];
-		predict_arguments[0] = testFile;
-		predict_arguments[1] = modelFile;
-		predict_arguments[2] = outputFilePath;
+		predict_arguments[0] = testFile.getAbsolutePath();
+		predict_arguments[1] = modelFile.getAbsolutePath();
+		predict_arguments[2] = intermediatePath+".out";
 		int[] result = svm_predict.main(predict_arguments);
 		int correct = result[0], total = result[1];
-		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
-		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		System.out.println("Created SVM output file - "+intermediatePath+".out");
+		appendLog("Created SVM output file - "+intermediatePath+".out");		
+		//System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		//appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		//System.out.println(featureMap.toString());
+		return ret;
 	}
+//	public void classify(String testFile, String modelFile, String outputFilePath) throws IOException{
+//		String[] predict_arguments = new String[3];
+//		predict_arguments[0] = testFile;
+//		predict_arguments[1] = modelFile;
+//		predict_arguments[2] = outputFilePath;
+//		int[] result = svm_predict.main(predict_arguments);
+//		int correct = result[0], total = result[1];
+//		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+//		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+//	}
 	
 	public static void main(String[] args) throws IOException {
 		SvmClassifier svm = new SvmClassifier(true," .,;'\"!-()[]{}:?",null);
