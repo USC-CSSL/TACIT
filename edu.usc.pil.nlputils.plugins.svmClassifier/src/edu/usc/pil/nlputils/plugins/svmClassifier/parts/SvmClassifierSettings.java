@@ -24,6 +24,9 @@ import org.eclipse.swt.events.MouseEvent;
 import edu.usc.pil.nlputils.plugins.svmClassifier.process.SvmClassifier;
 
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.custom.CTabItem;
 
 public class SvmClassifierSettings {
 	private Text txtLabel1;
@@ -39,6 +42,7 @@ public class SvmClassifierSettings {
 	private Text txtDelimiters;
 	private Text text_1;
 	private Text txtStopWords;
+	private Text txtCOutputPath;
 	public SvmClassifierSettings() {
 		//TODO Your code here
 	}
@@ -48,11 +52,15 @@ public class SvmClassifierSettings {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(7, false));
 		
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 3);
-		gd_composite.heightHint = 180;
-		gd_composite.widthHint = 436;
-		composite.setLayoutData(gd_composite);
+		Group grpInputSettings = new Group(parent, SWT.NONE);
+		grpInputSettings.setText("Input Settings");
+		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
+		gd_grpInputSettings.heightHint = 192;
+		gd_grpInputSettings.widthHint = 436;
+		grpInputSettings.setLayoutData(gd_grpInputSettings);
+		
+		Composite composite = new Composite(grpInputSettings, SWT.NONE);
+		composite.setBounds(10, 20, 429, 180);
 		
 		Label lblLabel_1 = new Label(composite, SWT.NONE);
 		lblLabel_1.setBounds(0, 35, 36, 15);
@@ -139,35 +147,34 @@ public class SvmClassifierSettings {
 		lblStopWordsFile.setBounds(25, 59, 98, 15);
 		lblStopWordsFile.setText("Stop Words File");
 		
-		final Button btnTest = new Button(parent, SWT.RADIO);
-		btnTest.setSelection(true);
-		btnTest.setText("Test");
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
+		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE);
+		tabFolder.setSingle(false);
+		tabFolder.setSimple(false);
+		GridData gd_tabFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
+		gd_tabFolder.heightHint = 214;
+		gd_tabFolder.widthHint = 429;
+		tabFolder.setLayoutData(gd_tabFolder);
+		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
-		Group grpTestMode = new Group(parent, SWT.NONE);
-		GridData gd_grpTestMode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpTestMode.heightHint = 86;
-		gd_grpTestMode.widthHint = 395;
-		grpTestMode.setLayoutData(gd_grpTestMode);
+		final CTabItem tbtmTesting = new CTabItem(tabFolder, SWT.NONE);
+		tbtmTesting.setText("Testing");
+		
+		Group grpTestMode = new Group(tabFolder, SWT.NONE);
+		tbtmTesting.setControl(grpTestMode);
 		
 		Label lblTestFolder = new Label(grpTestMode, SWT.NONE);
-		lblTestFolder.setBounds(10, 23, 119, 15);
-		lblTestFolder.setText("Test Folder for Class 1");
+		lblTestFolder.setBounds(34, 38, 95, 15);
+		lblTestFolder.setText("Class 1 Test Data");
 		
 		txtTestFolder1 = new Text(grpTestMode, SWT.BORDER);
-		txtTestFolder1.setBounds(135, 17, 220, 21);
+		txtTestFolder1.setBounds(135, 32, 220, 21);
 		
 		Label lblTestFolder_1 = new Label(grpTestMode, SWT.NONE);
-		lblTestFolder_1.setBounds(10, 52, 119, 15);
-		lblTestFolder_1.setText("Test Folder for Class 2");
+		lblTestFolder_1.setBounds(34, 64, 95, 15);
+		lblTestFolder_1.setText("Class 2 Test Data");
 		
 		txtTestFolder2 = new Text(grpTestMode, SWT.BORDER);
-		txtTestFolder2.setBounds(135, 46, 220, 21);
+		txtTestFolder2.setBounds(135, 61, 220, 21);
 		
 		Button button_3 = new Button(grpTestMode, SWT.NONE);
 		button_3.addMouseListener(new MouseAdapter() {
@@ -180,7 +187,7 @@ public class SvmClassifierSettings {
 				
 			}
 		});
-		button_3.setBounds(359, 17, 21, 25);
+		button_3.setBounds(359, 30, 21, 25);
 		button_3.setText("...");
 		
 		Button button_4 = new Button(grpTestMode, SWT.NONE);
@@ -194,57 +201,25 @@ public class SvmClassifierSettings {
 			
 			}
 		});
-		button_4.setBounds(359, 45, 21, 25);
+		button_4.setBounds(359, 59, 21, 25);
 		button_4.setText("...");
 		
-		text_1 = new Text(grpTestMode, SWT.BORDER);
-		text_1.setBounds(135, 73, 220, 21);
-		
 		Label lblKfoldCrossValidation = new Label(grpTestMode, SWT.NONE);
-		lblKfoldCrossValidation.setBounds(10, 79, 130, 15);
-		lblKfoldCrossValidation.setText("k-Fold Cross Validation");
+		lblKfoldCrossValidation.setBounds(34, 118, 46, 15);
+		lblKfoldCrossValidation.setText("k Value");
 		
-		Button btnClassify = new Button(parent, SWT.RADIO);
-		btnClassify.setText("Classify");
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
+		Label label = new Label(grpTestMode, SWT.NONE);
+		label.setText("Output File");
+		label.setBounds(10, 154, 59, 15);
 		
-		Group grpClassifyMode = new Group(parent, SWT.NONE);
-		GridData gd_grpClassifyMode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpClassifyMode.heightHint = 57;
-		gd_grpClassifyMode.widthHint = 400;
-		grpClassifyMode.setLayoutData(gd_grpClassifyMode);
-		grpClassifyMode.setText("Classify");
+		text_1 = new Text(grpTestMode, SWT.BORDER);
+		text_1.setBounds(135, 115, 220, 21);
 		
-		Label lblFolder_2 = new Label(grpClassifyMode, SWT.NONE);
-		lblFolder_2.setBounds(10, 32, 97, 15);
-		lblFolder_2.setText("Directory Path");
+		txtOutputFile = new Text(grpTestMode, SWT.BORDER);
+		txtOutputFile.setBounds(135, 151, 220, 21);
 		
-		text_2 = new Text(grpClassifyMode, SWT.BORDER);
-		text_2.setBounds(135, 26, 234, 21);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		
-		Label lblOutputFile = new Label(parent, SWT.NONE);
-		lblOutputFile.setText("Output File");
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		
-		txtOutputFile = new Text(parent, SWT.BORDER);
-		txtOutputFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(parent, SWT.NONE);
-		
-		Button button_2 = new Button(parent, SWT.NONE);
+		Button button_2 = new Button(grpTestMode, SWT.NONE);
+		button_2.setBounds(359, 149, 21, 25);
 		button_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -258,7 +233,8 @@ public class SvmClassifierSettings {
 		});
 		button_2.setText("...");
 		
-		Button btnTrain = new Button(parent, SWT.NONE);
+		Button btnTrain = new Button(grpTestMode, SWT.NONE);
+		btnTrain.setBounds(10, 175, 52, 25);
 		btnTrain.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -270,9 +246,17 @@ public class SvmClassifierSettings {
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(svm,iEclipseContext);
 
+				int selection = tabFolder.getSelectionIndex();
 				svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText());
-				if (btnTest.getSelection())
-				svm.predict(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(),txtOutputFile.getText());
+				if(selection == 0){
+					System.out.println("Test Mode");
+					appendLog("Test Mode");
+					svm.predict(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText());
+					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText(),txtOutputFile.getText());
+				} else if (selection == 1){
+					System.out.println("Classification Mode");
+					appendLog("Classification Mode");
+				}
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				} catch (IOException ie) {
@@ -280,13 +264,58 @@ public class SvmClassifierSettings {
 				}
 			}
 		});
-		btnTrain.setText("Classify");
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
+		btnTrain.setText("Test");
+		
+		Button btnSeparateTestData = new Button(grpTestMode, SWT.RADIO);
+		btnSeparateTestData.setSelection(true);
+		btnSeparateTestData.setBounds(10, 10, 119, 16);
+		btnSeparateTestData.setText("Separate Test Data");
+		
+		Button btnKfoldCrossValidation = new Button(grpTestMode, SWT.RADIO);
+		btnKfoldCrossValidation.setBounds(10, 94, 149, 16);
+		btnKfoldCrossValidation.setText("k-Fold Cross Validation");
+		
+		//Setting Testing as the default tab
+		tabFolder.setSelection(0);
+		
+		CTabItem tbtmClassify = new CTabItem(tabFolder, SWT.NONE);
+		tbtmClassify.setText("Classify");
+		
+		Group grpClassifyMode = new Group(tabFolder, SWT.NONE);
+		tbtmClassify.setControl(grpClassifyMode);
+		grpClassifyMode.setText("Classify");
+		
+		Label lblFolder_2 = new Label(grpClassifyMode, SWT.NONE);
+		lblFolder_2.setBounds(10, 32, 97, 15);
+		lblFolder_2.setText("Directory Path");
+		
+		text_2 = new Text(grpClassifyMode, SWT.BORDER);
+		text_2.setBounds(135, 26, 234, 21);
+		
+		Label label_1 = new Label(grpClassifyMode, SWT.NONE);
+		label_1.setText("Output File");
+		label_1.setBounds(10, 66, 59, 15);
+		
+		txtCOutputPath = new Text(grpClassifyMode, SWT.BORDER);
+		txtCOutputPath.setBounds(135, 63, 234, 21);
+		
+		Button button_6 = new Button(grpClassifyMode, SWT.NONE);
+		button_6.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				/*
+				DirectoryDialog cd = new DirectoryDialog(shell, SWT.SAVE);
+				cd.open();
+				txtCOutputPath.setText(cd.getFilterPath());
+				*/
+			}
+		});
+		button_6.setText("...");
+		button_6.setBounds(370, 61, 21, 25);
+		
+		Button btnClassify = new Button(grpClassifyMode, SWT.NONE);
+		btnClassify.setText("Classify");
+		btnClassify.setBounds(10, 95, 52, 25);
 		//TODO Your code here
 	}
 	
