@@ -3,10 +3,14 @@ package edu.usc.pil.nlputils.plugins.svmClassifier.process;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -183,7 +187,7 @@ public class SvmClassifier {
 		return sb.toString().trim();
 	}
 
-	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf) throws IOException{
+	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf, boolean doCrossVal, String kVal) throws IOException{
 		int ret = 0;
 		File folder1 = new File(folderPath1);
 		File folder2 = new File(folderPath2);
@@ -193,6 +197,7 @@ public class SvmClassifier {
 		modelFile = new File(intermediatePath+".model");
 		File trainFile = new File(intermediatePath+".train");
 		this.doTfidf = doTfidf;
+		
 
 		// if TFIDF method, build df map
 		dfMap.clear();
@@ -229,15 +234,37 @@ public class SvmClassifier {
 		appendLog("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
 		bw.close();
 		
-		String[] train_arguments = new String[2];
+		String[] train_arguments;
+		if (doCrossVal){
+			train_arguments = new String[4];
+			train_arguments[0] = "-v";
+			train_arguments[1] = kVal;
+			train_arguments[2] = trainFile.getAbsolutePath();
+			train_arguments[3] = modelFile.getAbsolutePath();
+		}else {
+		train_arguments = new String[2];
 		train_arguments[0] = trainFile.getAbsolutePath();
 		train_arguments[1] = modelFile.getAbsolutePath();
+		}
 		System.out.println("Training the classifier...");
 		appendLog("Training the classifier...");
-		svm_train.main(train_arguments);
+		double crossValResult = svm_train.main(train_arguments);
 		System.out.println("Model file created - "+modelFile.getAbsolutePath());
 		appendLog("Model file created - "+modelFile.getAbsolutePath());
 		
+		// Saving the feature map
+		File hashmap = new File(intermediatePath+".hashmap");
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(hashmap));
+		oos.writeObject(featureMap);
+		oos.flush();
+		oos.close();
+		System.out.println("Feature Map saved - "+hashmap.getAbsolutePath());
+		appendLog("Feature Map saved - "+hashmap.getAbsolutePath());
+		
+		if (doCrossVal){
+			System.out.println("Cross Validation Accuracy = "+crossValResult+"%");
+			appendLog("Cross Validation Accuracy = "+crossValResult+"%");
+		}
 		return ret;
 	}
 	
@@ -357,6 +384,24 @@ public class SvmClassifier {
 		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		//System.out.println(featureMap.toString());
+		return ret;
+	}
+	
+	public int loadPretrainedModel(String label1, String label2, String modelFilePath, String hashmapPath) throws FileNotFoundException, IOException, ClassNotFoundException{
+		int ret = 0;
+		System.out.println("Loading Model File "+modelFilePath);
+		this.modelFile = new File(modelFilePath);
+		//String fileName = modelFilePath.substring(0,modelFilePath.lastIndexOf('.'));
+		//File hashmap = new File(fileName+".hashmap");
+		File hashmap = new File(hashmapPath);
+		System.out.println("Loading Feature Map "+hashmap.getAbsolutePath());
+		
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(hashmap));
+		this.featureMap = (HashMap<String,Integer>)ois.readObject();
+		//System.out.println(featureMap);
+		Calendar cal = Calendar.getInstance();
+		dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
+		this.intermediatePath = System.getProperty("user.dir")+"\\"+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 		return ret;
 	}
 	

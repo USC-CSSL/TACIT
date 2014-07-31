@@ -13,7 +13,8 @@ class svm_train {
 	private String error_msg;
 	private int cross_validation;
 	private int nr_fold;
-
+	private static double crossValResult = 0;
+	
 	private static svm_print_interface svm_print_null = new svm_print_interface()
 	{
 		public void print(String s) {}
@@ -88,6 +89,7 @@ class svm_train {
 				if(target[i] == prob.y[i])
 					++total_correct;
 			System.out.print("Cross Validation Accuracy = "+100.0*total_correct/prob.l+"%\n");
+			crossValResult = 100.0*total_correct/prob.l;
 		}
 	}
 	
@@ -115,10 +117,11 @@ class svm_train {
 		}
 	}
 
-	public static void main(String argv[]) throws IOException
+	public static double main(String argv[]) throws IOException
 	{
 		svm_train t = new svm_train();
 		t.run(argv);
+		return crossValResult;
 	}
 
 	private static double atof(String s)

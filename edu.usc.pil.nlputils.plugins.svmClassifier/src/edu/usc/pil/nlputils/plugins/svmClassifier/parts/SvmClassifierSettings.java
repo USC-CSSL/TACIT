@@ -40,9 +40,11 @@ public class SvmClassifierSettings {
 	private Text txtClassifyInput;
 	private Text txtOutputFile;
 	private Text txtDelimiters;
-	private Text text_1;
+	private Text txtkVal;
 	private Text txtStopWords;
 	private Text txtClassifyOutput;
+	private Text txtModelFilePath;
+	private Text txtHashmapPath;
 	public SvmClassifierSettings() {
 		//TODO Your code here
 	}
@@ -55,7 +57,7 @@ public class SvmClassifierSettings {
 		Group grpInputSettings = new Group(parent, SWT.NONE);
 		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpInputSettings.heightHint = 238;
+		gd_grpInputSettings.heightHint = 329;
 		gd_grpInputSettings.widthHint = 436;
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
@@ -93,7 +95,7 @@ public class SvmClassifierSettings {
 		txtFolderPath2.setBounds(257, 32, 143, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
-		button.setBounds(406, 0, 21, 25);
+		button.setBounds(403, 0, 21, 25);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -107,7 +109,7 @@ public class SvmClassifierSettings {
 		button.setText("...");
 		
 		Button button_1 = new Button(composite, SWT.NONE);
-		button_1.setBounds(406, 30, 21, 25);
+		button_1.setBounds(403, 30, 21, 25);
 		button_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -140,7 +142,18 @@ public class SvmClassifierSettings {
 		txtDelimiters.setBounds(178, 22, 195, 21);
 		
 		Button button_5 = new Button(grpPreprocessingOptions, SWT.NONE);
-		button_5.setBounds(379, 51, 21, 25);
+		button_5.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				txtStopWords.setText("");
+				FileDialog fd = new FileDialog(shell,SWT.OPEN);
+				fd.open();
+				String oFile = fd.getFileName();
+				String dir = fd.getFilterPath();
+				txtStopWords.setText(dir+"\\"+oFile);
+			}
+		});
+		button_5.setBounds(375, 52, 21, 25);
 		button_5.setText("...");
 		
 		Label lblStopWordsFile = new Label(grpPreprocessingOptions, SWT.NONE);
@@ -155,6 +168,35 @@ public class SvmClassifierSettings {
 		final Button btnTfidf = new Button(grpInputSettings, SWT.RADIO);
 		btnTfidf.setBounds(238, 219, 90, 16);
 		btnTfidf.setText("TF.IDF");
+		
+		final Button btnLoadModel = new Button(grpInputSettings, SWT.CHECK);
+		btnLoadModel.setBounds(11, 253, 168, 16);
+		btnLoadModel.setText("Load Pretrained Model");
+		
+		txtModelFilePath = new Text(grpInputSettings, SWT.BORDER);
+		txtModelFilePath.setBounds(185, 248, 199, 21);
+		
+		Button button_8 = new Button(grpInputSettings, SWT.NONE);
+		button_8.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				txtModelFilePath.setText("");
+				FileDialog fd = new FileDialog(shell,SWT.OPEN);
+				fd.open();
+				String oFile = fd.getFileName();
+				String dir = fd.getFilterPath();
+				txtModelFilePath.setText(dir+"\\"+oFile);
+			}
+		});
+		button_8.setBounds(387, 246, 20, 25);
+		button_8.setText("...");
+		
+		txtHashmapPath = new Text(grpInputSettings, SWT.BORDER);
+		txtHashmapPath.setBounds(185, 296, 199, 21);
+		
+		Button button_9 = new Button(grpInputSettings, SWT.NONE);
+		button_9.setBounds(387, 294, 20, 25);
+		button_9.setText("...");
 		
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE);
 		tabFolder.setSingle(false);
@@ -221,8 +263,8 @@ public class SvmClassifierSettings {
 		label.setText("Output File");
 		label.setBounds(10, 154, 59, 15);
 		
-		text_1 = new Text(grpTestMode, SWT.BORDER);
-		text_1.setBounds(135, 115, 220, 21);
+		txtkVal = new Text(grpTestMode, SWT.BORDER);
+		txtkVal.setBounds(135, 115, 220, 21);
 		
 		txtOutputFile = new Text(grpTestMode, SWT.BORDER);
 		txtOutputFile.setBounds(135, 151, 220, 21);
@@ -242,6 +284,11 @@ public class SvmClassifierSettings {
 		});
 		button_2.setText("...");
 		
+		final Button btnCrossVal = new Button(grpTestMode, SWT.RADIO);
+		btnCrossVal.setBounds(10, 94, 149, 16);
+		btnCrossVal.setText("k-Fold Cross Validation");
+		
+		
 		Button btnTrain = new Button(grpTestMode, SWT.NONE);
 		btnTrain.setBounds(10, 175, 52, 25);
 		btnTrain.addMouseListener(new MouseAdapter() {
@@ -256,7 +303,12 @@ public class SvmClassifierSettings {
 				ContextInjectionFactory.inject(svm,iEclipseContext);
 
 				int selection = tabFolder.getSelectionIndex();
-				svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection());
+				if(btnLoadModel.getSelection())
+					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
+				else
+					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText());
+				// Cross Validation => No need to call predict and output separately
+				if (!btnCrossVal.getSelection()){
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
@@ -266,9 +318,10 @@ public class SvmClassifierSettings {
 					System.out.println("Classification Mode");
 					appendLog("Classification Mode");
 				}
+				}
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
-				} catch (IOException ie) {
+				} catch (IOException | ClassNotFoundException ie) {
 					ie.printStackTrace();
 				}
 			}
@@ -280,9 +333,6 @@ public class SvmClassifierSettings {
 		btnSeparateTestData.setBounds(10, 10, 119, 16);
 		btnSeparateTestData.setText("Separate Test Data");
 		
-		Button btnKfoldCrossValidation = new Button(grpTestMode, SWT.RADIO);
-		btnKfoldCrossValidation.setBounds(10, 94, 149, 16);
-		btnKfoldCrossValidation.setText("k-Fold Cross Validation");
 		
 		//Setting Testing as the default tab
 		tabFolder.setSelection(0);
@@ -336,7 +386,10 @@ public class SvmClassifierSettings {
 				ContextInjectionFactory.inject(svm,iEclipseContext);
 
 				int selection = tabFolder.getSelectionIndex();
-				svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection());
+				if(btnLoadModel.getSelection())
+					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
+				else
+					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(),false, null);
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
@@ -350,7 +403,7 @@ public class SvmClassifierSettings {
 				}
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
-				} catch (IOException ie) {
+				} catch (IOException | ClassNotFoundException ie) {
 					ie.printStackTrace();
 				}
 
