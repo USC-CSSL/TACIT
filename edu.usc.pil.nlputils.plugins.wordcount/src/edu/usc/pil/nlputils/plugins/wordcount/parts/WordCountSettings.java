@@ -91,12 +91,12 @@ public class WordCountSettings {
 				// Since the FileDialog will not return the absolute file paths, add directory path to each file name
 				inputFiles = new String[ifDialog.getFileNames().length];
 				for (int i=0; i<ifDialog.getFileNames().length; i++){
-					inputFiles[i] = ifDialog.getFilterPath()+"\\"+ifDialog.getFileNames()[i];
+					inputFiles[i] = ifDialog.getFilterPath()+System.getProperty("file.separator")+ifDialog.getFileNames()[i];
 				}
 				// Display the concatenated paths in the text field.
 				StringBuilder sb = new StringBuilder();
 				for (String inputFile : ifDialog.getFileNames())
-					sb.append(ifDialog.getFilterPath()+"\\"+inputFile+", ");
+					sb.append(ifDialog.getFilterPath()+System.getProperty("file.separator")+inputFile+", ");
 				txtInputFile.setText(sb.toString());
 			}
 		});
@@ -116,7 +116,7 @@ public class WordCountSettings {
 			public void mouseUp(MouseEvent e) {
 				FileDialog dfDialog = new FileDialog(shell, SWT.MULTI);
 				dfDialog.open();
-				txtDictionary.setText(dfDialog.getFilterPath()+"\\"+dfDialog.getFileName());
+				txtDictionary.setText(dfDialog.getFilterPath()+System.getProperty("file.separator")+dfDialog.getFileName());
 			}
 		});
 		btnDictionary.setText("...");
@@ -135,7 +135,7 @@ public class WordCountSettings {
 			public void mouseUp(MouseEvent e) {
 				FileDialog sfDialog = new FileDialog(shell, SWT.MULTI);
 				sfDialog.open();
-				txtStopWords.setText(sfDialog.getFilterPath()+"\\"+sfDialog.getFileName());
+				txtStopWords.setText(sfDialog.getFilterPath()+System.getProperty("file.separator")+sfDialog.getFileName());
 			}
 		});
 		btnStopWords.setText("...");
@@ -156,7 +156,7 @@ public class WordCountSettings {
 			public void mouseUp(MouseEvent e) {
 				FileDialog ofDialog = new FileDialog(shell, SWT.SAVE);
 				ofDialog.open();
-				txtOutputFile.setText(ofDialog.getFilterPath()+"\\"+ofDialog.getFileName());
+				txtOutputFile.setText(ofDialog.getFilterPath()+System.getProperty("file.separator")+ofDialog.getFileName());
 			}
 		});
 		btnOutputFile.setText("...");

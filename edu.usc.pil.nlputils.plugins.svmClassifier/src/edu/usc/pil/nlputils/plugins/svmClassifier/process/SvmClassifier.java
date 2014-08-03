@@ -193,7 +193,7 @@ public class SvmClassifier {
 		File folder2 = new File(folderPath2);
 		Calendar cal = Calendar.getInstance();
 		dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		intermediatePath = System.getProperty("user.dir")+"\\"+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
+		intermediatePath = System.getProperty("user.dir")+System.getProperty("file.separator")+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 		modelFile = new File(intermediatePath+".model");
 		File trainFile = new File(intermediatePath+".train");
 		this.doTfidf = doTfidf;
@@ -401,7 +401,7 @@ public class SvmClassifier {
 		//System.out.println(featureMap);
 		Calendar cal = Calendar.getInstance();
 		dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		this.intermediatePath = System.getProperty("user.dir")+"\\"+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
+		this.intermediatePath = System.getProperty("user.dir")+System.getProperty("file.separator")+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 		return ret;
 	}
 	

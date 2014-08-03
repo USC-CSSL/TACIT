@@ -70,8 +70,10 @@ public class PreprocessorSettings {
 				int i=0;
 				inputFiles = new String[iFiles.length];
 				for (String file:iFiles){
-					txtInput.append(dir+"\\"+file+",");
-					inputFiles[i++] = dir+"\\"+file;
+					//txtInput.append(dir+"\\"+file+",");
+					txtInput.append(dir+System.getProperty("file.separator")+file+",");
+					//inputFiles[i++] = dir+"\\"+file;
+					inputFiles[i++] = dir+System.getProperty("file.separator")+file;
 					//inputFiles[i++] = file;
 				}
 			}
@@ -90,7 +92,7 @@ public class PreprocessorSettings {
 			public void mouseUp(MouseEvent e) {
 				FileDialog sfd = new FileDialog(shell,SWT.OPEN);
 				sfd.open();
-				stopwordsFile = sfd.getFilterPath()+"\\"+sfd.getFileName();
+				stopwordsFile = sfd.getFilterPath()+System.getProperty("file.separator")+sfd.getFileName();
 				if (stopwordsFile.length()<2){
 					stopwordsFile = "";
 				} else{

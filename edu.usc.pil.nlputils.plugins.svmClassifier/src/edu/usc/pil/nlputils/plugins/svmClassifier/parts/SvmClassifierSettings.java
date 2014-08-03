@@ -150,7 +150,7 @@ public class SvmClassifierSettings {
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
-				txtStopWords.setText(dir+"\\"+oFile);
+				txtStopWords.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
 		button_5.setBounds(375, 52, 21, 25);
@@ -185,7 +185,7 @@ public class SvmClassifierSettings {
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
-				txtModelFilePath.setText(dir+"\\"+oFile);
+				txtModelFilePath.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
 		button_8.setBounds(387, 246, 20, 25);
@@ -279,7 +279,7 @@ public class SvmClassifierSettings {
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
-				txtOutputFile.setText(dir+"\\"+oFile);
+				txtOutputFile.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
 		button_2.setText("...");
@@ -367,7 +367,7 @@ public class SvmClassifierSettings {
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
-				txtClassifyOutput.setText(dir+"\\"+oFile);
+				txtClassifyOutput.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
 		button_6.setText("...");
