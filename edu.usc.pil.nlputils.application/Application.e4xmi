@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_-nteAPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.application" bindingContexts="_-nteCfzGEeOdn9ViPpOXDA">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_-nteAfzGEeOdn9ViPpOXDA" label="edu.usc.pil.nlputils.application" width="550" height="650">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_-nteAfzGEeOdn9ViPpOXDA" label="USC NLPUtils" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/Main32x32.gif" width="550" height="650">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_-nuFI_zGEeOdn9ViPpOXDA">
       <children xsi:type="advanced:Perspective" xmi:id="_-nuFJPzGEeOdn9ViPpOXDA">
         <children xsi:type="basic:PartSashContainer" xmi:id="_-nuFJfzGEeOdn9ViPpOXDA" elementId="">
@@ -9,7 +9,7 @@
           </children>
           <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" containerData="150" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
             <children xsi:type="basic:Part" xmi:id="_VZHDoAfHEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.console" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Console" label="Console"/>
-            <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.error" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.ErrorLog" label="Error Log"/>
+            <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.error" visible="false" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.ErrorLog" label="Error Log"/>
           </children>
         </children>
       </children>
@@ -20,7 +20,8 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFH_zGEeOdn9ViPpOXDA" label="Save" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/save_edit.png" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIPzGEeOdn9ViPpOXDA" label="Quit" command="_-nteDPzGEeOdn9ViPpOXDA"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.utilities" label="Utilities"/>
+      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.utilities" label="Basic Tools"/>
+      <children xsi:type="menu:Menu" xmi:id="_c7vqMBv1EeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.application.menu.wordcount" label="Word Counts"/>
       <children xsi:type="menu:Menu" xmi:id="_e5q_8A3SEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.classifiers" label="Classifiers"/>
       <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" label="Plugins">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.0" label="Add Plugin"/>
