@@ -58,11 +58,11 @@ public class SvmClassifierSettings {
 		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
 		gd_grpInputSettings.heightHint = 329;
-		gd_grpInputSettings.widthHint = 436;
+		gd_grpInputSettings.widthHint = 489;
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
 		Composite composite = new Composite(grpInputSettings, SWT.NONE);
-		composite.setBounds(10, 20, 429, 180);
+		composite.setBounds(10, 20, 475, 180);
 		
 		Label lblLabel_1 = new Label(composite, SWT.NONE);
 		lblLabel_1.setBounds(0, 35, 36, 15);
@@ -123,11 +123,11 @@ public class SvmClassifierSettings {
 		button_1.setText("...");
 		
 		Group grpPreprocessingOptions = new Group(composite, SWT.NONE);
-		grpPreprocessingOptions.setBounds(0, 56, 426, 114);
+		grpPreprocessingOptions.setBounds(0, 56, 465, 114);
 		grpPreprocessingOptions.setText("Preprocessing Options");
 		
 		txtStopWords = new Text(grpPreprocessingOptions, SWT.BORDER);
-		txtStopWords.setBounds(178, 54, 195, 21);
+		txtStopWords.setBounds(226, 51, 195, 21);
 		
 		final Button btnLowercase = new Button(grpPreprocessingOptions, SWT.CHECK);
 		btnLowercase.setBounds(25, 90, 140, 16);
@@ -139,7 +139,7 @@ public class SvmClassifierSettings {
 		
 		txtDelimiters = new Text(grpPreprocessingOptions, SWT.BORDER);
 		txtDelimiters.setText(" .,;'\\\"!-()[]{}:?");
-		txtDelimiters.setBounds(178, 22, 195, 21);
+		txtDelimiters.setBounds(226, 19, 195, 21);
 		
 		Button button_5 = new Button(grpPreprocessingOptions, SWT.NONE);
 		button_5.addMouseListener(new MouseAdapter() {
@@ -153,28 +153,19 @@ public class SvmClassifierSettings {
 				txtStopWords.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
-		button_5.setBounds(375, 52, 21, 25);
+		button_5.setBounds(423, 49, 21, 25);
 		button_5.setText("...");
 		
 		Label lblStopWordsFile = new Label(grpPreprocessingOptions, SWT.NONE);
 		lblStopWordsFile.setBounds(25, 59, 98, 15);
 		lblStopWordsFile.setText("Stop Words File");
 		
-		Button btnTermFreqencyTf = new Button(grpInputSettings, SWT.RADIO);
-		btnTermFreqencyTf.setSelection(true);
-		btnTermFreqencyTf.setBounds(10, 219, 199, 16);
-		btnTermFreqencyTf.setText("Term Freqency TF (Word Count)");
-		
-		final Button btnTfidf = new Button(grpInputSettings, SWT.RADIO);
-		btnTfidf.setBounds(238, 219, 90, 16);
-		btnTfidf.setText("TF.IDF");
-		
 		final Button btnLoadModel = new Button(grpInputSettings, SWT.CHECK);
-		btnLoadModel.setBounds(11, 253, 168, 16);
+		btnLoadModel.setBounds(10, 213, 168, 16);
 		btnLoadModel.setText("Load Pretrained Model");
 		
 		txtModelFilePath = new Text(grpInputSettings, SWT.BORDER);
-		txtModelFilePath.setBounds(185, 248, 199, 21);
+		txtModelFilePath.setBounds(236, 208, 199, 21);
 		
 		Button button_8 = new Button(grpInputSettings, SWT.NONE);
 		button_8.addMouseListener(new MouseAdapter() {
@@ -188,22 +179,54 @@ public class SvmClassifierSettings {
 				txtModelFilePath.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
-		button_8.setBounds(387, 246, 20, 25);
+		button_8.setBounds(438, 206, 20, 25);
 		button_8.setText("...");
 		
 		txtHashmapPath = new Text(grpInputSettings, SWT.BORDER);
-		txtHashmapPath.setBounds(185, 296, 199, 21);
+		txtHashmapPath.setBounds(236, 250, 199, 21);
 		
 		Button button_9 = new Button(grpInputSettings, SWT.NONE);
-		button_9.setBounds(387, 294, 20, 25);
+		button_9.setBounds(438, 248, 20, 25);
 		button_9.setText("...");
+		
+		Composite composite_1 = new Composite(grpInputSettings, SWT.NONE);
+		composite_1.setBounds(2, 282, 489, 26);
+		
+		Button btnTermFreqencyTf = new Button(composite_1, SWT.RADIO);
+		btnTermFreqencyTf.setBounds(135, 10, 199, 16);
+		btnTermFreqencyTf.setSelection(true);
+		btnTermFreqencyTf.setText("Term Freqency TF (Word Count)");
+		
+		final Button btnTfidf = new Button(composite_1, SWT.RADIO);
+		btnTfidf.setBounds(350, 10, 139, 16);
+		btnTfidf.setText("TF.IDF (More accurate)");
+		
+		Label lblWeightCalculation = new Label(composite_1, SWT.NONE);
+		lblWeightCalculation.setBounds(10, 11, 107, 15);
+		lblWeightCalculation.setText("Weight Calculation");
+		
+		Composite composite_2 = new Composite(grpInputSettings, SWT.NONE);
+		composite_2.setBounds(2, 311, 490, 26);
+		
+		Label lblKernel = new Label(composite_2, SWT.NONE);
+		lblKernel.setBounds(10, 10, 68, 15);
+		lblKernel.setText("SVM Kernel");
+		
+		final Button btnLinear = new Button(composite_2, SWT.RADIO);
+		btnLinear.setSelection(true);
+		btnLinear.setBounds(134, 9, 213, 16);
+		btnLinear.setText("Linear (Faster, Usually better for text)");
+		
+		Button btnRadial = new Button(composite_2, SWT.RADIO);
+		btnRadial.setBounds(350, 9, 131, 16);
+		btnRadial.setText("Radial Basis Function");
 		
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE);
 		tabFolder.setSingle(false);
 		tabFolder.setSimple(false);
 		GridData gd_tabFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
 		gd_tabFolder.heightHint = 214;
-		gd_tabFolder.widthHint = 429;
+		gd_tabFolder.widthHint = 490;
 		tabFolder.setLayoutData(gd_tabFolder);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
@@ -264,7 +287,7 @@ public class SvmClassifierSettings {
 		label.setBounds(10, 154, 59, 15);
 		
 		txtkVal = new Text(grpTestMode, SWT.BORDER);
-		txtkVal.setBounds(135, 115, 220, 21);
+		txtkVal.setBounds(135, 115, 46, 21);
 		
 		txtOutputFile = new Text(grpTestMode, SWT.BORDER);
 		txtOutputFile.setBounds(135, 151, 220, 21);
@@ -306,13 +329,13 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText());
+					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText(), btnLinear.getSelection());
 				// Cross Validation => No need to call predict and output separately
 				if (!btnCrossVal.getSelection()){
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
-					svm.predict(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText());
+					svm.predict(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
 					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText(),txtOutputFile.getText());
 				} else if (selection == 1){
 					System.out.println("Classification Mode");
@@ -389,11 +412,11 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(),false, null);
+					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(),false, null,btnLinear.getSelection());
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
-					svm.predict(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText());
+					svm.predict(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
 					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText(),txtOutputFile.getText());
 				} else if (selection == 1){
 					System.out.println("Classification Mode");

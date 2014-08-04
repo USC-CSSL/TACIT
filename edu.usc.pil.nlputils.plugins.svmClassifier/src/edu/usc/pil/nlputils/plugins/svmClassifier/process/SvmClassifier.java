@@ -187,7 +187,7 @@ public class SvmClassifier {
 		return sb.toString().trim();
 	}
 
-	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf, boolean doCrossVal, String kVal) throws IOException{
+	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf, boolean doCrossVal, String kVal, boolean doLinear) throws IOException{
 		int ret = 0;
 		File folder1 = new File(folderPath1);
 		File folder2 = new File(folderPath2);
@@ -235,16 +235,39 @@ public class SvmClassifier {
 		bw.close();
 		
 		String[] train_arguments;
-		if (doCrossVal){
-			train_arguments = new String[4];
-			train_arguments[0] = "-v";
-			train_arguments[1] = kVal;
-			train_arguments[2] = trainFile.getAbsolutePath();
-			train_arguments[3] = modelFile.getAbsolutePath();
-		}else {
-		train_arguments = new String[2];
-		train_arguments[0] = trainFile.getAbsolutePath();
-		train_arguments[1] = modelFile.getAbsolutePath();
+		
+		if (doLinear){
+			System.out.println("Linear Kernel selected");
+			appendLog("Linear Kernel selected");
+			if (doCrossVal){
+				train_arguments = new String[6];
+				train_arguments[0] = "-v";
+				train_arguments[1] = kVal;
+				train_arguments[2] = "-t";
+				train_arguments[3] = "0";
+				train_arguments[4] = trainFile.getAbsolutePath();
+				train_arguments[5] = modelFile.getAbsolutePath();
+			}else {
+				train_arguments = new String[4];
+				train_arguments[0] = "-t";
+				train_arguments[1] = "0";
+				train_arguments[2] = trainFile.getAbsolutePath();
+				train_arguments[3] = modelFile.getAbsolutePath();
+			}
+		} else {
+			System.out.println("RBF Kernel selected");
+			appendLog("RBF Kernel selected");
+			if (doCrossVal){
+				train_arguments = new String[4];
+				train_arguments[0] = "-v";
+				train_arguments[1] = kVal;
+				train_arguments[2] = trainFile.getAbsolutePath();
+				train_arguments[3] = modelFile.getAbsolutePath();
+			}else {
+				train_arguments = new String[2];
+				train_arguments[0] = trainFile.getAbsolutePath();
+				train_arguments[1] = modelFile.getAbsolutePath();
+			}
 		}
 		System.out.println("Training the classifier...");
 		appendLog("Training the classifier...");
