@@ -21,7 +21,7 @@ public class SvmTest {
 			//svm.output("HAM", "c:\\singular\\test\\ham", "SPAM", "c:\\singular\\test\\spam", "c:\\test\\svm\\csv.csv");
 			
 			//svm.train("HAM", "c:\\spam_training\\ham", "SPAM", "c:\\spam_training\\spam",true);
-			svm.train("HAM", "c:\\test\\svm\\small\\ham", "SPAM", "c:\\test\\svm\\small\\spam", true,true,"4",true);
+			svm.train("HAM", "c:\\test\\svm\\small\\ham", "SPAM", "c:\\test\\svm\\small\\spam", true,false,"",true);
 			//System.out.println(Math.log10(10));
 			//svm.predict("HAM", "c:\\test\\svm\\small_test\\ham", "SPAM", "c:\\test\\svm\\small_test\\spam");
 			//svm.output("HAM", "c:\\test\\svm\\small_test\\ham", "SPAM", "c:\\test\\svm\\small_test\\spam", "c:\\test\\svm\\csv.csv");

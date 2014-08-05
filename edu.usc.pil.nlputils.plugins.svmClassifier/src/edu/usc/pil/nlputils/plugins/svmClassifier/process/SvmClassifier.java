@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -284,6 +285,25 @@ public class SvmClassifier {
 		System.out.println("Feature Map saved - "+hashmap.getAbsolutePath());
 		appendLog("Feature Map saved - "+hashmap.getAbsolutePath());
 		
+		
+		if (doLinear && !doCrossVal) {
+			HashMap<Integer,String> reverseMap = new HashMap<Integer,String>();
+			for (String k:featureMap.keySet()){
+				reverseMap.put(featureMap.get(k), k);
+			}
+			PredictiveWeights pw = new PredictiveWeights();
+			File weightsFile = new File(intermediatePath+".weights");
+			BufferedWriter weightsWriter = new BufferedWriter(new FileWriter(weightsFile));
+			HashMap<Integer,Double> weightsMap = pw.computePredictiveWeights(modelFile);
+			weightsWriter.write("Word,ID,Weight\n");
+			for (Integer i:weightsMap.keySet()){
+				//System.out.print(i+" ");
+				weightsWriter.write(reverseMap.get(i)+","+i+","+weightsMap.get(i)+"\n");
+			}
+			System.out.println("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
+			appendLog("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
+			weightsWriter.close();
+		}
 		if (doCrossVal){
 			System.out.println("Cross Validation Accuracy = "+crossValResult+"%");
 			appendLog("Cross Validation Accuracy = "+crossValResult+"%");
