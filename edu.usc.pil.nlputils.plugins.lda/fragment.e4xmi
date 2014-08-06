@@ -6,7 +6,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zSuE4BxFEeSPGOxRdieGyg" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
     <elements xsi:type="commands:Handler" xmi:id="_9qqJEBxFEeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.plugins.lda.handler.openLDAHandler" contributionURI="bundleclass://edu.usc.pil.nlputils.plugins.lda/edu.usc.pil.nlputils.plugins.lda.handlers.OpenLDAHandler" command="_44HAEBxFEeSPGOxRdieGyg"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zt16oBxFEeSPGOxRdieGyg" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.utilities">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zt16oBxFEeSPGOxRdieGyg" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.topic">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_N2s54BxGEeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.plugins.lda.handledmenuitem.openLDA" label="LDA Topic Modelling" command="_44HAEBxFEeSPGOxRdieGyg"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_0Lop4BxFEeSPGOxRdieGyg" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
