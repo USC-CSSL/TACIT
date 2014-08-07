@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="weka.jar"/>
+	<classpathentry kind="lib" path="mallet-deps.jar"/>
+	<classpathentry kind="lib" path="mallet.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
