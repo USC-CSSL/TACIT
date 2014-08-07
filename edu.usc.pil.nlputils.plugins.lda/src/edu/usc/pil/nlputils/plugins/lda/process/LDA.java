@@ -50,8 +50,8 @@ public class LDA {
 			preserveCase = "FALSE";
 		}
 		String[] t2vArgs = {"--input",sourceDir,"--output",outputPath+".mallet","--keep-sequence",keepSeq,"--remove-stopwords",stopWords,"--preserve-case",preserveCase};
-		String[] v2tArgs = {"--input",outputPath+".mallet","--num-topics",numTopics,"--output-state",outputPath+".topic-state.gz",
-				"--output-topic-keys",outputPath+".topic_keys.txt","--output-doc-topics",outputPath+".topic_composition.txt"};
+		String[] v2tArgs = {"--input",outputPath+".mallet","--num-topics",numTopics,"--optimize-interval","20","--output-state",outputPath+".topic-state.gz",
+				"--output-topic-keys",outputPath+".topic_keys.txt","--output-doc-topics",outputPath+".topic_composition.txt","--topic-word-weights-file",outputPath+".word_weights.txt"};
 		
 		//--input pathway\to\the\directory\with\the\files --output tutorial.mallet --keep-sequence --remove-stopwords
 		Text2Vectors.main(t2vArgs);
