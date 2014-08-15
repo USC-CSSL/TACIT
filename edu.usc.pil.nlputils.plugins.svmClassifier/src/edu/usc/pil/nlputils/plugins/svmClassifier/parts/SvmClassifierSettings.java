@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class SvmClassifierSettings {
 	private Text txtLabel1;
@@ -57,7 +59,7 @@ public class SvmClassifierSettings {
 		Group grpInputSettings = new Group(parent, SWT.NONE);
 		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpInputSettings.heightHint = 329;
+		gd_grpInputSettings.heightHint = 306;
 		gd_grpInputSettings.widthHint = 489;
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
@@ -165,9 +167,11 @@ public class SvmClassifierSettings {
 		btnLoadModel.setText("Load Pretrained Model");
 		
 		txtModelFilePath = new Text(grpInputSettings, SWT.BORDER);
+		txtModelFilePath.setEnabled(false);
 		txtModelFilePath.setBounds(236, 208, 199, 21);
 		
-		Button button_8 = new Button(grpInputSettings, SWT.NONE);
+		final Button button_8 = new Button(grpInputSettings, SWT.NONE);
+		button_8.setEnabled(false);
 		button_8.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -183,11 +187,41 @@ public class SvmClassifierSettings {
 		button_8.setText("...");
 		
 		txtHashmapPath = new Text(grpInputSettings, SWT.BORDER);
+		txtHashmapPath.setEnabled(false);
 		txtHashmapPath.setBounds(236, 250, 199, 21);
 		
-		Button button_9 = new Button(grpInputSettings, SWT.NONE);
+		final Button button_9 = new Button(grpInputSettings, SWT.NONE);
+		button_9.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				txtHashmapPath.setText("");
+				FileDialog fd = new FileDialog(shell,SWT.OPEN);
+				fd.open();
+				String oFile = fd.getFileName();
+				String dir = fd.getFilterPath();
+				txtHashmapPath.setText(dir+System.getProperty("file.separator")+oFile);
+			}
+		});
+		button_9.setEnabled(false);
 		button_9.setBounds(438, 248, 20, 25);
 		button_9.setText("...");
+		
+		final Label lblPretrainedHashMap = new Label(grpInputSettings, SWT.NONE);
+		lblPretrainedHashMap.setEnabled(false);
+		lblPretrainedHashMap.setBounds(26, 256, 128, 15);
+		lblPretrainedHashMap.setText("Pretrained Hash Map");
+		
+		btnLoadModel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				button_8.setEnabled(true);
+				txtModelFilePath.setEnabled(true);
+				txtHashmapPath.setEnabled(true);
+				button_9.setEnabled(true);
+				lblPretrainedHashMap.setEnabled(true);
+			}
+		});
+		
 		
 		Composite composite_1 = new Composite(grpInputSettings, SWT.NONE);
 		composite_1.setBounds(2, 282, 489, 26);
@@ -205,21 +239,6 @@ public class SvmClassifierSettings {
 		lblWeightCalculation.setBounds(10, 11, 107, 15);
 		lblWeightCalculation.setText("Weight Calculation");
 		
-		Composite composite_2 = new Composite(grpInputSettings, SWT.NONE);
-		composite_2.setBounds(2, 311, 490, 26);
-		
-		Label lblKernel = new Label(composite_2, SWT.NONE);
-		lblKernel.setBounds(10, 10, 68, 15);
-		lblKernel.setText("SVM Kernel");
-		
-		final Button btnLinear = new Button(composite_2, SWT.RADIO);
-		btnLinear.setSelection(true);
-		btnLinear.setBounds(134, 9, 213, 16);
-		btnLinear.setText("Linear (Faster, Usually better for text)");
-		
-		Button btnRadial = new Button(composite_2, SWT.RADIO);
-		btnRadial.setBounds(350, 9, 131, 16);
-		btnRadial.setText("Radial Basis Function");
 		
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE);
 		tabFolder.setSingle(false);
@@ -329,7 +348,7 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText(), btnLinear.getSelection());
+					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText(), true);  //btnLinear.getSelection() removed. made Linear Kernel default
 				// Cross Validation => No need to call predict and output separately
 				if (!btnCrossVal.getSelection()){
 				if(selection == 0){
@@ -412,7 +431,7 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(),false, null,btnLinear.getSelection());
+					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(),false, null,true);  //btnLinear.getSelection() removed. made Linear Kernel default
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");

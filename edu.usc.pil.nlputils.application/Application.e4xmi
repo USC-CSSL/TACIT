@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_-nteAPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.application" bindingContexts="_-nteCfzGEeOdn9ViPpOXDA">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_-nteAfzGEeOdn9ViPpOXDA" label="USC NLPUtils" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/Main32x32.gif" width="550" height="650">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_-nteAfzGEeOdn9ViPpOXDA" label="USC NLPUtils" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/Main32x32.gif" width="950" height="700">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_-nuFI_zGEeOdn9ViPpOXDA">
       <children xsi:type="advanced:Perspective" xmi:id="_-nuFJPzGEeOdn9ViPpOXDA">
-        <children xsi:type="basic:PartSashContainer" xmi:id="_-nuFJfzGEeOdn9ViPpOXDA" elementId="">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_-nuFJfzGEeOdn9ViPpOXDA" elementId="" horizontal="true">
           <children xsi:type="basic:PartStack" xmi:id="_-nuFJvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ide.partstack" containerData="500">
             <children xsi:type="basic:Part" xmi:id="_-nuFJ_zGEeOdn9ViPpOXDA" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Welcome" label="Welcome"/>
           </children>
-          <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" containerData="150" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
+          <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" containerData="250" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
             <children xsi:type="basic:Part" xmi:id="_VZHDoAfHEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.console" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.Console" label="Console"/>
             <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.error" visible="false" contributionURI="bundleclass://edu.usc.pil.nlputils.application/edu.usc.pil.nlputils.application.parts.ErrorLog" label="Error Log"/>
           </children>
@@ -24,6 +24,7 @@
       <children xsi:type="menu:Menu" xmi:id="_c7vqMBv1EeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.application.menu.wordcount" label="Word Counts"/>
       <children xsi:type="menu:Menu" xmi:id="_e5q_8A3SEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.classifiers" label="Classifiers"/>
       <children xsi:type="menu:Menu" xmi:id="_hSs34B2sEeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.application.menu.topic" label="Topic Modelling"/>
+      <children xsi:type="menu:Menu" xmi:id="_pAZvECNtEeSWsdFScyxqCg" elementId="edu.usc.pil.nlputils.application.menu.crawlers" label="Crawlers"/>
       <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" label="Plugins">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.0" label="Add Plugin"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.1" label="Remove Plugin"/>

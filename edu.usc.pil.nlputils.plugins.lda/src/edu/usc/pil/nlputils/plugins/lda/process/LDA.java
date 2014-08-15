@@ -1,7 +1,11 @@
 package edu.usc.pil.nlputils.plugins.lda.process;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,22 +40,24 @@ import cc.mallet.types.InstanceList;
 import cc.mallet.types.LabelSequence;
 
 public class LDA {
-	public void doLDA(String sourceDir, boolean removeStopwords, boolean doLowercase, String numTopics, String outputDir) throws FileNotFoundException, IOException{
+	public void doLDA(String sourceDir, String numTopics, String outputDir, String label) throws FileNotFoundException, IOException{
 		Calendar cal = Calendar.getInstance();
 		String dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		String outputPath = outputDir+System.getProperty("file.separator")+sourceDir.substring(sourceDir.lastIndexOf(System.getProperty("file.separator"))+1)+"-"+dateString+"-"+System.currentTimeMillis();
+		String outputPath = outputDir+System.getProperty("file.separator")+label+"-"+dateString+"-"+System.currentTimeMillis();
 		
 		String keepSeq = "TRUE", stopWords = "FALSE", preserveCase = "TRUE";
 		
+		/*
 		if (removeStopwords){
 			stopWords = "TRUE";
 		}
 		if (doLowercase){
 			preserveCase = "FALSE";
-		}
+		}*/
+		
 		String[] t2vArgs = {"--input",sourceDir,"--output",outputPath+".mallet","--keep-sequence",keepSeq,"--remove-stopwords",stopWords,"--preserve-case",preserveCase};
 		String[] v2tArgs = {"--input",outputPath+".mallet","--num-topics",numTopics,"--optimize-interval","20","--output-state",outputPath+".topic-state.gz",
-				"--output-topic-keys",outputPath+".topic_keys.txt","--output-doc-topics",outputPath+".topic_composition.txt","--topic-word-weights-file",outputPath+".word_weights.txt"};
+				"--output-topic-keys",outputPath+".topic_keys.txt","--output-doc-topics",outputPath+".topic_composition.txt","--topic-word-weights-file",outputPath+".word_weights.txt","--word-topic-counts-file",outputPath+".word_counts.txt"};
 		
 		//--input pathway\to\the\directory\with\the\files --output tutorial.mallet --keep-sequence --remove-stopwords
 		Text2Vectors.main(t2vArgs);
@@ -61,13 +67,46 @@ public class LDA {
 		System.out.println("Created complete state file "+outputPath+".topic-state.gz");
 		System.out.println("Created topic keys file "+outputPath+".topic_keys.txt");
 		System.out.println("Created topic composition file "+outputPath+".topic_composition.txt");
-		
+		System.out.println("Created topic word counts file "+outputPath+".word_counts.txt");
 		appendLog("Created complete state file "+outputPath+".topic-state.gz");
 		appendLog("Created topic keys file "+outputPath+".topic_keys.txt");
 		appendLog("Created topic composition file "+outputPath+".topic_composition.txt");
+		appendLog("Created topic word counts file "+outputPath+".word_counts.txt");
+		
+		convert2csv(outputPath+".topic_keys",false);
+		convert2csv(outputPath+".topic_composition",false);
+		convert2csv(outputPath+".word_counts", true);
+		
+		System.out.println("Created topic keys csv file "+outputPath+".topic_keys.csv");
+		System.out.println("Created topic composition csv file "+outputPath+".topic_composition.csv");
+		appendLog("Created topic keys csv file "+outputPath+".topic_keys.csv");
+		appendLog("Created topic composition csv file "+outputPath+".topic_composition.csv");
+		
 	}
 	
 	
+	private void convert2csv(String string, boolean space) {
+		try {
+			BufferedReader br;
+			BufferedWriter bw;
+			br = new BufferedReader(new FileReader(new File(string+".txt")));
+			bw = new BufferedWriter(new FileWriter(new File(string+".csv")));
+			String currentLine;
+			while((currentLine = br.readLine())!=null){
+				if (space)
+					bw.write(currentLine.replace(' ', ','));
+				else
+				bw.write(currentLine.replace('\t', ','));
+				bw.newLine();
+			}
+			br.close();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		}
+
+
 	public static void main(String[] args) throws Exception {
 /* Ignore this function. Not implemented. */
 		File classDirs = new File("c:\\mallet\\dirs");

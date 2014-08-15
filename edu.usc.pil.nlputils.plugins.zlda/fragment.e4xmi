@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_5GD5YCBfEeSR1dZkXCkCrA">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_LlELUCBgEeSR1dZkXCkCrA" featurename="commands" parentElementId="org.eclipse.e4.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_V7J1YCBgEeSR1dZkXCkCrA" elementId="edu.usc.pil.nlputils.plugins.zlda.command.openZlda" commandName="Open Z-Label LDA"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ZFx-UCBgEeSR1dZkXCkCrA" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_cn-5wCBgEeSR1dZkXCkCrA" elementId="edu.usc.pil.nlputils.plugins.zlda.handler.openZlda" contributionURI="bundleclass://edu.usc.pil.nlputils.plugins.zlda/edu.usc.pil.nlputils.plugins.zlda.handlers.OpenZldaHandler" command="_V7J1YCBgEeSR1dZkXCkCrA"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_oR_p0CBgEeSR1dZkXCkCrA" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
+    <elements xsi:type="basic:Part" xmi:id="_tiJ74CBgEeSR1dZkXCkCrA" elementId="edu.usc.pil.nlputils.plugins.zlda.part.ZldaSettings" visible="false" contributionURI="bundleclass://edu.usc.pil.nlputils.plugins.zlda/edu.usc.pil.nlputils.plugins.zlda.parts.ZldaSettings" label="Z-Label LDA Settings" closeable="true"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zwr6sCBgEeSR1dZkXCkCrA" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.topic">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_4jgwgCBgEeSR1dZkXCkCrA" elementId="edu.usc.pil.nlputils.plugins.zlda.handledmenuitem.openZlda" label="Z-Label LDA" command="_V7J1YCBgEeSR1dZkXCkCrA"/>
+  </fragments>
+</fragment:ModelFragments>

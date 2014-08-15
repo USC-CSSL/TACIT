@@ -21,7 +21,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import bsh.EvalError;
-import edu.usc.pil.nlputils.plugins.nbclassifier.algorithms.NaiveBayesClass;
+
 import edu.usc.pil.nlputils.plugins.nbclassifier.process.NBClassifier;
 
 public class NBClassifierSettings {
@@ -195,11 +195,23 @@ public class NBClassifierSettings {
 		btnClassify.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				NaiveBayesClass nb = new NaiveBayesClass();
-				try{
-				nb.doClassification();
-				} catch (Exception ex) {
-					ex.printStackTrace();
+				NBClassifier nb = new NBClassifier();
+				IEclipseContext iEclipseContext = context;
+				ContextInjectionFactory.inject(nb,iEclipseContext);
+				
+				try {
+					System.out.println("Processing...");
+					appendLog("Processing...");
+					long startTime = System.currentTimeMillis();
+					nb.doClassification(txtSource1.getText(), txtSource2.getText(), txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), btnConvertToLowercase.getSelection(), btnKeepSequence.getSelection(), btnRemoveStopWords.getSelection());
+					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (EvalError e1) {
+					e1.printStackTrace();
 				}
 			}
 		});

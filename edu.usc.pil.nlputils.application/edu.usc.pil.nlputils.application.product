@@ -33,8 +33,11 @@
       <plugin id="edu.usc.pil.nlputils.plugins.lda"/>
       <plugin id="edu.usc.pil.nlputils.plugins.nbclassifier"/>
       <plugin id="edu.usc.pil.nlputils.plugins.preprocessor"/>
+      <plugin id="edu.usc.pil.nlputils.plugins.preprocessorService"/>
+      <plugin id="edu.usc.pil.nlputils.plugins.senatecrawler"/>
       <plugin id="edu.usc.pil.nlputils.plugins.svmClassifier"/>
       <plugin id="edu.usc.pil.nlputils.plugins.wordcount"/>
+      <plugin id="edu.usc.pil.nlputils.plugins.zlda"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.xml"/>

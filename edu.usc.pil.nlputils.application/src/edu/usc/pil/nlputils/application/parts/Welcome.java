@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.browser.Browser;
 
+
+
 public class Welcome {
 
 	private Text txtInput;
@@ -38,7 +40,7 @@ public class Welcome {
 	@PostConstruct
 	public void createComposite(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
-
+		
 		txtInput = new Text(parent, SWT.BORDER);
 		txtInput.setMessage("Enter text to mark part as dirty");
 		txtInput.addModifyListener(new ModifyListener() {
