@@ -7,9 +7,9 @@ import edu.usc.pil.nlputils.plugins.senatecrawler.process.SenateCrawler;
 public class SaneTest {
 
 	public static void main(String[] args) {
-		SenateCrawler sc = new SenateCrawler();
 		try {
-			sc.doCrawl();
+			SenateCrawler sc = new SenateCrawler();
+			//sc.doCrawl();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
