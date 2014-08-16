@@ -1,5 +1,8 @@
 package edu.usc.pil.nlputils.plugins.senatecrawler.process;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -10,11 +13,20 @@ import org.jsoup.select.Elements;
 
 public class SenateCrawler {
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
+	String dateFrom, dateTo;
+	int maxDocs = 10;
+	String outputDir;
 	
-	public SenateCrawler() throws IOException{
+	public SenateCrawler(int maxDocs, String dateFrom, String dateTo, String outputDir) throws IOException{
+		this.outputDir = outputDir;
+		this.maxDocs = maxDocs;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		
 		getCongresses();
 		for (int congress : congresses){
 			getSenators(congress);
+			//break;	// Remove to unleash
 		}
 	}
 	
@@ -27,17 +39,14 @@ public class SenateCrawler {
 			String senText = senItem.text().replace("\u00A0", " ");
 			if (senText.contains("Any Senator"))		// We just need the senator names
 				continue;
-			String senatorName = senText.split("\\(")[0].trim();
-			String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
 			//System.out.println(senatorName+" "+senatorAttribs);
-			searchSenateRecord(congress,senText,senatorName,senatorAttribs);
-			break;	// Remove to unleash
+			searchSenateRecord(congress,senText);
+			//break;	// Remove to unleash
 		}
 	}
 
-	private void searchSenateRecord(int congress, String senText,
-			String senatorName, String senatorAttribs) throws IOException {
-		System.out.println(congress+"-"+senatorName.split(",")[0]+"-"+senatorAttribs);
+	private void searchSenateRecord(int congress, String senText) throws IOException {
+		System.out.println("Current Senator - "+senText);
 		doCrawl(congress,senText);
 	}
 
@@ -56,8 +65,8 @@ public class SenateCrawler {
 	public void doCrawl(int congress,String senText) throws IOException{
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
-				.data("queryr"+congress,"")		// Important. 113 - congress number. Make this auto? If removed, "Database Missing" error
-				.data("MaxDocs","2000")
+				.data("queryr"+congress,"")	// Important. 113 - congress number. Make this auto? If removed, "Database Missing" error
+				.data("MaxDocs","2000")		// Doesn't seem to be working
 				.data("Stemming","No")
 				.data("HSpeaker","")
 				.data("SSpeaker",senText)
@@ -67,10 +76,10 @@ public class SenateCrawler {
 				//.data("HouseSection","2")
 				//.data("ExSection","4")
 				//.data("DigestSection","8")
-				.data("LBDateSel","")		// "" | 1st | 2nd  -- all sessions, 1st session, 2nd session
-				.data("DateFrom","")
-				.data("DateTo","")
-				.data("sort","Default")		// Default | Date
+				.data("LBDateSel","Thru")		// "" | 1st | 2nd | Thru -- all sessions, 1st session, 2nd session, range
+				.data("DateFrom",dateFrom)
+				.data("DateTo",dateTo)
+				.data("sort","Date")		// Default | Date
 				.data("submit","SEARCH")
 				.userAgent("Mozilla")
 				.timeout(10*1000)
@@ -81,12 +90,23 @@ public class SenateCrawler {
 		links.remove(0);
 		links.remove(0);
 		links.remove(0);
-		links.remove(links.size()-1);
-		links.remove(links.size()-1);
-		links.remove(links.size()-1);
 		
+		// Remove the bottom links that pop up when the number of rows is above 20
+		if (links.size()>20){
+			links.remove(links.size()-1);
+			links.remove(links.size()-1);
+			links.remove(links.size()-1);
+		}
+		
+		String senatorName = senText.split("\\(")[0].trim();
+		String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
+		
+		int count = 0;
 		// Process each search result
 		for (Element link : links){
+			// Max Docs for each senator
+			if (count++>=maxDocs)
+				break;
 			System.out.println("Processing "+link.text());
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
@@ -100,24 +120,102 @@ public class SenateCrawler {
 				}
 			}
 			
-			extract(extractLink);
+			String lastName = senText.split(",")[0];
+			String[] contents = extract(extractLink,lastName);
+
+			if (contents[1].length()==0)
+				count--;
+			else{
+				String[] split = contents[0].split("-");
+				String title = split[0].trim();
+				title = title.replaceAll(",", "");
+				title = title.replaceAll("\\.", "");
+
+				if (title.length()>15)
+					title = title.substring(0, 15).trim();
+				String date = contents[0].split("\\(Senate - ")[1].trim();
+				date = date.replace(",", "");
+				date = date.replace(")", "");
+				System.out.println(date);
+				if (date==null || date.isEmpty())
+					System.out.println("date is empty");
+				date = date.split(" ")[0]+" "+date.split(" ")[1]+" "+date.split(" ")[2];
+				date = date.trim();
+				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+date+"-"+title+".txt";
+				writeToFile(fileName, contents);
+			}
 			//break;
 		}
 			
 	}
 
-	private void extract(String extractLink) throws IOException {
+	private void writeToFile(String fileName, String[] contents) throws IOException {
+		System.out.println("Writing senator data - "+fileName);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDir+System.getProperty("file.separator")+fileName)));
+		bw.write(contents[0]);
+		bw.newLine();
+		bw.newLine();
+		bw.write(contents[1]);
+		bw.close();
+	}
+
+	private String[] extract(String extractLink, String lastName) throws IOException {
 		Document page = Jsoup.connect("http://thomas.loc.gov"+extractLink).timeout(10*1000).get();
 		//System.out.println(page.getElementById("container"));
 		//System.out.println(page.getElementById("container").text());
 		String title = page.getElementById("container").select("b").text();
 		StringBuilder content = new StringBuilder();
 		Elements lines = page.getElementById("container").select("p");
+		String currentLine;
+		boolean extractFlag = false;
 		for (Element line : lines) {
-			content.append(line.text()+"\n");
+			currentLine = line.text();
+			if (currentLine!=null && !currentLine.isEmpty()){
+				String[] words = currentLine.split(" ");
+				if (words.length>1){
+					String currentName = words[1].trim().replace(".", "");	// Check the second word of the sentence.
+					currentName = currentName.replace(",", "");
+					String firstWord = words[0].trim().replace(".", "");
+					
+					if (currentName.equals(lastName.toUpperCase())) {
+						// Found senator dialogue
+						extractFlag = true;
+						content.append(currentLine.replace("\u00A0", "").trim()+"\n");
+					} else {
+						// If first word is uppercase too, stop extracting.
+						if (firstWord.length()<=1 && !firstWord.equals(firstWord.toUpperCase()) ){
+							extractFlag = false;
+						}
+						// If "I", continue extracting. 
+					if (!currentName.equals("I") && !isNumeric(currentName) && currentName.equals(currentName.toUpperCase())){
+						// Next speaker.
+						extractFlag = false;
+					}
+					// if already extracting, continue until end of file or until next speaker's dialogue
+					if (extractFlag)
+						content.append(currentLine.replace("\u00A0", "").trim()+"\n");
+					}
+				}
+			}
 		}
-		System.out.println(extractLink.substring(extractLink.lastIndexOf('/')+2));
-		System.out.println(title);
-		System.out.println(content.toString());
+		
+		//System.out.println(title);
+		//System.out.println(content.toString());
+		
+
+		String[] contents = new String[2];
+		contents[0] = title;
+		contents[1] = content.toString();
+		
+		return contents;
+	}
+	
+	private boolean isNumeric(String word){
+		try{
+			Integer.parseInt(word);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 }
