@@ -25,7 +25,7 @@
       <children xsi:type="menu:Menu" xmi:id="_e5q_8A3SEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.classifiers" label="Classifiers"/>
       <children xsi:type="menu:Menu" xmi:id="_hSs34B2sEeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.application.menu.topic" label="Topic Modelling"/>
       <children xsi:type="menu:Menu" xmi:id="_pAZvECNtEeSWsdFScyxqCg" elementId="edu.usc.pil.nlputils.application.menu.crawlers" label="Crawlers"/>
-      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" label="Plugins">
+      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" visible="false" label="Plugins">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.0" label="Add Plugin"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.1" label="Remove Plugin"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_WkqrkA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.2" label="Global Plugin Settings"/>
