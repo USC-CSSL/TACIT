@@ -13,4 +13,7 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0.v2014051
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.e4.ui.workbench.modeling,
  org.eclipse.swt,
+ org.eclipse.swt.graphics,
  org.eclipse.swt.widgets
+Bundle-ClassPath: jsoup-1.7.3.jar,
+ .

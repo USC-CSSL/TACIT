@@ -16,18 +16,45 @@ public class SenateCrawler {
 	String dateFrom, dateTo;
 	int maxDocs = 10;
 	String outputDir;
+	BufferedWriter csvWriter;
 	
 	public SenateCrawler(int maxDocs, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
-		
+		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
+		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
+		csvWriter.newLine();
 		getCongresses();
 		for (int congress : congresses){
 			getSenators(congress);
 			//break;	// Remove to unleash
 		}
+		csvWriter.close();
+	}
+	
+	public SenateCrawler(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) throws IOException{
+		this.outputDir = outputDir;
+		this.maxDocs = maxDocs;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
+		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
+		csvWriter.newLine();
+		if (senText == null){
+			getSenators(congressNum);
+		} else {
+			if (congressNum == -1){
+				getCongresses();
+				for (int congress: congresses){
+					searchSenatorRecords(congress,senText);
+				}
+			} else {
+				searchSenatorRecords(congressNum,senText);
+			}
+		}
+		csvWriter.close();
 	}
 	
 	private void getSenators(int congress) throws IOException {
@@ -40,14 +67,9 @@ public class SenateCrawler {
 			if (senText.contains("Any Senator"))		// We just need the senator names
 				continue;
 			//System.out.println(senatorName+" "+senatorAttribs);
-			searchSenateRecord(congress,senText);
+			searchSenatorRecords(congress,senText);
 			//break;	// Remove to unleash
 		}
-	}
-
-	private void searchSenateRecord(int congress, String senText) throws IOException {
-		System.out.println("Current Senator - "+senText);
-		doCrawl(congress,senText);
 	}
 
 	private void getCongresses() throws IOException {
@@ -62,7 +84,8 @@ public class SenateCrawler {
 		System.out.println(congresses);
 	}
 
-	public void doCrawl(int congress,String senText) throws IOException{
+	public void searchSenatorRecords(int congress,String senText) throws IOException{
+		System.out.println("Current Senator - "+senText);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
 				.data("queryr"+congress,"")	// Important. 113 - congress number. Make this auto? If removed, "Database Missing" error
@@ -86,6 +109,7 @@ public class SenateCrawler {
 				.post();
 		Elements links = doc.getElementById("content").getElementsByTag("a");
 		
+		if (links.size()>6){
 		// Removing unnecessary links
 		links.remove(0);
 		links.remove(0);
@@ -97,7 +121,10 @@ public class SenateCrawler {
 			links.remove(links.size()-1);
 			links.remove(links.size()-1);
 		}
-		
+		} else {
+			System.out.println("No records found.");
+			return;
+		}
 		String senatorName = senText.split("\\(")[0].trim();
 		String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
 		
@@ -107,6 +134,8 @@ public class SenateCrawler {
 			// Max Docs for each senator
 			if (count++>=maxDocs)
 				break;
+			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
+			System.out.println(recordDate);
 			System.out.println("Processing "+link.text());
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
@@ -130,19 +159,22 @@ public class SenateCrawler {
 				String title = split[0].trim();
 				title = title.replaceAll(",", "");
 				title = title.replaceAll("\\.", "");
-
+				String shortTitle = title;
 				if (title.length()>15)
-					title = title.substring(0, 15).trim();
-				String date = contents[0].split("\\(Senate - ")[1].trim();
-				date = date.replace(",", "");
-				date = date.replace(")", "");
-				System.out.println(date);
-				if (date==null || date.isEmpty())
-					System.out.println("date is empty");
-				date = date.split(" ")[0]+" "+date.split(" ")[1]+" "+date.split(" ")[2];
-				date = date.trim();
-				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+date+"-"+title+".txt";
+					shortTitle = title.substring(0, 15).trim();
+//				String date = contents[0].split("\\(Senate - ")[1].trim();
+//				date = date.replace(",", "");
+//				date = date.replace(")", "");
+//				System.out.println(date);
+//				if (date==null || date.isEmpty())
+//					System.out.println("date is empty");
+//				date = date.split(" ")[0]+" "+date.split(" ")[1]+" "+date.split(" ")[2];
+//				date = date.trim();
+				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+".txt";
 				writeToFile(fileName, contents);
+				csvWriter.write(congress+","+recordDate+","+lastName+","+senatorAttribs+","+title+","+fileName);
+				csvWriter.newLine();
+				csvWriter.flush();
 			}
 			//break;
 		}
