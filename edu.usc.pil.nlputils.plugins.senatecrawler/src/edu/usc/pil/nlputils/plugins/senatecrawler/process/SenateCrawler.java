@@ -26,6 +26,8 @@ public class SenateCrawler {
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
+		checkPath(outputDir);
+		
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
 		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
 		csvWriter.newLine();
@@ -37,11 +39,20 @@ public class SenateCrawler {
 		csvWriter.close();
 	}
 	
+	private void checkPath(String outputDir) {
+		File outputPath = new File(outputDir);
+		if (!outputPath.exists()){
+			outputPath.mkdirs();
+		}
+	}
+
 	public void initialize(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
+		checkPath(outputDir);
+		
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
 		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
 		csvWriter.newLine();
