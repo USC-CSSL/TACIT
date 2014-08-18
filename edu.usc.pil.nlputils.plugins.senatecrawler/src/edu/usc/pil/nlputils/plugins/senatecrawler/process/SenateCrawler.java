@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +21,7 @@ public class SenateCrawler {
 	String outputDir;
 	BufferedWriter csvWriter;
 	
-	public SenateCrawler(int maxDocs, String dateFrom, String dateTo, String outputDir) throws IOException{
+	public void initialize(int maxDocs, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
@@ -34,7 +37,7 @@ public class SenateCrawler {
 		csvWriter.close();
 	}
 	
-	public SenateCrawler(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) throws IOException{
+	public void initialize(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
@@ -48,17 +51,24 @@ public class SenateCrawler {
 			if (congressNum == -1){
 				getCongresses();
 				for (int congress: congresses){
+					System.out.println("Extracting Records from Congress "+congress+"...");
+					appendLog("Extracting Records from Congress "+congress);
 					searchSenatorRecords(congress,senText);
 				}
 			} else {
+				System.out.println("Extracting Records from Congress "+congressNum+"...");
+				appendLog("Extracting Records from Congress "+congressNum);
 				searchSenatorRecords(congressNum,senText);
 			}
 		}
 		csvWriter.close();
+		appendLog("Records written successfully to "+outputDir + System.getProperty("file.separator") + "records.csv");
+		
 	}
 	
 	private void getSenators(int congress) throws IOException {
-		System.out.println("Extracting Senators of Congress "+congress);
+		System.out.println("Extracting Senators of Congress "+congress+"...");
+		appendLog("Extracting Senators of Congress "+congress);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
 		
@@ -73,6 +83,7 @@ public class SenateCrawler {
 	}
 
 	private void getCongresses() throws IOException {
+		appendLog("Extracting available congresses...");
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record").timeout(10*1000).get();
 		Elements congList = doc.select("p.nav");
 		//System.out.println(congList);
@@ -183,6 +194,7 @@ public class SenateCrawler {
 
 	private void writeToFile(String fileName, String[] contents) throws IOException {
 		System.out.println("Writing senator data - "+fileName);
+		//appendLog("Writing senator data - "+fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
 		bw.newLine();
@@ -248,6 +260,26 @@ public class SenateCrawler {
 			return true;
 		} catch (NumberFormatException e) {
 			return false;
+		}
+	}
+	
+
+	@Inject IEclipseContext context;	
+	private void appendLog(String message){
+		IEclipseContext parent = context.getParent();
+		//System.out.println(parent.get("consoleMessage"));
+		String currentMessage = (String) parent.get("consoleMessage"); 
+		if (currentMessage==null)
+			parent.set("consoleMessage", message);
+		else {
+			if (currentMessage.equals(message)) {
+				// Set the param to null before writing the message if it is the same as the previous message. 
+				// Else, the change handler will not be called.
+				parent.set("consoleMessage", null);
+				parent.set("consoleMessage", message);
+			}
+			else
+				parent.set("consoleMessage", message);
 		}
 	}
 }
