@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  org.eclipse.core.runtime;bundle-version="3.9.100",
  javax.inject,
  javax.annotation,
- org.eclipse.swt
+ org.eclipse.swt,
+ edu.usc.pil.nlputils.plugins.preprocessorService
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.model.application.ui,

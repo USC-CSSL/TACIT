@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
+import edu.usc.pil.nlputils.plugins.preprocessorService.services.PreprocessorService;
 import edu.usc.pil.nlputils.plugins.svmClassifier.process.SvmClassifier;
 
 import org.eclipse.swt.widgets.Group;
@@ -35,15 +36,14 @@ public class SvmClassifierSettings {
 	private Text txtFolderPath2;
 	private Text txtFolderPath1;
 	private Text txtLabel2;
+	private PreprocessorService ppService = new PreprocessorService();
 	
 	@Inject IEclipseContext context;
 	private Text txtTestFolder1;
 	private Text txtTestFolder2;
 	private Text txtClassifyInput;
 	private Text txtOutputFile;
-	private Text txtDelimiters;
 	private Text txtkVal;
-	private Text txtStopWords;
 	private Text txtClassifyOutput;
 	private Text txtModelFilePath;
 	private Text txtHashmapPath;
@@ -59,12 +59,12 @@ public class SvmClassifierSettings {
 		Group grpInputSettings = new Group(parent, SWT.NONE);
 		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpInputSettings.heightHint = 306;
-		gd_grpInputSettings.widthHint = 489;
+		gd_grpInputSettings.heightHint = 237;
+		gd_grpInputSettings.widthHint = 529;
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
 		Composite composite = new Composite(grpInputSettings, SWT.NONE);
-		composite.setBounds(10, 20, 475, 180);
+		composite.setBounds(10, 20, 475, 95);
 		
 		Label lblLabel_1 = new Label(composite, SWT.NONE);
 		lblLabel_1.setBounds(0, 35, 36, 15);
@@ -124,51 +124,24 @@ public class SvmClassifierSettings {
 		});
 		button_1.setText("...");
 		
-		Group grpPreprocessingOptions = new Group(composite, SWT.NONE);
-		grpPreprocessingOptions.setBounds(0, 56, 465, 114);
-		grpPreprocessingOptions.setText("Preprocessing Options");
-		
-		txtStopWords = new Text(grpPreprocessingOptions, SWT.BORDER);
-		txtStopWords.setBounds(226, 51, 195, 21);
-		
-		final Button btnLowercase = new Button(grpPreprocessingOptions, SWT.CHECK);
-		btnLowercase.setBounds(25, 90, 140, 16);
-		btnLowercase.setText("Convert to Lowercase");
-		
-		Label lblDelimiters = new Label(grpPreprocessingOptions, SWT.NONE);
-		lblDelimiters.setBounds(25, 25, 55, 15);
-		lblDelimiters.setText("Delimiters");
-		
-		txtDelimiters = new Text(grpPreprocessingOptions, SWT.BORDER);
-		txtDelimiters.setText(" .,;'\\\"!-()[]{}:?");
-		txtDelimiters.setBounds(226, 19, 195, 21);
-		
-		Button button_5 = new Button(grpPreprocessingOptions, SWT.NONE);
-		button_5.addMouseListener(new MouseAdapter() {
+		Button btnPreprocess = new Button(composite, SWT.NONE);
+		btnPreprocess.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				txtStopWords.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.OPEN);
-				fd.open();
-				String oFile = fd.getFileName();
-				String dir = fd.getFilterPath();
-				txtStopWords.setText(dir+System.getProperty("file.separator")+oFile);
+				showPpOptions(shell);
 			}
+
 		});
-		button_5.setBounds(423, 49, 21, 25);
-		button_5.setText("...");
-		
-		Label lblStopWordsFile = new Label(grpPreprocessingOptions, SWT.NONE);
-		lblStopWordsFile.setBounds(25, 59, 98, 15);
-		lblStopWordsFile.setText("Stop Words File");
+		btnPreprocess.setBounds(0, 65, 75, 25);
+		btnPreprocess.setText("Preprocess...");
 		
 		final Button btnLoadModel = new Button(grpInputSettings, SWT.CHECK);
-		btnLoadModel.setBounds(10, 213, 168, 16);
+		btnLoadModel.setBounds(18, 137, 168, 16);
 		btnLoadModel.setText("Load Pretrained Model");
 		
 		txtModelFilePath = new Text(grpInputSettings, SWT.BORDER);
 		txtModelFilePath.setEnabled(false);
-		txtModelFilePath.setBounds(236, 208, 199, 21);
+		txtModelFilePath.setBounds(244, 132, 199, 21);
 		
 		final Button button_8 = new Button(grpInputSettings, SWT.NONE);
 		button_8.setEnabled(false);
@@ -183,12 +156,12 @@ public class SvmClassifierSettings {
 				txtModelFilePath.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
-		button_8.setBounds(438, 206, 20, 25);
+		button_8.setBounds(446, 130, 20, 25);
 		button_8.setText("...");
 		
 		txtHashmapPath = new Text(grpInputSettings, SWT.BORDER);
 		txtHashmapPath.setEnabled(false);
-		txtHashmapPath.setBounds(236, 250, 199, 21);
+		txtHashmapPath.setBounds(244, 174, 199, 21);
 		
 		final Button button_9 = new Button(grpInputSettings, SWT.NONE);
 		button_9.addMouseListener(new MouseAdapter() {
@@ -203,12 +176,12 @@ public class SvmClassifierSettings {
 			}
 		});
 		button_9.setEnabled(false);
-		button_9.setBounds(438, 248, 20, 25);
+		button_9.setBounds(446, 172, 20, 25);
 		button_9.setText("...");
 		
 		final Label lblPretrainedHashMap = new Label(grpInputSettings, SWT.NONE);
 		lblPretrainedHashMap.setEnabled(false);
-		lblPretrainedHashMap.setBounds(26, 256, 128, 15);
+		lblPretrainedHashMap.setBounds(34, 180, 128, 15);
 		lblPretrainedHashMap.setText("Pretrained Hash Map");
 		
 		btnLoadModel.addSelectionListener(new SelectionAdapter() {
@@ -224,7 +197,7 @@ public class SvmClassifierSettings {
 		
 		
 		Composite composite_1 = new Composite(grpInputSettings, SWT.NONE);
-		composite_1.setBounds(2, 282, 489, 26);
+		composite_1.setBounds(10, 206, 489, 26);
 		
 		Button btnTermFreqencyTf = new Button(composite_1, SWT.RADIO);
 		btnTermFreqencyTf.setBounds(135, 10, 199, 16);
@@ -245,7 +218,7 @@ public class SvmClassifierSettings {
 		tabFolder.setSimple(false);
 		GridData gd_tabFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
 		gd_tabFolder.heightHint = 214;
-		gd_tabFolder.widthHint = 490;
+		gd_tabFolder.widthHint = 534;
 		tabFolder.setLayoutData(gd_tabFolder);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
@@ -338,8 +311,29 @@ public class SvmClassifierSettings {
 			public void mouseUp(MouseEvent e) {
 				long currentTime = System.currentTimeMillis();
 				
+				String ppDir1 = txtFolderPath1.getText();
+				String ppDir2 = txtFolderPath2.getText();
+				if(ppService.doPP) {
+					
+					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
+					IEclipseContext iEclipseContext = context;
+					ContextInjectionFactory.inject(ppService,iEclipseContext);
+
+				//Preprocessing
+				appendLog("Preprocessing...");
+				System.out.println("Preprocessing...");
 				try {
-				SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());
+					ppDir1 = doPp(txtFolderPath1.getText());
+					ppDir2 = doPp(txtFolderPath2.getText());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				}
+				
+				try {
+				//SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());  Preprocessing done separately
+				SvmClassifier svm = new SvmClassifier();
+				
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(svm,iEclipseContext);
@@ -348,7 +342,7 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText(), true);  //btnLinear.getSelection() removed. made Linear Kernel default
+					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText(), true);  //btnLinear.getSelection() removed. made Linear Kernel default
 				// Cross Validation => No need to call predict and output separately
 				if (!btnCrossVal.getSelection()){
 				if(selection == 0){
@@ -367,6 +361,8 @@ public class SvmClassifierSettings {
 					ie.printStackTrace();
 				}
 			}
+
+		
 		});
 		btnTrain.setText("Test");
 		
@@ -421,8 +417,29 @@ public class SvmClassifierSettings {
 			public void mouseUp(MouseEvent e) {
 				long currentTime = System.currentTimeMillis();
 				
+				String ppDir1 = txtFolderPath1.getText();
+				String ppDir2 = txtFolderPath2.getText();
+				if(ppService.doPP) {
+					
+					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
+					IEclipseContext iEclipseContext = context;
+					ContextInjectionFactory.inject(ppService,iEclipseContext);
+
+				//Preprocessing
+				appendLog("Preprocessing...");
+				System.out.println("Preprocessing...");
 				try {
-				SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());
+					ppDir1 = doPp(txtFolderPath1.getText());
+					ppDir2 = doPp(txtFolderPath2.getText());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				}
+
+				
+				try {
+				//SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());      Preprocessing done separately
+				SvmClassifier svm = new SvmClassifier();
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(svm,iEclipseContext);
@@ -431,7 +448,7 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), txtFolderPath1.getText(), txtLabel2.getText(), txtFolderPath2.getText(), btnTfidf.getSelection(),false, null,true);  //btnLinear.getSelection() removed. made Linear Kernel default
+					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, btnTfidf.getSelection(),false, null,true);  //btnLinear.getSelection() removed. made Linear Kernel default
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
@@ -469,6 +486,15 @@ public class SvmClassifierSettings {
 		button_7.setText("...");
 		//TODO Your code here
 	}
+	
+	private String doPp(String inputPath) throws IOException{
+		return ppService.doPreprocessing(inputPath);
+	}
+	
+	private void showPpOptions(Shell shell) {
+		ppService.setOptions(shell);
+	}
+
 	
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();

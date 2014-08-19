@@ -32,8 +32,8 @@ public class SvmClassifier {
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	private String dateString;
 	private File modelFile;
-	private boolean doLowercase = true;
-	private boolean doStopWords = true;
+	private boolean doLowercase = false;
+	private boolean doStopWords = false;
 	private String intermediatePath;
 	private int noOfDocuments = 0;
 	private boolean doTfidf = false;
@@ -59,6 +59,10 @@ public class SvmClassifier {
 				}
 				
 		}
+	}
+	
+	public SvmClassifier(){
+		
 	}
 	
 	public void buildDfMap(File inputFile) throws IOException{

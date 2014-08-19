@@ -29,10 +29,10 @@ public class WordCountTest {
 	public static void multiTest(){
 		WordCount wc = new WordCount();
 		String files[];
-		files = new String[]{"c:/test/indian summer.txt"};
+		files = new String[]{"c:/demo/word count/input/109.txt"};
 		//files = new String[]{"c:/test/indian summer.txt"};
 		try {
-		wc.wordCount(files,"c:/test/dictionary.dic","c:/test/stop words.txt","c:/test/test.csv"," .,;'\"!-()[]{}:?",true, true, true, false, false);	
+		wc.wordCount(files,"c:/demo/word count/moral.dic","c:/test/stop words.txt","c:/demo/word count/test.csv"," .,;'\"!-()[]{}:?",true, true, false, false, false);	
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}

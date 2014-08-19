@@ -227,15 +227,17 @@ public class WordCount {
 		}
 		// If Word Distribution output is enabled, calculate the values
 		if (doWordDistribution)
-			calculateWordDistribution(map, catCount, wordCategories, inputFile);
+			calculateWordDistribution(map, catCount, wordCategories, inputFile,oFile);
 			
 		writeToFile(oFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, catCount);
 		if (doSpss)
 			writeToSpss(spssFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, catCount);
 	}
 	
-	public void calculateWordDistribution(HashMap<String,Integer> map, HashMap<String,Integer> catCount, HashMap<String,HashSet<String>> wordCategories, String inputFile) throws IOException{
-		File wdFile = new File(inputFile+"_wordDistribution.csv");
+	public void calculateWordDistribution(HashMap<String,Integer> map, HashMap<String,Integer> catCount, HashMap<String,HashSet<String>> wordCategories, String inputFile, File oFile) throws IOException{
+		File outputDir = oFile.getParentFile();
+		String iFilename = inputFile.substring(inputFile.lastIndexOf(System.getProperty("file.separator")));
+		File wdFile = new File(outputDir.getAbsolutePath()+System.getProperty("file.separator")+iFilename+"_wordDistribution.csv");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
 		bw.write("Word,Count,");
 		StringBuilder toWrite = new StringBuilder();
@@ -469,14 +471,14 @@ public class WordCount {
 
 	public void buildCategorizer(File dFile) throws IOException {
 		BufferedReader br= new BufferedReader(new FileReader(dFile));
-		String currentLine=br.readLine();
+		String currentLine=br.readLine().trim();
 		if (currentLine == null) {
 			logger.warning("The dictionary file is empty");
 			appendLog("The dictionary file is empty");
 		}
 		if (currentLine.equals("%"))
-			while ((currentLine=br.readLine()) != null && !currentLine.equals("%"))
-				categories.put(Integer.parseInt(currentLine.split("\t")[0].trim()), currentLine.split("\t")[1].trim());
+			while ((currentLine=br.readLine().trim()) != null && !currentLine.equals("%"))
+				categories.put(Integer.parseInt(currentLine.split("\\s+")[0].trim()), currentLine.split("\\s+")[1].trim());
 		
 		if (currentLine == null){
 			logger.warning("The dictionary file does not have categorized words");
@@ -484,10 +486,15 @@ public class WordCount {
 		} else {
 			while ((currentLine=br.readLine())!=null) {
 				ArrayList<Integer> categories = new ArrayList<Integer>();
-				String[] words = currentLine.split(" ");
+				currentLine = currentLine.trim();
+				
+				if (currentLine.equals(""))
+					continue;
+				String[] words = currentLine.split("\\s+");
 				for (int i=1; i<words.length; i++){
 					categories.add(Integer.parseInt(words[i]));
 				}
+				//System.out.println(words[0]+" "+categories);
 				// do Stemming or not. if Stemming is disabled, remove * from the dictionary words
 				if (doLiwcStemming)
 					categorizer.insert(words[0], categories);
@@ -547,7 +554,10 @@ public class WordCount {
 	// This function updates the consoleMessage parameter of the context.
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
+		IEclipseContext parent = null;
+		if (context==null)
+			return;
+		parent = context.getParent();
 		parent.set("consoleMessage", message);
 	}
 
