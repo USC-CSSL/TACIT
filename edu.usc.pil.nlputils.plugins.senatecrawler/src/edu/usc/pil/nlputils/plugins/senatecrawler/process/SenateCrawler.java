@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -20,6 +22,7 @@ public class SenateCrawler {
 	int maxDocs = 10;
 	String outputDir;
 	BufferedWriter csvWriter;
+	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
 	
 	public void initialize(int maxDocs, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
@@ -46,6 +49,33 @@ public class SenateCrawler {
 		}
 	}
 
+	public void getAll(int congressNum, String senText) throws IOException{
+		System.out.println("Extracting Senators of Congress "+congressNum+"...");
+		appendLog("Extracting Senators of Congress "+congressNum);
+		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congressNum).timeout(10*1000).get();
+		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
+		
+		for (Element senItem : senList){
+			String senator = senItem.text().replace("\u00A0", " ");
+			if (senator.contains("Any Senator"))		// We just need the senator names
+				continue;
+			if (senText.contains("All Republicans")){
+				if (!senator.contains("(R-"))
+					continue;
+			}
+			if (senText.contains("All Democrats")){
+				if (!senator.contains("(D-"))
+					continue;
+			}
+			if (senText.contains("All Independents")){
+				if (!senator.contains("(I-"))
+					continue;
+			}
+			searchSenatorRecords(congressNum,senator);
+			//System.out.println(congressNum+" - "+senator);
+		}
+	}
+	
 	public void initialize(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
@@ -56,9 +86,17 @@ public class SenateCrawler {
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
 		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
 		csvWriter.newLine();
-		if (senText == null){
-			getSenators(congressNum);
-		} else {
+		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
+			if (congressNum != -1)
+				getAll(congressNum,senText);
+			else {
+				getCongresses();
+				for (int congress:congresses)
+					getAll(congress,senText);
+			}
+		} 
+		
+		else {
 			if (congressNum == -1){
 				getCongresses();
 				for (int congress: congresses){
@@ -131,22 +169,39 @@ public class SenateCrawler {
 				.post();
 		Elements links = doc.getElementById("content").getElementsByTag("a");
 		
-		if (links.size()>6){
-		// Removing unnecessary links
-		links.remove(0);
-		links.remove(0);
-		links.remove(0);
 		
-		// Remove the bottom links that pop up when the number of rows is above 20
-		if (links.size()>20){
-			links.remove(links.size()-1);
-			links.remove(links.size()-1);
-			links.remove(links.size()-1);
+		// Extracting the relevant links
+		Elements relevantLinks = new Elements();
+		for (Element link:links){
+			if (!irrelevantLinks.contains(link.text()))
+				if (link.text().contains("Senate"))
+					relevantLinks.add(link);
 		}
-		} else {
-			System.out.println("No records found.");
+		//System.out.println(relevantLinks);
+		//System.out.println(relevantLinks.size());
+		
+		if (relevantLinks.size() == 0){
+			System.out.println("No Records Found.");
 			return;
 		}
+		
+		links = relevantLinks;
+//		if (links.size()>6){
+//		// Removing unnecessary links
+//		links.remove(0);
+//		links.remove(0);
+//		links.remove(0);
+//		
+//		// Remove the bottom links that pop up when the number of rows is above 20
+//		if (links.size()>20){
+//			links.remove(links.size()-1);
+//			links.remove(links.size()-1);
+//			links.remove(links.size()-1);
+//		}
+//		} else {
+//			System.out.println("No records found.");
+//			return;
+//		}
 		String senatorName = senText.split("\\(")[0].trim();
 		String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
 		
@@ -154,6 +209,8 @@ public class SenateCrawler {
 		// Process each search result
 		for (Element link : links){
 			// Max Docs for each senator
+			if (maxDocs==-1)
+				count=-2000;
 			if (count++>=maxDocs)
 				break;
 			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
@@ -277,7 +334,10 @@ public class SenateCrawler {
 
 	@Inject IEclipseContext context;	
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
+		IEclipseContext parent = null;
+		if (context==null)
+			return;
+		parent = context.getParent();
 		//System.out.println(parent.get("consoleMessage"));
 		String currentMessage = (String) parent.get("consoleMessage"); 
 		if (currentMessage==null)

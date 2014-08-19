@@ -72,12 +72,8 @@ public class SenateCrawlerSettings {
 		lblToDate.setBounds(179, 142, 21, 15);
 		lblToDate.setText("To");
 		
-		Label lblMaximumRecordsPer = new Label(composite, SWT.NONE);
-		lblMaximumRecordsPer.setBounds(10, 193, 182, 15);
-		lblMaximumRecordsPer.setText("Maximum Records per Senator");
-		
 		txtMaxDocs = new Text(composite, SWT.BORDER);
-		txtMaxDocs.setText("10");
+		txtMaxDocs.setEnabled(false);
 		txtMaxDocs.setBounds(206, 187, 80, 21);
 		
 		Label lblFrom = new Label(composite, SWT.NONE);
@@ -87,7 +83,10 @@ public class SenateCrawlerSettings {
 		final Combo cmbSenator = new Combo(composite, SWT.NONE);
 		cmbSenator.setBounds(89, 67, 91, 23);
 		cmbSenator.setItems(allSenators);
-		cmbSenator.add("Any Senator", 0);
+		cmbSenator.add("All Senators", 0);
+		cmbSenator.add("All Democrats", 1);
+		cmbSenator.add("All Republicans", 2);
+		cmbSenator.add("All Independents", 3);
 		cmbSenator.select(0);
 		
 		final Combo cmbCongress = new Combo(composite, SWT.NONE);
@@ -97,12 +96,21 @@ public class SenateCrawlerSettings {
 				try {
 					String selectedCongress = cmbCongress.getText().trim();
 					if (selectedCongress.equals("All")){
-						cmbSenator.add("Any Senator", 0);
 						cmbSenator.setItems(allSenators);
+						cmbSenator.add("All Senators", 0);
+						cmbSenator.add("All Democrats", 1);
+						cmbSenator.add("All Republicans", 2);
+						cmbSenator.add("All Independents", 3);
 						cmbSenator.select(0);
 					}
-					else
+					else{
 						cmbSenator.setItems(AvailableRecords.getSenators(selectedCongress));
+						cmbSenator.add("All Senators", 0);
+						cmbSenator.add("All Democrats", 1);
+						cmbSenator.add("All Republicans", 2);
+						cmbSenator.add("All Independents", 3);
+						cmbSenator.select(0);
+					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -140,7 +148,9 @@ public class SenateCrawlerSettings {
 		btnExtract.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				int maxDocs = Integer.parseInt(txtMaxDocs.getText().trim());
+				int maxDocs = -1;
+				if (txtMaxDocs.getText()!="")
+					maxDocs = Integer.parseInt(txtMaxDocs.getText().trim());
 				SenateCrawler senateCrawler = new SenateCrawler();
 				// Injecting the context into Senatecrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
@@ -156,19 +166,17 @@ public class SenateCrawlerSettings {
 				String senator = cmbSenator.getText().replaceAll("\u00A0", "").trim();
 				String congress = cmbCongress.getText().replaceAll("\u00A0", "").trim();
 				
+				int cNum = -1;
+				if (!congress.equals("All"))
+					cNum = Integer.parseInt(congress);
 				try {
 					
 					long startTime = System.currentTimeMillis();
-										
-					if (senator.equals("Any Senator")){
-						if (congress.equals("All")){
+					senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
+					/*
+					if (senator.equals("All Senators") && congress.equals("All")){
 							System.out.println(maxDocs+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
 							senateCrawler.initialize(maxDocs, dateFrom,dateTo, txtOutput.getText());
-						}
-						else{
-							System.out.println(maxDocs+", "+congress+", null, "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-							senateCrawler.initialize(maxDocs, Integer.parseInt(congress), null, dateFrom,dateTo,txtOutput.getText());
-						}
 					} else {
 						int cNum = -1;
 						if (!congress.equals("All"))
@@ -176,6 +184,8 @@ public class SenateCrawlerSettings {
 						System.out.println(maxDocs+", "+congress+", "+senator+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
 						senateCrawler.initialize(maxDocs, cNum, senator, dateFrom,dateTo,txtOutput.getText());
 					}
+					*/
+					
 					appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -204,6 +214,23 @@ public class SenateCrawlerSettings {
 		});
 		button.setBounds(286, 221, 21, 25);
 		button.setText("...");
+		
+		final Button btnLimitRecords = new Button(composite, SWT.CHECK);
+		btnLimitRecords.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnLimitRecords.getSelection())
+					txtMaxDocs.setEnabled(true);
+				else
+					txtMaxDocs.setEnabled(false);
+			}
+		});
+		btnLimitRecords.setBounds(10, 189, 161, 16);
+		btnLimitRecords.setText("Limit Records per Senator");
+		
+		Label lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel.setBounds(321, 10, 123, 215);
+		lblNewLabel.setText("Year                 Congress\r\n1989-1990       101st\r\n1991-1992       102nd\r\n1993-1994       103rd\r\n1995-1996       104th\r\n1997-1998       105th\r\n1999-2000       106th\r\n2001-2002       107th\r\n2003-2004       108th\r\n2005-2006       109th\r\n2007-2008       110th\r\n2009-2010       111th\r\n2011-2012       112th\r\n2013-2014       113th");
 		
 		
 	}
