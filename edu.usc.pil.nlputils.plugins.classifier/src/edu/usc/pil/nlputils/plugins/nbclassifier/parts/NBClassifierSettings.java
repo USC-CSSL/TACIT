@@ -23,6 +23,8 @@ import org.eclipse.swt.events.MouseEvent;
 import bsh.EvalError;
 
 import edu.usc.pil.nlputils.plugins.nbclassifier.process.NBClassifier;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 public class NBClassifierSettings {
 	private Text txtSource1;
@@ -83,12 +85,13 @@ public class NBClassifierSettings {
 		btnRemoveStopWords.setBounds(133, 103, 128, 16);
 		btnRemoveStopWords.setText("Remove Stop Words");
 		
-		Group grpTesting = new Group(parent, SWT.NONE);
-		GridData gd_grpTesting = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_grpTesting.heightHint = 158;
-		gd_grpTesting.widthHint = 428;
-		grpTesting.setLayoutData(gd_grpTesting);
-		grpTesting.setText("Testing");
+		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		
+		TabItem tbtmTesting = new TabItem(tabFolder, SWT.NONE);
+		tbtmTesting.setText("Test");
+		
+		Group grpTesting = new Group(tabFolder, SWT.NONE);
+		tbtmTesting.setControl(grpTesting);
 		
 		Label lblNewLabel = new Label(grpTesting, SWT.NONE);
 		lblNewLabel.setBounds(10, 28, 98, 15);
@@ -150,13 +153,12 @@ public class NBClassifierSettings {
 		button_7.setText("...");
 		button_7.setBounds(385, 93, 21, 25);
 		
-		Group grpClassify = new Group(parent, SWT.NONE);
+		TabItem tbtmClassify = new TabItem(tabFolder, SWT.NONE);
+		tbtmClassify.setText("Classify");
+		
+		Group grpClassify = new Group(tabFolder, SWT.NONE);
+		tbtmClassify.setControl(grpClassify);
 		grpClassify.setEnabled(false);
-		GridData gd_grpClassify = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_grpClassify.heightHint = 160;
-		gd_grpClassify.widthHint = 431;
-		grpClassify.setLayoutData(gd_grpClassify);
-		grpClassify.setText("Classify");
 		
 		Label lblInputFile = new Label(grpClassify, SWT.NONE);
 		lblInputFile.setBounds(10, 29, 55, 15);

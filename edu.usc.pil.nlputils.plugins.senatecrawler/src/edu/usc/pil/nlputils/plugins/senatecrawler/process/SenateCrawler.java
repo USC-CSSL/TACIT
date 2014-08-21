@@ -240,7 +240,7 @@ public class SenateCrawler {
 				title = title.replaceAll("\\.", "");
 				String shortTitle = title;
 				if (title.length()>15)
-					shortTitle = title.substring(0, 15).trim();
+					shortTitle = title.substring(0, 15).trim().replaceAll("[^\\w\\s]", "");
 //				String date = contents[0].split("\\(Senate - ")[1].trim();
 //				date = date.replace(",", "");
 //				date = date.replace(")", "");

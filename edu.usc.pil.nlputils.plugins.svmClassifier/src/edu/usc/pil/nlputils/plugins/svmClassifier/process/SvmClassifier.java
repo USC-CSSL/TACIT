@@ -61,8 +61,10 @@ public class SvmClassifier {
 		}
 	}
 	
-	public SvmClassifier(){
-		
+	public SvmClassifier(String label1, String label2, String outputFolder){
+		Calendar cal = Calendar.getInstance();
+		this.dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
+		this.intermediatePath = outputFolder+System.getProperty("file.separator")+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 	}
 	
 	public void buildDfMap(File inputFile) throws IOException{
@@ -192,13 +194,12 @@ public class SvmClassifier {
 		return sb.toString().trim();
 	}
 
-	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf, boolean doCrossVal, String kVal, boolean doLinear) throws IOException{
+	public int train(String label1, String folderPath1, String label2, String folderPath2, boolean doTfidf, boolean doCrossVal, String kVal, boolean doLinear, boolean doPredictiveWeights) throws IOException{
 		int ret = 0;
 		File folder1 = new File(folderPath1);
 		File folder2 = new File(folderPath2);
 		Calendar cal = Calendar.getInstance();
 		dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		intermediatePath = System.getProperty("user.dir")+System.getProperty("file.separator")+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 		modelFile = new File(intermediatePath+".model");
 		File trainFile = new File(intermediatePath+".train");
 		this.doTfidf = doTfidf;
@@ -295,8 +296,10 @@ public class SvmClassifier {
 			for (String k:featureMap.keySet()){
 				reverseMap.put(featureMap.get(k), k);
 			}
+			
+			if (doPredictiveWeights){
 			PredictiveWeights pw = new PredictiveWeights();
-			File weightsFile = new File(intermediatePath+".weights");
+			File weightsFile = new File(intermediatePath+"_weights.csv");
 			BufferedWriter weightsWriter = new BufferedWriter(new FileWriter(weightsFile));
 			HashMap<Integer,Double> weightsMap = pw.computePredictiveWeights(modelFile);
 			weightsWriter.write("Word,ID,Weight\n");
@@ -307,6 +310,7 @@ public class SvmClassifier {
 			System.out.println("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
 			appendLog("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
 			weightsWriter.close();
+			}
 		}
 		if (doCrossVal){
 			System.out.println("Cross Validation Accuracy = "+crossValResult+"%");
@@ -315,13 +319,13 @@ public class SvmClassifier {
 		return ret;
 	}
 	
-	public int output(String label1, String folderPath1, String label2, String folderPath2, String outputFilePath) throws IOException{
+	public int output(String label1, String folderPath1, String label2, String folderPath2) throws IOException{
 		int ret = 0;
 		File dir1 = new File (folderPath1);
 		File dir2 = new File (folderPath2);
 		String tempOut = intermediatePath+".out";
 		BufferedReader brt = new BufferedReader(new FileReader(new File(tempOut)));
-		File outputFile = new File(outputFilePath);
+		File outputFile = new File(intermediatePath+"_prediction.csv");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
 		bw.write("File Name,Actual Class,Predicted Class\n");
 		String actualLabel, predictedLabel;
@@ -345,19 +349,19 @@ public class SvmClassifier {
 			}
 			bw.write(file.getAbsolutePath()+","+actualLabel+","+predictedLabel+"\n");
 		}
-		System.out.println("Created output file "+outputFilePath);
-		appendLog("Created output file "+outputFilePath);
+		System.out.println("Created output file "+outputFile.getAbsolutePath());
+		appendLog("Created output file "+outputFile.getAbsolutePath());
 		bw.close();
 		brt.close();
 		return ret;
 	}
 	
-	public int outputPredictedOnly(String label1, String label2, String inputPath, String outputFilePath) throws IOException{
+	public int outputPredictedOnly(String label1, String label2, String inputPath) throws IOException{
 		int ret = 0;
 		File dir = new File (inputPath);
 		String tempOut = intermediatePath+".out";
 		BufferedReader brt = new BufferedReader(new FileReader(new File(tempOut)));
-		File outputFile = new File(outputFilePath);
+		File outputFile = new File(intermediatePath+"_prediction.csv");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
 		bw.write("File Name,Predicted Class\n");
 		String predictedLabel;
@@ -370,8 +374,8 @@ public class SvmClassifier {
 			}
 			bw.write(file.getAbsolutePath()+","+predictedLabel+"\n");
 		}
-		System.out.println("Created output file "+outputFilePath);
-		appendLog("Created output file "+outputFilePath);
+		System.out.println("Created output file "+outputFile.getAbsolutePath());
+		appendLog("Created output file "+outputFile.getAbsolutePath());
 		bw.close();
 		brt.close();
 		return ret;
@@ -446,9 +450,6 @@ public class SvmClassifier {
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(hashmap));
 		this.featureMap = (HashMap<String,Integer>)ois.readObject();
 		//System.out.println(featureMap);
-		Calendar cal = Calendar.getInstance();
-		dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		this.intermediatePath = System.getProperty("user.dir")+System.getProperty("file.separator")+label1+"_"+label2+"_"+dateString+"-"+System.currentTimeMillis();
 		return ret;
 	}
 	

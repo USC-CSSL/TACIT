@@ -11,6 +11,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
@@ -59,7 +60,7 @@ public class SvmClassifierSettings {
 		Group grpInputSettings = new Group(parent, SWT.NONE);
 		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpInputSettings.heightHint = 237;
+		gd_grpInputSettings.heightHint = 233;
 		gd_grpInputSettings.widthHint = 529;
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
@@ -184,6 +185,11 @@ public class SvmClassifierSettings {
 		lblPretrainedHashMap.setBounds(34, 180, 128, 15);
 		lblPretrainedHashMap.setText("Pretrained Hash Map");
 		
+		final Button btnWeights = new Button(grpInputSettings, SWT.CHECK);
+		btnWeights.setSelection(true);
+		btnWeights.setBounds(18, 216, 174, 16);
+		btnWeights.setText("Create Feature Weights File");
+		
 		btnLoadModel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -196,51 +202,34 @@ public class SvmClassifierSettings {
 		});
 		
 		
-		Composite composite_1 = new Composite(grpInputSettings, SWT.NONE);
-		composite_1.setBounds(10, 206, 489, 26);
-		
-		Button btnTermFreqencyTf = new Button(composite_1, SWT.RADIO);
-		btnTermFreqencyTf.setBounds(135, 10, 199, 16);
-		btnTermFreqencyTf.setSelection(true);
-		btnTermFreqencyTf.setText("Term Freqency TF (Word Count)");
-		
-		final Button btnTfidf = new Button(composite_1, SWT.RADIO);
-		btnTfidf.setBounds(350, 10, 139, 16);
-		btnTfidf.setText("TF.IDF (More accurate)");
-		
-		Label lblWeightCalculation = new Label(composite_1, SWT.NONE);
-		lblWeightCalculation.setBounds(10, 11, 107, 15);
-		lblWeightCalculation.setText("Weight Calculation");
-		
-		
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE);
 		tabFolder.setSingle(false);
 		tabFolder.setSimple(false);
 		GridData gd_tabFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_tabFolder.heightHint = 214;
+		gd_tabFolder.heightHint = 259;
 		gd_tabFolder.widthHint = 534;
 		tabFolder.setLayoutData(gd_tabFolder);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
 		final CTabItem tbtmTesting = new CTabItem(tabFolder, SWT.NONE);
-		tbtmTesting.setText("Testing");
+		tbtmTesting.setText("Test");
 		
 		Group grpTestMode = new Group(tabFolder, SWT.NONE);
 		tbtmTesting.setControl(grpTestMode);
 		
 		Label lblTestFolder = new Label(grpTestMode, SWT.NONE);
-		lblTestFolder.setBounds(34, 38, 95, 15);
+		lblTestFolder.setBounds(34, 108, 95, 15);
 		lblTestFolder.setText("Class 1 Test Data");
 		
 		txtTestFolder1 = new Text(grpTestMode, SWT.BORDER);
-		txtTestFolder1.setBounds(135, 32, 220, 21);
+		txtTestFolder1.setBounds(135, 102, 220, 21);
 		
 		Label lblTestFolder_1 = new Label(grpTestMode, SWT.NONE);
-		lblTestFolder_1.setBounds(34, 64, 95, 15);
+		lblTestFolder_1.setBounds(34, 134, 95, 15);
 		lblTestFolder_1.setText("Class 2 Test Data");
 		
 		txtTestFolder2 = new Text(grpTestMode, SWT.BORDER);
-		txtTestFolder2.setBounds(135, 61, 220, 21);
+		txtTestFolder2.setBounds(135, 131, 220, 21);
 		
 		Button button_3 = new Button(grpTestMode, SWT.NONE);
 		button_3.addMouseListener(new MouseAdapter() {
@@ -253,7 +242,7 @@ public class SvmClassifierSettings {
 				
 			}
 		});
-		button_3.setBounds(359, 30, 21, 25);
+		button_3.setBounds(359, 100, 21, 25);
 		button_3.setText("...");
 		
 		Button button_4 = new Button(grpTestMode, SWT.NONE);
@@ -267,52 +256,56 @@ public class SvmClassifierSettings {
 			
 			}
 		});
-		button_4.setBounds(359, 59, 21, 25);
+		button_4.setBounds(359, 129, 21, 25);
 		button_4.setText("...");
 		
 		Label lblKfoldCrossValidation = new Label(grpTestMode, SWT.NONE);
-		lblKfoldCrossValidation.setBounds(34, 118, 46, 15);
+		lblKfoldCrossValidation.setBounds(34, 46, 46, 15);
 		lblKfoldCrossValidation.setText("k Value");
 		
-		Label label = new Label(grpTestMode, SWT.NONE);
-		label.setText("Output File");
-		label.setBounds(10, 154, 59, 15);
+		Label lblOutputPath = new Label(grpTestMode, SWT.NONE);
+		lblOutputPath.setText("Output Path");
+		lblOutputPath.setBounds(10, 175, 70, 15);
 		
 		txtkVal = new Text(grpTestMode, SWT.BORDER);
-		txtkVal.setBounds(135, 115, 46, 21);
+		txtkVal.setBounds(135, 43, 46, 21);
 		
 		txtOutputFile = new Text(grpTestMode, SWT.BORDER);
-		txtOutputFile.setBounds(135, 151, 220, 21);
+		txtOutputFile.setBounds(135, 172, 220, 21);
 		
 		Button button_2 = new Button(grpTestMode, SWT.NONE);
-		button_2.setBounds(359, 149, 21, 25);
+		button_2.setBounds(359, 170, 21, 25);
 		button_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				txtOutputFile.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.SAVE);
-				fd.open();
-				String oFile = fd.getFileName();
-				String dir = fd.getFilterPath();
-				txtOutputFile.setText(dir+System.getProperty("file.separator")+oFile);
+				DirectoryDialog fd1 = new DirectoryDialog(shell);
+				fd1.open();
+				String fp1Directory = fd1.getFilterPath();
+				txtOutputFile.setText(fp1Directory);
 			}
 		});
 		button_2.setText("...");
 		
 		final Button btnCrossVal = new Button(grpTestMode, SWT.RADIO);
-		btnCrossVal.setBounds(10, 94, 149, 16);
+		btnCrossVal.setBounds(10, 22, 149, 16);
 		btnCrossVal.setText("k-Fold Cross Validation");
 		
 		
 		Button btnTrain = new Button(grpTestMode, SWT.NONE);
-		btnTrain.setBounds(10, 175, 52, 25);
+		btnTrain.setBounds(10, 208, 52, 25);
 		btnTrain.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				long currentTime = System.currentTimeMillis();
-				
 				String ppDir1 = txtFolderPath1.getText();
 				String ppDir2 = txtFolderPath2.getText();
+				
+				if (ppDir1.equals("") || ppDir2.equals("") || txtOutputFile.getText().equals("")){
+					showError(shell);
+					return;
+				}
+				
 				if(ppService.doPP) {
 					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
@@ -332,7 +325,7 @@ public class SvmClassifierSettings {
 				
 				try {
 				//SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());  Preprocessing done separately
-				SvmClassifier svm = new SvmClassifier();
+				SvmClassifier svm = new SvmClassifier(txtLabel1.getText(), txtLabel2.getText(), txtOutputFile.getText());
 				
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
@@ -342,14 +335,14 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, btnTfidf.getSelection(), btnCrossVal.getSelection(), txtkVal.getText(), true);  //btnLinear.getSelection() removed. made Linear Kernel default
+					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, true, btnCrossVal.getSelection(), txtkVal.getText(), true, btnWeights.getSelection());  //btnLinear.getSelection() removed. made Linear Kernel default
 				// Cross Validation => No need to call predict and output separately
 				if (!btnCrossVal.getSelection()){
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
 					svm.predict(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
-					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText(),txtOutputFile.getText());
+					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
 				} else if (selection == 1){
 					System.out.println("Classification Mode");
 					appendLog("Classification Mode");
@@ -368,7 +361,7 @@ public class SvmClassifierSettings {
 		
 		Button btnSeparateTestData = new Button(grpTestMode, SWT.RADIO);
 		btnSeparateTestData.setSelection(true);
-		btnSeparateTestData.setBounds(10, 10, 119, 16);
+		btnSeparateTestData.setBounds(10, 80, 119, 16);
 		btnSeparateTestData.setText("Separate Test Data");
 		
 		
@@ -389,9 +382,9 @@ public class SvmClassifierSettings {
 		txtClassifyInput = new Text(grpClassifyMode, SWT.BORDER);
 		txtClassifyInput.setBounds(135, 26, 234, 21);
 		
-		Label label_1 = new Label(grpClassifyMode, SWT.NONE);
-		label_1.setText("Output File");
-		label_1.setBounds(10, 66, 59, 15);
+		Label lblOutputPath_1 = new Label(grpClassifyMode, SWT.NONE);
+		lblOutputPath_1.setText("Output Path");
+		lblOutputPath_1.setBounds(10, 66, 59, 15);
 		
 		txtClassifyOutput = new Text(grpClassifyMode, SWT.BORDER);
 		txtClassifyOutput.setBounds(135, 63, 234, 21);
@@ -401,11 +394,10 @@ public class SvmClassifierSettings {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				txtClassifyOutput.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.SAVE);
-				fd.open();
-				String oFile = fd.getFileName();
-				String dir = fd.getFilterPath();
-				txtClassifyOutput.setText(dir+System.getProperty("file.separator")+oFile);
+				DirectoryDialog fd1 = new DirectoryDialog(shell);
+				fd1.open();
+				String fp1Directory = fd1.getFilterPath();
+				txtClassifyOutput.setText(fp1Directory);
 			}
 		});
 		button_6.setText("...");
@@ -417,8 +409,14 @@ public class SvmClassifierSettings {
 			public void mouseUp(MouseEvent e) {
 				long currentTime = System.currentTimeMillis();
 				
+				
 				String ppDir1 = txtFolderPath1.getText();
 				String ppDir2 = txtFolderPath2.getText();
+				
+				if (ppDir1.equals("") || ppDir2.equals("") || txtClassifyOutput.getText().equals("")){
+					showError(shell);
+					return;
+			}
 				if(ppService.doPP) {
 					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
@@ -439,7 +437,7 @@ public class SvmClassifierSettings {
 				
 				try {
 				//SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());      Preprocessing done separately
-				SvmClassifier svm = new SvmClassifier();
+				SvmClassifier svm = new SvmClassifier(txtLabel1.getText(), txtLabel2.getText(), txtClassifyOutput.getText());
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(svm,iEclipseContext);
@@ -448,17 +446,17 @@ public class SvmClassifierSettings {
 				if(btnLoadModel.getSelection())
 					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
 				else
-					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, btnTfidf.getSelection(),false, null,true);  //btnLinear.getSelection() removed. made Linear Kernel default
+					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, true,false, null,true, btnWeights.getSelection());  //btnLinear.getSelection() removed. made Linear Kernel default
 				if(selection == 0){
 					System.out.println("Test Mode");
 					appendLog("Test Mode");
 					svm.predict(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
-					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText(),txtOutputFile.getText());
+					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
 				} else if (selection == 1){
 					System.out.println("Classification Mode");
 					appendLog("Classification Mode");
 					svm.classify(txtLabel1.getText(), txtLabel2.getText(), txtClassifyInput.getText());
-					svm.outputPredictedOnly(txtLabel1.getText(), txtLabel2.getText(), txtClassifyInput.getText(), txtClassifyOutput.getText());
+					svm.outputPredictedOnly(txtLabel1.getText(), txtLabel2.getText(), txtClassifyInput.getText());
 				}
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
@@ -495,7 +493,12 @@ public class SvmClassifierSettings {
 		ppService.setOptions(shell);
 	}
 
-	
+private void showError(Shell shell){
+	MessageBox message = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+	message.setMessage("Please select input and output paths");
+	message.setText("Error");
+	message.open();
+}
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
 		//System.out.println(parent.get("consoleMessage"));
