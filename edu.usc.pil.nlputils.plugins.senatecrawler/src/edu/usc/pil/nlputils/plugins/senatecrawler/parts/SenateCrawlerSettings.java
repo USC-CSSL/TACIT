@@ -41,22 +41,22 @@ public class SenateCrawlerSettings {
 		final Shell shell = parent.getShell();
 		appendLog("Loading Congresses...");
 		String[] congresses = null;
-		/*
+
 		try {
 			 congresses = AvailableRecords.getAllCongresses();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
+
 		appendLog("Loading Senators...");
 		String[] senatorsArray = null;
-		/*
+
 		try {
 			senatorsArray = AvailableRecords.getAllSenators(congresses);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		*/
+
 		final String[] allSenators = senatorsArray;
 		
 		Composite composite = new Composite(parent, SWT.NONE);
