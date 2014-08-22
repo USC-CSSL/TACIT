@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.pil.nlputils.plugins.lda.parts;
 
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class LDASettings {
 		lblData.setText("Data Path");
 		
 		txtSourceDir = new Text(composite, SWT.BORDER);
-		txtSourceDir.setBounds(115, 7, 269, 21);
+		txtSourceDir.setBounds(115, 7, 334, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
@@ -59,7 +61,7 @@ public class LDASettings {
 				txtLabel.setText(fd1.getFilterPath().substring(1+fd1.getFilterPath().lastIndexOf(System.getProperty("file.separator"))));
 			}
 		});
-		button.setBounds(386, 5, 21, 25);
+		button.setBounds(450, 5, 26, 25);
 		button.setText("...");
 		
 		txtNumTopics = new Text(composite, SWT.BORDER);
@@ -70,7 +72,7 @@ public class LDASettings {
 		lblNumberOfTopics.setText("Number of Topics");
 		
 		txtOutputPath = new Text(composite, SWT.BORDER);
-		txtOutputPath.setBounds(115, 83, 269, 21);
+		txtOutputPath.setBounds(115, 83, 334, 21);
 		
 		Button button_1 = new Button(composite, SWT.NONE);
 		button_1.addMouseListener(new MouseAdapter() {
@@ -82,7 +84,7 @@ public class LDASettings {
 				txtOutputPath.setText(fp1Directory);
 			}
 		});
-		button_1.setBounds(386, 81, 21, 25);
+		button_1.setBounds(450, 81, 26, 25);
 		button_1.setText("...");
 		
 		Label lblOutputPath = new Label(composite, SWT.NONE);
@@ -140,7 +142,7 @@ public class LDASettings {
 				showPpOptions(shell);
 			}
 		});
-		btnPreprocess.setBounds(416, 5, 75, 25);
+		btnPreprocess.setBounds(482, 5, 75, 25);
 		btnPreprocess.setText("Preprocess...");
 		
 		Label lblOutputPrefix = new Label(composite, SWT.NONE);

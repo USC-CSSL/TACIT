@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.pil.nlputils.plugins.svmClassifier.parts;
 
 import java.io.IOException;
@@ -65,7 +67,7 @@ public class SvmClassifierSettings {
 		grpInputSettings.setLayoutData(gd_grpInputSettings);
 		
 		Composite composite = new Composite(grpInputSettings, SWT.NONE);
-		composite.setBounds(10, 20, 475, 95);
+		composite.setBounds(10, 20, 515, 95);
 		
 		Label lblLabel_1 = new Label(composite, SWT.NONE);
 		lblLabel_1.setBounds(0, 35, 36, 15);
@@ -84,21 +86,21 @@ public class SvmClassifierSettings {
 		txtLabel2.setBounds(66, 32, 157, 21);
 		
 		Label lblFolder = new Label(composite, SWT.NONE);
-		lblFolder.setBounds(228, 5, 24, 15);
+		lblFolder.setBounds(237, 6, 24, 15);
 		lblFolder.setText("Path");
 		
 		Label lblFolder_1 = new Label(composite, SWT.NONE);
-		lblFolder_1.setBounds(228, 35, 24, 15);
+		lblFolder_1.setBounds(237, 36, 24, 15);
 		lblFolder_1.setText("Path");
 		
 		txtFolderPath1 = new Text(composite, SWT.BORDER);
-		txtFolderPath1.setBounds(257, 2, 143, 21);
+		txtFolderPath1.setBounds(266, 3, 212, 21);
 		
 		txtFolderPath2 = new Text(composite, SWT.BORDER);
-		txtFolderPath2.setBounds(257, 32, 143, 21);
+		txtFolderPath2.setBounds(266, 33, 212, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
-		button.setBounds(403, 0, 21, 25);
+		button.setBounds(478, 1, 27, 25);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -112,7 +114,7 @@ public class SvmClassifierSettings {
 		button.setText("...");
 		
 		Button button_1 = new Button(composite, SWT.NONE);
-		button_1.setBounds(403, 30, 21, 25);
+		button_1.setBounds(478, 31, 27, 25);
 		button_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -142,7 +144,7 @@ public class SvmClassifierSettings {
 		
 		txtModelFilePath = new Text(grpInputSettings, SWT.BORDER);
 		txtModelFilePath.setEnabled(false);
-		txtModelFilePath.setBounds(244, 132, 199, 21);
+		txtModelFilePath.setBounds(244, 132, 243, 21);
 		
 		final Button button_8 = new Button(grpInputSettings, SWT.NONE);
 		button_8.setEnabled(false);
@@ -157,12 +159,12 @@ public class SvmClassifierSettings {
 				txtModelFilePath.setText(dir+System.getProperty("file.separator")+oFile);
 			}
 		});
-		button_8.setBounds(446, 130, 20, 25);
+		button_8.setBounds(487, 130, 26, 25);
 		button_8.setText("...");
 		
 		txtHashmapPath = new Text(grpInputSettings, SWT.BORDER);
 		txtHashmapPath.setEnabled(false);
-		txtHashmapPath.setBounds(244, 174, 199, 21);
+		txtHashmapPath.setBounds(244, 174, 243, 21);
 		
 		final Button button_9 = new Button(grpInputSettings, SWT.NONE);
 		button_9.addMouseListener(new MouseAdapter() {
@@ -177,7 +179,7 @@ public class SvmClassifierSettings {
 			}
 		});
 		button_9.setEnabled(false);
-		button_9.setBounds(446, 172, 20, 25);
+		button_9.setBounds(487, 172, 26, 25);
 		button_9.setText("...");
 		
 		final Label lblPretrainedHashMap = new Label(grpInputSettings, SWT.NONE);
@@ -222,14 +224,14 @@ public class SvmClassifierSettings {
 		lblTestFolder.setText("Class 1 Test Data");
 		
 		txtTestFolder1 = new Text(grpTestMode, SWT.BORDER);
-		txtTestFolder1.setBounds(135, 102, 220, 21);
+		txtTestFolder1.setBounds(135, 102, 348, 21);
 		
 		Label lblTestFolder_1 = new Label(grpTestMode, SWT.NONE);
 		lblTestFolder_1.setBounds(34, 134, 95, 15);
 		lblTestFolder_1.setText("Class 2 Test Data");
 		
 		txtTestFolder2 = new Text(grpTestMode, SWT.BORDER);
-		txtTestFolder2.setBounds(135, 131, 220, 21);
+		txtTestFolder2.setBounds(135, 131, 348, 21);
 		
 		Button button_3 = new Button(grpTestMode, SWT.NONE);
 		button_3.addMouseListener(new MouseAdapter() {
@@ -242,7 +244,7 @@ public class SvmClassifierSettings {
 				
 			}
 		});
-		button_3.setBounds(359, 100, 21, 25);
+		button_3.setBounds(485, 100, 27, 25);
 		button_3.setText("...");
 		
 		Button button_4 = new Button(grpTestMode, SWT.NONE);
@@ -256,7 +258,7 @@ public class SvmClassifierSettings {
 			
 			}
 		});
-		button_4.setBounds(359, 129, 21, 25);
+		button_4.setBounds(485, 129, 27, 25);
 		button_4.setText("...");
 		
 		Label lblKfoldCrossValidation = new Label(grpTestMode, SWT.NONE);
@@ -271,10 +273,10 @@ public class SvmClassifierSettings {
 		txtkVal.setBounds(135, 43, 46, 21);
 		
 		txtOutputFile = new Text(grpTestMode, SWT.BORDER);
-		txtOutputFile.setBounds(135, 172, 220, 21);
+		txtOutputFile.setBounds(135, 172, 348, 21);
 		
 		Button button_2 = new Button(grpTestMode, SWT.NONE);
-		button_2.setBounds(359, 170, 21, 25);
+		button_2.setBounds(485, 170, 27, 25);
 		button_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -380,14 +382,14 @@ public class SvmClassifierSettings {
 		lblFolder_2.setText("Directory Path");
 		
 		txtClassifyInput = new Text(grpClassifyMode, SWT.BORDER);
-		txtClassifyInput.setBounds(135, 26, 234, 21);
+		txtClassifyInput.setBounds(135, 26, 348, 21);
 		
 		Label lblOutputPath_1 = new Label(grpClassifyMode, SWT.NONE);
 		lblOutputPath_1.setText("Output Path");
 		lblOutputPath_1.setBounds(10, 66, 59, 15);
 		
 		txtClassifyOutput = new Text(grpClassifyMode, SWT.BORDER);
-		txtClassifyOutput.setBounds(135, 63, 234, 21);
+		txtClassifyOutput.setBounds(135, 63, 348, 21);
 		
 		Button button_6 = new Button(grpClassifyMode, SWT.NONE);
 		button_6.addMouseListener(new MouseAdapter() {
@@ -401,7 +403,7 @@ public class SvmClassifierSettings {
 			}
 		});
 		button_6.setText("...");
-		button_6.setBounds(370, 61, 21, 25);
+		button_6.setBounds(484, 60, 26, 25);
 		
 		Button btnClassify = new Button(grpClassifyMode, SWT.NONE);
 		btnClassify.addMouseListener(new MouseAdapter() {
@@ -480,7 +482,7 @@ public class SvmClassifierSettings {
 				
 			}
 		});
-		button_7.setBounds(370, 24, 21, 25);
+		button_7.setBounds(484, 23, 26, 25);
 		button_7.setText("...");
 		//TODO Your code here
 	}
@@ -493,12 +495,12 @@ public class SvmClassifierSettings {
 		ppService.setOptions(shell);
 	}
 
-private void showError(Shell shell){
-	MessageBox message = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-	message.setMessage("Please select input and output paths");
-	message.setText("Error");
-	message.open();
-}
+	private void showError(Shell shell){
+		MessageBox message = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+		message.setMessage("Please select input and output paths");
+		message.setText("Error");
+		message.open();
+	}
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
 		//System.out.println(parent.get("consoleMessage"));

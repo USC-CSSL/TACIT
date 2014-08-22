@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.pil.nlputils.plugins.senatecrawler.parts;
 
 import java.io.IOException;
@@ -39,22 +41,27 @@ public class SenateCrawlerSettings {
 		final Shell shell = parent.getShell();
 		appendLog("Loading Congresses...");
 		String[] congresses = null;
+		/*
 		try {
 			 congresses = AvailableRecords.getAllCongresses();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 		appendLog("Loading Senators...");
 		String[] senatorsArray = null;
+		/*
 		try {
 			senatorsArray = AvailableRecords.getAllSenators(congresses);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
+		*/
 		final String[] allSenators = senatorsArray;
 		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLocation(-87, -10);
+		composite.setSize(579, 298);
+		composite.setLocation(0, 0);
 		
 		Label lblSenator = new Label(composite, SWT.NONE);
 		lblSenator.setBounds(10, 36, 55, 15);
@@ -62,26 +69,27 @@ public class SenateCrawlerSettings {
 		
 		final DateTime dateTime = new DateTime(composite, SWT.BORDER);
 		dateTime.setEnabled(false);
-		dateTime.setBounds(51, 133, 80, 24);
+		dateTime.setBounds(89, 133, 101, 24);
 		
 		final DateTime dateTime_1 = new DateTime(composite, SWT.BORDER);
 		dateTime_1.setEnabled(false);
-		dateTime_1.setBounds(206, 133, 80, 24);
+		dateTime_1.setBounds(288, 133, 101, 24);
 		
 		Label lblToDate = new Label(composite, SWT.NONE);
-		lblToDate.setBounds(179, 142, 21, 15);
+		lblToDate.setBounds(245, 137, 21, 15);
 		lblToDate.setText("To");
 		
 		txtMaxDocs = new Text(composite, SWT.BORDER);
+		txtMaxDocs.setToolTipText("Enter the maximum number of records to extract for each senator");
 		txtMaxDocs.setEnabled(false);
-		txtMaxDocs.setBounds(206, 187, 80, 21);
+		txtMaxDocs.setBounds(189, 184, 40, 21);
 		
 		Label lblFrom = new Label(composite, SWT.NONE);
-		lblFrom.setBounds(10, 142, 35, 15);
+		lblFrom.setBounds(26, 137, 35, 15);
 		lblFrom.setText("From");
 
 		final Combo cmbSenator = new Combo(composite, SWT.NONE);
-		cmbSenator.setBounds(89, 67, 91, 23);
+		cmbSenator.setBounds(89, 67, 300, 23);
 		cmbSenator.setItems(allSenators);
 		cmbSenator.add("All Senators", 0);
 		cmbSenator.add("All Democrats", 1);
@@ -119,7 +127,7 @@ public class SenateCrawlerSettings {
 		});
 		//combo.setItems(new String[] {"All", "113"});
 		cmbCongress.setItems(congresses);
-		cmbCongress.setBounds(89, 33, 91, 23);
+		cmbCongress.setBounds(89, 33, 101, 23);
 		cmbCongress.select(0);
 		
 		Label lblSenator_1 = new Label(composite, SWT.NONE);
@@ -200,7 +208,7 @@ public class SenateCrawlerSettings {
 		lblOutput.setText("Output Path");
 		
 		txtOutput = new Text(composite, SWT.BORDER);
-		txtOutput.setBounds(104, 225, 182, 21);
+		txtOutput.setBounds(104, 225, 258, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
@@ -212,7 +220,7 @@ public class SenateCrawlerSettings {
 				txtOutput.setText(oDirectory);
 			}
 		});
-		button.setBounds(286, 221, 21, 25);
+		button.setBounds(362, 221, 27, 25);
 		button.setText("...");
 		
 		final Button btnLimitRecords = new Button(composite, SWT.CHECK);
@@ -228,9 +236,9 @@ public class SenateCrawlerSettings {
 		btnLimitRecords.setBounds(10, 189, 161, 16);
 		btnLimitRecords.setText("Limit Records per Senator");
 		
-		Label lblNewLabel = new Label(composite, SWT.NONE);
-		lblNewLabel.setBounds(321, 10, 123, 215);
-		lblNewLabel.setText("Year                 Congress\r\n1989-1990       101st\r\n1991-1992       102nd\r\n1993-1994       103rd\r\n1995-1996       104th\r\n1997-1998       105th\r\n1999-2000       106th\r\n2001-2002       107th\r\n2003-2004       108th\r\n2005-2006       109th\r\n2007-2008       110th\r\n2009-2010       111th\r\n2011-2012       112th\r\n2013-2014       113th");
+		Label lblNewLabel = new Label(composite, SWT.BORDER | SWT.SHADOW_NONE);
+		lblNewLabel.setBounds(433, 14, 133, 215);
+		lblNewLabel.setText(" Year                 Congress\r\n 1989-1990       101st\r\n 1991-1992       102nd\r\n 1993-1994       103rd\r\n 1995-1996       104th\r\n 1997-1998       105th\r\n 1999-2000       106th\r\n 2001-2002       107th\r\n 2003-2004       108th\r\n 2005-2006       109th\r\n 2007-2008       110th\r\n 2009-2010       111th\r\n 2011-2012       112th\r\n 2013-2014       113th");
 		
 		
 	}

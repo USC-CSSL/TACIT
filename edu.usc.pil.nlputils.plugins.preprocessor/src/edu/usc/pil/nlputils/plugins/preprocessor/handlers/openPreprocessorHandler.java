@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.pil.nlputils.plugins.preprocessor.handlers;
 
 import javax.inject.Inject;

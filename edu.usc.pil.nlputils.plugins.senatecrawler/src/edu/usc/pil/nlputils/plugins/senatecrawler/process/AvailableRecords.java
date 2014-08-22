@@ -1,3 +1,6 @@
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */
 package edu.usc.pil.nlputils.plugins.senatecrawler.process;
 
 import java.io.IOException;

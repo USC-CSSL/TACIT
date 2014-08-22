@@ -1,3 +1,6 @@
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */
 package edu.usc.pil.nlputils.plugins.svmClassifier.process;
 
 import java.io.BufferedReader;

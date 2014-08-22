@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.pil.nlputils.plugins.preprocessor.parts;
 
 import java.io.IOException;

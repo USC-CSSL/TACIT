@@ -30,6 +30,7 @@ import cc.mallet.util.*;
 public abstract class Vectors2Classify
 {
   static BshInterpreter interpreter = new BshInterpreter();
+  static ArrayList<String> result = new ArrayList<String>();
   
 	private static Logger logger = MalletLogger.getLogger(Vectors2Classify.class.getName());
 	private static Logger progressLogger = MalletProgressMessageLogger.getLogger(Vectors2Classify.class.getName() + "-pl");
@@ -211,8 +212,10 @@ public abstract class Vectors2Classify
 	(Vectors2Classify.class, "cross-validation", "INT", true, 0,
 	    "The number of folds for cross-validation (DEFAULT=0).", null);
 
-	public static void main (String[] args) throws bsh.EvalError, java.io.IOException
+	public static ArrayList<String> main (String[] args) throws bsh.EvalError, java.io.IOException
 	{
+		result.clear();
+		
 		// Process the command-line options
 		CommandOption.setSummary (Vectors2Classify.class,
 								  "A tool for training, saving and printing diagnostics from a classifier on vectors.");
@@ -541,19 +544,30 @@ public abstract class Vectors2Classify
 				System.out.println ("Summary. test accuracy mean = "+ MatrixOps.mean (testAccuracy[c])+
 									" stddev = "+ MatrixOps.stddev (testAccuracy[c])+
 									" stderr = "+ MatrixOps.stderr (testAccuracy[c]));
-
+			
+			// If we are testing the classifier with two folders, result will be empty - no report is generated
+			if (result.isEmpty())
+				result.add("Summary. test accuracy mean = "+ MatrixOps.mean (testAccuracy[c])+
+										" stddev = "+ MatrixOps.stddev (testAccuracy[c])+
+										" stderr = "+ MatrixOps.stderr (testAccuracy[c]));
 		}   // end for each trainer
+		
+		return result;
 	}
 
 	private static void printTrialClassification(Trial trial)
 	{
 	  for (Classification c : trial) {
+		  String classification = "";
 	    Instance instance = c.getInstance();
 	    System.out.print(instance.getName() + " " + instance.getTarget() + " ");
+	    classification = instance.getName() + "," + instance.getTarget() + " ";
 	    Labeling labeling = c.getLabeling();
 	    for (int j = 0; j < labeling.numLocations(); j++){
-	      System.out.print(labeling.getLabelAtRank(j).toString() + ":" + labeling.getValueAtRank(j) + " ");
+	    	classification = classification + labeling.getLabelAtRank(j).toString() + ":" + labeling.getValueAtRank(j) + ",";
+	    	System.out.print(labeling.getLabelAtRank(j).toString() + ":" + labeling.getValueAtRank(j) + " ");
 	    }
+	    result.add(classification);
 	    System.out.println();
 	  }
 	}

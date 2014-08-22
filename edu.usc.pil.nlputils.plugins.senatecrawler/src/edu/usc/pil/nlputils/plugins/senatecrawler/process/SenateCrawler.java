@@ -1,3 +1,7 @@
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */
+
 package edu.usc.pil.nlputils.plugins.senatecrawler.process;
 
 import java.io.BufferedWriter;
@@ -23,6 +27,8 @@ public class SenateCrawler {
 	String outputDir;
 	BufferedWriter csvWriter;
 	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
+	//Feinstein test
+	//private boolean Feinstein = false;
 	
 	public void initialize(int maxDocs, String dateFrom, String dateTo, String outputDir) throws IOException{
 		this.outputDir = outputDir;
@@ -57,6 +63,12 @@ public class SenateCrawler {
 		
 		for (Element senItem : senList){
 			String senator = senItem.text().replace("\u00A0", " ");
+			/*Feinstein test*/
+			//if (senator.contains("Feinstein"))
+			//	Feinstein = true;
+			//if (!Feinstein)
+			//	continue;
+
 			if (senator.contains("Any Senator"))		// We just need the senator names
 				continue;
 			if (senText.contains("All Republicans")){
@@ -249,7 +261,7 @@ public class SenateCrawler {
 //					System.out.println("date is empty");
 //				date = date.split(" ")[0]+" "+date.split(" ")[1]+" "+date.split(" ")[2];
 //				date = date.trim();
-				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+".txt";
+				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
 				writeToFile(fileName, contents);
 				csvWriter.write(congress+","+recordDate+","+lastName+","+senatorAttribs+","+title+","+fileName);
 				csvWriter.newLine();
