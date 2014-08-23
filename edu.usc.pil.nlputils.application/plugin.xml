@@ -5,7 +5,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            name="USC NLPUtils"
+            name="edu.usc.pil.nlputils.application"
             application="org.eclipse.e4.ui.workbench.swt.E4Application">
          <property
                name="applicationCSS"
@@ -15,9 +15,6 @@
                name="appName"
                value="edu.usc.pil.nlputils.application">
          </property>
-         <property
-          name="windowImages" 
-          value="icons/Main32x32.gif"/>
       </product>
    </extension>
 

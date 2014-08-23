@@ -92,7 +92,7 @@ public class PreprocessorService {
 //				File path = new File(main.getPath());
 //				System.out.println(path);
 				try{
-				DetectorFactory.loadProfile("C:\\Users\\45W1N\\workspaceRCP\\edu.usc.pil.nlputils.plugins.preprocessorService\\profiles");
+				DetectorFactory.loadProfile("C:\\Users\\45W1N\\git\\USC-NLPUtils\\edu.usc.pil.nlputils.plugins.preprocessorService\\profiles");
 				} catch (com.cybozu.labs.langdetect.LangDetectException ex){
 					//ex.printStackTrace();
 					System.out.println("Exception code - "+ex.getCode());
