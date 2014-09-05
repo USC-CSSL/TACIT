@@ -97,8 +97,12 @@ public class WordCountSettings {
 				}
 				// Display the concatenated paths in the text field.
 				StringBuilder sb = new StringBuilder();
-				for (String inputFile : ifDialog.getFileNames())
-					sb.append(ifDialog.getFilterPath()+System.getProperty("file.separator")+inputFile+", ");
+				String selectedFiles[] = ifDialog.getFileNames();
+				if (selectedFiles.length<=10)
+					for (String inputFile : selectedFiles)
+						sb.append(ifDialog.getFilterPath()+System.getProperty("file.separator")+inputFile+", ");
+				else
+					sb.append(selectedFiles.length +" files selected");
 				txtInputFile.setText(sb.toString());
 			}
 		});
@@ -138,6 +142,8 @@ public class WordCountSettings {
 				FileDialog sfDialog = new FileDialog(shell, SWT.MULTI);
 				sfDialog.open();
 				txtStopWords.setText(sfDialog.getFilterPath()+System.getProperty("file.separator")+sfDialog.getFileName());
+				if (txtStopWords.getText().length() <3)
+					txtStopWords.setText("");
 			}
 		});
 		btnStopWords.setText("...");
@@ -158,7 +164,7 @@ public class WordCountSettings {
 			public void mouseUp(MouseEvent e) {
 				FileDialog ofDialog = new FileDialog(shell, SWT.SAVE);
 				ofDialog.open();
-				txtOutputFile.setText(ofDialog.getFilterPath()+System.getProperty("file.separator")+ofDialog.getFileName());
+				txtOutputFile.setText(ofDialog.getFilterPath()+System.getProperty("file.separator")+ofDialog.getFileName()+".csv");
 			}
 		});
 		btnOutputFile.setText("...");
@@ -255,6 +261,7 @@ public class WordCountSettings {
 				consoleHandler.setLevel(Level.FINER);
 				Logger.getAnonymousLogger().addHandler(consoleHandler);
 				logger.addHandler(consoleHandler);*/
+								
 				int returnCode = -1;
 				String errorMessage = "Word Count failed. Please try again.";
 				WordCount wc = new WordCount();
@@ -263,11 +270,28 @@ public class WordCountSettings {
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(wc,iEclipseContext);
 				
-				logger.info("Analyze button clicked. "+txtInputFile.getText()+" "+txtDictionary.getText()+" "+txtStopWords.getText()+" "+txtOutputFile.getText()+" "+txtDelimiters.getText()+" "+btnYes.getSelection());				
+				MessageBox overwriteMsg = new MessageBox(shell,SWT.YES|SWT.NO);
+				overwriteMsg.setMessage("The output file already exists. Do you want to overwrite?");
+				overwriteMsg.setText("Warning");
+				int overwrite = 0;
+				
+				String oPath = txtOutputFile.getText().substring(0, txtOutputFile.getText().length()-4);
+				
+				File oFile = new File(oPath+".csv");
+				File sFile = new File(oPath+".dat");
+				
+				if (oFile.exists() || sFile.exists())
+					overwrite = overwriteMsg.open();
+				
+				if (overwrite == SWT.NO){
+					System.out.println("Do not overwrite. Return to GUI.");
+					return;
+				}
+				System.out.println("Overwrite files.");
 				
 				
 				try {
-					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), txtOutputFile.getText(), txtDelimiters.getText(),btnYes.getSelection(),btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection());
+					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),btnYes.getSelection(),btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection());
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
@@ -279,9 +303,9 @@ public class WordCountSettings {
 				if (returnCode == -4) 
 					errorMessage = "Please check the stop words file path.";
 				if (returnCode == -5) 
-					errorMessage = "The output file path is incorrect or the file already exists.";
+					errorMessage = "The output file path is incorrect.";
 				if (returnCode == -6)
-					errorMessage = "The SPSS output file path is incorrect or the file already exists.";
+					errorMessage = "The SPSS output file path is incorrect.";
 				if (returnCode == 0)
 					errorMessage = "Word Count Completed Successfully.";
 				

@@ -78,9 +78,9 @@ public class WordCount {
 		}
 		
 		// Checking the output path
-		File oFile = new File(outputFile);
-		if (outputFile=="" || oFile.exists() || oFile.isDirectory()) {
-			logger.warning("The output file path is incorrect or the file already exists.");
+		File oFile = new File(outputFile+".csv");
+		if (outputFile=="" || oFile.isDirectory()) {
+			logger.warning("The output file path is incorrect.");
 			error = true;
 			return -5;
 		}
@@ -89,8 +89,8 @@ public class WordCount {
 		// Checking the spss path
 		File spssFile = new File(outputFile+".dat");
 		if (doSpss) {
-				if (outputFile=="" || spssFile.exists() || spssFile.isDirectory()) {
-					logger.warning("The SPSS output file path is incorrect or the file already exists.");
+				if (outputFile=="" || spssFile.isDirectory()) {
+					logger.warning("The SPSS output file path is incorrect.");
 					error = true;
 					return -6;
 				}
@@ -201,9 +201,11 @@ public class WordCount {
 		for (String currWord : map.keySet()){
 			
 			currCategories = categorizer.query(currWord);
+			
 			// If the word is in the trie, update the dictionary words count and the per-category count
 			if (currCategories!=null){
-				dicCount = dicCount+1;
+				//dicCount = dicCount+1;
+				dicCount = dicCount+map.get(currWord); // add the count of the current word. we are not counting unique words here.
 				for (int i : currCategories) {
 					currCategoryName = categories.get(i);
 					if (catCount.get(currCategoryName)!=null){
@@ -212,7 +214,7 @@ public class WordCount {
 						// Add map.get(currWord), i.e, the num of each word to count total number of words in the category
 						catCount.put(currCategoryName, catCount.get(currCategoryName)+map.get(currWord));
 					} else {
-						catCount.put(currCategoryName, 1);
+						catCount.put(currCategoryName, map.get(currWord));
 					}
 					
 					// Populate the Category Set for each Word
@@ -359,7 +361,8 @@ public class WordCount {
 			for (String currWord : map.keySet()){
 				currCategories = categorizer.query(currWord);
 				if (currCategories!=null){
-					dicCount = dicCount+1;
+					//dicCount = dicCount+1;
+					dicCount = dicCount+map.get(currWord); // add the count of the current word. we are not counting unique words here.
 					for (int i : currCategories) {
 						currCategoryName = categories.get(i);
 						if (catCount.get(currCategoryName)!=null){
@@ -535,7 +538,7 @@ public class WordCount {
 			if (doStopWords)
 				if (stopWordSet.contains(currentWord))
 					continue;
-			if (currentWord.length()>=6){
+			if (currentWord.length()>6){
 				sixltr = sixltr + 1;
 			}
 			numWords = numWords + 1;

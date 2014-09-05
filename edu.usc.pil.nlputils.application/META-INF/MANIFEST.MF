@@ -16,4 +16,6 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
  javax.annotation
 Import-Package: javax.annotation;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: .,
+ swing2swt.jar
 
