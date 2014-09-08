@@ -30,10 +30,11 @@ public class WordCountTest {
 		System.out.println("Starting word count");
 		WordCount wc = new WordCount();
 		String files[];
-		files = new String[]{"c:/LIWC/small test.txt"};
+		files = new String[]{"c:/LIWC/test file.txt"};
 		//files = new String[]{"c:/test/indian summer.txt"};
 		try {
-		wc.wordCount(files,"c:/LIWC/TabbedDictionary.dic","","c:/LIWC/myout"," .,;'\"!-()[]{}:?",true, true, false, false, false);	
+		wc.wordCount(files,"c:/LIWC/TabbedDictionary.dic","","c:/LIWC/numberOutWin","",true, true, false, false, false);
+		//wc.wordCount(files,"c:/LIWC/TabbedDictionary.dic","","c:/LIWC/numberOutWin"," .,;\"!-()[]{}:?",true, true, false, false, false);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
