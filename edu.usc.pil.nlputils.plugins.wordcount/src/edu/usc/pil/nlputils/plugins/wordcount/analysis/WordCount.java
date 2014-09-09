@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -42,12 +44,21 @@ public class WordCount {
 	private boolean doSnowballStemming = true;
 	PorterStemmer stemmer = new PorterStemmer();
 	
+	// counting numbers - // 5.7, .7 , 5., 567, -25.9, +45
+	Pattern pattern = Pattern.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
+	
+	// for calculating punctuation ratios
+	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro, parenth, otherP, allPct;
+	
 	private static Logger logger = Logger.getLogger(WordCount.class.getName());
 	
 	// Updated function that can handle multiple input files
 	public int wordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doLower, boolean doLiwcStemming, boolean doSnowBallStemming, boolean doSpss, boolean doWordDistribution) throws IOException{
 		int returnCode = -1;
-		this.delimiters = delimiters;
+		if (delimiters==null || delimiters.equals(""))
+			this.delimiters=" ";
+		else
+			this.delimiters = delimiters;
 		this.doLower = doLower;
 		this.doLiwcStemming = doLiwcStemming;
 		this.doSpss = doSpss;
@@ -78,9 +89,9 @@ public class WordCount {
 		}
 		
 		// Checking the output path
-		File oFile = new File(outputFile);
-		if (outputFile=="" || oFile.exists() || oFile.isDirectory()) {
-			logger.warning("The output file path is incorrect or the file already exists.");
+		File oFile = new File(outputFile+".csv");
+		if (outputFile=="" || oFile.isDirectory()) {
+			logger.warning("The output file path is incorrect.");
 			error = true;
 			return -5;
 		}
@@ -89,8 +100,8 @@ public class WordCount {
 		// Checking the spss path
 		File spssFile = new File(outputFile+".dat");
 		if (doSpss) {
-				if (outputFile=="" || spssFile.exists() || spssFile.isDirectory()) {
-					logger.warning("The SPSS output file path is incorrect or the file already exists.");
+				if (outputFile=="" || spssFile.isDirectory()) {
+					logger.warning("The SPSS output file path is incorrect.");
 					error = true;
 					return -6;
 				}
@@ -179,13 +190,37 @@ public class WordCount {
 		int totalWords = 0;
 		int sixltr = 0;
 		int noOfLines = 0;
+		int numerals = 0;
+		period = comma = colon = semiC = qMark  = exclam = dash = quote = apostro = parenth = otherP = allPct = 0;
 		while ((currentLine = br.readLine()) != null) {
 			noOfLines = noOfLines + StringUtils.countMatches(currentLine, ". ");
+			noOfLines = noOfLines + StringUtils.countMatches(currentLine, "? ");
+			noOfLines = noOfLines + StringUtils.countMatches(currentLine, "! ");
 			noOfLines = noOfLines + 1; // For the final sentence
+			
+			period = period + StringUtils.countMatches(currentLine, ".");
+			comma = comma + StringUtils.countMatches(currentLine, ",");
+			colon = colon + StringUtils.countMatches(currentLine, ":");
+			semiC = semiC + StringUtils.countMatches(currentLine, ";");
+			qMark = qMark + StringUtils.countMatches(currentLine, "?");
+			exclam = exclam + StringUtils.countMatches(currentLine, "!");
+			dash = dash + StringUtils.countMatches(currentLine, "-");
+			quote = quote + StringUtils.countMatches(currentLine, "\"");
+			apostro = apostro + StringUtils.countMatches(currentLine, "'");
+			parenth = parenth + StringUtils.countMatches(currentLine, "(");
+			parenth = parenth + StringUtils.countMatches(currentLine, ")");
+			
+			for (char c:"!\"#$%&*+=/\\<>@_^`~|{}[]".toCharArray()){
+				otherP = otherP + StringUtils.countMatches(currentLine, String.valueOf(c));
+			}
+			
 			int[] i = process(currentLine, map);
 			totalWords = totalWords + i[0];
 			sixltr = sixltr + i[1];
+			numerals = numerals + i[2];
 		}
+		allPct = allPct + period + comma + colon + semiC + qMark + exclam + dash + quote + apostro + parenth + otherP;
+		
 		br.close();
 		logger.info("Total number of words - "+totalWords);
 		logger.info("Finished building hashmap in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
@@ -201,9 +236,11 @@ public class WordCount {
 		for (String currWord : map.keySet()){
 			
 			currCategories = categorizer.query(currWord);
+			
 			// If the word is in the trie, update the dictionary words count and the per-category count
 			if (currCategories!=null){
-				dicCount = dicCount+1;
+				//dicCount = dicCount+1;
+				dicCount = dicCount+map.get(currWord); // add the count of the current word. we are not counting unique words here.
 				for (int i : currCategories) {
 					currCategoryName = categories.get(i);
 					if (catCount.get(currCategoryName)!=null){
@@ -212,7 +249,7 @@ public class WordCount {
 						// Add map.get(currWord), i.e, the num of each word to count total number of words in the category
 						catCount.put(currCategoryName, catCount.get(currCategoryName)+map.get(currWord));
 					} else {
-						catCount.put(currCategoryName, 1);
+						catCount.put(currCategoryName, map.get(currWord));
 					}
 					
 					// Populate the Category Set for each Word
@@ -232,7 +269,7 @@ public class WordCount {
 		if (doWordDistribution)
 			calculateWordDistribution(map, catCount, wordCategories, inputFile,oFile);
 			
-		writeToFile(oFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, catCount);
+		writeToFile(oFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, (numerals*100)/(float)totalWords, catCount);
 		if (doSpss)
 			writeToSpss(spssFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, catCount);
 	}
@@ -359,7 +396,8 @@ public class WordCount {
 			for (String currWord : map.keySet()){
 				currCategories = categorizer.query(currWord);
 				if (currCategories!=null){
-					dicCount = dicCount+1;
+					//dicCount = dicCount+1;
+					dicCount = dicCount+map.get(currWord); // add the count of the current word. we are not counting unique words here.
 					for (int i : currCategories) {
 						currCategoryName = categories.get(i);
 						if (catCount.get(currCategoryName)!=null){
@@ -371,7 +409,7 @@ public class WordCount {
 				}
 				//System.out.println(currWord);
 			}
-			writeToFile(oFile, iFile.getName(), totalWords, 0, 0, dicCount, catCount);
+			writeToFile(oFile, iFile.getName(), totalWords, 0, 0, dicCount, 0, catCount);
 			returnCode = 0;
 		}
 		return returnCode;
@@ -389,10 +427,11 @@ public class WordCount {
 	
 	public void buildOutputFile(File oFile) throws IOException{
 		StringBuilder titles = new StringBuilder();
-		titles.append("Filename,WC,WPS,Sixltr,Dic,");
+		titles.append("Filename,WC,WPS,Sixltr,Dic,Numerals,");
 		for (String title : categories.values()){
 			titles.append(title+",");
 		}
+		titles.append("Period, Comma, Colon, SemiC, QMark, Exclam, Dash, Quote, Apostro, Parenth, OtherP, AllPct");
 		FileWriter fw = new FileWriter(oFile);
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write(titles.toString());
@@ -449,9 +488,10 @@ public class WordCount {
 		logger.info("SPSS File Updated Successfully");
 	}
 
-	public void writeToFile(File oFile, String docName, int totalCount, float wps, float sixltr, float dic, HashMap<String,Integer> catCount) throws IOException{
+	public void writeToFile(File oFile, String docName, int totalCount, float wps, float sixltr, float dic, float numerals, HashMap<String,Integer> catCount) throws IOException{
 		StringBuilder row = new StringBuilder();
-		row.append(docName+","+totalCount+","+wps+","+sixltr+","+dic+",");
+		row.append(docName+","+totalCount+","+wps+","+sixltr+","+dic+","+numerals+",");
+		
 		int currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row string 
 		for (String title : categories.values()){
@@ -461,6 +501,20 @@ public class WordCount {
 				currCatCount = catCount.get(title);
 			row.append(((currCatCount*100)/(float)totalCount)+",");
 		}
+		
+		//Period, Comma, Colon, SemiC, QMark, Exclam, Dash, Quote, Apostro, Parenth, OtherP, AllPct
+		row.append(((period*100)/(float)totalCount)+",");
+		row.append(((comma*100)/(float)totalCount)+",");
+		row.append(((colon*100)/(float)totalCount)+",");
+		row.append(((semiC*100)/(float)totalCount)+",");
+		row.append(((qMark*100)/(float)totalCount)+",");
+		row.append(((exclam*100)/(float)totalCount)+",");
+		row.append(((dash*100)/(float)totalCount)+",");
+		row.append(((quote*100)/(float)totalCount)+",");
+		row.append(((apostro*100)/(float)totalCount)+",");
+		row.append(((parenth*100)/(float)totalCount)+",");
+		row.append(((otherP*100)/(float)totalCount)+",");
+		row.append(((allPct*100)/(float)totalCount)+",");
 		
 		// Append mode because the titles are already written. Append a row corresponding to each input file
 		FileWriter fw = new FileWriter(oFile, true);
@@ -511,9 +565,11 @@ public class WordCount {
 	
 	// Adds words and their corresponding count to the hashmap. Returns total number of words.
 	public int[] process(String line, HashMap<String, Integer> map) {
-		int ret[] = new int[2];
+		int ret[] = new int[3];
 		int numWords = 0;
 		int sixltr = 0;
+		int numerals = 0;
+		Matcher matcher;
 		//preprocess
 		if (doLower)
 			line = line.toLowerCase();
@@ -521,6 +577,13 @@ public class WordCount {
 		
 		while (st.hasMoreTokens()){
 			String currentWord = st.nextToken();
+			
+			matcher = pattern.matcher(currentWord);
+			while (matcher.find()){
+				numerals++;
+				//System.out.println(currentWord);
+			}
+			
 			//Do Porter2/Snowball Stemming if enabled
 			if (doSnowballStemming){
 				stemmer.setCurrent(currentWord);
@@ -535,7 +598,7 @@ public class WordCount {
 			if (doStopWords)
 				if (stopWordSet.contains(currentWord))
 					continue;
-			if (currentWord.length()>=6){
+			if (currentWord.length()>6){
 				sixltr = sixltr + 1;
 			}
 			numWords = numWords + 1;
@@ -550,6 +613,7 @@ public class WordCount {
 		}
 		ret[0] = numWords;
 		ret[1] = sixltr;
+		ret[2] = numerals;
 		return ret;
 	}
 	
