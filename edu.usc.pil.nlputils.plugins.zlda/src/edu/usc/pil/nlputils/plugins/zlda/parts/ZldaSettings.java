@@ -5,12 +5,19 @@ package edu.usc.pil.nlputils.plugins.zlda.parts;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -20,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import edu.usc.pil.nlputils.plugins.preprocessorService.services.PreprocessorService;
 import edu.usc.pil.nlputils.plugins.zlda.process.DTWC;
 
 import org.eclipse.swt.layout.GridLayout;
@@ -30,10 +38,12 @@ import org.eclipse.swt.events.MouseEvent;
 
 public class ZldaSettings {
 	private Text txtInputDir;
+	private PreprocessorService ppService = new PreprocessorService();
 	@Inject
 	public ZldaSettings() {
 		
 	}
+	
 	
 	@PostConstruct
 	public void postConstruct(Composite parent) {
@@ -67,27 +77,6 @@ public class ZldaSettings {
 		});
 		button.setText("...");
 		
-		lblStopFile = new Label(composite, SWT.NONE);
-		lblStopFile.setText("Stop File");
-		
-		txtStopFile = new Text(composite, SWT.BORDER);
-		GridData gd_txtStopFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtStopFile.widthHint = 244;
-		txtStopFile.setLayoutData(gd_txtStopFile);
-		
-		button_1 = new Button(composite, SWT.NONE);
-		button_1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				txtStopFile.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.SAVE);
-				fd.open();
-				String oFile = fd.getFileName();
-				String dir = fd.getFilterPath();
-				txtStopFile.setText(dir+System.getProperty("file.separator")+oFile);
-			}
-		});
-		button_1.setText("...");
 		
 		lblSeedFile = new Label(composite, SWT.NONE);
 		lblSeedFile.setText("Seed File");
@@ -117,30 +106,6 @@ public class ZldaSettings {
 		txtNumTopics = new Text(composite, SWT.BORDER);
 		new Label(composite, SWT.NONE);
 		
-		lblAlpha = new Label(composite, SWT.NONE);
-		lblAlpha.setText("Alpha");
-		
-		txtAlpha = new Text(composite, SWT.BORDER);
-		new Label(composite, SWT.NONE);
-		
-		lblBeta = new Label(composite, SWT.NONE);
-		lblBeta.setText("Beta");
-		
-		txtBeta = new Text(composite, SWT.BORDER);
-		new Label(composite, SWT.NONE);
-		
-		lblNumberOfSamples = new Label(composite, SWT.NONE);
-		lblNumberOfSamples.setText("Number of Samples");
-		
-		txtNumSamples = new Text(composite, SWT.BORDER);
-		new Label(composite, SWT.NONE);
-		
-		lblConfidence = new Label(composite, SWT.NONE);
-		lblConfidence.setText("Confidence");
-		
-		txtConfidence = new Text(composite, SWT.BORDER);
-		new Label(composite, SWT.NONE);
-		
 		lblOutputPath = new Label(composite, SWT.NONE);
 		lblOutputPath.setText("Output Path");
 		
@@ -161,11 +126,44 @@ public class ZldaSettings {
 		});
 		button_3.setText("...");
 		
+		Button btnPreprocess = new Button(composite, SWT.NONE);
+		btnPreprocess.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				showPpOptions(shell);
+			}
+		});
+		btnPreprocess.setBounds(482, 5, 75, 25);
+		btnPreprocess.setText("Preprocess...");
+		
+		
 		Button btnCalculate = new Button(composite, SWT.NONE);
 		btnCalculate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				
+				ppDir = txtInputDir.getText();
+				ppSeedFile = txtSeedFile.getText();
+				
+				if(ppService.doPP) {
+					
+					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
+					IEclipseContext iEclipseContext = context;
+					ContextInjectionFactory.inject(ppService,iEclipseContext);
+
+				//Preprocessing
+				appendLog("Preprocessing...");
+				System.out.println("Preprocessing...");
+				try {
+					ppDir = doPp(txtInputDir.getText());
+					ppSeedFile = doPp(txtSeedFile.getText());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				}
+				long startTime = System.currentTimeMillis();
 				invokeLDA();
+				appendLog("z-label LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 			}
 		});
 		btnCalculate.setText("Calculate");
@@ -173,29 +171,44 @@ public class ZldaSettings {
 		new Label(composite, SWT.NONE);
 		
 	}
+
+	private void showPpOptions(Shell shell){
+		ppService.setOptions(shell);
+	}
+	
+	private String doPp(String inputPath) throws IOException{
+		return ppService.doPreprocessing(inputPath);
+	}
+	
+	public static void main(String[] args)
+	{		
+		
+		File dir = new File("C://Users//carlosg//Desktop//CSSL//zlab-0.1//sampledocs//");
+		File seedFile = new File("C://Users//carlosg//Desktop//CSSL//zlab-0.1//topics.txt");
+		int numTopics = 40;
+		
+		
+		double alphaval = 0.5;
+		double betaval = 0.1;
+		
+		String txtOutputDir = "C://Users//carlosg//Desktop//CSSL//zlab-0.1//sampleoutput//";
+		ZldaSettings zlda = new ZldaSettings();
+		zlda.runLDA(dir,  seedFile, numTopics, 2000, alphaval, betaval, 1, txtOutputDir);
+	}
 	
 	@Inject
 	IEclipseContext context;
-	private Text txtStopFile;
 	private Text txtSeedFile;
 	private Text txtNumTopics;
-	private Text txtAlpha;
-	private Text txtBeta;
-	private Text txtNumSamples;
-	private Text txtConfidence;
 	private Text txtOutputDir;
 	private Label lblOutputPath;
-	private Label lblStopFile;
 	private Label lblSeedFile;
 	private Label lblNumberOfTopics;
-	private Label lblAlpha;
-	private Label lblBeta;
-	private Label lblNumberOfSamples;
-	private Label lblConfidence;
 	private Button button;
-	private Button button_1;
 	private Button button_2;
 	private Button button_3;
+	private String ppDir;
+	private String ppSeedFile;
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
 		//System.out.println(parent.get("consoleMessage"));
@@ -215,16 +228,24 @@ public class ZldaSettings {
 	}
 	
 protected void invokeLDA(){
-		File dir = new File(txtInputDir.getText());
+		File dir = new File(ppDir);
+		
+		File seedFile = new File(ppSeedFile);
+		int numTopics = Integer.parseInt(txtNumTopics.getText());
+		
+		double alphaval = 0.5;
+		double betaval = 0.1;
+		int noOfSamples = 2000;
+		double confidenceValue = 1;
+		
+		runLDA(dir, seedFile, numTopics, noOfSamples, alphaval, betaval, confidenceValue, txtOutputDir.getText());
+		
+}
+
+protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples, 
+		double alphaval, double betaval, double confidenceValue, String outputdir ){
+		
 		File[] listOfFiles =  dir.listFiles();
-		/*
-		java.util.List<File> inputFiles = new java.util.ArrayList<File>();
-		for(int i=0; i<listOfFiles.length; i++){
-			if(fileList[i+1].isSelected()){
-				inputFiles.add(listOfFiles[i]);
-			}
-		}
-		*/
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles)
 			inputFiles.add(f);
@@ -233,61 +254,48 @@ protected void invokeLDA(){
 			return;
 		}
 		
-		File stopFile = new File(txtStopFile.getText());
-		File seedFile = new File(txtSeedFile.getText());
-		int numTopics = Integer.parseInt(txtNumTopics.getText());
+		File [] listSeedFiles = seedFile.listFiles();
+		File preSeedFile = listSeedFiles[0];
 		
-		DTWC dtwc = new DTWC(inputFiles, seedFile, stopFile);
+		System.out.println("running zlabel LDA...");
+		appendLog("running zlabel LDA...");
+		DTWC dtwc = new DTWC(inputFiles, preSeedFile);
 		dtwc.computeDocumentVectors();
 		
 		int[][][] zlabels = dtwc.getTopicSeedsAsInt();
 		int[][] docs = dtwc.getDocVectorsAsInt();
 		
+	/*	System.out.println("\n");
+		
+		String toPrint;
+		for(int i=0; i<docs.length; i++){
+			toPrint = "";
+			for(int j=0; j<docs[i].length; j++){
+				toPrint = toPrint + docs[i][j];
+			}
+			System.out.println(toPrint);
+		}
+		
+		System.out.println("\n"); */
+	
+		
 		int T = numTopics;
 		int W = dtwc.getVocabSize();
 		
 		double[][] alpha = new double[1][T];
-		
-		double alphaval;
-		if(txtAlpha.getText().length() == 0){
-			alphaval = 0.5;
-		}
-		else{
-			alphaval = Double.parseDouble(txtAlpha.getText());
-		}
-		
 		for(int i=0; i<T; i++){
 			alpha[0][i] = alphaval;
 		}
 		
 		double[][] beta = new double[T][W];
-		
-		double betaval;
-		if(txtBeta.getText().length() == 0){
-			betaval = 0.1;
-		}
-		else{
-			betaval = txtBeta.getText().length();
-		}
 		for(int i=0; i<T; i++){
 			for(int j=0; j<W; j++){
 				beta[i][j] = betaval;
 			}
 		}
 		
-		int noOfSamples = 1000;
-		if(txtNumSamples.getText().length() != 0){
-			noOfSamples = Integer.parseInt(txtNumSamples.getText());
-		}
-		
-		double confidenceValue = 0.95;
-		if(txtConfidence.getText().length() !=0){
-			confidenceValue = Double.parseDouble(txtConfidence.getText());
-		}
 		ZlabelLDA zelda = new ZlabelLDA(docs, zlabels, confidenceValue, alpha, beta, noOfSamples ); 
-		
 		boolean retVal = zelda.zLDA();
-		
 		if(!retVal){
 			appendLog("Sorry, something is wrong with the input - please check format and try again");
 			return;
@@ -296,45 +304,39 @@ protected void invokeLDA(){
 		double[][] theta, phi;
 		
 		theta = zelda.getTheta();
-		phi = zelda.getPhi();
+		phi = zelda.getPhi(); 
 		
-		/*System.out.println("\n");
-		System.out.println(theta.length);
-		System.out.println(theta[0].length);
-		
-		String toPrint;
-		for(int i=0; i<docs.length; i++){
-			toPrint = "";
-			for(int j=0; j<T; j++){
-				toPrint = toPrint + theta[i][j] + " ";
-			}
-			System.out.println(toPrint);
-		}
-		
-		System.out.println("\n"); */
-		
-		java.util.Map<String, Integer> dictionary = dtwc.getTermIndex();
-		java.util.Map<Integer, String> revDict = dtwc.getIndexTerm(); 
+		Map<String, Integer> dictionary = dtwc.getTermIndex();
+		Map<Integer, String> revDict = dtwc.getIndexTerm(); 
 
-		java.util.List<java.util.List<String>> topicWords = new java.util.ArrayList<java.util.List<String>>(); 
+		List< List <Map.Entry<String, Double>>> topicWords = new ArrayList< List<Map.Entry <String, Double>>>(); 
 		for(int i=0; i<T; i++){
-			topicWords.add(new java.util.ArrayList<String>());
+			topicWords.add(new ArrayList< Map.Entry<String, Double>>());
 		}
 		
 		for(int i=0; i<T; i++){
 			for(int j=0; j<W; j++){
 				if(phi[i][j] > 0.001){
-					topicWords.get(i).add(revDict.get(j));
+					topicWords.get(i).add(  new AbstractMap.SimpleEntry<String, Double>(revDict.get(j),new Double(phi[i][j])));
 				}
 			}
 		}
 		
 		try {
-			FileWriter fw = new FileWriter(new File(txtOutputDir.getText() + "\\topicwords.csv"));
+			FileWriter fw = new FileWriter(new File(outputdir + "\\topicwords.csv"));
 			for(int i=0; i<T; i++){
 				fw.write("Topic" + i + ",");
-				for(int j=0; j<(topicWords.get(i)).size(); j++){
-					fw.write(topicWords.get(i).get(j) + ",");
+				Collections.sort( topicWords.get(i), new Comparator<Map.Entry<String, Double>>()
+				{	
+							@Override
+							public int compare(Entry<String, Double> arg0,
+									Entry<String, Double> arg1) {
+								return -(arg0.getValue()).compareTo(arg1.getValue());
+							}
+				} );
+				for(int j=0; (j<topicWords.get(i).size() && j<50); j++){
+					fw.write(topicWords.get(i).get(j).getKey()  + " " + topicWords.get(i).get(j).getValue() + 
+				",");
 				}
 				fw.write("\n");
 				fw.flush();
@@ -342,11 +344,13 @@ protected void invokeLDA(){
 			fw.flush();
 			fw.close();
 			
-			fw = new FileWriter(new File(txtOutputDir.getText() + "\\phi.csv"));
+			fw = new FileWriter(new File(outputdir + "\\phi.csv"));
 			for(int i=0; i<T; i++){
 				fw.write("Topic" + i + ",");
 				for(int j=0; j<phi[i].length; j++){
-					fw.write(phi[i][j] + ",");
+					if(phi[i][j] > 0.001){
+						fw.write(phi[i][j] + ",");
+					}
 				}
 				fw.write("\n");
 				fw.flush();
@@ -354,7 +358,7 @@ protected void invokeLDA(){
 			fw.flush();
 			fw.close();
 			
-			fw = new FileWriter(new File(txtOutputDir.getText() + "\\theta.csv"));
+			fw = new FileWriter(new File(outputdir + "\\theta.csv"));
 			for(int i=0; i<docs.length; i++){
 				fw.write("Document" + i + ",");
 				for(int j=0; j<theta[i].length; j++){
@@ -367,9 +371,9 @@ protected void invokeLDA(){
 			fw.close();
 		}
 		catch(Exception e){
-			appendLog("Error writing output to files");
+			appendLog("Error writing output to files" + e);
 		}
-
+		appendLog("Done zlabel LDA...");
 		
 	}
 }

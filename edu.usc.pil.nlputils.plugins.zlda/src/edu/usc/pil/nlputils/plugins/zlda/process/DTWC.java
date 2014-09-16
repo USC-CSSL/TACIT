@@ -2,23 +2,16 @@ package edu.usc.pil.nlputils.plugins.zlda.process;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import weka.core.stemmers.LovinsStemmer;
-import weka.core.stemmers.Stemmer;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.process.PTBTokenizer;
-import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
 
 public class DTWC {
 
@@ -31,13 +24,11 @@ public class DTWC {
 	private Map<Integer, String> indexTerm;
 	private Integer vocabSize;
 	private File seedFile;
-	
+	private Map<String, Integer> termCount;
 	private List<Map<Integer, List<Integer>>> topicSeeds;
 	private int[][][] topicSeedsAsInt;
 	
 	private Map<Integer, Integer> seedWords;
-	private File stopWordFile;
-	private Map<String, Boolean> stopWords;
 	
 	
 	public Integer getVocabSize() {
@@ -84,9 +75,9 @@ public class DTWC {
 			docVectors.add(new ArrayList<Integer>());
 		}
 		termIndex = new HashMap<String, Integer>();
+		termCount = new HashMap<String, Integer>();
 		initializeSeeds();
-		stopWords = new HashMap<String, Boolean>();
-		addPunctuationMarksToStopList();
+		
 		indexTerm = new HashMap<Integer, String>();
 	}
 	
@@ -95,52 +86,7 @@ public class DTWC {
 		this.seedFile = seedFile; 
 	}
 	
-	public DTWC(List<File> docs, File seedFile, File stopWords){
-		this(docs, seedFile);
-		stopWordFile = stopWords;
-	}
-	
-	private void addPunctuationMarksToStopList(){
-		stopWords.put(",", true);
-		stopWords.put("'", true);
-		stopWords.put("\"", true);
-		stopWords.put(":", true);
-		stopWords.put(".", true);
-		stopWords.put("?", true);
-		stopWords.put("``", true);
-		stopWords.put("--", true);
-		stopWords.put("''",	true);
-		stopWords.put("'s", true);
-		stopWords.put("n't", true);
-		stopWords.put("-", true);
-		stopWords.put("`", true);
-		stopWords.put("!", true);
-		stopWords.put("'ve", true);
-		stopWords.put("'m", true);
-		stopWords.put(";", true);
-		stopWords.put("'em", true);
-		stopWords.put("ll", true);
-		stopWords.put("'ll", true);
-		stopWords.put("'re", true);
-		stopWords.put("´", true);
-		stopWords.put("\n", true);
-	}
-	
-	private void readStopWords(){
-		
-		try {
-			System.out.println("Stop Words - "+stopWordFile.getAbsolutePath());
-			BufferedReader br = new BufferedReader(new FileReader(stopWordFile));
-			String line;
-			while((line = br.readLine()) != null){
-				stopWords.put(line.toLowerCase(), true);
-			}
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+
 	
 	private void initializeSeeds(){
 		topicSeeds = new ArrayList<Map<Integer, List<Integer>>>();
@@ -150,34 +96,35 @@ public class DTWC {
 		seedWords = new HashMap<Integer, Integer>();
 	}
 	
+	@SuppressWarnings({ "rawtypes"})
 	private void calculateTermIndicesAndVectors(){
-		
-		Stemmer stemmer = new LovinsStemmer();
-		
-		if(stopWordFile != null){
-			readStopWords();
-		}
 		
 		String word;
 		List<Integer> vector;
 		for(int i=0; i<documents.size(); i++){
 			vector = docVectors.get(i);
 			try {
+			
+				
 				PTBTokenizer ptbtk = new PTBTokenizer(new FileReader(documents.get(i)), 
 						new CoreLabelTokenFactory(), "");
 				
 				while(ptbtk.hasNext()){
-					word = ptbtk.next().toString().toLowerCase();
-					if(stopWords.containsKey(word) == false){
-						word = stemmer.stem(word);
+					//word = ptbtk.next().toString().toLowerCase();
+					word = ptbtk.next().toString();
+					word.replaceAll("[^a-zA-Z0-9-_]", " ");
+					if(word.matches("^[a-zA-Z0-9]*$")){
+						//word = stemmer.stem(word);
 						if(termIndex.containsKey(word) == false){
 							termIndex.put(word, vocabSize);
 							indexTerm.put(vocabSize, word);
+							termCount.put(word, 1);
 							vector.add(vocabSize);
 							vocabSize++;
 						}
 						else{
 							vector.add(termIndex.get(word));
+							termCount.put(word, termCount.get(word) + 1);
 						}
 					}
 				}
@@ -262,7 +209,6 @@ public class DTWC {
 	/* Read the seed words from the seed file */
 	private void constructTopicList(){
 		
-		Stemmer stemmer = new LovinsStemmer();
 		String line;
 		String[] words;
 		int topicNo = 0;
@@ -270,10 +216,10 @@ public class DTWC {
 			
 			BufferedReader br = new BufferedReader(new FileReader(seedFile));
 			while((line = br.readLine()) != null){
-				words = line.split(",");
+				words = line.split(" ");
 				for(int i=0; i<words.length; i++){
-					if(termIndex.containsKey(stemmer.stem(words[i].toLowerCase()))){
-						seedWords.put(termIndex.get(stemmer.stem(words[i].toLowerCase())), topicNo);
+					if(termIndex.containsKey(words[i])){
+						seedWords.put(termIndex.get(words[i]), topicNo);
 					}
 				}
 				topicNo++;
@@ -299,13 +245,16 @@ public class DTWC {
 			docTopicSeeds = topicSeeds.get(i);
 			for(int j=0; j<doc.size(); j++){
 				word = doc.get((int)j);
-				wordTopicList = docTopicSeeds.get(j);
-				if(seedWords.containsKey(word)){
-					if(wordTopicList == null){
-						wordTopicList = new ArrayList<Integer>();
-						docTopicSeeds.put(j, wordTopicList);
+				if(termCount.get(indexTerm.get(word)) > 5)
+				{
+					wordTopicList = docTopicSeeds.get(j);
+					if(seedWords.containsKey(word)){
+						if(wordTopicList == null){
+							wordTopicList = new ArrayList<Integer>();
+							docTopicSeeds.put(j, wordTopicList);
+						}
+						wordTopicList.add(seedWords.get(word));
 					}
-					wordTopicList.add(seedWords.get(word));
 				}
 			}
 		}

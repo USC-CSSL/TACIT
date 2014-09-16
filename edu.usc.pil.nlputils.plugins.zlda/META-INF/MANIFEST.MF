@@ -12,8 +12,11 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0.v2014051
  javax.annotation,
  org.eclipse.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.e4.core.contexts,
- org.eclipse.e4.ui.workbench.modeling
+Import-Package: bin.edu.usc.pil.nlputils.plugins.preprocessorService.services,
+ edu.usc.pil.nlputils.plugins.preprocessorService.services,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.ui.workbench.modeling,
+ snowballstemmer
 Bundle-ClassPath: weka.jar,
  .,
  stanford-corenlp-3.2.0.jar

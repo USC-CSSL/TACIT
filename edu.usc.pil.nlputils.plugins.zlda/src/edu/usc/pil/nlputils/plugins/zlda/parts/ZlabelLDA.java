@@ -91,7 +91,7 @@ public class ZlabelLDA {
 		this.alpha = alpha;
 		this.beta = beta;
 		this.numsamp = numsamp;
-		random = new Random(new Date().getTime());
+		random = new Random(194582);
 		sample = new int[docs.length][];
 		numberOfDocuments = documents.length;
 		for(int i=0; i<documents.length; i++){
@@ -203,7 +203,7 @@ public class ZlabelLDA {
 					 *   
 					 **/
 					numerator[j] = (counts.nw[(int)word][j] + betaI)/denomL;
-					numerator[j] = numerator[j]*counts.nd[d][j] + alphaJ;
+					numerator[j] = numerator[j]*(counts.nd[d][j] + alphaJ);
 					
 					/* Add a multiplicative penalty if applicable */
 					if(docSeeds[i] != null){
@@ -282,7 +282,7 @@ public class ZlabelLDA {
 					 *   
 					 **/
 					numerator[j] = (counts.nw[(int)word][j] + betaI)/denomL;
-					numerator[j] = numerator[j]*counts.nd[d][j] + alphaJ;
+					numerator[j] = numerator[j]*(counts.nd[d][j] + alphaJ);
 					
 					if(docSeeds[i] != null){
 						
@@ -341,6 +341,7 @@ public class ZlabelLDA {
 				nwct = counts.nw[(int)w][t];
 				phi[t][w] = (betaW + nwct)/(currBetaSum + colSum);
 			}
+			
 			
 		}
 		
