@@ -110,12 +110,6 @@ public class PreprocessorService {
 			String inputFile = f.getAbsolutePath();
 			System.out.println("Preprocessing "+inputFile);
 			
-			if (!f.exists() || f.isDirectory()){
-				System.out.println("Error in input file path "+inputFile);
-				appendLog("Error in input file path "+inputFile);
-				continue;
-			}
-			
 			
 			// doLangDetect only if doStemming is true
 			if (doLangDetect) {
@@ -130,25 +124,36 @@ public class PreprocessorService {
 			}
 			
 			
-			String linear = null;
-			try{
-			linear = makeLinear(f);
-			} catch (IOException ie){
-				ie.printStackTrace();
+			File iFile = new File(inputFile);
+			if (!iFile.exists() || iFile.isDirectory()){
+				System.out.println("Error in input file path "+iFile.getAbsolutePath());
+				appendLog("Error in input file path "+iFile.getAbsolutePath());
+				continue;
 			}
-			if (options.isDoLowercase())
-				linear = linear.toLowerCase();
-			for (char c:options.getDelimiters().toCharArray())
-				linear = linear.replace(c, ' ');
-			if (doStopWords)
-				linear = removeStopWords(linear);
-			if (options.isDoStemming())
-				linear = stem(linear);
 			
-			System.out.println(outputPath+System.getProperty("file.separator")+f.getName());
-			File outFile = new File(outputPath+System.getProperty("file.separator")+f.getName());
-			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-			bw.write(linear);
+		
+			File oFile = new File(outputPath+System.getProperty("file.separator")+f.getName());
+			BufferedReader br = new BufferedReader(new FileReader(iFile));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(oFile));
+			
+			String linear;
+			while ((linear = br.readLine()) != null) {
+				if (linear != "") {
+					if (options.isDoLowercase())
+						linear = linear.toLowerCase();
+					for (char c : options.getDelimiters().toCharArray())
+						linear = linear.replace(c, ' ');
+					if (doStopWords)
+						linear = removeStopWords(linear);
+					if (options.isDoStemming())
+						linear = stem(linear);
+					bw.write(linear + "\n");
+				}
+			}
+			System.out.println(outputPath
+					+ System.getProperty("file.separator") + f.getName());
+			
+			br.close();
 			bw.close();
 		}
 		System.out.println("Preprocessed files stored in "+outputPath);
