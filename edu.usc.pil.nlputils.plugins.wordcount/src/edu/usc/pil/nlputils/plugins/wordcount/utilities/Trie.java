@@ -126,4 +126,50 @@ public class Trie {
 		
 	}
 	
+public boolean checkHyphen(String word){
+		boolean hyphen = false;
+		Node prev = root, next = root.children.get(word.charAt(0));
+		
+		int i=1;
+		while( next != null && i != word.length()){
+			prev = next;
+			next = next.children.get(word.charAt(i));
+			if (next!=null)
+				if (next.character == '-')
+				hyphen = true;
+			i++;
+		}
+		
+		if(i == word.length() && next != null){
+			prev = next;
+		}
+	
+		if(prev.children.get('*') != null){
+			// return prev.children.get('*').categories;
+			if (hyphen)
+				return true;
+			else 
+				return false;
+		}
+		
+		if (i == word.length() && next == null & prev.children.get("*")==null){
+			// return null;
+			return false;
+		}
+		
+		if(i == word.length()){
+			if(prev.isWord){
+				//return prev.categories;
+				if (hyphen)
+					return true;
+				else 
+					return false;
+			}
+		}		
+		
+		/* If I came out alive, it means I didn't find the word - so return a null */
+		return false;
+		
+	}
+	
 }

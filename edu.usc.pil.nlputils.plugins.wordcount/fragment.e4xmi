@@ -7,7 +7,7 @@
     <elements xsi:type="commands:Handler" xmi:id="_YMgBsPzZEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.handler.open.wordcount" contributionURI="bundleclass://edu.usc.pil.nlputils.plugins.wordcount/edu.usc.pil.nlputils.plugins.wordcount.handlers.OpenWordCount" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ZF4oIPzWEeOC76nH4x2Ykg" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.wordcount">
-    <elements xsi:type="menu:HandledMenuItem" xmi:id="_30d7sPzeEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.handledmenuitem.open.wordcount" label="WordCount" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_30d7sPzeEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.handledmenuitem.open.wordcount" label="LIWC-Style Word Count" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ROIAsPzhEeOC76nH4x2Ykg" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
     <elements xsi:type="basic:Part" xmi:id="_XVIbMPzhEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.part.0" visible="false" contributionURI="bundleclass://edu.usc.pil.nlputils.plugins.wordcount/edu.usc.pil.nlputils.plugins.wordcount.parts.WordCountSettings" label="WordCount Settings" closeable="true"/>

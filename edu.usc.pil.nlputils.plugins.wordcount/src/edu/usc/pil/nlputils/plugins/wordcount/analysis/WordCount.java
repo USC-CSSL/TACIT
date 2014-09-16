@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -43,9 +44,25 @@ public class WordCount {
 	private boolean doWordDistribution = true;
 	private boolean doSnowballStemming = true;
 	PorterStemmer stemmer = new PorterStemmer();
-	
+	private int weirdDashCount = 0;
+	private String punctuations = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
 	// counting numbers - // 5.7, .7 , 5., 567, -25.9, +45
 	Pattern pattern = Pattern.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
+	//Pattern pattern = Pattern.compile("\\s+[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.,\\s]+");
+	
+	// end of line detection
+	Pattern eol = Pattern.compile("\\w+\\s*[.?!]+\\B");
+	
+	//compound word detection
+	Pattern compoundPattern = Pattern.compile("[\\w\\d]+[-]{1}[\\w\\d]+");
+	
+	Pattern doubleHyphenPattern = Pattern.compile("[\\w\\d]+[-]{2}[\\w\\d]+");
+	
+	// Regular word
+	Pattern regularPattern = Pattern.compile("[\\w\\d]+");
+	
+	// for rounding off the decimals
+	DecimalFormat df = new DecimalFormat("#.##");
 	
 	// for calculating punctuation ratios
 	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro, parenth, otherP, allPct;
@@ -181,7 +198,6 @@ public class WordCount {
 		// For calculating Category wise distribution of each word.
 		HashMap<String,HashSet<String>> wordCategories = new HashMap<String, HashSet<String>>();
 		
-		
 		// Build a hashmap of the words in the input file
 		long startTime = System.currentTimeMillis();	
 		BufferedReader br = new BufferedReader(new FileReader(iFile));
@@ -191,12 +207,19 @@ public class WordCount {
 		int sixltr = 0;
 		int noOfLines = 0;
 		int numerals = 0;
+		weirdDashCount = 0;
 		period = comma = colon = semiC = qMark  = exclam = dash = quote = apostro = parenth = otherP = allPct = 0;
 		while ((currentLine = br.readLine()) != null) {
+			/*
 			noOfLines = noOfLines + StringUtils.countMatches(currentLine, ". ");
 			noOfLines = noOfLines + StringUtils.countMatches(currentLine, "? ");
 			noOfLines = noOfLines + StringUtils.countMatches(currentLine, "! ");
-			noOfLines = noOfLines + 1; // For the final sentence
+			//noOfLines = noOfLines + 1; // For the final sentence. Removed cos LIWC doesnt do this.
+			*/
+			Matcher eolMatcher = eol.matcher(currentLine);
+			while(eolMatcher.find())
+				noOfLines++;
+			
 			
 			period = period + StringUtils.countMatches(currentLine, ".");
 			comma = comma + StringUtils.countMatches(currentLine, ",");
@@ -206,11 +229,13 @@ public class WordCount {
 			exclam = exclam + StringUtils.countMatches(currentLine, "!");
 			dash = dash + StringUtils.countMatches(currentLine, "-");
 			quote = quote + StringUtils.countMatches(currentLine, "\"");
+			quote = quote + StringUtils.countMatches(currentLine, "“");
+			quote = quote + StringUtils.countMatches(currentLine, "”");
 			apostro = apostro + StringUtils.countMatches(currentLine, "'");
 			parenth = parenth + StringUtils.countMatches(currentLine, "(");
 			parenth = parenth + StringUtils.countMatches(currentLine, ")");
 			
-			for (char c:"!\"#$%&*+=/\\<>@_^`~|{}[]".toCharArray()){
+			for (char c:"#$%&*+=/\\<>@_^`~|{}[]".toCharArray()){
 				otherP = otherP + StringUtils.countMatches(currentLine, String.valueOf(c));
 			}
 			
@@ -235,7 +260,10 @@ public class WordCount {
 		// Search each input word in the trie prefix tree categorizer (dictionary).
 		for (String currWord : map.keySet()){
 			
-			currCategories = categorizer.query(currWord);
+			if (currWord==null || currWord.equals(""))
+				continue;
+			
+			currCategories = categorizer.query(currWord.toLowerCase());
 			
 			// If the word is in the trie, update the dictionary words count and the per-category count
 			if (currCategories!=null){
@@ -243,6 +271,7 @@ public class WordCount {
 				dicCount = dicCount+map.get(currWord); // add the count of the current word. we are not counting unique words here.
 				for (int i : currCategories) {
 					currCategoryName = categories.get(i);
+					//System.out.println(currCategoryName+"->"+currWord);
 					if (catCount.get(currCategoryName)!=null){
 						//catCount.put(currCategoryName, catCount.get(currCategoryName)+1);
 						// Add 1 to count the unique words in the category. 
@@ -264,10 +293,17 @@ public class WordCount {
 
 				}
 			}
+			else {
+				//System.out.println("No category -> "+currWord);
+			}
 		}
 		// If Word Distribution output is enabled, calculate the values
 		if (doWordDistribution)
 			calculateWordDistribution(map, catCount, wordCategories, inputFile,oFile);
+		
+		// If there are no punctuation marks, minimum number of lines = 1
+		if (noOfLines==0)
+			noOfLines = 1;
 			
 		writeToFile(oFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, (numerals*100)/(float)totalWords, catCount);
 		if (doSpss)
@@ -427,7 +463,7 @@ public class WordCount {
 	
 	public void buildOutputFile(File oFile) throws IOException{
 		StringBuilder titles = new StringBuilder();
-		titles.append("Filename,WC,WPS,Sixltr,Dic,Numerals,");
+		titles.append("Filename,Seg,WC,WPS,Sixltr,Dic,Numerals,");
 		for (String title : categories.values()){
 			titles.append(title+",");
 		}
@@ -490,7 +526,7 @@ public class WordCount {
 
 	public void writeToFile(File oFile, String docName, int totalCount, float wps, float sixltr, float dic, float numerals, HashMap<String,Integer> catCount) throws IOException{
 		StringBuilder row = new StringBuilder();
-		row.append(docName+","+totalCount+","+wps+","+sixltr+","+dic+","+numerals+",");
+		row.append(docName+",1,"+totalCount+","+df.format(wps)+","+df.format(sixltr)+","+df.format(dic)+","+df.format(numerals)+",");
 		
 		int currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row string 
@@ -499,22 +535,24 @@ public class WordCount {
 				currCatCount = 0;
 			else
 				currCatCount = catCount.get(title);
-			row.append(((currCatCount*100)/(float)totalCount)+",");
+			row.append(df.format(((currCatCount*100)/(float)totalCount))+",");
 		}
 		
 		//Period, Comma, Colon, SemiC, QMark, Exclam, Dash, Quote, Apostro, Parenth, OtherP, AllPct
-		row.append(((period*100)/(float)totalCount)+",");
-		row.append(((comma*100)/(float)totalCount)+",");
-		row.append(((colon*100)/(float)totalCount)+",");
-		row.append(((semiC*100)/(float)totalCount)+",");
-		row.append(((qMark*100)/(float)totalCount)+",");
-		row.append(((exclam*100)/(float)totalCount)+",");
-		row.append(((dash*100)/(float)totalCount)+",");
-		row.append(((quote*100)/(float)totalCount)+",");
-		row.append(((apostro*100)/(float)totalCount)+",");
-		row.append(((parenth*100)/(float)totalCount)+",");
-		row.append(((otherP*100)/(float)totalCount)+",");
-		row.append(((allPct*100)/(float)totalCount)+",");
+		row.append(df.format(((period*100)/(float)totalCount))+",");
+		row.append(df.format(((comma*100)/(float)totalCount))+",");
+		row.append(df.format(((colon*100)/(float)totalCount))+",");
+		row.append(df.format(((semiC*100)/(float)totalCount))+",");
+		row.append(df.format(((qMark*100)/(float)totalCount))+",");
+		row.append(df.format(((exclam*100)/(float)totalCount))+",");
+		//row.append(df.format(((dash*100)/(float)totalCount))+",");   correct way
+		dash = (dash * 2) - weirdDashCount;
+		row.append(df.format(((dash*100)/(float)totalCount))+",");
+		row.append(df.format(((quote*100)/(float)totalCount))+",");
+		row.append(df.format(((apostro*100)/(float)totalCount))+",");
+		row.append(df.format(((parenth*50)/(float)totalCount))+","); // multiply by 50 = dividing by two. parantheses are counted as pairs
+		row.append(df.format(((otherP*100)/(float)totalCount))+",");
+		row.append(df.format(((allPct*100)/(float)totalCount))+",");
 		
 		// Append mode because the titles are already written. Append a row corresponding to each input file
 		FileWriter fw = new FileWriter(oFile, true);
@@ -528,13 +566,13 @@ public class WordCount {
 
 	public void buildCategorizer(File dFile) throws IOException {
 		BufferedReader br= new BufferedReader(new FileReader(dFile));
-		String currentLine=br.readLine().trim();
+		String currentLine=br.readLine().trim();	
 		if (currentLine == null) {
 			logger.warning("The dictionary file is empty");
 			appendLog("The dictionary file is empty");
 		}
 		if (currentLine.equals("%"))
-			while ((currentLine=br.readLine().trim()) != null && !currentLine.equals("%"))
+			while ((currentLine=br.readLine().trim().toLowerCase()) != null && !currentLine.equals("%"))
 				categories.put(Integer.parseInt(currentLine.split("\\s+")[0].trim()), currentLine.split("\\s+")[1].trim());
 		
 		if (currentLine == null){
@@ -543,7 +581,7 @@ public class WordCount {
 		} else {
 			while ((currentLine=br.readLine())!=null) {
 				ArrayList<Integer> categories = new ArrayList<Integer>();
-				currentLine = currentLine.trim();
+				currentLine = currentLine.trim().toLowerCase();  // Dictionary is stored in lowercase in LIWC
 				
 				if (currentLine.equals(""))
 					continue;
@@ -569,19 +607,37 @@ public class WordCount {
 		int numWords = 0;
 		int sixltr = 0;
 		int numerals = 0;
-		Matcher matcher;
+		Matcher matcher = pattern.matcher(line);
+		
+		/*
+		//LIWC checks the numerals before stripping off the hyphens
+		StringTokenizer tokens = new StringTokenizer(line," ");
+		while(tokens.hasMoreTokens()){
+			String currentWord = tokens.nextToken();
+			matcher = pattern.matcher(currentWord);
+			while (matcher.find()){
+				numerals++;
+			}
+		}
+		*/
+		
 		//preprocess
 		if (doLower)
 			line = line.toLowerCase();
 		StringTokenizer st = new StringTokenizer(line,delimiters);
 		
 		while (st.hasMoreTokens()){
-			String currentWord = st.nextToken();
+			// TODO - "test.word, --> remove leading and trailing special characters from the word
+			String currentWord = trimChars(st.nextToken(),punctuations);
+			//String currentWord = st.nextToken();
 			
+			if (currentWord==null || currentWord.equals(""))
+				continue;
+			
+			// Checking numerals
 			matcher = pattern.matcher(currentWord);
 			while (matcher.find()){
 				numerals++;
-				//System.out.println(currentWord);
 			}
 			
 			//Do Porter2/Snowball Stemming if enabled
@@ -598,17 +654,144 @@ public class WordCount {
 			if (doStopWords)
 				if (stopWordSet.contains(currentWord))
 					continue;
+			
+			
+			Matcher word = regularPattern.matcher(currentWord);
+			if(word.find()){
+				numWords = numWords + 1;
+				if (currentWord.length()>6){
+					sixltr = sixltr + 1;
+					//System.out.println(currentWord+" "+sixltr);
+				}
+			}
+			
+			/*
+			numWords = numWords + 1;
 			if (currentWord.length()>6){
 				sixltr = sixltr + 1;
+				//System.out.println(currentWord+" "+sixltr);
 			}
-			numWords = numWords + 1;
-			// can use map.containsKey function. But avoiding two calls with the one below.
-			Object value = map.get(currentWord);
-			if (value!=null) {
-				int i = (int) value;
-				map.put(currentWord, i+1);
-			} else {
-				map.put(currentWord, 1);
+			*/
+			
+			boolean treatAsOne = true;
+			
+			Matcher dh = doubleHyphenPattern.matcher(currentWord);
+			// if double quotes, convert to single quotes and treat as a single word in the lookup
+			if (dh.find()){
+				currentWord = currentWord.replace("--", "-").toLowerCase();
+				if (categorizer.query(currentWord)!=null && !categorizer.checkHyphen(currentWord)){
+					// treat as one word. 
+					// numWords = numWords; already 1 added above
+					//System.out.println("Treating as one - "+currentWord);
+					Object value = map.get(currentWord);
+					if (value!=null) {
+						int i = (int) value;
+						map.put(currentWord, i+1);
+					} else {
+						map.put(currentWord, 1);
+					}
+					String[] words = currentWord.split("-");
+					int hyphened = 0;
+//					boolean allFound = true;
+					for (String s:words){
+//						if (s==null || s.equals(""))
+//							continue;
+//						if (categorizer.query(s) == null){
+//							allFound = false;
+//						}
+						hyphened++;
+					}
+					
+						weirdDashCount= weirdDashCount + hyphened; //twice if two dashes
+				}
+				else {
+					String[] words = currentWord.split("-");
+					int hyphened = -1;
+//					boolean allFound = true;
+					for (String s:words){
+//						if (s==null || s.equals(""))
+//							continue;
+//						if (categorizer.query(s) == null){
+//							allFound = false;
+//						}
+						hyphened++;
+					}
+					
+					if(categorizer.query(currentWord)!=null){
+						Object value = map.get(currentWord);
+						if (value!=null) {
+							int i = (int) value;
+							map.put(words[0], i+1);
+						} else {
+							map.put(words[0], 1);
+						}
+						numWords = numWords + hyphened;
+						treatAsOne = true;
+					}
+					else {
+					numWords = numWords + hyphened;
+					if (categorizer.query(words[0])!=null){
+						Object value = map.get(words[0]);
+						if (value!=null) {
+							int i = (int) value;
+							map.put(words[0], i+1);
+						} else {
+							map.put(words[0], 1);
+						}
+					}
+					treatAsOne = false;
+					}
+					if(treatAsOne)
+						weirdDashCount++;
+					else
+						weirdDashCount= weirdDashCount + hyphened; //twice if two dashes
+				}
+			}
+			else {
+				Matcher cm = compoundPattern.matcher(currentWord);
+				if (cm.find()){
+					String[] words = currentWord.split("-");
+					int hyphened = -1;
+					for (String s:words){
+						if (s==null || s.equals(""))
+							continue;
+						hyphened++;
+					}
+					//int hyphens = StringUtils.countMatches(currentWord, "-"); -- breaks on double hyphens
+					
+					// If the word is not in the dictionary, consider as separate words. 
+					if (categorizer.query(currentWord.toLowerCase()) == null){
+						numWords = numWords + hyphened; // no need to add +1 as the count was increased by 1 above.
+						treatAsOne = false;
+					}
+					else    // Add hyphencount to the weird dash count to subtract from the final value.
+						weirdDashCount = weirdDashCount + 1;
+				}
+			
+				if (treatAsOne){
+					// can use map.containsKey function. But avoiding two calls with the one below.
+					Object value = map.get(currentWord);
+					if (value!=null) {
+						int i = (int) value;
+						map.put(currentWord, i+1);
+					} else {
+						map.put(currentWord, 1);
+					}
+				} else {
+					// if the compound word doesnt exist in the dictionary, treat as separate words.
+					String[] parts = currentWord.split("-");
+					for (String part : parts){
+						if (part==null || part.equals(""))
+							continue;
+						Object value = map.get(part);
+						if (value!=null) {
+							int i = (int) value;
+							map.put(part, i+1);
+						} else {
+							map.put(part, 1);
+						}
+					}
+				}
 			}
 		}
 		ret[0] = numWords;
@@ -628,4 +811,23 @@ public class WordCount {
 		parent.set("consoleMessage", message);
 	}
 
+	public static String trimChars(String source, String trimChars) {
+	    char[] chars = source.toCharArray();
+	    int length = chars.length;
+	    int start = 0;
+
+	    while (start < length && trimChars.indexOf(chars[start]) > -1) {
+	        start++;
+	    }
+
+	    while (start < length && trimChars.indexOf(chars[length - 1]) > -1) {
+	        length--;
+	    }
+
+	    if (start > 0 || length < chars.length) {
+	        return source.substring(start, length);
+	    } else {
+	        return source;
+	    }
+	}
 }

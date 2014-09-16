@@ -140,16 +140,7 @@ public class WordCountSettings {
 						return;
 					txtInputFile.setText(fp1Directory);
 					File dir = new File(fp1Directory);
-					String[] dirFiles = dir.list();
-					ArrayList<String> paths = new ArrayList<String>();					
-					for (String s : dirFiles){
-						String path = fp1Directory+System.getProperty("file.separator")+s;
-						File temp = new File(path);
-						if (temp.exists() && !temp.isDirectory()){
-							paths.add(path);
-							//System.out.println(path);
-						}
-					}
+					ArrayList<String> paths = getFiles(fp1Directory);
 					int i = 0;
 					inputFiles = new String[paths.size()];
 					for (String path:paths)
@@ -257,33 +248,19 @@ public class WordCountSettings {
 		grpPreprocessing.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		grpPreprocessing.setText("Pre-processing");
 		GridData gd_grpPreprocessing = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
-		gd_grpPreprocessing.heightHint = 106;
-		gd_grpPreprocessing.widthHint = 505;
+		gd_grpPreprocessing.heightHint = 76;
+		gd_grpPreprocessing.widthHint = 357;
 		grpPreprocessing.setLayoutData(gd_grpPreprocessing);
-		
-		Label lblConvertToLowercase = new Label(grpPreprocessing, SWT.NONE);
-		lblConvertToLowercase.setBounds(10, 61, 114, 15);
-		lblConvertToLowercase.setText("Convert to Lowercase");
-		
-		final Button btnYes = new Button(grpPreprocessing, SWT.RADIO);
-		btnYes.setBounds(152, 60, 39, 16);
-		btnYes.setSelection(true);
-		btnYes.setText("Yes");
-		
-		final Button btnNo = new Button(grpPreprocessing, SWT.RADIO);
-		btnNo.setBounds(203, 60, 37, 16);
-		btnNo.setText("No");
 		
 		Label lblDelimiters = new Label(grpPreprocessing, SWT.NONE);
 		lblDelimiters.setBounds(10, 33, 53, 15);
 		lblDelimiters.setText("Delimiters");
 		
 		txtDelimiters = new Text(grpPreprocessing, SWT.BORDER);
-		txtDelimiters.setBounds(152, 30, 288, 21);
-		txtDelimiters.setText(" .,;'\\\"!-()[]{}:?");
+		txtDelimiters.setBounds(160, 30, 172, 21);
 		
 		Composite composite = new Composite(grpPreprocessing, SWT.NONE);
-		composite.setBounds(4, 83, 419, 31);
+		composite.setBounds(10, 57, 336, 31);
 		
 		final Button btnStemming = new Button(composite, SWT.RADIO);
 		btnStemming.setSelection(true);
@@ -345,7 +322,7 @@ public class WordCountSettings {
 				
 				
 				try {
-					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),btnYes.getSelection(),btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection());
+					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection());
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
@@ -392,10 +369,29 @@ public class WordCountSettings {
 		//TODO Your code here
 	}
 	
-	
+
 	@Focus
 	public void onFocus() {
 		//TODO Your code here
+	}
+	
+	protected ArrayList<String> getFiles(String fp1Directory) {
+		File dir = new File(fp1Directory);
+		String[] dirFiles = dir.list();
+		ArrayList<String> paths = new ArrayList<String>();
+		for (String s : dirFiles){
+			String path = fp1Directory+System.getProperty("file.separator")+s;
+			File temp = new File(path);
+			if (temp.exists() && !temp.isDirectory()){
+				paths.add(path);
+				//System.out.println(path);
+			} else if (temp.exists() && temp.isDirectory()) {
+				String directory = temp.getAbsolutePath();
+				String[] files = temp.list();
+				paths.addAll(getFiles(directory));
+			}
+		}
+		return paths;
 	}
 	
 	@Inject IEclipseContext context;
@@ -416,4 +412,5 @@ public class WordCountSettings {
 				parent.set("consoleMessage", message);
 		}
 	}
+	
 }
