@@ -14,6 +14,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -280,7 +282,9 @@ public class SvmClassifier {
 		}
 		System.out.println("Training the classifier...");
 		appendLog("Training the classifier...");
-		double crossValResult = svm_train.main(train_arguments);
+		double[] result  = svm_train.main(train_arguments);
+		double crossValResult = result[0];
+		double pvalue = result[1];
 		System.out.println("Model file created - "+modelFile.getAbsolutePath());
 		appendLog("Model file created - "+modelFile.getAbsolutePath());
 		
@@ -318,6 +322,11 @@ public class SvmClassifier {
 		if (doCrossVal){
 			System.out.println("Cross Validation Accuracy = "+crossValResult+"%");
 			appendLog("Cross Validation Accuracy = "+crossValResult+"%");
+			System.out.println("Cross Validation P value = "+ pvalue+"%");
+			NumberFormat nf = NumberFormat.getInstance();
+			nf.setMaximumFractionDigits(Integer.MAX_VALUE);
+			System.out.println("Pvalue = " +nf.format(pvalue));
+			appendLog("Cross Validation P value = "+ nf.format(pvalue));
 		}
 		return ret;
 	}
@@ -431,12 +440,19 @@ public class SvmClassifier {
 		predict_arguments[0] = testFile.getAbsolutePath();
 		predict_arguments[1] = modelFile.getAbsolutePath();
 		predict_arguments[2] = intermediatePath+".out";
-		int[] result = svm_predict.main(predict_arguments);
-		int correct = result[0], total = result[1];
+		double[] result = svm_predict.main(predict_arguments);
+		int correct = (int) result[0], total = (int) result[1];
+		double pvalue = result[2];
 		System.out.println("Created SVM output file - "+intermediatePath+".out");
 		appendLog("Created SVM output file - "+intermediatePath+".out");
 		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		System.out.println("P value  = " + pvalue);
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
+		System.out.println(nf.format(pvalue));
+		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		appendLog("P value = " + nf.format(pvalue) + " (classification)\n" );
 		//System.out.println(featureMap.toString());
 		return ret;
 	}
@@ -493,8 +509,8 @@ public class SvmClassifier {
 		predict_arguments[0] = testFile.getAbsolutePath();
 		predict_arguments[1] = modelFile.getAbsolutePath();
 		predict_arguments[2] = intermediatePath+".out";
-		int[] result = svm_predict.main(predict_arguments);
-		int correct = result[0], total = result[1];
+		double[] result = svm_predict.main(predict_arguments);
+		int correct = (int) result[0], total = (int) result[1];
 		System.out.println("Created SVM output file - "+intermediatePath+".out");
 		appendLog("Created SVM output file - "+intermediatePath+".out");		
 		//System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
@@ -556,8 +572,8 @@ public class SvmClassifier {
 		predict_arguments[0] = testFilePath;
 		predict_arguments[1] = modelFilePath;
 		predict_arguments[2] = outputFilePath;
-		int[] result = svm_predict.main(predict_arguments);
-		int correct = result[0], total = result[1];
+		double[] result = svm_predict.main(predict_arguments);
+		int correct = (int) result[0], total = (int) result[1];
 		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 	}
 	

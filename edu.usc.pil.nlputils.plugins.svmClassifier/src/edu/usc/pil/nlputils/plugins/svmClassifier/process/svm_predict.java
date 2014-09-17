@@ -1,8 +1,12 @@
 package edu.usc.pil.nlputils.plugins.svmClassifier.process;
 
 import libsvm.*;
+
 import java.io.*;
 import java.util.*;
+
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
+import org.apache.commons.math3.stat.inference.BinomialTest;
 
 class svm_predict {
 	private static svm_print_interface svm_print_null = new svm_print_interface()
@@ -35,11 +39,11 @@ class svm_predict {
 		return Integer.parseInt(s);
 	}
 
-	private static int[] predict(BufferedReader input, DataOutputStream output, svm_model model, int predict_probability) throws IOException
+	private static double[] predict(BufferedReader input, DataOutputStream output, svm_model model, int predict_probability) throws IOException
 	{
 		int correct = 0;
 		int total = 0;
-		double error = 0;
+		double error = 0, pvalue = 0;
 		double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
 
 		int svm_type=svm.svm_get_svm_type(model);
@@ -115,10 +119,14 @@ class svm_predict {
 				 ((total*sumvv-sumv*sumv)*(total*sumyy-sumy*sumy))+
 				 " (regression)\n");
 		}
-		else
+		else{
 			svm_predict.info("Accuracy = "+(double)correct/total*100+
-				 "% ("+correct+"/"+total+") (classification)\n");
-		return new int[]{correct,total};
+					"% ("+correct+"/"+total+") (classification)\n");
+			System.out.println(total + " " + correct + " " + (double)1/nr_class + " ");
+			BinomialTest btest = new BinomialTest();
+			pvalue = btest.binomialTest(total, correct, (double)1/nr_class, AlternativeHypothesis.TWO_SIDED);
+		}
+		return new double[]{correct,total, pvalue};
 	}
 
 	private static void exit_with_help()
@@ -130,11 +138,11 @@ class svm_predict {
 		System.exit(1);
 	}
 
-	public static int[] main(String argv[]) throws IOException
+	public static double[] main(String argv[]) throws IOException
 	{
 		int i, predict_probability=0;
         	svm_print_string = svm_print_stdout;
-        int[] result = new int[2];
+        double[] result = new double[3];
 		// parse options
 		for(i=0;i<argv.length;i++)
 		{
