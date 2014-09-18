@@ -18,6 +18,9 @@ import java.util.*;
 import java.util.logging.*;
 import java.lang.reflect.*;
 
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
+import org.apache.commons.math3.stat.inference.BinomialTest;
+
 import cc.mallet.classify.*;
 import cc.mallet.classify.evaluate.*;
 import cc.mallet.types.*;
@@ -216,6 +219,7 @@ public abstract class Vectors2Classify
 	{
 		result.clear();
 		
+		double pvalue = 0;
 		// Process the command-line options
 		CommandOption.setSummary (Vectors2Classify.class,
 								  "A tool for training, saving and printing diagnostics from a classifier on vectors.");
@@ -474,8 +478,9 @@ public abstract class Vectors2Classify
 					System.out.println(" Raw Validation Data");
 					printTrialClassification(validationTrial);
 				}
-
-
+				System.out.println("Bino test vars size " + ilists[1].size() + "and accuracy + " + testTrial.getAccuracy() + " then success " + (int) testTrial.getAccuracy()*ilists[1].size());
+				BinomialTest binomtest = new BinomialTest();
+				
 				//train
 				if (ReportOptions[ReportOption.train][ReportOption.confusion]){
 					System.out.println("Trial " + trialIndex + " Trainer " + trainer.toString() +  " Training Data Confusion Matrix");
@@ -483,6 +488,8 @@ public abstract class Vectors2Classify
 				}
 
 				if (ReportOptions[ReportOption.train][ReportOption.accuracy]){
+					pvalue = binomtest.binomialTest(ilists[0].size(), (int) (trainTrial.getAccuracy()*ilists[0].size()) , 0.5, AlternativeHypothesis.TWO_SIDED);
+					System.out.println("P value = " + pvalue);
 					System.out.println ("Trial " + trialIndex + " Trainer " + trainer.toString() + " training data accuracy= "+ trainAccuracy[c][trialIndex]);
 				}
 
@@ -513,6 +520,8 @@ public abstract class Vectors2Classify
 				}
 
 				if (ReportOptions[ReportOption.test][ReportOption.accuracy]){
+					 pvalue = binomtest.binomialTest(ilists[1].size(), (int) (testTrial.getAccuracy()*ilists[1].size()) , 0.5, AlternativeHypothesis.TWO_SIDED);
+					System.out.println("P value = " + pvalue);
 					System.out.println ("Trial " + trialIndex + " Trainer " + trainer.toString() + " test data accuracy= "+ testAccuracy[c][trialIndex]);
 				}
 
@@ -543,13 +552,16 @@ public abstract class Vectors2Classify
 			if (ReportOptions[ReportOption.test][ReportOption.accuracy])
 				System.out.println ("Summary. test accuracy mean = "+ MatrixOps.mean (testAccuracy[c])+
 									" stddev = "+ MatrixOps.stddev (testAccuracy[c])+
-									" stderr = "+ MatrixOps.stderr (testAccuracy[c]));
+									" stderr = "+ MatrixOps.stderr (testAccuracy[c])
+									+ " pvalue = " + pvalue);
+				
 			
 			// If we are testing the classifier with two folders, result will be empty - no report is generated
 			if (result.isEmpty())
 				result.add("Summary. test accuracy mean = "+ MatrixOps.mean (testAccuracy[c])+
 										" stddev = "+ MatrixOps.stddev (testAccuracy[c])+
-										" stderr = "+ MatrixOps.stderr (testAccuracy[c]));
+										" stderr = "+ MatrixOps.stderr (testAccuracy[c])	
+										+ " pvalue = " + pvalue);
 		}   // end for each trainer
 		
 		return result;

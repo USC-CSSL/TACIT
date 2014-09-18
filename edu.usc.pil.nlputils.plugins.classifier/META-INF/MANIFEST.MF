@@ -17,4 +17,5 @@ Import-Package: org.eclipse.e4.core.contexts,
 Bundle-ClassPath: weka.jar,
  .,
  mallet-deps.jar,
- mallet.jar
+ mallet.jar,
+ commons-math3-3.3.jar
