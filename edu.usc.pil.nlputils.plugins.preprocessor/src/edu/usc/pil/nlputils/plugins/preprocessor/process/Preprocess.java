@@ -137,8 +137,14 @@ public class Preprocess {
 				//System.out.println(currentLine);
 				for (char c:delimiters.toCharArray())
 					currentLine = currentLine.replace(c, ' ');
-				if (doLowercase)
+				if (doLowercase){
+					String turk = "İnsan oğulları";
+					System.out.println(turk);
+					currentLine = turk;
+					System.out.println(currentLine);
 					currentLine = currentLine.toLowerCase();
+					System.out.println(currentLine);
+				}
 				if (doStopWords)
 					currentLine = removeStopWords(currentLine);
 				if (doStemming)
@@ -236,7 +242,9 @@ public class Preprocess {
 	// This function updates the consoleMessage parameter of the context.
 		@Inject IEclipseContext context;
 		private void appendLog(String message){
+			if (context!=null){
 			IEclipseContext parent = context.getParent();
 			parent.set("consoleMessage", message);
+			}
 		}
 }

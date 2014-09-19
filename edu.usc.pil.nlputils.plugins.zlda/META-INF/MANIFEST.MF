@@ -10,13 +10,11 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0.v2014051
  org.eclipse.core.runtime;bundle-version="3.10.0",
  javax.inject,
  javax.annotation,
- org.eclipse.swt
+ org.eclipse.swt,
+ edu.usc.pil.nlputils.plugins.preprocessorService
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: bin.edu.usc.pil.nlputils.plugins.preprocessorService.services,
- edu.usc.pil.nlputils.plugins.preprocessorService.services,
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.ui.workbench.modeling,
- snowballstemmer
+Import-Package: org.eclipse.e4.core.contexts,
+ org.eclipse.e4.ui.workbench.modeling
 Bundle-ClassPath: weka.jar,
  .,
  stanford-corenlp-3.2.0.jar
