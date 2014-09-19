@@ -183,7 +183,7 @@ public class PreprocessorSettings {
 		btnPreprocess.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				Preprocess pp = new Preprocess(inputFiles, stopwordsFile, outputDirectory, txtSuffix.getText(), txtDelimiters.getText(), btnDoLowercase.getSelection(), btnStemming.getSelection(),cmbStemLang.getText());
+				Preprocess pp = new Preprocess(inputFiles, txtStopWords.getText(), txtOutput.getText(), txtSuffix.getText(), txtDelimiters.getText(), btnDoLowercase.getSelection(), btnStemming.getSelection(),cmbStemLang.getText());
 				
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;

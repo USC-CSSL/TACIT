@@ -6,10 +6,15 @@ package edu.usc.pil.nlputils.plugins.preprocessor.process;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -129,8 +134,8 @@ public class Preprocess {
 				}
 			}
 			
-			BufferedReader br = new BufferedReader(new FileReader(iFile));
-			BufferedWriter bw = new BufferedWriter(new FileWriter(oFile));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(iFile), "UTF8"));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(oFile),"UTF-8"));
 			
 			String currentLine;
 			while((currentLine = br.readLine())!=null){
@@ -138,12 +143,10 @@ public class Preprocess {
 				for (char c:delimiters.toCharArray())
 					currentLine = currentLine.replace(c, ' ');
 				if (doLowercase){
-					String turk = "İnsan oğulları";
-					System.out.println(turk);
-					currentLine = turk;
-					System.out.println(currentLine);
+					//Locale trLocale = Locale.forLanguageTag("tr_TR");
+					//System.out.println(currentLine);
 					currentLine = currentLine.toLowerCase();
-					System.out.println(currentLine);
+					//System.out.println(currentLine);
 				}
 				if (doStopWords)
 					currentLine = removeStopWords(currentLine);
