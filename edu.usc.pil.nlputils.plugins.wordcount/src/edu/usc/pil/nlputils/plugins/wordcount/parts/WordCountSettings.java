@@ -76,8 +76,6 @@ public class WordCountSettings {
 		btnFiles.setSelection(true);
 		btnFiles.setText("Files");
 		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
 		
 		Button btnFolder = new Button(parent, SWT.RADIO);
 		btnFolder.addSelectionListener(new SelectionAdapter() {
@@ -89,6 +87,8 @@ public class WordCountSettings {
 		btnFolder.setText("Folder");
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		
 		lblInput = new Label(parent, SWT.NONE);
 		GridData gd_lblInput = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -98,8 +98,8 @@ public class WordCountSettings {
 		new Label(parent, SWT.NONE);
 		
 		txtInputFile = new Text(parent, SWT.BORDER);
-		GridData gd_txtInputFile = new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1);
-		gd_txtInputFile.widthHint = 183;
+		GridData gd_txtInputFile = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		gd_txtInputFile.widthHint = 405;
 		txtInputFile.setLayoutData(gd_txtInputFile);
 		
 		Button btnInputFile = new Button(parent, SWT.NONE);
@@ -150,13 +150,17 @@ public class WordCountSettings {
 		});
 		btnInputFile.setText("...");
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		
 		Label lblDictionary = new Label(parent, SWT.NONE);
 		lblDictionary.setText("Dictionary");
 		new Label(parent, SWT.NONE);
 		
 		txtDictionary = new Text(parent, SWT.BORDER);
-		txtDictionary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1));
+		GridData gd_txtDictionary = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		gd_txtDictionary.widthHint = 405;
+		txtDictionary.setLayoutData(gd_txtDictionary);
 		
 		Button btnDictionary = new Button(parent, SWT.NONE);
 		btnDictionary.addMouseListener(new MouseAdapter() {
@@ -169,13 +173,17 @@ public class WordCountSettings {
 		});
 		btnDictionary.setText("...");
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		
 		Label lblStopWords = new Label(parent, SWT.NONE);
 		lblStopWords.setText("Stop Words");
 		new Label(parent, SWT.NONE);
 		
 		txtStopWords = new Text(parent, SWT.BORDER);
-		txtStopWords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1));
+		GridData gd_txtStopWords = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		gd_txtStopWords.widthHint = 405;
+		txtStopWords.setLayoutData(gd_txtStopWords);
 		
 		Button btnStopWords = new Button(parent, SWT.NONE);
 		btnStopWords.addMouseListener(new MouseAdapter() {
@@ -190,14 +198,16 @@ public class WordCountSettings {
 		});
 		btnStopWords.setText("...");
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		
 		Label lblOutputFile = new Label(parent, SWT.NONE);
 		lblOutputFile.setText("Output File");
 		new Label(parent, SWT.NONE);
 		
 		txtOutputFile = new Text(parent, SWT.BORDER);
-		GridData gd_txtOutputFile = new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1);
-		gd_txtOutputFile.widthHint = 273;
+		GridData gd_txtOutputFile = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		gd_txtOutputFile.widthHint = 405;
 		txtOutputFile.setLayoutData(gd_txtOutputFile);
 		
 		Button btnOutputFile = new Button(parent, SWT.NONE);
@@ -223,16 +233,25 @@ public class WordCountSettings {
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		
+		final Button btnStemDictionary = new Button(parent, SWT.CHECK);
+		btnStemDictionary.setText("Stem the dictionary");
+		new Label(parent, SWT.NONE);
 		
 		final Button btnSpss = new Button(parent, SWT.CHECK);
 		btnSpss.setText("Create SPSS raw file");
 		new Label(parent, SWT.NONE);
 		
 		final Button btnWordDistribution = new Button(parent, SWT.CHECK);
-		GridData gd_btnWordDistribution = new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1);
-		gd_btnWordDistribution.widthHint = 313;
+		GridData gd_btnWordDistribution = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnWordDistribution.widthHint = 266;
 		btnWordDistribution.setLayoutData(gd_btnWordDistribution);
 		btnWordDistribution.setText("Create Category-wise Word Distribution Files");
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -247,7 +266,7 @@ public class WordCountSettings {
 		Group grpPreprocessing = new Group(parent, SWT.NONE);
 		grpPreprocessing.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		grpPreprocessing.setText("Pre-processing");
-		GridData gd_grpPreprocessing = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
+		GridData gd_grpPreprocessing = new GridData(SWT.LEFT, SWT.CENTER, false, false, 8, 1);
 		gd_grpPreprocessing.heightHint = 76;
 		gd_grpPreprocessing.widthHint = 357;
 		grpPreprocessing.setLayoutData(gd_grpPreprocessing);
@@ -270,7 +289,6 @@ public class WordCountSettings {
 		final Button btnSnowball = new Button(composite, SWT.RADIO);
 		btnSnowball.setBounds(148, 9, 188, 16);
 		btnSnowball.setText("Snowball (Porter 2) Stemming");
-		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -322,7 +340,7 @@ public class WordCountSettings {
 				
 				
 				try {
-					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection());
+					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection(),btnStemDictionary.getSelection());
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
