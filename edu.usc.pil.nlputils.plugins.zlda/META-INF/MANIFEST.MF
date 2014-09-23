@@ -15,8 +15,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: bin.edu.usc.pil.nlputils.plugins.preprocessorService.services,
  edu.usc.pil.nlputils.plugins.preprocessorService.services,
  org.eclipse.e4.core.contexts,
- org.eclipse.e4.ui.workbench.modeling,
- snowballstemmer
+ org.eclipse.e4.ui.workbench.modeling
 Bundle-ClassPath: weka.jar,
  .,
  stanford-corenlp-3.2.0.jar
+Export-Package: weka.core
