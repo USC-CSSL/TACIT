@@ -9,12 +9,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0",
  javax.inject.source;bundle-version="1.0.0",
  org.eclipse.swt.win32.win32.x86_64.source;bundle-version="3.103.0",
- edu.usc.pil.nlputils.plugins.preprocessorService;bundle-version="1.0.0"
+ edu.usc.pil.nlputils.plugins.preprocessorService;bundle-version="1.0.0",
+ org.eclipse.e4.core.commands.source;bundle-version="0.10.2",
+ org.eclipse.e4.core.di.source;bundle-version="1.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: edu.usc.pil.nlputils.plugins.preprocessorService.services,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.model.application.ui,
  org.eclipse.e4.ui.model.application.ui.basic,
- org.eclipse.e4.ui.workbench.modeling
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.ui.workbench.modeling,
+ weka.core
 Bundle-ClassPath: weka.jar,
  .

@@ -16,8 +16,8 @@ public class OpenHierarchicalClusteringHandler {
 	
 	@Execute
 	public void execute() {
-		System.out.println("Opening KMeans Clustering");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.kmeansclustering.parts.KMeansClusteringSettings");
+		System.out.println("Opening Hierarchical Clustering");
+		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.hierarchicalclustering.parts.HierarchicalClusteringSettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

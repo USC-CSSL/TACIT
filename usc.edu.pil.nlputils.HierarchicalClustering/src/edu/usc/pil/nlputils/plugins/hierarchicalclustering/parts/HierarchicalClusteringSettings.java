@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import edu.usc.pil.nlputils.plugins.preprocessorService.services.PreprocessorService;
-import edu.usc.pil.nlputils.plugins.hierarchicalclustering.process.KMeansClustering;
+import edu.usc.pil.nlputils.plugins.hierarchicalclustering.process.HierarchicalClustering;
 
 public class HierarchicalClusteringSettings {
 	private Text txtInputDir;
@@ -194,12 +194,9 @@ protected void runClustering( ){
 		
 		System.out.println("Running KMeans Clustering...");
 		appendLog("Running KMeans Clustering...");
-		int []clusters = KMeansClustering.doClustering(inputFiles, numClusters);
+		HierarchicalClustering.doClustering(inputFiles, numClusters);
 		int i=0;
-		for (int clusterNum : clusters) {
-			System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
-			i++;
-		}
+		
 		appendLog("Done KMeans Clustering...");
 		
 	}

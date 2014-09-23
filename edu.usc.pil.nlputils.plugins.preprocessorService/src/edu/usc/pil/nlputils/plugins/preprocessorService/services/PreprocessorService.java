@@ -6,9 +6,13 @@ package edu.usc.pil.nlputils.plugins.preprocessorService.services;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
 
 import javax.inject.Inject;
@@ -133,8 +137,8 @@ public class PreprocessorService {
 			
 		
 			File oFile = new File(outputPath+System.getProperty("file.separator")+f.getName());
-			BufferedReader br = new BufferedReader(new FileReader(iFile));
-			BufferedWriter bw = new BufferedWriter(new FileWriter(oFile));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(iFile), "UTF8"));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(oFile),"UTF-8"));
 			
 			String linear;
 			while ((linear = br.readLine()) != null) {

@@ -43,6 +43,7 @@ public class WordCount {
 	private boolean doSpss = true;
 	private boolean doWordDistribution = true;
 	private boolean doSnowballStemming = true;
+	private boolean stemDictionary = false;
 	PorterStemmer stemmer = new PorterStemmer();
 	private int weirdDashCount = 0;
 	private String punctuations = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
@@ -70,7 +71,7 @@ public class WordCount {
 	private static Logger logger = Logger.getLogger(WordCount.class.getName());
 	
 	// Updated function that can handle multiple input files
-	public int wordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doLower, boolean doLiwcStemming, boolean doSnowBallStemming, boolean doSpss, boolean doWordDistribution) throws IOException{
+	public int wordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doLower, boolean doLiwcStemming, boolean doSnowBallStemming, boolean doSpss, boolean doWordDistribution, boolean stemDictionary) throws IOException{
 		int returnCode = -1;
 		if (delimiters==null || delimiters.equals(""))
 			this.delimiters=" ";
@@ -81,6 +82,7 @@ public class WordCount {
 		this.doSpss = doSpss;
 		this.doWordDistribution = doWordDistribution;
 		this.doSnowballStemming = doSnowBallStemming;
+		this.stemDictionary = stemDictionary;
 		
 		appendLog("Processing...");
 		
@@ -589,12 +591,27 @@ public class WordCount {
 				for (int i=1; i<words.length; i++){
 					categories.add(Integer.parseInt(words[i]));
 				}
+				
+				String currentWord = words[0];
+				
+				if (stemDictionary){
+					currentWord = currentWord.replace("*", "");
+					stemmer.setCurrent(currentWord);
+					String stemmedWord = "";
+					if(stemmer.stem())
+						 stemmedWord = stemmer.getCurrent();
+					if (!stemmedWord.equals(""))
+						currentWord = stemmedWord;
+				}
+				
+				System.out.println(currentWord);
 				//System.out.println(words[0]+" "+categories);
+				
 				// do Stemming or not. if Stemming is disabled, remove * from the dictionary words
 				if (doLiwcStemming)
-					categorizer.insert(words[0], categories);
+					categorizer.insert(currentWord, categories);
 				else
-					categorizer.insert(words[0].replace("*", ""), categories);
+					categorizer.insert(currentWord.replace("*", ""), categories);
 				//categorizer.printTrie();
 			}
 		}
