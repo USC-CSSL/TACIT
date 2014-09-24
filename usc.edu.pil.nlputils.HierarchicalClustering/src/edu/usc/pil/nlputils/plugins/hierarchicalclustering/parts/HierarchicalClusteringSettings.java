@@ -128,7 +128,7 @@ public class HierarchicalClusteringSettings {
 				}
 				long startTime = System.currentTimeMillis();
 				runClustering();
-				appendLog("KMeans Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 			}
 		});
 		btnCalculate.setText("Cluster");
@@ -187,17 +187,24 @@ protected void runClustering( ){
 		for (File f : listOfFiles)
 			inputFiles.add(f);
 		if(inputFiles.size() == 0){
-			appendLog("Please select at least one file on which to run KMeans Clustering");
+			appendLog("Please select at least one file on which to run Hierarchical Clustering");
 			return;
 		}
 		
 		
-		System.out.println("Running KMeans Clustering...");
-		appendLog("Running KMeans Clustering...");
-		HierarchicalClustering.doClustering(inputFiles, numClusters);
-		int i=0;
+		System.out.println("Running Hierarchical Clustering...");
+		appendLog("Running Hierarchical Clustering...");
+		int[] clusters = HierarchicalClustering.doClustering(inputFiles, numClusters);
+		if(clusters == null)
+		{
+			appendLog("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
+			return;
+		}
+
+		appendLog("Output for KMeans Clustering");
+		appendLog("Clusters formed: \n");
 		
-		appendLog("Done KMeans Clustering...");
+		appendLog("Done Hierarchical Clustering...");
 		
 	}
 }
