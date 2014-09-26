@@ -220,7 +220,7 @@ public class SenateCrawlerSettings {
 				txtOutput.setText(oDirectory);
 			}
 		});
-		button.setBounds(362, 221, 27, 25);
+		button.setBounds(358, 224, 40, 25);
 		button.setText("...");
 		
 		final Button btnLimitRecords = new Button(composite, SWT.CHECK);

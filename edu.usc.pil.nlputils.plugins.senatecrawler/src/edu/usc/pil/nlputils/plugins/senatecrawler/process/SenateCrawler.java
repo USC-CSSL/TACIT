@@ -8,8 +8,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import javax.inject.Inject;
@@ -95,7 +98,11 @@ public class SenateCrawler {
 		this.dateTo = dateTo;
 		checkPath(outputDir);
 		
-		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		String dateString = dateFormat.format(date);
+		
+		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records_"+dateString+".csv")));
 		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
 		csvWriter.newLine();
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
@@ -123,7 +130,7 @@ public class SenateCrawler {
 			}
 		}
 		csvWriter.close();
-		appendLog("Records written successfully to "+outputDir + System.getProperty("file.separator") + "records.csv");
+		appendLog("Records written successfully to "+outputDir + System.getProperty("file.separator") + "records_"+dateString+".csv");
 		
 	}
 	
