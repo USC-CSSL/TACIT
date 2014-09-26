@@ -215,10 +215,20 @@ public class SvmClassifier {
 		noOfDocuments = 0;
 		if (doTfidf){
 		for (File file:folder1.listFiles()){
+
+			// Mac cache file filtering
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
+			
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
 		for (File file:folder2.listFiles()){
+
+			// Mac cache file filtering
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
+			
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
@@ -230,11 +240,21 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
 		
 		for (File file:folder1.listFiles()){
+
+			// Mac cache file filtering
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
+
 			System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:folder2.listFiles()){
+
+			// Mac cache file filtering
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
+
 			System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();

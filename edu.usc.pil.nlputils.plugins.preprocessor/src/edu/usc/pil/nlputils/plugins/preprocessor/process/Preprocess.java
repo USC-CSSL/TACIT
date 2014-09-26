@@ -108,6 +108,11 @@ public class Preprocess {
 		}
 		
 		for (String inputFile:inputFiles){
+			
+			// Mac cache file filtering
+			if (inputFile.contains("DS_Store"))
+				continue;
+			
 			System.out.println("Preprocessing file "+inputFile);
 			appendLog("Preprocessing file "+inputFile);
 			File iFile = new File(inputFile);

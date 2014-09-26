@@ -170,6 +170,10 @@ public class WordCount {
 		// for each inputFile,
 		for (String inputFile: inputFiles) {
 			
+			// Mac cache file filtering
+			if (inputFile.contains("DS_Store"))
+				continue;
+			
 			File iFile = new File(inputFile);
 			if (!iFile.exists() || iFile.isDirectory()){
 				logger.warning("Please check the input file path "+inputFile);
@@ -231,8 +235,8 @@ public class WordCount {
 			exclam = exclam + StringUtils.countMatches(currentLine, "!");
 			dash = dash + StringUtils.countMatches(currentLine, "-");
 			quote = quote + StringUtils.countMatches(currentLine, "\"");
-			quote = quote + StringUtils.countMatches(currentLine, "“");
-			quote = quote + StringUtils.countMatches(currentLine, "”");
+			quote = quote + StringUtils.countMatches(currentLine, "ï¿½");
+			quote = quote + StringUtils.countMatches(currentLine, "ï¿½");
 			apostro = apostro + StringUtils.countMatches(currentLine, "'");
 			parenth = parenth + StringUtils.countMatches(currentLine, "(");
 			parenth = parenth + StringUtils.countMatches(currentLine, ")");

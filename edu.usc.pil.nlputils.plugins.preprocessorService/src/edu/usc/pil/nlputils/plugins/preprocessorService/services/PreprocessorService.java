@@ -109,6 +109,11 @@ public class PreprocessorService {
 			}
 		
 		for (File f : files){
+			
+			// Mac cache file filtering
+			if (f.getAbsolutePath().contains("DS_Store"))
+				continue;
+
 			if ("_preprocessed".equals(f.getName()))
 				continue;
 			String inputFile = f.getAbsolutePath();
