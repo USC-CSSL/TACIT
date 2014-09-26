@@ -265,29 +265,29 @@ public class WordCountSettings {
 		
 		Group grpPreprocessing = new Group(parent, SWT.NONE);
 		grpPreprocessing.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		grpPreprocessing.setText("Pre-processing");
+		grpPreprocessing.setText("Additional Options");
 		GridData gd_grpPreprocessing = new GridData(SWT.LEFT, SWT.CENTER, false, false, 8, 1);
 		gd_grpPreprocessing.heightHint = 76;
 		gd_grpPreprocessing.widthHint = 357;
 		grpPreprocessing.setLayoutData(gd_grpPreprocessing);
 		
 		Label lblDelimiters = new Label(grpPreprocessing, SWT.NONE);
-		lblDelimiters.setBounds(10, 33, 53, 15);
-		lblDelimiters.setText("Delimiters");
+		lblDelimiters.setBounds(16, 9, 129, 15);
+		lblDelimiters.setText("Word Delimiters");
 		
 		txtDelimiters = new Text(grpPreprocessing, SWT.BORDER);
-		txtDelimiters.setBounds(160, 30, 172, 21);
+		txtDelimiters.setBounds(137, 7, 129, 21);
 		
 		Composite composite = new Composite(grpPreprocessing, SWT.NONE);
-		composite.setBounds(10, 57, 336, 31);
+		composite.setBounds(10, 35, 336, 31);
 		
 		final Button btnStemming = new Button(composite, SWT.RADIO);
 		btnStemming.setSelection(true);
-		btnStemming.setBounds(4, 9, 141, 16);
-		btnStemming.setText("LIWC Style Stemming");
+		btnStemming.setBounds(4, 9, 106, 16);
+		btnStemming.setText("LIWC Stemming");
 		
 		final Button btnSnowball = new Button(composite, SWT.RADIO);
-		btnSnowball.setBounds(148, 9, 188, 16);
+		btnSnowball.setBounds(125, 9, 188, 16);
 		btnSnowball.setText("Snowball (Porter 2) Stemming");
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
