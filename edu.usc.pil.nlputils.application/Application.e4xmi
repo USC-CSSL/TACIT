@@ -39,7 +39,6 @@
     <trimBars xmi:id="_-nuFKPzGEeOdn9ViPpOXDA">
       <children xsi:type="menu:ToolBar" xmi:id="_-nusIPzGEeOdn9ViPpOXDA" elementId="toolbar:org.eclipse.ui.main.toolbar">
         <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIfzGEeOdn9ViPpOXDA" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/sample.png" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIvzGEeOdn9ViPpOXDA" iconURI="platform:/plugin/edu.usc.pil.nlputils.application/icons/save_edit.png" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
       </children>
     </trimBars>
   </children>
