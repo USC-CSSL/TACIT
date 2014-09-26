@@ -18,7 +18,7 @@ Import-Package: edu.usc.pil.nlputils.plugins.preprocessorService.services,
  org.eclipse.e4.ui.model.application.ui,
  org.eclipse.e4.ui.model.application.ui.basic,
  org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.workbench.modeling,
- weka.core
-Bundle-ClassPath: weka.jar,
- .
+ org.eclipse.e4.ui.workbench.modeling
+Bundle-ClassPath: .,
+ weka.jar
+Bundle-ActivationPolicy: lazy
