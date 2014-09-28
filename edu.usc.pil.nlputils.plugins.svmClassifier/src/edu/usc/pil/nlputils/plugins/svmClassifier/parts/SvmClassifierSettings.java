@@ -25,6 +25,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import edu.usc.pil.nlputils.plugins.preprocessorService.services.PreprocessorService;
+import edu.usc.pil.nlputils.plugins.svmClassifier.process.CrossValidator;
 import edu.usc.pil.nlputils.plugins.svmClassifier.process.SvmClassifier;
 
 import org.eclipse.swt.widgets.Group;
@@ -334,21 +335,29 @@ public class SvmClassifierSettings {
 				ContextInjectionFactory.inject(svm,iEclipseContext);
 
 				int selection = tabFolder.getSelectionIndex();
-				if(btnLoadModel.getSelection())
-					svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
-				else
-					svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, true, btnCrossVal.getSelection(), txtkVal.getText(), true, btnWeights.getSelection());  //btnLinear.getSelection() removed. made Linear Kernel default
-				// Cross Validation => No need to call predict and output separately
-				if (!btnCrossVal.getSelection()){
-				if(selection == 0){
-					System.out.println("Test Mode");
-					appendLog("Test Mode");
-					svm.predict(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
-					svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
-				} else if (selection == 1){
-					System.out.println("Classification Mode");
-					appendLog("Classification Mode");
+				
+				if (btnCrossVal.getSelection()){
+					CrossValidator cv = new CrossValidator();
+					ContextInjectionFactory.inject(cv,iEclipseContext);
+					cv.doCross(svm, txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, Integer.parseInt(txtkVal.getText()), btnWeights.getSelection());
 				}
+				else{
+					if(btnLoadModel.getSelection())
+						svm.loadPretrainedModel(txtLabel1.getText(), txtLabel2.getText(), txtModelFilePath.getText(), txtHashmapPath.getText());
+					else
+						svm.train(txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, true, false, txtkVal.getText(), true, btnWeights.getSelection());  //btnLinear.getSelection() removed. made Linear Kernel default
+					// Cross Validation => No need to call predict and output separately
+					
+					if(selection == 0){
+						System.out.println("Test Mode");
+						appendLog("Test Mode");
+						svm.predict(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
+						svm.output(txtLabel1.getText(), txtTestFolder1.getText(), txtLabel2.getText(), txtTestFolder2.getText());
+					} else if (selection == 1){
+						System.out.println("Classification Mode");
+						appendLog("Classification Mode");
+					}
+					
 				}
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");

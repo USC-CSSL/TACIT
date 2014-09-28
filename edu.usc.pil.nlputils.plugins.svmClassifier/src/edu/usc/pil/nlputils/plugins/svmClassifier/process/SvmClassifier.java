@@ -204,7 +204,6 @@ public class SvmClassifier {
 		File folder1 = new File(folderPath1);
 		File folder2 = new File(folderPath2);
 		Calendar cal = Calendar.getInstance();
-		dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
 		modelFile = new File(intermediatePath+".model");
 		File trainFile = new File(intermediatePath+".train");
 		this.doTfidf = doTfidf;
@@ -215,20 +214,10 @@ public class SvmClassifier {
 		noOfDocuments = 0;
 		if (doTfidf){
 		for (File file:folder1.listFiles()){
-
-			// Mac cache file filtering
-			if (file.getAbsolutePath().contains("DS_Store"))
-				continue;
-			
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
 		for (File file:folder2.listFiles()){
-
-			// Mac cache file filtering
-			if (file.getAbsolutePath().contains("DS_Store"))
-				continue;
-			
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
@@ -240,21 +229,11 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
 		
 		for (File file:folder1.listFiles()){
-
-			// Mac cache file filtering
-			if (file.getAbsolutePath().contains("DS_Store"))
-				continue;
-
 			System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:folder2.listFiles()){
-
-			// Mac cache file filtering
-			if (file.getAbsolutePath().contains("DS_Store"))
-				continue;
-
 			System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();
@@ -548,6 +527,163 @@ public class SvmClassifier {
 //		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 //		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 //	}
+	
+	
+	
+	
+	public int cross_train(String kVal, String label1, File[] trainFiles1, String label2, File[] trainFiles2, boolean doPredictiveWeights) throws IOException{
+		int ret = 0;
+		modelFile = new File(intermediatePath+"_"+kVal+".model");
+		File trainFile = new File(intermediatePath+"_"+kVal+".train");
+		this.doTfidf = true;
+		featureMapIndex = 0;
+		featureMap.clear();
+		dfMap.clear();
+		noOfDocuments = 0;
+
+		if (doTfidf){
+		for (File file:trainFiles1){
+			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
+			buildDfMap(file);
+		}
+		for (File file:trainFiles2){
+			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
+			buildDfMap(file);
+		}
+		//System.out.println("dfmap -"+dfMap);
+		System.out.println("Finished building document frequency map.");
+		appendLog("Finished building document frequency map.");
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
+		
+		for (File file:trainFiles1){
+			//System.out.println("Reading File "+file.toString());
+			bw.write("+1 "+BowToString(fileToBow(file)));
+			bw.newLine();
+		}
+		for (File file:trainFiles2){
+			//System.out.println("Reading File "+file.toString());
+			bw.write("-1 "+BowToString(fileToBow(file)));
+			bw.newLine();
+		}
+		System.out.println("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
+		System.out.println("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
+		appendLog("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
+		appendLog("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
+		bw.close();
+		
+		String[] train_arguments;
+		
+		System.out.println("Linear Kernel selected");
+		appendLog("Linear Kernel selected");
+		train_arguments = new String[4];
+		train_arguments[0] = "-t";
+		train_arguments[1] = "0";
+		train_arguments[2] = trainFile.getAbsolutePath();
+		train_arguments[3] = modelFile.getAbsolutePath();
+		
+		System.out.println("Training the classifier...");
+		appendLog("Training the classifier...");
+		double[] result  = svm_train.main(train_arguments);
+		double crossValResult = result[0];
+		double pvalue = result[1];
+		System.out.println("Model file created - "+modelFile.getAbsolutePath());
+		appendLog("Model file created - "+modelFile.getAbsolutePath());
+		
+		// Saving the feature map
+		File hashmap = new File(intermediatePath+"_"+kVal+".hashmap");
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(hashmap));
+		oos.writeObject(featureMap);
+		oos.flush();
+		oos.close();
+		System.out.println("Feature Map saved - "+hashmap.getAbsolutePath());
+		appendLog("Feature Map saved - "+hashmap.getAbsolutePath());
+		
+		
+		HashMap<Integer,String> reverseMap = new HashMap<Integer,String>();
+		for (String k:featureMap.keySet()){
+			reverseMap.put(featureMap.get(k), k);
+		}
+		
+		if (doPredictiveWeights){
+		PredictiveWeights pw = new PredictiveWeights();
+		File weightsFile = new File(intermediatePath+"_weights"+"_"+kVal+".csv");
+		BufferedWriter weightsWriter = new BufferedWriter(new FileWriter(weightsFile));
+		HashMap<Integer,Double> weightsMap = pw.computePredictiveWeights(modelFile);
+		weightsWriter.write("Word,ID,Weight\n");
+		for (Integer i:weightsMap.keySet()){
+			//System.out.print(i+" ");
+			weightsWriter.write(reverseMap.get(i)+","+i+","+weightsMap.get(i)+"\n");
+		}
+		System.out.println("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
+		appendLog("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
+		weightsWriter.close();
+		}
+	
+		
+		return ret;
+	}
+	
+	public double cross_predict(String kVal, String label1, File[] testFiles1, String label2, File[] testFiles2) throws IOException{
+		
+		// if TFIDF method, clear and rebuild df map
+				dfMap.clear();
+				noOfDocuments = 0;
+				if (doTfidf){
+				for (File file:testFiles1){
+					noOfDocuments = noOfDocuments + 1;
+					buildDfMap(file);
+				}
+				for (File file:testFiles2){
+					noOfDocuments = noOfDocuments + 1;
+					buildDfMap(file);
+				}
+				//System.out.println("dfmap -"+dfMap);
+				System.out.println("Finished building document frequency map.");
+				appendLog("Finished building document frequency map.");
+				}
+				
+		// Create a test file just like the training file was created.
+		// Use the existing featureMap, ignore new words.
+		File testFile = new File(intermediatePath+"_"+kVal+".test");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(testFile));
+		
+		for (File file:testFiles1){
+			//System.out.println("Reading File "+file.toString());
+			bw.write("+1 "+BowToTestString(fileToBow(file)));
+			bw.newLine();
+		}
+		for (File file:testFiles2){
+			//System.out.println("Reading File "+file.toString());
+			bw.write("-1 "+BowToTestString(fileToBow(file)));
+			bw.newLine();
+		}
+		System.out.println("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		appendLog("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		bw.close();
+		System.out.println("Model file loaded - "+modelFile.getAbsolutePath());
+		appendLog("Model file loaded - "+modelFile.getAbsolutePath());
+		String[] predict_arguments = new String[3];
+		predict_arguments[0] = testFile.getAbsolutePath();
+		predict_arguments[1] = modelFile.getAbsolutePath();
+		predict_arguments[2] = intermediatePath+"_"+kVal+".out";
+		double[] result = svm_predict.main(predict_arguments);
+		int correct = (int) result[0], total = (int) result[1];
+		double pvalue = result[2];
+		System.out.println("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
+		appendLog("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
+		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		System.out.println("P value  = " + pvalue);
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
+		System.out.println(nf.format(pvalue));
+		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		appendLog("P value = " + nf.format(pvalue) + " (classification)\n" );
+		//System.out.println(featureMap.toString());
+		return (double)correct/total*100;
+	}
 	
 	public static void main(String[] args) throws IOException {
 		SvmClassifier svm = new SvmClassifier(true," .,;'\"!-()[]{}:?",null);
