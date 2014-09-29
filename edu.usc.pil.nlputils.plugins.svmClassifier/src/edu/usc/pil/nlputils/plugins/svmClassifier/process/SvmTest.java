@@ -6,7 +6,12 @@ public class SvmTest {
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		SvmClassifier svm = new SvmClassifier(true, " .,;'\"!-()[]{}:?",null);
+		SvmClassifier svm = new SvmClassifier("ham", "spam" , "c:\\liwc\\cross_output");
+		
+		CrossValidator cv = new CrossValidator();
+		cv.doCross(svm, "ham","c:\\liwc\\folder1", "spam", "c:\\liwc\\folder2", 5, true);
+		
+		/*
 		try {
 		
 			//svm.loadPretrainedModel("HAM","SPAM","c:\\singular\\pretrained.model","c:\\singular\\pretrained.hashmap");
@@ -31,6 +36,8 @@ public class SvmTest {
 		} catch (Exception ie) {
 			ie.printStackTrace();
 		}
+		*/
+		
 	}
 
 }
