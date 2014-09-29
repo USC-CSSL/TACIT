@@ -124,7 +124,7 @@ class svm_predict {
 					"% ("+correct+"/"+total+") (classification)\n");
 			System.out.println(total + " " + correct + " " + (double)1/nr_class + " ");
 			BinomialTest btest = new BinomialTest();
-			pvalue = btest.binomialTest(total, correct, (double)1/nr_class, AlternativeHypothesis.TWO_SIDED);
+			pvalue = btest.binomialTest(total, correct, (double)0.5, AlternativeHypothesis.TWO_SIDED);
 		}
 		return new double[]{correct,total, pvalue};
 	}

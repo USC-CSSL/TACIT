@@ -25,6 +25,8 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
+import org.apache.commons.math3.stat.inference.BinomialTest;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import edu.usc.pil.nlputils.plugins.svmClassifier.utilities.Convertor;
@@ -441,17 +443,26 @@ public class SvmClassifier {
 		predict_arguments[2] = intermediatePath+".out";
 		double[] result = svm_predict.main(predict_arguments);
 		int correct = (int) result[0], total = (int) result[1];
-		double pvalue = result[2];
+		//double pvalue = result[2];
 		System.out.println("Created SVM output file - "+intermediatePath+".out");
 		appendLog("Created SVM output file - "+intermediatePath+".out");
 		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		BinomialTest btest = new BinomialTest();
+		double p = 0.5;
+		double pvalue = btest.binomialTest(total, correct, p, AlternativeHypothesis.TWO_SIDED);
 		System.out.println("P value  = " + pvalue);
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
-		System.out.println(nf.format(pvalue));
+	//	NumberFormat nf = NumberFormat.getInstance();
+	//	nf.setMaximumFractionDigits(Integer.MAX_VALUE);
+	//	System.out.println(nf.format(pvalue));
 		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
-		appendLog("P value = " + nf.format(pvalue) + " (classification)\n" );
+		if(pvalue != 0){
+			if(pvalue > 0.5)
+				pvalue = Math.abs(pvalue -1);
+			appendLog("P value = " + pvalue + " (classification)\n" );
+		}
+		else
+			appendLog("P value < 10^(-1022) (classification)\n" );
 		//System.out.println(featureMap.toString());
 		return ret;
 	}
@@ -670,7 +681,10 @@ public class SvmClassifier {
 		predict_arguments[2] = intermediatePath+"_"+kVal+".out";
 		double[] result = svm_predict.main(predict_arguments);
 		int correct = (int) result[0], total = (int) result[1];
-		double pvalue = result[2];
+	//	double pvalue = result[2];
+		BinomialTest btest = new BinomialTest();
+		double p =0.5;
+		double pvalue = btest.binomialTest(total, correct, p, AlternativeHypothesis.TWO_SIDED);
 		System.out.println("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
 		appendLog("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
 		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
@@ -678,9 +692,15 @@ public class SvmClassifier {
 		System.out.println("P value  = " + pvalue);
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
-		System.out.println(nf.format(pvalue));
+		//System.out.println(nf.format(pvalue));
 		appendLog("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
-		appendLog("P value = " + nf.format(pvalue) + " (classification)\n" );
+		if(pvalue != 0){
+			if(pvalue > 0.5)
+				pvalue = Math.abs(pvalue -1);
+			appendLog("P value = " + pvalue + " (classification)\n" );
+		}
+		else
+			appendLog("P value < 10^(-1022) (classification)\n" );
 		//System.out.println(featureMap.toString());
 		return (double)correct/total*100;
 	}
