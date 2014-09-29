@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -206,19 +208,37 @@ protected void runClustering( ){
 		appendLog("Output for KMeans Clustering");
 		appendLog("Clusters formed: \n");
 		
+		Map<Integer, List <String> > outputClusters = new HashMap<Integer, List <String>>();
+		for(i=0;i<numClusters;i++){
+			outputClusters.put(i, new ArrayList<String>());
+		}
+		
+		List<String> vec;
+		i =0;
+		for (int clusterNum : clusters) {
+			vec = outputClusters.get(clusterNum);
+			vec.add(inputFiles.get(i).getName());
+			outputClusters.put(clusterNum, vec);
+			i++;
+		}
+		
 		try {
 			FileWriter fw = new FileWriter(new File(txtOutputDir.getText() + "\\KMeansClusters.csv"));
-			for (int clusterNum : clusters) {
-				System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
-				appendLog("File " + inputFiles.get(i).getName() + " -> Cluster" + clusterNum);
-				fw.write("File" + inputFiles.get(i).getName() + " -> Cluster" + clusterNum);
-				i++;
+			for (int c : outputClusters.keySet()) {
+				System.out.printf("Cluster %d \n", c);
+				appendLog("Cluster " + c + ": \n");
+				vec = outputClusters.get(c);
+				for(String f : vec){
+					appendLog("File " + f);
+					fw.write("File" + f + "\n");
+				}
+				appendLog("");
 			}
 			fw.close();
 		} catch (IOException e) {
 			appendLog("Error writing output to files" + e);
 		}
-		appendLog("Done KMeans Clustering...");
+		appendLog("\nDone KMeans Clustering...");
 		
 	}
 }
