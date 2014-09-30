@@ -227,6 +227,7 @@ protected void runClustering( ){
 			for (int c : outputClusters.keySet()) {
 				System.out.printf("Cluster %d \n", c);
 				appendLog("Cluster " + c + ": \n");
+				fw.write("Cluster " + c + ": \n");
 				vec = outputClusters.get(c);
 				for(String f : vec){
 					appendLog("File " + f);
