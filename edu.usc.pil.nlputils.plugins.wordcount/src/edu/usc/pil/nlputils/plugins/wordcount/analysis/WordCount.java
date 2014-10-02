@@ -37,6 +37,7 @@ public class WordCount {
 	private Trie phrazer = new Trie(); 
 	private boolean phraseDetect = false;
 	private HashMap<String, List<Integer>> phraseLookup = new HashMap<String, List<Integer>>(); 
+	private HashMap<String, List<Integer>> conditionalCategory = new HashMap<String,List<Integer>>();
 	private TreeMap<Integer,String> categories = new TreeMap<Integer, String>();
 	private String delimiters;
 	private boolean doLower;
@@ -591,17 +592,25 @@ public class WordCount {
 		} else {
 			while ((currentLine=br.readLine())!=null) {
 				ArrayList<Integer> categories = new ArrayList<Integer>();
+				ArrayList<Integer> condCategories = new ArrayList<Integer>();
 				currentLine = currentLine.trim().toLowerCase();  // Dictionary is stored in lowercase in LIWC
 				
 				if (currentLine.equals(""))
 					continue;
+				boolean conditional = false;
 				String[] words = currentLine.split("\\s+");
 				String currPhrase = words[0];
+				String condPhrase = words[0];
 				for (int i=1; i<words.length; i++){
 					if(!words[i].matches("\\d+")){
 						if (words[i].contains("/")) {
 							String[] splits = words[i].split("/");
 							categories.add(Integer.parseInt(splits[1]));
+							if (splits[0].contains(">")){
+								conditional = true;
+								condCategories.add(Integer.parseInt(splits[0].split(">")[1]));
+								condPhrase = words[0] + " " + splits[0].split(">")[0].replace("<", "");
+							}
 						}
 						else if (words[i].contains(")") || words[i].contains("("))
 								continue;
@@ -639,6 +648,8 @@ public class WordCount {
 				if (phraseDetect)
 					phraseLookup.put(currentWord, categories);
 					
+				if (conditional)
+					conditionalCategory.put(condPhrase, condCategories);
 				//categorizer.printTrie();
 			}
 		}
@@ -757,10 +768,14 @@ public class WordCount {
 		}
 		
 		StringTokenizer st = new StringTokenizer(line,delimiters);
-		
-		while (st.hasMoreTokens()){
-			// TODO - "test.word, --> remove leading and trailing special characters from the word
-			String currentWord = trimChars(st.nextToken(),punctuations);
+		String currentWord = null;
+		if(st.hasMoreTokens())
+			currentWord = trimChars(st.nextToken(),punctuations);
+		do {
+			String nextWord = null;
+			// take the next word too
+			if(st.hasMoreTokens())
+				nextWord = trimChars(st.nextToken(),punctuations);
 			//String currentWord = st.nextToken();
 			
 			if (currentWord==null || currentWord.equals(""))
@@ -925,7 +940,9 @@ public class WordCount {
 					}
 				}
 			}
-		}
+			currentWord = nextWord;
+		} while (st.hasMoreTokens());
+		
 		ret[0] = numWords;
 		ret[1] = sixltr;
 		ret[2] = numerals;
