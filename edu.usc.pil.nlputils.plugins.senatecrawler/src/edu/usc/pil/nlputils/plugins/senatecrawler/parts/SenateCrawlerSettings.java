@@ -59,8 +59,10 @@ public class SenateCrawlerSettings {
 
 		final String[] allSenators = senatorsArray;
 		
+		appendLog("Loading Complete.");
+		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setSize(579, 298);
+		composite.setSize(588, 300);
 		composite.setLocation(0, 0);
 		
 		Label lblSenator = new Label(composite, SWT.NONE);

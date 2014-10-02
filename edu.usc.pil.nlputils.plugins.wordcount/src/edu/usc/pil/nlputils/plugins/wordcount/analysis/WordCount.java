@@ -34,6 +34,9 @@ import edu.usc.pil.nlputils.plugins.wordcount.utilities.*;
 public class WordCount {
 	
 	private Trie categorizer = new Trie();
+	private Trie phrazer = new Trie(); 
+	private boolean phraseDetect = false;
+	private HashMap<String, List<Integer>> phraseLookup = new HashMap<String, List<Integer>>(); 
 	private TreeMap<Integer,String> categories = new TreeMap<Integer, String>();
 	private String delimiters;
 	private boolean doLower;
@@ -222,6 +225,7 @@ public class WordCount {
 			noOfLines = noOfLines + StringUtils.countMatches(currentLine, "! ");
 			//noOfLines = noOfLines + 1; // For the final sentence. Removed cos LIWC doesnt do this.
 			*/
+			
 			Matcher eolMatcher = eol.matcher(currentLine);
 			while(eolMatcher.find())
 				noOfLines++;
@@ -273,7 +277,7 @@ public class WordCount {
 			
 			// If the word is in the trie, update the dictionary words count and the per-category count
 			if (currCategories!=null){
-				//dicCount = dicCount+1;
+				//dicCount = dicCount+1; 
 				dicCount = dicCount+map.get(currWord); // add the count of the current word. we are not counting unique words here.
 				for (int i : currCategories) {
 					currCategoryName = categories.get(i);
@@ -592,11 +596,19 @@ public class WordCount {
 				if (currentLine.equals(""))
 					continue;
 				String[] words = currentLine.split("\\s+");
+				String currPhrase = words[0];
 				for (int i=1; i<words.length; i++){
+					if(!words[i].matches("\\d+")){
+						currPhrase = currPhrase+" "+words[i];
+						phraseDetect = true;
+						continue;
+					}
 					categories.add(Integer.parseInt(words[i]));
 				}
 				
 				String currentWord = words[0];
+				if (phraseDetect)
+					currentWord = currPhrase;
 				
 				if (stemDictionary){
 					currentWord = currentWord.replace("*", "");
@@ -612,10 +624,13 @@ public class WordCount {
 				//System.out.println(words[0]+" "+categories);
 				
 				// do Stemming or not. if Stemming is disabled, remove * from the dictionary words
-				if (doLiwcStemming)
-					categorizer.insert(currentWord, categories);
-				else
-					categorizer.insert(currentWord.replace("*", ""), categories);
+				if (!doLiwcStemming)
+					currentWord = currentWord.replace("*", "");
+				categorizer.insert(currentWord.replace("*", ""), categories);
+				
+				if (phraseDetect)
+					phraseLookup.put(currentWord, categories);
+					
 				//categorizer.printTrie();
 			}
 		}
@@ -645,6 +660,94 @@ public class WordCount {
 		//preprocess
 		if (doLower)
 			line = line.toLowerCase();
+		
+		//phrase check
+		//increment total words and sixltr words. put the word count in the map. 
+		//add phrase to lookup and its categories to categorizer
+		//phrases ending with *
+		//phrase only. single pattern for space or beginning of file?
+		//phrases with numerals?
+		//use string builder?
+		//right now, putting key in the map rather than the match
+		if (phraseDetect){
+			for(String key:phraseLookup.keySet()){
+				Pattern p,justp;
+				if (key.endsWith("*")){
+					p = Pattern.compile("[\\s\"\\.,()]{1}"+key+"[\\w\\d]*"); // if key is 'string*'
+					justp = Pattern.compile(key+"[\\w\\d]*");
+					key = key.substring(0, key.length()-1);
+				}
+				else {
+					p = Pattern.compile("[\\s\"\\.,()]{1}"+key+"\\b");
+					justp = Pattern.compile(key+"\\b");
+				}
+				
+				int wordsInPhrase = key.split("\\s+").length;
+				
+				Matcher m = p.matcher(line);
+				ArrayList<Integer> indexes = new ArrayList<Integer>();
+				while (m.find()){
+					//System.out.println(m.group());
+					//System.out.println(m.start()+1);
+					//System.out.println(m.end());
+					String match = m.group();
+					indexes.add(m.start()+1);		
+					indexes.add(m.end());
+					
+					numWords = numWords + wordsInPhrase;
+					sixltr = sixltr + bigWords(match);
+					
+					Object value = map.get(key);
+					if (value!=null) {
+						int i = (int) value;
+						map.put(key, i+wordsInPhrase);
+					} else {
+						map.put(key, wordsInPhrase);
+					}
+				}
+				
+				for (int i=0;i<indexes.size();i=i+2){
+					// phrases and replacements would be rare. No need for a StringBuilder
+					line = line.substring(0, indexes.get(i))+line.substring(indexes.get(i+1));
+					int diff = indexes.get(i+1)-indexes.get(i);
+					for (int j = 0; j<indexes.size();j++)
+						indexes.set(j, indexes.get(j)-diff);
+					//System.out.println(line);
+				}
+				indexes.clear();
+				
+				// in case the file just has that one phrase or begins with it
+				Matcher m2 = justp.matcher(line);
+				while (m2.find()){
+					String match = m2.group();
+					indexes.add(m2.start());		
+					indexes.add(m2.end());
+					
+					numWords = numWords + wordsInPhrase;
+					sixltr = sixltr + bigWords(match);
+					
+					Object value = map.get(key);
+					if (value!=null) {
+						int i = (int) value;
+						map.put(key, i+wordsInPhrase);
+					} else {
+						map.put(key, wordsInPhrase);
+					}
+				}
+				
+				for (int i=0;i<indexes.size();i=i+2){
+					// phrases and replacements would be rare. No need for a StringBuilder
+					line = line.substring(0, indexes.get(i))+line.substring(indexes.get(i+1));
+					int diff = indexes.get(i+1)-indexes.get(i);
+					for (int j = 0; j<indexes.size();j++)
+						indexes.set(j, indexes.get(j)-diff);
+					//System.out.println(line);
+				}
+				//System.out.println("Phrase removed - "+line);
+				
+			}
+		}
+		
 		StringTokenizer st = new StringTokenizer(line,delimiters);
 		
 		while (st.hasMoreTokens()){
@@ -822,6 +925,15 @@ public class WordCount {
 	}
 	
 	
+	private int bigWords(String group) {
+		int bigs = 0;
+		for (String word : group.split("\\s+"))
+			if (word.length()>6)
+				bigs = bigs + 1;
+		return bigs;
+	}
+
+
 	// This function updates the consoleMessage parameter of the context.
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
