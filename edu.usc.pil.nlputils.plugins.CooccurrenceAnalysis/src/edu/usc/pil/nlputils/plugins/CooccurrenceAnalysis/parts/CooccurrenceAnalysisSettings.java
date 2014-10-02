@@ -218,8 +218,8 @@ protected void invokeCooccurrence( ){
 		
 		System.out.println("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
-		int[] clusters = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText());
-		if(clusters == null)
+		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText());
+		if(isSuccess == false)
 		{
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
 			return;
@@ -228,6 +228,7 @@ protected void invokeCooccurrence( ){
 		appendLog("Output for Co-occurrence Analysis");
 		
 		appendLog("Word to word matrix stored in " + txtOutputDir + "\\word-matrix.csv" );
+		appendLog("Phrases stored in " + txtOutputDir + "\\phrases.csv" );
 		appendLog("Done Co-occurrence Analysis...");
 		
 	}

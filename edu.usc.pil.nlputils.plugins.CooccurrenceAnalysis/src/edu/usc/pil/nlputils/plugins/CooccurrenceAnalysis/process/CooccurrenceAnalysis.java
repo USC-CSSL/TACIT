@@ -26,7 +26,7 @@ public class CooccurrenceAnalysis {
 				"C://Users//carlosg//Desktop//CSSL//Clusering//");
 	}
 
-	public static int[] calculateCooccurrences(String inputDir,
+	public static boolean calculateCooccurrences(String inputDir,
 			String seedFile, int windowSize, String outputPath) {
 		String currentLine = null;
 		Map<String, Integer> seedWords = new HashMap<String, Integer>();
@@ -151,7 +151,7 @@ public class CooccurrenceAnalysis {
 			}
 			
 			try {
-				FileWriter fw = new FileWriter(new File(outputPath	+ "\\sentences.csv"));
+				FileWriter fw = new FileWriter(new File(outputPath	+ "\\phrases.csv"));
 				for(String p:phrase)
 					fw.write(p+"\n");
 				fw.close();
@@ -164,11 +164,11 @@ public class CooccurrenceAnalysis {
 				System.out.println(s);
 			}
 
-			return null;
+			return true;
 		} catch (Exception e) {
 			System.out.println("Exception occurred in Cooccurrence Analysis "
 					+ e);
 		}
-		return null;
+		return false;
 	}
 }
