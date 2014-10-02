@@ -599,8 +599,16 @@ public class WordCount {
 				String currPhrase = words[0];
 				for (int i=1; i<words.length; i++){
 					if(!words[i].matches("\\d+")){
-						currPhrase = currPhrase+" "+words[i];
-						phraseDetect = true;
+						if (words[i].contains("/")) {
+							String[] splits = words[i].split("/");
+							categories.add(Integer.parseInt(splits[1]));
+						}
+						else if (words[i].contains(")") || words[i].contains("("))
+								continue;
+						else {
+							currPhrase = currPhrase+" "+words[i];
+							phraseDetect = true;
+						}
 						continue;
 					}
 					categories.add(Integer.parseInt(words[i]));
