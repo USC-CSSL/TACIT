@@ -17,6 +17,5 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
 Import-Package: javax.annotation;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
- swing2swt.jar,
- commons-math3-3.3.jar
+ swing2swt.jar
 
