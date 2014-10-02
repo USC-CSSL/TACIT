@@ -3,8 +3,7 @@ package edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis.parts;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -40,7 +39,6 @@ public class CooccurrenceAnalysisSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(1, false));
-		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -210,18 +208,17 @@ protected void invokeCooccurrence( ){
 	
 		File dir = new File(ppDir);
 		File[] listOfFiles =  dir.listFiles();
-		List<File> inputFiles = new ArrayList<File>();
-		for (File f : listOfFiles)
-			inputFiles.add(f);
-		if(inputFiles.size() == 0){
+		
+		if(listOfFiles.length == 0){
 			appendLog("Please select at least one file on which to run Co-occurrence Analysis");
 			return;
 		}
+		int windowSize = Integer.parseInt(txtNumTopics.getText());
 		
 		
 		System.out.println("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
-		int[] clusters = CooccurrenceAnalysis.calculateCooccurrences(inputFiles);
+		int[] clusters = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText());
 		if(clusters == null)
 		{
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
