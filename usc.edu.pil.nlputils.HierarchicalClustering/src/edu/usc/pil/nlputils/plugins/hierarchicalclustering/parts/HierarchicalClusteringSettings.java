@@ -194,16 +194,16 @@ protected void runClustering( ){
 		
 		System.out.println("Running Hierarchical Clustering...");
 		appendLog("Running Hierarchical Clustering...");
-		int[] clusters = HierarchicalClustering.doClustering(inputFiles, numClusters);
+		String clusters = HierarchicalClustering.doClustering(inputFiles, numClusters);
 		if(clusters == null)
 		{
 			appendLog("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
 			return;
 		}
 
-		appendLog("Output for KMeans Clustering");
+		appendLog("Output for Hierarchical Clustering");
 		appendLog("Clusters formed: \n");
-		
+		appendLog(clusters);
 		appendLog("Done Hierarchical Clustering...");
 		
 	}

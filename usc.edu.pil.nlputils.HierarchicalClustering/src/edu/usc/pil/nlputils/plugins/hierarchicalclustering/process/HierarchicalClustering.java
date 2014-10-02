@@ -19,7 +19,7 @@ public class HierarchicalClustering {
 		//		"5");
 	}
 
-	public static int[] doClustering(List<File> inputFiles, int numOfClusters) {
+	public static String doClustering(List<File> inputFiles, int numOfClusters) {
 		try {
 			
 			StringToWordVector filter = new StringToWordVector();
@@ -56,7 +56,7 @@ public class HierarchicalClustering {
 			System.out.println("Network " + g);
 			 
 			
-			return null;
+			return g;
 		} catch (Exception e) {
 			System.out.println("Exception occurred in K means " + e);
 		}
