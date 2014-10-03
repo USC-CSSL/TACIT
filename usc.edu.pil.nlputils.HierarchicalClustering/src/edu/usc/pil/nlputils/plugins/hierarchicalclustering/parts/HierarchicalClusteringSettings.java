@@ -197,7 +197,7 @@ protected void runClustering( ){
 		String clusters = HierarchicalClustering.doClustering(inputFiles, numClusters);
 		if(clusters == null)
 		{
-			appendLog("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
+			appendLog("Sorry. Something went wrong with Hierarchical Clustering. Please check your input and try again.\n");
 			return;
 		}
 
