@@ -254,9 +254,13 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			return;
 		}
 		
-		File [] listSeedFiles = seedFile.listFiles();
-		File preSeedFile = listSeedFiles[0];
-		
+		File preSeedFile;
+		if(seedFile.isDirectory()){
+			File [] listSeedFiles = seedFile.listFiles();
+			preSeedFile = listSeedFiles[0];
+		}else{
+			preSeedFile = seedFile;
+		}
 		System.out.println("running zlabel LDA...");
 		appendLog("running zlabel LDA...");
 		DTWC dtwc = new DTWC(inputFiles, preSeedFile);
@@ -322,6 +326,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			}
 		}
 		
+		appendLog("Topic and its corresponding words and phi values stored in " + outputdir + "\\topicwords.csv" );
 		try {
 			FileWriter fw = new FileWriter(new File(outputdir + "\\topicwords.csv"));
 			for(int i=0; i<T; i++){
@@ -335,7 +340,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 							}
 				} );
 				for(int j=0; (j<topicWords.get(i).size() && j<50); j++){
-					fw.write(topicWords.get(i).get(j).getKey()  + " " + topicWords.get(i).get(j).getValue() + 
+					fw.write(topicWords.get(i).get(j).getKey()  + "," + topicWords.get(i).get(j).getValue() + 
 				",");
 				}
 				fw.write("\n");
@@ -344,6 +349,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.flush();
 			fw.close();
 			
+			appendLog("Phi values for each stopic stored in " + outputdir + "\\phi.csv" );
 			fw = new FileWriter(new File(outputdir + "\\phi.csv"));
 			for(int i=0; i<T; i++){
 				fw.write("Topic" + i + ",");
@@ -358,6 +364,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.flush();
 			fw.close();
 			
+			appendLog("Theta values for each document stored in " + outputdir + "\\theta.csv" );
 			fw = new FileWriter(new File(outputdir + "\\theta.csv"));
 			for(int i=0; i<docs.length; i++){
 				fw.write("Document" + i + ",");
