@@ -637,7 +637,7 @@ public class WordCount {
 						currentWord = stemmedWord;
 				}
 				
-				System.out.println(currentWord);
+				//System.out.println(currentWord);
 				//System.out.println(words[0]+" "+categories);
 				
 				// do Stemming or not. if Stemming is disabled, remove * from the dictionary words
