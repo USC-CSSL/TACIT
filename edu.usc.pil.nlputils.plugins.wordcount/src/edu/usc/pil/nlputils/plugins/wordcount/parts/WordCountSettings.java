@@ -272,14 +272,14 @@ public class WordCountSettings {
 		grpPreprocessing.setLayoutData(gd_grpPreprocessing);
 		
 		Label lblDelimiters = new Label(grpPreprocessing, SWT.NONE);
-		lblDelimiters.setBounds(16, 9, 129, 15);
+		lblDelimiters.setBounds(16, 30, 105, 15);
 		lblDelimiters.setText("Word Delimiters");
 		
 		txtDelimiters = new Text(grpPreprocessing, SWT.BORDER);
-		txtDelimiters.setBounds(137, 7, 129, 21);
+		txtDelimiters.setBounds(137, 28, 129, 21);
 		
 		Composite composite = new Composite(grpPreprocessing, SWT.NONE);
-		composite.setBounds(10, 35, 336, 31);
+		composite.setBounds(10, 56, 336, 31);
 		
 		final Button btnStemming = new Button(composite, SWT.RADIO);
 		btnStemming.setSelection(true);

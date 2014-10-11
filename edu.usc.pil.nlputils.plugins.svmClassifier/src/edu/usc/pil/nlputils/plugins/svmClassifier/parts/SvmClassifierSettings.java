@@ -139,7 +139,7 @@ public class SvmClassifierSettings {
 		btnWeights.setText("Create Feature Weights File");
 		
 		Label lblKfoldCrossValidation = new Label(grpInputSettings, SWT.NONE);
-		lblKfoldCrossValidation.setBounds(13, 163, 160, 15);
+		lblKfoldCrossValidation.setBounds(13, 163, 149, 15);
 		lblKfoldCrossValidation.setText("k Value for Cross Validation");
 		
 		txtkVal = new Text(grpInputSettings, SWT.BORDER);
