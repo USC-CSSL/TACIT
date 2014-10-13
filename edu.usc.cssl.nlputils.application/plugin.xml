@@ -5,15 +5,15 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            name="edu.usc.pil.nlputils.application"
+            name="NLPUtils"
             application="org.eclipse.e4.ui.workbench.swt.E4Application">
          <property
                name="applicationCSS"
-               value="platform:/plugin/edu.usc.pil.nlputils.application/css/default.css">
+               value="platform:/plugin/edu.usc.cssl.nlputils.application/css/default.css">
          </property>
          <property
                name="appName"
-               value="edu.usc.pil.nlputils.application">
+               value="NLPUtils">
          </property>
       </product>
    </extension>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010 - 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,16 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <lars.Vogel@gmail.com> - Bug 419770
  *******************************************************************************/
-package edu.usc.pil.nlputils.application.handlers;
+package edu.usc.cssl.nlputils.application.handlers;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-public class OpenHandler {
 
+
+public class QuitHandler {
 	@Execute
-	public void execute(Shell shell){
-		FileDialog dialog = new FileDialog(shell);
-		dialog.open();
+	public void execute(IWorkbench workbench, Shell shell){
+		if (MessageDialog.openConfirm(shell, "Confirmation",
+				"Do you want to exit?")) {
+			workbench.close();
+		}
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
  */ 
-package edu.usc.pil.nlputils.application.parts;
+package edu.usc.cssl.nlputils.application.parts;
 
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;

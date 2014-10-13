@@ -9,24 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <lars.Vogel@gmail.com> - Bug 419770
  *******************************************************************************/
-package edu.usc.pil.nlputils.application.handlers;
+package edu.usc.cssl.nlputils.application.handlers;
 
-import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 
-public class SaveHandler {
-
-	@CanExecute
-	public boolean canExecute(EPartService partService) {
-		if (partService != null) {
-			return !partService.getDirtyParts().isEmpty();
-		}
-		return false;
-	}
-
+public class AboutHandler {
 	@Execute
-	public void execute(EPartService partService) {
-		partService.saveAll(false);
+	public void execute(Shell shell) {
+		MessageDialog.openInformation(shell, "About", "NLPUtils alpha release.\n\nPlease visit https://github.com/USC-PIL/USC-NLPUtils/wiki for more information.");
 	}
 }
