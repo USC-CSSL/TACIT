@@ -3,7 +3,6 @@
 
 <product name="edu.usc.cssl.nlputils.application" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -25,26 +24,24 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
       <plugin id="edu.usc.cssl.nlputils.application"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.HierarchicalClustering"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.KMeansClustering"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.lda"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.nbclassifier"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.preprocessor"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.preprocessorService"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.senatecrawler"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.svmClassifier"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.wordcount"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.zlda"/>
-      <plugin id="edu.usc.pil.nlputils.plugins.zlda2"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.HierarchicalClustering"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.KMeansClustering"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.lda"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.nbclassifier"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.preprocessor"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.preprocessorService"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.senatecrawler"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.svmClassifier"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.wordcount"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.zlda"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.zlda2"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.xml"/>

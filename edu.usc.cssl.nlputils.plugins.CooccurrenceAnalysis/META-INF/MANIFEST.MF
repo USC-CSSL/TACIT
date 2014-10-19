@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CoOccurrenceAnalysis
+Bundle-SymbolicName: edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.core.di,
+ javax.inject,
+ org.eclipse.swt,
+ org.eclipse.e4.core.contexts,
+ edu.usc.cssl.nlputils.plugins.preprocessorService;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
