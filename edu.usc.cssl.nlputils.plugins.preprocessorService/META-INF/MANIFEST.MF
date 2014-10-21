@@ -6,6 +6,7 @@ Bundle-Version: 0.0.1.qualifier
 Require-Bundle: org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.di,
  org.eclipse.e4.ui.di,
+ javax.inject,
  org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

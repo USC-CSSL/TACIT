@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Preprocessor
 Bundle-SymbolicName: edu.usc.cssl.nlputils.plugins.preprocessor;singleton:=true
-Bundle-Version: 0.0.1.qualifier
+Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.e4.ui.workbench,
  org.eclipse.core.runtime,
  org.eclipse.ui,
