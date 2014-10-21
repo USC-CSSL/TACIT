@@ -1,2 +1,1 @@
-testing jenkins for USC-NLPUtils
-it works now
+https://github.com/USC-CSSL/USC-NLPUtils/wiki/Quick-Start-Instructions
