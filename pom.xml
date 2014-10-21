@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<version>1.0.0-SNAPSHOT</version>
+	<groupId>example.group</groupId>
+	<artifactId>parent</artifactId>
+	<packaging>pom</packaging>
+	<name>Master</name>
+
+	<properties>
+		<tycho-version>0.21.0</tycho-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<repositories>
+		<repository>
+			<id>luna</id>
+			<url>http://download.eclipse.org/releases/luna/</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories> 
+	<modules>
+		<module>eclipse-repository</module>
+		<module>edu.usc.cssl.nlputils.application</module>
+		<module>edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis</module>
+		<module>usc.edu.pil.nlputils.HierarchicalClustering</module>
+		<module>edu.usc.pil.nlputils.plugins.KMeansClustering</module>
+		<module>edu.usc.pil.nlputils.plugins.lda</module>
+		<module>edu.usc.pil.nlputils.plugins.classifier</module>
+		<module>edu.usc.pil.nlputils.plugins.preprocessor</module>
+		<module>edu.usc.pil.nlputils.plugins.preprocessorService</module>
+		<module>edu.usc.pil.nlputils.plugins.senatecrawler</module>
+		<module>edu.usc.pil.nlputils.plugins.svmClassifier</module>
+		<module>edu.usc.pil.nlputils.plugins.wordcount</module>
+		<module>edu.usc.pil.nlputils.plugins.zlda</module>
+		<module>edu.usc.pil.nlputils.plugins.zlda2</module>
+	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+		          <compilerArgument>-err:-forbidden</compilerArgument>
+					<!-- <target>
+						<artifact>
+							<groupId>example.group</groupId>
+							<artifactId>luna</artifactId>
+							<version>1.0.0-SNAPSHOT</version>
+						</artifact>
+					</target> -->
+					<environments>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
