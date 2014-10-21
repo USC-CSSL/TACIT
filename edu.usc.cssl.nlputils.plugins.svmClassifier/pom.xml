@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<version>0.0.1-SNAPSHOT</version>
+		<groupId>example.group</groupId>
+		<artifactId>parent</artifactId>
+	</parent>
+	
+
+	<packaging>eclipse-plugin</packaging>
+	<groupId>edu.usc.cssl.nlputils.plugins.svmClassifier</groupId>
+	<artifactId>edu.usc.cssl.nlputils.plugins.svmClassifier</artifactId>
+
+</project>
