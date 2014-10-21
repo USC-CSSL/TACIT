@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.ui,
  javax.inject,
  org.eclipse.swt,
  org.eclipse.e4.core.contexts,
- edu.usc.cssl.nlputils.plugins.preprocessorService;bundle-version="1.0.0"
+ edu.usc.cssl.nlputils.plugins.preprocessorService
 Bundle-ActivationPolicy: lazy
