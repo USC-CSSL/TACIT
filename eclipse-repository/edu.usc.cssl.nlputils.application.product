@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="edu.usc.cssl.nlputils.application" uid="NLPUtils" id="edu.usc.cssl.nlputils.application.NLPUtils" application="org.eclipse.ant.core.antRunner" version="0.0.1.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="edu.usc.cssl.nlputils.application" uid="NLPUtils" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.0.1.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
