@@ -5,6 +5,7 @@ Bundle-SymbolicName: edu.usc.cssl.nlputils.plugins.KMeansClustering;singleton:=t
 Bundle-Version: 0.0.1.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ javax.inject,
  org.eclipse.e4.ui.model.workbench,
  edu.usc.cssl.nlputils.plugins.preprocessorService,
  org.eclipse.e4.core.di
