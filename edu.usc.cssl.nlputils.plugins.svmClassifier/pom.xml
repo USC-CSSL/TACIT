@@ -8,7 +8,6 @@
 		<artifactId>parent</artifactId>
 	</parent>
 	
-
 	<packaging>eclipse-plugin</packaging>
 	<groupId>edu.usc.cssl.nlputils.plugins.svmClassifier</groupId>
 	<artifactId>edu.usc.cssl.nlputils.plugins.svmClassifier</artifactId>
