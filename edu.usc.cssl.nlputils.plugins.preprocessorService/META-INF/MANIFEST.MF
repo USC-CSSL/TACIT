@@ -10,8 +10,7 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench,
  org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: bin.edu.usc.cssl.nlputils.plugins.preprocessorService.services,
- edu.usc.cssl.nlputils.plugins.preprocessorService.services
+Export-Package: edu.usc.cssl.nlputils.plugins.preprocessorService.services
 Import-Package: org.eclipse.e4.core.contexts
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: jsonic-1.2.0.jar,
