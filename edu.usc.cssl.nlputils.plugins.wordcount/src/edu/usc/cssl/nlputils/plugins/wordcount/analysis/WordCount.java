@@ -42,6 +42,7 @@ public class WordCount {
 	private String delimiters;
 	private boolean doLower;
 	private boolean doStopWords;
+	private boolean noDictionary = false;
 	private HashSet<String> stopWordSet = new HashSet<String>();
 	private boolean doLiwcStemming = true;
 	private boolean doSpss = true;
@@ -103,12 +104,21 @@ public class WordCount {
 			return -2;
 		}
 		
+		if (dictionaryFile==null || dictionaryFile.trim().isEmpty()){
+			noDictionary = true;
+			System.out.println("No Dictionary. Stripped down mode.");
+			appendLog("No Dictionary. Stripped down mode.");
+		}
+		
+		File dFile = null;
+		if(!noDictionary){
 		// Checking the dictionary
-		File dFile = new File(dictionaryFile);
+		dFile = new File(dictionaryFile);
 		if (!dFile.exists() || dFile.isDirectory()) {
 			logger.warning("Please check the dictionary file path.");
 			error = true;
 			return -3;
+		}
 		}
 		
 		// Checking the output path
@@ -146,11 +156,13 @@ public class WordCount {
 		}
 		
 		// No errors with the output, dictionary and stop-words paths. Start processing.
-
 		long startTime = System.currentTimeMillis();
+		
+		if(!noDictionary){
 		buildCategorizer(dFile);
 		logger.info("Finished building the dictionary trie in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		appendLog("Finished building the dictionary trie in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+		}
 		
 		// Create Stop Words Set if doStopWords is true
 		if (doStopWords){

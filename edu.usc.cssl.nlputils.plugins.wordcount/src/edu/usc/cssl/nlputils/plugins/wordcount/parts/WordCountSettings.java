@@ -46,7 +46,6 @@ public class WordCountSettings {
 	private Text txtStopWords;
 	private Text txtOutputFile;
 	private static Logger logger = Logger.getLogger(WordCountSettings.class.getName());
-	private Text txtDelimiters;
 	private Label lblInput;
 	//private static Handler consoleHandler = new ConsoleHandler();
 	//private static Logger logger = LoggerFactory.getLogger(WordCountSettings.class.getName());
@@ -271,15 +270,8 @@ public class WordCountSettings {
 		gd_grpPreprocessing.widthHint = 357;
 		grpPreprocessing.setLayoutData(gd_grpPreprocessing);
 		
-		Label lblDelimiters = new Label(grpPreprocessing, SWT.NONE);
-		lblDelimiters.setBounds(16, 30, 105, 15);
-		lblDelimiters.setText("Word Delimiters");
-		
-		txtDelimiters = new Text(grpPreprocessing, SWT.BORDER);
-		txtDelimiters.setBounds(137, 28, 129, 21);
-		
 		Composite composite = new Composite(grpPreprocessing, SWT.NONE);
-		composite.setBounds(10, 56, 336, 31);
+		composite.setBounds(10, 22, 336, 31);
 		
 		final Button btnStemming = new Button(composite, SWT.RADIO);
 		btnStemming.setSelection(true);
@@ -340,7 +332,7 @@ public class WordCountSettings {
 				
 				
 				try {
-					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection(),btnStemDictionary.getSelection());
+					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, "",true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection(),btnStemDictionary.getSelection());
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
