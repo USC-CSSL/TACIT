@@ -17,7 +17,7 @@ public class OpenZldaHandler {
 	@Execute
 	public void execute() {
 		System.out.println("Opening Z-Label LDA");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.zlda.part.ZldaSettings");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.zlda.part.ZldaSettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

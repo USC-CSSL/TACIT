@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_o7ZkwPzVEeOC76nH4x2Ykg">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_YOLkEPzWEeOC76nH4x2Ykg" featurename="commands" parentElementId="org.eclipse.e4.ide.application">
-    <elements xsi:type="commands:Command" xmi:id="_2Gt6EPzWEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.command.open.wordcount" commandName="Open WordCount"/>
+    <elements xsi:type="commands:Command" xmi:id="_2Gt6EPzWEeOC76nH4x2Ykg" elementId="edu.usc.cssl.nlputils.plugins.wordcount.command.open.wordcount" commandName="Open WordCount"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_YpN6QPzWEeOC76nH4x2Ykg" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
-    <elements xsi:type="commands:Handler" xmi:id="_YMgBsPzZEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.handler.open.wordcount" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.wordcount/edu.usc.cssl.nlputils.plugins.wordcount.handlers.OpenWordCount" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_YMgBsPzZEeOC76nH4x2Ykg" elementId="edu.usc.cssl.nlputils.plugins.wordcount.handler.open.wordcount" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.wordcount/edu.usc.cssl.nlputils.plugins.wordcount.handlers.OpenWordCount" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ZF4oIPzWEeOC76nH4x2Ykg" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.wordcount">
-    <elements xsi:type="menu:HandledMenuItem" xmi:id="_30d7sPzeEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.handledmenuitem.open.wordcount" label="LIWC-Style Word Count" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ZF4oIPzWEeOC76nH4x2Ykg" featurename="children" parentElementId="edu.usc.cssl.nlputils.application.menu.wordcount">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_30d7sPzeEeOC76nH4x2Ykg" elementId="edu.usc.cssl.nlputils.plugins.wordcount.handledmenuitem.open.wordcount" label="LIWC-Style Word Count" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ROIAsPzhEeOC76nH4x2Ykg" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
-    <elements xsi:type="basic:Part" xmi:id="_XVIbMPzhEeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.plugins.wordcount.part.0" visible="false" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.wordcount/edu.usc.cssl.nlputils.plugins.wordcount.parts.WordCountSettings" label="WordCount Settings" closeable="true"/>
+    <elements xsi:type="basic:Part" xmi:id="_XVIbMPzhEeOC76nH4x2Ykg" elementId="edu.usc.cssl.nlputils.plugins.wordcount.part.0" visible="false" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.wordcount/edu.usc.cssl.nlputils.plugins.wordcount.parts.WordCountSettings" label="WordCount Settings" closeable="true"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_CFOOIEU-EeSEZc_En_mvZg" featurename="children" parentElementId="toolbar:org.eclipse.ui.main.toolbar">
-    <elements xsi:type="menu:HandledToolItem" xmi:id="_UMCCgEU-EeSEZc_En_mvZg" elementId="edu.usc.pil.nlputils.plugins.wordcount.handledtoolitem.wordCountToolIcon" label="WordCount" iconURI="platform:/plugin/edu.usc.cssl.nlputils.plugins.wordcount/123-512.png" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_UMCCgEU-EeSEZc_En_mvZg" elementId="edu.usc.cssl.nlputils.plugins.wordcount.handledtoolitem.wordCountToolIcon" label="WordCount" iconURI="platform:/plugin/edu.usc.cssl.nlputils.plugins.wordcount/123-512.png" command="_2Gt6EPzWEeOC76nH4x2Ykg"/>
   </fragments>
 </fragment:ModelFragments>

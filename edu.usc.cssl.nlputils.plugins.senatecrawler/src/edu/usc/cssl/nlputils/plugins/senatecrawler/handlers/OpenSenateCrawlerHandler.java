@@ -16,7 +16,7 @@ public class OpenSenateCrawlerHandler {
 	@Execute
 	public void execute() {
 		System.out.println("Opening Senate Crawler Plugin");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.senatecrawler.part.senateCrawlerSettings");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.senatecrawler.part.senateCrawlerSettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

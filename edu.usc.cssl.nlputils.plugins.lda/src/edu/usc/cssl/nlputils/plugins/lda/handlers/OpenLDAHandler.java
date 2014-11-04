@@ -17,7 +17,7 @@ public class OpenLDAHandler {
 	@Execute
 	public void execute() {
 		System.out.println("Opening LDA Plugin");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.lda.part.LDASettings");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.lda.part.LDASettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

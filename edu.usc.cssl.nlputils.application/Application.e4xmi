@@ -9,8 +9,8 @@
             <children xsi:type="basic:Part" xmi:id="_-nuFJ_zGEeOdn9ViPpOXDA" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.parts.Welcome" label="Welcome" closeable="true"/>
           </children>
           <children xsi:type="basic:PartStack" xmi:id="_NWyzAAfHEeSFfNIWaBOnnw" elementId="org.eclipse.e4.ide.partstackdisplay" containerData="350" selectedElement="_VZHDoAfHEeSFfNIWaBOnnw">
-            <children xsi:type="basic:Part" xmi:id="_VZHDoAfHEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.console" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.parts.Console" label="Console"/>
-            <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.pil.nlputils.application.part.error" visible="false" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.parts.ErrorLog" label="Error Log"/>
+            <children xsi:type="basic:Part" xmi:id="_VZHDoAfHEeSFfNIWaBOnnw" elementId="edu.usc.cssl.nlputils.application.part.console" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.parts.Console" label="Console"/>
+            <children xsi:type="basic:Part" xmi:id="_il4KcAfIEeSFfNIWaBOnnw" elementId="edu.usc.cssl.nlputils.application.part.error" visible="false" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.parts.ErrorLog" label="Error Log"/>
           </children>
         </children>
       </children>
@@ -21,16 +21,16 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFH_zGEeOdn9ViPpOXDA" label="Save" iconURI="platform:/plugin/edu.usc.cssl.nlputils.application/icons/save_edit.png" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIPzGEeOdn9ViPpOXDA" label="Quit" command="_-nteDPzGEeOdn9ViPpOXDA"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_pAZvECNtEeSWsdFScyxqCg" elementId="edu.usc.pil.nlputils.application.menu.crawlers" label="Crawl"/>
-      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.preprocessors" label="Preprocess"/>
-      <children xsi:type="menu:Menu" xmi:id="_c7vqMBv1EeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.application.menu.wordcount" label="Word Count"/>
-      <children xsi:type="menu:Menu" xmi:id="_e5q_8A3SEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.menu.classifiers" label="Classify"/>
-      <children xsi:type="menu:Menu" xmi:id="_hSs34B2sEeSPGOxRdieGyg" elementId="edu.usc.pil.nlputils.application.menu.topic" label="Topic Model"/>
-      <children xsi:type="menu:Menu" xmi:id="_Lth1sEKMEeS4TbhSwD9pOw" elementId="edu.usc.pil.nlputils.application.menu.clustering" label="Clustering"/>
-      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.pil.nlputils.application.menu.plugins" visible="false" label="Plugins">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.0" label="Add Plugin"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.1" label="Remove Plugin"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_WkqrkA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.2" label="Global Plugin Settings"/>
+      <children xsi:type="menu:Menu" xmi:id="_pAZvECNtEeSWsdFScyxqCg" elementId="edu.usc.cssl.nlputils.application.menu.crawlers" label="Crawl"/>
+      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.menu.preprocessors" label="Preprocess"/>
+      <children xsi:type="menu:Menu" xmi:id="_c7vqMBv1EeSPGOxRdieGyg" elementId="edu.usc.cssl.nlputils.application.menu.wordcount" label="Word Count"/>
+      <children xsi:type="menu:Menu" xmi:id="_e5q_8A3SEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.menu.classifiers" label="Classify"/>
+      <children xsi:type="menu:Menu" xmi:id="_hSs34B2sEeSPGOxRdieGyg" elementId="edu.usc.cssl.nlputils.application.menu.topic" label="Topic Model"/>
+      <children xsi:type="menu:Menu" xmi:id="_Lth1sEKMEeS4TbhSwD9pOw" elementId="edu.usc.cssl.nlputils.application.menu.clustering" label="Clustering"/>
+      <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.cssl.nlputils.application.menu.plugins" visible="false" label="Plugins">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.handledmenuitem.0" label="Add Plugin"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.handledmenuitem.1" label="Remove Plugin"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_WkqrkA3MEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.handledmenuitem.2" label="Global Plugin Settings"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_-nuFIfzGEeOdn9ViPpOXDA" label="Help">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIvzGEeOdn9ViPpOXDA" label="About" command="_-nuFGfzGEeOdn9ViPpOXDA"/>

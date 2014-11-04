@@ -19,7 +19,7 @@ public class OpenNBClassifier {
 	public void execute() {
 		System.out.println("Opening Classifier");
 		
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.nbclassifier.part.0");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.nbclassifier.part.0");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 		

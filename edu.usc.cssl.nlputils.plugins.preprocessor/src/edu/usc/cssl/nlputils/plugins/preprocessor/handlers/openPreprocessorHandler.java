@@ -16,7 +16,7 @@ public class openPreprocessorHandler {
 	@Execute
 	public void execute() {
 		System.out.println("Opening Preprocessor");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.preprocessor.part.PreprocessorSettings");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.preprocessor.part.PreprocessorSettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

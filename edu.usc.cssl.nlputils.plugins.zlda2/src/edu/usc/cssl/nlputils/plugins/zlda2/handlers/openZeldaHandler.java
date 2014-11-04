@@ -14,7 +14,7 @@ public class openZeldaHandler {
 	@Execute
 	public void execute() {
 		System.out.println("Opening Zelda...");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.zlda2.part.zeldaSettings");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.zlda2.part.zeldaSettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

@@ -57,6 +57,7 @@ public class WordCountSettings {
 	
 	@PostConstruct
 	public void postConstruct(Composite parent) {
+		//appendLog("Test");
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(9, false));
 		new Label(parent, SWT.NONE);

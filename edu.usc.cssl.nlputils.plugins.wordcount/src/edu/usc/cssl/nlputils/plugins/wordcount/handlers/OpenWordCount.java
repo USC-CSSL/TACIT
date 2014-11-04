@@ -20,7 +20,7 @@ public class OpenWordCount {
 		//TODO Your code goes here
 		System.out.println("Opening WordCount");
 		
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.wordcount.part.0");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.wordcount.part.0");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}
