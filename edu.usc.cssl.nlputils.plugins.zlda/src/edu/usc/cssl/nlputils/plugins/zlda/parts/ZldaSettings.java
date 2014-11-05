@@ -162,8 +162,10 @@ public class ZldaSettings {
 				}
 				}
 				long startTime = System.currentTimeMillis();
+				appendLog("PROCESSING...(Z-LDA)");
 				invokeLDA();
 				appendLog("z-label LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("DONE");
 			}
 		});
 		btnCalculate.setText("Calculate");

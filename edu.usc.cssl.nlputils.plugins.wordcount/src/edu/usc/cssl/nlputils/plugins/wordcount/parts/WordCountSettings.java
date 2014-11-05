@@ -331,7 +331,7 @@ public class WordCountSettings {
 				}
 				System.out.println("Overwrite files.");
 				
-				
+				appendLog("PROCESSING...(Word Count)");
 				try {
 					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, "",true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection(),btnStemDictionary.getSelection());
 				} catch (IOException ioe) {
@@ -352,6 +352,7 @@ public class WordCountSettings {
 					errorMessage = "Word Count Completed Successfully.";
 				
 				appendLog(errorMessage);
+				appendLog("DONE");
 				
 				if (returnCode == 0){
 					MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);

@@ -182,6 +182,7 @@ public class SenateCrawlerSettings {
 				try {
 					
 					long startTime = System.currentTimeMillis();
+					appendLog("PROCESSING...(Senate Crawler)");
 					senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
 					/*
 					if (senator.equals("All Senators") && congress.equals("All")){
@@ -197,6 +198,7 @@ public class SenateCrawlerSettings {
 					*/
 					
 					appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+					appendLog("DONE");
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}

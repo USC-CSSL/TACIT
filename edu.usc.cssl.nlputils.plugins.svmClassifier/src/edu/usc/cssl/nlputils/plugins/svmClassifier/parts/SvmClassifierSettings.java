@@ -188,7 +188,7 @@ public class SvmClassifierSettings {
 				ContextInjectionFactory.inject(svm,iEclipseContext);
 
 				//int selection = tabFolder.getSelectionIndex();
-				
+				appendLog("PROCESSING...(SVM)");
 				if (true){	// btnCrossVal.getSelection() always true
 					CrossValidator cv = new CrossValidator();
 					ContextInjectionFactory.inject(cv,iEclipseContext);
@@ -214,6 +214,7 @@ public class SvmClassifierSettings {
 				}*/
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
+				appendLog("DONE");
 				} catch (IOException ie) {
 					ie.printStackTrace();
 				}

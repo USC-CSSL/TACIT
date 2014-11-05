@@ -127,8 +127,10 @@ public class HierarchicalClusteringSettings {
 				}
 				}
 				long startTime = System.currentTimeMillis();
+				appendLog("PROCESSING...(Hierarchical Clustering)");
 				runClustering();
 				appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("DONE");
 			}
 		});
 		btnCalculate.setText("Cluster");

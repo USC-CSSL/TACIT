@@ -112,12 +112,13 @@ public class ZldaSettings {
 		btnCalculate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				appendLog("Processing Z-label LDA");
+				appendLog("PROCESSING...(Z-LDA Python Based)");
 				long startTime = System.currentTimeMillis();
 				Zlda2 z2 = new Zlda2();
 				z2.callPython(txtTopic.getText(),txtData.getText(),txtNum.getText(),txtOutput.getText());
 				appendLog("Completed writing output file "+txtOutput.getText());
 				appendLog("Finished successfully in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+				appendLog("DONE");
 			}
 		});
 		btnCalculate.setBounds(6, 136, 94, 28);

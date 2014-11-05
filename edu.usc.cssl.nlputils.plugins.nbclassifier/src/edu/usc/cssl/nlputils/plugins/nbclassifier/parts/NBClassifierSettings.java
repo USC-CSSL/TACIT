@@ -178,11 +178,12 @@ public class NBClassifierSettings {
 				
 				try {
 					System.out.println("Processing...");
-					appendLog("Processing...");
+					appendLog("PROCESSING...(Naive Bayes)");
 					long startTime = System.currentTimeMillis();
 					nb.doClassification(ppDir1, ppDir2, txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
 					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					appendLog("DONE");
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -329,11 +330,12 @@ public class NBClassifierSettings {
 				
 				try {
 					System.out.println("Processing...");
-					appendLog("Processing...");
+					appendLog("PROCESSING...(Naive Bayes)");
 					long startTime = System.currentTimeMillis();
 					nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
 					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					appendLog("DONE");
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {

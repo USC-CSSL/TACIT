@@ -150,11 +150,15 @@ public class CooccurrenceAnalysisSettings {
 				}
 				}
 				long startTime = System.currentTimeMillis();
+				appendLog("PROCESSING...(Co-occurrence Analysis)");
 				invokeCooccurrence();
 				appendLog("Co-occurrence Analysis LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("DONE");
 			}
 		});
 		btnCalculate.setText("Co-occurrence Analysis");
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		

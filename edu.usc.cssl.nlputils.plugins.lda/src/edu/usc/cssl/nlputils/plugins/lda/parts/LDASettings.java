@@ -121,12 +121,14 @@ public class LDASettings {
 				
 				try {
 					System.out.println("Processing...");
-					appendLog("Processing...");
+					appendLog("Processing...(LDA)");
 					
 					long startTime = System.currentTimeMillis();
+					appendLog("PROCESSING...");
 					lda.doLDA(ppDir, txtNumTopics.getText(), txtOutputPath.getText(), txtLabel.getText()); // Preprocessing is now done separately. Hence passing false
 					System.out.println("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					appendLog("DONE");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

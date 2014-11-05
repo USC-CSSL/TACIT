@@ -130,8 +130,10 @@ public class KMeansClusteringSettings {
 				}
 				}
 				long startTime = System.currentTimeMillis();
+				appendLog("PROCESSING...(K-means Clustering)");
 				runClustering();
 				appendLog("KMeans Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("DONE");
 			}
 		});
 		btnCalculate.setText("Cluster");

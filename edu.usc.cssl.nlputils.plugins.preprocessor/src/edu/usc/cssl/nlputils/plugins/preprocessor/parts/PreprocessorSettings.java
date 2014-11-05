@@ -191,11 +191,13 @@ public class PreprocessorSettings {
 				
 				try{
 					long startTime = System.currentTimeMillis();
+					appendLog("PREPROCESSING...");
 					int result = pp.doPreprocess();
 					if (result == -1 || result == -2 || result == -3)
 						appendLog("Preprocessing failed.");
 					else
 						appendLog("Preprocessing completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					appendLog("DONE");
 				} catch (Exception ioe){
 					ioe.printStackTrace();
 				}
