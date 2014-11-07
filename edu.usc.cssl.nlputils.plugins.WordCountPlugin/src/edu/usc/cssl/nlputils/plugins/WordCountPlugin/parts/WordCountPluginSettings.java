@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-
 import edu.usc.cssl.nlputils.plugins.WordCountPlugin.process.WordCountPlugin;
 
 
@@ -223,19 +222,11 @@ public class WordCountPluginSettings {
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		
-		final Button btnStemDictionary = new Button(parent, SWT.CHECK);
-		btnStemDictionary.setText("Stem the dictionary");
+		final Button btnStem = new Button(parent, SWT.CHECK);
+		btnStem.setText("Stem");
 		new Label(parent, SWT.NONE);
 		
-		final Button btnSpss = new Button(parent, SWT.CHECK);
-		btnSpss.setText("Create SPSS raw file");
-		new Label(parent, SWT.NONE);
-		
-		final Button btnWordDistribution = new Button(parent, SWT.CHECK);
-		GridData gd_btnWordDistribution = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnWordDistribution.widthHint = 266;
-		btnWordDistribution.setLayoutData(gd_btnWordDistribution);
-		btnWordDistribution.setText("Create Category-wise Word Distribution Files");
+
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -249,44 +240,6 @@ public class WordCountPluginSettings {
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
-		
-		Group grpPreprocessing = new Group(parent, SWT.NONE);
-		grpPreprocessing.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		grpPreprocessing.setText("Additional Options");
-		GridData gd_grpPreprocessing = new GridData(SWT.LEFT, SWT.CENTER, false, false, 8, 1);
-		gd_grpPreprocessing.heightHint = 76;
-		gd_grpPreprocessing.widthHint = 357;
-		grpPreprocessing.setLayoutData(gd_grpPreprocessing);
-		
-		Label lblDelimiters = new Label(grpPreprocessing, SWT.NONE);
-		lblDelimiters.setBounds(16, 30, 105, 15);
-		lblDelimiters.setText("Word Delimiters");
-		
-		txtDelimiters = new Text(grpPreprocessing, SWT.BORDER);
-		txtDelimiters.setBounds(137, 28, 129, 21);
-		
-		Composite composite = new Composite(grpPreprocessing, SWT.NONE);
-		composite.setBounds(10, 56, 336, 31);
-		
-		final Button btnStemming = new Button(composite, SWT.RADIO);
-		btnStemming.setSelection(true);
-		btnStemming.setBounds(4, 9, 106, 16);
-		btnStemming.setText("LIWC Stemming");
-		
-		final Button btnSnowball = new Button(composite, SWT.RADIO);
-		btnSnowball.setBounds(125, 9, 188, 16);
-		btnSnowball.setText("Snowball (Porter 2) Stemming");
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		
 		
 		
 		Button btnAnalyze = new Button(parent, SWT.NONE);
@@ -328,7 +281,7 @@ public class WordCountPluginSettings {
 				
 				try {
 						//Niki Change here
-				//	returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection(),btnStemDictionary.getSelection());
+					returnCode=wc.invokeWordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),btnStem.getSelection());
 				} catch (Exception ioe) {
 					ioe.printStackTrace();
 				}
@@ -341,8 +294,6 @@ public class WordCountPluginSettings {
 					errorMessage = "Please check the stop words file path.";
 				if (returnCode == -5) 
 					errorMessage = "The output file path is incorrect.";
-				if (returnCode == -6)
-					errorMessage = "The SPSS output file path is incorrect.";
 				if (returnCode == 0)
 					errorMessage = "Word Count Completed Successfully.";
 				
@@ -432,31 +383,5 @@ public class WordCountPluginSettings {
 	}
 	
 
-protected void invokeCooccurrence( ){
-		
-	
-		
-		
-		
-		if(inputFiles.length == 0){
-			appendLog("Please select at least one file on which to run Co-occurrence Analysis");
-			return;
-		}
-		int windowSize =0;
-		System.out.println("Running Co-occurrence Analysis...");
-		appendLog("Running Co-occurrence Analysis...");
-		//boolean isSuccess = WordCountPlugin.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText());
-	//	if(isSuccess == false)
-	//	{
-	//		appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
-	//		return;
-	//	}
 
-		appendLog("Output for Co-occurrence Analysis");
-		
-		appendLog("Word to word matrix stored in " + txtOutputDir + "\\word-matrix.csv" );
-		appendLog("Phrases stored in " + txtOutputDir + "\\phrases.csv" );
-		appendLog("Done Co-occurrence Analysis...");
-		
-	}
 }

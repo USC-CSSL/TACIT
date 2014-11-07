@@ -5,26 +5,202 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.IEclipseContext;
+
+import snowballstemmer.PorterStemmer;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
+
 
 public class WordCountPlugin {
+	private boolean doStopWords;
+	private HashSet<String> stopWordSet = new HashSet<String>();
+	Map<String, Map<String, Double>> wordMat = new HashMap<String, Map<String, Double>>();
+	PorterStemmer stemmer = new PorterStemmer();
+	private boolean doStemming = true;
+	
+	
+	DecimalFormat df = new DecimalFormat("#.##");
+	
+	
+	private static Logger logger = Logger.getLogger(WordCountPlugin.class.getName());
+	public static void main(String[] args) throws IOException {
+		WordCountPlugin wc = new WordCountPlugin();
+		String dir = "C://Users//carlosg//Desktop//CSSL//svm//testham//";
+		File dirList = new File(dir);
+		int i = 0;
+		String[] inputFiles = dirList.list();
+		wc.invokeWordCount(inputFiles,"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt" , "C://Users//carlosg//Desktop//CSSL//zlab-0.1/stop.txt", "C://Users//carlosg//Desktop//CSSL//Clusering//", "", true);
 
-	public static void main(String[] args) {
-
-		calculateCooccurrences(
-				"C://Users//carlosg//Desktop//CSSL//svm//testham//",
-				"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt", 6,
-				"C://Users//carlosg//Desktop//CSSL//Clusering//");
 	}
+
+	public int invokeWordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doStemming) throws IOException{
+		int returnCode = -1;
+		long startTime = System.currentTimeMillis();
+		
+		
+		if (inputFiles==null){
+			logger.warning("Please select the input file(s).");
+			return -2;
+		}
+		
+		// Checking the dictionary
+		File dFile = new File(dictionaryFile);
+		if (!dFile.exists() || dFile.isDirectory()) {
+			logger.warning("Please check the dictionary file path.");
+			return -3;
+		}
+				
+		
+		// StopWords is optional
+		if (stopWordsFile.equals(null) || stopWordsFile.equals(""))
+			this.doStopWords=false;
+		else{
+			this.doStopWords=true;
+			File sFile = new File(stopWordsFile);
+	
+			if (!sFile.exists() || sFile.isDirectory()) {
+				logger.warning("Please check the stop words file path.");
+				return -4;
+			}else {
+				startTime = System.currentTimeMillis();
+				stopWordSetBuild(stopWordsFile);
+				logger.info("Finished building the Stop Words Set in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("Finished building the Stop Words Set in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+			}
+		}
+		
+		// Checking the output path
+		File oFile = new File(outputFile+".csv");
+		if (outputFile=="" || oFile.isDirectory()) {
+			logger.warning("The output file path is incorrect.");
+			return -5;
+		}
+				
+		for (String inputFile: inputFiles) {
+			String input = inputFile;
+			inputFile = "C://Users//carlosg//Desktop//CSSL//svm//testham//" + inputFile;
+			// Mac cache file filtering
+			if (inputFile.contains("DS_Store"))
+				continue;
+			
+			Map<String, Double> words = new HashMap<String, Double>();
+			File iFile = new File(inputFile);
+			if (!iFile.exists() || iFile.isDirectory()){
+				logger.warning("Please check the input file path "+inputFile);
+				return -2;
+			}	
+			
+			countWords(inputFile, words);
+			wordMat.put(input, words);
+		}
+		
+		//writeToOutput(outputFile);
+		
+		return 0;
+		
+	}
+	
+	// Builds the Stop Word Set
+		public void stopWordSetBuild(String stopWordsFile) throws IOException {
+			File sFile = new File(stopWordsFile);
+			BufferedReader br = new BufferedReader(new FileReader(sFile));
+			String currentLine = null;
+			while ((currentLine = br.readLine()) != null ) {
+				stopWordSet.add(currentLine.trim().toLowerCase());
+			}
+			br.close();
+		}
+		
+		public void countWords(String inputFile,  Map<String, Double> words){
+			
+			int totalWords  = 0;
+			
+			try {
+				String seed = null;
+		
+				 PTBTokenizer ptbt = new PTBTokenizer(new FileReader(inputFile), new CoreLabelTokenFactory(), "");
+			      for (CoreLabel label; ptbt.hasNext(); ) {
+			    	  	label = (CoreLabel) ptbt.next();
+			        	seed = label.toString();
+						if(doStopWords && stopWordSet.contains(seed))
+							continue;
+						if(doStemming){
+						
+								seed = seed.replace("*", "");
+								stemmer.setCurrent(seed);
+								String stemmedWord = "";
+								if(stemmer.stem())
+									 stemmedWord = stemmer.getCurrent();
+								if (!stemmedWord.equals(""))
+									seed = stemmedWord;
+							
+						}
+						totalWords++;
+						if (words.containsKey(seed)) {
+							words.put(seed, words.get(seed) + 1);
+						}else{
+							words.put(seed, (double) 1);
+						}
+						System.out.println(seed + " " + words.get(seed));
+					}
+
+				for(String word: words.keySet()){
+					words.put(word, (100*words.get(word))/totalWords);
+				}
+				
+			}catch(Exception e){
+				System.out.println("Error processing files" + e);
+			}
+		}
+		
+		public void writeToOutput(String outputPath){
+			Map<String, Double> vec = null;
+			SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
+			System.out.println(keys.size());
+			try {
+				FileWriter fw = new FileWriter(new File(outputPath	+ "\\document-to-word-matrix.csv"));
+				fw.write("start,");
+				for (String key : keys) {
+					fw.write(key + ",");
+				}
+				fw.write("\n\n");
+
+				for (String key : keys) {
+					fw.write(key + ",");
+					vec = wordMat.get(key);
+					for (String value : keys) {
+						if (vec.containsKey(value)) {
+							fw.write(vec.get(value) + ",");
+						} else {
+							fw.write("0,");
+						}
+					}
+					fw.write("\n");
+				}
+
+				fw.close();
+			} catch (IOException e) {
+				System.out.println("Error writing output to files" + e);
+			}
+			logger.info("CSV File Updated Successfully");
+			appendLog("CSV File Updated Successfully");
+		}
 
 	public static boolean calculateCooccurrences(String inputDir,
 			String seedFile, int windowSize, String outputPath) {
@@ -166,9 +342,18 @@ public class WordCountPlugin {
 
 			return true;
 		} catch (Exception e) {
-			System.out.println("Exception occurred in Cooccurrence Analysis "
-					+ e);
+			System.out.println("Exception occurred in Cooccurrence Analysis " + e);
 		}
 		return false;
 	}
+	
+	// This function updates the consoleMessage parameter of the context.
+		@Inject IEclipseContext context;
+		private void appendLog(String message){
+			IEclipseContext parent = null;
+			if (context==null)
+				return;
+			parent = context.getParent();
+			parent.set("consoleMessage", message);
+		}
 }

@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="stanford-corenlp-3.2.0.jar"/>
+	<classpathentry kind="lib" path="SnowballStemmer.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
