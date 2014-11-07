@@ -31,6 +31,8 @@ public class WordCountPlugin {
 	private boolean doStopWords;
 	private HashSet<String> stopWordSet = new HashSet<String>();
 	Map<String, Map<String, Double>> wordMat = new HashMap<String, Map<String, Double>>();
+	SortedSet<String> keys = new TreeSet<String>();
+	String delimeters = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
 	PorterStemmer stemmer = new PorterStemmer();
 	private boolean doStemming = true;
 	
@@ -43,16 +45,13 @@ public class WordCountPlugin {
 		WordCountPlugin wc = new WordCountPlugin();
 		String dir = "C://Users//carlosg//Desktop//CSSL//svm//testham//";
 		File dirList = new File(dir);
-		int i = 0;
 		String[] inputFiles = dirList.list();
-		wc.invokeWordCount(inputFiles,"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt" , "C://Users//carlosg//Desktop//CSSL//zlab-0.1/stop.txt", "C://Users//carlosg//Desktop//CSSL//Clusering//", "", true);
+		wc.invokeWordCount(inputFiles,"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt" , "C://Users//carlosg//Desktop//CSSL//zlab-0.1/stop.txt", "C://Users//carlosg//Desktop//CSSL//Clusering//",  true);
 
 	}
 
-	public int invokeWordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doStemming) throws IOException{
-		int returnCode = -1;
+	public int invokeWordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, boolean doStemming) throws IOException{
 		long startTime = System.currentTimeMillis();
-		
 		
 		if (inputFiles==null){
 			logger.warning("Please select the input file(s).");
@@ -110,7 +109,7 @@ public class WordCountPlugin {
 			wordMat.put(input, words);
 		}
 		
-		//writeToOutput(outputFile);
+		writeToOutput(outputFile);
 		
 		return 0;
 		
@@ -134,11 +133,16 @@ public class WordCountPlugin {
 			try {
 				String seed = null;
 		
-				 PTBTokenizer ptbt = new PTBTokenizer(new FileReader(inputFile), new CoreLabelTokenFactory(), "");
+				 @SuppressWarnings("unchecked")
+				PTBTokenizer ptbt = new PTBTokenizer(new FileReader(inputFile), new CoreLabelTokenFactory(), "");
 			      for (CoreLabel label; ptbt.hasNext(); ) {
 			    	  	label = (CoreLabel) ptbt.next();
 			        	seed = label.toString();
+			        	if(seed.isEmpty())
+			        		continue;
 						if(doStopWords && stopWordSet.contains(seed))
+							continue;
+						if(delimeters.contains(seed))
 							continue;
 						if(doStemming){
 						
@@ -156,6 +160,8 @@ public class WordCountPlugin {
 							words.put(seed, words.get(seed) + 1);
 						}else{
 							words.put(seed, (double) 1);
+							if(!keys.contains(seed))
+								keys.add(seed);
 						}
 						System.out.println(seed + " " + words.get(seed));
 					}
@@ -171,7 +177,7 @@ public class WordCountPlugin {
 		
 		public void writeToOutput(String outputPath){
 			Map<String, Double> vec = null;
-			SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
+			
 			System.out.println(keys.size());
 			try {
 				FileWriter fw = new FileWriter(new File(outputPath	+ "\\document-to-word-matrix.csv"));
@@ -179,11 +185,11 @@ public class WordCountPlugin {
 				for (String key : keys) {
 					fw.write(key + ",");
 				}
-				fw.write("\n\n");
+				fw.write("\n");
 
-				for (String key : keys) {
-					fw.write(key + ",");
-					vec = wordMat.get(key);
+				for (String files : wordMat.keySet()) {
+					fw.write(files + ",");
+					vec = wordMat.get(files);
 					for (String value : keys) {
 						if (vec.containsKey(value)) {
 							fw.write(vec.get(value) + ",");
@@ -196,7 +202,8 @@ public class WordCountPlugin {
 
 				fw.close();
 			} catch (IOException e) {
-				System.out.println("Error writing output to files" + e);
+				logger.info("Error writing output to files");
+				appendLog("Error writing output to files");
 			}
 			logger.info("CSV File Updated Successfully");
 			appendLog("CSV File Updated Successfully");

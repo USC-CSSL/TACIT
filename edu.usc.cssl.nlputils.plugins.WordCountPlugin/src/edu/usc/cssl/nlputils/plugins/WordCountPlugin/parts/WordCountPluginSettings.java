@@ -2,9 +2,7 @@
 package edu.usc.cssl.nlputils.plugins.WordCountPlugin.parts;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -23,24 +21,28 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.usc.cssl.nlputils.plugins.WordCountPlugin.process.WordCountPlugin;
 
 
 public class WordCountPluginSettings {
-	private Text txtInputDir;
-
+	
+	@Inject
+	IEclipseContext context;
+	private String[] inputFiles;
+	private Text txtInputFile;
+	private Text txtDictionary;
+	private Text txtStopWords;
+	private Text txtOutputFile;
+	private Label lblInput;
+	
 	@Inject
 	public WordCountPluginSettings() {
-		
 	}
-	
 	
 	@PostConstruct
 	public void postConstruct(Composite parent) {
@@ -281,7 +283,7 @@ public class WordCountPluginSettings {
 				
 				try {
 						//Niki Change here
-					returnCode=wc.invokeWordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, txtDelimiters.getText(),btnStem.getSelection());
+					returnCode=wc.invokeWordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, btnStem.getSelection());
 				} catch (Exception ioe) {
 					ioe.printStackTrace();
 				}
@@ -344,25 +346,11 @@ public class WordCountPluginSettings {
 				//System.out.println(path);
 			} else if (temp.exists() && temp.isDirectory()) {
 				String directory = temp.getAbsolutePath();
-				String[] files = temp.list();
 				paths.addAll(getFiles(directory));
 			}
 		}
 		return paths;
 	}
-	
-	@Inject
-	IEclipseContext context;
-	private Text txtOutputDir;
-	private Label lblOutputPath;
-	private Button button;
-	private String[] inputFiles;
-	private Text txtInputFile;
-	private Text txtDictionary;
-	private Text txtStopWords;
-	private Text txtOutputFile;
-	private Text txtDelimiters;
-	private Label lblInput;
 
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
