@@ -209,7 +209,7 @@ public class WordCountPlugin {
 			appendLog("CSV File Updated Successfully");
 		}
 
-	public static boolean calculateCooccurrences(String inputDir,
+	/*public static boolean calculateCooccurrences(String inputDir,
 			String seedFile, int windowSize, String outputPath) {
 		String currentLine = null;
 		Map<String, Integer> seedWords = new HashMap<String, Integer>();
@@ -352,7 +352,7 @@ public class WordCountPlugin {
 			System.out.println("Exception occurred in Cooccurrence Analysis " + e);
 		}
 		return false;
-	}
+	}*/
 	
 	// This function updates the consoleMessage parameter of the context.
 		@Inject IEclipseContext context;
