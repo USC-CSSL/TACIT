@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="edu.usc.cssl.nlputils.application" uid="NLPUtils" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="edu.usc.cssl.nlputils.application" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -33,6 +33,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.HierarchicalClustering"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.KMeansClustering"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.WordCountPlugin"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.lda"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.nbclassifier"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.preprocessor"/>
@@ -65,7 +66,7 @@
       <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.solaris.sparc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.win32.x86"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.resources"/>
