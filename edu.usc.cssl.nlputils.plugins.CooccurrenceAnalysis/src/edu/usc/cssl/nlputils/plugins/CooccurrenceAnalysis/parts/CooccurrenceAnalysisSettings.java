@@ -144,21 +144,18 @@ public class CooccurrenceAnalysisSettings {
 				System.out.println("Preprocessing...");
 				try {
 					ppDir = doPp(txtInputDir.getText());
-					ppSeedFile = doPp(txtSeedFile.getText());
+					if(ppSeedFile!= "")
+						ppSeedFile = doPp(txtSeedFile.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 				}
 				long startTime = System.currentTimeMillis();
-				appendLog("PROCESSING...(Co-occurrence Analysis)");
 				invokeCooccurrence();
-				appendLog("Co-occurrence Analysis LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-				appendLog("DONE");
+				appendLog("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 			}
 		});
 		btnCalculate.setText("Co-occurrence Analysis");
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		
@@ -216,7 +213,9 @@ protected void invokeCooccurrence( ){
 			appendLog("Please select at least one file on which to run Co-occurrence Analysis");
 			return;
 		}
-		int windowSize = Integer.parseInt(txtNumTopics.getText());
+		int windowSize = 0;
+		if(!txtNumTopics.getText().equals(""))
+			windowSize = Integer.parseInt(txtNumTopics.getText());
 		
 		
 		System.out.println("Running Co-occurrence Analysis...");
@@ -230,8 +229,8 @@ protected void invokeCooccurrence( ){
 
 		appendLog("Output for Co-occurrence Analysis");
 		
-		appendLog("Word to word matrix stored in " + txtOutputDir + "\\word-matrix.csv" );
-		appendLog("Phrases stored in " + txtOutputDir + "\\phrases.csv" );
+		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + "\\word-matrix.csv" );
+		appendLog("Phrases stored in " + txtOutputDir.getText() + "\\phrases.csv" );
 		appendLog("Done Co-occurrence Analysis...");
 		
 	}

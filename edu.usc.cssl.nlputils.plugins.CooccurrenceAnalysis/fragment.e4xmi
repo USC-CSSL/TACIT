@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_07YIsBWKEeSxTtNMnu405Q">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4Md0EBWMEeSxTtNMnu405Q" featurename="commands" parentElementId="org.eclipse.e4.ide.application">
-    <elements xsi:type="commands:Command" xmi:id="_91wX0BWMEeSxTtNMnu405Q" elementId="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.command.openCooccurrenceAnalysis" commandName="Open CooccurrenceAnalysis"/>
+    <elements xsi:type="commands:Command" xmi:id="_91wX0BWMEeSxTtNMnu405Q" elementId="edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis.command.openCooccurrenceAnalysis" commandName="Open CooccurrenceAnalysis"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4tCKgBWMEeSxTtNMnu405Q" featurename="children" parentElementId="edu.usc.cssl.nlputils.application.menu.wordcount">
-    <elements xsi:type="menu:HandledMenuItem" xmi:id="_ICzaoBWNEeSxTtNMnu405Q" elementId="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.handledmenuitem.openCooccurrenceAnalysis" label="Co-occurrence Analysis" command="_91wX0BWMEeSxTtNMnu405Q"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4tCKgBWMEeSxTtNMnu405Q" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.wordcount">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_ICzaoBWNEeSxTtNMnu405Q" elementId="edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis.handledmenuitem.openCooccurrenceAnalysis" label="Co-occurrence Analysis" command="_91wX0BWMEeSxTtNMnu405Q"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5LqnQBWMEeSxTtNMnu405Q" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
-    <elements xsi:type="commands:Handler" xmi:id="_VmGAgBWNEeSxTtNMnu405Q" elementId="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.handler.openCooccurrenceAnalysis" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis/edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.handlers.OpenCooccurrenceAnalysisHandler" command="_91wX0BWMEeSxTtNMnu405Q"/>
+    <elements xsi:type="commands:Handler" xmi:id="_VmGAgBWNEeSxTtNMnu405Q" elementId="edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis.handler.openCooccurrenceAnalysis" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis/edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.handlers.OpenCooccurrenceAnalysisHandler" command="_91wX0BWMEeSxTtNMnu405Q"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5rCq4BWMEeSxTtNMnu405Q" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
     <elements xsi:type="basic:Part" xmi:id="_toUqcBWNEeSxTtNMnu405Q" elementId="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.parts.CooccurrenceAnalysisSettings" visible="false" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis/edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.parts.CooccurrenceAnalysisSettings" label="Co-occurrence Analysis Settings" closeable="true"/>

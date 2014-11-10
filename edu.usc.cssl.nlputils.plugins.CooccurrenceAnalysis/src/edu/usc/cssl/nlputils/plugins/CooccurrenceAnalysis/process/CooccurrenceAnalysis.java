@@ -17,7 +17,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class CooccurrenceAnalysis {
-
+	static String delimeters = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
+	static boolean doPhrases = false;
+	
 	public static void main(String[] args) {
 
 		calculateCooccurrences(
@@ -33,24 +35,34 @@ public class CooccurrenceAnalysis {
 		Queue<String> q = new LinkedList<String>();
 		Map<String, Map<String, Integer>> wordMat = new HashMap<String, Map<String, Integer>>();
 		List<String> phrase = new ArrayList<String>();
-
+		BufferedReader br = null;
+		
+		
 		try {
 			String[] seeds = null;
-			BufferedReader br = new BufferedReader(new FileReader(new File(
-					seedFile)));
-			while ((currentLine = br.readLine()) != null) {
-				seeds = currentLine.split(" ");
-				for (String seed : seeds) {
-					if (!seedWords.containsKey(seed)) {
-						
-						seedWords.put(seed, 1);
+			if (windowSize > 0) {
+				File sf = new File(seedFile);
+				if (sf != null && sf.exists()) {
+					br = new BufferedReader(new FileReader(
+							new File(seedFile)));
+					while ((currentLine = br.readLine()) != null) {
+						seeds = currentLine.split(" ");
+						for (String seed : seeds) {
+							if (!seedWords.containsKey(seed)) {
+
+								seedWords.put(seed, 1);
+							}
+						}
+
 					}
+					br.close();
+					doPhrases = true;
 				}
-
 			}
-			br.close();
 			
-
+			if(windowSize == 0 || seedWords.size() == 0)
+				doPhrases = false;
+			
 			File dir = new File(inputDir);
 			File[] listOfFiles = dir.listFiles();
 
@@ -60,16 +72,27 @@ public class CooccurrenceAnalysis {
 			StringBuilder match;
 			int size = seedWords.size();
 			for (File f : listOfFiles) {
+				System.out.println("Processing");
 				List<String> words = new ArrayList<String>();
+				if(!f.exists() || f.isDirectory())
+					continue;
 				br = new BufferedReader(new FileReader(f));
 				while ((currentLine = br.readLine()) != null) {
+					if(currentLine.isEmpty() || currentLine.equals(""))
+						continue;
 					for (String s : currentLine.split(" "))
 						if(!s.isEmpty())
 						words.add(s);
 				}
 				System.out.println(words);
 				len = count = 0;
+				
 				for (String word : words) {
+					if(word.isEmpty() || word.equals(""))
+						continue;
+					if(delimeters.contains(word))
+						continue;
+					if(doPhrases){
 					if(len<windowSize){
 						q.add(word);
 						if(seedWords.containsKey(word)){
@@ -81,7 +104,7 @@ public class CooccurrenceAnalysis {
 						len++;
 					}
 					else{
-						if(count ==  size){
+						if(size!=0 && count ==  size){
 							match = new StringBuilder();
 							for(String s: q)
 								match.append(s+' '); 
@@ -102,7 +125,9 @@ public class CooccurrenceAnalysis {
 							}
 						}
 					}
+				}
 					
+					System.out.println("Building word mat for " + word);
 					if (wordMat.containsKey(word)) {
 						vec = wordMat.get(word);
 					} else {
@@ -126,11 +151,11 @@ public class CooccurrenceAnalysis {
 			System.out.println(keys.size());
 			try {
 				FileWriter fw = new FileWriter(new File(outputPath	+ "\\word-to-word-matrix.csv"));
-				fw.write("start,");
+				fw.write(" ,");
 				for (String key : keys) {
 					fw.write(key + ",");
 				}
-				fw.write("\n\n");
+				fw.write("\n");
 
 				for (String key : keys) {
 					fw.write(key + ",");
@@ -166,8 +191,7 @@ public class CooccurrenceAnalysis {
 
 			return true;
 		} catch (Exception e) {
-			System.out.println("Exception occurred in Cooccurrence Analysis "
-					+ e);
+			System.out.println("Exception occurred in Cooccurrence Analysis "+ e);
 		}
 		return false;
 	}
