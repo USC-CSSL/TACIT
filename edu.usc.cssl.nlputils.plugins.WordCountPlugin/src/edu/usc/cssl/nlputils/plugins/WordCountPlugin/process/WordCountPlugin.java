@@ -2,9 +2,11 @@ package edu.usc.cssl.nlputils.plugins.WordCountPlugin.process;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -29,13 +32,14 @@ import edu.stanford.nlp.process.PTBTokenizer;
 
 public class WordCountPlugin {
 	private boolean doStopWords;
-	private HashSet<String> stopWordSet = new HashSet<String>();
-	Map<String, Map<String, Double>> wordMat = new HashMap<String, Map<String, Double>>();
-	SortedSet<String> keys = new TreeSet<String>();
+	private HashSet<String> stopWordSet;
+	Map<String, Map<String, Double>> wordMat;
+	Set<String> dict;
+	SortedSet<String> keys;
 	String delimeters = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
 	PorterStemmer stemmer = new PorterStemmer();
 	private boolean doStemming = true;
-	
+	private boolean useDict = false;
 	
 	DecimalFormat df = new DecimalFormat("#.##");
 	
@@ -46,23 +50,34 @@ public class WordCountPlugin {
 		String dir = "C://Users//carlosg//Desktop//CSSL//svm//testham//";
 		File dirList = new File(dir);
 		String[] inputFiles = dirList.list();
+		
 		wc.invokeWordCount(inputFiles,"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt" , "C://Users//carlosg//Desktop//CSSL//zlab-0.1/stop.txt", "C://Users//carlosg//Desktop//CSSL//Clusering//",  true);
 
 	}
 
 	public int invokeWordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, boolean doStemming) throws IOException{
 		long startTime = System.currentTimeMillis();
+		File dFile = null;
+		useDict = false;
+		doStemming = true;
+		wordMat = new HashMap<String, Map<String, Double>>();
+		stopWordSet = new HashSet<String>();
+		keys = new TreeSet<String>();
+		
 		
 		if (inputFiles==null){
 			logger.warning("Please select the input file(s).");
 			return -2;
 		}
 		
-		// Checking the dictionary
-		File dFile = new File(dictionaryFile);
-		if (!dFile.exists() || dFile.isDirectory()) {
-			logger.warning("Please check the dictionary file path.");
-			return -3;
+		if(!dictionaryFile.isEmpty() && !dictionaryFile.equals("")){
+			// Checking the dictionary
+			useDict = true;
+			dFile = new File(dictionaryFile);
+			if (!dFile.exists() || dFile.isDirectory()) {
+				logger.warning("Please check the dictionary file path.");
+				return -3;
+			}
 		}
 				
 		
@@ -90,6 +105,11 @@ public class WordCountPlugin {
 			logger.warning("The output file path is incorrect.");
 			return -5;
 		}
+		
+		if(useDict){
+			dict = new HashSet<String>();
+			buildDictionary(dFile);
+		}
 				
 		for (String inputFile: inputFiles) {
 			String input = inputFile;
@@ -115,6 +135,36 @@ public class WordCountPlugin {
 		
 	}
 	
+	/* Build the dictionary set if present*/
+	public void buildDictionary(File dictFile) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(dictFile));
+		String currentLine = null;
+		String[] words = null;
+		while ((currentLine = br.readLine()) != null ) {
+			words = currentLine.split(" ");
+			for(String word: words)
+			{
+				if(!word.equals("")){
+					word = word.trim().toLowerCase();
+					if(doStemming){
+
+						word = word.replace("*", "");
+						stemmer.setCurrent(word);
+						String stemmedWord = "";
+						if(stemmer.stem())
+							stemmedWord = stemmer.getCurrent();
+						if (!stemmedWord.equals(""))
+							word = stemmedWord;
+
+					}
+					dict.add(word);
+				}
+			}
+
+		}
+		br.close();
+	}
+	
 	// Builds the Stop Word Set
 		public void stopWordSetBuild(String stopWordsFile) throws IOException {
 			File sFile = new File(stopWordsFile);
@@ -126,6 +176,7 @@ public class WordCountPlugin {
 			br.close();
 		}
 		
+		/* Does the actual word count for each document */
 		public void countWords(String inputFile,  Map<String, Double> words){
 			
 			int totalWords  = 0;
@@ -155,6 +206,8 @@ public class WordCountPlugin {
 									seed = stemmedWord;
 							
 						}
+						if(useDict && !dict.contains(seed))
+								continue;
 						totalWords++;
 						if (words.containsKey(seed)) {
 							words.put(seed, words.get(seed) + 1);
@@ -163,7 +216,7 @@ public class WordCountPlugin {
 							if(!keys.contains(seed))
 								keys.add(seed);
 						}
-						System.out.println(seed + " " + words.get(seed));
+						//System.out.println(seed + " " + words.get(seed));
 					}
 
 				for(String word: words.keySet()){
@@ -171,10 +224,11 @@ public class WordCountPlugin {
 				}
 				
 			}catch(Exception e){
-				System.out.println("Error processing files" + e);
+				System.out.println("Error processing file " + inputFile + " .Exception " + e);
 			}
 		}
 		
+		/* Writes the whole output to a output file */
 		public void writeToOutput(String outputPath){
 			Map<String, Double> vec = null;
 			
@@ -202,11 +256,11 @@ public class WordCountPlugin {
 
 				fw.close();
 			} catch (IOException e) {
-				logger.info("Error writing output to files");
-				appendLog("Error writing output to files");
+				logger.info("Error writing output to files. ");
+				appendLog("Error writing output to files. ");
 			}
-			logger.info("CSV File Updated Successfully");
-			appendLog("CSV File Updated Successfully");
+			logger.info("CSV File Updated Successfully. ");
+			appendLog("CSV File Updated Successfully. ");
 		}
 
 	/*public static boolean calculateCooccurrences(String inputDir,
