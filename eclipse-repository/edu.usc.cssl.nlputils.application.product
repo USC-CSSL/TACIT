@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="edu.usc.cssl.nlputils.application" uid="NLPUtils" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.0.1.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="edu.usc.cssl.nlputils.application" uid="NLPUtils" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -33,6 +33,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.HierarchicalClustering"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.KMeansClustering"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.WordCountPlugin"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.lda"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.nbclassifier"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.preprocessor"/>
@@ -80,6 +81,7 @@
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.addons.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
+      <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench3"/>
       <plugin id="org.eclipse.emf.common"/>
@@ -102,6 +104,10 @@
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64.source"/>
       <plugin id="org.eclipse.ui"/>
@@ -113,11 +119,11 @@
    </plugins>
 
    <configurations>
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
    </configurations>
 

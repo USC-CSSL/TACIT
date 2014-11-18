@@ -46,6 +46,11 @@
 			<url>http://download.eclipse.org/releases/luna/</url>
 			<layout>p2</layout>
 		</repository>
+		<repository>
+			<id>updates</id>
+			<url>http://download.eclipse.org/eclipse/updates/4.4</url>
+			<layout>p2</layout>
+		</repository>
 	</repositories>
 	<modules>
 		<module>eclipse-repository</module>
@@ -60,6 +65,7 @@
 		<module>edu.usc.cssl.nlputils.plugins.senatecrawler</module>
 		<module>edu.usc.cssl.nlputils.plugins.svmClassifier</module>
 		<module>edu.usc.cssl.nlputils.plugins.wordcount</module>
+		<module>edu.usc.cssl.nlputils.plugins.WordCountPlugin</module>
 		<module>edu.usc.cssl.nlputils.plugins.zlda</module>
 		<module>edu.usc.cssl.nlputils.plugins.zlda2</module>
 	</modules>
@@ -70,12 +76,32 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<!-- <target> <artifact> <groupId>example.group</groupId> <artifactId>luna</artifactId> 
-						<version>1.0.0-SNAPSHOT</version> </artifact> </target> -->
+				    <pomDependencies>consider</pomDependencies>
+					<resolver>p2</resolver>
 					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
