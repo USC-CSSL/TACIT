@@ -120,6 +120,21 @@ public class SenateCrawlerSettings {
 						cmbSenator.add("All Republicans", 2);
 						cmbSenator.add("All Independents", 3);
 						cmbSenator.select(0);
+						
+						/* Set date time*/
+						String congress = cmbCongress.getText().replaceAll("\u00A0", "").trim();
+						int cNum = -1;
+						if (!congress.equals("All")){
+							cNum = Integer.parseInt(congress);
+							cNum = 2*(cNum - 101);
+							dateTime.setYear(1989+cNum);
+							dateTime.setDay(3);
+							dateTime.setMonth(0);
+							dateTime_1.setYear(1990+cNum);
+							dateTime_1.setDay(3);
+							dateTime_1.setMonth(0);
+						}
+						
 					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -152,6 +167,7 @@ public class SenateCrawlerSettings {
 		});
 		btnDateRange.setBounds(9, 112, 93, 16);
 		btnDateRange.setText("Date Range");
+		
 		
 		
 		Button btnExtract = new Button(composite, SWT.NONE);

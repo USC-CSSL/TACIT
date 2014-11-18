@@ -702,7 +702,32 @@ public class SvmClassifier {
 		else
 			appendLog("P value < 10^(-1022) (classification)\n" );
 		//System.out.println(featureMap.toString());
+		
+		
 		return (double)correct/total*100;
+		
+		
+	}
+	
+	public void printReadMe(int kVal, String label1, String label2, double mean, String message) throws IOException{
+		File readMe = new File(intermediatePath+".README");
+		BufferedWriter rmw = new BufferedWriter(new FileWriter(readMe));
+		rmw.write("SVM Cross-Validation Results\n-----------------------\n");
+		rmw.write("Class +1  :  "+label1+"\n");
+		rmw.write("Class -1 :  "+label2+"\n");
+		rmw.write("K-value  :  "+kVal+"\n");
+		rmw.write("Mean Accuracy  :  "+mean+"\n");
+		rmw.write(message+"\n\n");
+		for (int k = 1; k <= kVal; k++){
+			rmw.write("K - "+k+"\n");
+			rmw.write("Training File  :  "+intermediatePath+"_k"+k+".train\n");
+			rmw.write("Test File  :  "+intermediatePath+"_k"+k+".test\n");
+			rmw.write("Model File  :  "+intermediatePath+"_k"+k+".model\n");
+			rmw.write("Output File  :  "+intermediatePath+"_k"+k+".out\n");
+			rmw.write("Predictive weights file  :  "+intermediatePath+"_weights_k"+k+".csv\n\n");
+		}
+		//rmw.write(intermediatePath+"_prediction.csv  :  Class predictions for the given input\n");
+		rmw.close();
 	}
 	
 	public static void main(String[] args) throws IOException {

@@ -92,7 +92,7 @@ public class CrossValidator {
 				distance = currDist;
 			}
 		}
-		
+		svm.printReadMe(k, label1, label2, mean, "Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance);
 		System.out.println("Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance);
 		appendLog("Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance);
 		
