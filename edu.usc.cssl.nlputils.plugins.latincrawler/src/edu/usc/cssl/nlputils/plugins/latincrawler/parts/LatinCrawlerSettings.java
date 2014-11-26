@@ -68,95 +68,7 @@ public class LatinCrawlerSettings {
 		composite.setSize(588, 300);
 		composite.setLocation(0, 0);
 		
-		/*
-		Label lblSenator = new Label(composite, SWT.NONE);
-		lblSenator.setBounds(10, 36, 55, 15);
-		lblSenator.setText("Congress");
 		
-		final DateTime dateTime = new DateTime(composite, SWT.BORDER);
-		dateTime.setEnabled(false);
-		dateTime.setBounds(89, 133, 101, 24);
-		
-		final DateTime dateTime_1 = new DateTime(composite, SWT.BORDER);
-		dateTime_1.setEnabled(false);
-		dateTime_1.setBounds(288, 133, 101, 24);
-		
-		Label lblToDate = new Label(composite, SWT.NONE);
-		lblToDate.setBounds(245, 137, 21, 15);
-		lblToDate.setText("To");
-		
-		txtMaxDocs = new Text(composite, SWT.BORDER);
-		txtMaxDocs.setToolTipText("Enter the maximum number of records to extract for each senator");
-		txtMaxDocs.setEnabled(false);
-		txtMaxDocs.setBounds(189, 184, 40, 21);
-		
-		Label lblFrom = new Label(composite, SWT.NONE);
-		lblFrom.setBounds(26, 137, 35, 15);
-		lblFrom.setText("From");
-
-		final Combo cmbSenator = new Combo(composite, SWT.NONE);
-		cmbSenator.setBounds(89, 67, 300, 23);
-		cmbSenator.setItems(allSenators);
-		cmbSenator.add("All Senators", 0);
-		cmbSenator.add("All Democrats", 1);
-		cmbSenator.add("All Republicans", 2);
-		cmbSenator.add("All Independents", 3);
-		cmbSenator.select(0);
-		
-		final Combo cmbCongress = new Combo(composite, SWT.NONE);
-		cmbCongress.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					String selectedCongress = cmbCongress.getText().trim();
-					if (selectedCongress.equals("All")){
-						cmbSenator.setItems(allSenators);
-						cmbSenator.add("All Senators", 0);
-						cmbSenator.add("All Democrats", 1);
-						cmbSenator.add("All Republicans", 2);
-						cmbSenator.add("All Independents", 3);
-						cmbSenator.select(0);
-					}
-					else{
-						cmbSenator.setItems(AvailableRecords.getSenators(selectedCongress));
-						cmbSenator.add("All Senators", 0);
-						cmbSenator.add("All Democrats", 1);
-						cmbSenator.add("All Republicans", 2);
-						cmbSenator.add("All Independents", 3);
-						cmbSenator.select(0);
-					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				cmbSenator.select(0);
-			}
-		});
-		//combo.setItems(new String[] {"All", "113"});
-		cmbCongress.setItems(authors);
-		cmbCongress.setBounds(89, 33, 101, 23);
-		cmbCongress.select(0);
-		
-		Label lblSenator_1 = new Label(composite, SWT.NONE);
-		lblSenator_1.setBounds(10, 70, 55, 15);
-		lblSenator_1.setText("Senator");
-		
-
-		final Button btnDateRange = new Button(composite, SWT.CHECK);
-		btnDateRange.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (btnDateRange.getSelection()){
-					dateTime.setEnabled(true);
-					dateTime_1.setEnabled(true);
-				} else {
-					dateTime.setEnabled(false);
-					dateTime_1.setEnabled(false);
-				}
-			}
-		});
-		btnDateRange.setBounds(9, 112, 93, 16);
-		btnDateRange.setText("Date Range");
-		*/
 		
 		Button btnExtract = new Button(composite, SWT.NONE);
 		btnExtract.addMouseListener(new MouseAdapter() {
@@ -204,11 +116,6 @@ public class LatinCrawlerSettings {
 		button.setBounds(358, 224, 40, 25);
 		button.setText("...");
 	
-		
-		Label lblNewLabel = new Label(composite, SWT.BORDER | SWT.SHADOW_NONE);
-		lblNewLabel.setBounds(433, 14, 133, 215);
-		lblNewLabel.setText(" Year                 Congress\r\n 1989-1990       101st\r\n 1991-1992       102nd\r\n 1993-1994       103rd\r\n 1995-1996       104th\r\n 1997-1998       105th\r\n 1999-2000       106th\r\n 2001-2002       107th\r\n 2003-2004       108th\r\n 2005-2006       109th\r\n 2007-2008       110th\r\n 2009-2010       111th\r\n 2011-2012       112th\r\n 2013-2014       113th");
-		
 		
 	}
 	
