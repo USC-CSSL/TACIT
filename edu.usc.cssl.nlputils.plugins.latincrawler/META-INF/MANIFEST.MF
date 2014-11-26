@@ -10,5 +10,4 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.model.workbench,
  javax.inject,
  org.eclipse.swt,
- org.eclipse.e4.core.contexts,
- edu.usc.pil.nlputils.plugins.wordcount
+ org.eclipse.e4.core.contexts

@@ -14,15 +14,27 @@ import org.jsoup.select.Elements;
 
 public class AvailableRecords {
 	
-	public static String[] getAllCongresses() throws IOException{
-			Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record").timeout(10*1000).get();
-			Elements congList = doc.select("p.nav");
-			//System.out.println(congList);
-			String congString = " All|"+congList.text().split(":")[1];
-			return congString.split("\\|");
+	public static void main(String[] args) throws IOException{
+		getAllAuthors();
 	}
 	
-	public static String[] getSenators(String congressString) throws IOException {
+	public static String[] getAllAuthors() throws IOException{
+			int i, size = 0;
+		
+			Document doc = Jsoup.connect("http://www.thelatinlibrary.com/").timeout(10*1000).get();
+			Elements authorsList = doc.getElementsByTag("option");
+			System.out.println(authorsList);
+			size = authorsList.size();
+			String[] authorString = new String[size];
+			for(i =0;i<size;i++)
+			{
+				authorString[i] = authorsList.get(i).text();
+			}
+			//String authorsString = " All|"+authorsList.text().split(":")[1];
+			return authorString;
+	}
+	
+	public static String[] getBooks(String congressString) throws IOException {
 		congressString = congressString.replace("\u00A0", "");
 		int congress = Integer.parseInt(congressString);
 		System.out.println("Extracting Senators of Congress "+congress);
@@ -39,12 +51,10 @@ public class AvailableRecords {
 		return senArray;
 	}
 	
-	public static String[] getAllSenators(String[] congresses) throws IOException{
-		TreeSet<String> senators = new TreeSet<String>();
-		for (String cong : congresses){
-			if (cong.trim().equals("All"))
-				continue;
-			String[] temp = getSenators(cong.trim());
+	/*public static String[] getAllBooks(String[] authors) throws IOException{
+		TreeSet<String> books = new TreeSet<String>();
+		for (String cong : authors){
+			String[] temp = getBooks(cong.trim());
 			for (String senator : temp){
 				if (senator.equals("Any Senator"))
 					continue;
@@ -54,5 +64,5 @@ public class AvailableRecords {
 		String[] senatorArray = new String[senators.size()];
 		senators.toArray(senatorArray);
 		return senatorArray;
-	}
+	}*/
 }

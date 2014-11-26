@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Combo;
 
 import edu.usc.cssl.nlputils.plugins.latincrawler.process.AvailableRecords;
@@ -30,7 +29,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 public class LatinCrawlerSettings {
-	private Text txtMaxDocs;
+	
 	@Inject
 	public LatinCrawlerSettings() {
 		
@@ -39,32 +38,37 @@ public class LatinCrawlerSettings {
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
-		appendLog("Loading Congresses...");
-		String[] congresses = null;
+		appendLog("Loading Latin Library...");
+		String[] authors = null;
 
 		try {
-			 congresses = AvailableRecords.getAllCongresses();
+			 authors = AvailableRecords.getAllAuthors();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		appendLog("Loading Senators...");
-		String[] senatorsArray = null;
+		appendLog("Loading Authors...");
+		final String[] allAuthors = authors;
+		/*
+		String[] booksArray = null;
 
 		try {
-			senatorsArray = AvailableRecords.getAllSenators(congresses);
+			booksArray = AvailableRecords.getAllBooks(authors);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
 
-		final String[] allSenators = senatorsArray;
+		
+		*/
 		
 		appendLog("Loading Complete.");
+	
 		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setSize(588, 300);
 		composite.setLocation(0, 0);
 		
+		/*
 		Label lblSenator = new Label(composite, SWT.NONE);
 		lblSenator.setBounds(10, 36, 55, 15);
 		lblSenator.setText("Congress");
@@ -128,7 +132,7 @@ public class LatinCrawlerSettings {
 			}
 		});
 		//combo.setItems(new String[] {"All", "113"});
-		cmbCongress.setItems(congresses);
+		cmbCongress.setItems(authors);
 		cmbCongress.setBounds(89, 33, 101, 23);
 		cmbCongress.select(0);
 		
@@ -152,52 +156,27 @@ public class LatinCrawlerSettings {
 		});
 		btnDateRange.setBounds(9, 112, 93, 16);
 		btnDateRange.setText("Date Range");
-		
+		*/
 		
 		Button btnExtract = new Button(composite, SWT.NONE);
 		btnExtract.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				int maxDocs = -1;
-				if (txtMaxDocs.getText()!="")
-					maxDocs = Integer.parseInt(txtMaxDocs.getText().trim());
-				LatinCrawler senateCrawler = new LatinCrawler();
+
+				
+				LatinCrawler crawler = new LatinCrawler();
 				// Injecting the context into Senatecrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
-				ContextInjectionFactory.inject(senateCrawler,iEclipseContext);
+				ContextInjectionFactory.inject(crawler,iEclipseContext);
 
-				String dateFrom ="";
-				String dateTo = "";
-				
-				if (btnDateRange.getSelection()){
-					dateFrom = (dateTime.getMonth()+1)+"/"+dateTime.getDay()+"/"+dateTime.getYear();
-					dateTo = (dateTime_1.getMonth()+1)+"/"+dateTime_1.getDay()+"/"+dateTime_1.getYear();
-				}
-				String senator = cmbSenator.getText().replaceAll("\u00A0", "").trim();
-				String congress = cmbCongress.getText().replaceAll("\u00A0", "").trim();
-				
-				int cNum = -1;
-				if (!congress.equals("All"))
-					cNum = Integer.parseInt(congress);
+			
 				try {
 					
 					long startTime = System.currentTimeMillis();
-					senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
-					/*
-					if (senator.equals("All Senators") && congress.equals("All")){
-							System.out.println(maxDocs+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-							senateCrawler.initialize(maxDocs, dateFrom,dateTo, txtOutput.getText());
-					} else {
-						int cNum = -1;
-						if (!congress.equals("All"))
-							cNum = Integer.parseInt(congress);
-						System.out.println(maxDocs+", "+congress+", "+senator+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-						senateCrawler.initialize(maxDocs, cNum, senator, dateFrom,dateTo,txtOutput.getText());
-					}
-					*/
-					
+					crawler.initialize( allAuthors,  txtOutput.getText());
+				
 					appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -224,19 +203,7 @@ public class LatinCrawlerSettings {
 		});
 		button.setBounds(358, 224, 40, 25);
 		button.setText("...");
-		
-		final Button btnLimitRecords = new Button(composite, SWT.CHECK);
-		btnLimitRecords.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (btnLimitRecords.getSelection())
-					txtMaxDocs.setEnabled(true);
-				else
-					txtMaxDocs.setEnabled(false);
-			}
-		});
-		btnLimitRecords.setBounds(10, 189, 161, 16);
-		btnLimitRecords.setText("Limit Records per Senator");
+	
 		
 		Label lblNewLabel = new Label(composite, SWT.BORDER | SWT.SHADOW_NONE);
 		lblNewLabel.setBounds(433, 14, 133, 215);
