@@ -15,8 +15,8 @@ public class OpenLatinCrawlerHandler {
 	private EPartService partService;
 	@Execute
 	public void execute() {
-		System.out.println("Opening Senate Crawler Plugin");
-		MPart part = partService.findPart("edu.usc.pil.nlputils.plugins.latincrawler.part.LatinCrawlerSettings");
+		System.out.println("Opening Latin Crawler Plugin");
+		MPart part = partService.findPart("edu.usc.cssl.nlputils.plugins.latincrawler.part.LatinCrawlerSettings");
 		part.setVisible(true);
 		partService.showPart(part, PartState.VISIBLE);
 	}

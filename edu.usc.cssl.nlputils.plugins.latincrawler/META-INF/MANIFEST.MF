@@ -5,9 +5,13 @@ Bundle-SymbolicName: edu.usc.cssl.nlputils.plugins.latincrawler;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.e4.ui.workbench,
- org.eclipse.e4.core.di,
+Require-Bundle: org.eclipse.ui;bundle-version="3.106.0",
+ org.eclipse.core.runtime;bundle-version="3.10.0",
  org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.core.di,
  javax.inject,
  org.eclipse.swt,
  org.eclipse.e4.core.contexts
+Bundle-ClassPath: jsoup-1.7.3.jar,
+ .

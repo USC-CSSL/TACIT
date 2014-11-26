@@ -8,12 +8,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -26,11 +20,12 @@ import org.jsoup.select.Elements;
 public class LatinCrawler {
 
 	String outputDir;
-	BufferedWriter csvWriter;
+
 	
 	
 	public static void main(String[] args) throws IOException{
 		LatinCrawler lc = new LatinCrawler();
+		lc.outputDir = "C://Users//carlosg//Desktop//CSSL//svm";
 		lc.getBooks("cato");
 	}
 	
@@ -39,15 +34,11 @@ public class LatinCrawler {
 		
 		checkPath(outputDir);
 		
-		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records.csv")));
-		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
-		csvWriter.newLine();
-
 		for (String author: authors){
+			
 			getBooks(author);
 			//break;	// Remove to unleash
 		}
-		csvWriter.close();
 	}
 	
 	private void checkPath(String outputDir) {
@@ -63,21 +54,37 @@ public class LatinCrawler {
 		Document doc = Jsoup.connect("http://www.thelatinlibrary.com/"+ author.toLowerCase()+".html").timeout(10*1000).get();
 		Elements booksList = doc.getElementsByClass("work").first().getElementsByAttribute("href");
 		
+		File authorDir = new File(outputDir+"/"+author);
+		if(!authorDir.exists()){
+			authorDir.mkdirs();
+		}
+		String apath = authorDir.toString();
+		System.out.println(apath);
+		
+		String bookname = "";
 		for (Element bookItem : booksList){
 			String bookText = bookItem.attr("abs:href");
-			System.out.println(bookText);
-			getContent(bookText);
+			bookname  = bookItem.text();
+			System.out.println(bookname);
+			getContent(bookText, bookname, apath);
 			
 			
 		}
 	}
 
-	private void getContent(String bookUri) throws IOException{
+	private void getContent(String bookUri, String bookDir, String authorDir) throws IOException{
+		BufferedWriter csvWriter= null;
+		System.out.println("Extracting Content of book  "+ bookDir +"...");
+		appendLog("Extracting Books of Author  "+ bookDir +"...");
+		csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
 		Document doc = Jsoup.connect(bookUri).timeout(10*1000).get();
 		Elements content = doc.select("body").first().getElementsByTag("p");
 		for (Element c : content){
 			System.out.println(c.text());
+			csvWriter.write(c.text()+"\n");
 		}
+		
+		csvWriter.close();
 		
 	}
 	
