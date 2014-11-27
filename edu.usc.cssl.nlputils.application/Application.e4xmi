@@ -29,7 +29,7 @@
       <children xsi:type="menu:Menu" xmi:id="_Lth1sEKMEeS4TbhSwD9pOw" elementId="edu.usc.cssl.nlputils.application.menu.clustering" label="Clustering"/>
       <children xsi:type="menu:Menu" xmi:id="_3vW7IP0_EeOC76nH4x2Ykg" elementId="edu.usc.cssl.nlputils.application.menu.plugins" label="Plugins">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_JchwoA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.0" label="Add Plugin" command="_mgIqoHXTEeSExqwA7kFrtQ"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.1" label="Remove Plugin"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_M8ZJwA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.1" label="Remove Plugin" command="_Kf3KoHZ_EeStuJgh46SXjQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_WkqrkA3MEeSxjN9OGB1twg" elementId="edu.usc.pil.nlputils.application.handledmenuitem.2" visible="false" label="Global Plugin Settings"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_-nuFIfzGEeOdn9ViPpOXDA" label="Help">
@@ -47,6 +47,7 @@
   <handlers xmi:id="_-nuFF_zGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.saveCommand" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.SaveHandler" command="_-nuFFvzGEeOdn9ViPpOXDA"/>
   <handlers xmi:id="_-nuFGvzGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.aboutCommand" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.AboutHandler" command="_-nuFGfzGEeOdn9ViPpOXDA"/>
   <handlers xmi:id="_GNh0AHXVEeSExqwA7kFrtQ" elementId="edu.usc.cssl.nlputils.application.handler.0" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.InstallHandler" command="_mgIqoHXTEeSExqwA7kFrtQ"/>
+  <handlers xmi:id="_IM7esHZ_EeStuJgh46SXjQ" elementId="edu.usc.cssl.nlputils.application.handler.1" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.UninstallHandler" command="_Kf3KoHZ_EeStuJgh46SXjQ"/>
   <bindingTables xmi:id="_-nuFEfzGEeOdn9ViPpOXDA" bindingContext="_-nteCfzGEeOdn9ViPpOXDA">
     <bindings xmi:id="_-nuFEvzGEeOdn9ViPpOXDA" keySequence="M1+Q" command="_-nteDPzGEeOdn9ViPpOXDA"/>
     <bindings xmi:id="_-nuFFfzGEeOdn9ViPpOXDA" keySequence="M1+O" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
@@ -62,6 +63,7 @@
   <commands xmi:id="_-nuFFvzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
   <commands xmi:id="_-nuFGfzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
   <commands xmi:id="_mgIqoHXTEeSExqwA7kFrtQ" elementId="edu.usc.cssl.nlputils.application.command.installPlugins" commandName="Install Plugins"/>
+  <commands xmi:id="_Kf3KoHZ_EeStuJgh46SXjQ" elementId="edu.usc.cssl.nlputils.application.command.uninstall" commandName="Uninstall"/>
   <addons xmi:id="_-nteAvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_-nteA_zGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_-nteBPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
