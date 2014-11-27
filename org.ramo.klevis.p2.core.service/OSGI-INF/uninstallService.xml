@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.ramo.klevis.p2.core.service.uninstall">
+   <implementation class="org.ramo.klevis.p2.core.service.impl.UninstallSoftwareService"/>
+   <service>
+      <provide interface="org.ramo.klevis.p2.core.iservice.IUninstallSoftwareService"/>
+   </service>
+</scr:component>

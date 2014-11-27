@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.usc.cssl.nlputils.basePluginsFeature"
+      label="BasePluginsFeature"
+      version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      This feature includes base plugins.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.e4.ui.model.workbench" version="1.1.0.v20140512-1820" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.di"/>
+      <import plugin="javax.inject"/>
+   </requires>
+
+   <plugin
+         id="edu.usc.cssl.nlputils.plugins.weightedCount"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
