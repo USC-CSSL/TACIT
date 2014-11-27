@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -47,8 +48,9 @@ public class Install {
 	
 	@PostConstruct
 	public void postConstruct(final Composite parent) {
+		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(3, false));
-		parent.setSize(500, 309);
+		parent.setSize(500, 325);
 		Label lblInstallSitePath = new Label(parent, SWT.NONE);
 		lblInstallSitePath.setText("Install Site Path Location");
 		new Label(parent, SWT.NONE);
@@ -61,6 +63,10 @@ public class Install {
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				DirectoryDialog location = new DirectoryDialog(shell);
+				location.open();
+				String locationPath = location.getFilterPath();
+				text.setText(locationPath);
 			}
 		});
 		button.setText("...");
@@ -128,7 +134,7 @@ public class Install {
 
 					if (loadRepository == null || loadRepository.isEmpty()) {
 
-						styledText.setText("You must select at last one");
+						styledText.setText("You must select at least one plugin");
 
 					}
 					installNewSoftware = installService
@@ -144,7 +150,7 @@ public class Install {
 								.setText("You must export via .product file first");
 					else
 						styledText.setText(exception.getMessage()
-								+ "Something bat happended");
+								+ "Something bad happened");
 
 				}
 
@@ -155,7 +161,7 @@ public class Install {
 							.equals(IInstallNewSoftwareService.SUCESS_INSTALL)) {
 						boolean openConfirm = MessageDialog.openConfirm(
 								(Shell) parent, "",
-								"Software installed, do you want to restart in order to see changes?");
+								"Plugins installed successfully. Do you want to restart the application in order to see changes?");
 						if (openConfirm) {
 							workbench.restart();
 						}
@@ -163,7 +169,7 @@ public class Install {
 					}
 				} else
 					styledText
-							.setText("Software installed!Pres Esc and restart");
+							.setText("Plugins installed! Pres Esc and restart");
 			}
 		});
 		btnNewButton.setText("Install");
