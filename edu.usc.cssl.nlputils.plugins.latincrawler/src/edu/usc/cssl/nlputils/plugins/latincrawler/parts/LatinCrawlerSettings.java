@@ -4,6 +4,8 @@
 package edu.usc.cssl.nlputils.plugins.latincrawler.parts;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
@@ -27,6 +29,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 
 public class LatinCrawlerSettings {
 	
@@ -39,16 +43,6 @@ public class LatinCrawlerSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		appendLog("Loading Latin Library...");
-		String[] authors = null;
-
-		try {
-			 authors = AvailableRecords.getAllAuthors();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		appendLog("Loading Authors...");
-		final String[] allAuthors = authors;
 		/*
 		String[] booksArray = null;
 
@@ -65,10 +59,31 @@ public class LatinCrawlerSettings {
 	
 		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setSize(588, 300);
-		composite.setLocation(0, 0);
+		composite.setLayout(new GridLayout(3, false));
+		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_composite.widthHint = 431;
+		gd_composite.heightHint = 477;
+		composite.setLayoutData(gd_composite);
 		
+		Label lblOutput = new Label(composite, SWT.NONE);
+		lblOutput.setText("Output Path");
 		
+		txtOutput = new Text(composite, SWT.BORDER);
+		GridData gd_txtOutputDir = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_txtOutputDir.widthHint = 244;
+		txtOutput.setLayoutData(gd_txtOutputDir);
+		
+		Button button = new Button(composite, SWT.NONE);
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				DirectoryDialog od = new DirectoryDialog(shell);
+				od.open();
+				String oDirectory = od.getFilterPath();
+				txtOutput.setText(oDirectory);
+			}
+		});
+		button.setText("...");
 		
 		Button btnExtract = new Button(composite, SWT.NONE);
 		btnExtract.addMouseListener(new MouseAdapter() {
@@ -85,7 +100,7 @@ public class LatinCrawlerSettings {
 				try {
 					
 					long startTime = System.currentTimeMillis();
-					crawler.initialize( allAuthors,  txtOutput.getText());
+					crawler.initialize(txtOutput.getText());
 				
 					appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 				} catch (Exception e1) {
@@ -93,29 +108,7 @@ public class LatinCrawlerSettings {
 				}
 			}
 		});
-		btnExtract.setBounds(10, 263, 75, 25);
 		btnExtract.setText("Extract");
-		
-		Label lblOutput = new Label(composite, SWT.NONE);
-		lblOutput.setBounds(10, 231, 80, 15);
-		lblOutput.setText("Output Path");
-		
-		txtOutput = new Text(composite, SWT.BORDER);
-		txtOutput.setBounds(104, 225, 258, 21);
-		
-		Button button = new Button(composite, SWT.NONE);
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				DirectoryDialog od = new DirectoryDialog(shell);
-				od.open();
-				String oDirectory = od.getFilterPath();
-				txtOutput.setText(oDirectory);
-			}
-		});
-		button.setBounds(358, 224, 40, 25);
-		button.setText("...");
-	
 		
 	}
 	

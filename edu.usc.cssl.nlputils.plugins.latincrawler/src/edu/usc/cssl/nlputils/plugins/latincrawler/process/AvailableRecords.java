@@ -1,5 +1,5 @@
 /**
- * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ * @author Niki Parmar <nikijitp@usc.edu>
  */
 package edu.usc.cssl.nlputils.plugins.latincrawler.process;
 
@@ -28,7 +28,7 @@ public class AvailableRecords {
 			String[] authorString = new String[size];
 			for(i =0;i<size;i++)
 			{
-				authorString[i] = authorsList.get(i).text();
+				authorString[i] = authorsList.get(i).attr("abs:href");
 			}
 			//String authorsString = " All|"+authorsList.text().split(":")[1];
 			return authorString;
