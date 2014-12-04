@@ -6,7 +6,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5LqnQBWMEeSxTtNMnu405Q" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
     <elements xsi:type="commands:Handler" xmi:id="_VmGAgBWNEeSxTtNMnu405Q" elementId="edu.usc.cssl.nlputils.plugins.WordCountPlugin.handler.openWordCountPlugin" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.WordCountPlugin/edu.usc.cssl.nlputils.plugins.WordCountPlugin.handlers.OpenWordCountPluginHandler" command="_91wX0BWMEeSxTtNMnu405Q"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4tCKgBWMEeSxTtNMnu405Q" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.wordcount">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4tCKgBWMEeSxTtNMnu405Q" featurename="children" parentElementId="edu.usc.cssl.nlputils.application.menu.wordcount">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_ICzaoBWNEeSxTtNMnu405Q" elementId="edu.usc.cssl.nlputils.plugins.WordCountPlugin.handledmenuitem.openWordCountPlugin" label="Word Count II" command="_91wX0BWMEeSxTtNMnu405Q"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5rCq4BWMEeSxTtNMnu405Q" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
