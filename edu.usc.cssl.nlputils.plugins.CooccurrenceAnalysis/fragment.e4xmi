@@ -3,7 +3,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4Md0EBWMEeSxTtNMnu405Q" featurename="commands" parentElementId="org.eclipse.e4.ide.application">
     <elements xsi:type="commands:Command" xmi:id="_91wX0BWMEeSxTtNMnu405Q" elementId="edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis.command.openCooccurrenceAnalysis" commandName="Open CooccurrenceAnalysis"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4tCKgBWMEeSxTtNMnu405Q" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.wordcount">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_4tCKgBWMEeSxTtNMnu405Q" featurename="children" parentElementId="edu.usc.cssl.nlputils.application.menu.wordcount">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_ICzaoBWNEeSxTtNMnu405Q" elementId="edu.usc.pil.nlputils.plugins.CooccurrenceAnalysis.handledmenuitem.openCooccurrenceAnalysis" label="Co-occurrence Analysis" command="_91wX0BWMEeSxTtNMnu405Q"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5LqnQBWMEeSxTtNMnu405Q" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
