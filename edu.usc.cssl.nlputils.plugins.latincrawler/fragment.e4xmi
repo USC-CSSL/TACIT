@@ -6,7 +6,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_S3CEMCNtEeSWsdFScyxqCg" featurename="handlers" parentElementId="org.eclipse.e4.ide.application">
     <elements xsi:type="commands:Handler" xmi:id="_V1VBUCNtEeSWsdFScyxqCg" elementId="edu.usc.cssl.nlputils.plugins.senatecrawler.handler.openLatin" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.latincrawler/edu.usc.cssl.nlputils.plugins.latincrawler.handlers.OpenLatinCrawlerHandler" command="_NTeVACNtEeSWsdFScyxqCg"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lTdjQCNtEeSWsdFScyxqCg" featurename="children" parentElementId="edu.usc.pil.nlputils.application.menu.crawlers">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lTdjQCNtEeSWsdFScyxqCg" featurename="children" parentElementId="edu.usc.cssl.nlputils.application.menu.crawlers">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_yxPXACNtEeSWsdFScyxqCg" elementId="edu.usc.cssl.nlputils.plugins.latincrawler.handledmenuitem.openLatin" label="Latin Crawler" command="_NTeVACNtEeSWsdFScyxqCg"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6J7b0CNtEeSWsdFScyxqCg" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
