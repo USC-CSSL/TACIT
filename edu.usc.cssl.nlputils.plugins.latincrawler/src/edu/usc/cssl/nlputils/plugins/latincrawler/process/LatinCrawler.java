@@ -71,7 +71,7 @@ public class LatinCrawler {
 	}
 	
 	private void getBooks(String author, String aurl) throws IOException {
-		System.out.println("Extracting Books of Author  "+ author +"...");
+		//System.out.println("Extracting Books of Author  "+ author +"...");
 		appendLog("\nExtracting Books of Author  "+ author +"...");
 		
 		try{
@@ -104,7 +104,7 @@ public class LatinCrawler {
 
 	private void getContent(String bookUri, String bookDir, String authorDir) throws IOException{
 		BufferedWriter csvWriter= null;
-		System.out.println("Extracting Content of book  "+ bookDir +"...");
+	//	System.out.println("Extracting Content of book  "+ bookDir +"...");
 		appendLog("Extracting Content of book  "+ bookDir +"...");
 		try{
 			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
@@ -114,8 +114,8 @@ public class LatinCrawler {
 				csvWriter.write(c.text()+"\n");
 			}
 		}catch(Exception e){
-			System.out.println("Something went wrong when extracting book " + bookDir);
-			appendLog("Something went wrong when extracting book " + bookDir);
+	//		System.out.println("Something went wrong when extracting book " + bookDir);
+	//		appendLog("Something went wrong when extracting book " + bookDir);
 		}finally{
 			if(csvWriter!=null)
 				csvWriter.close();
