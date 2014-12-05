@@ -41,6 +41,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.preprocessorService"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.senatecrawler"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.svmClassifier"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.weightedCount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.wordcount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.zlda"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.zlda2"/>

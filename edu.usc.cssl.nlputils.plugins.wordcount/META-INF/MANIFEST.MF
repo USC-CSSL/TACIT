@@ -14,7 +14,11 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  edu.usc.cssl.nlputils.plugins.preprocessorService
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: edu.usc.cssl.nlputils.plugins.wordcount.handlers,
- edu.usc.cssl.nlputils.plugins.wordcount.parts
+ edu.usc.cssl.nlputils.plugins.wordcount.parts,
+ edu.usc.cssl.nlputils.plugins.wordcount.utilities,
+ org.apache.commons.lang3,
+ org.eclipse.wb.swt,
+ snowballstemmer
 Bundle-ClassPath: .,
  commons-lang3-3.3.2.jar,
  SnowballStemmer.jar
