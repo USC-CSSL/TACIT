@@ -9,10 +9,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,7 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class LatinCrawler {
-
+	private StringBuilder readMe = new StringBuilder();
 	String outputDir;
 	List<String> authorNames, authorUrl;
 	
@@ -41,6 +43,7 @@ public class LatinCrawler {
 		checkPath(outputDir);
 		appendLog("Loading Authors...");
 		getAllAuthors();
+		writeReadMe(outputDir);
 	}
 	
 	private void checkPath(String outputDir) {
@@ -144,6 +147,21 @@ public class LatinCrawler {
 			}
 			else
 				parent.set("consoleMessage", message);
+			readMe.append(message+"\n");
+		}
+	}
+	public void writeReadMe(String location){
+		File readme = new File(location+"/README.txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.latincrawler").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("Latin Crawler Output\n--------------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Shell;
 
@@ -32,7 +34,7 @@ import snowballstemmer.PorterStemmer;
 import edu.usc.cssl.nlputils.plugins.wordcount.utilities.*;
 
 public class WordCount {
-	
+	private StringBuilder readMe = new StringBuilder();
 	private Trie categorizer = new Trie();
 	private Trie phrazer = new Trie(); 
 	private boolean phraseDetect = false;
@@ -207,6 +209,9 @@ public class WordCount {
 		
 		if (doSpss)
 			finalizeSpssFile(spssFile);
+		
+		writeReadMe(outputFile.substring(0, outputFile.lastIndexOf(File.separator)));
+		
 		//No errors
 		returnCode = 0;
 		return returnCode;
@@ -979,6 +984,7 @@ public class WordCount {
 			return;
 		parent = context.getParent();
 		parent.set("consoleMessage", message);
+		readMe.append(message+"\n");
 	}
 
 	public static String trimChars(String source, String trimChars) {
@@ -999,5 +1005,19 @@ public class WordCount {
 	    } else {
 	        return source;
 	    }
+	}
+	public void writeReadMe(String location){
+		File readme = new File(location+"/README.txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.wordcount").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("Word Count Output\n-----------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

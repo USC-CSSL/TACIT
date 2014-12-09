@@ -1,3 +1,6 @@
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */
 package edu.usc.cssl.nlputils.application.handlers;
  
 

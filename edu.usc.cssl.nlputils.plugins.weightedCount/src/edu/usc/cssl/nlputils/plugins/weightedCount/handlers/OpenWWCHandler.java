@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.cssl.nlputils.plugins.weightedCount.handlers;
 
 import javax.inject.Inject;

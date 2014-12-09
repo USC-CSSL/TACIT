@@ -13,11 +13,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import com.cybozu.labs.langdetect.Detector;
@@ -38,6 +40,7 @@ import snowballstemmer.GermanStemmer;
 import snowballstemmer.TurkishStemmer;
 
 public class Preprocess {
+	private StringBuilder readMe = new StringBuilder();
 	private boolean doLowercase = false;
 	private boolean doStemming = false;
 	private boolean doStopWords = false;
@@ -164,6 +167,7 @@ public class Preprocess {
 			br.close();
 			bw.close();
 		}
+		writeReadMe(outputPath);
 		return 1;
 	}
 
@@ -253,6 +257,23 @@ public class Preprocess {
 			if (context!=null){
 			IEclipseContext parent = context.getParent();
 			parent.set("consoleMessage", message);
+			readMe.append(message+"\n");
 			}
 		}
+		
+		public void writeReadMe(String path){
+			File readme = new File(path+"/README.txt");
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+				String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.preprocessor").getHeaders().get("Bundle-Version");
+				String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+				Date date = new Date();
+				bw.write("Preprocessor Output\n-------------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+				bw.write(readMe.toString());
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 }

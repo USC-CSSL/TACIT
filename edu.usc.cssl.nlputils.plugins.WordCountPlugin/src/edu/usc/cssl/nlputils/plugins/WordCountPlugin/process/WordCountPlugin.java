@@ -1,6 +1,7 @@
 package edu.usc.cssl.nlputils.plugins.WordCountPlugin.process;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,6 +24,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import snowballstemmer.PorterStemmer;
@@ -31,6 +34,7 @@ import edu.stanford.nlp.process.PTBTokenizer;
 
 
 public class WordCountPlugin {
+	private StringBuilder readMe = new StringBuilder();
 	private boolean doStopWords;
 	private HashSet<String> stopWordSet;
 	Map<String, Map<String, Double>> wordMat;
@@ -130,7 +134,7 @@ public class WordCountPlugin {
 		}
 		
 		writeToOutput(outputFile);
-		
+		writeReadMe(outputFile);
 		return 0;
 		
 	}
@@ -416,5 +420,21 @@ public class WordCountPlugin {
 				return;
 			parent = context.getParent();
 			parent.set("consoleMessage", message);
+			readMe.append(message+"\n");
+		}
+		
+		public void writeReadMe(String location){
+			File readme = new File(location+"/README.txt");
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+				String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.WordCountPlugin").getHeaders().get("Bundle-Version");
+				String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+				Date date = new Date();
+				bw.write("Basic Word Count Output\n-----------------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+				bw.write(readMe.toString());
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 }

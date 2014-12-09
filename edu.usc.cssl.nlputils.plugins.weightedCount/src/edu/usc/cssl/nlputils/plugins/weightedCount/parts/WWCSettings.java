@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.cssl.nlputils.plugins.weightedCount.parts;
 
 import java.io.File;

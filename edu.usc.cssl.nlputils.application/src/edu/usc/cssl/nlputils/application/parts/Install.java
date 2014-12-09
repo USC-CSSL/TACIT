@@ -1,4 +1,6 @@
- 
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */ 
 package edu.usc.cssl.nlputils.application.parts;
 
 import java.util.List;

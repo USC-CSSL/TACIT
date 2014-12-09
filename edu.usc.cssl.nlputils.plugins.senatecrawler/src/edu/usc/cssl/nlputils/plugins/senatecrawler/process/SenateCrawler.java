@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,6 +25,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class SenateCrawler {
+	private StringBuilder readMe = new StringBuilder();
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
 	String dateFrom, dateTo;
 	int maxDocs = 10;
@@ -131,7 +133,7 @@ public class SenateCrawler {
 		}
 		csvWriter.close();
 		appendLog("Records written successfully to "+outputDir + System.getProperty("file.separator") + "records_"+dateString+".csv");
-		
+		writeReadMe(outputDir+"/README_"+dateString+".txt");
 	}
 	
 	private void getSenators(int congress) throws IOException {
@@ -276,7 +278,6 @@ public class SenateCrawler {
 			}
 			//break;
 		}
-			
 	}
 
 	private void writeToFile(String fileName, String[] contents) throws IOException {
@@ -370,6 +371,22 @@ public class SenateCrawler {
 			}
 			else
 				parent.set("consoleMessage", message);
+			readMe.append(message+"\n");
+		}
+	}
+	
+	public void writeReadMe(String location){
+		File readme = new File(location);
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.senatecrawler").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("READ ME\n-------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

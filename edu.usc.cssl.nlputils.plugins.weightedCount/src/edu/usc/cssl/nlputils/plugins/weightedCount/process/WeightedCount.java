@@ -1,3 +1,6 @@
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */
 package edu.usc.cssl.nlputils.plugins.weightedCount.process;
 
 import java.io.BufferedReader;
@@ -29,7 +32,7 @@ import edu.usc.cssl.nlputils.plugins.wordcount.utilities.Trie;
 
 public class WeightedCount {
 
-	private static StringBuilder readMe = new StringBuilder();
+	private StringBuilder readMe = new StringBuilder();
 	private Trie categorizer = new Trie();
 	private Trie phrazer = new Trie(); 
 	private boolean phraseDetect = false;
@@ -1011,14 +1014,14 @@ public class WeightedCount {
 	    }
 	}
 	
-	public static void writeReadMe(String location){
+	public void writeReadMe(String location){
 		File readme = new File(location+"/README.txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
 			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.weightedCount").getHeaders().get("Bundle-Version");
 			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
 			Date date = new Date();
-			bw.write("READ ME\n-------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write("Weighted Word Count Output\n--------------------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
 			bw.write(readMe.toString());
 			bw.close();
 		} catch (IOException e) {

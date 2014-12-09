@@ -1,3 +1,6 @@
+/**
+ * @author Aswin Rajkumar <aswin.rajkumar@usc.edu>
+ */
 package edu.usc.cssl.nlputils.plugins.svmClassifier.process;
 
 import java.io.File;
@@ -82,7 +85,7 @@ public class CrossValidator {
 		}
 		double mean = (total/(float)k);
 		System.out.println("Mean accuracy = "+mean);
-		appendLog("Mean accuracy = "+mean);
+		appendLog("Mean accuracy = "+mean, svm);
 		int closest = 0;
 		double distance = Math.abs(mean - accuracies[0]);
 		for (int i = 0; i<accuracies.length;i++){
@@ -94,15 +97,16 @@ public class CrossValidator {
 		}
 		svm.printReadMe(k, label1, label2, mean, "Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance);
 		System.out.println("Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance);
-		appendLog("Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance);
-		
+		appendLog("Closest accuracy to mean = "+accuracies[closest]+", for the run k"+(closest+1)+" with distance "+distance, svm);
+		svm.writeReadMe();
 	}
 	
 	// This function updates the consoleMessage parameter of the context.
-		private void appendLog(String message){
+		private void appendLog(String message, SvmClassifier svm){
 			if (!(context==null)){
 			IEclipseContext parent = context.getParent();
 			parent.set("consoleMessage", message);
+			svm.readMe.append(message+"\n");
 			}
 		}
 }

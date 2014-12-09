@@ -10,9 +10,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import bsh.EvalError;
@@ -20,6 +22,7 @@ import cc.mallet.topics.tui.Vectors2Topics;
 import edu.usc.cssl.nlputils.plugins.nbclassifier.process.Text2Vectors;
 
 public class NBClassifier {
+	private StringBuilder readMe = new StringBuilder();
 	
 	public void doClassification(String sourceDir1, String sourceDir2, String testDir1, String testDir2, String outputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError{
 		Calendar cal = Calendar.getInstance();
@@ -51,6 +54,7 @@ public class NBClassifier {
 		
 		System.out.println(result.get(0));
 		appendLog(result.get(0));
+		writeReadMe(outputPath);
 	}
 
 	public void doValidation(String sourceDir1, String sourceDir2, String valDir, String outputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError{
@@ -90,7 +94,7 @@ public class NBClassifier {
 		
 		System.out.println("Created prediction CSV file "+outputPath+"_output.csv");
 		appendLog("Created prediction CSV file "+outputPath+"_output.csv");
-		
+		writeReadMe(outputPath);
 	}
 
 	
@@ -112,6 +116,22 @@ public class NBClassifier {
 			}
 			else
 				parent.set("consoleMessage", message);
+			readMe.append(message+"\n");
+		}
+	}
+	
+	public void writeReadMe(String location){
+		File readme = new File(location+"_README.txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.nbclassifier").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("Naive Bayes Output\n------------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

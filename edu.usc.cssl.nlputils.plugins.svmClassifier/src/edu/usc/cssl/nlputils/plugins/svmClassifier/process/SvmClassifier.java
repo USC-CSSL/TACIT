@@ -17,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,11 +28,13 @@ import javax.inject.Inject;
 
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import edu.usc.cssl.nlputils.plugins.svmClassifier.utilities.Convertor;
 
 public class SvmClassifier {
+	public StringBuilder readMe = new StringBuilder();
 	private int featureMapIndex=0;		// Keeps track of num of features for calculating the index of the next word
 	private HashMap<String,Integer> featureMap = new HashMap<String,Integer>();		// Stores Numerical ID for each word
 	private HashMap<String,Integer> dfMap = new HashMap<String,Integer>();		// Number of documents that contains each word
@@ -710,24 +713,40 @@ public class SvmClassifier {
 	}
 	
 	public void printReadMe(int kVal, String label1, String label2, double mean, String message) throws IOException{
-		File readMe = new File(intermediatePath+".README");
-		BufferedWriter rmw = new BufferedWriter(new FileWriter(readMe));
-		rmw.write("SVM Cross-Validation Results\n-----------------------\n");
-		rmw.write("Class +1  :  "+label1+"\n");
-		rmw.write("Class -1 :  "+label2+"\n");
-		rmw.write("K-value  :  "+kVal+"\n");
-		rmw.write("Mean Accuracy  :  "+mean+"\n");
-		rmw.write(message+"\n\n");
+//		File readMe = new File(intermediatePath+".README");
+//		BufferedWriter rmw = new BufferedWriter(new FileWriter(readMe));
+//		rmw.write("SVM Cross-Validation Results\n-----------------------\n");
+//		rmw.write("Class +1  :  "+label1+"\n");
+//		rmw.write("Class -1 :  "+label2+"\n");
+//		rmw.write("K-value  :  "+kVal+"\n");
+//		rmw.write("Mean Accuracy  :  "+mean+"\n");
+//		rmw.write(message+"\n\n");
+//		for (int k = 1; k <= kVal; k++){
+//			rmw.write("K - "+k+"\n");
+//			rmw.write("Training File  :  "+intermediatePath+"_k"+k+".train\n");
+//			rmw.write("Test File  :  "+intermediatePath+"_k"+k+".test\n");
+//			rmw.write("Model File  :  "+intermediatePath+"_k"+k+".model\n");
+//			rmw.write("Output File  :  "+intermediatePath+"_k"+k+".out\n");
+//			rmw.write("Predictive weights file  :  "+intermediatePath+"_weights_k"+k+".csv\n\n");
+//		}
+//		//rmw.write(intermediatePath+"_prediction.csv  :  Class predictions for the given input\n");
+//		rmw.close();
+		
+		readMe.append("\n\nSVM Cross-Validation Results\n-----------------------\n");
+		readMe.append("Class +1  :  "+label1+"\n");
+		readMe.append("Class -1 :  "+label2+"\n");
+		readMe.append("K-value  :  "+kVal+"\n");
+		readMe.append("Mean Accuracy  :  "+mean+"\n");
+		readMe.append(message+"\n\n");
 		for (int k = 1; k <= kVal; k++){
-			rmw.write("K - "+k+"\n");
-			rmw.write("Training File  :  "+intermediatePath+"_k"+k+".train\n");
-			rmw.write("Test File  :  "+intermediatePath+"_k"+k+".test\n");
-			rmw.write("Model File  :  "+intermediatePath+"_k"+k+".model\n");
-			rmw.write("Output File  :  "+intermediatePath+"_k"+k+".out\n");
-			rmw.write("Predictive weights file  :  "+intermediatePath+"_weights_k"+k+".csv\n\n");
+			readMe.append("K - "+k+"\n");
+			readMe.append("Training File  :  "+intermediatePath+"_k"+k+".train\n");
+			readMe.append("Test File  :  "+intermediatePath+"_k"+k+".test\n");
+			readMe.append("Model File  :  "+intermediatePath+"_k"+k+".model\n");
+			readMe.append("Output File  :  "+intermediatePath+"_k"+k+".out\n");
+			readMe.append("Predictive weights file  :  "+intermediatePath+"_weights_k"+k+".csv\n\n");
 		}
-		//rmw.write(intermediatePath+"_prediction.csv  :  Class predictions for the given input\n");
-		rmw.close();
+
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -784,8 +803,23 @@ public class SvmClassifier {
 		if (!(context==null)){
 		IEclipseContext parent = context.getParent();
 		parent.set("consoleMessage", message);
+		//readMe.append(message+"\n");
 		}
 	}
 
+	public void writeReadMe(){
+		File readme = new File(intermediatePath+"_README.txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.svmClassifier").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("SVM Output\n----------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
