@@ -12,4 +12,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_K28xwBJiEeSYVv-YVTdTdw" featurename="children" parentElementId="org.eclipse.e4.ide.partstack">
     <elements xsi:type="basic:Part" xmi:id="_mbO7QBJkEeSYVv-YVTdTdw" elementId="edu.usc.cssl.nlputils.plugins.preprocessor.part.PreprocessorSettings" visible="false" contributionURI="bundleclass://edu.usc.cssl.nlputils.plugins.preprocessor/edu.usc.cssl.nlputils.plugins.preprocessor.parts.PreprocessorSettings" label="Preprocessor Settings" closeable="true"/>
   </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_k2Dl4H-AEeSuEJK90F1SUw" featurename="children" parentElementId="toolbar:org.eclipse.ui.main.toolbar">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_t8nhwH-AEeSuEJK90F1SUw" elementId="edu.usc.cssl.nlputils.plugins.preprocessor.handledtoolitem.preprocessor" label="Preprocessor" iconURI="platform:/plugin/edu.usc.cssl.nlputils.plugins.preprocessor/clean.png" command="_63BU4BJiEeSYVv-YVTdTdw"/>
+  </fragments>
 </fragment:ModelFragments>
