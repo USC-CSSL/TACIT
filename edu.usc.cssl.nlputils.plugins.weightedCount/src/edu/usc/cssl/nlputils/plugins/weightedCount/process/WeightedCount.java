@@ -31,6 +31,7 @@ public class WeightedCount {
 	private Trie categorizer = new Trie();
 	private Trie phrazer = new Trie(); 
 	private boolean phraseDetect = false;
+	private HashMap<String, HashMap<String,Double>> weightMap = new HashMap<String, HashMap<String,Double>>();
 	private HashMap<String, List<Integer>> phraseLookup = new HashMap<String, List<Integer>>(); 
 	private HashMap<String, List<Integer>> conditionalCategory = new HashMap<String,List<Integer>>();
 	private TreeMap<Integer,String> categories = new TreeMap<Integer, String>();
@@ -351,10 +352,15 @@ public class WeightedCount {
 			for (String currCat : catCount.keySet()){
 				// multiplier is 0 if the current word does not belong to the current category
 				int multiplier = 0;
-				if (wordCategories.get(currWord).contains(currCat)){
+				if (wordCategories.get(currWord).contains(currCat))
 					multiplier = 100;	// 100 instead of 1 because the output should be of the form 25%, not 0.25
+				if (multiplier ==0)
+					row.append( "0,");
+				else{
+					//Find the root word as that's what's stored in the dictionary and weight map
+					String rootWord = categorizer.root(currWord);
+					row.append( (multiplier * map.get(currWord) * weightMap.get(rootWord).get(currCat) ) / (float)catCount.get(currCat) +",");
 				}
-				row.append( (multiplier * map.get(currWord)) / (float)catCount.get(currCat) +",");
 			}
 			bw.write(row.toString());
 			bw.newLine();
@@ -599,7 +605,9 @@ public class WeightedCount {
 		} else {
 			while ((currentLine=br.readLine())!=null) {
 				ArrayList<Integer> categories = new ArrayList<Integer>();
+				//ArrayList<Double> weights = new ArrayList<Double>();
 				ArrayList<Integer> condCategories = new ArrayList<Integer>();
+				HashMap<String,Double> weights = new HashMap<String,Double>();
 				currentLine = currentLine.trim().toLowerCase();  // Dictionary is stored in lowercase in LIWC
 				
 				if (currentLine.equals(""))
@@ -608,7 +616,7 @@ public class WeightedCount {
 				String[] words = currentLine.split("\\s+");
 				String currPhrase = words[0];
 				String condPhrase = words[0];
-				for (int i=1; i<words.length; i++){
+				for (int i=2; i<words.length; i=i+2){
 					if(!words[i].matches("\\d+")){
 						if (words[i].contains("/")) {
 							String[] splits = words[i].split("/");
@@ -627,6 +635,7 @@ public class WeightedCount {
 						}
 						continue;
 					}
+					weights.put(this.categories.get(Integer.parseInt(words[i])), Double.parseDouble(words[i-1]));
 					categories.add(Integer.parseInt(words[i]));
 				}
 				
@@ -650,7 +659,7 @@ public class WeightedCount {
 				// do Stemming or not. if Stemming is disabled, remove * from the dictionary words
 				if (!doLiwcStemming)
 					currentWord = currentWord.replace("*", "");
-				categorizer.insert(currentWord.replace("*", ""), categories);
+				categorizer.insert(currentWord, categories);
 				
 				if (phraseDetect)
 					phraseLookup.put(currentWord, categories);
@@ -658,6 +667,8 @@ public class WeightedCount {
 				if (conditional)
 					conditionalCategory.put(condPhrase, condCategories);
 				//categorizer.printTrie();
+				
+				weightMap.put(currentWord, weights);
 			}
 		}
 		br.close();

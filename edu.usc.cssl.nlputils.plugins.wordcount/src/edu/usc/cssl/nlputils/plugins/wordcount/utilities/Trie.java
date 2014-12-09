@@ -126,6 +126,48 @@ public class Trie {
 		
 	}
 	
+public String root(String word){
+		StringBuilder sb = new StringBuilder();
+		Node prev = root, next = root.children.get(word.charAt(0));
+		
+		int i=1;
+		while( next != null && i != word.length()){
+			prev = next;
+			next = next.children.get(word.charAt(i));
+			sb.append(prev.character);
+			i++;
+		}
+		
+		if(i == word.length() && next != null){
+			prev = next;
+			sb.append(prev.character);
+		}
+		
+//		if ((i == word.length()) && (prev.children.get('*') != null)){
+//			sb.append(prev.character);
+//			return sb.toString();
+//		}
+		
+		if(prev.children.get('*') != null){
+			sb.append("*");
+			return sb.toString();
+		}
+		
+		if (i == word.length() && next == null & prev.children.get("*")==null){
+			return null;
+		}
+		
+		if(i == word.length()){
+			if(prev.isWord){
+				return sb.toString();
+			}
+		}		
+		
+		/* If I came out alive, it means I didn't find the word - so return a null */
+		return null;
+		
+	}
+	
 public boolean checkHyphen(String word){
 		boolean hyphen = false;
 		Node prev = root, next = root.children.get(word.charAt(0));

@@ -655,7 +655,7 @@ public class WordCount {
 				// do Stemming or not. if Stemming is disabled, remove * from the dictionary words
 				if (!doLiwcStemming)
 					currentWord = currentWord.replace("*", "");
-				categorizer.insert(currentWord.replace("*", ""), categories);
+				categorizer.insert(currentWord, categories);
 				
 				if (phraseDetect)
 					phraseLookup.put(currentWord, categories);
