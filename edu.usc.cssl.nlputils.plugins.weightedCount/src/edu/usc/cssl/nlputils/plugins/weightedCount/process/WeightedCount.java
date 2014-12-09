@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import snowballstemmer.PorterStemmer;
@@ -27,7 +29,7 @@ import edu.usc.cssl.nlputils.plugins.wordcount.utilities.Trie;
 
 public class WeightedCount {
 
-
+	private static StringBuilder readMe = new StringBuilder();
 	private Trie categorizer = new Trie();
 	private Trie phrazer = new Trie(); 
 	private boolean phraseDetect = false;
@@ -204,6 +206,7 @@ public class WeightedCount {
 		if (doSpss)
 			finalizeSpssFile(spssFile);
 		//No errors
+		writeReadMe(outputFile.substring(0, outputFile.lastIndexOf(File.separator)));
 		returnCode = 0;
 		return returnCode;
 	}
@@ -985,6 +988,7 @@ public class WeightedCount {
 			return;
 		parent = context.getParent();
 		parent.set("consoleMessage", message);
+		readMe.append(message+"\n");
 	}
 
 	public static String trimChars(String source, String trimChars) {
@@ -1005,5 +1009,20 @@ public class WeightedCount {
 	    } else {
 	        return source;
 	    }
+	}
+	
+	public static void writeReadMe(String location){
+		File readme = new File(location+"/README.txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.weightedCount").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("READ ME\n-------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
