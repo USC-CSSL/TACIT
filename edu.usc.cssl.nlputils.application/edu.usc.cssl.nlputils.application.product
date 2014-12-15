@@ -40,6 +40,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.preprocessor"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.preprocessorService"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.senatecrawler"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.supremeCrawler"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.svmClassifier"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.weightedCount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.wordcount"/>
@@ -51,6 +52,7 @@
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.util"/>
       <plugin id="org.apache.batik.util.gui"/>
+      <plugin id="org.apache.commons.lang3"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
@@ -147,6 +149,7 @@
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.jsoup"/>
       <plugin id="org.ramo.klevis.p2.core.service"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
