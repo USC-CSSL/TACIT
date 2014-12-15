@@ -213,7 +213,7 @@ public class SenateCrawlerSettings {
 					}
 					*/
 					
-					appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+					appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 					appendLog("DONE");
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -221,7 +221,7 @@ public class SenateCrawlerSettings {
 			}
 		});
 		btnExtract.setBounds(10, 263, 75, 25);
-		btnExtract.setText("Extract");
+		btnExtract.setText("Crawl");
 		
 		Label lblOutput = new Label(composite, SWT.NONE);
 		lblOutput.setBounds(10, 231, 80, 15);

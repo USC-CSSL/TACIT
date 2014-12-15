@@ -1,9 +1,13 @@
  
 package edu.usc.cssl.nlputils.plugins.supremeCrawler.parts;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,7 +35,7 @@ public class SupremeGUI {
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
-		parent.setLayout(new GridLayout(9, false));
+		parent.setLayout(new GridLayout(10, false));
 		
 		Label lblSortBy = new Label(parent, SWT.NONE);
 		lblSortBy.setText("Filter Type");
@@ -48,15 +52,17 @@ public class SupremeGUI {
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		
 		Label lblFilter = new Label(parent, SWT.NONE);
 		lblFilter.setText("Filter Range");
 		new Label(parent, SWT.NONE);
 		
 		final Combo combo=new Combo(parent, SWT.NONE);
-		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 6, 1);
+		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 7, 1);
 		gd_combo.widthHint = 177;
 		combo.setLayoutData(gd_combo);
+		appendLog("Loading Filters...");
 		combo.setItems(SupremeCrawler.filters("cases"));
 		combo.select(0);
 		new Label(parent, SWT.NONE);
@@ -66,7 +72,9 @@ public class SupremeGUI {
 		new Label(parent, SWT.NONE);
 		
 		txtOutput = new Text(parent, SWT.BORDER);
-		txtOutput.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 6, 1));
+		GridData gd_txtOutput = new GridData(SWT.FILL, SWT.CENTER, false, false, 7, 1);
+		gd_txtOutput.widthHint = 260;
+		txtOutput.setLayoutData(gd_txtOutput);
 		
 		Button button = new Button(parent, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
@@ -90,10 +98,48 @@ public class SupremeGUI {
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		
+		Button btnCrawl = new Button(parent, SWT.NONE);
+		btnCrawl.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				appendLog("Crawling...");
+				String f = combo.getText();
+				if(f.equals("All")){
+					if(btnCases.getSelection())
+						f = "/cases";
+					else
+						f = "/issues";
+				}
+				long startTime = System.currentTimeMillis();
+				SupremeCrawler sc = new SupremeCrawler(combo.getText(), txtOutput.getText(), btnTruncate.getSelection());
+				IEclipseContext iEclipseContext = context;
+				ContextInjectionFactory.inject(sc,iEclipseContext);
+				try {
+					sc.looper();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+				appendLog("DONE\n");
+			}
+		});
+		btnCrawl.setText("Crawl");
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		
 		btnCases.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				appendLog("Loading Filters...");
 				System.out.println("Term is "+btnCases.getSelection());
 				if(btnCases.getSelection())
 					combo.setItems(SupremeCrawler.filters("cases"));
@@ -106,7 +152,23 @@ public class SupremeGUI {
 		
 	}
 	
-	
+	@Inject IEclipseContext context;
+	private void appendLog(String message){
+		IEclipseContext parent = context.getParent();
+		String currentMessage = (String) parent.get("consoleMessage"); 
+		if (currentMessage==null)
+			parent.set("consoleMessage", message);
+		else {
+			if (currentMessage.equals(message)) {
+				// Set the param to null before writing the message if it is the same as the previous message. 
+				// Else, the change handler will not be called.
+				parent.set("consoleMessage", null);
+				parent.set("consoleMessage", message);
+			}
+			else
+				parent.set("consoleMessage", message);
+		}
+	}
 	
 	
 }
