@@ -19,11 +19,12 @@ import org.jsoup.select.Elements;
 
 public class SupremeCrawler {
 	String filter, url, outputDir;
-	boolean truncate;
-	public SupremeCrawler(String filter, String outputDir, boolean truncate){
+	boolean truncate, downloadAudio;
+	public SupremeCrawler(String filter, String outputDir, boolean truncate, boolean downloadAudio){
 		this.filter = filter;
 		this.outputDir = outputDir;
 		this.truncate = truncate;
+		this.downloadAudio = downloadAudio;
 		// http://www.oyez.org/cases/2009?page=1
 		// http://www.oyez.org/cases/2009?order=field_argument_value&sort=asc&page=1&0=
 		this.url = "http://www.oyez.org"+filter+"?order=title&sort=asc";
@@ -95,21 +96,23 @@ public class SupremeCrawler {
 		}
 		bw.close();
 		
-		//"-argument.mp3"
-		Elements links = doc.select(".audio");
-		for (Element mp3:links){
-			if(mp3.attr("href").contains(".mp3")){
-				System.out.println("Downloading "+"http://www.oyez.org"+mp3.attr("href"));
-				appendLog("Downloading "+"http://www.oyez.org"+mp3.attr("href"));
-				Response audio;
-				if (!truncate)
-					audio = Jsoup.connect("http://www.oyez.org"+mp3.attr("href")).cookie("oyez-tos","1.0").maxBodySize(0).ignoreContentType(true).execute();
-				else
-					audio = Jsoup.connect("http://www.oyez.org"+mp3.attr("href")).cookie("oyez-tos","1.0").ignoreContentType(true).execute();
-				FileOutputStream fos = new FileOutputStream(new File(outputDir+"/"+filename+"-argument.mp3"));
-				fos.write(audio.bodyAsBytes());
-				fos.close();
-				break; // Once mp3 found, no need to continue for loop
+		if(downloadAudio){
+			//"-argument.mp3"
+			Elements links = doc.select(".audio");
+			for (Element mp3:links){
+				if(mp3.attr("href").contains(".mp3")){
+					System.out.println("Downloading "+"http://www.oyez.org"+mp3.attr("href"));
+					appendLog("Downloading "+"http://www.oyez.org"+mp3.attr("href"));
+					Response audio;
+					if (!truncate)
+						audio = Jsoup.connect("http://www.oyez.org"+mp3.attr("href")).cookie("oyez-tos","1.0").maxBodySize(0).ignoreContentType(true).execute();
+					else
+						audio = Jsoup.connect("http://www.oyez.org"+mp3.attr("href")).cookie("oyez-tos","1.0").ignoreContentType(true).execute();
+					FileOutputStream fos = new FileOutputStream(new File(outputDir+"/"+filename+"-argument.mp3"));
+					fos.write(audio.bodyAsBytes());
+					fos.close();
+					break; // Once mp3 found, no need to continue for loop
+				}
 			}
 		}
 		
@@ -140,7 +143,7 @@ public class SupremeCrawler {
 		filters("cases");
 		//SupremeCrawler sc = new SupremeCrawler("cases","","title","asc","/Users/aswinrajkumar/Desktop/supreme/");
 		//http://www.oyez.org/issues/criminal_procedure/confrontation/confession_error
-		SupremeCrawler sc = new SupremeCrawler("/issues/criminal_procedure/confrontation/confession_error","/Users/aswinrajkumar/Desktop/supreme/",true);
+		SupremeCrawler sc = new SupremeCrawler("/issues/criminal_procedure/confrontation/confession_error","/Users/aswinrajkumar/Desktop/supreme/",true, true);
 		try {
 			sc.looper();
 			//sc.crawl("http://www.oyez.org/issues/?order=title&sort=asc&page=142");

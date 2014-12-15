@@ -35,7 +35,7 @@ public class SupremeGUI {
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
-		parent.setLayout(new GridLayout(10, false));
+		parent.setLayout(new GridLayout(15, false));
 		
 		Label lblSortBy = new Label(parent, SWT.NONE);
 		lblSortBy.setText("Filter Type");
@@ -45,10 +45,15 @@ public class SupremeGUI {
 		btnCases.setSelection(true);
 		btnCases.setText("Term");
 		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
 		
 		Button btnIssues = new Button(parent, SWT.RADIO);
 		btnIssues.setText("Issues");
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -59,20 +64,19 @@ public class SupremeGUI {
 		new Label(parent, SWT.NONE);
 		
 		final Combo combo=new Combo(parent, SWT.NONE);
-		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 7, 1);
+		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, true, false, 13, 1);
 		gd_combo.widthHint = 177;
 		combo.setLayoutData(gd_combo);
 		appendLog("Loading Filters...");
 		combo.setItems(SupremeCrawler.filters("cases"));
 		combo.select(0);
-		new Label(parent, SWT.NONE);
 		
 		Label lblOutputDirectory = new Label(parent, SWT.NONE);
 		lblOutputDirectory.setText("Output Directory");
 		new Label(parent, SWT.NONE);
 		
 		txtOutput = new Text(parent, SWT.BORDER);
-		GridData gd_txtOutput = new GridData(SWT.FILL, SWT.CENTER, false, false, 7, 1);
+		GridData gd_txtOutput = new GridData(SWT.FILL, SWT.CENTER, false, false, 9, 1);
 		gd_txtOutput.widthHint = 260;
 		txtOutput.setLayoutData(gd_txtOutput);
 		
@@ -87,9 +91,19 @@ public class SupremeGUI {
 			}
 		});
 		button.setText("...");
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		
+		Button btnDownloadAudio = new Button(parent, SWT.CHECK);
+		btnDownloadAudio.setSelection(true);
+		btnDownloadAudio.setText("Download Audio");
+		new Label(parent, SWT.NONE);
 		
 		Button btnTruncate = new Button(parent, SWT.CHECK);
+		btnTruncate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 		btnTruncate.setText("Truncate MP3 (1MB)");
+		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -113,7 +127,7 @@ public class SupremeGUI {
 						f = "/issues";
 				}
 				long startTime = System.currentTimeMillis();
-				SupremeCrawler sc = new SupremeCrawler(combo.getText(), txtOutput.getText(), btnTruncate.getSelection());
+				SupremeCrawler sc = new SupremeCrawler(combo.getText(), txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(sc,iEclipseContext);
 				try {
@@ -126,6 +140,11 @@ public class SupremeGUI {
 			}
 		});
 		btnCrawl.setText("Crawl");
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
