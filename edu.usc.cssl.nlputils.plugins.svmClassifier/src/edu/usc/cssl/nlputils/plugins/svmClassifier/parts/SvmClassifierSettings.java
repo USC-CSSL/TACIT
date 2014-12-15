@@ -125,7 +125,7 @@ public class SvmClassifierSettings {
 			}
 
 		});
-		btnPreprocess.setBounds(0, 65, 75, 25);
+		btnPreprocess.setBounds(0, 65, 95, 25);
 		btnPreprocess.setText("Preprocess...");
 		
 		final Button btnWeights = new Button(grpInputSettings, SWT.CHECK);

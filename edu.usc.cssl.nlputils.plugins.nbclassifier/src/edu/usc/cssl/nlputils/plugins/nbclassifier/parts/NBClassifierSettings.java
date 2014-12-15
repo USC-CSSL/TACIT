@@ -75,7 +75,7 @@ public class NBClassifierSettings {
 				
 			}
 		});
-		button.setBounds(474, 13, 27, 25);
+		button.setBounds(472, 16, 43, 25);
 		button.setText("...");
 		
 		Label lblModelFilePath = new Label(grpTraining, SWT.NONE);
@@ -96,7 +96,7 @@ public class NBClassifierSettings {
 				
 			}
 		});
-		button_1.setBounds(474, 54, 27, 25);
+		button_1.setBounds(472, 57, 43, 25);
 		button_1.setText("...");
 		
 		final Button btnDoLowercase = new Button(grpTraining, SWT.CHECK);
@@ -138,7 +138,7 @@ public class NBClassifierSettings {
 				
 			}
 		});
-		button_2.setBounds(472, 18, 26, 25);
+		button_2.setBounds(468, 21, 36, 25);
 		button_2.setText("...");
 		
 		Button btnTest = new Button(grpTesting, SWT.NONE);
@@ -215,7 +215,7 @@ public class NBClassifierSettings {
 			}
 		});
 		button_6.setText("...");
-		button_6.setBounds(472, 53, 26, 25);
+		button_6.setBounds(468, 56, 36, 25);
 		
 		Label lblOutputPath = new Label(grpTesting, SWT.NONE);
 		lblOutputPath.setText("Output Path");
@@ -236,7 +236,7 @@ public class NBClassifierSettings {
 			}
 		});
 		button_7.setText("...");
-		button_7.setBounds(472, 91, 26, 25);
+		button_7.setBounds(468, 94, 36, 25);
 		
 		CTabItem tbtmClassify = new CTabItem(tabFolder, SWT.NONE);
 		tbtmClassify.setText("Classify");

@@ -13,14 +13,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.osgi.framework.Bundle;
 
 import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
@@ -90,15 +94,19 @@ public class Preprocess {
 		if (stemLang.equals("AUTO DETECT LANGUAGE")){
 			appendLog("Initializing Language Detection...");
 			doLangDetect = true;
-			System.out.println(System.getProperty("user.dir"));
-			System.out.println(this.getClass().getResource("").getPath());
+			Bundle bundle = Platform.getBundle("edu.usc.cssl.nlputils.plugins.preprocessor");
+			URL url = FileLocator.find(bundle, new Path("profiles"),null);
+			URL fileURL = FileLocator.toFileURL(url);
+			System.out.println(fileURL.getPath());
+			//System.out.println(System.getProperty("user.dir"));
+			//System.out.println(this.getClass().getResource("").getPath());
 //			URL main = Preprocess.class.getResource("Preprocess.class");
 //			if (!"file".equalsIgnoreCase(main.getProtocol()))
 //			  throw new IllegalStateException("Main class is not stored in a file.");
 //			File path = new File(main.getPath());
 //			System.out.println(path);
 			try{
-			DetectorFactory.loadProfile("C:\\Users\\45W1N\\NLPUtils-application\\edu.usc.pil.nlputils.plugins.preprocessor\\profiles");
+			DetectorFactory.loadProfile(fileURL.getPath());
 			} catch (com.cybozu.labs.langdetect.LangDetectException ex){
 				//ex.printStackTrace();
 				System.out.println("Exception code - "+ex.getCode());

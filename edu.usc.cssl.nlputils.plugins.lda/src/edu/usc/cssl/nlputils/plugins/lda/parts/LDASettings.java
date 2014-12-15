@@ -62,7 +62,7 @@ public class LDASettings {
 				txtLabel.setText(fd1.getFilterPath().substring(1+fd1.getFilterPath().lastIndexOf(System.getProperty("file.separator"))));
 			}
 		});
-		button.setBounds(450, 5, 26, 25);
+		button.setBounds(446, 6, 39, 25);
 		button.setText("...");
 		
 		txtNumTopics = new Text(composite, SWT.BORDER);
@@ -85,7 +85,7 @@ public class LDASettings {
 				txtOutputPath.setText(fp1Directory);
 			}
 		});
-		button_1.setBounds(450, 81, 26, 25);
+		button_1.setBounds(446, 81, 39, 25);
 		button_1.setText("...");
 		
 		Label lblOutputPath = new Label(composite, SWT.NONE);
@@ -145,7 +145,7 @@ public class LDASettings {
 				showPpOptions(shell);
 			}
 		});
-		btnPreprocess.setBounds(482, 5, 75, 25);
+		btnPreprocess.setBounds(482, 5, 96, 25);
 		btnPreprocess.setText("Preprocess...");
 		
 		Label lblOutputPrefix = new Label(composite, SWT.NONE);
