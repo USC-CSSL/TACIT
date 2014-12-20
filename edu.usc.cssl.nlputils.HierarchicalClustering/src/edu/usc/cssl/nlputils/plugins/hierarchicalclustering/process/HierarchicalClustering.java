@@ -1,4 +1,5 @@
 package edu.usc.cssl.nlputils.plugins.hierarchicalclustering.process;
+import java.awt.Container;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -6,14 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+
 import weka.clusterers.HierarchicalClusterer;
 import weka.core.Attribute;
-import weka.core.Drawable;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
 
 public class HierarchicalClustering {
 
@@ -60,13 +63,26 @@ public class HierarchicalClustering {
 			
 			
 			aggHierarchical.setNumClusters(1);
+			aggHierarchical.setPrintNewick(true);
 			aggHierarchical.buildClusterer(filteredData);
-			int numClusters = aggHierarchical.numberOfClusters();
-			String g = aggHierarchical.toString();
-			System.out.println("Network " + aggHierarchical.toString());
 			
+		
+			String g = aggHierarchical.graph();
+			System.out.println("Network " + aggHierarchical.graph());
+			aggHierarchical.linkTypeTipText();
 			
-			List<Character> outputTree = new ArrayList<Character>();
+
+		     HierarchyVisualizer tv = new HierarchyVisualizer(aggHierarchical.graph());
+		     
+		     tv.setSize(800 ,600);
+		      JFrame f;
+		      f = new JFrame();
+		      Container contentPane = f.getContentPane();
+		      contentPane.add(tv);
+		      f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		      f.setSize(800,600);
+		      f.setVisible(true);
+		      tv.fitToScreen();
 			
 			
 			BufferedWriter buf = new BufferedWriter(new FileWriter (new File(outputPath+"cluster.txt")));
