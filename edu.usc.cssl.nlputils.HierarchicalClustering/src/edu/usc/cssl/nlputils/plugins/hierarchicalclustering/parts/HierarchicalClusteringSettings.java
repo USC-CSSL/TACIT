@@ -196,7 +196,7 @@ protected void runClustering( ){
 		
 		System.out.println("Running Hierarchical Clustering...");
 		appendLog("Running Hierarchical Clustering...");
-		String clusters = HierarchicalClustering.doClustering(inputFiles, numClusters);
+		String clusters = HierarchicalClustering.doClustering(inputFiles, txtOutputDir.toString());
 		if(clusters == null)
 		{
 			appendLog("Sorry. Something went wrong with Hierarchical Clustering. Please check your input and try again.\n");
@@ -206,7 +206,8 @@ protected void runClustering( ){
 		appendLog("Output for Hierarchical Clustering");
 		appendLog("Clusters formed: \n");
 		appendLog(clusters);
-		appendLog("Done Hierarchical Clustering...");
+		appendLog("Saving the output to cluster.txt");
+		appendLog("\nDone Hierarchical Clustering...");
 		
 	}
 }
