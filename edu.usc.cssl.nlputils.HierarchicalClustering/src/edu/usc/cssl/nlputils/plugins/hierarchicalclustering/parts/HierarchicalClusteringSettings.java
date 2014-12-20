@@ -67,12 +67,6 @@ public class HierarchicalClusteringSettings {
 		});
 		button.setText("...");
 		
-		lblNumberOfClusters = new Label(composite, SWT.NONE);
-		lblNumberOfClusters.setText("Number of Clusters");
-		
-		txtNumClusters = new Text(composite, SWT.BORDER);
-		new Label(composite, SWT.NONE);
-		
 		lblOutputPath = new Label(composite, SWT.NONE);
 		lblOutputPath.setText("Output Path");
 		
@@ -181,7 +175,7 @@ public class HierarchicalClusteringSettings {
 
 protected void runClustering( ){
 		
-		int numClusters = Integer.parseInt(txtNumClusters.getText());
+		
 	
 		File dir = new File(ppDir);
 		File[] listOfFiles =  dir.listFiles();
