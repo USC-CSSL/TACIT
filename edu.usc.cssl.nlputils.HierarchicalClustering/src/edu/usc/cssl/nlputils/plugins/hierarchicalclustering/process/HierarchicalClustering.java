@@ -62,8 +62,12 @@ public class HierarchicalClustering {
 			aggHierarchical.setNumClusters(1);
 			aggHierarchical.buildClusterer(filteredData);
 			int numClusters = aggHierarchical.numberOfClusters();
-			String g = aggHierarchical.printNewickTipText();
+			String g = aggHierarchical.toString();
 			System.out.println("Network " + aggHierarchical.toString());
+			
+			
+			List<Character> outputTree = new ArrayList<Character>();
+			
 			
 			BufferedWriter buf = new BufferedWriter(new FileWriter (new File(outputPath+"cluster.txt")));
 			buf.write(g);
