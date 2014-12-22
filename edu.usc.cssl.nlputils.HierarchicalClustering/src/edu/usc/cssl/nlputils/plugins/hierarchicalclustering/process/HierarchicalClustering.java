@@ -30,6 +30,7 @@ public class HierarchicalClustering {
 		}
 		
 		doClustering(files,"/home/niki/Desktop/CSSL/Clustering/sampledocs/");
+	//	formatGraph("Newick:(1.0:24.24871,((0.0:15.58846,0.0:15.58846):0.84322,0.0:16.43168))", files);
 	}
 
 	public static String doClustering(List<File> inputFiles, String outputPath) {
@@ -68,11 +69,12 @@ public class HierarchicalClustering {
 			
 		
 			String g = aggHierarchical.graph();
-			System.out.println("Network " + aggHierarchical.graph());
+			String output = formatGraph(g, inputFiles);
+			System.out.println("Network " + output);
 			aggHierarchical.linkTypeTipText();
 			
 
-		     HierarchyVisualizer tv = new HierarchyVisualizer(aggHierarchical.graph());
+		     HierarchyVisualizer tv = new HierarchyVisualizer(output);
 		     
 		     tv.setSize(800 ,600);
 		      JFrame f;
@@ -91,8 +93,42 @@ public class HierarchicalClustering {
 			
 			return g;
 		} catch (Exception e) {
-			System.out.println("Exception occurred in K means " + e);
+			System.out.println("Exception occurred in Hierarchical Clustering  " + e);
 		}
 		return null;
+	}
+	
+	public static String formatGraph(String graph, List<File> files){
+		StringBuffer fgraph = new StringBuffer();
+
+		
+		String input = graph.substring(7);
+		int i =0, len = input.length();
+		char c;
+		int count = 0;
+		
+		fgraph.append(graph.substring(0, 7));
+		System.out.println(graph);
+		while(i<len){
+			c = input.charAt(i);
+			if(c=='('){
+				fgraph.append(input.charAt(i++));
+			}else if(c == ':'){
+				if(input.charAt(i-1)!=')'){
+					fgraph.append(files.get(count++).getName());
+					
+				}
+				while(i<len && (input.charAt(i)!=',' && input.charAt(i)!='(')){
+					fgraph.append(input.charAt(i++));
+					//System.out.println(fgraph.toString());
+				}
+				if(i<len)
+					fgraph.append(input.charAt(i++));
+			}else{
+				i++;
+			}
+		}
+		System.out.println(fgraph.toString());
+		return fgraph.toString();
 	}
 }
