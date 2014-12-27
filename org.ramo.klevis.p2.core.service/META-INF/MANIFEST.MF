@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Service
 Bundle-SymbolicName: org.ramo.klevis.p2.core.service
-Bundle-Version: 1.0.0
+Bundle-Version: 0.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.ramo.klevis.p2.core.iservice
 Require-Bundle: org.eclipse.equinox.p2.core;bundle-version="2.3.0",

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: WeightedCount
 Bundle-SymbolicName: edu.usc.cssl.nlputils.plugins.weightedCount;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.1.qualifier
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0.v20140512-1820",
  org.eclipse.e4.core.di,
  javax.inject,

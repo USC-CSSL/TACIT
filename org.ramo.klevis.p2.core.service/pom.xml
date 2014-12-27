@@ -1,0 +1,38 @@
+<!--
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ramo.klevis.p2.core.service</groupId>
+  <artifactId>org.ramo.klevis.p2.core.service</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<parent>
+		<version>0.0.1-SNAPSHOT</version>
+		<groupId>example.group</groupId>
+		<artifactId>parent</artifactId>
+	</parent>
+	
+
+	<packaging>eclipse-plugin</packaging>
+	<groupId>org.ramo.klevis.p2.core.service</groupId>
+	<artifactId>org.ramo.klevis.p2.core.service</artifactId>
+
+</project>
