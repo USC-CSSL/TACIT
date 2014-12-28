@@ -91,7 +91,7 @@ public class ZldaSettings {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				txtSeedFile.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.OPEN);
+				FileDialog fd	= new FileDialog(shell,SWT.OPEN);
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
@@ -328,7 +328,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			}
 		}
 		
-		appendLog("Topic and its corresponding words and phi values stored in " + outputdir + "\\topicwords.csv" );
+		appendLog("\nTopic and its corresponding words and phi values stored in " + outputdir + File.separator + "topicwords.csv" );
 		try {
 			FileWriter fw = new FileWriter(new File(outputdir + File.separator + "topicwords.csv"));
 			for(int i=0; i<T; i++){
@@ -351,8 +351,8 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.flush();
 			fw.close();
 			
-			appendLog("Phi values for each stopic stored in " + outputdir + File.separator + "phi.csv" );
-			fw = new FileWriter(new File(outputdir + "\\phi.csv"));
+			appendLog("\nPhi values for each stopic stored in " + outputdir + File.separator + "phi.csv" );
+			fw = new FileWriter(new File(outputdir + File.separator + "phi.csv"));
 			for(int i=0; i<T; i++){
 				fw.write("Topic" + i + ",");
 				for(int j=0; j<phi[i].length; j++){
@@ -366,8 +366,8 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.flush();
 			fw.close();
 			
-			appendLog("Theta values for each document stored in " + outputdir + File.separator + "theta.csv" );
-			fw = new FileWriter(new File(outputdir + "\\theta.csv"));
+			appendLog("\nTheta values for each document stored in " + outputdir + File.separator + "theta.csv" );
+			fw = new FileWriter(new File(outputdir + File.separator + "theta.csv"));
 			for(int i=0; i<docs.length; i++){
 				fw.write("Document" + i + ",");
 				for(int j=0; j<theta[i].length; j++){
@@ -382,7 +382,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 		catch(Exception e){
 			appendLog("Error writing output to files " + e);
 		}
-		appendLog("Done zlabel LDA...");
+		appendLog("\nDone zlabel LDA...");
 		
 	}
 }

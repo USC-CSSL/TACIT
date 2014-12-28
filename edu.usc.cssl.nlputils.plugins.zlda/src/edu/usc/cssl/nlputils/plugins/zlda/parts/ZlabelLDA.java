@@ -1,8 +1,17 @@
 package edu.usc.cssl.nlputils.plugins.zlda.parts;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
+
+import javax.inject.Inject;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 
 public class ZlabelLDA {
@@ -414,12 +423,14 @@ public class ZlabelLDA {
 		/* If f-label is provided, check validity - non-negative values, etc. */
 			if(fLabel.length != numberOfDocuments){
 				System.out.println("f-label array has size less than the number of documents");
+				appendLog("f-label array has size less than the number of documents");
 				return false;
 			}
 			else{
 				for(int i=0; i<fLabel.length; i++){
 					if(fLabel[i] < 0){
 						System.out.println("Negative f-label - not valid input");
+						appendLog("Negative f-label - not valid input");
 						return false;
 					}
 					else if(fLabel[i] > fmax){
@@ -432,6 +443,7 @@ public class ZlabelLDA {
 		/* The number of maps in topicSeeds should be the same as the number of documents */
 		if(topicSeeds.length != documents.length){
 			System.out.println("Topic Seeds array/ no. of documents size mismatch");
+			appendLog("Topic Seeds array/ no. of documents size mismatch");
 			return false;
 		}
 		
@@ -439,6 +451,7 @@ public class ZlabelLDA {
 		
 		if(alpha[0] == null || beta[0] == null){
 			System.out.println("Invalid alpha or beta value");
+			appendLog("Invalid alpha or beta value");
 			return false;
 		}
 		else {
@@ -451,6 +464,7 @@ public class ZlabelLDA {
 		/* fmax needs to be the same as the dimensions of alpha */
 		if(F-1 != fmax){
 			System.out.println("Alpha/f dimensionality mismatch");
+			appendLog("Alpha/f dimensionality mismatch");
 			return false;
 		}
 		
@@ -461,6 +475,7 @@ public class ZlabelLDA {
 		/* Beta must have the same number of rows as the number of topics we want */
 		if(T != beta.length){
 			System.out.println("Beta size/no. of topics mismatch");
+			appendLog("Beta size/no. of topics mismatch");
 			return false;
 		}
 		
@@ -468,6 +483,7 @@ public class ZlabelLDA {
 			/* The lists in alpha must have the same dimensions */
 			if(alpha[i].length != T){
 				System.out.println("Alpha arrays do not have the same dimensionality");
+				appendLog("Alpha arrays do not have the same dimensionality");
 				return false;
 			}
 		}
@@ -476,6 +492,7 @@ public class ZlabelLDA {
 			/* The lists in beta must have the same dimensions */
 			if(beta[i].length != W){
 				System.out.println("Beta arrays do not have the same dimensionality");
+				appendLog("Beta arrays do not have the same dimensionality");
 				return false;
 			}
 		}
@@ -485,6 +502,7 @@ public class ZlabelLDA {
 			for(int j=0; j<alpha[i].length; j++){
 				if(alpha[i][j] < 0){
 					System.out.println("Invalid value in the alpha array");
+					appendLog("Invalid value in the alpha array");
 					return false;
 				}
 			}
@@ -494,6 +512,7 @@ public class ZlabelLDA {
 			for(int j=0; j<beta[i].length; j++){
 				if(beta[i][j] < 0){
 					System.out.println("Invalid value in the beta array");
+					appendLog("Invalid value in the beta array");
 					return false;
 				}
 			}
@@ -509,6 +528,7 @@ public class ZlabelLDA {
 					for(int k=0; k<topicSeeds[i][j].length; k++){
 						if(topicSeeds[i][j][k] < 0 || topicSeeds[i][j][k] >= T ){
 							System.out.println("The topic seed value is invalid");
+							appendLog("The topic seed value is invalid");
 							return false;
 						}
 					}
@@ -522,6 +542,7 @@ public class ZlabelLDA {
 			for(int j=0; j<documents[i].length; j++){
 				if(documents[i][j] < 0 || documents[i][j] >= W){
 					System.out.println("The word value in document is invalid");
+					appendLog("The word value in document is invalid");
 					return false;
 				}
 			}
@@ -584,4 +605,41 @@ public class ZlabelLDA {
 		
 	}
 	
+	private StringBuilder readMe = new StringBuilder();
+	@Inject IEclipseContext context;	
+	private void appendLog(String message){
+		IEclipseContext parent = null;
+		if (context==null)
+			return;
+		parent = context.getParent();
+		//System.out.println(parent.get("consoleMessage"));
+		String currentMessage = (String) parent.get("consoleMessage"); 
+		if (currentMessage==null)
+			parent.set("consoleMessage", message);
+		else {
+			if (currentMessage.equals(message)) {
+				// Set the param to null before writing the message if it is the same as the previous message. 
+				// Else, the change handler will not be called.
+				parent.set("consoleMessage", null);
+				parent.set("consoleMessage", message);
+			}
+			else
+				parent.set("consoleMessage", message);
+			readMe.append(message+"\n");
+		}
+	}
+	public void writeReadMe(String location){
+		File readme = new File(location+"/README.txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.zlda").getHeaders().get("Bundle-Version");
+			String appV = Platform.getBundle("edu.usc.cssl.nlputils.application").getHeaders().get("Bundle-Version");
+			Date date = new Date();
+			bw.write("Zlabel LDA Output\n--------------------\n\nApplication Version: "+appV+"\nPlugin Version: "+plugV+"\nDate: "+date.toString()+"\n\n");
+			bw.write(readMe.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
