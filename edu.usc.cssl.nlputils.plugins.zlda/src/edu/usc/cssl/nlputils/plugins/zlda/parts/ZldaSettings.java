@@ -91,7 +91,7 @@ public class ZldaSettings {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				txtSeedFile.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.SAVE);
+				FileDialog fd = new FileDialog(shell,SWT.OPEN);
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
