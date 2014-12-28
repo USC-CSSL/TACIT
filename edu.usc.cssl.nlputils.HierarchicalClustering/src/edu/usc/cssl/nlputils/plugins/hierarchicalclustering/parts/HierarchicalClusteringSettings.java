@@ -87,6 +87,16 @@ public class HierarchicalClusteringSettings {
 		});
 		button_3.setText("...");
 		
+		//new Label(composite, SWT.NONE);
+		final Button btnImg = new Button(composite, SWT.CHECK);
+		btnImg.setText("Save Image");
+		
+		GridData gd_img = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		//gd_img.widthHint = 220;
+		btnImg.setLayoutData(gd_img);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		
 		Button btnPreprocess = new Button(composite, SWT.NONE);
 		btnPreprocess.addMouseListener(new MouseAdapter() {
 			@Override
@@ -95,6 +105,9 @@ public class HierarchicalClusteringSettings {
 			}
 		});
 		btnPreprocess.setBounds(482, 5, 75, 25);
+		//GridData gd_preprocess = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		//gd_preprocess.widthHint = 244;
+		//btnPreprocess.setLayoutData(gd_preprocess);
 		btnPreprocess.setText("Preprocess...");
 		
 		
@@ -122,6 +135,7 @@ public class HierarchicalClusteringSettings {
 				}
 				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(Hierarchical Clustering)");
+				isSaveImg = btnImg.getSelection();
 				runClustering();
 				appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 				appendLog("DONE");
@@ -153,7 +167,9 @@ public class HierarchicalClusteringSettings {
 
 	private Button button_3;
 	private String ppDir;
-
+	private boolean isSaveImg;
+	
+	
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
 		//System.out.println(parent.get("consoleMessage"));
@@ -181,7 +197,8 @@ protected void runClustering( ){
 		File[] listOfFiles =  dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles)
-			inputFiles.add(f);
+			if (!f.isDirectory() && f.exists())
+				inputFiles.add(f);
 		if(inputFiles.size() == 0){
 			appendLog("Please select at least one file on which to run Hierarchical Clustering");
 			return;
@@ -190,7 +207,7 @@ protected void runClustering( ){
 		
 		System.out.println("Running Hierarchical Clustering...");
 		appendLog("Running Hierarchical Clustering...");
-		String clusters = HierarchicalClustering.doClustering(inputFiles, txtOutputDir.toString());
+		String clusters = HierarchicalClustering.doClustering(inputFiles, txtOutputDir.getText(), isSaveImg);
 		if(clusters == null)
 		{
 			appendLog("Sorry. Something went wrong with Hierarchical Clustering. Please check your input and try again.\n");
@@ -199,6 +216,7 @@ protected void runClustering( ){
 
 		appendLog("Output for Hierarchical Clustering");
 		appendLog("Clusters formed: \n");
+		
 		appendLog(clusters);
 		appendLog("Saving the output to cluster.txt");
 		appendLog("\nDone Hierarchical Clustering...");
