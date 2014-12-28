@@ -1,5 +1,7 @@
 package edu.usc.cssl.nlputils.plugins.hierarchicalclustering.process;
 import java.awt.Container;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import weka.clusterers.HierarchicalClusterer;
@@ -33,7 +36,7 @@ public class HierarchicalClustering {
 	//	formatGraph("Newick:(1.0:24.24871,((0.0:15.58846,0.0:15.58846):0.84322,0.0:16.43168))", files);
 	}
 
-	public static String doClustering(List<File> inputFiles, String outputPath) {
+	public static String doClustering(List<File> inputFiles, String outputPath, boolean saveImg) {
 		try {
 			
 			StringToWordVector filter = new StringToWordVector();
@@ -45,7 +48,7 @@ public class HierarchicalClustering {
 			Instances docs = new Instances("text_files", atts, 0);
 
 			
-			
+			System.out.println(outputPath);
 	
 			for (int i = 0; i < inputFiles.size(); i++) {
 
@@ -76,22 +79,36 @@ public class HierarchicalClustering {
 
 		     HierarchyVisualizer tv = new HierarchyVisualizer(output);
 		     
-		     tv.setSize(800 ,600);
+		     tv.setSize(1024 ,1024);
 		      JFrame f;
 		      f = new JFrame();
 		      Container contentPane = f.getContentPane();
 		      contentPane.add(tv);
 		      f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		      f.setSize(800,600);
+		      f.setSize(1024,1024);
 		      f.setVisible(true);
-		      tv.fitToScreen();
+		      //tv.fitToScreen();
+		      
+		      if(saveImg){
+		      try
+		        {
+		            BufferedImage image = new BufferedImage(contentPane.getWidth(), contentPane.getHeight(), BufferedImage.TYPE_INT_RGB);
+		            Graphics2D graphics2D = image.createGraphics();
+		            contentPane.printAll(graphics2D);
+                    graphics2D.dispose();
+		            ImageIO.write(image,"jpeg", new File(outputPath+ File.separator + "Hierarchical Clustering Output.jpeg"));
+		        }
+		        catch(Exception e)
+		        {
+		        	System.out.println("Exception occurred in saving image of output " + e);
+		        }
+		      }
 			
-			
-			BufferedWriter buf = new BufferedWriter(new FileWriter (new File(outputPath+"cluster.txt")));
-			buf.write(g);
+			BufferedWriter buf = new BufferedWriter(new FileWriter (new File(outputPath+ File.separator+"cluster.txt")));
+			buf.write(output);
 			buf.close();
 			
-			return g;
+			return output;
 		} catch (Exception e) {
 			System.out.println("Exception occurred in Hierarchical Clustering  " + e);
 		}
