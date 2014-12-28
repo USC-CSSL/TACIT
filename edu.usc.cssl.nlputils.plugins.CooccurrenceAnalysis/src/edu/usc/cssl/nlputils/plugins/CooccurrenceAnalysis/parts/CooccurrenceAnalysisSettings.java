@@ -79,7 +79,7 @@ public class CooccurrenceAnalysisSettings {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				txtSeedFile.setText("");
-				FileDialog fd = new FileDialog(shell,SWT.SAVE);
+				FileDialog fd = new FileDialog(shell,SWT.OPEN);
 				fd.open();
 				String oFile = fd.getFileName();
 				String dir = fd.getFilterPath();
@@ -144,7 +144,7 @@ public class CooccurrenceAnalysisSettings {
 				System.out.println("Preprocessing...");
 				try {
 					ppDir = doPp(txtInputDir.getText());
-					if(ppSeedFile!= "")
+					if(ppSeedFile!= "" && !ppSeedFile.isEmpty())
 						ppSeedFile = doPp(txtSeedFile.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -230,7 +230,8 @@ protected void invokeCooccurrence( ){
 		appendLog("Output for Co-occurrence Analysis");
 		
 		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-matrix.csv" );
-		appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.csv" );
+		if(ppSeedFile!= "" && !ppSeedFile.isEmpty() && windowSize !=0)
+			appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.csv" );
 		appendLog("Done Co-occurrence Analysis...");
 		
 	}

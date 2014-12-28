@@ -17,7 +17,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class CooccurrenceAnalysis {
-	static String delimeters = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
+	static String delimeters = " .,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>";
 	static boolean doPhrases = false;
 	
 	public static void main(String[] args) {
@@ -88,6 +88,7 @@ public class CooccurrenceAnalysis {
 				len = count = 0;
 				
 				for (String word : words) {
+					word.replaceAll("[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
 					if(word.isEmpty() || word.equals(""))
 						continue;
 					if(delimeters.contains(word))
@@ -150,7 +151,7 @@ public class CooccurrenceAnalysis {
 			SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
 			System.out.println(keys.size());
 			try {
-				FileWriter fw = new FileWriter(new File(outputPath	+ "\\word-to-word-matrix.csv"));
+				FileWriter fw = new FileWriter(new File(outputPath	+ File.separator + "word-to-word-matrix.csv"));
 				fw.write(" ,");
 				for (String key : keys) {
 					fw.write(key + ",");
@@ -175,15 +176,18 @@ public class CooccurrenceAnalysis {
 				System.out.println("Error writing output to files" + e);
 			}
 			
-			try {
-				FileWriter fw = new FileWriter(new File(outputPath	+ "\\phrases.csv"));
-				for(String p:phrase)
-					fw.write(p+"\n");
-				fw.close();
-			} catch (IOException e) {
-				System.out.println("Error writing output to files" + e);
+			if(seedFile!= "" && !seedFile.isEmpty() && windowSize !=0)
+			{
+				try {
+					FileWriter fw = new FileWriter(new File(outputPath	+ File.separator + "phrases.txt"));
+					for(String p:phrase)
+						fw.write(p+"\n");
+					fw.close();
+				} catch (IOException e) {
+					System.out.println("Error writing output to file phrases.txt " + e);
+				}
 			}
-			
+
 			System.out.println(phrase.size());
 			for(String s:phrase){
 				System.out.println(s);
