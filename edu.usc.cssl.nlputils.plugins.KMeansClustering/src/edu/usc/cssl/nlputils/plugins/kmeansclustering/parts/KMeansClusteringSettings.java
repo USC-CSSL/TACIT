@@ -225,7 +225,9 @@ protected void runClustering( ){
 		}
 		
 		try {
-			FileWriter fw = new FileWriter(new File(txtOutputDir.getText() + "\\KMeansClusters.csv"));
+			String op = txtOutputDir.getText() + File.separator +  "KMeansClusters.txt";
+			appendLog("Saving the output for Kmeans clustering in " + op);
+			FileWriter fw = new FileWriter(new File(op));
 			for (int c : outputClusters.keySet()) {
 				System.out.printf("Cluster %d \n", c);
 				appendLog("Cluster " + c + ": \n");
@@ -235,6 +237,7 @@ protected void runClustering( ){
 					appendLog("File " + f);
 					fw.write("File" + f + "\n");
 				}
+				fw.write("\n");
 				appendLog("");
 			}
 			fw.close();
