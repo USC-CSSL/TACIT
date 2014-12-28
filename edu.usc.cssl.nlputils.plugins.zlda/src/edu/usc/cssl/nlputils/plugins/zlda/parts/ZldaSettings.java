@@ -330,7 +330,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 		
 		appendLog("Topic and its corresponding words and phi values stored in " + outputdir + "\\topicwords.csv" );
 		try {
-			FileWriter fw = new FileWriter(new File(outputdir + "\\topicwords.csv"));
+			FileWriter fw = new FileWriter(new File(outputdir + File.separator + "topicwords.csv"));
 			for(int i=0; i<T; i++){
 				fw.write("Topic" + i + ",");
 				Collections.sort( topicWords.get(i), new Comparator<Map.Entry<String, Double>>()
@@ -351,7 +351,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.flush();
 			fw.close();
 			
-			appendLog("Phi values for each stopic stored in " + outputdir + "\\phi.csv" );
+			appendLog("Phi values for each stopic stored in " + outputdir + File.separator + "phi.csv" );
 			fw = new FileWriter(new File(outputdir + "\\phi.csv"));
 			for(int i=0; i<T; i++){
 				fw.write("Topic" + i + ",");
@@ -366,7 +366,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.flush();
 			fw.close();
 			
-			appendLog("Theta values for each document stored in " + outputdir + "\\theta.csv" );
+			appendLog("Theta values for each document stored in " + outputdir + File.separator + "theta.csv" );
 			fw = new FileWriter(new File(outputdir + "\\theta.csv"));
 			for(int i=0; i<docs.length; i++){
 				fw.write("Document" + i + ",");
@@ -380,7 +380,7 @@ protected void runLDA(File dir, File seedFile, int numTopics, int noOfSamples,
 			fw.close();
 		}
 		catch(Exception e){
-			appendLog("Error writing output to files" + e);
+			appendLog("Error writing output to files " + e);
 		}
 		appendLog("Done zlabel LDA...");
 		
