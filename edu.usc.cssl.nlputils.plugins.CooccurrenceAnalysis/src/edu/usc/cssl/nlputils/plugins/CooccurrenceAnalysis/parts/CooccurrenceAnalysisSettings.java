@@ -229,8 +229,8 @@ protected void invokeCooccurrence( ){
 
 		appendLog("Output for Co-occurrence Analysis");
 		
-		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + "\\word-matrix.csv" );
-		appendLog("Phrases stored in " + txtOutputDir.getText() + "\\phrases.csv" );
+		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-matrix.csv" );
+		appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.csv" );
 		appendLog("Done Co-occurrence Analysis...");
 		
 	}
