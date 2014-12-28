@@ -32,7 +32,7 @@ public class HierarchicalClustering {
 			System.out.println(f);
 		}
 		
-		doClustering(files,"/home/niki/Desktop/CSSL/Clustering/sampledocs/");
+		doClustering(files,"/home/niki/Desktop/CSSL/Clustering/sampledocs/", false);
 	//	formatGraph("Newick:(1.0:24.24871,((0.0:15.58846,0.0:15.58846):0.84322,0.0:16.43168))", files);
 	}
 
