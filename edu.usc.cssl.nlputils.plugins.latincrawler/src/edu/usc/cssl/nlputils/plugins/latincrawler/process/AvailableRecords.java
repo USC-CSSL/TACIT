@@ -34,22 +34,7 @@ public class AvailableRecords {
 			return authorString;
 	}
 	
-	public static String[] getBooks(String congressString) throws IOException {
-		congressString = congressString.replace("\u00A0", "");
-		int congress = Integer.parseInt(congressString);
-		System.out.println("Extracting Senators of Congress "+congress);
-		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
-		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
-		String[] senArray = new String[senList.size()-1];
-		int index = 0;
-		for (Element senItem : senList){
-			String senText = senItem.text().replace("\u00A0", " ");
-			if (senText.equals("Any Senator"))
-				continue;
-			senArray[index++] = senText;
-		}
-		return senArray;
-	}
+
 	
 	/*public static String[] getAllBooks(String[] authors) throws IOException{
 		TreeSet<String> books = new TreeSet<String>();
