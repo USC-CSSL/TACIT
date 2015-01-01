@@ -45,7 +45,6 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.weightedCount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.wordcount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.zlda"/>
-      <plugin id="edu.usc.cssl.nlputils.plugins.zlda2"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.xml"/>
