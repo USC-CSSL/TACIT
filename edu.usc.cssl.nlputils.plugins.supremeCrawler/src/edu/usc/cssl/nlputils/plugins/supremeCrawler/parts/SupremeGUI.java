@@ -134,7 +134,7 @@ public class SupremeGUI {
 						f = "/issues";
 				}
 				long startTime = System.currentTimeMillis();
-				SupremeCrawler sc = new SupremeCrawler(combo.getText(), txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
+				SupremeCrawler sc = new SupremeCrawler(f, txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(sc,iEclipseContext);
 				try {
