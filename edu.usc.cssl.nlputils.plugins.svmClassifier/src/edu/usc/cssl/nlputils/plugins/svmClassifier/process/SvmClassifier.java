@@ -219,10 +219,14 @@ public class SvmClassifier {
 		noOfDocuments = 0;
 		if (doTfidf){
 		for (File file:folder1.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
 		for (File file:folder2.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
@@ -234,11 +238,15 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
 		
 		for (File file:folder1.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:folder2.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();
@@ -347,6 +355,8 @@ public class SvmClassifier {
 		String actualLabel, predictedLabel;
 		actualLabel = label1;
 		for (File file:dir1.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			String currPrediction = brt.readLine();
 			if (currPrediction.equals("1.0")){
 				predictedLabel = label1;
@@ -357,6 +367,8 @@ public class SvmClassifier {
 		}
 		actualLabel = label2;
 		for (File file:dir2.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			String currPrediction = brt.readLine();
 			if (currPrediction.equals("1.0")){
 				predictedLabel = label1;
@@ -382,6 +394,8 @@ public class SvmClassifier {
 		bw.write("File Name,Predicted Class\n");
 		String predictedLabel;
 		for (File file:dir.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			String currPrediction = brt.readLine();
 			if (currPrediction.equals("1.0")){
 				predictedLabel = label1;
@@ -408,10 +422,16 @@ public class SvmClassifier {
 				noOfDocuments = 0;
 				if (doTfidf){
 				for (File file:folder1.listFiles()){
+					if (file.getAbsolutePath().contains("DS_Store"))
+						continue;
+					
 					noOfDocuments = noOfDocuments + 1;
 					buildDfMap(file);
 				}
 				for (File file:folder2.listFiles()){
+					if (file.getAbsolutePath().contains("DS_Store"))
+						continue;
+					
 					noOfDocuments = noOfDocuments + 1;
 					buildDfMap(file);
 				}
@@ -426,11 +446,15 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(testFile));
 		
 		for (File file:folder1.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:folder2.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
@@ -494,6 +518,8 @@ public class SvmClassifier {
 				noOfDocuments = 0;
 				if (doTfidf){
 				for (File file:folder.listFiles()){
+					if (file.getAbsolutePath().contains("DS_Store"))
+						continue;
 					noOfDocuments = noOfDocuments + 1;
 					buildDfMap(file);
 				}
@@ -508,6 +534,8 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(testFile));
 		
 		for (File file:folder.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			bw.write("0 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
@@ -557,10 +585,14 @@ public class SvmClassifier {
 
 		if (doTfidf){
 		for (File file:trainFiles1){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
 		for (File file:trainFiles2){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 			buildDfMap(file);
 		}
@@ -572,11 +604,15 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
 		
 		for (File file:trainFiles1){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			//System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:trainFiles2){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			//System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();
@@ -646,10 +682,14 @@ public class SvmClassifier {
 				noOfDocuments = 0;
 				if (doTfidf){
 				for (File file:testFiles1){
+					if (file.getAbsolutePath().contains("DS_Store"))
+						continue;
 					noOfDocuments = noOfDocuments + 1;
 					buildDfMap(file);
 				}
 				for (File file:testFiles2){
+					if (file.getAbsolutePath().contains("DS_Store"))
+						continue;
 					noOfDocuments = noOfDocuments + 1;
 					buildDfMap(file);
 				}
@@ -664,11 +704,15 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(testFile));
 		
 		for (File file:testFiles1){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			//System.out.println("Reading File "+file.toString());
 			bw.write("+1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:testFiles2){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			//System.out.println("Reading File "+file.toString());
 			bw.write("-1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
@@ -761,12 +805,16 @@ public class SvmClassifier {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(formatFile));
 		
 		for (File file:folder1.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			//System.out.println("+1 "+svm.BowToString(svm.fileToBow(file)));
 			bw.write("+1 "+svm.BowToString(svm.fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:folder2.listFiles()){
+			if (file.getAbsolutePath().contains("DS_Store"))
+				continue;
 			System.out.println("Reading File "+file.toString());
 			//System.out.println("-1 "+svm.BowToString(svm.fileToBow(file)));
 			bw.write("-1 "+svm.BowToString(svm.fileToBow(file)));

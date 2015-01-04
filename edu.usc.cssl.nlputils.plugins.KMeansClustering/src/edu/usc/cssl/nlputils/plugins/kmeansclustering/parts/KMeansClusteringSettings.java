@@ -189,8 +189,11 @@ protected void runClustering( ){
 		File dir = new File(ppDir);
 		File[] listOfFiles =  dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
-		for (File f : listOfFiles)
+		for (File f : listOfFiles){
+			if (f.getAbsolutePath().contains("DS_Store"))
+				continue;
 			inputFiles.add(f);
+			}
 		if(inputFiles.size() == 0){
 			appendLog("Please select at least one file on which to run KMeans Clustering");
 			return;
