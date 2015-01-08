@@ -38,11 +38,15 @@ public class CooccurrenceAnalysis {
 		BufferedReader br = null;
 		
 		
+		
 		try {
 			String[] seeds = null;
 			if (windowSize > 0) {
 				File sf = new File(seedFile);
 				if (sf != null && sf.exists()) {
+					if(sf.isDirectory()){
+						seedFile = sf.listFiles()[0].getAbsolutePath();
+					}
 					br = new BufferedReader(new FileReader(
 							new File(seedFile)));
 					while ((currentLine = br.readLine()) != null) {
@@ -84,7 +88,7 @@ public class CooccurrenceAnalysis {
 						if(!s.isEmpty())
 						words.add(s);
 				}
-				System.out.println(words);
+				//System.out.println(words);
 				len = count = 0;
 				
 				for (String word : words) {
@@ -128,7 +132,7 @@ public class CooccurrenceAnalysis {
 					}
 				}
 					
-					System.out.println("Building word mat for " + word);
+				//	System.out.println("Building word mat for " + word);
 					if (wordMat.containsKey(word)) {
 						vec = wordMat.get(word);
 					} else {
