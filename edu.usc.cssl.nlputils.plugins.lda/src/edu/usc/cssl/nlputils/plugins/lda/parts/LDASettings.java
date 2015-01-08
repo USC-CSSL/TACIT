@@ -3,6 +3,7 @@
  */ 
 package edu.usc.cssl.nlputils.plugins.lda.parts;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+
 
 
 
@@ -98,6 +100,13 @@ public class LDASettings {
 			public void mouseUp(MouseEvent e) {
 				
 				String ppDir = txtSourceDir.getText();
+				File iDir = new File(ppDir);
+				File[] iFiles = iDir.listFiles();
+				for (File f : iFiles){
+					if (f.getAbsolutePath().contains("DS_Store"))
+						f.delete();
+				}
+				
 				if(ppService.doPP) {
 					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage

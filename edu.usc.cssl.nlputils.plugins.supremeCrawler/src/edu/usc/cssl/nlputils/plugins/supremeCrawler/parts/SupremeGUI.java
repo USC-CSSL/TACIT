@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
@@ -118,6 +119,12 @@ public class SupremeGUI {
 		btnCrawl.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				if (txtOutput.getText() == null || txtOutput.getText().length() < 2){
+					MessageBox mBox = new MessageBox(shell,SWT.OK);
+					mBox.setMessage("Please choose a valid output folder.");
+					mBox.open();
+					return;
+				}
 				appendLog("Crawling...");
 				String f = combo.getText();
 				if(f.equals("All")){
@@ -127,7 +134,7 @@ public class SupremeGUI {
 						f = "/issues";
 				}
 				long startTime = System.currentTimeMillis();
-				SupremeCrawler sc = new SupremeCrawler(combo.getText(), txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
+				SupremeCrawler sc = new SupremeCrawler(f, txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(sc,iEclipseContext);
 				try {

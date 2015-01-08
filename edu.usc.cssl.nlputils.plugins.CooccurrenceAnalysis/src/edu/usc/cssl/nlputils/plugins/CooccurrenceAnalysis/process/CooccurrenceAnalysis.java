@@ -76,6 +76,8 @@ public class CooccurrenceAnalysis {
 			StringBuilder match;
 			int size = seedWords.size();
 			for (File f : listOfFiles) {
+				if (f.getAbsolutePath().contains("DS_Store"))
+					continue;
 				System.out.println("Processing");
 				List<String> words = new ArrayList<String>();
 				if(!f.exists() || f.isDirectory())

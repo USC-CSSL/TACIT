@@ -3,6 +3,7 @@
  */ 
 package edu.usc.cssl.nlputils.plugins.nbclassifier.parts;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -27,6 +28,7 @@ import org.eclipse.swt.events.MouseEvent;
 
 import bsh.EvalError;
 import edu.usc.cssl.nlputils.plugins.nbclassifier.process.NBClassifier;
+
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.custom.CTabItem;
@@ -152,6 +154,21 @@ public class NBClassifierSettings {
 					showError(shell);
 					return;
 				}
+				
+				File iDir1 = new File(ppDir1);
+				File[] iFiles1 = iDir1.listFiles();
+				for (File f : iFiles1){
+					if (f.getAbsolutePath().contains("DS_Store"))
+						f.delete();
+				}
+				
+				File iDir2 = new File(ppDir2);
+				File[] iFiles2 = iDir2.listFiles();
+				for (File f : iFiles2){
+					if (f.getAbsolutePath().contains("DS_Store"))
+						f.delete();
+				}
+				
 				
 				/* Mallet is not compatible with the Preprocessing plugin
 				if(ppService.doPP) {
@@ -302,6 +319,21 @@ public class NBClassifierSettings {
 				if (ppDir1.equals("") || ppDir2.equals("") || txtCOutput.getText().equals("")){
 					showError(shell);
 					return;
+				}
+				
+
+				File iDir1 = new File(ppDir1);
+				File[] iFiles1 = iDir1.listFiles();
+				for (File f : iFiles1){
+					if (f.getAbsolutePath().contains("DS_Store"))
+						f.delete();
+				}
+				
+				File iDir2 = new File(ppDir2);
+				File[] iFiles2 = iDir2.listFiles();
+				for (File f : iFiles2){
+					if (f.getAbsolutePath().contains("DS_Store"))
+						f.delete();
 				}
 				
 				

@@ -85,10 +85,19 @@ public class SupremeCrawler {
 		
 		Document doc = Jsoup.connect(contenturl).timeout(10*1000).get();
 		
+		Elements hidden = doc.select("div.hidden");
+		if (hidden.size()==0){
+			System.out.println("No data. Skipping page "+contenturl);
+			appendLog("No data. Skipping page "+contenturl);
+			return;
+		}
+		
 		//"-transcript.txt"
 		System.out.println("Writing "+outputDir+"/"+filename+"-transcript.txt");
 		appendLog("Writing "+outputDir+"/"+filename+"-transcript.txt");
-		Element transcript = doc.select("div.hidden").get(0);
+		
+		//Element transcript = doc.select("div.hidden").get(0);
+		Element transcript = hidden.get(0);
 		Elements lines = transcript.select("p");
 		for (Element line:lines){
 			//System.out.println(line.text());
@@ -143,9 +152,10 @@ public class SupremeCrawler {
 		filters("cases");
 		//SupremeCrawler sc = new SupremeCrawler("cases","","title","asc","/Users/aswinrajkumar/Desktop/supreme/");
 		//http://www.oyez.org/issues/criminal_procedure/confrontation/confession_error
-		SupremeCrawler sc = new SupremeCrawler("/issues/criminal_procedure/confrontation/confession_error","/Users/aswinrajkumar/Desktop/supreme/",true, true);
+		SupremeCrawler sc = new SupremeCrawler("/issues/criminal_procedure/confrontation/confession_error","/Users/aswinrajkumar/Desktop/Stupidoutput/Output",true, true);
 		try {
-			sc.looper();
+			//sc.looper();
+			sc.crawl("http://www.oyez.org/cases/2010-2019?page=3");
 			//sc.crawl("http://www.oyez.org/issues/?order=title&sort=asc&page=142");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -154,6 +164,8 @@ public class SupremeCrawler {
 	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
+		if (context == null)
+			return;
 		IEclipseContext parent = context.getParent();
 		String currentMessage = (String) parent.get("consoleMessage"); 
 		if (currentMessage==null)
