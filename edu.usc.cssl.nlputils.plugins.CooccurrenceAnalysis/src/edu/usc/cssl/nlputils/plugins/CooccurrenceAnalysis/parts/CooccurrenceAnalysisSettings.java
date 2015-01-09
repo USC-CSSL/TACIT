@@ -207,6 +207,11 @@ protected void invokeCooccurrence( ){
 		
 	
 		File dir = new File(ppDir);
+		if(!dir.exists() || !dir.isDirectory())
+		{
+			appendLog("Input Path not correct. Please check and try again. Exiting ..");
+			return;
+		}
 		File[] listOfFiles =  dir.listFiles();
 		
 		if(listOfFiles.length == 0){
