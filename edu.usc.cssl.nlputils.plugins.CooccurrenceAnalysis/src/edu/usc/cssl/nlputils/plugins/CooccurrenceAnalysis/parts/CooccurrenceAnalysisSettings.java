@@ -141,7 +141,7 @@ public class CooccurrenceAnalysisSettings {
 
 				//Preprocessing
 				appendLog("Preprocessing...");
-				System.out.println("Preprocessing...");
+				//System.out.println("Preprocessing...");
 				try {
 					ppDir = doPp(txtInputDir.getText());
 					if(ppSeedFile!= "" && !ppSeedFile.isEmpty())
@@ -218,7 +218,7 @@ protected void invokeCooccurrence( ){
 			windowSize = Integer.parseInt(txtNumTopics.getText());
 		
 		
-		System.out.println("Running Co-occurrence Analysis...");
+		//System.out.println("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
 		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText());
 		if(isSuccess == false)
@@ -231,7 +231,7 @@ protected void invokeCooccurrence( ){
 		
 		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-matrix.csv" );
 		if(ppSeedFile!= "" && !ppSeedFile.isEmpty() && windowSize !=0)
-			appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.csv" );
+			appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.txt" );
 		appendLog("Done Co-occurrence Analysis...");
 		
 	}

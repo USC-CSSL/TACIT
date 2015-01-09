@@ -182,7 +182,7 @@ public class CooccurrenceAnalysis {
 				System.out.println("Error writing output to files" + e);
 			}
 			
-			if(seedFile!= "" && !seedFile.isEmpty() && windowSize !=0)
+			if(seedFile!= "" && !seedFile.isEmpty() && phrase.size()>0)
 			{
 				try {
 					FileWriter fw = new FileWriter(new File(outputPath	+ File.separator + "phrases.txt"));
@@ -195,9 +195,9 @@ public class CooccurrenceAnalysis {
 			}
 
 			System.out.println(phrase.size());
-			for(String s:phrase){
-				System.out.println(s);
-			}
+			//for(String s:phrase){
+			//	System.out.println(s);
+			//}
 
 			return true;
 		} catch (Exception e) {
