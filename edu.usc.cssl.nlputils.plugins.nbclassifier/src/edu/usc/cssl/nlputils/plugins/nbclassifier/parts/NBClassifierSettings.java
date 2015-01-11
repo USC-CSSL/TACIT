@@ -27,7 +27,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import bsh.EvalError;
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.nbclassifier.process.NBClassifier;
+import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
@@ -41,7 +43,7 @@ public class NBClassifierSettings {
 	private Text txtCOutput;
 	private Text txtTestPath2;
 	private Text txtOutputPath;
-	//private PreprocessorService ppService = new PreprocessorService();
+	private PreprocessorService ppService = null;
 	
 	@Inject
 	public NBClassifierSettings() {
@@ -101,13 +103,9 @@ public class NBClassifierSettings {
 		button_1.setBounds(472, 57, 43, 25);
 		button_1.setText("...");
 		
-		final Button btnDoLowercase = new Button(grpTraining, SWT.CHECK);
-		btnDoLowercase.setBounds(142, 102, 145, 16);
-		btnDoLowercase.setText("Convert to Lowercase");
-		
-		final Button btnStopWords = new Button(grpTraining, SWT.CHECK);
-		btnStopWords.setBounds(10, 102, 125, 16);
-		btnStopWords.setText("Remove Stop Words");
+		Button btnPreprocess = new Button(grpTraining, SWT.CHECK);
+		btnPreprocess.setBounds(10, 93, 94, 18);
+		btnPreprocess.setText("Preprocess");
 		
 		CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER);
 		GridData gd_tabFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -169,7 +167,30 @@ public class NBClassifierSettings {
 						f.delete();
 				}
 				
-				
+				if (btnPreprocess.getSelection()){
+					ppService = GlobalPresserSettings.ppService;
+					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
+					IEclipseContext iEclipseContext = context;
+					ContextInjectionFactory.inject(ppService,iEclipseContext);
+					//Preprocessing
+					appendLog("Preprocessing...");
+					System.out.println("Preprocessing...");
+					try {
+						ppDir1 = ppService.doPreprocessing(ppDir1);
+						ppDir2 = ppService.doPreprocessing(ppDir2);
+						File dir1 = new File(ppDir1);
+						File dest1 = new File(txtFolderPath1.getText()+"/"+"Class1_pre");
+						dir1.renameTo(dest1);
+						ppDir1 = dest1.getAbsolutePath();
+						File dir2 = new File(ppDir2);
+						File dest2 = new File(txtFolderPath2.getText()+"/"+"Class2_pre");
+						dir2.renameTo(dest2);
+						ppDir2 = dest2.getAbsolutePath();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
+				}
 				/* Mallet is not compatible with the Preprocessing plugin
 				if(ppService.doPP) {
 					
@@ -197,9 +218,18 @@ public class NBClassifierSettings {
 					System.out.println("Processing...");
 					appendLog("PROCESSING...(Naive Bayes)");
 					long startTime = System.currentTimeMillis();
-					nb.doClassification(ppDir1, ppDir2, txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
+					//nb.doClassification(ppDir1, ppDir2, txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
+					nb.doClassification(ppDir1, ppDir2, txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), false,false);
 					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+						ppService.clean(ppDir1);
+						System.out.println("Cleaning up preprocessed files - "+ppDir1);
+						appendLog("Cleaning up preprocessed files - "+ppDir1);
+						ppService.clean(ppDir2);
+						System.out.println("Cleaning up preprocessed files - "+ppDir2);
+						appendLog("Cleaning up preprocessed files - "+ppDir2);
+					}
 					appendLog("DONE");
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
@@ -364,7 +394,8 @@ public class NBClassifierSettings {
 					System.out.println("Processing...");
 					appendLog("PROCESSING...(Naive Bayes)");
 					long startTime = System.currentTimeMillis();
-					nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
+					//nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
+					nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), false, false);
 					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("DONE");

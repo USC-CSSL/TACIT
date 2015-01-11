@@ -282,6 +282,14 @@ public class PreprocessorService {
 		return sb.toString();
 	}
 	
+	public void clean(String ppDir){
+		File toDel = new File(ppDir);
+		for (File f:toDel.listFiles()){
+			f.delete();
+		}
+		toDel.delete();
+	}
+	
 	public boolean doCleanUp() {
 		return options.doCleanUp();
 	}

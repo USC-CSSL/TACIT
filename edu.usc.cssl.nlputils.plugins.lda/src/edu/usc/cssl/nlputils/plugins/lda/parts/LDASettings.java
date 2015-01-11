@@ -144,13 +144,9 @@ public class LDASettings {
 					System.out.println("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+						ppService.clean(ppDir);
 						System.out.println("Cleaning up preprocessed files - "+ppDir);
 						appendLog("Cleaning up preprocessed files - "+ppDir);
-						File toDel = new File(ppDir);
-						for (File f:toDel.listFiles()){
-							f.delete();
-						}
-						toDel.delete();
 					}
 					appendLog("DONE");
 				} catch (IOException e1) {
