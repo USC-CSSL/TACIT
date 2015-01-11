@@ -34,6 +34,7 @@ public class PPDialog extends Dialog {
 	private OptionObject oo;
 	public boolean doPP = false;
 	
+	
   public PPDialog(Shell parentShell) {
     super(parentShell);
   }
@@ -50,15 +51,17 @@ public class PPDialog extends Dialog {
     new Label(container, SWT.NONE);
     new Label(container, SWT.NONE);
     
+    
     txtStopFile = new Text(container, SWT.BORDER);
     txtStopFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    
     
     Button button = new Button(container, SWT.NONE);
     button.addMouseListener(new MouseAdapter() {
     	@Override
     	public void mouseUp(MouseEvent e) {
     		txtStopFile.setText("");
-			FileDialog fd = new FileDialog(shell,SWT.SAVE);
+			FileDialog fd = new FileDialog(shell,SWT.OPEN);
 			fd.open();
 			String oFile = fd.getFileName();
 			String dir = fd.getFilterPath();
@@ -77,7 +80,7 @@ public class PPDialog extends Dialog {
     txtDelimiters.setText(" .,;'\\\"!-()[]{}:?/@");
     txtDelimiters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     new Label(container, SWT.NONE);
-    
+        
     btnConvertToLowercase = new Button(container, SWT.CHECK);
     btnConvertToLowercase.setText("Convert to Lowercase");
     new Label(container, SWT.NONE);
@@ -99,12 +102,25 @@ public class PPDialog extends Dialog {
     new Label(container, SWT.NONE);
     new Label(container, SWT.NONE);
     
+    
     cmbStemLang = new Combo(container, SWT.NONE);
     cmbStemLang.setItems(new String[] {"Auto Detect Language", "EN", "DE", "FR", "IT", "DA", "NL", "FI", "HU", "NO", "TR"});
     cmbStemLang.setEnabled(false);
     cmbStemLang.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     cmbStemLang.setText("Auto Detect Language");
     new Label(container, SWT.NONE);
+    
+    if (oo!=null){
+        //System.out.println(oo.getDelimiters());
+    	System.out.println(oo.getStopFile());
+        txtStopFile.setText(oo.getStopFile());
+    	System.out.println(oo.getDelimiters());
+        txtDelimiters.setText(oo.getDelimiters());
+    	btnConvertToLowercase.setSelection(oo.isDoLowercase());
+    	btnStemming.setSelection(oo.isDoStemming());
+        cmbStemLang.setText(oo.getStemLang());
+        cmbStemLang.setEnabled(true);
+    }
 
     return container;
   }
@@ -127,6 +143,15 @@ public class PPDialog extends Dialog {
   private void saveInput() {
 	  oo = new OptionObject(txtDelimiters.getText(), txtStopFile.getText(), btnConvertToLowercase.getSelection(), btnStemming.getSelection(), cmbStemLang.getText());
 	  doPP = true;
+  }
+  
+  public void setOptions(OptionObject oo){
+	  System.out.println(oo.getDelimiters());
+	  txtDelimiters.setText(oo.getDelimiters());
+	  txtStopFile.setText(oo.getStopFile());
+	  btnConvertToLowercase.setEnabled(oo.isDoLowercase());
+	  btnStemming.setEnabled(oo.isDoStemming());
+	  cmbStemLang.setText(oo.getStemLang());
   }
   
   public OptionObject getOptions(){
