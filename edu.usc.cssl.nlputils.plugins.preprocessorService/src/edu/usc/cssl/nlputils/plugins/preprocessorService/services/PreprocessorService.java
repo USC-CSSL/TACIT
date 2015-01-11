@@ -282,6 +282,10 @@ public class PreprocessorService {
 		return sb.toString();
 	}
 	
+	public boolean doCleanUp() {
+		return options.doCleanUp();
+	}
+	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();

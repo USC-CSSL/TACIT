@@ -9,13 +9,15 @@ public class OptionObject {
 	private boolean doLowercase;
 	private boolean doStemming;
 	private String stemLang;
+	private boolean cleanUp;
 	
-	public OptionObject(String delimiters, String stopFile, boolean doLowercase, boolean doStemming, String stemLang){
+	public OptionObject(String delimiters, String stopFile, boolean doLowercase, boolean doStemming, String stemLang, boolean cleanUp){
 		this.delimiters = delimiters;
 		this.stopFile = stopFile;
 		this.doLowercase = doLowercase;
 		this.doStemming = doStemming;
 		this.stemLang = stemLang;
+		this.cleanUp = cleanUp;
 	}
 
 	public String getDelimiters() {
@@ -38,5 +40,8 @@ public class OptionObject {
 		return stemLang;
 	}
 	
+	public boolean doCleanUp(){
+		return cleanUp;
+	}
 	
 }

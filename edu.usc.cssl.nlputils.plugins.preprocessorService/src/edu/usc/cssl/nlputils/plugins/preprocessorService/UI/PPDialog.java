@@ -33,6 +33,7 @@ public class PPDialog extends Dialog {
 	private Combo cmbStemLang;
 	private OptionObject oo;
 	public boolean doPP = false;
+	private Button btnCleanUp;
 	
 	
   public PPDialog(Shell parentShell) {
@@ -110,6 +111,11 @@ public class PPDialog extends Dialog {
     cmbStemLang.setText("Auto Detect Language");
     new Label(container, SWT.NONE);
     
+    btnCleanUp = new Button(container, SWT.CHECK);
+    btnCleanUp.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
+    btnCleanUp.setText("Clean Up Preprocessed Files when Done");
+    new Label(container, SWT.NONE);
+    
     if (oo!=null){
         //System.out.println(oo.getDelimiters());
     	System.out.println(oo.getStopFile());
@@ -120,6 +126,7 @@ public class PPDialog extends Dialog {
     	btnStemming.setSelection(oo.isDoStemming());
         cmbStemLang.setText(oo.getStemLang());
         cmbStemLang.setEnabled(true);
+        btnCleanUp.setSelection(oo.doCleanUp());
     }
 
     return container;
@@ -141,7 +148,7 @@ public class PPDialog extends Dialog {
 
 
   private void saveInput() {
-	  oo = new OptionObject(txtDelimiters.getText(), txtStopFile.getText(), btnConvertToLowercase.getSelection(), btnStemming.getSelection(), cmbStemLang.getText());
+	  oo = new OptionObject(txtDelimiters.getText(), txtStopFile.getText(), btnConvertToLowercase.getSelection(), btnStemming.getSelection(), cmbStemLang.getText(), btnCleanUp.getSelection());
 	  doPP = true;
   }
   
