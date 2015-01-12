@@ -38,7 +38,7 @@
     </mainMenu>
     <trimBars xmi:id="_-nuFKPzGEeOdn9ViPpOXDA">
       <children xsi:type="menu:ToolBar" xmi:id="_-nusIPzGEeOdn9ViPpOXDA" elementId="toolbar:org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIfzGEeOdn9ViPpOXDA" iconURI="platform:/plugin/edu.usc.cssl.nlputils.application/icons/sample.png" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIfzGEeOdn9ViPpOXDA" visible="false" iconURI="platform:/plugin/edu.usc.cssl.nlputils.application/icons/sample.png" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_gwtT4JkYEeSzUp2fEDdRRw" elementId="edu.usc.cssl.nlputils.application.handledtoolitem.globalpresser" label="Preprocessor Settings" command="_j_GigJkYEeSzUp2fEDdRRw"/>
       </children>
     </trimBars>
