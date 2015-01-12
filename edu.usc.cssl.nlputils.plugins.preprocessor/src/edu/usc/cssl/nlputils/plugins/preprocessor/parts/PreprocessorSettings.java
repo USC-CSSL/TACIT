@@ -197,7 +197,7 @@ public class PreprocessorSettings {
 						appendLog("Preprocessing failed.");
 					else
 						appendLog("Preprocessing completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					appendLog("DONE");
+					appendLog("DONE (Preprocessing)");
 				} catch (Exception ioe){
 					ioe.printStackTrace();
 				}

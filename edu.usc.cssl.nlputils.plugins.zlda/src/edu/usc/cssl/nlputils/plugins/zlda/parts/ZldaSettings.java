@@ -167,7 +167,7 @@ public class ZldaSettings {
 					System.out.println("Cleaning up preprocessed seed file - "+ppSeedFile);
 					appendLog("Cleaning up preprocessed seed file - "+ppSeedFile);
 				}
-				appendLog("DONE");
+				appendLog("DONE (Z-LDA)");
 			}
 		});
 		btnCalculate.setText("Calculate");

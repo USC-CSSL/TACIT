@@ -216,7 +216,7 @@ public class SvmClassifierSettings {
 					System.out.println("Cleaning up preprocessed files - "+ppDir2);
 					appendLog("Cleaning up preprocessed files - "+ppDir2);
 				}
-				appendLog("DONE");
+				appendLog("DONE (SVM)");
 				} catch (IOException ie) {
 					ie.printStackTrace();
 				}

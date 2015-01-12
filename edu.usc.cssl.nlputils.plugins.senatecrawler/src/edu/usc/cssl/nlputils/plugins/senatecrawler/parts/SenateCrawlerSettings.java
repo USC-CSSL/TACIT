@@ -214,7 +214,7 @@ public class SenateCrawlerSettings {
 					*/
 					
 					appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
-					appendLog("DONE");
+					appendLog("DONE (Senate Crawler)");
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}

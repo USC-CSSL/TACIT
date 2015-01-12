@@ -8,7 +8,8 @@ Require-Bundle: org.eclipse.ui,
  javax.inject,
  org.eclipse.e4.ui.model.workbench,
  edu.usc.cssl.nlputils.plugins.preprocessorService,
- org.eclipse.e4.core.di
+ org.eclipse.e4.core.di,
+ edu.usc.cssl.nlputils.application
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: edu.usc.cssl.nlputils.plugins.preprocessorService.services,
  org.eclipse.e4.core.contexts,

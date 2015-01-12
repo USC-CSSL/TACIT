@@ -23,12 +23,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.hierarchicalclustering.process.HierarchicalClustering;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
 public class HierarchicalClusteringSettings {
 	private Text txtInputDir;
-	private PreprocessorService ppService = new PreprocessorService();
+	private PreprocessorService ppService = null;
 	@Inject
 	public HierarchicalClusteringSettings() {
 		
@@ -41,7 +42,7 @@ public class HierarchicalClusteringSettings {
 		parent.setLayout(new GridLayout(1, false));
 		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_composite.widthHint = 431;
 		gd_composite.heightHint = 477;
@@ -67,6 +68,9 @@ public class HierarchicalClusteringSettings {
 		});
 		button.setText("...");
 		
+		btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setText("Preprocess");
+		
 		lblOutputPath = new Label(composite, SWT.NONE);
 		lblOutputPath.setText("Output Path");
 		
@@ -86,29 +90,14 @@ public class HierarchicalClusteringSettings {
 			}
 		});
 		button_3.setText("...");
+		new Label(composite, SWT.NONE);
 		
 		//new Label(composite, SWT.NONE);
 		final Button btnImg = new Button(composite, SWT.CHECK);
 		btnImg.setText("Save Image");
-		
-		GridData gd_img = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		//gd_img.widthHint = 220;
-		btnImg.setLayoutData(gd_img);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
-		
-		Button btnPreprocess = new Button(composite, SWT.NONE);
-		btnPreprocess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				showPpOptions(shell);
-			}
-		});
-		btnPreprocess.setBounds(482, 5, 75, 25);
-		//GridData gd_preprocess = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		//gd_preprocess.widthHint = 244;
-		//btnPreprocess.setLayoutData(gd_preprocess);
-		btnPreprocess.setText("Preprocess...");
+		new Label(composite, SWT.NONE);
 		
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
@@ -118,8 +107,8 @@ public class HierarchicalClusteringSettings {
 				
 				ppDir = txtInputDir.getText();
 				
-				if(ppService.doPP) {
-					
+				if(btnPreprocess.getSelection()) {
+					ppService = GlobalPresserSettings.ppService;
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);
@@ -128,7 +117,7 @@ public class HierarchicalClusteringSettings {
 				appendLog("Preprocessing...");
 				System.out.println("Preprocessing...");
 				try {
-					ppDir = doPp(txtInputDir.getText());
+					ppDir = ppService.doPreprocessing(txtInputDir.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -138,23 +127,21 @@ public class HierarchicalClusteringSettings {
 				isSaveImg = btnImg.getSelection();
 				runClustering();
 				appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-				appendLog("DONE");
+				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+					ppService.clean(ppDir);
+					System.out.println("Cleaning up preprocessed files - "+ppDir);
+					appendLog("Cleaning up preprocessed files - "+ppDir);
+				}
+				appendLog("DONE (Hierarchinal Clustering)");
 			}
 		});
 		btnCalculate.setText("Cluster");
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 		
 	}
-
-	private void showPpOptions(Shell shell){
-		ppService.setOptions(shell);
-	}
-	
-	private String doPp(String inputPath) throws IOException{
-		return ppService.doPreprocessing(inputPath);
-	}
-	
+		
 	
 	@Inject
 	IEclipseContext context;
@@ -168,6 +155,7 @@ public class HierarchicalClusteringSettings {
 	private Button button_3;
 	private String ppDir;
 	private boolean isSaveImg;
+	private Button btnPreprocess;
 	
 	
 	private void appendLog(String message){

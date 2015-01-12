@@ -352,7 +352,7 @@ public class WordCountSettings {
 					errorMessage = "Word Count Completed Successfully.";
 				
 				appendLog(errorMessage);
-				appendLog("DONE");
+				appendLog("DONE (Word Count)");
 				
 				if (returnCode == 0){
 					MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);

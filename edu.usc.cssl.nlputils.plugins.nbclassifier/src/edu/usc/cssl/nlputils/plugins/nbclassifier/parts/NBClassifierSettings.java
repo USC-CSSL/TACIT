@@ -230,7 +230,7 @@ public class NBClassifierSettings {
 						System.out.println("Cleaning up preprocessed files - "+ppDir2);
 						appendLog("Cleaning up preprocessed files - "+ppDir2);
 					}
-					appendLog("DONE");
+					appendLog("DONE (Naive Bayes)");
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {

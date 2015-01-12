@@ -148,7 +148,7 @@ public class LDASettings {
 						System.out.println("Cleaning up preprocessed files - "+ppDir);
 						appendLog("Cleaning up preprocessed files - "+ppDir);
 					}
-					appendLog("DONE");
+					appendLog("DONE (LDA)");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

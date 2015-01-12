@@ -143,7 +143,7 @@ public class SupremeGUI {
 					e1.printStackTrace();
 				}
 				appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
-				appendLog("DONE\n");
+				appendLog("DONE (Supreme Court Crawler)\n");
 			}
 		});
 		btnCrawl.setText("Crawl");

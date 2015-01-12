@@ -26,12 +26,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.kmeansclustering.process.KMeansClustering;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
 public class KMeansClusteringSettings {
 	private Text txtInputDir;
-	private PreprocessorService ppService = new PreprocessorService();
+	private PreprocessorService ppService = null;
 	@Inject
 	public KMeansClusteringSettings() {
 		
@@ -44,7 +45,7 @@ public class KMeansClusteringSettings {
 		parent.setLayout(new GridLayout(1, false));
 		
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_composite.widthHint = 431;
 		gd_composite.heightHint = 477;
@@ -70,10 +71,14 @@ public class KMeansClusteringSettings {
 		});
 		button.setText("...");
 		
+		btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setText("Preprocess");
+		
 		lblNumberOfClusters = new Label(composite, SWT.NONE);
 		lblNumberOfClusters.setText("Number of Clusters");
 		
 		txtNumClusters = new Text(composite, SWT.BORDER);
+		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		
 		lblOutputPath = new Label(composite, SWT.NONE);
@@ -95,16 +100,7 @@ public class KMeansClusteringSettings {
 			}
 		});
 		button_3.setText("...");
-		
-		Button btnPreprocess = new Button(composite, SWT.NONE);
-		btnPreprocess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				showPpOptions(shell);
-			}
-		});
-		btnPreprocess.setBounds(282, 5, 75, 25);
-		btnPreprocess.setText("Preprocess...");
+		new Label(composite, SWT.NONE);
 		
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
@@ -114,8 +110,8 @@ public class KMeansClusteringSettings {
 				
 				ppDir = txtInputDir.getText();
 				
-				if(ppService.doPP) {
-					
+				if(btnPreprocess.getSelection()) {
+					ppService = GlobalPresserSettings.ppService;
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);
@@ -124,7 +120,7 @@ public class KMeansClusteringSettings {
 				appendLog("Preprocessing...");
 				System.out.println("Preprocessing...");
 				try {
-					ppDir = doPp(txtInputDir.getText());
+					ppDir = ppService.doPreprocessing(txtInputDir.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -132,23 +128,23 @@ public class KMeansClusteringSettings {
 				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(K-means Clustering)");
 				runClustering();
-				appendLog("KMeans Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-				appendLog("DONE");
+				appendLog("K-Means Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+					ppService.clean(ppDir);
+					System.out.println("Cleaning up preprocessed files - "+ppDir);
+					appendLog("Cleaning up preprocessed files - "+ppDir);
+				}
+				appendLog("DONE (K-Means Clustering)");
 			}
 		});
 		btnCalculate.setText("Cluster");
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 		
 	}
-
-	private void showPpOptions(Shell shell){
-		ppService.setOptions(shell);
-	}
 	
-	private String doPp(String inputPath) throws IOException{
-		return ppService.doPreprocessing(inputPath);
-	}
+	
 	
 	
 	@Inject
@@ -162,6 +158,7 @@ public class KMeansClusteringSettings {
 
 	private Button button_3;
 	private String ppDir;
+	private Button btnPreprocess;
 
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
@@ -247,7 +244,6 @@ protected void runClustering( ){
 		} catch (IOException e) {
 			appendLog("Error writing output to files" + e);
 		}
-		appendLog("\nDone KMeans Clustering...");
 		
 	}
 }
