@@ -22,7 +22,9 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-nuFIPzGEeOdn9ViPpOXDA" label="Quit" command="_-nteDPzGEeOdn9ViPpOXDA"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_pAZvECNtEeSWsdFScyxqCg" elementId="edu.usc.cssl.nlputils.application.menu.crawlers" label="Crawl"/>
-      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.menu.preprocessors" label="Preprocess"/>
+      <children xsi:type="menu:Menu" xmi:id="_yw5tQA3LEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.menu.preprocessors" label="Preprocess">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jePBQJqxEeSM3dANIl7sWQ" elementId="edu.usc.cssl.nlputils.application.handledmenuitem.settings" label="Preprocessing Global Settings" command="_j_GigJkYEeSzUp2fEDdRRw"/>
+      </children>
       <children xsi:type="menu:Menu" xmi:id="_c7vqMBv1EeSPGOxRdieGyg" elementId="edu.usc.cssl.nlputils.application.menu.wordcount" label="Word Count"/>
       <children xsi:type="menu:Menu" xmi:id="_e5q_8A3SEeSxjN9OGB1twg" elementId="edu.usc.cssl.nlputils.application.menu.classifiers" label="Classify"/>
       <children xsi:type="menu:Menu" xmi:id="_hSs34B2sEeSPGOxRdieGyg" elementId="edu.usc.cssl.nlputils.application.menu.topic" label="Topic Model"/>
