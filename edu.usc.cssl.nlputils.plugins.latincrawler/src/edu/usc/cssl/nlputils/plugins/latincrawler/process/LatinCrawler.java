@@ -8,10 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -36,28 +34,38 @@ public class LatinCrawler {
 		
 		skipBooks.add("The Latin Library");
 		skipBooks.add("The Classics Page");
+		skipBooks.add("The Classics Homepage");
 		skipBooks.add("Christian Latin");
+		skipBooks.add("Thomas May");
+		skipBooks.add("Contemporary Latin");
+		skipBooks.add("Apollinaris Sidonius");
 		skipBooks.add("The Miscellany");
 		skipBooks.add("St. Thomas Aquinas");
+		skipBooks.add("St. Jerome");
+		//skipBooks.add("Leo the Great"); //check this
 		skipBooks.add("Isidore of Seville");
 		skipBooks.add("Seneca the Younger");
 		skipBooks.add("Seneca the Elder");
+		skipBooks.add("Miscellanea Carminum");
 		skipBooks.add("Velleius");
 		skipBooks.add("Neo-Latin");
 		skipBooks.add("The Bible");
 		skipBooks.add("Medieval Latin");
 		skipBooks.add("Christian");
+		skipBooks.add("Christina Latin");
 		skipBooks.add("Medieval");
 		skipBooks.add("Ius Romanum");
 		skipBooks.add("Miscellany");
+		skipBooks.add("Paulus Diaconus");
 	}
 	
 	public static void main(String[] args) throws IOException{
 		LatinCrawler lc = new LatinCrawler();
 		lc.outputDir = "/home/niki/Desktop/CSSL/latin/";
-		lc.authorNames.add("Claudian");
-		lc.getBooks("Medieval", "http://www.thelatinlibrary.com/medieval.html", "/home/niki/Desktop/CSSL/latin/Medieval", "Medieval");
+		//lc.authorNames.add("Suetonius");
+		//lc.getBooks("Suetonius", "http://www.thelatinlibrary.com/suet.html", "/home/niki/Desktop/CSSL/latin/Suetonius", "Suetonius");
 		//lc.getContent("http://www.thelatinlibrary.com/ammianus/17.shtml", "Liber XX", "/home/niki/Desktop/CSSL/latin/Ammianus Marcellinus");
+		lc.initialize("/home/niki/Desktop/CSSL/latin/");
 	}
 	
 	public void initialize(String outputDir) throws IOException{
@@ -65,7 +73,22 @@ public class LatinCrawler {
 		checkPath(outputDir);
 		appendLog("Loading Authors...");
 		getAllAuthors();
-		writeReadMe(outputDir);
+		
+		callSpecialAuthors("http://www.thelatinlibrary.com/medieval.html", "Medieval Latin");
+		callSpecialAuthors("http://www.thelatinlibrary.com/christian.html", "Christian Latin");
+		callSpecialAuthors("http://www.thelatinlibrary.com/neo.html", "Neo-Latin");
+		callSpecialAuthors("http://www.thelatinlibrary.com/misc.html", "Miscellany");
+		callSpecialAuthors("http://www.thelatinlibrary.com/ius.html", "Ius Romanum");
+
+		//writeReadMe(outputDir);
+	}
+	
+	private void callSpecialAuthors(String url, String name) throws IOException{
+		File authorDir = new File(outputDir + File.separator + name);
+		if(!authorDir.exists()){
+			authorDir.mkdirs();
+		}
+		getAllSubAuthors(url, outputDir + File.separator + name);
 	}
 	
 	private void checkPath(String outputDir) {
@@ -100,7 +123,7 @@ public class LatinCrawler {
 				//System.out.println("Extracting Books of Author  "+ name +"...");
 				appendLog("\nExtracting Books of Author  "+ name +"...");
 				getBooks(name, url, aurl, name);
-			 	//count++;
+			 	count++;
 		}
 		//String authorsString = " All|"+authorsList.text().split(":")[1];
 		
@@ -112,7 +135,6 @@ public class LatinCrawler {
 			url = auth.getElementsByTag("a").attr("abs:href");
 			if(authorNames.contains(name))
 				continue;
-			//authorUrl.add(url);
 			authorNames.add(name);
 			if(skipBooks.contains(name))
 				continue;
@@ -129,13 +151,45 @@ public class LatinCrawler {
 		return;
 	}
 	
+	/* The sub libraries*/
+	public void getAllSubAuthors(String connectUrl, String output) throws IOException{
+		int i = 0, size = 0;
+		String name, url;
+		Document doc = Jsoup.connect(connectUrl).timeout(10*1000).get();
+	
+		Element secondList = doc.getElementsByTag("table").get(0);
+		Elements auth2List = secondList.getElementsByTag("td");
+		for(Element auth : auth2List)
+		{
+			name = auth.text();
+			url = auth.getElementsByTag("a").attr("abs:href");
+			if(authorNames.contains(name))
+				continue;
+			authorNames.add(name);
+			if(skipBooks.contains(name))
+				continue;
+			String aurl = output + File.separator + name;
+			File authorDir = new File(aurl);
+			if(!authorDir.exists()){
+				authorDir.mkdirs();
+			}
+			//System.out.println("Extracting Books of Author  "+ name +"...");
+			appendLog("\nExtracting Books of Author  "+ name +"...");
+		 	getBooks(name, url, aurl, name);
+			i++;
+			
+		}
+		
+		return;
+	}
+	
 	private void getBooks(String author, String aurl, String apath, String mainAuthor) throws IOException {
 
 		try{
 		//	System.out.println(aurl);
 			Document doc = Jsoup.connect(aurl).timeout(10*1000).get();
-			Elements subLists = doc.select("h2.work");
-			if(subLists != null && subLists.size() > 1){
+			Elements subLists = doc.select("div.work");
+			if(subLists != null && subLists.size() > 0){
 				getBooksList(author, aurl, doc, apath, mainAuthor);
 				return;
 			}	
@@ -144,14 +198,18 @@ public class LatinCrawler {
 			//System.out.println(apath);
 			int count = 0;
 			String bookname = "";
-
+			int i = 0;
 			if(booksList != null){
-				for (Element bookItem : booksList){
+				int size = booksList.size();
+				for (i =0;i<size;i++){
+					Element bookItem = booksList.get(i);
 					String bookText = bookItem.getElementsByTag("a").attr("abs:href");
 					if(bookText.contains("#"))
 						continue;
 					bookname  = bookItem.text();
 					//System.out.println(bookname + " " + author);
+					if(bookText.isEmpty() || bookText== null)
+						continue;
 					if(skipBooks.contains(bookname))
 						continue;
 					if(authorNames.contains(bookname) || (bookname.toLowerCase()).equals(mainAuthor.toLowerCase()))
@@ -162,7 +220,9 @@ public class LatinCrawler {
 				}
 			}
 			if(count == 0) {
-				if(doc.select("p.pagehead")!= null && doc.select("p.pagehead").size() > 0 )
+				if(doc.select("title")!=null)
+					bookname = doc.select("title").first().text();
+				else if(doc.select("p.pagehead")!= null && doc.select("p.pagehead").size() > 0 )
 					bookname = doc.select("p.pagehead").first().text();
 				else if(doc.select("h1")!= null && doc.select("h1").size() >  0)
 					bookname = doc.select("h1").first().text();
@@ -184,6 +244,7 @@ public class LatinCrawler {
 		String bookText ="";
 		String bookname = "";
 		Element head = null;
+		int k;
 
 		//handle count of headers and div
 		while(i< size1 || j<size2){
@@ -227,14 +288,18 @@ public class LatinCrawler {
 						authorDir.mkdirs();
 					}
 					String apath1 = authorDir.toString();
-					//System.out.println(apath1);
+				//	System.out.println(apath1);
 
-
+					k = 0;
+					
 					int count1 = 0;
+					Element bookItem = null;
 					if(booksList != null){
-						for (Element bookItem : booksList){
+						for (k=0;k<booksList.size();k++ ){
+							bookItem = booksList.get(k);
 							bookText = bookItem.getElementsByTag("a").attr("abs:href");
-							if(bookText.contains("#"))
+							
+							if(bookText == null)
 								continue;
 							bookname  = bookItem.text();
 							//System.out.println(bookname + " " + author);
@@ -250,7 +315,9 @@ public class LatinCrawler {
 
 
 					if(count1 == 0) {
-						if(doc.select("p.pagehead")!= null && doc.select("p.pagehead").size() > 0 )
+						if(doc.select("title")!=null)
+							bookname = doc.select("title").first().text();
+						else if(doc.select("p.pagehead")!= null && doc.select("p.pagehead").size() > 0 )
 							bookname = doc.select("p.pagehead").first().text();
 						else if(doc.select("h1")!= null && doc.select("h1").size() >  0)
 							bookname = doc.select("h1").first().text();
@@ -275,7 +342,7 @@ public class LatinCrawler {
 		//System.out.println("Extracting Content of book  "+ bookDir +"...");
 		appendLog("Extracting Content of book  "+ bookDir +"...");
 		try{
-			//System.out.println(bookUri);
+			System.out.println(bookUri);
 			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
 			Document doc = Jsoup.connect(bookUri).timeout(10*10000).get();
 			//Elements c1 = doc.select("div#page-wrapper");
