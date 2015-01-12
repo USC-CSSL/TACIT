@@ -47,7 +47,7 @@ public class KMeansClusteringSettings {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(4, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 431;
+		gd_composite.widthHint = 509;
 		gd_composite.heightHint = 477;
 		composite.setLayoutData(gd_composite);
 		
@@ -112,6 +112,12 @@ public class KMeansClusteringSettings {
 				
 				if(btnPreprocess.getSelection()) {
 					ppService = GlobalPresserSettings.ppService;
+					if (ppService.options == null){
+						System.out.println("Preprocessing Options not set.");
+						appendLog("Preprocessing Options not set. Please select the preprocessing options from the dialog box.");
+						GlobalPresserSettings.ppService.setOptions(shell);
+					}
+					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);

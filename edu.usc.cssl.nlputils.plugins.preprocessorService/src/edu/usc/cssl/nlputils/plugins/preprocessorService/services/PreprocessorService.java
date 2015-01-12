@@ -44,7 +44,7 @@ import com.cybozu.labs.langdetect.LangDetectException;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.UI.PPDialog;
 
 public class PreprocessorService {
-	private OptionObject options;
+	public OptionObject options;
 	public boolean doPP = false;
 	private boolean doStopWords = false;
 	private HashSet<String> stopWordsSet = new HashSet<String>();

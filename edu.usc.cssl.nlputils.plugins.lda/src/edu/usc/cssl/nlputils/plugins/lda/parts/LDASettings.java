@@ -26,6 +26,7 @@ import org.eclipse.swt.events.MouseEvent;
 
 
 
+
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.lda.process.LDA;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
@@ -115,6 +116,13 @@ public class LDASettings {
 				
 				if(btnPreprocess.getSelection()) {
 					ppService = GlobalPresserSettings.ppService;
+					if (ppService.options == null){
+						System.out.println("Preprocessing Options not set.");
+						appendLog("Preprocessing Options not set. Please select the preprocessing options from the dialog box.");
+						GlobalPresserSettings.ppService.setOptions(shell);
+					}
+					
+					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);

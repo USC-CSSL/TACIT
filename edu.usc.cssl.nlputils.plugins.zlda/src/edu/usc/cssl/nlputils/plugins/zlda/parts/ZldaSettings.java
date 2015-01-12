@@ -141,6 +141,12 @@ public class ZldaSettings {
 				
 				if(btnPreprocess.getSelection()) {
 					
+					if (ppService.options == null){
+						System.out.println("Preprocessing Options not set.");
+						appendLog("Preprocessing Options not set. Please select the preprocessing options from the dialog box.");
+						GlobalPresserSettings.ppService.setOptions(shell);
+					}
+					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);

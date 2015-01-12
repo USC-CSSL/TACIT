@@ -30,6 +30,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
+
 
 
 public class Welcome {
@@ -94,6 +96,7 @@ public class Welcome {
 		gd_browser.widthHint = 800;
 		browser.setLayoutData(gd_browser);
 		browser.setUrl("https://github.com/neo-anderson/NLPUtilsWiki/wiki/What's-New!");
+		
 	}
 	@Focus
 	public void setFocus() {
