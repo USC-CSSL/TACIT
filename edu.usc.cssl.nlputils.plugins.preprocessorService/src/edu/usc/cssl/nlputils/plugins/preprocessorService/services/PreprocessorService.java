@@ -50,13 +50,24 @@ public class PreprocessorService {
 	private HashSet<String> stopWordsSet = new HashSet<String>();
 	private boolean doLangDetect = false;
 	SnowballStemmer stemmer=null;
+	private boolean initial = true;
+	private PPDialog ppDialog = null;
 	
 	public void setOptions(Shell shell) {
-		System.out.println("Doing Preprocessing");
-		PPDialog ppDialog = new PPDialog(shell);
+		//System.out.println("Doing Preprocessing");
+		
+		if (initial){
+			System.out.println("New Settings Dialog");
+			ppDialog = new PPDialog(shell);
+		} 
 		ppDialog.open();
 		options = ppDialog.getOptions();
 		doPP = ppDialog.doPP;
+		initial = false;
+	}
+	
+	public String getOptions(){
+		return options.getStopFile();
 	}
 	
 	// for File as well as Directory
@@ -269,6 +280,21 @@ public class PreprocessorService {
 			sb.append(currentLine.trim()+' ');
 		br.close();
 		return sb.toString();
+	}
+	
+	public void clean(String ppDir){
+		File toDel = new File(ppDir);
+		// if folder, delete contents too
+		if (toDel.isDirectory()){
+			for (File f:toDel.listFiles()){
+				f.delete();
+			}
+		} 		
+		toDel.delete();
+	}
+	
+	public boolean doCleanUp() {
+		return options.doCleanUp();
 	}
 	
 	@Inject IEclipseContext context;

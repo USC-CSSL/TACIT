@@ -203,7 +203,7 @@ public class PreprocessorSettings {
 				}
 			}
 		});
-		btnPreprocess.setBounds(10, 101, 75, 25);
+		btnPreprocess.setBounds(10, 101, 90, 25);
 		btnPreprocess.setText("PreProcess");
 		
 		

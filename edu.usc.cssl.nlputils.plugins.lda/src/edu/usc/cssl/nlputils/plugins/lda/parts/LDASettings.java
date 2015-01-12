@@ -25,6 +25,8 @@ import org.eclipse.swt.events.MouseEvent;
 
 
 
+
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.lda.process.LDA;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
@@ -33,7 +35,7 @@ public class LDASettings {
 	private Text txtSourceDir;
 	private Text txtNumTopics;
 	private Text txtOutputPath;
-	private PreprocessorService ppService = new PreprocessorService();
+	private PreprocessorService ppService = null;
 	
 	@Inject
 	public LDASettings() {
@@ -94,6 +96,10 @@ public class LDASettings {
 		lblOutputPath.setBounds(10, 89, 76, 15);
 		lblOutputPath.setText("Output Path");
 		
+		Button btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setBounds(491, 10, 94, 18);
+		btnPreprocess.setText("Preprocess");
+		
 		Button btnProcess = new Button(composite, SWT.NONE);
 		btnProcess.addMouseListener(new MouseAdapter() {
 			@Override
@@ -107,17 +113,17 @@ public class LDASettings {
 						f.delete();
 				}
 				
-				if(ppService.doPP) {
-					
+				if(btnPreprocess.getSelection()) {
+					ppService = GlobalPresserSettings.ppService;
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);
-
+					
 				//Preprocessing
 				appendLog("Preprocessing...");
 				System.out.println("Preprocessing...");
 				try {
-					ppDir = doPp(txtSourceDir.getText());
+					ppDir = ppService.doPreprocessing(txtSourceDir.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -133,10 +139,15 @@ public class LDASettings {
 					appendLog("Processing...(LDA)");
 					
 					long startTime = System.currentTimeMillis();
-					appendLog("PROCESSING...");
+					//appendLog("PROCESSING...");
 					lda.doLDA(ppDir, txtNumTopics.getText(), txtOutputPath.getText(), txtLabel.getText()); // Preprocessing is now done separately. Hence passing false
 					System.out.println("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+						ppService.clean(ppDir);
+						System.out.println("Cleaning up preprocessed files - "+ppDir);
+						appendLog("Cleaning up preprocessed files - "+ppDir);
+					}
 					appendLog("DONE");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -147,16 +158,6 @@ public class LDASettings {
 		btnProcess.setBounds(11, 163, 75, 25);
 		btnProcess.setText("Process");
 		
-		Button btnPreprocess = new Button(composite, SWT.NONE);
-		btnPreprocess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				showPpOptions(shell);
-			}
-		});
-		btnPreprocess.setBounds(482, 5, 96, 25);
-		btnPreprocess.setText("Preprocess...");
-		
 		Label lblOutputPrefix = new Label(composite, SWT.NONE);
 		lblOutputPrefix.setBounds(10, 125, 76, 15);
 		lblOutputPrefix.setText("Output Prefix");
@@ -165,23 +166,9 @@ public class LDASettings {
 		txtLabel.setText("output");
 		txtLabel.setBounds(115, 119, 76, 21);
 		
+		
 	}
 	
-	
-	private void showPpOptions(Shell shell){
-		ppService.setOptions(shell);
-	}
-	
-	private String doPp(String inputPath) throws IOException{
-		return ppService.doPreprocessing(inputPath);
-	}
-	
-	private String[] doPp(String inputPath1, String inputPath2) throws IOException{
-		String[] dirPaths = new String[2];
-		dirPaths[0] = ppService.doPreprocessing(inputPath1); 
-		dirPaths[1] = ppService.doPreprocessing(inputPath2);
-		return dirPaths;
-	}
 	
 	@Inject IEclipseContext context;
 	private Text txtLabel;

@@ -39,6 +39,7 @@
     <trimBars xmi:id="_-nuFKPzGEeOdn9ViPpOXDA">
       <children xsi:type="menu:ToolBar" xmi:id="_-nusIPzGEeOdn9ViPpOXDA" elementId="toolbar:org.eclipse.ui.main.toolbar">
         <children xsi:type="menu:HandledToolItem" xmi:id="_-nusIfzGEeOdn9ViPpOXDA" iconURI="platform:/plugin/edu.usc.cssl.nlputils.application/icons/sample.png" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_gwtT4JkYEeSzUp2fEDdRRw" elementId="edu.usc.cssl.nlputils.application.handledtoolitem.globalpresser" label="Preprocessor Settings" command="_j_GigJkYEeSzUp2fEDdRRw"/>
       </children>
     </trimBars>
   </children>
@@ -48,6 +49,7 @@
   <handlers xmi:id="_-nuFGvzGEeOdn9ViPpOXDA" elementId="edu.usc.pil.nlputils.application.handler.aboutCommand" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.AboutHandler" command="_-nuFGfzGEeOdn9ViPpOXDA"/>
   <handlers xmi:id="_GNh0AHXVEeSExqwA7kFrtQ" elementId="edu.usc.cssl.nlputils.application.handler.0" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.InstallHandler" command="_mgIqoHXTEeSExqwA7kFrtQ"/>
   <handlers xmi:id="_IM7esHZ_EeStuJgh46SXjQ" elementId="edu.usc.cssl.nlputils.application.handler.1" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.UninstallHandler" command="_Kf3KoHZ_EeStuJgh46SXjQ"/>
+  <handlers xmi:id="_q9784JkYEeSzUp2fEDdRRw" elementId="edu.usc.cssl.nlputils.application.handler.openGlobalPresser" contributionURI="bundleclass://edu.usc.cssl.nlputils.application/edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings" command="_j_GigJkYEeSzUp2fEDdRRw"/>
   <bindingTables xmi:id="_-nuFEfzGEeOdn9ViPpOXDA" bindingContext="_-nteCfzGEeOdn9ViPpOXDA">
     <bindings xmi:id="_-nuFEvzGEeOdn9ViPpOXDA" keySequence="M1+Q" command="_-nteDPzGEeOdn9ViPpOXDA"/>
     <bindings xmi:id="_-nuFFfzGEeOdn9ViPpOXDA" keySequence="M1+O" command="_-nuFE_zGEeOdn9ViPpOXDA"/>
@@ -64,6 +66,7 @@
   <commands xmi:id="_-nuFGfzGEeOdn9ViPpOXDA" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
   <commands xmi:id="_mgIqoHXTEeSExqwA7kFrtQ" elementId="edu.usc.cssl.nlputils.application.command.installPlugins" commandName="Install Plugins"/>
   <commands xmi:id="_Kf3KoHZ_EeStuJgh46SXjQ" elementId="edu.usc.cssl.nlputils.application.command.uninstall" commandName="Uninstall"/>
+  <commands xmi:id="_j_GigJkYEeSzUp2fEDdRRw" elementId="edu.usc.cssl.nlputils.application.command.openGlobalPresser" commandName="Global Preprocessor Settings"/>
   <addons xmi:id="_-nteAvzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_-nteA_zGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_-nteBPzGEeOdn9ViPpOXDA" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.zlda.process.DTWC;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
@@ -38,7 +39,7 @@ import org.eclipse.swt.events.MouseEvent;
 
 public class ZldaSettings {
 	private Text txtInputDir;
-	private PreprocessorService ppService = new PreprocessorService();
+	
 	@Inject
 	public ZldaSettings() {
 		
@@ -49,7 +50,7 @@ public class ZldaSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(1, false));
-		
+		PreprocessorService ppService = GlobalPresserSettings.ppService;
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -126,15 +127,8 @@ public class ZldaSettings {
 		});
 		button_3.setText("...");
 		
-		Button btnPreprocess = new Button(composite, SWT.NONE);
-		btnPreprocess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				showPpOptions(shell);
-			}
-		});
-		btnPreprocess.setBounds(482, 5, 75, 25);
-		btnPreprocess.setText("Preprocess...");
+		btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setText("Preprocess");
 		
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
@@ -145,7 +139,7 @@ public class ZldaSettings {
 				ppDir = txtInputDir.getText();
 				ppSeedFile = txtSeedFile.getText();
 				
-				if(ppService.doPP) {
+				if(btnPreprocess.getSelection()) {
 					
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
@@ -155,8 +149,8 @@ public class ZldaSettings {
 				appendLog("Preprocessing...");
 				System.out.println("Preprocessing...");
 				try {
-					ppDir = doPp(txtInputDir.getText());
-					ppSeedFile = doPp(txtSeedFile.getText());
+					ppDir = ppService.doPreprocessing(txtInputDir.getText());
+					ppSeedFile = ppService.doPreprocessing(txtSeedFile.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -165,21 +159,20 @@ public class ZldaSettings {
 				appendLog("PROCESSING...(Z-LDA)");
 				invokeLDA();
 				appendLog("z-label LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+					ppService.clean(ppDir);
+					System.out.println("Cleaning up preprocessed files - "+ppDir);
+					appendLog("Cleaning up preprocessed files - "+ppDir);
+					ppService.clean(ppSeedFile);
+					System.out.println("Cleaning up preprocessed seed file - "+ppSeedFile);
+					appendLog("Cleaning up preprocessed seed file - "+ppSeedFile);
+				}
 				appendLog("DONE");
 			}
 		});
 		btnCalculate.setText("Calculate");
 		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
 		
-	}
-
-	private void showPpOptions(Shell shell){
-		ppService.setOptions(shell);
-	}
-	
-	private String doPp(String inputPath) throws IOException{
-		return ppService.doPreprocessing(inputPath);
 	}
 	
 	public static void main(String[] args)
@@ -211,6 +204,7 @@ public class ZldaSettings {
 	private Button button_3;
 	private String ppDir;
 	private String ppSeedFile;
+	private Button btnPreprocess;
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
 		//System.out.println(parent.get("consoleMessage"));
