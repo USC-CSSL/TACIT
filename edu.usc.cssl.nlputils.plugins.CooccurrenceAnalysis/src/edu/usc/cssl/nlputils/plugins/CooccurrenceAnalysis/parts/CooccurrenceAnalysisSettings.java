@@ -22,12 +22,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.process.CooccurrenceAnalysis;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
 public class CooccurrenceAnalysisSettings {
 	private Text txtInputDir;
-	private PreprocessorService ppService = new PreprocessorService();
+	private PreprocessorService ppService = null;
+	
 	@Inject
 	public CooccurrenceAnalysisSettings() {
 		
@@ -114,18 +116,14 @@ public class CooccurrenceAnalysisSettings {
 		});
 		button_3.setText("...");
 		
-		Button btnPreprocess = new Button(composite, SWT.NONE);
-		btnPreprocess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				showPpOptions(shell);
-			}
-		});
-		btnPreprocess.setBounds(482, 5, 75, 25);
-		btnPreprocess.setText("Preprocess...");
+		btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setText("Preprocess");
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 		
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
+		btnCalculate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		btnCalculate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -133,8 +131,8 @@ public class CooccurrenceAnalysisSettings {
 				ppDir = txtInputDir.getText();
 				ppSeedFile = txtSeedFile.getText();
 				
-				if(ppService.doPP) {
-					
+				if(btnPreprocess.getSelection()) {
+					ppService = GlobalPresserSettings.ppService;
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);
@@ -143,32 +141,33 @@ public class CooccurrenceAnalysisSettings {
 				appendLog("Preprocessing...");
 				//System.out.println("Preprocessing...");
 				try {
-					ppDir = doPp(txtInputDir.getText());
+					ppDir = ppService.doPreprocessing(txtInputDir.getText());
 					if(ppSeedFile!= "" && !ppSeedFile.isEmpty())
-						ppSeedFile = doPp(txtSeedFile.getText());
+						ppSeedFile = ppService.doPreprocessing(txtSeedFile.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 				}
 				long startTime = System.currentTimeMillis();
 				invokeCooccurrence();
+				
+				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+					ppService.clean(ppDir);
+					System.out.println("Cleaning up preprocessed files - "+ppDir);
+					appendLog("Cleaning up preprocessed files - "+ppDir);
+					ppService.clean(ppSeedFile);
+					System.out.println("Cleaning up preprocessed seed file - "+ppSeedFile);
+					appendLog("Cleaning up preprocessed seed file - "+ppSeedFile);
+				}
+				
 				appendLog("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				appendLog("DONE (Co-occurrence Analysis)");
 			}
 		});
 		btnCalculate.setText("Co-occurrence Analysis");
 		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
 		
 	}
-
-	private void showPpOptions(Shell shell){
-		ppService.setOptions(shell);
-	}
-	
-	private String doPp(String inputPath) throws IOException{
-		return ppService.doPreprocessing(inputPath);
-	}
-	
 	
 	@Inject
 	IEclipseContext context;
@@ -183,6 +182,7 @@ public class CooccurrenceAnalysisSettings {
 	private String ppDir;
 	private Button button_2;
 	private String ppSeedFile;
+	private Button btnPreprocess;
 
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
@@ -237,7 +237,7 @@ protected void invokeCooccurrence( ){
 		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-matrix.csv" );
 		if(ppSeedFile!= "" && !ppSeedFile.isEmpty() && windowSize !=0)
 			appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.txt" );
-		appendLog("Done Co-occurrence Analysis...");
+		
 		
 	}
 }

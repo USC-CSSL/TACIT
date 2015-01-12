@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
+import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.svmClassifier.process.CrossValidator;
 import edu.usc.cssl.nlputils.plugins.svmClassifier.process.SvmClassifier;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
@@ -35,7 +36,7 @@ public class SvmClassifierSettings {
 	private Text txtFolderPath2;
 	private Text txtFolderPath1;
 	private Text txtLabel2;
-	private PreprocessorService ppService = new PreprocessorService();
+	private PreprocessorService ppService = null;
 	
 	@Inject IEclipseContext context;
 	private Text txtOutputFile;
@@ -117,16 +118,9 @@ public class SvmClassifierSettings {
 		});
 		button_1.setText("...");
 		
-		Button btnPreprocess = new Button(composite, SWT.NONE);
-		btnPreprocess.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				showPpOptions(shell);
-			}
-
-		});
-		btnPreprocess.setBounds(0, 65, 95, 25);
-		btnPreprocess.setText("Preprocess...");
+		Button btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setBounds(0, 67, 94, 18);
+		btnPreprocess.setText("Preprocess");
 		
 		final Button btnWeights = new Button(grpInputSettings, SWT.CHECK);
 		btnWeights.setSelection(true);
@@ -162,8 +156,8 @@ public class SvmClassifierSettings {
 					return;
 				}
 				
-				if(ppService.doPP) {
-					
+				if(btnPreprocess.getSelection()) {
+					ppService = GlobalPresserSettings.ppService;
 					// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 					IEclipseContext iEclipseContext = context;
 					ContextInjectionFactory.inject(ppService,iEclipseContext);
@@ -172,8 +166,8 @@ public class SvmClassifierSettings {
 				appendLog("Preprocessing...");
 				System.out.println("Preprocessing...");
 				try {
-					ppDir1 = doPp(txtFolderPath1.getText());
-					ppDir2 = doPp(txtFolderPath2.getText());
+					ppDir1 = ppService.doPreprocessing(txtFolderPath1.getText());
+					ppDir2 = ppService.doPreprocessing(txtFolderPath2.getText());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -214,6 +208,14 @@ public class SvmClassifierSettings {
 				}*/
 				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
 				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
+				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+					ppService.clean(ppDir1);
+					System.out.println("Cleaning up preprocessed files - "+ppDir1);
+					appendLog("Cleaning up preprocessed files - "+ppDir1);
+					ppService.clean(ppDir2);
+					System.out.println("Cleaning up preprocessed files - "+ppDir2);
+					appendLog("Cleaning up preprocessed files - "+ppDir2);
+				}
 				appendLog("DONE");
 				} catch (IOException ie) {
 					ie.printStackTrace();
@@ -240,13 +242,6 @@ public class SvmClassifierSettings {
 		//TODO Your code here
 	}
 	
-	private String doPp(String inputPath) throws IOException{
-		return ppService.doPreprocessing(inputPath);
-	}
-	
-	private void showPpOptions(Shell shell) {
-		ppService.setOptions(shell);
-	}
 
 	private void showError(Shell shell){
 		MessageBox message = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
