@@ -284,9 +284,12 @@ public class PreprocessorService {
 	
 	public void clean(String ppDir){
 		File toDel = new File(ppDir);
-		for (File f:toDel.listFiles()){
-			f.delete();
-		}
+		// if folder, delete contents too
+		if (toDel.isDirectory()){
+			for (File f:toDel.listFiles()){
+				f.delete();
+			}
+		} 		
 		toDel.delete();
 	}
 	
