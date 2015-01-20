@@ -74,7 +74,14 @@ public class SupremeCrawler {
 			String filename = row.select("td").get(1).text().trim()+"_"+date.substring(6)+date.substring(0,2)+date.substring(3,5);
 			System.out.println(contenturl+", "+filename);
 			appendLog(contenturl);
+			// Fixing the unhandled exception without cascading.
+			try{
 			getFiles(contenturl, filename);
+			}catch (IOException e) {
+				System.out.println("Error Accessing the URL "+contenturl);
+				appendLog("Error Accessing the URL "+contenturl);
+				e.printStackTrace();
+			}
 			//break;
 		}
 	}
@@ -89,6 +96,7 @@ public class SupremeCrawler {
 		if (hidden.size()==0){
 			System.out.println("No data. Skipping page "+contenturl);
 			appendLog("No data. Skipping page "+contenturl);
+			bw.close();
 			return;
 		}
 		
@@ -155,11 +163,14 @@ public class SupremeCrawler {
 		SupremeCrawler sc = new SupremeCrawler("/issues/criminal_procedure/confrontation/confession_error","/Users/aswinrajkumar/Desktop/Stupidoutput/Output",true, true);
 		try {
 			//sc.looper();
-			sc.crawl("http://www.oyez.org/cases/2010-2019?page=3");
+			//sc.crawl("http://www.oyez.org/cases/2010-2019?page=3");
+			//sc.getFiles("http://www.oyez.org/cases/2000-2009/2007/2007_07_21", "somefile");
+			sc.getFiles("http://www.oyez.org/cases/1960-1969/1962/1962_124", "somefile");
 			//sc.crawl("http://www.oyez.org/issues/?order=title&sort=asc&page=142");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("DONE");
 	}
 	
 	@Inject IEclipseContext context;
