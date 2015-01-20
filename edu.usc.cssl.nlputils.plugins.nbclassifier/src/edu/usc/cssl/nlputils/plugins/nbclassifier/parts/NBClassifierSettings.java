@@ -103,7 +103,7 @@ public class NBClassifierSettings {
 		button_1.setBounds(472, 57, 43, 25);
 		button_1.setText("...");
 		
-		Button btnPreprocess = new Button(grpTraining, SWT.CHECK);
+		final Button btnPreprocess = new Button(grpTraining, SWT.CHECK);
 		btnPreprocess.setBounds(10, 93, 94, 18);
 		btnPreprocess.setText("Preprocess");
 		

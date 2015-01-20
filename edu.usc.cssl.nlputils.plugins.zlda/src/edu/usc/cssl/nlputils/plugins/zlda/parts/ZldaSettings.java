@@ -39,6 +39,7 @@ import org.eclipse.swt.events.MouseEvent;
 
 public class ZldaSettings {
 	private Text txtInputDir;
+	private PreprocessorService ppService = null;
 	
 	@Inject
 	public ZldaSettings() {
@@ -50,7 +51,7 @@ public class ZldaSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(1, false));
-		PreprocessorService ppService = GlobalPresserSettings.ppService;
+		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -140,7 +141,7 @@ public class ZldaSettings {
 				ppSeedFile = txtSeedFile.getText();
 				
 				if(btnPreprocess.getSelection()) {
-					
+					ppService = GlobalPresserSettings.ppService;
 					if (ppService.options == null){
 						System.out.println("Preprocessing Options not set.");
 						appendLog("Preprocessing Options not set. Please select the preprocessing options from the dialog box.");

@@ -118,7 +118,7 @@ public class SvmClassifierSettings {
 		});
 		button_1.setText("...");
 		
-		Button btnPreprocess = new Button(composite, SWT.CHECK);
+		final Button btnPreprocess = new Button(composite, SWT.CHECK);
 		btnPreprocess.setBounds(0, 67, 94, 18);
 		btnPreprocess.setText("Preprocess");
 		

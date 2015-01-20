@@ -97,7 +97,7 @@ public class LDASettings {
 		lblOutputPath.setBounds(10, 89, 76, 15);
 		lblOutputPath.setText("Output Path");
 		
-		Button btnPreprocess = new Button(composite, SWT.CHECK);
+		final Button btnPreprocess = new Button(composite, SWT.CHECK);
 		btnPreprocess.setBounds(491, 10, 94, 18);
 		btnPreprocess.setText("Preprocess");
 		
