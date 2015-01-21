@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,13 +60,14 @@ public class LatinCrawler {
 		skipBooks.add("Paulus Diaconus");
 	}
 	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws Exception{
 		LatinCrawler lc = new LatinCrawler();
 		lc.outputDir = "/home/niki/Desktop/CSSL/latin/";
-		//lc.authorNames.add("Suetonius");
+		lc.authorNames.add("Suetonius");
 		//lc.getBooks("Suetonius", "http://www.thelatinlibrary.com/suet.html", "/home/niki/Desktop/CSSL/latin/Suetonius", "Suetonius");
-		//lc.getContent("http://www.thelatinlibrary.com/ammianus/17.shtml", "Liber XX", "/home/niki/Desktop/CSSL/latin/Ammianus Marcellinus");
-		lc.initialize("/home/niki/Desktop/CSSL/latin/");
+		lc.getContent("http://www.thelatinlibrary.com/suetonius/suet.aug.shtml", "Liber XX", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/");
+		//lc.initialize("/home/niki/Desktop/CSSL/latin/");
+		//lc.getBooks("Suetonius","http://www.thelatinlibrary.com/suet.html", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/", "Suetonius");
 	}
 	
 	public void initialize(String outputDir) throws IOException{
@@ -103,7 +105,7 @@ public class LatinCrawler {
 		String name , url;
 		Document doc = Jsoup.connect("http://www.thelatinlibrary.com/").timeout(10*1000).get();
 		Elements authorsList = doc.getElementsByTag("option");
-		//System.out.println(authorsList);
+		
 		size = authorsList.size();
 		int count = 0;
 		
@@ -111,7 +113,6 @@ public class LatinCrawler {
 		{
 				name = authorsList.get(i).text();
 				url = "http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value");
-				//authorUrl.add(url);
 				authorNames.add(name);
 				if(skipBooks.contains(name))
 					continue;
@@ -120,12 +121,10 @@ public class LatinCrawler {
 				if(!authorDir.exists()){
 					authorDir.mkdirs();
 				}
-				//System.out.println("Extracting Books of Author  "+ name +"...");
 				appendLog("\nExtracting Books of Author  "+ name +"...");
 				getBooks(name, url, aurl, name);
 			 	count++;
 		}
-		//String authorsString = " All|"+authorsList.text().split(":")[1];
 		
 		Element secondList = doc.getElementsByTag("table").get(1);
 		Elements auth2List = secondList.getElementsByTag("td");
@@ -143,7 +142,6 @@ public class LatinCrawler {
 			if(!authorDir.exists()){
 				authorDir.mkdirs();
 			}
-		//	System.out.println("Extracting Books of Author  "+ name +"...");
 			appendLog("\nExtracting Books of Author  "+ name +"...");
 		 	getBooks(name, url, aurl, name);
 		}
@@ -186,16 +184,15 @@ public class LatinCrawler {
 	private void getBooks(String author, String aurl, String apath, String mainAuthor) throws IOException {
 
 		try{
-		//	System.out.println(aurl);
 			Document doc = Jsoup.connect(aurl).timeout(10*1000).get();
 			Elements subLists = doc.select("div.work");
 			if(subLists != null && subLists.size() > 0){
 				getBooksList(author, aurl, doc, apath, mainAuthor);
 				return;
 			}	
-
+			
 			Elements booksList = doc.getElementsByTag("td");
-			//System.out.println(apath);
+			
 			int count = 0;
 			String bookname = "";
 			int i = 0;
@@ -207,7 +204,6 @@ public class LatinCrawler {
 					if(bookText.contains("#"))
 						continue;
 					bookname  = bookItem.text();
-					//System.out.println(bookname + " " + author);
 					if(bookText.isEmpty() || bookText== null)
 						continue;
 					if(skipBooks.contains(bookname))
@@ -220,7 +216,7 @@ public class LatinCrawler {
 				}
 			}
 			if(count == 0) {
-				if(doc.select("title")!=null)
+				if(doc.select("title")!=null && doc.select("title").size() > 0)
 					bookname = doc.select("title").first().text();
 				else if(doc.select("p.pagehead")!= null && doc.select("p.pagehead").size() > 0 )
 					bookname = doc.select("p.pagehead").first().text();
@@ -231,14 +227,13 @@ public class LatinCrawler {
 				getContent(aurl, bookname, apath);
 			}
 		}catch(Exception e){
-			System.out.println("Something went wrong when extracting books of Author " + author + e);
+			//System.out.println("Something went wrong when extracting books of Author " + author + e);
 			appendLog("Something went wrong when extracting books of Author " + author);
 		}
 	}
 
 	private void getBooksList(String author, String aurl, Document doc, String apath, String mainAuthor){
 		Elements subLists = doc.select("div.work");
-		//System.out.println(subLists);
 		Elements subHeaders = doc.select("h2.work");
 		int i = 0, size1 = subLists.size(), size2 = subHeaders.size(), j =0;
 		String bookText ="";
@@ -255,9 +250,7 @@ public class LatinCrawler {
 					if(bookLink!= null && bookLink.size() > 0){
 						//make for all links
 						bookText = bookLink.get(0).attr("abs:href");
-			//			System.out.println(bookText);
 						bookname  = bookLink.get(0).text();
-		//				System.out.println(bookname + " " + author);
 						if(skipBooks.contains(bookname))
 							continue;
 						if(authorNames.contains(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
@@ -273,7 +266,6 @@ public class LatinCrawler {
 					}
 				}
 
-
 				if(i< size1){
 					Element list = subLists.get(i);
 					Elements booksList = list.getElementsByTag("td");
@@ -288,10 +280,8 @@ public class LatinCrawler {
 						authorDir.mkdirs();
 					}
 					String apath1 = authorDir.toString();
-				//	System.out.println(apath1);
 
 					k = 0;
-					
 					int count1 = 0;
 					Element bookItem = null;
 					if(booksList != null){
@@ -302,14 +292,12 @@ public class LatinCrawler {
 							if(bookText == null)
 								continue;
 							bookname  = bookItem.text();
-							//System.out.println(bookname + " " + author);
 							if(skipBooks.contains(bookname))
 								continue;
 							if(authorNames.contains(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
 								continue;
 							getBooks(bookname, bookText, apath1, mainAuthor);
 							count1++;
-
 						}
 					}
 
@@ -323,7 +311,6 @@ public class LatinCrawler {
 							bookname = doc.select("h1").first().text();
 						else
 							bookname = author;
-						//	System.out.println(bookname);
 						getContent(aurl, bookname, apath1);
 					}
 					i++;
@@ -339,22 +326,24 @@ public class LatinCrawler {
 	
 	private void getContent(String bookUri, String bookDir, String authorDir) throws IOException{
 		BufferedWriter csvWriter= null;
-		//System.out.println("Extracting Content of book  "+ bookDir +"...");
 		appendLog("Extracting Content of book  "+ bookDir +"...");
 		try{
-			System.out.println(bookUri);
 			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
 			Document doc = Jsoup.connect(bookUri).timeout(10*10000).get();
-			//Elements c1 = doc.select("div#page-wrapper");
 			Elements content = doc.getElementsByTag("p"); 
-		//	System.out.println(doc);
+			if(content.size() == 0)
+			{
+				if(csvWriter!=null)
+					csvWriter.close();
+				getBookContent(bookUri, bookDir, authorDir);
+				return;
+			}
 			for (Element c : content){
 				csvWriter.write(c.text()+"\n");
-			//	System.out.println(c.text());
 			}
 		}catch(Exception e){
-			//System.out.println("Something went wrong when extracting book " + bookDir + e);
-			appendLog("Something went wrong when extracting book " + bookDir);
+			getBookContent(bookUri, bookDir, authorDir);
+			//appendLog("Something went wrong when extracting book " + bookDir);
 		}finally{
 			if(csvWriter!=null)
 				csvWriter.close();
@@ -362,6 +351,26 @@ public class LatinCrawler {
 	}
 	
 
+	public void getBookContent(String bookUri, String bookDir, String authorDir) throws IOException {
+		BufferedWriter csvWriter= null;
+		try{
+			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
+		   Document doc = Jsoup.parse(new URL(bookUri).openStream(), "UTF-16", bookUri);
+		   Elements content = doc.getElementsByTag("p"); 
+				for (Element c : content){
+					csvWriter.write(c.text()+"\n");
+				}
+			}catch(Exception e){
+				//System.out.println("Something went wrong when extracting book " + bookDir + e);
+				appendLog("Something went wrong when extracting book " + bookDir);
+			}finally{
+				if(csvWriter!=null)
+					csvWriter.close();
+			}
+	}
+
+	
+	
 	@Inject IEclipseContext context;	
 	private void appendLog(String message){
 		IEclipseContext parent = null;
