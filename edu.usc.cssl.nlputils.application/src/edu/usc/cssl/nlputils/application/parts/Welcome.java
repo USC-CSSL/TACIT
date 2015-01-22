@@ -45,6 +45,7 @@ public class Welcome {
 	@PostConstruct
 	public void createComposite(Composite parent) {
 		Shell currentShell = parent.getShell();
+		currentShell.setMaximized(Boolean.TRUE);
 		parent.setLayout(new GridLayout(4, false));
 		
 		Button btnBack = new Button(parent, SWT.NONE);

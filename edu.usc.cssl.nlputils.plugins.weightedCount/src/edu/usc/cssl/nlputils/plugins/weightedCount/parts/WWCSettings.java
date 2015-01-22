@@ -11,9 +11,12 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
@@ -31,6 +34,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.plugins.weightedCount.process.WeightedCount;
 
@@ -53,8 +57,14 @@ public class WWCSettings {
 		//appendLog("Test");
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(9, false));
-		new Label(parent, SWT.NONE);
-		
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		for(int i=1; i<=17; i++){
+			new Label(parent, SWT.NONE);
+		}
+
 		Label lblInputType = new Label(parent, SWT.NONE);
 		lblInputType.setText("Input Type");
 		new Label(parent, SWT.NONE);
@@ -85,7 +95,7 @@ public class WWCSettings {
 		
 		lblInput = new Label(parent, SWT.NONE);
 		GridData gd_lblInput = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblInput.widthHint = 71;
+		gd_lblInput.widthHint = 75;
 		lblInput.setLayoutData(gd_lblInput);
 		lblInput.setText("Input File(s)");
 		new Label(parent, SWT.NONE);
@@ -269,7 +279,7 @@ public class WWCSettings {
 		
 		final Button btnStemming = new Button(composite, SWT.RADIO);
 		btnStemming.setSelection(true);
-		btnStemming.setBounds(4, 9, 106, 16);
+		btnStemming.setBounds(4, 9, 110, 16);
 		btnStemming.setText("LIWC Stemming");
 		
 		final Button btnSnowball = new Button(composite, SWT.RADIO);
@@ -362,6 +372,7 @@ public class WWCSettings {
 			}
 		});
 		btnAnalyze.setText("Analyze");
+		shell.setDefaultButton(btnAnalyze);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);

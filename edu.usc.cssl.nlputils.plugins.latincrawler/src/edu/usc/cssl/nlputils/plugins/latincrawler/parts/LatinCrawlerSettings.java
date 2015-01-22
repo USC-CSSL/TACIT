@@ -10,8 +10,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -31,6 +34,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.osgi.framework.FrameworkUtil;
 
 public class LatinCrawlerSettings {
 	
@@ -56,10 +60,15 @@ public class LatinCrawlerSettings {
 		*/
 		
 		appendLog("Loading Complete.");
-	
-		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
+		Label header = new Label(composite, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		for (int i=1; i<=5; i++){
+			new Label(composite, SWT.NONE);
+		}
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_composite.widthHint = 431;
 		gd_composite.heightHint = 477;
@@ -109,6 +118,7 @@ public class LatinCrawlerSettings {
 			}
 		});
 		btnExtract.setText("Extract");
+		shell.setDefaultButton(btnExtract);
 		
 	}
 	

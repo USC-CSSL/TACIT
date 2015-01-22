@@ -10,8 +10,11 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
@@ -34,6 +37,7 @@ import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorSe
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.custom.CTabItem;
+import org.osgi.framework.FrameworkUtil;
 
 public class NBClassifierSettings {
 	private Text txtFolderPath1;
@@ -53,7 +57,11 @@ public class NBClassifierSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(1, false));
-		
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+
 		Group grpTraining = new Group(parent, SWT.NONE);
 		GridData gd_grpTraining = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_grpTraining.heightHint = 111;
@@ -62,11 +70,11 @@ public class NBClassifierSettings {
 		grpTraining.setText("Training");
 		
 		Label lblDataSet = new Label(grpTraining, SWT.NONE);
-		lblDataSet.setBounds(10, 26, 95, 15);
+		lblDataSet.setBounds(10, 26, 95, 20);
 		lblDataSet.setText("Class 1 Path");
 		
 		txtFolderPath1 = new Text(grpTraining, SWT.BORDER);
-		txtFolderPath1.setBounds(142, 18, 332, 21);
+		txtFolderPath1.setBounds(142, 26, 332, 21);
 		
 		Button button = new Button(grpTraining, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
@@ -79,15 +87,15 @@ public class NBClassifierSettings {
 				
 			}
 		});
-		button.setBounds(472, 16, 43, 25);
+		button.setBounds(474, 26, 40, 25);
 		button.setText("...");
 		
 		Label lblModelFilePath = new Label(grpTraining, SWT.NONE);
-		lblModelFilePath.setBounds(10, 62, 95, 15);
+		lblModelFilePath.setBounds(10, 62, 95, 20);
 		lblModelFilePath.setText("Class 2 Path");
 		
 		txtFolderPath2 = new Text(grpTraining, SWT.BORDER);
-		txtFolderPath2.setBounds(142, 58, 332, 21);
+		txtFolderPath2.setBounds(142, 62, 332, 21);
 		
 		Button button_1 = new Button(grpTraining, SWT.NONE);
 		button_1.addMouseListener(new MouseAdapter() {
@@ -100,7 +108,7 @@ public class NBClassifierSettings {
 				
 			}
 		});
-		button_1.setBounds(472, 57, 43, 25);
+		button_1.setBounds(474, 62, 40, 25);
 		button_1.setText("...");
 		
 		final Button btnPreprocess = new Button(grpTraining, SWT.CHECK);
@@ -108,8 +116,11 @@ public class NBClassifierSettings {
 		btnPreprocess.setText("Preprocess");
 		
 		CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER);
+		tabFolder.marginHeight = 0;
+		tabFolder.marginWidth = 0;
+		tabFolder.setTabHeight(35);
 		GridData gd_tabFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_tabFolder.widthHint = 508;
+		gd_tabFolder.widthHint = 512;
 		tabFolder.setLayoutData(gd_tabFolder);
 		tabFolder.setSimple(false);
 		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
@@ -121,11 +132,11 @@ public class NBClassifierSettings {
 		tbtmTest.setControl(grpTesting);
 		
 		Label lblNewLabel = new Label(grpTesting, SWT.NONE);
-		lblNewLabel.setBounds(10, 28, 98, 15);
+		lblNewLabel.setBounds(10, 28, 105, 20);
 		lblNewLabel.setText("Class 1 Test Path");
 		
 		txtTestPath1 = new Text(grpTesting, SWT.BORDER);
-		txtTestPath1.setBounds(134, 22, 337, 21);
+		txtTestPath1.setBounds(134, 28, 337, 21);
 		
 		Button button_2 = new Button(grpTesting, SWT.NONE);
 		button_2.addMouseListener(new MouseAdapter() {
@@ -138,7 +149,7 @@ public class NBClassifierSettings {
 				
 			}
 		});
-		button_2.setBounds(468, 21, 36, 25);
+		button_2.setBounds(472, 28, 40, 25);
 		button_2.setText("...");
 		
 		Button btnTest = new Button(grpTesting, SWT.NONE);
@@ -251,10 +262,10 @@ public class NBClassifierSettings {
 		
 		Label lblClassTest = new Label(grpTesting, SWT.NONE);
 		lblClassTest.setText("Class 2 Test Path");
-		lblClassTest.setBounds(10, 63, 98, 15);
+		lblClassTest.setBounds(10, 63, 105, 20);
 		
 		txtTestPath2 = new Text(grpTesting, SWT.BORDER);
-		txtTestPath2.setBounds(134, 57, 337, 21);
+		txtTestPath2.setBounds(134, 63, 337, 21);
 		
 		Button button_6 = new Button(grpTesting, SWT.NONE);
 		button_6.addMouseListener(new MouseAdapter() {
@@ -268,11 +279,11 @@ public class NBClassifierSettings {
 			}
 		});
 		button_6.setText("...");
-		button_6.setBounds(468, 56, 36, 25);
+		button_6.setBounds(472, 63, 40, 25);
 		
 		Label lblOutputPath = new Label(grpTesting, SWT.NONE);
 		lblOutputPath.setText("Output Path");
-		lblOutputPath.setBounds(10, 101, 98, 15);
+		lblOutputPath.setBounds(10, 101, 98, 20);
 		
 		txtOutputPath = new Text(grpTesting, SWT.BORDER);
 		txtOutputPath.setBounds(134, 95, 337, 21);
@@ -289,7 +300,7 @@ public class NBClassifierSettings {
 			}
 		});
 		button_7.setText("...");
-		button_7.setBounds(468, 94, 36, 25);
+		button_7.setBounds(472, 95, 40, 25);
 		
 		CTabItem tbtmClassify = new CTabItem(tabFolder, SWT.NONE);
 		tbtmClassify.setText("Classify");
@@ -298,12 +309,12 @@ public class NBClassifierSettings {
 		tbtmClassify.setControl(grpClassify);
 		
 		Label lblInputFile = new Label(grpClassify, SWT.NONE);
-		lblInputFile.setBounds(10, 29, 55, 15);
+		lblInputFile.setBounds(10, 29, 65, 20);
 		lblInputFile.setText("Input Path");
 		
 		txtCInput = new Text(grpClassify, SWT.BORDER);
 		txtCInput.setEnabled(true);
-		txtCInput.setBounds(135, 23, 336, 21);
+		txtCInput.setBounds(135, 29, 336, 21);
 		
 		Button button_3 = new Button(grpClassify, SWT.NONE);
 		button_3.addMouseListener(new MouseAdapter() {
@@ -317,16 +328,16 @@ public class NBClassifierSettings {
 			}
 		});
 		button_3.setEnabled(true);
-		button_3.setBounds(471, 19, 27, 25);
+		button_3.setBounds(471, 29, 40, 25);
 		button_3.setText("...");
 		
 		Label lblOutputFile_1 = new Label(grpClassify, SWT.NONE);
-		lblOutputFile_1.setBounds(10, 69, 78, 15);
+		lblOutputFile_1.setBounds(10, 69, 78, 20);
 		lblOutputFile_1.setText("Output Path");
 		
 		txtCOutput = new Text(grpClassify, SWT.BORDER);
 		txtCOutput.setEnabled(true);
-		txtCOutput.setBounds(135, 63, 336, 21);
+		txtCOutput.setBounds(135, 69, 336, 21);
 		
 		Button button_5 = new Button(grpClassify, SWT.NONE);
 		button_5.addMouseListener(new MouseAdapter() {
@@ -340,7 +351,7 @@ public class NBClassifierSettings {
 			}
 		});
 		button_5.setEnabled(true);
-		button_5.setBounds(471, 59, 27, 25);
+		button_5.setBounds(471, 69, 40, 25);
 		button_5.setText("...");
 		
 		Button btnClassify = new Button(grpClassify, SWT.NONE);
@@ -414,8 +425,9 @@ public class NBClassifierSettings {
 				}
 			}
 		});
-		btnClassify.setBounds(10, 103, 75, 25);
+		btnClassify.setBounds(10, 141, 75, 25);
 		btnClassify.setText("Classify");
+		shell.setDefaultButton(btnTest);
 		
 		tabFolder.setSelection(0);
 	}

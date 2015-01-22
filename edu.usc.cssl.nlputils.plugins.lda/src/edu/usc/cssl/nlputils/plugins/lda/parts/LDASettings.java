@@ -9,8 +9,11 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -26,6 +29,10 @@ import org.eclipse.swt.events.MouseEvent;
 
 
 
+
+
+
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.lda.process.LDA;
@@ -48,13 +55,18 @@ public class LDASettings {
 		final Shell shell = parent.getShell();
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBounds(0, 0, 507, 298);
+		Label header = new Label(composite, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		header.setBounds(10, 0, 200, 40);
 		
 		Label lblData = new Label(composite, SWT.NONE);
-		lblData.setBounds(10, 10, 55, 15);
+		lblData.setBounds(10, 70, 70, 20);
 		lblData.setText("Data Path");
 		
 		txtSourceDir = new Text(composite, SWT.BORDER);
-		txtSourceDir.setBounds(115, 7, 334, 21);
+		txtSourceDir.setBounds(130, 70, 334, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
@@ -67,18 +79,18 @@ public class LDASettings {
 				txtLabel.setText(fd1.getFilterPath().substring(1+fd1.getFilterPath().lastIndexOf(System.getProperty("file.separator"))));
 			}
 		});
-		button.setBounds(446, 6, 39, 25);
+		button.setBounds(465, 70, 40, 25);
 		button.setText("...");
 		
 		txtNumTopics = new Text(composite, SWT.BORDER);
-		txtNumTopics.setBounds(115, 46, 76, 21);
+		txtNumTopics.setBounds(130, 99, 76, 21);
 		
 		Label lblNumberOfTopics = new Label(composite, SWT.NONE);
-		lblNumberOfTopics.setBounds(10, 49, 99, 15);
+		lblNumberOfTopics.setBounds(10, 99, 110, 20);
 		lblNumberOfTopics.setText("Number of Topics");
 		
 		txtOutputPath = new Text(composite, SWT.BORDER);
-		txtOutputPath.setBounds(115, 83, 334, 21);
+		txtOutputPath.setBounds(130, 149, 334, 21);
 		
 		Button button_1 = new Button(composite, SWT.NONE);
 		button_1.addMouseListener(new MouseAdapter() {
@@ -90,15 +102,15 @@ public class LDASettings {
 				txtOutputPath.setText(fp1Directory);
 			}
 		});
-		button_1.setBounds(446, 81, 39, 25);
+		button_1.setBounds(465, 149, 40, 25);
 		button_1.setText("...");
 		
 		Label lblOutputPath = new Label(composite, SWT.NONE);
-		lblOutputPath.setBounds(10, 89, 76, 15);
+		lblOutputPath.setBounds(10, 149, 80, 20);
 		lblOutputPath.setText("Output Path");
 		
 		final Button btnPreprocess = new Button(composite, SWT.CHECK);
-		btnPreprocess.setBounds(491, 10, 94, 18);
+		btnPreprocess.setBounds(520, 70, 94, 18);
 		btnPreprocess.setText("Preprocess");
 		
 		Button btnProcess = new Button(composite, SWT.NONE);
@@ -163,17 +175,17 @@ public class LDASettings {
 				}
 			}
 		});
-		btnProcess.setBounds(11, 163, 75, 25);
+		btnProcess.setBounds(11, 223, 75, 25);
 		btnProcess.setText("Process");
+		shell.setDefaultButton(btnProcess);
 		
 		Label lblOutputPrefix = new Label(composite, SWT.NONE);
-		lblOutputPrefix.setBounds(10, 125, 76, 15);
+		lblOutputPrefix.setBounds(10, 185, 100, 20);
 		lblOutputPrefix.setText("Output Prefix");
 		
 		txtLabel = new Text(composite, SWT.BORDER);
 		txtLabel.setText("output");
-		txtLabel.setBounds(115, 119, 76, 21);
-		
+		txtLabel.setBounds(130, 185, 76, 21);	
 		
 	}
 	

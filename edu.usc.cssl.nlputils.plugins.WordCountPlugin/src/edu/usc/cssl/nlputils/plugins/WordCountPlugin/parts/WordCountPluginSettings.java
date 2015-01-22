@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -25,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.plugins.WordCountPlugin.process.WordCountPlugin;
 
@@ -48,7 +52,13 @@ public class WordCountPluginSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(9, false));
-		new Label(parent, SWT.NONE);
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		for(int i=1; i<=17; i++){
+			new Label(parent, SWT.NONE);
+		}
 		
 		Label lblInputType = new Label(parent, SWT.NONE);
 		lblInputType.setText("Input Type");
@@ -80,7 +90,7 @@ public class WordCountPluginSettings {
 		
 		lblInput = new Label(parent, SWT.NONE);
 		GridData gd_lblInput = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblInput.widthHint = 71;
+		gd_lblInput.widthHint = 75;
 		lblInput.setLayoutData(gd_lblInput);
 		lblInput.setText("Input File(s)");
 		new Label(parent, SWT.NONE);
@@ -226,23 +236,23 @@ public class WordCountPluginSettings {
 		
 		final Button btnStem = new Button(parent, SWT.CHECK);
 		btnStem.setText("Stem");
+//		new Label(parent, SWT.NONE);
+//		
+//
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
+//		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
-		
-
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		
+//		
 		
 		Button btnAnalyze = new Button(parent, SWT.NONE);
 		btnAnalyze.addMouseListener(new MouseAdapter() {
@@ -316,6 +326,7 @@ public class WordCountPluginSettings {
 			}
 		});
 		btnAnalyze.setText("Analyze");
+		shell.setDefaultButton(btnAnalyze);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);

@@ -11,10 +11,14 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -35,7 +39,8 @@ import edu.usc.cssl.nlputils.plugins.wordcount.analysis.WordCount;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;;
+import org.eclipse.swt.events.SelectionEvent;
+import org.osgi.framework.FrameworkUtil;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
@@ -49,7 +54,10 @@ public class WordCountSettings {
 	private Label lblInput;
 	//private static Handler consoleHandler = new ConsoleHandler();
 	//private static Logger logger = LoggerFactory.getLogger(WordCountSettings.class.getName());
-	
+	// IStylingEngine is injected
+	@Inject 
+	IStylingEngine style_engine;
+
 	@Inject
 	public WordCountSettings() {
 		//TODO Your code here
@@ -60,10 +68,16 @@ public class WordCountSettings {
 		//appendLog("Test");
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(9, false));
-		new Label(parent, SWT.NONE);
-		
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		for(int i=1; i<=17; i++){
+			new Label(parent, SWT.NONE);
+		}
 		Label lblInputType = new Label(parent, SWT.NONE);
 		lblInputType.setText("Input Type");
+		lblInputType.setBounds(10,130,10,20);
 		new Label(parent, SWT.NONE);
 		
 		final Button btnFiles = new Button(parent, SWT.RADIO);
@@ -92,14 +106,14 @@ public class WordCountSettings {
 		
 		lblInput = new Label(parent, SWT.NONE);
 		GridData gd_lblInput = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblInput.widthHint = 71;
+		gd_lblInput.widthHint = 75;
 		lblInput.setLayoutData(gd_lblInput);
 		lblInput.setText("Input File(s)");
 		new Label(parent, SWT.NONE);
 		
 		txtInputFile = new Text(parent, SWT.BORDER);
 		GridData gd_txtInputFile = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
-		gd_txtInputFile.widthHint = 405;
+		gd_txtInputFile.widthHint = 300;
 		txtInputFile.setLayoutData(gd_txtInputFile);
 		
 		Button btnInputFile = new Button(parent, SWT.NONE);
@@ -149,6 +163,7 @@ public class WordCountSettings {
 			}
 		});
 		btnInputFile.setText("...");
+		style_engine.setClassname(btnInputFile, "blue_button");
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -276,11 +291,11 @@ public class WordCountSettings {
 		
 		final Button btnStemming = new Button(composite, SWT.RADIO);
 		btnStemming.setSelection(true);
-		btnStemming.setBounds(4, 9, 106, 16);
+		btnStemming.setBounds(6, 9, 110, 16);
 		btnStemming.setText("LIWC Stemming");
 		
 		final Button btnSnowball = new Button(composite, SWT.RADIO);
-		btnSnowball.setBounds(125, 9, 188, 16);
+		btnSnowball.setBounds(130, 9, 188, 16);
 		btnSnowball.setText("Snowball (Porter 2) Stemming");
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -369,6 +384,7 @@ public class WordCountSettings {
 			}
 		});
 		btnAnalyze.setText("Analyze");
+		shell.setDefaultButton(btnAnalyze);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);

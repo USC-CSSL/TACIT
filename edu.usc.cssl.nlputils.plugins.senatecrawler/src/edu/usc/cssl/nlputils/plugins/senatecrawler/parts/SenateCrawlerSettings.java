@@ -8,8 +8,12 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -28,6 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.osgi.framework.FrameworkUtil;
 
 public class SenateCrawlerSettings {
 	private Text txtMaxDocs;
@@ -35,6 +40,9 @@ public class SenateCrawlerSettings {
 	public SenateCrawlerSettings() {
 		
 	}
+
+	// IStylingEngine is injected
+	@Inject IStylingEngine style_engine;
 	
 	@PostConstruct
 	public void postConstruct(Composite parent) {
@@ -64,34 +72,39 @@ public class SenateCrawlerSettings {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setSize(588, 300);
 		composite.setLocation(0, 0);
+		Label header = new Label(composite, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		header.setBounds(10, 0, 161, 40);
 		
 		Label lblSenator = new Label(composite, SWT.NONE);
-		lblSenator.setBounds(10, 36, 55, 15);
+		lblSenator.setBounds(10, 66, 60, 20);
 		lblSenator.setText("Congress");
 		
 		final DateTime dateTime = new DateTime(composite, SWT.BORDER);
 		dateTime.setEnabled(false);
-		dateTime.setBounds(89, 133, 101, 24);
+		dateTime.setBounds(89, 167, 101, 24);
 		
 		final DateTime dateTime_1 = new DateTime(composite, SWT.BORDER);
 		dateTime_1.setEnabled(false);
-		dateTime_1.setBounds(288, 133, 101, 24);
+		dateTime_1.setBounds(288, 167, 101, 24);
 		
 		Label lblToDate = new Label(composite, SWT.NONE);
-		lblToDate.setBounds(245, 137, 21, 15);
+		lblToDate.setBounds(245, 167, 21, 20);
 		lblToDate.setText("To");
 		
 		txtMaxDocs = new Text(composite, SWT.BORDER);
 		txtMaxDocs.setToolTipText("Enter the maximum number of records to extract for each senator");
 		txtMaxDocs.setEnabled(false);
-		txtMaxDocs.setBounds(189, 184, 40, 21);
+		txtMaxDocs.setBounds(189, 219, 40, 21);
 		
 		Label lblFrom = new Label(composite, SWT.NONE);
-		lblFrom.setBounds(26, 137, 35, 15);
+		lblFrom.setBounds(26, 167, 35, 20);
 		lblFrom.setText("From");
 
 		final Combo cmbSenator = new Combo(composite, SWT.NONE);
-		cmbSenator.setBounds(89, 67, 300, 23);
+		cmbSenator.setBounds(89, 100, 300, 23);
 		cmbSenator.setItems(allSenators);
 		cmbSenator.add("All Senators", 0);
 		cmbSenator.add("All Democrats", 1);
@@ -100,6 +113,7 @@ public class SenateCrawlerSettings {
 		cmbSenator.select(0);
 		
 		final Combo cmbCongress = new Combo(composite, SWT.NONE);
+		cmbCongress.setBounds(89, 66, 60, 20);
 		cmbCongress.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -144,11 +158,10 @@ public class SenateCrawlerSettings {
 		});
 		//combo.setItems(new String[] {"All", "113"});
 		cmbCongress.setItems(congresses);
-		cmbCongress.setBounds(89, 33, 101, 23);
 		cmbCongress.select(0);
 		
 		Label lblSenator_1 = new Label(composite, SWT.NONE);
-		lblSenator_1.setBounds(10, 70, 55, 15);
+		lblSenator_1.setBounds(10, 100, 55, 20);
 		lblSenator_1.setText("Senator");
 		
 
@@ -165,7 +178,7 @@ public class SenateCrawlerSettings {
 				}
 			}
 		});
-		btnDateRange.setBounds(9, 112, 93, 16);
+		btnDateRange.setBounds(9, 142, 93, 16);
 		btnDateRange.setText("Date Range");
 		
 		
@@ -220,15 +233,16 @@ public class SenateCrawlerSettings {
 				}
 			}
 		});
-		btnExtract.setBounds(10, 263, 75, 25);
+		btnExtract.setBounds(10, 320, 75, 25);
 		btnExtract.setText("Crawl");
+		shell.setDefaultButton(btnExtract);
 		
 		Label lblOutput = new Label(composite, SWT.NONE);
-		lblOutput.setBounds(10, 231, 80, 15);
+		lblOutput.setBounds(10, 261, 80, 20);
 		lblOutput.setText("Output Path");
 		
 		txtOutput = new Text(composite, SWT.BORDER);
-		txtOutput.setBounds(104, 225, 258, 21);
+		txtOutput.setBounds(100, 261, 258, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
@@ -240,7 +254,7 @@ public class SenateCrawlerSettings {
 				txtOutput.setText(oDirectory);
 			}
 		});
-		button.setBounds(358, 224, 40, 25);
+		button.setBounds(358, 261, 40, 25);
 		button.setText("...");
 		
 		final Button btnLimitRecords = new Button(composite, SWT.CHECK);
@@ -253,12 +267,12 @@ public class SenateCrawlerSettings {
 					txtMaxDocs.setEnabled(false);
 			}
 		});
-		btnLimitRecords.setBounds(10, 189, 161, 16);
+		btnLimitRecords.setBounds(10, 219, 175, 20);
 		btnLimitRecords.setText("Limit Records per Senator");
 		
 		Label lblNewLabel = new Label(composite, SWT.BORDER | SWT.SHADOW_NONE);
-		lblNewLabel.setBounds(433, 14, 133, 215);
-		lblNewLabel.setText(" Year                 Congress\r\n 1989-1990       101st\r\n 1991-1992       102nd\r\n 1993-1994       103rd\r\n 1995-1996       104th\r\n 1997-1998       105th\r\n 1999-2000       106th\r\n 2001-2002       107th\r\n 2003-2004       108th\r\n 2005-2006       109th\r\n 2007-2008       110th\r\n 2009-2010       111th\r\n 2011-2012       112th\r\n 2013-2014       113th");
+		lblNewLabel.setBounds(433, 24, 175, 320);
+		lblNewLabel.setText("\nYear\t\t\t\tCongress\r\n----------------------------------\r\n1989-1990\t-|-\t101st\r\n1991-1992\t-|-\t102nd\r\n1993-1994\t-|-\t103rd\r\n1995-1996\t-|-\t104th\r\n1997-1998\t-|-\t105th\r\n1999-2000\t-|-\t106th\r\n2001-2002\t-|-\t107th\r\n2003-2004\t-|-\t108th\r\n2005-2006\t-|-\t109th\r\n2007-2008\t-|-\t110th\r\n2009-2010\t-|-\t111th\r\n2011-2012\t-|-\t112th\r\n2013-2014\t-|-\t113th");
 		
 		
 	}

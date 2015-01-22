@@ -8,8 +8,11 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -30,6 +33,7 @@ import edu.usc.cssl.nlputils.plugins.svmClassifier.process.SvmClassifier;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
 
 import org.eclipse.swt.widgets.Group;
+import org.osgi.framework.FrameworkUtil;
 
 public class SvmClassifierSettings {
 	private Text txtLabel1;
@@ -49,7 +53,10 @@ public class SvmClassifierSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(7, false));
-		
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
 		Group grpInputSettings = new Group(parent, SWT.NONE);
 		grpInputSettings.setText("Training Settings");
 		GridData gd_grpInputSettings = new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1);
@@ -61,37 +68,37 @@ public class SvmClassifierSettings {
 		composite.setBounds(10, 20, 515, 95);
 		
 		Label lblLabel_1 = new Label(composite, SWT.NONE);
-		lblLabel_1.setBounds(0, 35, 36, 15);
+		lblLabel_1.setBounds(0, 35, 45, 20);
 		lblLabel_1.setText("Class 2");
 		
 		Label lblLabel = new Label(composite, SWT.NONE);
-		lblLabel.setBounds(0, 5, 36, 15);
+		lblLabel.setBounds(0, 5, 45, 20);
 		lblLabel.setText("Class 1");
 		
 		txtLabel1 = new Text(composite, SWT.BORDER);
 		txtLabel1.setText("Label1");
-		txtLabel1.setBounds(66, 2, 157, 21);
+		txtLabel1.setBounds(66, 5, 157, 21);
 		
 		txtLabel2 = new Text(composite, SWT.BORDER);
 		txtLabel2.setText("Label2");
-		txtLabel2.setBounds(66, 32, 157, 21);
+		txtLabel2.setBounds(66, 35, 157, 21);
 		
 		Label lblFolder = new Label(composite, SWT.NONE);
-		lblFolder.setBounds(237, 6, 24, 15);
+		lblFolder.setBounds(237, 5, 30, 20);
 		lblFolder.setText("Path");
 		
 		Label lblFolder_1 = new Label(composite, SWT.NONE);
-		lblFolder_1.setBounds(237, 36, 24, 15);
+		lblFolder_1.setBounds(237, 35, 30, 20);
 		lblFolder_1.setText("Path");
 		
 		txtFolderPath1 = new Text(composite, SWT.BORDER);
-		txtFolderPath1.setBounds(266, 3, 212, 21);
+		txtFolderPath1.setBounds(279, 3, 190, 21);
 		
 		txtFolderPath2 = new Text(composite, SWT.BORDER);
-		txtFolderPath2.setBounds(266, 33, 212, 21);
+		txtFolderPath2.setBounds(279, 33, 190, 21);
 		
 		Button button = new Button(composite, SWT.NONE);
-		button.setBounds(474, 2, 35, 25);
+		button.setBounds(474, 2, 40, 25);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -105,7 +112,7 @@ public class SvmClassifierSettings {
 		button.setText("...");
 		
 		Button button_1 = new Button(composite, SWT.NONE);
-		button_1.setBounds(474, 32, 35, 25);
+		button_1.setBounds(474, 32, 40, 25);
 		button_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -119,7 +126,7 @@ public class SvmClassifierSettings {
 		button_1.setText("...");
 		
 		final Button btnPreprocess = new Button(composite, SWT.CHECK);
-		btnPreprocess.setBounds(0, 67, 94, 18);
+		btnPreprocess.setBounds(0, 65, 100, 25);
 		btnPreprocess.setText("Preprocess");
 		
 		final Button btnWeights = new Button(grpInputSettings, SWT.CHECK);
@@ -128,18 +135,18 @@ public class SvmClassifierSettings {
 		btnWeights.setText("Create Feature Weights File");
 		
 		Label lblKfoldCrossValidation = new Label(grpInputSettings, SWT.NONE);
-		lblKfoldCrossValidation.setBounds(13, 163, 149, 15);
+		lblKfoldCrossValidation.setBounds(13, 163, 180, 20);
 		lblKfoldCrossValidation.setText("k Value for Cross Validation");
 		
 		txtkVal = new Text(grpInputSettings, SWT.BORDER);
-		txtkVal.setBounds(170, 160, 46, 21);
+		txtkVal.setBounds(190, 163, 46, 21);
 		
 		Label lblOutputPath = new Label(grpInputSettings, SWT.NONE);
-		lblOutputPath.setBounds(13, 195, 70, 15);
+		lblOutputPath.setBounds(13, 195, 80, 20);
 		lblOutputPath.setText("Output Path");
 		
 		txtOutputFile = new Text(grpInputSettings, SWT.BORDER);
-		txtOutputFile.setBounds(170, 192, 316, 21);
+		txtOutputFile.setBounds(190, 192, 270, 21);
 		
 		
 		Button btnTrain = new Button(grpInputSettings, SWT.NONE);
@@ -230,9 +237,10 @@ public class SvmClassifierSettings {
 		
 		});
 		btnTrain.setText("Test");
+		shell.setDefaultButton(btnTrain);
 		
 		Button button_2 = new Button(grpInputSettings, SWT.NONE);
-		button_2.setBounds(482, 191, 36, 25);
+		button_2.setBounds(482, 191, 40, 25);
 		button_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {

@@ -7,8 +7,11 @@ import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -21,6 +24,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis.process.CooccurrenceAnalysis;
@@ -42,8 +46,16 @@ public class CooccurrenceAnalysisSettings {
 		parent.setLayout(new GridLayout(1, false));
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
+		Label header = new Label(composite, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		header.setBounds(10, 0, 161, 40);
+		for(int i=1; i<=5; i++){
+			new Label(composite, SWT.NONE);
+		}
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 431;
+		gd_composite.widthHint = 700;
 		gd_composite.heightHint = 477;
 		composite.setLayoutData(gd_composite);
 		
@@ -171,6 +183,7 @@ public class CooccurrenceAnalysisSettings {
 			}
 		});
 		btnCalculate.setText("Co-occurrence Analysis");
+		shell.setDefaultButton(btnCalculate);
 		new Label(composite, SWT.NONE);
 		
 	}

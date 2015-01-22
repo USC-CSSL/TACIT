@@ -6,8 +6,11 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -23,6 +26,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.plugins.supremeCrawler.process.SupremeCrawler;
 
@@ -37,7 +41,14 @@ public class SupremeGUI {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(15, false));
-		
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
+		for(int i=1; i<=29; i++){
+			new Label(parent, SWT.NONE);
+		}
+
 		Label lblSortBy = new Label(parent, SWT.NONE);
 		lblSortBy.setText("Filter Type");
 		new Label(parent, SWT.NONE);;
@@ -65,8 +76,8 @@ public class SupremeGUI {
 		new Label(parent, SWT.NONE);
 		
 		final Combo combo=new Combo(parent, SWT.NONE);
-		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, true, false, 13, 1);
-		gd_combo.widthHint = 177;
+		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 13, 1);
+		gd_combo.widthHint = 60;
 		combo.setLayoutData(gd_combo);
 		appendLog("Loading Filters...");
 		combo.setItems(SupremeCrawler.filters("cases"));
@@ -147,6 +158,7 @@ public class SupremeGUI {
 			}
 		});
 		btnCrawl.setText("Crawl");
+		shell.setDefaultButton(btnCrawl);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);

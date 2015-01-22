@@ -9,8 +9,11 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -22,6 +25,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.hierarchicalclustering.process.HierarchicalClustering;
@@ -40,12 +44,15 @@ public class HierarchicalClusteringSettings {
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(1, false));
-		
+		Label header = new Label(parent, SWT.NONE);
+		header.setImage(ImageDescriptor.createFromURL(
+				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
+						new Path("plugin_icon/icon.png"), null)).createImage());
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(4, false));
 		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 515;
-		gd_composite.heightHint = 477;
+		gd_composite.widthHint = 500;
+		gd_composite.heightHint = 500;
 		composite.setLayoutData(gd_composite);
 		
 		Label lblNewLabel = new Label(composite, SWT.NONE);
@@ -98,7 +105,7 @@ public class HierarchicalClusteringSettings {
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
-		
+		btnImg.setBounds(482, 5, 75, 25);
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
 		btnCalculate.addMouseListener(new MouseAdapter() {
@@ -141,6 +148,7 @@ public class HierarchicalClusteringSettings {
 			}
 		});
 		btnCalculate.setText("Cluster");
+		shell.setDefaultButton(btnCalculate);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
