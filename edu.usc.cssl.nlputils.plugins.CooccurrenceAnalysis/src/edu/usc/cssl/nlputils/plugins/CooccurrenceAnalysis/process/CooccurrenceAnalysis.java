@@ -98,28 +98,24 @@ public class CooccurrenceAnalysis {
 					//if(delimeters.contains(word))
 					//	continue;
 					if(doPhrases){
-						if(len<windowSize){
-							q.add(word);
-							if(seedWords.containsKey(word)){
-								if(seedWords.get(word) != 0){
-									count++;
-									seedWords.put(word, 0);
-								}
-							}
-							len++;
-						}
-						else{
+						
 							if(size!=0 && count ==  size){
 								match = new StringBuilder();
 								for(String s: q)
 									match.append(s+' '); 
 								phrase.add(match.toString());
-							}
-							first = q.remove();
-							if(seedWords.containsKey(first)){
-								if(seedWords.get(first) == 0){
-									count--;
-									seedWords.put(first, 1);
+								q.clear();
+								count =0;
+								for(String s: seedWords.keySet()){
+									seedWords.put(s, 1);
+								}
+							}else if(q.size() >= windowSize){
+								first = q.remove();
+								if(seedWords.containsKey(first)){
+									if(seedWords.get(first) == 0){
+										count--;
+										seedWords.put(first, 1);
+									}
 								}
 							}
 							q.add(word);
@@ -129,7 +125,7 @@ public class CooccurrenceAnalysis {
 									seedWords.put(word, 0);
 								}
 							}
-						}
+						
 					}
 
 					//	System.out.println("Building word mat for " + word);
