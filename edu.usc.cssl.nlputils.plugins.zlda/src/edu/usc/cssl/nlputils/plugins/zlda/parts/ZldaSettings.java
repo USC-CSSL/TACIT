@@ -54,27 +54,26 @@ public class ZldaSettings {
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
-		parent.setLayout(new GridLayout(1, false));
-		Label header = new Label(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBounds(0, 0, 507, 298);
+
+		Label header = new Label(composite, SWT.NONE);
 		header.setImage(ImageDescriptor.createFromURL(
 				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
 						new Path("plugin_icon/icon.png"), null)).createImage());
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
-		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 431;
-		gd_composite.heightHint = 477;
-		composite.setLayoutData(gd_composite);
+		
+		header.setBounds(10, 0, 165, 40);
 		
 		Label lblNewLabel = new Label(composite, SWT.NONE);
 		lblNewLabel.setText("Input Path");
+		lblNewLabel.setBounds(10, 70, 70, 20);
+
 		
 		txtInputDir = new Text(composite, SWT.BORDER);
-		GridData gd_txtInputDir = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtInputDir.widthHint = 244;
-		txtInputDir.setLayoutData(gd_txtInputDir);
-		
+		txtInputDir.setBounds(130, 70, 244, 21);
+				
 		button = new Button(composite, SWT.NONE);
+		button.setBounds(372, 70, 40, 25);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -89,13 +88,14 @@ public class ZldaSettings {
 		
 		lblSeedFile = new Label(composite, SWT.NONE);
 		lblSeedFile.setText("Seed File");
+		lblSeedFile.setBounds(10, 99, 70, 20);
+
 		
 		txtSeedFile = new Text(composite, SWT.BORDER);
-		GridData gd_txtSeedFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtSeedFile.widthHint = 244;
-		txtSeedFile.setLayoutData(gd_txtSeedFile);
-		
+		txtSeedFile.setBounds(130, 99, 244, 21);
+				
 		button_2 = new Button(composite, SWT.NONE);
+		button_2.setBounds(372, 99, 40, 25);
 		button_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -111,19 +111,21 @@ public class ZldaSettings {
 		
 		lblNumberOfTopics = new Label(composite, SWT.NONE);
 		lblNumberOfTopics.setText("Number of Topics");
+		lblNumberOfTopics.setBounds(10, 139, 100, 20);
 		
 		txtNumTopics = new Text(composite, SWT.BORDER);
-		new Label(composite, SWT.NONE);
+		txtNumTopics.setBounds(130, 139, 70, 21);
+		
 		
 		lblOutputPath = new Label(composite, SWT.NONE);
 		lblOutputPath.setText("Output Path");
+		lblOutputPath.setBounds(10, 175, 100, 20);
 		
 		txtOutputDir = new Text(composite, SWT.BORDER);
-		GridData gd_txtOutputDir = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtOutputDir.widthHint = 244;
-		txtOutputDir.setLayoutData(gd_txtOutputDir);
+		txtOutputDir.setBounds(130, 175, 244, 21);	
 		
 		button_3 = new Button(composite, SWT.NONE);
+		button_3.setBounds(372, 175, 40, 25);
 		button_3.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -136,6 +138,7 @@ public class ZldaSettings {
 		button_3.setText("...");
 		
 		btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setBounds(420, 70, 94, 18);
 		btnPreprocess.setText("Preprocess");
 		
 		
@@ -185,9 +188,8 @@ public class ZldaSettings {
 			}
 		});
 		btnCalculate.setText("Calculate");
-		shell.setDefaultButton(btnCalculate);
-		new Label(composite, SWT.NONE);
-		
+		btnCalculate.setBounds(10, 210, 75, 25);
+		shell.setDefaultButton(btnCalculate);		
 	}
 	
 	public static void main(String[] args)
