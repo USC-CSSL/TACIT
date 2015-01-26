@@ -67,7 +67,10 @@ public class PreprocessorService {
 	}
 	
 	public String getOptions(){
-		return options.getStopFile();
+		if(options != null)
+			return options.getStopFile();
+		else
+			return null;
 	}
 	
 	// for File as well as Directory

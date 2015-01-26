@@ -1,4 +1,3 @@
- 
 package edu.usc.cssl.nlputils.application.handlers;
 
 import javax.annotation.PostConstruct;
@@ -15,31 +14,32 @@ import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorSe
 public class GlobalPresserSettings {
 
 	public static PreprocessorService ppService = new PreprocessorService();
-	
+
 	@Execute
-	//@Inject
-	//@Optional @Named("globalPreprocessSettings")String settings
+	// @Inject
+	// @Optional @Named("globalPreprocessSettings")String settings
 	public void execute(Shell shell) {
 		System.out.println("Opening Global Preprocessor Settings");
 		printSettings(shell);
 	}
-	
-	@Inject IEclipseContext context;
-	public void printSettings(Shell shell){
+
+	@Inject
+	IEclipseContext context;
+
+	public void printSettings(Shell shell) {
 		IEclipseContext parent = context.getParent();
-		
+
 		String currSettings = (String) parent.get("globalPreprocessSettings");
-		if (currSettings!=null){
+		if (currSettings != null) {
 			System.out.println(currSettings);
 			System.out.println(ppService.getOptions());
 			ppService.setOptions(shell);
 		} else {
-			//System.out.println("Empty. Setting Defaults.");
+			// System.out.println("Empty. Setting Defaults.");
 			System.out.println("Setting Options.");
 			ppService.setOptions(shell);
 			parent.set("globalPreprocessSettings", "Set");
 		}
 	}
 
-		
 }
