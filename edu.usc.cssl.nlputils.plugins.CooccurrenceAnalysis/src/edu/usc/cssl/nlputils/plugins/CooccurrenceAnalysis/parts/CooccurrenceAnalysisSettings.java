@@ -108,6 +108,12 @@ public class CooccurrenceAnalysisSettings {
 		txtNumTopics = new Text(composite, SWT.BORDER);
 		new Label(composite, SWT.NONE);
 		
+		lblThreshold = new Label(composite, SWT.NONE);
+		lblThreshold.setText("Threshold");
+		
+		txtThreshold = new Text(composite, SWT.BORDER);
+		new Label(composite, SWT.NONE);
+		
 		lblOutputPath = new Label(composite, SWT.NONE);
 		lblOutputPath.setText("Output Path");
 		
@@ -192,11 +198,13 @@ public class CooccurrenceAnalysisSettings {
 	IEclipseContext context;
 	private Text txtOutputDir;
 	private Label lblOutputPath;
+	private Text txtThreshold;
 	private Text txtSeedFile;
 	private Text txtNumTopics;
 	private Button button;
 	private Label lblSeedFile;
 	private Label lblNumberOfTopics;
+	private Label lblThreshold;
 	private Button button_3;
 	private String ppDir;
 	private Button button_2;
@@ -241,10 +249,13 @@ protected void invokeCooccurrence( ){
 		if(!txtNumTopics.getText().equals(""))
 			windowSize = Integer.parseInt(txtNumTopics.getText());
 		
+		int threshold = 0;
+		if(!txtThreshold.getText().equals(""))
+			threshold = Integer.parseInt(txtThreshold.getText());
 		
 		//System.out.println("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
-		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText());
+		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText(), threshold);
 		if(isSuccess == false)
 		{
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");

@@ -25,11 +25,11 @@ public class CooccurrenceAnalysis {
 		calculateCooccurrences(
 				"C://Users//carlosg//Desktop//CSSL//svm//testham//",
 				"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt", 6,
-				"C://Users//carlosg//Desktop//CSSL//Clusering//");
+				"C://Users//carlosg//Desktop//CSSL//Clusering//", 1);
 	}
 
 	public static boolean calculateCooccurrences(String inputDir,
-			String seedFile, int windowSize, String outputPath) {
+			String seedFile, int windowSize, String outputPath, int threshold) {
 		String currentLine = null;
 		Map<String, Integer> seedWords = new HashMap<String, Integer>();
 		Queue<String> q = new LinkedList<String>();
@@ -99,7 +99,7 @@ public class CooccurrenceAnalysis {
 					//	continue;
 					if(doPhrases){
 						
-							if(size!=0 && count ==  size){
+							if(size!=0 && count >=  threshold){
 								match = new StringBuilder();
 								for(String s: q)
 									match.append(s+' '); 
