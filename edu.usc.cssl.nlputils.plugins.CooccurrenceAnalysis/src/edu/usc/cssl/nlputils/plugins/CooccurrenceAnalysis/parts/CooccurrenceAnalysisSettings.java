@@ -264,7 +264,7 @@ protected void invokeCooccurrence( ){
 
 		appendLog("Output for Co-occurrence Analysis");
 		
-		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-matrix.csv" );
+		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-to-word-matrix.csv" );
 		if(ppSeedFile!= "" && !ppSeedFile.isEmpty() && windowSize !=0)
 			appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.txt" );
 		
