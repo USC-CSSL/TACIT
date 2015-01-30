@@ -25,11 +25,11 @@ public class CooccurrenceAnalysis {
 		calculateCooccurrences(
 				"C://Users//carlosg//Desktop//CSSL//svm//testham//",
 				"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt", 6,
-				"C://Users//carlosg//Desktop//CSSL//Clusering//");
+				"C://Users//carlosg//Desktop//CSSL//Clusering//", 1);
 	}
 
 	public static boolean calculateCooccurrences(String inputDir,
-			String seedFile, int windowSize, String outputPath) {
+			String seedFile, int windowSize, String outputPath, int threshold) {
 		String currentLine = null;
 		Map<String, Integer> seedWords = new HashMap<String, Integer>();
 		Queue<String> q = new LinkedList<String>();
@@ -74,6 +74,9 @@ public class CooccurrenceAnalysis {
 			StringBuilder match;
 			int size = seedWords.size();
 			for (File f : listOfFiles) {
+				//System.out.println(words);
+				len = count = 0;
+				int line_no = 0;
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;
 				System.out.println("Processing");
@@ -84,26 +87,22 @@ public class CooccurrenceAnalysis {
 				while ((currentLine = br.readLine()) != null) {
 					if(currentLine.isEmpty() || currentLine.equals(""))
 						continue;
-					for (String s : currentLine.split(" "))
-						if(!s.isEmpty())
-							words.add(s);
-				}
-				//System.out.println(words);
-				len = count = 0;
-
-				for (String word : words) {
-					word.replaceAll("[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
-					if(word.isEmpty() || word.equals(""))
-						continue;
-					//if(delimeters.contains(word))
-					//	continue;
-					if(doPhrases){
+					line_no++;
+					for (String word : currentLine.split(" ")){
+						if(word.isEmpty() || word.equals(""))
+							continue;
 						
-							if(size!=0 && count ==  size){
+						word.replaceAll("[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
+						words.add(word);
+						
+			
+						if(doPhrases){
+
+							if(size!=0 && (count >= threshold || count>= size) ){
 								match = new StringBuilder();
 								for(String s: q)
 									match.append(s+' '); 
-								phrase.add(match.toString());
+								phrase.add(f.getName() + "  " + line_no + " " + match.toString() );
 								q.clear();
 								count =0;
 								for(String s: seedWords.keySet()){
@@ -125,23 +124,32 @@ public class CooccurrenceAnalysis {
 									seedWords.put(word, 0);
 								}
 							}
+
+						}
+
+						//	System.out.println("Building word mat for " + word);
+						if (wordMat.containsKey(word)) {
+							vec = wordMat.get(word);
+						} else {
+							vec = new HashMap<String, Integer>();
+							wordMat.put(word, vec);
+						}
+						for (String second : words) {
+							if (vec.containsKey(second)) {
+								vec.put(second, vec.get(second) + 1);
+							} else {
+								vec.put(second, 1);
+							}
+							Map<String, Integer> temp =  wordMat.get(second);
+							if(temp.containsKey(word)){
+								temp.put(word, temp.get(word) + 1);
+							}else{
+								temp.put(word, 1);
+							}
+
+						}
 						
 					}
-
-					//	System.out.println("Building word mat for " + word);
-					if (wordMat.containsKey(word)) {
-						vec = wordMat.get(word);
-					} else {
-						vec = new HashMap<String, Integer>();
-					}
-					for (String second : words) {
-						if (vec.containsKey(second)) {
-							vec.put(second, vec.get(second) + 1);
-						} else {
-							vec.put(second, 1);
-						}
-					}
-					wordMat.put(word, vec);
 				}
 
 			}
