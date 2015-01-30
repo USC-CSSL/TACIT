@@ -51,7 +51,8 @@ public class Trie {
 		}
 		
 		/* If I reached end of the trie without reaching the end of the string, add the new nodes corresponding to this new string */
-		if((i!=word.length()) || i==0){
+		//if((i!=word.length()) || i==0){
+		if(next==null){
 			Node n;
 			while( i != word.length()){
 				n = new Node(word.charAt(i), null, false);
