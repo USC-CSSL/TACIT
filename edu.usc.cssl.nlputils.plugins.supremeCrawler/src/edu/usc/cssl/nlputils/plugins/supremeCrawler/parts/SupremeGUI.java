@@ -7,7 +7,11 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -29,6 +33,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.plugins.supremeCrawler.process.SupremeCrawler;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 public class SupremeGUI {
 	private Text txtOutput;
@@ -148,13 +153,28 @@ public class SupremeGUI {
 				SupremeCrawler sc = new SupremeCrawler(f, txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(sc,iEclipseContext);
-				try {
-					sc.looper();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
-				appendLog("DONE (Supreme Court Crawler)\n");
+				
+				// Creating a new Job to do crawling so that the UI will not freeze
+				Job job = new Job("Crawler Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+					
+					try {
+						sc.looper();	
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
+					appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+					appendLog("DONE (Supreme Court Crawler)\n");
+					return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+				
+
+				// Cancel the job once panic button is clicked
+				//job.cancel();
 			}
 		});
 		btnCrawl.setText("Crawl");
@@ -192,20 +212,7 @@ public class SupremeGUI {
 	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context, message);	
 	}
 	
 	
