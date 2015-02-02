@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Utilities
 Bundle-SymbolicName: edu.usc.cssl.nlputils.utilities
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.utilities.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework;version="1.3.0"
