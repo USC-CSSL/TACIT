@@ -24,6 +24,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import edu.usc.cssl.nlputils.utilities.Log;
+
 public class SenateCrawler {
 	private StringBuilder readMe = new StringBuilder();
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
@@ -32,6 +34,8 @@ public class SenateCrawler {
 	String outputDir;
 	BufferedWriter csvWriter;
 	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
+	private String senText;
+	private int congressNum;
 	//Feinstein test
 	//private boolean Feinstein = false;
 	
@@ -60,46 +64,9 @@ public class SenateCrawler {
 		}
 	}
 
-	public void getAll(int congressNum, String senText) throws IOException{
-		System.out.println("Extracting Senators of Congress "+congressNum+"...");
-		appendLog("Extracting Senators of Congress "+congressNum);
-		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congressNum).timeout(10*1000).get();
-		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
-		
-		for (Element senItem : senList){
-			String senator = senItem.text().replace("\u00A0", " ");
-			/*Feinstein test*/
-			//if (senator.contains("Feinstein"))
-			//	Feinstein = true;
-			//if (!Feinstein)
-			//	continue;
-
-			if (senator.contains("Any Senator"))		// We just need the senator names
-				continue;
-			if (senText.contains("All Republicans")){
-				if (!senator.contains("(R-"))
-					continue;
-			}
-			if (senText.contains("All Democrats")){
-				if (!senator.contains("(D-"))
-					continue;
-			}
-			if (senText.contains("All Independents")){
-				if (!senator.contains("(I-"))
-					continue;
-			}
-			searchSenatorRecords(congressNum,senator);
-			//System.out.println(congressNum+" - "+senator);
-		}
-	}
-	
-	public void initialize(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) throws IOException{
-		this.outputDir = outputDir;
-		this.maxDocs = maxDocs;
-		this.dateFrom = dateFrom;
-		this.dateTo = dateTo;
+	public void crawl() throws IOException{
 		checkPath(outputDir);
-		
+		appendLog("Crawling...");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String dateString = dateFormat.format(date);
@@ -134,6 +101,47 @@ public class SenateCrawler {
 		csvWriter.close();
 		appendLog("Records written successfully to "+outputDir + System.getProperty("file.separator") + "records_"+dateString+".csv");
 		writeReadMe(outputDir+"/README_"+dateString+".txt");
+	}
+	public void getAll(int congressNum, String senText) throws IOException{
+		System.out.println("Extracting Senators of Congress "+congressNum+"...");
+		appendLog("Extracting Senators of Congress "+congressNum);
+		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congressNum).timeout(10*1000).get();
+		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
+		
+		for (Element senItem : senList){
+			String senator = senItem.text().replace("\u00A0", " ");
+			/*Feinstein test*/
+			//if (senator.contains("Feinstein"))
+			//	Feinstein = true;
+			//if (!Feinstein)
+			//	continue;
+
+			if (senator.contains("Any Senator"))		// We just need the senator names
+				continue;
+			if (senText.contains("All Republicans")){
+				if (!senator.contains("(R-"))
+					continue;
+			}
+			if (senText.contains("All Democrats")){
+				if (!senator.contains("(D-"))
+					continue;
+			}
+			if (senText.contains("All Independents")){
+				if (!senator.contains("(I-"))
+					continue;
+			}
+			searchSenatorRecords(congressNum,senator);
+			//System.out.println(congressNum+" - "+senator);
+		}
+	}
+	
+	public void initialize(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir) {
+		this.outputDir = outputDir;
+		this.maxDocs = maxDocs;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		this.senText = senText;
+		this.congressNum = congressNum;
 	}
 	
 	private void getSenators(int congress) throws IOException {
@@ -282,7 +290,7 @@ public class SenateCrawler {
 
 	private void writeToFile(String fileName, String[] contents) throws IOException {
 		System.out.println("Writing senator data - "+fileName);
-		//appendLog("Writing senator data - "+fileName);
+		appendLog("Writing senator data - "+fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
 		bw.newLine();
@@ -354,25 +362,7 @@ public class SenateCrawler {
 
 	@Inject IEclipseContext context;	
 	private void appendLog(String message){
-		IEclipseContext parent = null;
-		if (context==null)
-			return;
-		parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-			readMe.append(message+"\n");
-		}
+		Log.append(context, message);
 	}
 	
 	public void writeReadMe(String location){
