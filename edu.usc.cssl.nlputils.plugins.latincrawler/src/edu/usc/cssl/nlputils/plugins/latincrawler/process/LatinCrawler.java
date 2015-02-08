@@ -22,6 +22,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import edu.usc.cssl.nlputils.utilities.Log;
+
 public class LatinCrawler {
 	private StringBuilder readMe = new StringBuilder();
 	String outputDir;
@@ -70,8 +72,11 @@ public class LatinCrawler {
 		//lc.getBooks("Suetonius","http://www.thelatinlibrary.com/suet.html", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/", "Suetonius");
 	}
 	
-	public void initialize(String outputDir) throws IOException{
+	public void initialize(String outputDir){
 		this.outputDir = outputDir;	
+	}
+	
+	public void crawl() throws IOException{
 		checkPath(outputDir);
 		appendLog("Loading Authors...");
 		getAllAuthors();
@@ -83,6 +88,7 @@ public class LatinCrawler {
 		callSpecialAuthors("http://www.thelatinlibrary.com/ius.html", "Ius Romanum");
 
 		//writeReadMe(outputDir);
+
 	}
 	
 	private void callSpecialAuthors(String url, String name) throws IOException{
@@ -373,25 +379,7 @@ public class LatinCrawler {
 	
 	@Inject IEclipseContext context;	
 	private void appendLog(String message){
-		IEclipseContext parent = null;
-		if (context==null)
-			return;
-		parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-			readMe.append(message+"\n");
-		}
+		Log.append(context, message);
 	}
 	public void writeReadMe(String location){
 		File readme = new File(location+"/README.txt");

@@ -224,25 +224,11 @@ public class SenateCrawlerSettings {
 					
 						long startTime = System.currentTimeMillis();
 						appendLog("PROCESSING...(Senate Crawler)");
-						//senateCrawler.initialize(fmaxDocs, fcNum, senator, fdateFrom, fdateTo, txtOutput.getText());
 						try {
 							senateCrawler.crawl();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						/*
-						if (senator.equals("All Senators") && congress.equals("All")){
-								System.out.println(maxDocs+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-								senateCrawler.initialize(maxDocs, dateFrom,dateTo, txtOutput.getText());
-						} else {
-							int cNum = -1;
-							if (!congress.equals("All"))
-								cNum = Integer.parseInt(congress);
-							System.out.println(maxDocs+", "+congress+", "+senator+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-							senateCrawler.initialize(maxDocs, cNum, senator, dateFrom,dateTo,txtOutput.getText());
-						}
-						*/
 						
 						appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 						appendLog("DONE (Senate Crawler)");
