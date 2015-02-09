@@ -10,6 +10,7 @@ public class LDATest {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		LDA lda = new LDA();
-		lda.doLDA("c:\\mallet\\dirs\\ham", "10", "c:\\mallet\\dirs", "output");
+		lda.initialize("c:\\mallet\\dirs\\ham", "10", "c:\\mallet\\dirs", "output");
+		lda.doLDA();
 	}
 }
