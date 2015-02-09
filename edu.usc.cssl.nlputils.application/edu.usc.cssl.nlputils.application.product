@@ -149,7 +149,9 @@
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.hamcrest.core"/>
       <plugin id="org.jsoup"/>
+      <plugin id="org.junit"/>
       <plugin id="org.ramo.klevis.p2.core.service"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
