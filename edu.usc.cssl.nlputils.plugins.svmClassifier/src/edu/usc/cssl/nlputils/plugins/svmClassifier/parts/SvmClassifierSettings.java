@@ -9,12 +9,17 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -31,6 +36,7 @@ import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.svmClassifier.process.CrossValidator;
 import edu.usc.cssl.nlputils.plugins.svmClassifier.process.SvmClassifier;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 import org.eclipse.swt.widgets.Group;
 import org.osgi.framework.FrameworkUtil;
@@ -154,7 +160,7 @@ public class SvmClassifierSettings {
 		btnTrain.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				long currentTime = System.currentTimeMillis();
+				final long currentTime = System.currentTimeMillis();
 				String ppDir1 = txtFolderPath1.getText();
 				String ppDir2 = txtFolderPath2.getText();
 				
@@ -185,8 +191,6 @@ public class SvmClassifierSettings {
 				}
 				}
 				
-				try {
-				//SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());  Preprocessing done separately
 				SvmClassifier svm = new SvmClassifier(txtLabel1.getText(), txtLabel2.getText(), txtOutputFile.getText());
 				
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
@@ -195,7 +199,59 @@ public class SvmClassifierSettings {
 
 				//int selection = tabFolder.getSelectionIndex();
 				appendLog("PROCESSING...(SVM)");
-				if (true){	// btnCrossVal.getSelection() always true
+				// btnCrossVal.getSelection() always true
+				CrossValidator cv = new CrossValidator();
+				ContextInjectionFactory.inject(cv,iEclipseContext);
+				
+				final String fppDir1 = ppDir1;
+				final String fppDir2 = ppDir2;
+				final String label1 = txtLabel1.getText();
+				final String label2 = txtLabel2.getText();
+				final int k = Integer.parseInt(txtkVal.getText());
+				final boolean weights = btnWeights.getSelection();
+
+				// Creating a new Job to do crawling so that the UI will not freeze
+				Job job = new Job("Crawler Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+						
+						try {
+							cv.doCross(svm, label1, fppDir1, label2, fppDir2, k, weights);
+						} catch (NumberFormatException | IOException e) {
+							e.printStackTrace();
+						}
+						System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
+						appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
+						
+						Display.getDefault().asyncExec(new Runnable() {
+						      @Override
+						      public void run() {
+									if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+										ppService.clean(fppDir1);
+										System.out.println("Cleaning up preprocessed files - "+fppDir1);
+										appendLog("Cleaning up preprocessed files - "+fppDir1);
+										ppService.clean(fppDir2);
+										System.out.println("Cleaning up preprocessed files - "+fppDir2);
+										appendLog("Cleaning up preprocessed files - "+fppDir2);
+									}
+									appendLog("DONE (SVM)");
+						      }
+						    });
+
+						
+					
+						return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+				
+				
+				
+				
+				
+				/*  Legacy
+				SvmClassifier svm = new SvmClassifier(btnLowercase.getSelection(), txtDelimiters.getText(), txtStopWords.getText());  Preprocessing done separately
+				if (btnCrossVal.getSelection()){
 					CrossValidator cv = new CrossValidator();
 					ContextInjectionFactory.inject(cv,iEclipseContext);
 					cv.doCross(svm, txtLabel1.getText(), ppDir1, txtLabel2.getText(), ppDir2, Integer.parseInt(txtkVal.getText()), btnWeights.getSelection());
@@ -218,20 +274,6 @@ public class SvmClassifierSettings {
 					}
 					
 				}*/
-				System.out.println("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
-				appendLog("Completed classification in "+((System.currentTimeMillis()-currentTime)/(double)1000)+" seconds.");
-				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
-					ppService.clean(ppDir1);
-					System.out.println("Cleaning up preprocessed files - "+ppDir1);
-					appendLog("Cleaning up preprocessed files - "+ppDir1);
-					ppService.clean(ppDir2);
-					System.out.println("Cleaning up preprocessed files - "+ppDir2);
-					appendLog("Cleaning up preprocessed files - "+ppDir2);
-				}
-				appendLog("DONE (SVM)");
-				} catch (IOException ie) {
-					ie.printStackTrace();
-				}
 			}
 
 		
@@ -263,20 +305,22 @@ public class SvmClassifierSettings {
 		message.open();
 	}
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context,message);
+		
+//		IEclipseContext parent = context.getParent();
+//		//System.out.println(parent.get("consoleMessage"));
+//		String currentMessage = (String) parent.get("consoleMessage"); 
+//		if (currentMessage==null)
+//			parent.set("consoleMessage", message);
+//		else {
+//			if (currentMessage.equals(message)) {
+//				// Set the param to null before writing the message if it is the same as the previous message. 
+//				// Else, the change handler will not be called.
+//				parent.set("consoleMessage", null);
+//				parent.set("consoleMessage", message);
+//			}
+//			else
+//				parent.set("consoleMessage", message);
+//		}
 	}
 }

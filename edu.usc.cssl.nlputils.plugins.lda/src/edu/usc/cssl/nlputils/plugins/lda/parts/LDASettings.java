@@ -189,6 +189,7 @@ public class LDASettings {
 											System.out.println("Cleaning up preprocessed files - "+fppDir);
 											appendLog("Cleaning up preprocessed files - "+fppDir);
 										}
+							    	  appendLog("DONE (LDA)");
 							      }
 							    });
 //							if (btnPreprocess.getSelection() && ppService.doCleanUp()){
@@ -196,7 +197,7 @@ public class LDASettings {
 //								System.out.println("Cleaning up preprocessed files - "+fppDir);
 //								appendLog("Cleaning up preprocessed files - "+fppDir);
 //							}
-							appendLog("DONE (LDA)");
+							
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
