@@ -9,7 +9,11 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -28,6 +32,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import edu.usc.cssl.nlputils.plugins.preprocessor.process.Preprocess;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -197,18 +202,28 @@ public class PreprocessorSettings {
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(pp,iEclipseContext);
 				
-				try{
-					long startTime = System.currentTimeMillis();
-					appendLog("PREPROCESSING...");
-					int result = pp.doPreprocess();
-					if (result == -1 || result == -2 || result == -3)
-						appendLog("Preprocessing failed.");
-					else
-						appendLog("Preprocessing completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					appendLog("DONE (Preprocessing)");
-				} catch (Exception ioe){
-					ioe.printStackTrace();
-				}
+				// Creating a new Job to do Preprocessing so that the UI will not freeze
+				Job job = new Job("PP Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+				
+					try{
+						long startTime = System.currentTimeMillis();
+						appendLog("PREPROCESSING...");
+						int result = pp.doPreprocess();
+						if (result == -1 || result == -2 || result == -3)
+							appendLog("Preprocessing failed.");
+						else
+							appendLog("Preprocessing completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+						appendLog("DONE (Preprocessing)");
+					} catch (Exception ioe){
+						ioe.printStackTrace();
+					}
+				
+					return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
 			}
 		});
 		btnPreprocess.setBounds(10, 101, 100, 25);
@@ -217,20 +232,6 @@ public class PreprocessorSettings {
 	}
 	
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context,message);
 	}
 }
