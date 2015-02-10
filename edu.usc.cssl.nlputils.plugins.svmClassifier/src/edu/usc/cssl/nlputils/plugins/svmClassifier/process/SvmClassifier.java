@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 import edu.usc.cssl.nlputils.plugins.svmClassifier.utilities.Convertor;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 public class SvmClassifier {
 	public StringBuilder readMe = new StringBuilder();
@@ -848,11 +849,7 @@ public class SvmClassifier {
 	// This function updates the consoleMessage parameter of the context.
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
-		if (!(context==null)){
-		IEclipseContext parent = context.getParent();
-		parent.set("consoleMessage", message);
-		//readMe.append(message+"\n");
-		}
+		Log.append(context, message);
 	}
 
 	public void writeReadMe(){
