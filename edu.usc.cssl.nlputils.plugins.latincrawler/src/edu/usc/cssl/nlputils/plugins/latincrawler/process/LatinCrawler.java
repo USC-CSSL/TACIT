@@ -65,8 +65,8 @@ public class LatinCrawler {
 		lc.outputDir = "/home/niki/Desktop/CSSL/latin/";
 		lc.authorNames.add("Suetonius");
 		//lc.getBooks("Suetonius", "http://www.thelatinlibrary.com/suet.html", "/home/niki/Desktop/CSSL/latin/Suetonius", "Suetonius");
-		lc.getContent("http://www.thelatinlibrary.com/suetonius/suet.aug.shtml", "Liber XX", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/");
-		//lc.initialize("/home/niki/Desktop/CSSL/latin/");
+		//lc.getContent("http://www.thelatinlibrary.com/suetonius/suet.aug.shtml", "Liber XX", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/");
+		lc.initialize("/home/niki/Desktop/CSSL/latin/");
 		//lc.getBooks("Suetonius","http://www.thelatinlibrary.com/suet.html", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/", "Suetonius");
 	}
 	
@@ -328,6 +328,7 @@ public class LatinCrawler {
 		BufferedWriter csvWriter= null;
 		appendLog("Extracting Content of book  "+ bookDir +"...");
 		try{
+			bookDir = bookDir.replaceAll("[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
 			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
 			Document doc = Jsoup.connect(bookUri).timeout(10*10000).get();
 			Elements content = doc.getElementsByTag("p"); 
