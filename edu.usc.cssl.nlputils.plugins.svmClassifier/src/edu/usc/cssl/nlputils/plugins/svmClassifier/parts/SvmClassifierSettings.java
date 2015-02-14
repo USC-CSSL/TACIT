@@ -191,7 +191,7 @@ public class SvmClassifierSettings {
 				}
 				}
 				
-				SvmClassifier svm = new SvmClassifier(txtLabel1.getText(), txtLabel2.getText(), txtOutputFile.getText());
+				final SvmClassifier svm = new SvmClassifier(txtLabel1.getText(), txtLabel2.getText(), txtOutputFile.getText());
 				
 				// Injecting the context into Preprocessor object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
