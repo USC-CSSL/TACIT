@@ -200,7 +200,7 @@ public class SvmClassifierSettings {
 				//int selection = tabFolder.getSelectionIndex();
 				appendLog("PROCESSING...(SVM)");
 				// btnCrossVal.getSelection() always true
-				CrossValidator cv = new CrossValidator();
+				final CrossValidator cv = new CrossValidator();
 				ContextInjectionFactory.inject(cv,iEclipseContext);
 				
 				final String fppDir1 = ppDir1;
