@@ -11,7 +11,11 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -26,6 +30,7 @@ import org.eclipse.swt.widgets.Combo;
 
 import edu.usc.cssl.nlputils.plugins.latincrawler.process.AvailableRecords;
 import edu.usc.cssl.nlputils.plugins.latincrawler.process.LatinCrawler;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,6 +42,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.osgi.framework.FrameworkUtil;
 
 public class LatinCrawlerSettings {
+	private Text txtOutput;
+	
 	
 	@Inject
 	public LatinCrawlerSettings() {
@@ -100,21 +107,37 @@ public class LatinCrawlerSettings {
 			public void mouseUp(MouseEvent e) {
 
 				
-				LatinCrawler crawler = new LatinCrawler();
+				final LatinCrawler crawler = new LatinCrawler();
 				// Injecting the context into Senatecrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(crawler,iEclipseContext);
-
-			
-				try {
-					
-					long startTime = System.currentTimeMillis();
-					crawler.initialize(txtOutput.getText());
+				crawler.initialize(txtOutput.getText());
 				
-					appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
+			
+				// Creating a new Job to do crawling so that the UI will not freeze
+				Job job = new Job("Crawler Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+					
+						appendLog("PROCESSING...(Latin Crawler)");
+						
+						try {
+							
+							long startTime = System.currentTimeMillis();
+							crawler.crawl();
+							appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+						
+						appendLog("DONE (Latin Crawler)");
+						
+					return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+				
+				
 			}
 		});
 		btnExtract.setText("Extract");
@@ -123,22 +146,7 @@ public class LatinCrawlerSettings {
 	}
 	
 	@Inject IEclipseContext context;
-	private Text txtOutput;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context,message);
 	}
 }

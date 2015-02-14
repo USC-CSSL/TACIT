@@ -45,6 +45,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.weightedCount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.wordcount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.zlda"/>
+      <plugin id="edu.usc.cssl.nlputils.utilities"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.xml"/>
@@ -148,7 +149,9 @@
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.hamcrest.core"/>
       <plugin id="org.jsoup"/>
+      <plugin id="org.junit"/>
       <plugin id="org.ramo.klevis.p2.core.service"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>

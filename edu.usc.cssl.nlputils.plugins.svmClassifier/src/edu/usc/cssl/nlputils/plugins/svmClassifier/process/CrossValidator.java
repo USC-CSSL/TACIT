@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
+import edu.usc.cssl.nlputils.utilities.Log;
+
 public class CrossValidator {
 	
 	@Inject IEclipseContext context;
@@ -103,10 +105,7 @@ public class CrossValidator {
 	
 	// This function updates the consoleMessage parameter of the context.
 		private void appendLog(String message, SvmClassifier svm){
-			if (!(context==null)){
-			IEclipseContext parent = context.getParent();
-			parent.set("consoleMessage", message);
+			Log.append(context, message);
 			svm.readMe.append(message+"\n");
-			}
 		}
 }

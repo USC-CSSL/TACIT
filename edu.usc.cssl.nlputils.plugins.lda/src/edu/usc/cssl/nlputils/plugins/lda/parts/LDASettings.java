@@ -10,13 +10,18 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -37,12 +42,15 @@ import org.osgi.framework.FrameworkUtil;
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.lda.process.LDA;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 
 public class LDASettings {
 	private Text txtSourceDir;
 	private Text txtNumTopics;
 	private Text txtOutputPath;
+	private Text txtLabel;
+	
 	private PreprocessorService ppService = null;
 	
 	@Inject
@@ -153,26 +161,54 @@ public class LDASettings {
 				// Injecting the context into LDA object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(lda,iEclipseContext);
+				// Preprocessing is now done separately. Hence passing false
+				lda.initialize(ppDir, txtNumTopics.getText(), txtOutputPath.getText(), txtLabel.getText());
 				
-				try {
-					System.out.println("Processing...");
-					appendLog("Processing...(LDA)");
+				final String fppDir = ppDir;
+				// Creating a new Job to do LDA so that the UI will not freeze
+				Job job = new Job("LDA Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
 					
-					long startTime = System.currentTimeMillis();
-					//appendLog("PROCESSING...");
-					lda.doLDA(ppDir, txtNumTopics.getText(), txtOutputPath.getText(), txtLabel.getText()); // Preprocessing is now done separately. Hence passing false
-					System.out.println("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					appendLog("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					if (btnPreprocess.getSelection() && ppService.doCleanUp()){
-						ppService.clean(ppDir);
-						System.out.println("Cleaning up preprocessed files - "+ppDir);
-						appendLog("Cleaning up preprocessed files - "+ppDir);
+						try {
+							System.out.println("Processing...");
+							appendLog("Processing...(LDA)");
+							
+							long startTime = System.currentTimeMillis();
+							//appendLog("PROCESSING...");
+							lda.doLDA(); 					
+							
+							System.out.println("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+							appendLog("Topic modelling completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+							
+							// Async callback to access UI elements 
+							Display.getDefault().asyncExec(new Runnable() {
+							      @Override
+							      public void run() {
+							    	  if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+											ppService.clean(fppDir);
+											System.out.println("Cleaning up preprocessed files - "+fppDir);
+											appendLog("Cleaning up preprocessed files - "+fppDir);
+										}
+							    	  appendLog("DONE (LDA)");
+							      }
+							    });
+//							if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+//								ppService.clean(fppDir);
+//								System.out.println("Cleaning up preprocessed files - "+fppDir);
+//								appendLog("Cleaning up preprocessed files - "+fppDir);
+//							}
+							
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+					return Status.OK_STATUS;
 					}
-					appendLog("DONE (LDA)");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				};
+				job.setUser(true);
+				job.schedule();
+				
 			}
 		});
 		btnProcess.setBounds(11, 223, 75, 25);
@@ -191,22 +227,7 @@ public class LDASettings {
 	
 	
 	@Inject IEclipseContext context;
-	private Text txtLabel;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context,message);
 	}
 }

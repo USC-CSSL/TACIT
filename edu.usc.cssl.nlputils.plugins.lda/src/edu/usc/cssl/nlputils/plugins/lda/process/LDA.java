@@ -43,10 +43,23 @@ import cc.mallet.types.IDSorter;
 import cc.mallet.types.Instance;
 import cc.mallet.types.InstanceList;
 import cc.mallet.types.LabelSequence;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 public class LDA {
 	private StringBuilder readMe = new StringBuilder();
-	public void doLDA(String sourceDir, String numTopics, String outputDir, String label) throws FileNotFoundException, IOException{
+	private String sourceDir;
+	private String numTopics;
+	private String outputDir;
+	private String label;
+	
+	public void initialize(String sourceDir, String numTopics, String outputDir, String label){
+		this.sourceDir = sourceDir;
+		this.numTopics = numTopics;
+		this.outputDir = outputDir;
+		this.label = label;
+	}
+	
+	public void doLDA() throws FileNotFoundException, IOException{
 		Calendar cal = Calendar.getInstance();
 		String dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
 		String outputPath = outputDir+System.getProperty("file.separator")+label+"-"+dateString+"-"+System.currentTimeMillis();
@@ -216,22 +229,7 @@ public class LDA {
 	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-			readMe.append(message+"\n");
-		}
+		Log.append(context, message);
 	}
 	
 	public void writeReadMe(String location){

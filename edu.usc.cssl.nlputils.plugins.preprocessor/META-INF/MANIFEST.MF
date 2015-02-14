@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.di,
  javax.inject,
  javax.annotation,
- org.eclipse.e4.ui.model.workbench
+ org.eclipse.e4.ui.model.workbench,
+ edu.usc.cssl.nlputils.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: SnowballStemmer.jar,
  .,

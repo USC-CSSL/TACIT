@@ -25,7 +25,7 @@ public class SaneTest {
 			sc.initialize(2,113, "King, Angus S., Jr. (I-ME)", "5/19/2014", "5/24/2014","c:\\senate\\smallinde");
 			//sc.getAll(113, "All Independents");
 			//sc.searchSenatorRecords(113, senText)
-			
+			sc.crawl();
 			//sc.doCrawl();
 		} catch (IOException e) {
 			e.printStackTrace();

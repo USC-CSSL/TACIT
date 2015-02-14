@@ -9,7 +9,11 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -26,6 +30,7 @@ import org.eclipse.swt.widgets.Combo;
 
 import edu.usc.cssl.nlputils.plugins.senatecrawler.process.AvailableRecords;
 import edu.usc.cssl.nlputils.plugins.senatecrawler.process.SenateCrawler;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,6 +41,8 @@ import org.osgi.framework.FrameworkUtil;
 
 public class SenateCrawlerSettings {
 	private Text txtMaxDocs;
+	private Text txtOutput;
+	
 	@Inject
 	public SenateCrawlerSettings() {
 		
@@ -49,7 +56,7 @@ public class SenateCrawlerSettings {
 		final Shell shell = parent.getShell();
 		appendLog("Loading Congresses...");
 		String[] congresses = null;
-
+		
 		try {
 			 congresses = AvailableRecords.getAllCongresses();
 		} catch (IOException e) {
@@ -208,29 +215,30 @@ public class SenateCrawlerSettings {
 				int cNum = -1;
 				if (!congress.equals("All"))
 					cNum = Integer.parseInt(congress);
-				try {
+				
+				senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
+				
+				// Creating a new Job to do crawling so that the UI will not freeze
+				Job job = new Job("Crawler Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
 					
-					long startTime = System.currentTimeMillis();
-					appendLog("PROCESSING...(Senate Crawler)");
-					senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
-					/*
-					if (senator.equals("All Senators") && congress.equals("All")){
-							System.out.println(maxDocs+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-							senateCrawler.initialize(maxDocs, dateFrom,dateTo, txtOutput.getText());
-					} else {
-						int cNum = -1;
-						if (!congress.equals("All"))
-							cNum = Integer.parseInt(congress);
-						System.out.println(maxDocs+", "+congress+", "+senator+", "+dateFrom+", "+dateTo+", "+txtOutput.getText());
-						senateCrawler.initialize(maxDocs, cNum, senator, dateFrom,dateTo,txtOutput.getText());
+						long startTime = System.currentTimeMillis();
+						appendLog("PROCESSING...(Senate Crawler)");
+						try {
+							senateCrawler.crawl();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
+						appendLog("DONE (Senate Crawler)");
+						
+					return Status.OK_STATUS;
 					}
-					*/
-					
-					appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
-					appendLog("DONE (Senate Crawler)");
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				};
+				job.setUser(true);
+				job.schedule();
+
 			}
 		});
 		btnExtract.setBounds(10, 320, 75, 25);
@@ -278,22 +286,7 @@ public class SenateCrawlerSettings {
 	}
 	
 	@Inject IEclipseContext context;
-	private Text txtOutput;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context, message);
 	}
 }

@@ -71,6 +71,7 @@
 		<module>edu.usc.cssl.nlputils.plugins.latincrawler</module>
 		<module>edu.usc.cssl.nlputils.plugins.supremeCrawler</module>
 		<module>edu.usc.cssl.nlputils.plugins.weightedCount</module>
+		<module>edu.usc.cssl.nlputils.utilities</module>
 		<!--<module>edu.usc.cssl.nlputils.plugins.zlda2</module>-->
 	</modules>
 	<build>
