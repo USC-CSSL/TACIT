@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.swt.custom.Bullet;
+
 public class CooccurrenceAnalysis {
 	static String delimeters = " .,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>";
 	static boolean doPhrases = false;
@@ -25,11 +27,11 @@ public class CooccurrenceAnalysis {
 		calculateCooccurrences(
 				"C://Users//carlosg//Desktop//CSSL//svm//testham//",
 				"C://Users//carlosg//Desktop//CSSL//Clusering//seed.txt", 6,
-				"C://Users//carlosg//Desktop//CSSL//Clusering//", 1);
+				"C://Users//carlosg//Desktop//CSSL//Clusering//", 1, true);
 	}
 
 	public static boolean calculateCooccurrences(String inputDir,
-			String seedFile, int windowSize, String outputPath, int threshold) {
+			String seedFile, int windowSize, String outputPath, int threshold, boolean buildMatrix) {
 		String currentLine = null;
 		Map<String, Integer> seedWords = new HashMap<String, Integer>();
 		Queue<String> q = new LinkedList<String>();
@@ -91,11 +93,12 @@ public class CooccurrenceAnalysis {
 					for (String word : currentLine.split(" ")){
 						if(word.isEmpty() || word.equals(""))
 							continue;
-						
+
 						word.replaceAll("[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
-						words.add(word);
-						
-			
+						if(buildMatrix)
+							words.add(word);
+
+
 						if(doPhrases){
 
 							if(size!=0 && (count >= threshold || count>= size) ){
@@ -127,61 +130,64 @@ public class CooccurrenceAnalysis {
 
 						}
 
-						//	System.out.println("Building word mat for " + word);
-						if (wordMat.containsKey(word)) {
-							vec = wordMat.get(word);
-						} else {
-							vec = new HashMap<String, Integer>();
-							wordMat.put(word, vec);
-						}
-						for (String second : words) {
-							if (vec.containsKey(second)) {
-								vec.put(second, vec.get(second) + 1);
+						if(buildMatrix){
+							//	System.out.println("Building word mat for " + word);
+							if (wordMat.containsKey(word)) {
+								vec = wordMat.get(word);
 							} else {
-								vec.put(second, 1);
+								vec = new HashMap<String, Integer>();
+								wordMat.put(word, vec);
 							}
-							Map<String, Integer> temp =  wordMat.get(second);
-							if(temp.containsKey(word)){
-								temp.put(word, temp.get(word) + 1);
-							}else{
-								temp.put(word, 1);
-							}
+							for (String second : words) {
+								if (vec.containsKey(second)) {
+									vec.put(second, vec.get(second) + 1);
+								} else {
+									vec.put(second, 1);
+								}
+								Map<String, Integer> temp =  wordMat.get(second);
+								if(temp.containsKey(word)){
+									temp.put(word, temp.get(word) + 1);
+								}else{
+									temp.put(word, 1);
+								}
 
+							}
 						}
-						
+
 					}
 				}
 
 			}
 
-			SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
-			System.out.println(keys.size());
-			try {
-				FileWriter fw = new FileWriter(new File(outputPath	+ File.separator + "word-to-word-matrix.csv"));
-				fw.write(" ,");
-				for (String key : keys) {
-					fw.write(key + ",");
-				}
-				fw.write("\n");
-
-				for (String key : keys) {
-					fw.write(key + ",");
-					vec = wordMat.get(key);
-					for (String value : keys) {
-						if (vec.containsKey(value)) {
-							fw.write(vec.get(value) + ",");
-						} else {
-							fw.write("0,");
-						}
+			if(buildMatrix){
+				SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
+				System.out.println(keys.size());
+				try {
+					FileWriter fw = new FileWriter(new File(outputPath	+ File.separator + "word-to-word-matrix.csv"));
+					fw.write(" ,");
+					for (String key : keys) {
+						fw.write(key + ",");
 					}
 					fw.write("\n");
+
+					for (String key : keys) {
+						fw.write(key + ",");
+						vec = wordMat.get(key);
+						for (String value : keys) {
+							if (vec.containsKey(value)) {
+								fw.write(vec.get(value) + ",");
+							} else {
+								fw.write("0,");
+							}
+						}
+						fw.write("\n");
+					}
+
+					fw.close();
+				} catch (IOException e) {
+					System.out.println("Error writing output to files" + e);
 				}
-
-				fw.close();
-			} catch (IOException e) {
-				System.out.println("Error writing output to files" + e);
 			}
-
 			if(seedFile!= "" && !seedFile.isEmpty() && phrase.size()>0)
 			{
 				try {

@@ -139,6 +139,9 @@ public class CooccurrenceAnalysisSettings {
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		
+		btnOption = new Button(composite, SWT.CHECK);
+		btnOption.setText("Build Co-occurrence Matrix");
+		new Label(composite, SWT.NONE);
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
 		btnCalculate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
@@ -210,6 +213,7 @@ public class CooccurrenceAnalysisSettings {
 	private Button button_2;
 	private String ppSeedFile;
 	private Button btnPreprocess;
+	private Button btnOption;
 
 	private void appendLog(String message){
 		IEclipseContext parent = context.getParent();
@@ -253,9 +257,13 @@ protected void invokeCooccurrence( ){
 		if(!txtThreshold.getText().equals(""))
 			threshold = Integer.parseInt(txtThreshold.getText());
 		
+		boolean buildMatrix = false;
+		if(btnOption.getSelection())
+			buildMatrix = true;
+		
 		//System.out.println("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
-		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText(), threshold);
+		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText(), threshold, buildMatrix);
 		if(isSuccess == false)
 		{
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
