@@ -197,7 +197,7 @@ public class SenateCrawlerSettings {
 				int maxDocs = -1;
 				if (!txtMaxDocs.getText().equals(""))
 					maxDocs = Integer.parseInt(txtMaxDocs.getText().trim());
-				SenateCrawler senateCrawler = new SenateCrawler();
+				final SenateCrawler senateCrawler = new SenateCrawler();
 				// Injecting the context into Senatecrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(senateCrawler,iEclipseContext);

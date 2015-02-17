@@ -157,7 +157,7 @@ public class LDASettings {
 				}
 				}
 				
-				LDA lda = new LDA();
+				final LDA lda = new LDA();
 				// Injecting the context into LDA object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(lda,iEclipseContext);
