@@ -12,7 +12,11 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
@@ -22,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Button;
@@ -308,8 +313,6 @@ public class WWCSettings {
 				Logger.getAnonymousLogger().addHandler(consoleHandler);
 				logger.addHandler(consoleHandler);*/
 								
-				int returnCode = -1;
-				String errorMessage = "Word Count failed. Please try again.";
 				WeightedCount wc = new WeightedCount();
 				
 				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
@@ -336,39 +339,72 @@ public class WWCSettings {
 				System.out.println("Overwrite files.");
 				
 				appendLog("PROCESSING...(Word Count)");
-				try {
-					returnCode=wc.wordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, "",true,btnStemming.getSelection(),btnSnowball.getSelection(), btnSpss.getSelection(),btnWordDistribution.getSelection(),btnStemDictionary.getSelection());
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
 				
-				if (returnCode == -2)
-					errorMessage = "Please check the input file path.";
-				if (returnCode == -3) 
-					errorMessage = "Please check the dictionary file path.";
-				if (returnCode == -4) 
-					errorMessage = "Please check the stop words file path.";
-				if (returnCode == -5) 
-					errorMessage = "The output file path is incorrect.";
-				if (returnCode == -6)
-					errorMessage = "The SPSS output file path is incorrect.";
-				if (returnCode == 0)
-					errorMessage = "Word Count Completed Successfully.";
+				final String[] fInputFiles = inputFiles;
+				final String fDic = txtDictionary.getText();
+				final String fStop = txtStopWords.getText();
+				final String fOPath = oPath;
+				final boolean stemming = btnStemming.getSelection();
+				final boolean snowBall = btnSnowball.getSelection();
+				final boolean spss = btnSpss.getSelection();
+				final boolean wDist = btnWordDistribution.getSelection();
+				final boolean stemDic = btnStemDictionary.getSelection();
+				// Creating a new Job to do crawling so that the UI will not freeze
+				Job job = new Job("Crawler Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+						
+						int rc = -1;
+						
+						
+						try {
+							rc=wc.wordCount(fInputFiles, fDic, fStop, fOPath, "",true, stemming, snowBall, spss,wDist,stemDic);
+						} catch (IOException ioe) {
+							ioe.printStackTrace();
+						}
+						final int returnCode = rc;
+						final String errorMessage;
+						
+						if (returnCode == -2)
+							errorMessage = "Please check the input file path.";
+						else if (returnCode == -3) 
+							errorMessage = "Please check the dictionary file path.";
+						else if (returnCode == -4) 
+							errorMessage = "Please check the stop words file path.";
+						else if (returnCode == -5) 
+							errorMessage = "The output file path is incorrect.";
+						else if (returnCode == -6)
+							errorMessage = "The SPSS output file path is incorrect.";
+						else if (returnCode == 0)
+							errorMessage = "Word Count Completed Successfully.";
+						else
+							errorMessage = "Word Count failed. Please try again.";
+						
+						appendLog(errorMessage);
+						appendLog("DONE (Weighted Word Count)");
+						
+						Display.getDefault().asyncExec(new Runnable() {
+						      @Override
+						      public void run() {
+								if (returnCode == 0){
+									MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+									message.setMessage(errorMessage);
+									message.setText("Success");
+									message.open();
+								} else{
+									MessageBox message = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+									message.setMessage(errorMessage);
+									message.setText("Error");
+									message.open();
+								}
+						      }
+					    });
+						
+						return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
 				
-				appendLog(errorMessage);
-				appendLog("DONE (Weighted Word Count)");
-				
-				if (returnCode == 0){
-					MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
-					message.setMessage(errorMessage);
-					message.setText("Success");
-					message.open();
-				} else{
-					MessageBox message = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					message.setMessage(errorMessage);
-					message.setText("Error");
-					message.open();
-				}
 				
 			}
 		});
