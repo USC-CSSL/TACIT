@@ -13,7 +13,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -25,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -141,14 +146,37 @@ public class KMeansClusteringSettings {
 				}
 				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(K-means Clustering)");
-				runClustering();
+				
+				final String fNumClusters = txtNumClusters.getText();
+				final String fInputDir = ppDir;
+				final String fOutputDir = txtOutputDir.getText();
+				
+				// Creating a new Job to do KMeans so that the UI will not freeze
+				Job job = new Job("KMeans Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+				
+				runClustering( fNumClusters ,  fInputDir,  fOutputDir);
 				appendLog("K-Means Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
-					ppService.clean(ppDir);
-					System.out.println("Cleaning up preprocessed files - "+ppDir);
-					appendLog("Cleaning up preprocessed files - "+ppDir);
+				
+				Display.getDefault().asyncExec(new Runnable() {
+				      @Override
+				      public void run() {
+							if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+								ppService.clean(ppDir);
+								System.out.println("Cleaning up preprocessed files - "+ppDir);
+								appendLog("Cleaning up preprocessed files - "+ppDir);
+							}
+							appendLog("DONE (K-Means Clustering)");
+					      }
+					    });
+		
+					
+				
+					return Status.OK_STATUS;
 				}
-				appendLog("DONE (K-Means Clustering)");
+			};
+			job.setUser(true);
+			job.schedule();
 			}
 		});
 		btnCalculate.setText("Cluster");
@@ -175,9 +203,10 @@ public class KMeansClusteringSettings {
 		Log.append(context,message);
 	}
 
-protected void runClustering( ){		
-		int numClusters = Integer.parseInt(txtNumClusters.getText());
-		File dir = new File(ppDir);
+protected void runClustering(String fNumClusters , String fInputDir, String fOutputDir){		
+		
+		int numClusters = Integer.parseInt(fNumClusters);
+		File dir = new File(fInputDir);
 		File[] listOfFiles =  dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles){
@@ -218,7 +247,7 @@ protected void runClustering( ){
 		}
 		
 		try {
-			String op = txtOutputDir.getText() + File.separator +  "KMeansClusters.txt";
+			String op = fOutputDir + File.separator +  "KMeansClusters.txt";
 			appendLog("Saving the output for Kmeans clustering in " + op);
 			FileWriter fw = new FileWriter(new File(op));
 			for (int c : outputClusters.keySet()) {
