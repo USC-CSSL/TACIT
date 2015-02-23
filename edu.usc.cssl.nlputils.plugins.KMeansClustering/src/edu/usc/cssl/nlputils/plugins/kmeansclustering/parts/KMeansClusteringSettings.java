@@ -144,7 +144,6 @@ public class KMeansClusteringSettings {
 					e1.printStackTrace();
 				}
 				}
-				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(K-means Clustering)");
 				
 				final String fNumClusters = txtNumClusters.getText();
@@ -154,7 +153,8 @@ public class KMeansClusteringSettings {
 				// Creating a new Job to do KMeans so that the UI will not freeze
 				Job job = new Job("KMeans Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
-				
+						long startTime = System.currentTimeMillis();
+						
 				runClustering( fNumClusters ,  fInputDir,  fOutputDir);
 				appendLog("K-Means Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 				

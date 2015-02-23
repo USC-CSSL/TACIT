@@ -178,7 +178,6 @@ public class ZldaSettings {
 					e1.printStackTrace();
 				}
 				}
-				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(Z-LDA)");
 				final String inputDir = ppDir;
 				final String seedFileName = ppSeedFile;
@@ -188,7 +187,9 @@ public class ZldaSettings {
 				// Creating a new Job to do Zlda so that the UI will not freeze
 				Job job = new Job("Zlda Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
-				
+						
+						long startTime = System.currentTimeMillis();
+						
 					invokeLDA( inputDir, seedFileName,  num,  outputDir);
 					appendLog("z-label LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					
