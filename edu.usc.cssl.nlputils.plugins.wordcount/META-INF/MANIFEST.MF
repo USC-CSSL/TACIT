@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.e4.ui.workbench,
  javax.annotation,
  org.eclipse.e4.ui.model.workbench,
  edu.usc.cssl.nlputils.plugins.preprocessorService,
- org.junit;bundle-version="4.11.0"
+ org.junit;bundle-version="4.11.0",
+ edu.usc.cssl.nlputils.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: edu.usc.cssl.nlputils.plugins.wordcount.handlers,
  edu.usc.cssl.nlputils.plugins.wordcount.parts,

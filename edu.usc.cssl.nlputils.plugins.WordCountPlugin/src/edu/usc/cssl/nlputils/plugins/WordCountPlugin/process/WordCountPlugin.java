@@ -31,6 +31,7 @@ import snowballstemmer.PorterStemmer;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 
 public class WordCountPlugin {
@@ -415,11 +416,7 @@ public class WordCountPlugin {
 	// This function updates the consoleMessage parameter of the context.
 		@Inject IEclipseContext context;
 		private void appendLog(String message){
-			IEclipseContext parent = null;
-			if (context==null)
-				return;
-			parent = context.getParent();
-			parent.set("consoleMessage", message);
+			Log.append(context,message);
 			readMe.append(message+"\n");
 		}
 		

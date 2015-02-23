@@ -13,6 +13,8 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
+import edu.usc.cssl.nlputils.utilities.Log;
+
 
 public class ZlabelLDA {
 
@@ -608,25 +610,8 @@ public class ZlabelLDA {
 	private StringBuilder readMe = new StringBuilder();
 	@Inject IEclipseContext context;	
 	private void appendLog(String message){
-		IEclipseContext parent = null;
-		if (context==null)
-			return;
-		parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
+		Log.append(context,message);
 			readMe.append(message+"\n");
-		}
 	}
 	public void writeReadMe(String location){
 		File readme = new File(location+"/README.txt");

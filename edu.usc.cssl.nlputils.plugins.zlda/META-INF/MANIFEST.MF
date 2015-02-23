@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench,
  javax.annotation,
  org.eclipse.swt,
  edu.usc.cssl.nlputils.plugins.preprocessorService,
- edu.usc.cssl.nlputils.application
+ edu.usc.cssl.nlputils.application,
+ edu.usc.cssl.nlputils.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.workbench.modeling

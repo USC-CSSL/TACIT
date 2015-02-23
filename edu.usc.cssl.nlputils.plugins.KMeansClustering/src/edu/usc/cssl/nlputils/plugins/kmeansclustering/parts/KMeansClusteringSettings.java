@@ -33,6 +33,7 @@ import org.osgi.framework.FrameworkUtil;
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.kmeansclustering.process.KMeansClustering;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 public class KMeansClusteringSettings {
 	private Text txtInputDir;
@@ -171,21 +172,7 @@ public class KMeansClusteringSettings {
 	private Button btnPreprocess;
 
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context,message);
 	}
 
 protected void runClustering( ){		

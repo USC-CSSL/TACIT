@@ -6,7 +6,8 @@ Bundle-Version: 0.0.1.qualifier
 Require-Bundle: org.eclipse.ui,
  javax.inject,
  org.eclipse.core.runtime,
- edu.usc.cssl.nlputils.application
+ edu.usc.cssl.nlputils.application,
+ edu.usc.cssl.nlputils.utilities
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: edu.usc.cssl.nlputils.plugins.preprocessorService.services,
  org.eclipse.e4.core.contexts,
