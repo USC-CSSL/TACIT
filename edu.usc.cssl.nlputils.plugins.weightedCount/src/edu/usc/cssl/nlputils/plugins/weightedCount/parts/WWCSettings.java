@@ -349,8 +349,8 @@ public class WWCSettings {
 				final boolean spss = btnSpss.getSelection();
 				final boolean wDist = btnWordDistribution.getSelection();
 				final boolean stemDic = btnStemDictionary.getSelection();
-				// Creating a new Job to do crawling so that the UI will not freeze
-				Job job = new Job("Crawler Job"){
+				// Creating a new Job to do word count so that the UI will not freeze
+				Job job = new Job("Word Count Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 						
 						int rc = -1;
