@@ -325,7 +325,7 @@ public class WordCountSettings {
 				Logger.getAnonymousLogger().addHandler(consoleHandler);
 				logger.addHandler(consoleHandler);*/
 								
-				WordCount wc = new WordCount();
+				final WordCount wc = new WordCount();
 				
 				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;

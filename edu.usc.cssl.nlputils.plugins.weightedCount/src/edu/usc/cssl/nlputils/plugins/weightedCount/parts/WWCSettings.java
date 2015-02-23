@@ -313,7 +313,7 @@ public class WWCSettings {
 				Logger.getAnonymousLogger().addHandler(consoleHandler);
 				logger.addHandler(consoleHandler);*/
 								
-				WeightedCount wc = new WeightedCount();
+				final WeightedCount wc = new WeightedCount();
 				
 				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;

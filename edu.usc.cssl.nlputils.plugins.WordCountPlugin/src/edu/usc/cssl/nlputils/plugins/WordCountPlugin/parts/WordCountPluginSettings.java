@@ -8,7 +8,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
@@ -23,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
@@ -264,9 +269,7 @@ public class WordCountPluginSettings {
 				Logger.getAnonymousLogger().addHandler(consoleHandler);
 				logger.addHandler(consoleHandler);*/
 								
-				int returnCode = -1;
-				String errorMessage = "Word Count failed. Please try again.";
-				WordCountPlugin wc = new WordCountPlugin();
+				final WordCountPlugin wc = new WordCountPlugin();
 				
 				// Injecting the context into WordCount object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
@@ -291,27 +294,47 @@ public class WordCountPluginSettings {
 				}
 				System.out.println("Overwrite files.");
 				
+				final String[] fInputFiles = inputFiles;
+				final String fDic = txtDictionary.getText();
+				final String fStop = txtStopWords.getText();
+				final String fOPath = oPath;
+				final boolean fStem = btnStem.getSelection();
+				
+				// Creating a new Job to do Word Count so that the UI will not freeze
+				Job job = new Job("Word Count Plugin Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+				
+				int rc = -1;
 				
 				try {
 						//Niki Change here
-					returnCode=wc.invokeWordCount(inputFiles, txtDictionary.getText(), txtStopWords.getText(), oPath, btnStem.getSelection());
+					rc=wc.invokeWordCount(fInputFiles, fDic, fStop, fOPath, fStem);
 				} catch (Exception ioe) {
 					ioe.printStackTrace();
 				}
 				
+				final int returnCode = rc;
+				final String errorMessage;
+				
 				if (returnCode == -2)
 					errorMessage = "Please check the input file path.";
-				if (returnCode == -3) 
+				else if (returnCode == -3) 
 					errorMessage = "Please check the dictionary file path.";
-				if (returnCode == -4) 
+				else if (returnCode == -4) 
 					errorMessage = "Please check the stop words file path.";
-				if (returnCode == -5) 
+				else if (returnCode == -5) 
 					errorMessage = "The output file path is incorrect.";
-				if (returnCode == 0)
+				else if (returnCode == 0)
 					errorMessage = "Word Count Completed Successfully.";
+				else
+					errorMessage = "Word Count failed. Please try again.";
 				
 				appendLog(errorMessage);
+				appendLog("DONE (Word Count Plugin)");
 				
+				Display.getDefault().asyncExec(new Runnable() {
+				      @Override
+				      public void run() {
 				if (returnCode == 0){
 					MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 					message.setMessage(errorMessage);
@@ -323,6 +346,13 @@ public class WordCountPluginSettings {
 					message.setText("Error");
 					message.open();
 				}
+				      }
+			    });
+				return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
 				
 			}
 		});
