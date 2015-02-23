@@ -18,13 +18,18 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -175,17 +180,42 @@ public class ZldaSettings {
 				}
 				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(Z-LDA)");
-				invokeLDA();
-				appendLog("z-label LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
-					ppService.clean(ppDir);
-					System.out.println("Cleaning up preprocessed files - "+ppDir);
-					appendLog("Cleaning up preprocessed files - "+ppDir);
-					ppService.clean(ppSeedFile);
-					System.out.println("Cleaning up preprocessed seed file - "+ppSeedFile);
-					appendLog("Cleaning up preprocessed seed file - "+ppSeedFile);
-				}
-				appendLog("DONE (Z-LDA)");
+				final String inputDir = ppDir;
+				final String seedFileName = ppSeedFile;
+				final String num = txtNumTopics.getText();
+				final String outputDir = txtOutputDir.getText();
+				
+				// Creating a new Job to do Zlda so that the UI will not freeze
+				Job job = new Job("Zlda Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+				
+					invokeLDA( inputDir, seedFileName,  num,  outputDir);
+					appendLog("z-label LDA completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					
+					Display.getDefault().asyncExec(new Runnable() {
+					      @Override
+					      public void run() {
+					    	  
+					      
+					if (btnPreprocess.getSelection() && ppService.doCleanUp()){
+						ppService.clean(ppDir);
+						System.out.println("Cleaning up preprocessed files - "+ppDir);
+						appendLog("Cleaning up preprocessed files - "+ppDir);
+						ppService.clean(ppSeedFile);
+						System.out.println("Cleaning up preprocessed seed file - "+ppSeedFile);
+						appendLog("Cleaning up preprocessed seed file - "+ppSeedFile);
+					}
+					appendLog("DONE (Z-LDA)");
+					
+					      }
+				    });
+
+					return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+			
 			}
 		});
 		btnCalculate.setText("Calculate");
@@ -227,18 +257,18 @@ public class ZldaSettings {
 		Log.append(context,message);
 	}
 	
-protected void invokeLDA(){
-		File dir = new File(ppDir);
+protected void invokeLDA(String inputDir,String seedFileName, String num, String outputDir){
+		File dir = new File(inputDir);
 		
-		File seedFile = new File(ppSeedFile);
-		int numTopics = Integer.parseInt(txtNumTopics.getText());
+		File seedFile = new File(seedFileName);
+		int numTopics = Integer.parseInt(num);
 		
 		double alphaval = 0.5;
 		double betaval = 0.1;
 		int noOfSamples = 2000;
 		double confidenceValue = 1;
 		
-		runLDA(dir, seedFile, numTopics, noOfSamples, alphaval, betaval, confidenceValue, txtOutputDir.getText());
+		runLDA(dir, seedFile, numTopics, noOfSamples, alphaval, betaval, confidenceValue, outputDir);
 		
 }
 
