@@ -234,7 +234,7 @@ public class NBClassifierSettings {
 				}
 				*/
 				
-				NBClassifier nb = new NBClassifier();
+				final NBClassifier nb = new NBClassifier();
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(nb,iEclipseContext);
 				System.out.println("Processing...");
@@ -434,7 +434,7 @@ public class NBClassifierSettings {
 				}
 				*/
 				
-				NBClassifier nb = new NBClassifier();
+				final NBClassifier nb = new NBClassifier();
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(nb,iEclipseContext);
 				System.out.println("Processing...");
