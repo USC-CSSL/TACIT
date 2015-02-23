@@ -11,7 +11,11 @@ import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -33,6 +37,7 @@ import bsh.EvalError;
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.nbclassifier.process.NBClassifier;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
@@ -156,6 +161,8 @@ public class NBClassifierSettings {
 		btnTest.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				
+
 				String ppDir1 = txtFolderPath1.getText();
 				String ppDir2 = txtFolderPath2.getText();
 				
@@ -230,24 +237,42 @@ public class NBClassifierSettings {
 				NBClassifier nb = new NBClassifier();
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(nb,iEclipseContext);
+				System.out.println("Processing...");
+				appendLog("PROCESSING...(Naive Bayes)");
 				
+				final String fPpDir1 = ppDir1;
+				final String fPpDir2 = ppDir2;
+				final String testPath1 = txtTestPath1.getText();
+				final String testPath2 = txtTestPath2.getText();
+				final String outputPath = txtOutputPath.getText();
+				
+				// Creating a new Job to do NB so that the UI will not freeze
+				Job job = new Job("NB Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+						
+
 				try {
-					System.out.println("Processing...");
-					appendLog("PROCESSING...(Naive Bayes)");
+
 					long startTime = System.currentTimeMillis();
 					//nb.doClassification(ppDir1, ppDir2, txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
-					nb.doClassification(ppDir1, ppDir2, txtTestPath1.getText(), txtTestPath2.getText(), txtOutputPath.getText(), false,false);
+					nb.doClassification(fPpDir1, fPpDir2, testPath1, testPath2, outputPath, false,false);
 					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					
+					Display.getDefault().asyncExec(new Runnable() {
+					      @Override
+					      public void run() {
 					if (btnPreprocess.getSelection() && ppService.doCleanUp()){
-						ppService.clean(ppDir1);
-						System.out.println("Cleaning up preprocessed files - "+ppDir1);
-						appendLog("Cleaning up preprocessed files - "+ppDir1);
-						ppService.clean(ppDir2);
-						System.out.println("Cleaning up preprocessed files - "+ppDir2);
-						appendLog("Cleaning up preprocessed files - "+ppDir2);
+						ppService.clean(fPpDir1);
+						System.out.println("Cleaning up preprocessed files - "+fPpDir1);
+						appendLog("Cleaning up preprocessed files - "+fPpDir1);
+						ppService.clean(fPpDir2);
+						System.out.println("Cleaning up preprocessed files - "+fPpDir2);
+						appendLog("Cleaning up preprocessed files - "+fPpDir2);
 					}
 					appendLog("DONE (Naive Bayes)");
+					      }
+					});
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -255,6 +280,12 @@ public class NBClassifierSettings {
 				} catch (EvalError e1) {
 					e1.printStackTrace();
 				}
+				return Status.OK_STATUS;
+					}
+				};
+				job.setPriority(Job.LONG);
+				job.setUser(true);
+				job.schedule();
 			}
 		});
 		btnTest.setBounds(10, 141, 75, 25);
@@ -359,7 +390,7 @@ public class NBClassifierSettings {
 		btnClassify.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				
+						
 				String ppDir1 = txtFolderPath1.getText();
 				String ppDir2 = txtFolderPath2.getText();
 				
@@ -406,23 +437,40 @@ public class NBClassifierSettings {
 				NBClassifier nb = new NBClassifier();
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(nb,iEclipseContext);
+				System.out.println("Processing...");
+				appendLog("PROCESSING...(Naive Bayes)");
 				
-				try {
-					System.out.println("Processing...");
-					appendLog("PROCESSING...(Naive Bayes)");
-					long startTime = System.currentTimeMillis();
-					//nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
-					nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), false, false);
-					System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					appendLog("DONE");
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (EvalError e1) {
-					e1.printStackTrace();
-				}
+				final String fPpDir1 = ppDir1;
+				final String fPpDir2 = ppDir2;
+				final String cInput = txtCInput.getText();
+				final String cOutput = txtCOutput.getText();
+				final String outputPath = txtOutputPath.getText();
+				
+				// Creating a new Job to do NB so that the UI will not freeze
+				Job job = new Job("NB Job"){
+					protected IStatus run(IProgressMonitor monitor){
+
+					try {
+						long startTime = System.currentTimeMillis();
+						//nb.doValidation(ppDir1, ppDir2, txtCInput.getText(), txtCOutput.getText(), btnStopWords.getSelection(), btnDoLowercase.getSelection());
+						nb.doValidation(fPpDir1, fPpDir2, cInput, cOutput, false, false);
+						System.out.println("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+						appendLog("Naive Bayes Classification completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+						appendLog("DONE");
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (EvalError e1) {
+						e1.printStackTrace();
+					}
+					
+					return Status.OK_STATUS;
+					}
+				};
+				job.setPriority(Job.LONG);
+				job.setUser(true);
+				job.schedule();
 			}
 		});
 		btnClassify.setBounds(10, 141, 75, 25);
@@ -441,21 +489,7 @@ public class NBClassifierSettings {
 	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-		}
+		Log.append(context,message);
 	}
 	
 	private void showError(Shell shell){

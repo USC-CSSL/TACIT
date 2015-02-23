@@ -20,6 +20,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import bsh.EvalError;
 import cc.mallet.topics.tui.Vectors2Topics;
 import edu.usc.cssl.nlputils.plugins.nbclassifier.process.Text2Vectors;
+import edu.usc.cssl.nlputils.utilities.Log;
 
 public class NBClassifier {
 	private StringBuilder readMe = new StringBuilder();
@@ -100,24 +101,7 @@ public class NBClassifier {
 	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
-		if (context == null)
-			return;
-		IEclipseContext parent = context.getParent();
-		//System.out.println(parent.get("consoleMessage"));
-		String currentMessage = (String) parent.get("consoleMessage"); 
-		if (currentMessage==null)
-			parent.set("consoleMessage", message);
-		else {
-			if (currentMessage.equals(message)) {
-				// Set the param to null before writing the message if it is the same as the previous message. 
-				// Else, the change handler will not be called.
-				parent.set("consoleMessage", null);
-				parent.set("consoleMessage", message);
-			}
-			else
-				parent.set("consoleMessage", message);
-			readMe.append(message+"\n");
-		}
+		Log.append(context,message);
 	}
 	
 	public void writeReadMe(String location){
