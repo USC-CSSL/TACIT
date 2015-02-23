@@ -118,7 +118,7 @@ public class WordCountPlugin {
 				
 		for (String inputFile: inputFiles) {
 			String input = inputFile;
-			inputFile = "C://Users//carlosg//Desktop//CSSL//svm//testham//" + inputFile;
+			
 			// Mac cache file filtering
 			if (inputFile.contains("DS_Store"))
 				continue;
@@ -421,7 +421,7 @@ public class WordCountPlugin {
 		}
 		
 		public void writeReadMe(String location){
-			File readme = new File(location+"/README.txt");
+			File readme = new File(location+"_README.txt");
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
 				String plugV = Platform.getBundle("edu.usc.cssl.nlputils.plugins.WordCountPlugin").getHeaders().get("Bundle-Version");
