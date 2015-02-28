@@ -8,7 +8,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -20,6 +24,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -176,9 +181,25 @@ public class CooccurrenceAnalysisSettings {
 					e1.printStackTrace();
 				}
 				}
-				long startTime = System.currentTimeMillis();
-				invokeCooccurrence();
 				
+				final String fppDir = ppDir;
+				final String fppSeedFile = ppSeedFile;
+				final String fOutputDir = txtOutputDir.getText();
+				final String numTopics = txtNumTopics.getText();
+				final String ftxtThreshold = txtThreshold.getText();
+				final boolean fOption = btnOption.getSelection();
+				
+				
+				// Creating a new Job to do COA so that the UI will not freeze
+				Job job = new Job("COA Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+
+				long startTime = System.currentTimeMillis();
+				invokeCooccurrence( fppDir,  fppSeedFile,  fOutputDir,  numTopics,  ftxtThreshold,  fOption);
+				
+				Display.getDefault().asyncExec(new Runnable() {
+				      @Override
+				      public void run() {
 				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
 					ppService.clean(ppDir);
 					System.out.println("Cleaning up preprocessed files - "+ppDir);
@@ -190,6 +211,15 @@ public class CooccurrenceAnalysisSettings {
 				
 				appendLog("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 				appendLog("DONE (Co-occurrence Analysis)");
+				      }
+			    });
+
+				return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+			
 			}
 		});
 		btnCalculate.setText("Co-occurrence Analysis");
@@ -221,10 +251,9 @@ public class CooccurrenceAnalysisSettings {
 	}
 	
 
-protected void invokeCooccurrence( ){
-		
+protected void invokeCooccurrence(String fppDir, String fppSeedFile, String fOutputDir, String numTopics, String ftxtThreshold, boolean fOption ){
 	
-		File dir = new File(ppDir);
+		File dir = new File(fppDir);
 		if(!dir.exists() || !dir.isDirectory())
 		{
 			appendLog("Input Path not correct. Please check and try again. Exiting ..");
@@ -237,20 +266,21 @@ protected void invokeCooccurrence( ){
 			return;
 		}
 		int windowSize = 0;
-		if(!txtNumTopics.getText().equals(""))
-			windowSize = Integer.parseInt(txtNumTopics.getText());
+		if(!numTopics.equals(""))
+			windowSize = Integer.parseInt(numTopics);
 		
 		int threshold = 0;
-		if(!txtThreshold.getText().equals(""))
-			threshold = Integer.parseInt(txtThreshold.getText());
+		if(!ftxtThreshold.equals(""))
+			threshold = Integer.parseInt(ftxtThreshold);
 		
 		boolean buildMatrix = false;
-		if(btnOption.getSelection())
+		if(fOption)
 			buildMatrix = true;
 		
 		//System.out.println("Running Co-occurrence Analysis...");
-		appendLog("Running Co-occurrence Analysis...");
-		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(ppDir, ppSeedFile, windowSize, txtOutputDir.getText(), threshold, buildMatrix);
+		appendLog("Running Co-occurrence Analysis...");		
+		
+		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(fppDir, fppSeedFile, windowSize, fOutputDir, threshold, buildMatrix );
 		if(isSuccess == false)
 		{
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
@@ -259,9 +289,9 @@ protected void invokeCooccurrence( ){
 
 		appendLog("Output for Co-occurrence Analysis");
 		
-		appendLog("Word to word matrix stored in " + txtOutputDir.getText() + File.separator + "word-to-word-matrix.csv" );
-		if(ppSeedFile!= "" && !ppSeedFile.isEmpty() && windowSize !=0)
-			appendLog("Phrases stored in " + txtOutputDir.getText() + File.separator + "phrases.txt" );
+		appendLog("Word to word matrix stored in " + fOutputDir + File.separator + "word-to-word-matrix.csv" );
+		if(fppSeedFile!= "" && !fppSeedFile.isEmpty() && windowSize !=0)
+			appendLog("Phrases stored in " + fOutputDir + File.separator + "phrases.txt" );
 		
 		
 	}

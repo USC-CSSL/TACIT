@@ -10,7 +10,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -135,17 +140,37 @@ public class HierarchicalClusteringSettings {
 					e1.printStackTrace();
 				}
 				}
-				long startTime = System.currentTimeMillis();
 				appendLog("PROCESSING...(Hierarchical Clustering)");
 				isSaveImg = btnImg.getSelection();
-				runClustering();
+				final String fppDir = ppDir;
+				final String fOutputDir = txtOutputDir.getText();
+				final boolean fSaveImg = isSaveImg;
+				
+				// Creating a new Job to do HClustering so that the UI will not freeze
+				Job job = new Job("HCluster Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+						long startTime = System.currentTimeMillis();
+						
+				runClustering(fppDir, fOutputDir, fSaveImg);
 				appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				
+				Display.getDefault().asyncExec(new Runnable() {
+				      @Override
+				      public void run() {
 				if (btnPreprocess.getSelection() && ppService.doCleanUp()){
 					ppService.clean(ppDir);
 					System.out.println("Cleaning up preprocessed files - "+ppDir);
 					appendLog("Cleaning up preprocessed files - "+ppDir);
 				}
 				appendLog("DONE (Hierarchinal Clustering)");
+				      }
+			    });
+				
+				return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
 			}
 		});
 		btnCalculate.setText("Cluster");
@@ -177,11 +202,8 @@ public class HierarchicalClusteringSettings {
 	}
 	
 
-protected void runClustering( ){
-		
-		
-	
-		File dir = new File(ppDir);
+protected void runClustering(String fppDir, String fOutputDir, boolean fSaveImg ){
+		File dir = new File(fppDir);
 		File[] listOfFiles =  dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles){
@@ -198,7 +220,7 @@ protected void runClustering( ){
 		
 		System.out.println("Running Hierarchical Clustering...");
 		appendLog("Running Hierarchical Clustering...");
-		String clusters = HierarchicalClustering.doClustering(inputFiles, txtOutputDir.getText(), isSaveImg);
+		String clusters = HierarchicalClustering.doClustering(inputFiles, fOutputDir, fSaveImg);
 		if(clusters == null)
 		{
 			appendLog("Sorry. Something went wrong with Hierarchical Clustering. Please check your input and try again.\n");
