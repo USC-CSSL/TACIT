@@ -194,7 +194,7 @@ public class CooccurrenceAnalysisSettings {
 				Job job = new Job("COA Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 
-				long startTime = System.currentTimeMillis();
+				final long startTime = System.currentTimeMillis();
 				invokeCooccurrence( fppDir,  fppSeedFile,  fOutputDir,  numTopics,  ftxtThreshold,  fOption);
 				
 				Display.getDefault().asyncExec(new Runnable() {
