@@ -10,7 +10,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -27,11 +30,11 @@ import edu.usc.cssl.nlputils.utilities.Log;
 public class LatinCrawler {
 	private StringBuilder readMe = new StringBuilder();
 	String outputDir;
-	Set<String> authorNames;
+	public Map<String, String> authorNames;
 	Set<String> skipBooks;
 	
 	public LatinCrawler() {
-		authorNames = new HashSet<String>();
+		authorNames = new HashMap<String, String>();
 		//authorUrl = new HashSet<String>();
 		skipBooks = new HashSet<String>();
 		
@@ -65,7 +68,7 @@ public class LatinCrawler {
 	public static void main(String[] args) throws Exception{
 		LatinCrawler lc = new LatinCrawler();
 		lc.outputDir = "/home/niki/Desktop/CSSL/latin/";
-		lc.authorNames.add("Suetonius");
+		lc.authorNames.put("Suetonius","http://www.thelatinlibrary.com/suet.html");
 		//lc.getBooks("Suetonius", "http://www.thelatinlibrary.com/suet.html", "/home/niki/Desktop/CSSL/latin/Suetonius", "Suetonius");
 		//lc.getContent("http://www.thelatinlibrary.com/suetonius/suet.aug.shtml", "Liber XX", "C:/Users/carlosg/Desktop/CSSL/Clusering/latin library/Suetonis/");
 		lc.initialize("/home/niki/Desktop/CSSL/latin/");
@@ -78,7 +81,7 @@ public class LatinCrawler {
 	
 	public void crawl() throws IOException{
 		checkPath(outputDir);
-		appendLog("Loading Authors...");
+		
 		getAllAuthors();
 		
 		callSpecialAuthors("http://www.thelatinlibrary.com/medieval.html", "Medieval Latin");
@@ -106,29 +109,22 @@ public class LatinCrawler {
 		}
 	}	
 	
-	public void getAllAuthors() throws IOException{
+	public void getAuthorsList(String url) throws Exception{
 		int i, size = 0;
-		String name , url;
-		Document doc = Jsoup.connect("http://www.thelatinlibrary.com/").timeout(10*1000).get();
+		String name ;
+		Document doc = Jsoup.connect(url).timeout(10*1000).get();
 		Elements authorsList = doc.getElementsByTag("option");
 		
 		size = authorsList.size();
 		int count = 0;
-		
+		System.out.println("Here");
 		for(i =0;i<size;i++)
 		{
 				name = authorsList.get(i).text();
-				url = "http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value");
-				authorNames.add(name);
+				//url = "http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value");
+				authorNames.put(name,"http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value") );
 				if(skipBooks.contains(name))
 					continue;
-				String aurl = outputDir + File.separator + name;
-				File authorDir = new File(aurl);
-				if(!authorDir.exists()){
-					authorDir.mkdirs();
-				}
-				appendLog("\nExtracting Books of Author  "+ name +"...");
-				getBooks(name, url, aurl, name);
 			 	count++;
 		}
 		
@@ -137,22 +133,32 @@ public class LatinCrawler {
 		for(Element auth : auth2List)
 		{
 			name = auth.text();
-			url = auth.getElementsByTag("a").attr("abs:href");
-			if(authorNames.contains(name))
+			//url = auth.getElementsByTag("a").attr("abs:href");
+			if(authorNames.containsKey(name))
 				continue;
-			authorNames.add(name);
+			authorNames.put(name,auth.getElementsByTag("a").attr("abs:href") );
 			if(skipBooks.contains(name))
 				continue;
-			String aurl = outputDir + File.separator + name;
-			File authorDir = new File(aurl);
-			if(!authorDir.exists()){
-				authorDir.mkdirs();
-			}
-			appendLog("\nExtracting Books of Author  "+ name +"...");
-		 	getBooks(name, url, aurl, name);
 		}
+	}
+	
+	public void getAllAuthors() throws IOException{
+		List<String> authors = (List<String>) authorNames.keySet();
 		
+		for(String name:authors){
+				getSingleAuthor(name, authorNames.get(name));
+		}
 		return;
+	}
+	
+	public void getSingleAuthor(String name, String url) throws IOException{
+		String aurl = outputDir + File.separator + name;
+		File authorDir = new File(aurl);
+		if(!authorDir.exists()){
+			authorDir.mkdirs();
+		}
+		appendLog("\nExtracting Books of Author  "+ name +"...");
+		getBooks(name, url , aurl);
 	}
 	
 	/* The sub libraries*/
@@ -167,9 +173,9 @@ public class LatinCrawler {
 		{
 			name = auth.text();
 			url = auth.getElementsByTag("a").attr("abs:href");
-			if(authorNames.contains(name))
+			if(authorNames.containsKey(name))
 				continue;
-			authorNames.add(name);
+			//authorNames.add(name);
 			if(skipBooks.contains(name))
 				continue;
 			String aurl = output + File.separator + name;
@@ -179,7 +185,7 @@ public class LatinCrawler {
 			}
 			//System.out.println("Extracting Books of Author  "+ name +"...");
 			appendLog("\nExtracting Books of Author  "+ name +"...");
-		 	getBooks(name, url, aurl, name);
+		 	getBooks(name, url, aurl);
 			i++;
 			
 		}
@@ -187,13 +193,16 @@ public class LatinCrawler {
 		return;
 	}
 	
-	private void getBooks(String author, String aurl, String apath, String mainAuthor) throws IOException {
+	/* Get all books of a single author
+	 * Recursive function to trace all books and links of a particular author 
+	 */
+	private void getBooks(String author, String aurl, String apath) throws IOException {
 
 		try{
 			Document doc = Jsoup.connect(aurl).timeout(10*1000).get();
 			Elements subLists = doc.select("div.work");
 			if(subLists != null && subLists.size() > 0){
-				getBooksList(author, aurl, doc, apath, mainAuthor);
+				getBooksList(author, aurl, doc, apath);
 				return;
 			}	
 			
@@ -214,9 +223,9 @@ public class LatinCrawler {
 						continue;
 					if(skipBooks.contains(bookname))
 						continue;
-					if(authorNames.contains(bookname) || (bookname.toLowerCase()).equals(mainAuthor.toLowerCase()))
+					if(authorNames.containsKey(bookname))
 						continue;
-					getBooks(bookname, bookText, apath, mainAuthor);
+					getBooks(bookname, bookText, apath);
 					count++;
 
 				}
@@ -238,7 +247,7 @@ public class LatinCrawler {
 		}
 	}
 
-	private void getBooksList(String author, String aurl, Document doc, String apath, String mainAuthor){
+	private void getBooksList(String author, String aurl, Document doc, String apath){
 		Elements subLists = doc.select("div.work");
 		Elements subHeaders = doc.select("h2.work");
 		int i = 0, size1 = subLists.size(), size2 = subHeaders.size(), j =0;
@@ -259,14 +268,14 @@ public class LatinCrawler {
 						bookname  = bookLink.get(0).text();
 						if(skipBooks.contains(bookname))
 							continue;
-						if(authorNames.contains(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
+						if(authorNames.containsKey(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
 							continue;
 						File authorDir = new File(apath + File.separator + bookname);
 						if(!authorDir.exists()){
 							authorDir.mkdirs();
 						}
 						String apath1 = authorDir.toString();
-						getBooks(bookname, bookText, apath1, mainAuthor);
+						getBooks(bookname, bookText, apath1);
 						j++;
 						continue;
 					}
@@ -300,9 +309,9 @@ public class LatinCrawler {
 							bookname  = bookItem.text();
 							if(skipBooks.contains(bookname))
 								continue;
-							if(authorNames.contains(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
+							if(authorNames.containsKey(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
 								continue;
-							getBooks(bookname, bookText, apath1, mainAuthor);
+							getBooks(bookname, bookText, apath1);
 							count1++;
 						}
 					}

@@ -6,6 +6,8 @@ package edu.usc.cssl.nlputils.plugins.latincrawler.parts;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
@@ -43,7 +45,8 @@ import org.osgi.framework.FrameworkUtil;
 
 public class LatinCrawlerSettings {
 	private Text txtOutput;
-	
+	List<String> selectedAuthors;
+	Combo cmbAuth;
 	
 	@Inject
 	public LatinCrawlerSettings() {
@@ -51,22 +54,22 @@ public class LatinCrawlerSettings {
 	}
 	
 	@PostConstruct
-	public void postConstruct(Composite parent) {
+	public void postConstruct(Composite parent){
 		final Shell shell = parent.getShell();
 		appendLog("Loading Latin Library...");
-		/*
-		String[] booksArray = null;
 
+		appendLog("Loading Authors...");
+		final LatinCrawler crawler = new LatinCrawler();
 		try {
-			booksArray = AvailableRecords.getAllBooks(authors);
-		} catch (IOException e2) {
-			e2.printStackTrace();
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/");
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-
-		
-		*/
-		
 		appendLog("Loading Complete.");
+		
+		/* Selected list of authors to crawl */
+		selectedAuthors = new ArrayList<String>();
+		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 		Label header = new Label(composite, SWT.NONE);
@@ -101,14 +104,46 @@ public class LatinCrawlerSettings {
 		});
 		button.setText("...");
 		
+		appendLog("Selected Authors: ");
+		Label lblAuthor = new Label(composite, SWT.NONE);
+		lblAuthor.setText("Select Author");
+		cmbAuth = new Combo(composite, SWT.NONE);
+		cmbAuth.setEnabled(true);
+		cmbAuth.add("All");
+		System.out.println(crawler.authorNames.size());
+		SortedSet<String> authors = new TreeSet<String>(crawler.authorNames.keySet());
+		for(String auth: authors){
+			cmbAuth.add(auth);
+		}
+		cmbAuth.setText("All");
+		GridData gd_cmbAuth = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		cmbAuth.setLayoutData(gd_cmbAuth);
+	
+		Button bnSelAuth = new Button(composite, SWT.NONE);
+		bnSelAuth.setText("Add Author");
+		bnSelAuth.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				int index = cmbAuth.getSelectionIndex();
+				String selection = cmbAuth.getItem(index);
+				if(selection.equals("All")){
+					selectedAuthors.clear();
+					cmbAuth.setEnabled(false);
+				}else{
+					selectedAuthors.add(selection);
+					appendLog("Author " + selection);
+					cmbAuth.remove(index);
+				}
+			}
+		});
+		
 		Button btnExtract = new Button(composite, SWT.NONE);
 		btnExtract.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-
 				
-				final LatinCrawler crawler = new LatinCrawler();
-				// Injecting the context into Senatecrawler object so that the appendLog function can modify the Context Parameter consoleMessage
+				
+				// Injecting the context into Latincrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(crawler,iEclipseContext);
 				crawler.initialize(txtOutput.getText());
@@ -121,9 +156,17 @@ public class LatinCrawlerSettings {
 						appendLog("PROCESSING...(Latin Crawler)");
 						
 						try {
-							
+						
 							long startTime = System.currentTimeMillis();
-							crawler.crawl();
+							if(selectedAuthors.size() <= 0){
+								appendLog("Running Latin Crawler for all authors ");
+								crawler.crawl();
+							}
+							else{
+								for(String auth: selectedAuthors){
+									crawler.getSingleAuthor(auth, crawler.authorNames.get(auth));
+								}
+							}
 							appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 						} catch (Exception e1) {
 							e1.printStackTrace();
