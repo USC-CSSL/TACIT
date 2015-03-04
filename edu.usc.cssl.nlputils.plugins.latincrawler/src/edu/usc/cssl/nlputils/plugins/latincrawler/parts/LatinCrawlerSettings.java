@@ -61,7 +61,12 @@ public class LatinCrawlerSettings {
 		appendLog("Loading Authors...");
 		final LatinCrawler crawler = new LatinCrawler();
 		try {
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/");
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/", false);
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/medieval.html", true);
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/christian.html", true);
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/neo.html", true);
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/misc.html", true);
+			crawler.getAuthorsList("http://www.thelatinlibrary.com/ius.html", true);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -153,7 +158,7 @@ public class LatinCrawlerSettings {
 				Job job = new Job("Crawler Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 					
-						appendLog("PROCESSING...(Latin Crawler)");
+						appendLog("\nPROCESSING...(Latin Crawler)");
 						
 						try {
 						
@@ -166,6 +171,7 @@ public class LatinCrawlerSettings {
 								for(String auth: selectedAuthors){
 									crawler.getSingleAuthor(auth, crawler.authorNames.get(auth));
 								}
+								selectedAuthors.clear();
 							}
 							appendLog("Extraction completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 						} catch (Exception e1) {
