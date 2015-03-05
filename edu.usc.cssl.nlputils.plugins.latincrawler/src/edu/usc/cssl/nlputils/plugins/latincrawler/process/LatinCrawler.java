@@ -77,29 +77,7 @@ public class LatinCrawler {
 	
 	public void initialize(String outputDir){
 		this.outputDir = outputDir;	
-	}
-	
-	public void crawl() throws IOException{
 		checkPath(outputDir);
-		
-		getAllAuthors();
-		
-		callSpecialAuthors("http://www.thelatinlibrary.com/medieval.html", "Medieval Latin");
-		callSpecialAuthors("http://www.thelatinlibrary.com/christian.html", "Christian Latin");
-		callSpecialAuthors("http://www.thelatinlibrary.com/neo.html", "Neo-Latin");
-		callSpecialAuthors("http://www.thelatinlibrary.com/misc.html", "Miscellany");
-		callSpecialAuthors("http://www.thelatinlibrary.com/ius.html", "Ius Romanum");
-
-		//writeReadMe(outputDir);
-
-	}
-	
-	private void callSpecialAuthors(String url, String name) throws IOException{
-		File authorDir = new File(outputDir + File.separator + name);
-		if(!authorDir.exists()){
-			authorDir.mkdirs();
-		}
-		getAllSubAuthors(url, outputDir + File.separator + name);
 	}
 	
 	private void checkPath(String outputDir) {
@@ -107,28 +85,52 @@ public class LatinCrawler {
 		if (!outputPath.exists()){
 			outputPath.mkdirs();
 		}
-	}	
+	}
 	
-	public void getAuthorsList(String url) throws Exception{
+	public void crawl() throws IOException{
+		//checkPath(outputDir);
+		
+		getAllAuthors();
+		
+		//callSpecialAuthors("http://www.thelatinlibrary.com/medieval.html", "Medieval Latin");
+		//callSpecialAuthors("http://www.thelatinlibrary.com/christian.html", "Christian Latin");
+		//callSpecialAuthors("http://www.thelatinlibrary.com/neo.html", "Neo-Latin");
+	//	callSpecialAuthors("http://www.thelatinlibrary.com/misc.html", "Miscellany");
+	//	callSpecialAuthors("http://www.thelatinlibrary.com/ius.html", "Ius Romanum");
+
+		//writeReadMe(outputDir);
+
+	}
+	
+
+	
+	public void getAuthorsList(String url, boolean isSubAuthor) throws Exception{
 		int i, size = 0;
 		String name ;
+		
+	
 		Document doc = Jsoup.connect(url).timeout(10*1000).get();
+		if(!isSubAuthor){
 		Elements authorsList = doc.getElementsByTag("option");
 		
 		size = authorsList.size();
 		int count = 0;
-		System.out.println("Here");
 		for(i =0;i<size;i++)
 		{
 				name = authorsList.get(i).text();
 				//url = "http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value");
-				authorNames.put(name,"http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value") );
 				if(skipBooks.contains(name))
 					continue;
+				authorNames.put(name,"http://www.thelatinlibrary.com/" + authorsList.get(i).attr("value") );
 			 	count++;
 		}
+		}
 		
-		Element secondList = doc.getElementsByTag("table").get(1);
+		Element secondList = null;
+		if(isSubAuthor)
+			secondList = doc.getElementsByTag("table").get(0);
+		else
+			 secondList = doc.getElementsByTag("table").get(1);
 		Elements auth2List = secondList.getElementsByTag("td");
 		for(Element auth : auth2List)
 		{
@@ -136,15 +138,14 @@ public class LatinCrawler {
 			//url = auth.getElementsByTag("a").attr("abs:href");
 			if(authorNames.containsKey(name))
 				continue;
-			authorNames.put(name,auth.getElementsByTag("a").attr("abs:href") );
 			if(skipBooks.contains(name))
 				continue;
+			authorNames.put(name,auth.getElementsByTag("a").attr("abs:href") );
 		}
 	}
 	
 	public void getAllAuthors() throws IOException{
 		List<String> authors = (List<String>) authorNames.keySet();
-		
 		for(String name:authors){
 				getSingleAuthor(name, authorNames.get(name));
 		}
@@ -161,37 +162,7 @@ public class LatinCrawler {
 		getBooks(name, url , aurl);
 	}
 	
-	/* The sub libraries*/
-	public void getAllSubAuthors(String connectUrl, String output) throws IOException{
-		int i = 0, size = 0;
-		String name, url;
-		Document doc = Jsoup.connect(connectUrl).timeout(10*1000).get();
 	
-		Element secondList = doc.getElementsByTag("table").get(0);
-		Elements auth2List = secondList.getElementsByTag("td");
-		for(Element auth : auth2List)
-		{
-			name = auth.text();
-			url = auth.getElementsByTag("a").attr("abs:href");
-			if(authorNames.containsKey(name))
-				continue;
-			//authorNames.add(name);
-			if(skipBooks.contains(name))
-				continue;
-			String aurl = output + File.separator + name;
-			File authorDir = new File(aurl);
-			if(!authorDir.exists()){
-				authorDir.mkdirs();
-			}
-			//System.out.println("Extracting Books of Author  "+ name +"...");
-			appendLog("\nExtracting Books of Author  "+ name +"...");
-		 	getBooks(name, url, aurl);
-			i++;
-			
-		}
-		
-		return;
-	}
 	
 	/* Get all books of a single author
 	 * Recursive function to trace all books and links of a particular author 
@@ -309,7 +280,7 @@ public class LatinCrawler {
 							bookname  = bookItem.text();
 							if(skipBooks.contains(bookname))
 								continue;
-							if(authorNames.containsKey(bookname)|| (bookname.toLowerCase()).equals(author.toLowerCase()))
+							if(authorNames.containsKey(bookname))
 								continue;
 							getBooks(bookname, bookText, apath1);
 							count1++;
@@ -371,8 +342,8 @@ public class LatinCrawler {
 		BufferedWriter csvWriter= null;
 		try{
 			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
-		   Document doc = Jsoup.parse(new URL(bookUri).openStream(), "UTF-16", bookUri);
-		   Elements content = doc.getElementsByTag("p"); 
+			Document doc = Jsoup.parse(new URL(bookUri).openStream(), "UTF-16", bookUri);
+			Elements content = doc.getElementsByTag("p"); 
 				for (Element c : content){
 					csvWriter.write(c.text()+"\n");
 				}
@@ -385,7 +356,49 @@ public class LatinCrawler {
 			}
 	}
 
+	/* The sub libraries*/
+	/*
+	public void getAllSubAuthors(String connectUrl, String output) throws IOException{
+		int i = 0, size = 0;
+		String name, url;
+		Document doc = Jsoup.connect(connectUrl).timeout(10*1000).get();
 	
+		Element secondList = doc.getElementsByTag("table").get(0);
+		Elements auth2List = secondList.getElementsByTag("td");
+		for(Element auth : auth2List)
+		{
+			name = auth.text();
+			url = auth.getElementsByTag("a").attr("abs:href");
+			if(authorNames.containsKey(name))
+				continue;
+			//authorNames.add(name);
+			if(skipBooks.contains(name))
+				continue;
+			String aurl = output + File.separator + name;
+			File authorDir = new File(aurl);
+			if(!authorDir.exists()){
+				authorDir.mkdirs();
+			}
+			//System.out.println("Extracting Books of Author  "+ name +"...");
+			appendLog("\nExtracting Books of Author  "+ name +"...");
+		 	getBooks(name, url, aurl);
+			i++;
+			
+		}
+		
+		return;
+	}*/
+	/*
+	private void callSpecialAuthors(String url, String name) throws IOException{
+		File authorDir = new File(outputDir + File.separator + name);
+		if(!authorDir.exists()){
+			authorDir.mkdirs();
+		}
+		//getAllSubAuthors(url, outputDir + File.separator + name);
+	}
+	
+	
+	}*/	
 	
 	@Inject IEclipseContext context;	
 	private void appendLog(String message){
