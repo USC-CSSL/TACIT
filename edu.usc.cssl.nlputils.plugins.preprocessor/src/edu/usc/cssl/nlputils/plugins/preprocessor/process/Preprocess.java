@@ -136,9 +136,18 @@ public class Preprocess {
 			
 			int dindex = inputFile.lastIndexOf('.');
 			int findex = inputFile.lastIndexOf(System.getProperty("file.separator"));
-			String fname = inputFile.substring(findex,dindex);
-			String ext = inputFile.substring(dindex+1);
-			File oFile = new File(outputPath+System.getProperty("file.separator")+fname+suffix+"."+ext);
+			
+			String fname, ext;
+			
+			if(dindex>findex){
+				fname = inputFile.substring(findex,dindex);
+				ext = "."+inputFile.substring(dindex+1);
+			}
+			else{
+				fname = inputFile.substring(findex);
+				ext = "";
+			}
+			File oFile = new File(outputPath+System.getProperty("file.separator")+fname+suffix+ext);
 			System.out.println("Creating out file "+oFile.getAbsolutePath());
 			appendLog("Creating out file "+oFile.getAbsolutePath());
 			
