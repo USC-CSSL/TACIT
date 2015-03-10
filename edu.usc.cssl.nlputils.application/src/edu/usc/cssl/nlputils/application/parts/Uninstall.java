@@ -104,6 +104,7 @@ public class Uninstall {
 		btnRadioButton_1.setText("Category");
 
 		Button btnRadioButton_2 = new Button(composite, SWT.RADIO);
+		btnRadioButton_2.setEnabled(false);
 		btnRadioButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -158,7 +159,9 @@ public class Uninstall {
 		for (IInstallableUnit installed : installedSoftware) {
 
 			TreeItem treeItem = new TreeItem(tree, 0);
-			treeItem.setText(installed.getId());
+			if(!(installed.getId().equals("NLPUtils") || 
+					installed.getId().equals("edu.usc.cssl.nlputils.application.product")))
+				treeItem.setText(installed.getId());
 		}
 	}
 
