@@ -110,6 +110,7 @@ public class SenateCrawlerSettings {
 		lblFrom.setText("From");
 
 		final Combo cmbSenator = new Combo(composite, SWT.NONE);
+		cmbSenator.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		cmbSenator.setBounds(89, 100, 300, 23);
 //		cmbSenator.setItems(allSenators);
 //		cmbSenator.add("All Senators", 0);
@@ -121,6 +122,7 @@ public class SenateCrawlerSettings {
 		cmbSenator.select(0);
 		
 		final Combo cmbCongress = new Combo(composite, SWT.NONE);
+		cmbCongress.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		cmbCongress.setBounds(89, 66, 101, 20);
 		cmbCongress.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -303,6 +305,7 @@ public class SenateCrawlerSettings {
 				      public void run() {
 				    	cmbCongress.setItems(congresses);
 				  		cmbCongress.select(0);
+				  		cmbCongress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 				      }});
 				
 				appendLog("Loading Senators...");
@@ -325,6 +328,7 @@ public class SenateCrawlerSettings {
 				  		cmbSenator.add("All Republicans", 2);
 				  		cmbSenator.add("All Independents", 3);
 				  		cmbSenator.select(0);
+				  		cmbSenator.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 				      }
 				});
 				
