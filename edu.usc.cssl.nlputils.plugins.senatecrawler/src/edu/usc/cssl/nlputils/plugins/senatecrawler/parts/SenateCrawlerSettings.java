@@ -193,7 +193,6 @@ public class SenateCrawlerSettings {
 		btnExtract.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				Job job;
 				if (btnExtract.getText().equals("Crawl"))
 					senateCrawler = new SenateCrawler();
 				
@@ -229,7 +228,7 @@ public class SenateCrawlerSettings {
 				senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
 				
 				// Creating a new Job to do crawling so that the UI will not freeze
-				job = new Job("Crawler Job"){
+				Job job = new Job("Crawler Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 					
 						long startTime = System.currentTimeMillis();
