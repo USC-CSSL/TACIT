@@ -26,7 +26,7 @@ import org.jsoup.select.Elements;
 
 import edu.usc.cssl.nlputils.utilities.Log;
 
-public class SenateCrawler {
+public class SenateCrawler implements Runnable {
 	private StringBuilder readMe = new StringBuilder();
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
 	String dateFrom, dateTo;
@@ -36,6 +36,8 @@ public class SenateCrawler {
 	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
 	private String senText;
 	private int congressNum;
+	volatile boolean terminate = false; 
+	
 	//Feinstein test
 	//private boolean Feinstein = false;
 	
@@ -79,8 +81,10 @@ public class SenateCrawler {
 				getAll(congressNum,senText);
 			else {
 				getCongresses();
-				for (int congress:congresses)
-					getAll(congress,senText);
+				for (int congress:congresses){
+					if(!terminate)
+						getAll(congress,senText);
+				}
 			}
 		} 
 		
@@ -88,9 +92,11 @@ public class SenateCrawler {
 			if (congressNum == -1){
 				getCongresses();
 				for (int congress: congresses){
-					System.out.println("Extracting Records from Congress "+congress+"...");
-					appendLog("Extracting Records from Congress "+congress);
-					searchSenatorRecords(congress,senText);
+					if(!terminate){
+						System.out.println("Extracting Records from Congress "+congress+"...");
+						appendLog("Extracting Records from Congress "+congress);
+						searchSenatorRecords(congress,senText);
+					}
 				}
 			} else {
 				System.out.println("Extracting Records from Congress "+congressNum+"...");
@@ -109,6 +115,8 @@ public class SenateCrawler {
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
 		
 		for (Element senItem : senList){
+			if(terminate)
+				return;
 			String senator = senItem.text().replace("\u00A0", " ");
 			/*Feinstein test*/
 			//if (senator.contains("Feinstein"))
@@ -215,28 +223,15 @@ public class SenateCrawler {
 		}
 		
 		links = relevantLinks;
-//		if (links.size()>6){
-//		// Removing unnecessary links
-//		links.remove(0);
-//		links.remove(0);
-//		links.remove(0);
-//		
-//		// Remove the bottom links that pop up when the number of rows is above 20
-//		if (links.size()>20){
-//			links.remove(links.size()-1);
-//			links.remove(links.size()-1);
-//			links.remove(links.size()-1);
-//		}
-//		} else {
-//			System.out.println("No records found.");
-//			return;
-//		}
+		
 		String senatorName = senText.split("\\(")[0].trim();
 		String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
 		
 		int count = 0;
 		// Process each search result
 		for (Element link : links){
+			if (terminate)
+				return;
 			// Max Docs for each senator
 			if (maxDocs==-1)
 				count=-2000;
@@ -378,5 +373,18 @@ public class SenateCrawler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void run() {
+		try {
+			crawl();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void terminate(){
+		this.terminate = true;
 	}
 }

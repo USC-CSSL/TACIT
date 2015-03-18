@@ -45,11 +45,7 @@ public class SenateCrawlerSettings {
 	private Text txtOutput;
 	String[] allSenators;
 	String[] congresses;
-	
-	@Inject
-	public SenateCrawlerSettings() {
-		
-	}
+	SenateCrawler senateCrawler;
 
 	// IStylingEngine is injected
 	@Inject IStylingEngine style_engine;
@@ -197,10 +193,21 @@ public class SenateCrawlerSettings {
 		btnExtract.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				Job job;
+				if (btnExtract.getText().equals("Crawl"))
+					senateCrawler = new SenateCrawler();
+				
+				if(btnExtract.getText().equals("Stop")){
+					System.out.println("Cancelling the job");
+					appendLog("Cancelling the job");
+					senateCrawler.terminate();
+					btnExtract.setText("Crawl");
+					return;
+				}
 				int maxDocs = -1;
 				if (!txtMaxDocs.getText().equals(""))
 					maxDocs = Integer.parseInt(txtMaxDocs.getText().trim());
-				final SenateCrawler senateCrawler = new SenateCrawler();
+				
 				// Injecting the context into Senatecrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(senateCrawler,iEclipseContext);
@@ -222,26 +229,38 @@ public class SenateCrawlerSettings {
 				senateCrawler.initialize(maxDocs, cNum, senator, dateFrom, dateTo, txtOutput.getText());
 				
 				// Creating a new Job to do crawling so that the UI will not freeze
-				Job job = new Job("Crawler Job"){
+				job = new Job("Crawler Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 					
 						long startTime = System.currentTimeMillis();
 						appendLog("PROCESSING...(Senate Crawler)");
+						Thread crawlerThread = new Thread(senateCrawler);
+//						try {
+//							senateCrawler.crawl();
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
 						try {
-							senateCrawler.crawl();
-						} catch (IOException e) {
+							crawlerThread.start();
+							crawlerThread.join();
+						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						
 						appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 						appendLog("DONE (Senate Crawler)");
+						
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								btnExtract.setText("Crawl");
+							}
+						});
 						
 					return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
 				job.schedule();
-
+				btnExtract.setText("Stop");
 			}
 		});
 		btnExtract.setBounds(10, 320, 75, 25);
