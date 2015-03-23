@@ -51,7 +51,7 @@ public class CooccurrenceAnalysisSettings {
 		final Shell shell = parent.getShell();
 		parent.setLayout(new GridLayout(1, false));
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 		Label header = new Label(composite, SWT.NONE);
 		header.setImage(ImageDescriptor.createFromURL(
 				FileLocator.find(FrameworkUtil.getBundle(this.getClass()),
@@ -60,10 +60,14 @@ public class CooccurrenceAnalysisSettings {
 		for(int i=1; i<=5; i++){
 			new Label(composite, SWT.NONE);
 		}
-		GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 700;
-		gd_composite.heightHint = 477;
-		composite.setLayoutData(gd_composite);
+		//GridData gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		//gd_composite.widthHint = 700;
+		//gd_composite.heightHint = 477;
+		//composite.setLayoutData(gd_composite);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		
+		
 		
 		Label lblNewLabel = new Label(composite, SWT.NONE);
 		lblNewLabel.setText("Input Path");
@@ -84,7 +88,8 @@ public class CooccurrenceAnalysisSettings {
 			}
 		});
 		button.setText("...");
-		
+		btnPreprocess = new Button(composite, SWT.CHECK);
+		btnPreprocess.setText("Preprocess");
 		
 		lblSeedFile = new Label(composite, SWT.NONE);
 		lblSeedFile.setText("Word File");
@@ -108,17 +113,26 @@ public class CooccurrenceAnalysisSettings {
 		});
 		button_2.setText("...");
 		
+		new Label(composite, SWT.NONE);
+		
+		
 		lblNumberOfTopics = new Label(composite, SWT.NONE);
 		lblNumberOfTopics.setText("Window Size");
 		
 		txtNumTopics = new Text(composite, SWT.BORDER);
 		new Label(composite, SWT.NONE);
 		
+		new Label(composite, SWT.NONE);
+		
+		
 		lblThreshold = new Label(composite, SWT.NONE);
 		lblThreshold.setText("Threshold");
 		
 		txtThreshold = new Text(composite, SWT.BORDER);
 		new Label(composite, SWT.NONE);
+		
+		new Label(composite, SWT.NONE);
+		
 		
 		lblOutputPath = new Label(composite, SWT.NONE);
 		lblOutputPath.setText("Output Path");
@@ -140,14 +154,14 @@ public class CooccurrenceAnalysisSettings {
 		});
 		button_3.setText("...");
 		
-		btnPreprocess = new Button(composite, SWT.CHECK);
-		btnPreprocess.setText("Preprocess");
 		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
+		
 		
 		btnOption = new Button(composite, SWT.CHECK);
 		btnOption.setText("Build Co-occurrence Matrix");
 		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		
 		
 		Button btnCalculate = new Button(composite, SWT.NONE);
 		btnCalculate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
