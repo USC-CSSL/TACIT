@@ -4,7 +4,6 @@ Bundle-Name: Application
 Bundle-SymbolicName: edu.usc.cssl.nlputils.application;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Require-Bundle: javax.inject;bundle-version="1.0.0",
- org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.jface,
@@ -17,7 +16,12 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.ramo.klevis.p2.core.service,
  org.eclipse.equinox.p2.engine,
  org.eclipse.equinox.p2.metadata,
- edu.usc.cssl.nlputils.plugins.preprocessorService;bundle-version="0.0.1"
+ edu.usc.cssl.nlputils.plugins.preprocessorService;bundle-version="0.0.1",
+ org.eclipse.core.runtime;bundle-version="3.10.0",
+ org.eclipse.ui.intro.universal;bundle-version="3.2.701",
+ org.eclipse.ui.intro;bundle-version="3.4.200",
+ org.eclipse.ui.forms;bundle-version="3.6.100",
+ org.eclipse.ui
 Import-Package: javax.annotation;version="1.0.0",
  org.eclipse.equinox.p2.core;version="2.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

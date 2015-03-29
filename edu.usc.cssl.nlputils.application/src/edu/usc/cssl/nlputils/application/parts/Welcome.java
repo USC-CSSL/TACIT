@@ -13,10 +13,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -52,6 +51,8 @@ public class Welcome {
 				.createFromFile(Welcome.class, "/icons/backward_nav.gif"));
 		ir.put(NlpUtilsProductConstant.IMAGE_FRONT, ImageDescriptor
 				.createFromFile(Welcome.class, "/icons/step_current.gif"));
+		ir.put(NlpUtilsProductConstant.IMAGE_EXEC, ImageDescriptor
+				.createFromFile(Welcome.class, "/icons/nav_go.gif"));
 
 		/*
 		 * Create toolbar to group items
@@ -91,28 +92,32 @@ public class Welcome {
 		txtAddress.setText(NlpUtilsProductConstant.INIT_URL);
 		txtAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
-
+		// adding handler to go if enter key or F5 is pressed
+		txtAddress.addKeyListener(new KeyAdapter() {
+		      public void keyPressed(KeyEvent event) {
+		        switch (event.keyCode) {
+		        case SWT.CR:
+		        	browser.setUrl(txtAddress.getText());
+		        case SWT.F5:
+		        	browser.setUrl(txtAddress.getText());
+		          break;
+		        }
+		      }
+		    });
 	    Button btnGo = new Button(parent, SWT.NONE);
-		btnGo.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				browser.setUrl(txtAddress.getText());
-			}
-		});
 		btnGo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				browser.setUrl(txtAddress.getText());
 			}
 		});
-		currentShell.setDefaultButton(btnGo);
 		btnGo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				browser.setUrl(txtAddress.getText());
 			}
 		});
-		btnGo.setText("Go");
+		btnGo.setImage(ir.get(NlpUtilsProductConstant.IMAGE_EXEC));
 		browser = new Browser(parent, SWT.NONE);
 		GridData gd_browser = new GridData(SWT.LEFT, SWT.CENTER, true, true, 4,
 				1);

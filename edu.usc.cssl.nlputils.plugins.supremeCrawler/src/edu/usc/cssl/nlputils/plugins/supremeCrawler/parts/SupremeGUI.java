@@ -2,9 +2,11 @@
 package edu.usc.cssl.nlputils.plugins.supremeCrawler.parts;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.inject.Inject;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,23 +17,26 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.FrameworkUtil;
 
+import edu.usc.cssl.nlputils.plugins.supremeCrawler.process.ISupremeCrawlerConstants;
+import edu.usc.cssl.nlputils.plugins.supremeCrawler.process.SupremCrawlerFilter;
 import edu.usc.cssl.nlputils.plugins.supremeCrawler.process.SupremeCrawler;
 import edu.usc.cssl.nlputils.utilities.Log;
 
@@ -61,10 +66,12 @@ public class SupremeGUI {
 		Button btnCases = new Button(parent, SWT.RADIO);
 		btnCases.setSelection(true);
 		btnCases.setText("Term");
+		btnCases.setData("cases");
 		new Label(parent, SWT.NONE);
 		
 		Button btnIssues = new Button(parent, SWT.RADIO);
 		btnIssues.setText("Issues");
+		btnIssues.setData("issues");
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
@@ -84,9 +91,7 @@ public class SupremeGUI {
 		GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, false, false, 13, 1);
 		gd_combo.widthHint = 60;
 		combo.setLayoutData(gd_combo);
-		appendLog("Loading Filters...");
-		combo.setItems(SupremeCrawler.filters("cases"));
-		combo.select(0);
+		fireFilterEvent((String) btnCases.getData(), combo);
 		
 		Label lblOutputDirectory = new Label(parent, SWT.NONE);
 		lblOutputDirectory.setText("Output Directory");
@@ -142,15 +147,17 @@ public class SupremeGUI {
 					return;
 				}
 				appendLog("Crawling...");
-				String f = combo.getText();
-				if(f.equals("All")){
+				String selectedFilterValue = combo.getText();
+				if(selectedFilterValue.equals("All")){
 					if(btnCases.getSelection())
-						f = "/cases";
+						selectedFilterValue = "/cases";
 					else
-						f = "/issues";
+						selectedFilterValue = "/issues";
 				}
 				long startTime = System.currentTimeMillis();
-				SupremeCrawler sc = new SupremeCrawler(f, txtOutput.getText(), btnTruncate.getSelection(), btnDownloadAudio.getSelection());
+				SupremeCrawler sc = new SupremeCrawler(selectedFilterValue, txtOutput.getText(),ISupremeCrawlerConstants.CRAWLER_URL);
+				sc.setDownloadAudio(btnDownloadAudio.getSelection());
+                sc.setTruncate(btnTruncate.getSelection());
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(sc,iEclipseContext);
 				
@@ -197,18 +204,51 @@ public class SupremeGUI {
 		btnCases.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				appendLog("Loading Filters...");
-				System.out.println("Term is "+btnCases.getSelection());
 				if(btnCases.getSelection())
-					combo.setItems(SupremeCrawler.filters("cases"));
+					fireFilterEvent((String) btnCases.getData(), combo);
 				else
-					combo.setItems(SupremeCrawler.filters("issues"));
+					fireFilterEvent((String) btnIssues.getData(), combo);
 				combo.select(0);
 			}
 		});
 		
 		
 	}
+	
+	private void fireFilterEvent(String segment,final Combo combo){
+		Job loadFilters = new Job("Load Filter values") {
+
+			private String[] comboLists;
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SupremCrawlerFilter sFilter = new SupremCrawlerFilter(
+						ISupremeCrawlerConstants.CRAWLER_URL);
+					List<String> items;
+					try {
+						items = sFilter.filters(segment);
+					} catch (IOException e) {
+						items = new ArrayList<String>();
+						items.add("Not able to retrieve list !!");
+					}
+					comboLists = new String[items.size()];
+					comboLists = items.toArray(comboLists);
+					Display.getDefault().asyncExec(new Runnable() {
+						
+						@Override
+						public void run() {
+						combo.setItems(comboLists);
+						combo.select(0);
+							
+						}
+					});
+					return Status.OK_STATUS;
+					
+			}
+			};
+			loadFilters.schedule();
+	}
+
 	
 	@Inject IEclipseContext context;
 	private void appendLog(String message){
