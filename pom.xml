@@ -53,9 +53,12 @@
 		</repository>
 	</repositories>
 	<modules>
+	        
 		<module>eclipse-repository</module>
 		<module>org.ramo.klevis.p2.core.service</module>
 		<module>edu.usc.cssl.nlputils.application</module>
+		
+		        <!--   development plug-ins starts -->
 		<module>edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis</module>
 		<module>edu.usc.cssl.nlputils.HierarchicalClustering</module>
 		<module>edu.usc.cssl.nlputils.plugins.KMeansClustering</module>
@@ -72,6 +75,11 @@
 		<module>edu.usc.cssl.nlputils.plugins.supremeCrawler</module>
 		<module>edu.usc.cssl.nlputils.plugins.weightedCount</module>
 		<module>edu.usc.cssl.nlputils.utilities</module>
+			<!--   development plug-ins ends -->
+			
+			<!--   test plug-ins starts -->
+		<module>edu.usc.cssl.nlputils.plugins.supremecrawler.test</module>
+			<!--   test plug-ins ends -->
 		<!--<module>edu.usc.cssl.nlputils.plugins.zlda2</module>-->
 	</modules>
 	<build>
