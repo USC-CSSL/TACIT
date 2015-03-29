@@ -5,8 +5,8 @@ package edu.usc.cssl.nlputils.plugins.senatecrawler.parts;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,27 +18,26 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Combo;
+import org.osgi.framework.FrameworkUtil;
 
 import edu.usc.cssl.nlputils.plugins.senatecrawler.process.AvailableRecords;
 import edu.usc.cssl.nlputils.plugins.senatecrawler.process.SenateCrawler;
 import edu.usc.cssl.nlputils.utilities.Log;
-
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.osgi.framework.FrameworkUtil;
 
 public class SenateCrawlerSettings {
 	private Text txtMaxDocs;
@@ -189,7 +188,7 @@ public class SenateCrawlerSettings {
 		
 		
 		
-		Button btnExtract = new Button(composite, SWT.NONE);
+		final Button btnExtract = new Button(composite, SWT.NONE);
 		btnExtract.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
