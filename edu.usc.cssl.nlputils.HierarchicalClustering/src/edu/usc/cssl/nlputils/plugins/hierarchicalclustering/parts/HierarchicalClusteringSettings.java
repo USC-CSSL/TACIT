@@ -235,7 +235,14 @@ public class HierarchicalClusteringSettings {
 	
 
 protected String runClustering(String fppDir, String fOutputDir, boolean fSaveImg ){
+		
 		File dir = new File(fppDir);
+		File op = new File(fOutputDir);
+		if(!dir.exists() || !dir.isDirectory() || !op.exists()){
+			appendLog("Please select correct directory on which to run Hierarchical Clustering");
+			return null;
+		}
+			
 		File[] listOfFiles =  dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles){
