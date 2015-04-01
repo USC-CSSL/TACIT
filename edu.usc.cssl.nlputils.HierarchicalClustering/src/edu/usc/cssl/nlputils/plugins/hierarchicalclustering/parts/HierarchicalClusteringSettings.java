@@ -1,6 +1,8 @@
 
 package edu.usc.cssl.nlputils.plugins.hierarchicalclustering.parts;
 
+import java.awt.Container;
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.swing.JFrame;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,8 +22,11 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,6 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.FrameworkUtil;
 
+import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
 import edu.usc.cssl.nlputils.application.handlers.GlobalPresserSettings;
 import edu.usc.cssl.nlputils.plugins.hierarchicalclustering.process.HierarchicalClustering;
 import edu.usc.cssl.nlputils.plugins.preprocessorService.services.PreprocessorService;
@@ -149,10 +156,10 @@ public class HierarchicalClusteringSettings {
 				// Creating a new Job to do HClustering so that the UI will not freeze
 				Job job = new Job("HCluster Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
-						long startTime = System.currentTimeMillis();
+				final long startTime = System.currentTimeMillis();
 						
-				runClustering(fppDir, fOutputDir, fSaveImg);
-				appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+				final String clusters = runClustering(fppDir, fOutputDir, fSaveImg);
+				
 				
 				Display.getDefault().asyncExec(new Runnable() {
 				      @Override
@@ -162,6 +169,31 @@ public class HierarchicalClusteringSettings {
 					System.out.println("Cleaning up preprocessed files - "+ppDir);
 					appendLog("Cleaning up preprocessed files - "+ppDir);
 				}
+				  /*Shell shell = new Shell(Display.getCurrent());
+					ScrolledComposite sc = new ScrolledComposite(shell, SWT.H_SCROLL| SWT.V_SCROLL);
+					
+					Composite child = new Composite(sc, SWT.NONE);
+				    child.setLayout(new FillLayout());
+				    HierarchyVisualizer tv = new HierarchyVisualizer(clusters);
+				   
+				   
+				      Frame f = SWT_AWT.new_Frame(child);
+				      f.add(tv);
+				
+				      
+				 
+				    sc.setContent(child);
+
+				    // Set the minimum size
+				    sc.setMinSize(400, 400);
+
+				    // Expand both horizontally and vertically
+				    sc.setExpandHorizontal(true);
+				    sc.setExpandVertical(true);
+				    shell.open();
+					*/
+					appendLog("Hierarchical Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					
 				appendLog("DONE (Hierarchinal Clustering)");
 				      }
 			    });
@@ -202,7 +234,7 @@ public class HierarchicalClusteringSettings {
 	}
 	
 
-protected void runClustering(String fppDir, String fOutputDir, boolean fSaveImg ){
+protected String runClustering(String fppDir, String fOutputDir, boolean fSaveImg ){
 		File dir = new File(fppDir);
 		File[] listOfFiles =  dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
@@ -214,7 +246,7 @@ protected void runClustering(String fppDir, String fOutputDir, boolean fSaveImg 
 			}
 		if(inputFiles.size() == 0){
 			appendLog("Please select at least one file on which to run Hierarchical Clustering");
-			return;
+			return null;
 		}
 		
 		
@@ -224,15 +256,20 @@ protected void runClustering(String fppDir, String fOutputDir, boolean fSaveImg 
 		if(clusters == null)
 		{
 			appendLog("Sorry. Something went wrong with Hierarchical Clustering. Please check your input and try again.\n");
-			return;
+			return null;
 		}
 
 		appendLog("Output for Hierarchical Clustering");
+		appendLog("Mapping of document ID to actual names");
+		for(int i=0;i<inputFiles.size();i++){
+			appendLog((i+1) + " " + inputFiles.get(i).getName() );
+		}
 		appendLog("Clusters formed: \n");
 		
 		appendLog(clusters);
 		appendLog("Saving the output to cluster.txt");
+	
 		appendLog("\nDone Hierarchical Clustering...");
-		
+		return clusters;
 	}
 }

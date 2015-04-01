@@ -1,6 +1,8 @@
 package edu.usc.cssl.nlputils.plugins.hierarchicalclustering.process;
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,6 +13,8 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import weka.clusterers.HierarchicalClusterer;
 import weka.core.Attribute;
@@ -76,18 +80,25 @@ public class HierarchicalClustering {
 			System.out.println("Network " + output);
 			aggHierarchical.linkTypeTipText();
 			
-
+			
 		     HierarchyVisualizer tv = new HierarchyVisualizer(output);
 		     
 		     tv.setSize(1024 ,1024);
 		      JFrame f;
 		      f = new JFrame();
+		      JPanel container = new JPanel();
+		      JScrollPane scrPane = new JScrollPane(container);
 		      Container contentPane = f.getContentPane();
-		      contentPane.add(tv);
+		      contentPane.setLayout(new BorderLayout());
+		      f.getContentPane().add(scrPane);
+		     // f.add(scrPane);
+		  //    container.setLayout(new GridBagLayout());
+		     
+		      contentPane.add(tv,BorderLayout.CENTER);
 		      f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		      f.setSize(1024,1024);
 		      f.setVisible(true);
-		      //tv.fitToScreen();
+		      tv.fitToScreen();
 		      
 		      if(saveImg){
 		      try
@@ -105,6 +116,10 @@ public class HierarchicalClustering {
 		      }
 			
 			BufferedWriter buf = new BufferedWriter(new FileWriter (new File(outputPath+ File.separator+"cluster.txt")));
+			buf.write("Mapping of document ID to actual names\n");
+			for(int i=0;i<inputFiles.size();i++){
+				buf.write((i+1)  + " " + inputFiles.get(i).getName() + "\n");
+			}
 			buf.write(output);
 			buf.close();
 			
@@ -132,7 +147,7 @@ public class HierarchicalClustering {
 				fgraph.append(input.charAt(i++));
 			}else if(c == ':'){
 				if(input.charAt(i-1)!=')'){
-					fgraph.append(files.get(count++).getName());
+					fgraph.append(++count);
 					
 				}
 				while(i<len && (input.charAt(i)!=',' && input.charAt(i)!='(')){
