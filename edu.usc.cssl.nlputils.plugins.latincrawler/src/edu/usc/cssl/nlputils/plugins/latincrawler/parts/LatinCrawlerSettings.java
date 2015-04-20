@@ -54,22 +54,11 @@ public class LatinCrawlerSettings {
 	}
 	
 	@PostConstruct
-	public void postConstruct(Composite parent){
+	public void postConstruct(Composite parent) {
 		final Shell shell = parent.getShell();
 		appendLog("Loading Latin Library...");
-
 		appendLog("Loading Authors...");
 		final LatinCrawler crawler = new LatinCrawler();
-		try {
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/", false);
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/medieval.html", true);
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/christian.html", true);
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/neo.html", true);
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/misc.html", true);
-			crawler.getAuthorsList("http://www.thelatinlibrary.com/ius.html", true);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
 		appendLog("Loading Complete.");
 		
 		/* Selected list of authors to crawl */
@@ -115,8 +104,8 @@ public class LatinCrawlerSettings {
 		cmbAuth = new Combo(composite, SWT.NONE);
 		cmbAuth.setEnabled(true);
 		cmbAuth.add("All");
-		System.out.println(crawler.authorNames.size());
-		SortedSet<String> authors = new TreeSet<String>(crawler.authorNames.keySet());
+		System.out.println(crawler.getAuthorNames().size());
+		SortedSet<String> authors = new TreeSet<String>(crawler.getAuthorNames().keySet());
 		for(String auth: authors){
 			cmbAuth.add(auth);
 		}
@@ -151,7 +140,7 @@ public class LatinCrawlerSettings {
 				// Injecting the context into Latincrawler object so that the appendLog function can modify the Context Parameter consoleMessage
 				IEclipseContext iEclipseContext = context;
 				ContextInjectionFactory.inject(crawler,iEclipseContext);
-				crawler.initialize(txtOutput.getText());
+				crawler.setOutputDir(txtOutput.getText());
 				
 			
 				// Creating a new Job to do crawling so that the UI will not freeze
@@ -169,7 +158,7 @@ public class LatinCrawlerSettings {
 							}
 							else{
 								for(String auth: selectedAuthors){
-									crawler.getSingleAuthor(auth, crawler.authorNames.get(auth));
+									crawler.getBooksByAuthor(auth, crawler.getAuthorNames().get(auth));
 								}
 								selectedAuthors.clear();
 							}
