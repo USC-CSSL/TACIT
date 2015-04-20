@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: edu.usc.cssl.nlputils.plugins.latincrawler.test
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: USC
+Fragment-Host: edu.usc.cssl.nlputils.plugins.latincrawler;bundle-version="0.0.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit,
+ org.jsoup
