@@ -293,8 +293,8 @@ protected void invokeCooccurrence(String fppDir, String fppSeedFile, String fOut
 		
 		//System.out.println("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");		
-		
-		boolean isSuccess = CooccurrenceAnalysis.calculateCooccurrences(fppDir, fppSeedFile, windowSize, fOutputDir, threshold, buildMatrix );
+		CooccurrenceAnalysis analyser = new CooccurrenceAnalysis();
+		boolean isSuccess = analyser.calculateCooccurrences(fppDir, fppSeedFile, windowSize, fOutputDir, threshold, buildMatrix );
 		if(isSuccess == false)
 		{
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
