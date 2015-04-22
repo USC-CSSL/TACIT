@@ -42,6 +42,7 @@ import edu.usc.cssl.nlputils.utilities.Log;
 
 public class SupremeGUI {
 	private Text txtOutput;
+	SupremeCrawler sc;
 	@Inject
 	public SupremeGUI() {
 		
@@ -85,6 +86,18 @@ public class SupremeGUI {
 		
 		Label lblFilter = new Label(parent, SWT.NONE);
 		lblFilter.setText("Filter Range");
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		
 		final Combo combo=new Combo(parent, SWT.NONE);
@@ -146,6 +159,16 @@ public class SupremeGUI {
 					mBox.open();
 					return;
 				}
+				
+				// If the user clicks Stop button, terminate the job.
+				if(btnCrawl.getText().equals("Stop")){
+					System.out.println("Cancelling the job");
+					appendLog("Cancelling the job");
+					sc.terminate();
+					btnCrawl.setText("Crawl");
+					return;
+				}
+				
 				appendLog("Crawling...");
 				String selectedFilterValue = combo.getText();
 				if(selectedFilterValue.equals("All")){
@@ -155,7 +178,9 @@ public class SupremeGUI {
 						selectedFilterValue = "/issues";
 				}
 				long startTime = System.currentTimeMillis();
-				SupremeCrawler sc = new SupremeCrawler(selectedFilterValue, txtOutput.getText(),ISupremeCrawlerConstants.CRAWLER_URL);
+				
+				sc = new SupremeCrawler(selectedFilterValue, txtOutput.getText(),ISupremeCrawlerConstants.CRAWLER_URL);
+				
 				sc.setDownloadAudio(btnDownloadAudio.getSelection());
                 sc.setTruncate(btnTruncate.getSelection());
 				IEclipseContext iEclipseContext = context;
@@ -164,28 +189,36 @@ public class SupremeGUI {
 				// Creating a new Job to do crawling so that the UI will not freeze
 				Job job = new Job("Crawler Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
-					
+					Thread crawlThread = new Thread(sc); 
+					crawlThread.start();
 					try {
-						sc.looper();	
-					} catch (IOException e1) {
-						e1.printStackTrace();
+						crawlThread.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
-					
 					appendLog("Crawling completed in "+(System.currentTimeMillis()-startTime)/(float)1000+" seconds");
 					appendLog("DONE (Supreme Court Crawler)\n");
+					
+					// Set the button text back to Crawl 
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							btnCrawl.setText("Crawl");
+						}
+					});
+					
 					return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
 				job.schedule();
-				
-
-				// Cancel the job once panic button is clicked
-				//job.cancel();
+				// Set the button's text to Stop
+				btnCrawl.setText("Stop");
 			}
 		});
 		btnCrawl.setText("Crawl");
 		shell.setDefaultButton(btnCrawl);
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);
 		new Label(parent, SWT.NONE);

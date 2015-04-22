@@ -21,11 +21,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class SupremeCrawler implements ISupremeCrawlerConstants {
+public class SupremeCrawler implements ISupremeCrawlerConstants, Runnable {
 	private String filter, url, outputDir;
 	private boolean truncate, downloadAudio;
 	private String baseUrl;
-
+	private boolean terminate;
+	
 	public SupremeCrawler(String filter, String outputDir,String crawlUrl) {
 		this.filter = filter;
 		this.outputDir = outputDir;
@@ -74,6 +75,8 @@ public class SupremeCrawler implements ISupremeCrawlerConstants {
 		}
 
 		for (int i = 0; i <= noOfPages; i++) {
+			if (terminate)
+				return;
 			System.out.println("\nPage " + (i + 1));
 			appendLog("\nPage" + (i + 1));
 			crawl(url + "&page=" + i);
@@ -86,6 +89,8 @@ public class SupremeCrawler implements ISupremeCrawlerConstants {
 		Element table = doc.select("tbody").get(0);
 		Elements rows = table.select("tr");
 		for (Element row : rows) {
+			if (terminate)
+				return;
 			// System.out.println(row.select("a").get(0).attr("href"));
 			String contenturl = baseUrl
 					+ row.select("a").get(0).attr("href");
@@ -209,6 +214,20 @@ protected Document parseContentFromUrl(String crawlUrl) throws IOException {
 
 	private void appendLog(String message) {
 		Log.append(context, message);
+	}
+
+	@Override
+	public void run() {
+		try {
+			looper();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void terminate() {
+		// TODO Auto-generated method stub
+		terminate = true;
 	}
 
 }
