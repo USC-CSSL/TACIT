@@ -120,8 +120,11 @@ public class CooccurrenceAnalysis {
 							
 							if(count >= threshold || count>= seedWordCount ) {
 								StringBuilder match = new StringBuilder();
-								for(String str: q)
-									match.append(str+' '); 
+								for(String str: q){
+									if(seedWords.containsKey(str))
+										match.append('*');
+									match.append(str+' ');
+								}
 								phrase.add(f.getName() + "  " + line_no + " " + match.toString() );
 								q.clear();
 								count = 0;
