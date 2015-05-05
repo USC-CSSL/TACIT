@@ -3,6 +3,7 @@
 
 <product name="NLPUtils" id="edu.usc.cssl.nlputils.application.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -24,8 +25,10 @@
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
       <plugin id="com.ibm.icu"/>
@@ -33,6 +36,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.CooccurrenceAnalysis"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.HierarchicalClustering"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.KMeansClustering"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.RedditCrawler"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.WordCountPlugin"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.latincrawler"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.lda"/>
@@ -42,6 +46,7 @@
       <plugin id="edu.usc.cssl.nlputils.plugins.senatecrawler"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.supremeCrawler"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.svmClassifier"/>
+      <plugin id="edu.usc.cssl.nlputils.plugins.twitterStreamer"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.weightedCount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.wordcount"/>
       <plugin id="edu.usc.cssl.nlputils.plugins.zlda"/>
