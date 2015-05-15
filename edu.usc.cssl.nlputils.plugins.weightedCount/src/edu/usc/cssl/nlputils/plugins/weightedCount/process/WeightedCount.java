@@ -51,35 +51,35 @@ public class WeightedCount {
 	private boolean doWordDistribution = true;
 	private boolean doSnowballStemming = true;
 	private boolean stemDictionary = false;
-	PorterStemmer stemmer = new PorterStemmer();
+	private PorterStemmer stemmer = new PorterStemmer();
 	private int weirdDashCount = 0;
 	private String punctuations = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
 	// counting numbers - // 5.7, .7 , 5., 567, -25.9, +45
-	Pattern pattern = Pattern.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
+	private Pattern pattern = Pattern.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
 	//Pattern pattern = Pattern.compile("\\s+[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.,\\s]+");
 	
 	// end of line detection
-	Pattern eol = Pattern.compile("\\w+\\s*[.?!]+\\B");
+	private Pattern eol = Pattern.compile("\\w+\\s*[.?!]+\\B");
 	
 	//compound word detection
-	Pattern compoundPattern = Pattern.compile("[\\w\\d]+[-]{1}[\\w\\d]+");
+	private Pattern compoundPattern = Pattern.compile("[\\w\\d]+[-]{1}[\\w\\d]+");
 	
-	Pattern doubleHyphenPattern = Pattern.compile("[\\w\\d]+[-]{2}[\\w\\d]+");
+	private Pattern doubleHyphenPattern = Pattern.compile("[\\w\\d]+[-]{2}[\\w\\d]+");
 	
 	// Regular word
-	Pattern regularPattern = Pattern.compile("[\\w\\d]+");
+	private Pattern regularPattern = Pattern.compile("[\\w\\d]+");
 	
 	// for rounding off the decimals
-	DecimalFormat df = new DecimalFormat("#.##");
+	private DecimalFormat df = new DecimalFormat("#.##");
 	
 	// for calculating punctuation ratios
-	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro, parenth, otherP, allPct;
+	private int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro, parenth, otherP, allPct;
 	
 	private static Logger logger = Logger.getLogger(WeightedCount.class.getName());
 	
 	// Updated function that can handle multiple input files
 	public int wordCount(String[] inputFiles, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doLower, boolean doLiwcStemming, boolean doSnowBallStemming, boolean doSpss, boolean doWordDistribution, boolean stemDictionary) throws IOException{
-		int returnCode = -1;
+		
 		if (delimiters==null || delimiters.equals(""))
 			this.delimiters=" ";
 		else
@@ -97,12 +97,10 @@ public class WeightedCount {
 			this.doStopWords=false;
 		else
 			this.doStopWords=true;
-		// An error flag to check the error conditions
-		boolean error = false;
-		
-		if (inputFiles==null){
+				
+		if (inputFiles==null){ //do it in gui?
 			logger.warning("Please select the input file(s).");
-			error = true;
+			
 			return -2;
 		}
 		
@@ -118,7 +116,7 @@ public class WeightedCount {
 		dFile = new File(dictionaryFile);
 		if (!dFile.exists() || dFile.isDirectory()) {
 			logger.warning("Please check the dictionary file path.");
-			error = true;
+			
 			return -3;
 		}
 		}
@@ -127,7 +125,7 @@ public class WeightedCount {
 		File oFile = new File(outputFile+".csv");
 		if (outputFile=="" || oFile.isDirectory()) {
 			logger.warning("The output file path is incorrect.");
-			error = true;
+			
 			return -5;
 		}
 		
@@ -137,7 +135,7 @@ public class WeightedCount {
 		if (doSpss) {
 				if (outputFile=="" || spssFile.isDirectory()) {
 					logger.warning("The SPSS output file path is incorrect.");
-					error = true;
+			
 					return -6;
 				}
 		}
@@ -148,20 +146,17 @@ public class WeightedCount {
 		if (doStopWords){
 			if (!sFile.exists() || sFile.isDirectory()) {
 				logger.warning("Please check the stop words file path.");
-				error = true;
+			
 				return -4;
 			}
 		}
 			
-		if(error) {
-			return returnCode;
-		}
 		
 		// No errors with the output, dictionary and stop-words paths. Start processing.
 		long startTime = System.currentTimeMillis();
 		
 		if(!noDictionary){
-		buildCategorizer(dFile);
+		buildCategorizer(dFile); //1
 		logger.info("Finished building the dictionary trie in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		appendLog("Finished building the dictionary trie in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		}
@@ -169,17 +164,17 @@ public class WeightedCount {
 		// Create Stop Words Set if doStopWords is true
 		if (doStopWords){
 			startTime = System.currentTimeMillis();
-			stopWordSetBuild(sFile);
+			stopWordSetBuild(sFile); //2
 			logger.info("Finished building the Stop Words Set in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 			appendLog("Finished building the Stop Words Set in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 		}
 		
 		// Write the titles in the output file.
-		buildOutputFile(oFile);
+		buildOutputFile(oFile); //3
 		
 		// Write the SPSS file
 		if (doSpss)
-			buildSpssFile(spssFile);
+			buildSpssFile(spssFile); //4
 		
 		//categorizer.printTrie();
 		//System.out.println(categories);
@@ -195,28 +190,26 @@ public class WeightedCount {
 			File iFile = new File(inputFile);
 			if (!iFile.exists() || iFile.isDirectory()){
 				logger.warning("Please check the input file path "+inputFile);
-				error = true;
-				returnCode = -2;
+			
+				return -2;
 			}
 			
-			if(error) {
-				return returnCode;
-			}
+			
 			
 			System.out.println(inputFile);
-			countWords(inputFile, oFile, spssFile);
+			countWords(inputFile, oFile, spssFile); //5
 		}
 		
 		if (doSpss)
-			finalizeSpssFile(spssFile);
+			finalizeSpssFile(spssFile); //6
 		//No errors
-		writeReadMe(outputFile.substring(0, outputFile.lastIndexOf(File.separator)));
-		returnCode = 0;
-		return returnCode;
+		writeReadMe(outputFile.substring(0, outputFile.lastIndexOf(File.separator))); //7
+	
+		return 0;
 	}
 	
 	
-	public void countWords(String inputFile, File oFile, File spssFile) throws IOException{
+	private void countWords(String inputFile, File oFile, File spssFile) throws IOException{
 		File iFile = new File(inputFile);
 		logger.info("Current input file - "+inputFile);
 		appendLog("Current input file - "+inputFile);
@@ -336,7 +329,7 @@ public class WeightedCount {
 			writeToSpss(spssFile, iFile.getName(), totalWords, totalWords/(float)noOfLines, (sixltr*100)/(float)totalWords, (dicCount*100)/(float)totalWords, catCount);
 	}
 	
-	public void calculateWordDistribution(HashMap<String,Integer> map, HashMap<String,Integer> catCount, HashMap<String,HashSet<String>> wordCategories, String inputFile, File oFile) throws IOException{
+	private void calculateWordDistribution(HashMap<String,Integer> map, HashMap<String,Integer> catCount, HashMap<String,HashSet<String>> wordCategories, String inputFile, File oFile) throws IOException{
 		File outputDir = oFile.getParentFile();
 		String iFilename = inputFile.substring(inputFile.lastIndexOf(System.getProperty("file.separator")));
 		File wdFile = new File(outputDir.getAbsolutePath()+System.getProperty("file.separator")+iFilename+"_wordDistribution.csv");
@@ -378,7 +371,7 @@ public class WeightedCount {
 	
 	
 	// Legacy single-inputfile function
-	public int oldWordCount(String inputFile, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doLower) throws IOException{
+	private int oldWordCount(String inputFile, String dictionaryFile, String stopWordsFile, String outputFile, String delimiters, boolean doLower) throws IOException{
 		int returnCode = -1;
 		this.delimiters = delimiters;
 		this.doLower = doLower;
@@ -483,7 +476,7 @@ public class WeightedCount {
 	}
 	
 	// Builds the Stop Word Set
-	public void stopWordSetBuild(File sFile) throws IOException {
+	private void stopWordSetBuild(File sFile) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(sFile));
 		String currentLine = null;
 		while ((currentLine = br.readLine()) != null ) {
@@ -492,7 +485,7 @@ public class WeightedCount {
 		br.close();
 	}
 	
-	public void buildOutputFile(File oFile) throws IOException{
+	private void buildOutputFile(File oFile) throws IOException{
 		StringBuilder titles = new StringBuilder();
 		titles.append("Filename,Seg,WC,WPS,Sixltr,Dic,Numerals,");
 		for (String title : categories.values()){
@@ -508,7 +501,7 @@ public class WeightedCount {
 		appendLog("Building the output File.");
 	}
 	
-	public void buildSpssFile(File spssFile) throws IOException{
+	private void buildSpssFile(File spssFile) throws IOException {
 		StringBuilder titles = new StringBuilder();
 		titles.append("DATA LIST LIST\n/ Filename A(40) WC WPS Sixltr Dic ");
 		for (String title : categories.values()){
@@ -523,7 +516,7 @@ public class WeightedCount {
 		//logger.info("Created the SPSS output File.");
 	}
 	
-	public void finalizeSpssFile(File spssFile) throws IOException{
+	private void finalizeSpssFile(File spssFile) throws IOException{
 		String end = "END DATA.\n\nLIST.";
 		FileWriter fw = new FileWriter(spssFile, true);
 		BufferedWriter bw = new BufferedWriter(fw);
@@ -534,7 +527,7 @@ public class WeightedCount {
 		appendLog("Created the SPSS output File.");
 	}
 
-	public void writeToSpss(File spssFile, String docName, int totalCount, float wps, float sixltr, float dic, HashMap<String,Integer> catCount) throws IOException{
+	private void writeToSpss(File spssFile, String docName, int totalCount, float wps, float sixltr, float dic, HashMap<String,Integer> catCount) throws IOException{
 		StringBuilder row = new StringBuilder();
 		row.append("\""+docName+"\""+" "+totalCount+" "+wps+" "+sixltr+" "+dic+" ");
 		int currCatCount = 0;
@@ -555,7 +548,7 @@ public class WeightedCount {
 		logger.info("SPSS File Updated Successfully");
 	}
 
-	public void writeToFile(File oFile, String docName, int totalCount, float wps, float sixltr, float dic, float numerals, HashMap<String,Integer> catCount) throws IOException{
+	private void writeToFile(File oFile, String docName, int totalCount, float wps, float sixltr, float dic, float numerals, HashMap<String,Integer> catCount) throws IOException{
 		StringBuilder row = new StringBuilder();
 		row.append(docName+",1,"+totalCount+","+df.format(wps)+","+df.format(sixltr)+","+df.format(dic)+","+df.format(numerals)+",");
 		
@@ -595,7 +588,7 @@ public class WeightedCount {
 		appendLog("CSV File Updated Successfully");
 	}
 
-	public void buildCategorizer(File dFile) throws IOException {
+	private void buildCategorizer(File dFile) throws IOException {
 		BufferedReader br= new BufferedReader(new FileReader(dFile));
 		String currentLine=br.readLine().trim();	
 		if (currentLine == null) {
@@ -623,8 +616,8 @@ public class WeightedCount {
 				String[] words = currentLine.split("\\s+");
 				String currPhrase = words[0];
 				String condPhrase = words[0];
-				for (int i=2; i<words.length; i=i+2){
-					if(!words[i].matches("\\d+")){
+				for (int i=2; i<words.length; i=i+2) { //why
+					if(!words[i].matches("\bd+")) {
 						if (words[i].contains("/")) {
 							String[] splits = words[i].split("/");
 							categories.add(Integer.parseInt(splits[1]));
@@ -650,7 +643,7 @@ public class WeightedCount {
 				if (phraseDetect)
 					currentWord = currPhrase;
 				
-				if (stemDictionary){
+				if (stemDictionary) {
 					currentWord = currentWord.replace("*", "");
 					stemmer.setCurrent(currentWord);
 					String stemmedWord = "";
@@ -682,7 +675,7 @@ public class WeightedCount {
 	}
 	
 	// Adds words and their corresponding count to the hashmap. Returns total number of words.
-	public int[] process(String line, HashMap<String, Integer> map) {
+	private int[] process(String line, HashMap<String, Integer> map) {
 		int ret[] = new int[3];
 		int numWords = 0;
 		int sixltr = 0;
@@ -991,7 +984,7 @@ public class WeightedCount {
 		readMe.append(message+"\n");
 	}
 
-	public static String trimChars(String source, String trimChars) {
+	private static String trimChars(String source, String trimChars) {
 	    char[] chars = source.toCharArray();
 	    int length = chars.length;
 	    int start = 0;
@@ -1011,7 +1004,7 @@ public class WeightedCount {
 	    }
 	}
 	
-	public void writeReadMe(String location){
+	private void writeReadMe(String location){
 		File readme = new File(location+"/README.txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));

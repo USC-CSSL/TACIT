@@ -324,7 +324,9 @@ public class WWCSettings {
 				overwriteMsg.setText("Warning");
 				int overwrite = 0;
 				
-				String oPath = txtOutputFile.getText().substring(0, txtOutputFile.getText().length()-4);
+				//lindapulickal: handling case where user types in a file without extension
+				int hasFileExtension = txtOutputFile.getText().lastIndexOf('.');
+				String oPath = (hasFileExtension != -1 )? txtOutputFile.getText().substring(0, hasFileExtension) : txtOutputFile.getText();
 				
 				File oFile = new File(oPath+".csv");
 				File sFile = new File(oPath+".dat");
