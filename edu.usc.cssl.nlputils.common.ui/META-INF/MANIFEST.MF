@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: common ui
+Bundle-SymbolicName: edu.usc.cssl.nlputils.common.ui;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.common.ui.CommonUiActivator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.intro,
+ org.eclipse.ui.intro.universal,
+ org.eclipse.help.ui,
+ org.eclipse.help.webapp,
+ org.eclipse.ui.forms
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.nlputils.common.ui,
+ edu.usc.cssl.nlputils.common.ui.composite.from,
+ edu.usc.cssl.nlputils.common.ui.outputdata,
+ edu.usc.cssl.nlputils.common.ui.validation

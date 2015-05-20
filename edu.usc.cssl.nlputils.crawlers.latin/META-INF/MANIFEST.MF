@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Latin
+Bundle-SymbolicName: edu.usc.cssl.nlputils.crawlers.latin
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.crawlers.latin.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.jsoup
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.nlputils.crawlers.latin.services

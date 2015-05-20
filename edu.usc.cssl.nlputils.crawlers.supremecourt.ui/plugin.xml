@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Supreme Court Crawler"
+            class="edu.usc.cssl.nlputils.crawlers.supremecourt.ui.SupremeCrawlerView"
+            id="edu.usc.cssl.nlputils.crawlers.supremecourt.ui.view1">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:crawl">
+            <command
+                  commandId="usc.edu.cssl.crawlers.supreme.crawler.command1"
+                  label="Supreme Court Crawler">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="crawler.latin"
+         point="org.eclipse.ui.commands">
+      <command
+            id="usc.edu.cssl.crawlers.supreme.crawler.command1"
+            name="Supreme Court Crawler">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.crawlers.supremecourt.ui.handlers.OpenSupremeCrawlerViewHandler"
+            commandId="usc.edu.cssl.crawlers.supreme.crawler.command1">
+      </handler>
+   </extension>
+
+
+</plugin>

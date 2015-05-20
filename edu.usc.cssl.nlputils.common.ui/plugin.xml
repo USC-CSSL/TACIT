@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<!-- intro -->
+  <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            icon="icons/welcome16.gif"
+            id="edu.usc.cssl.nlputils.common.ui.intro">
+      </intro>
+      <introProductBinding
+            introId="edu.usc.cssl.nlputils.common.ui.intro"
+            productId="edu.usc.cssl.nlputils.repository.product">
+      </introProductBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            introId="edu.usc.cssl.nlputils.common.ui.intro"
+            content="introContent.xml"
+            id="edu.usc.cssl.nlputils.common.ui.configId">
+         <presentation
+               home-page-id="root">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+         </presentation>
+      </config>
+      <config
+            content="introContent.xml"
+            id="usc.edu.sampleapp.introConfigId"
+            introId="edu.usc.cssl.nlputils.common.ui.intro">
+         <presentation
+               home-page-id="root">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx"
+                  style="content/shared.css">
+            </implementation>
+         </presentation>
+      </config>
+   </extension>
+   <!-- Main menu -->
+    <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="crawl"
+               label="Crawl"
+               mnemonic="C"
+               tooltip="Crawl">
+         </menu>
+         <menu
+               id="wordcount"
+               label="Word Count"
+               mnemonic="W"
+               tooltip="Word Count">
+         </menu>
+          <menu
+               id="view"
+               label="View"
+               mnemonic="V"
+               tooltip="View">
+         </menu>
+          <menu
+                id="cluster"
+                label="Clustering"
+                mnemonic="l"
+                tooltip="Clustering">
+          </menu>
+         
+      </menuContribution>
+   </extension>
+   <!--  Progress View -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:view">
+             <command
+                  commandId="usc.edu.cssl.common.progressview.command1"
+                  label="Progress View">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="progress.view"
+         point="org.eclipse.ui.commands">
+      <command
+            id="usc.edu.cssl.common.progressview.command1"
+            name="Progress View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.common.ui.handlers.OpenProgressViewHandler"
+            commandId="usc.edu.cssl.common.progressview.command1">
+      </handler>
+   </extension>
+   
+   
+    <extension
+          point="org.eclipse.ui.views">
+       <view
+             category="org.eclipse.ui"
+             class="org.eclipse.ui.ExtensionFactory:progressView"
+             icon="icons/pview.gif"
+             id="org.eclipse.ui.views.ProgressView"
+             name="Progress View"
+             restorable="true">
+       </view>
+    </extension>
+    
+    <!-- preference page -->
+    <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             class="edu.usc.cssl.nlputils.common.ui.preferencepage.MainPreferencePage"
+             id="edu.usc.cssl.nlputils.common.ui.preferencepage.nlputils"
+             name="NLPUtils">
+       </page>
+       <page
+             category="edu.usc.cssl.nlputils.common.ui.preferencepage.nlputils"
+             class="edu.usc.cssl.nlputils.common.ui.preferencepage.PrepocessorSettings"
+             id="edu.usc.cssl.nlputils.common.ui.prepocessorsettings"
+             name="Prepocessor Settings">
+       </page>
+    </extension>
+    <!-- Console View -->
+       <!--  Progress View -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:view">
+             <command
+                  commandId="usc.edu.cssl.common.console.command"
+                  label="Console">
+            </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:view">
+             <command
+                  commandId="usc.edu.cssl.common.preprocess.command"
+                  label="Preprocess">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="console.view"
+         point="org.eclipse.ui.commands">
+      <command
+            id="usc.edu.cssl.common.console.command"
+            name="Console View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.common.ui.handlers.OpenConsoleViewHandler"
+            commandId="usc.edu.cssl.common.console.command">
+      </handler>
+   </extension>
+   
+   
+    <extension
+          point="org.eclipse.ui.views">
+       <view
+             
+             class="edu.usc.cssl.nlputils.common.ui.views.ConsoleView"
+             icon="icons/console_view.gif"
+             id="usc.edu.cssl.common.ui.views.console"
+             name="Console View"
+             restorable="true">
+       </view>
+    </extension>
+    <extension
+          point="org.eclipse.help.toc">
+       <toc
+             file="toc.xml"
+             primary="true">
+       </toc>
+       <toc
+             file="tocconcepts.xml">
+       </toc>
+       <toc
+             file="tocgettingstarted.xml">
+       </toc>
+             <toc
+            file="tocreference.xml">
+      </toc>
+      <toc
+            file="tocsamples.xml">
+      </toc>
+      <toc
+            file="toctasks.xml">
+      </toc>
+    </extension>
+    <extension
+          point="org.eclipse.ui.views">
+       <view
+             class="edu.usc.cssl.nlputils.common.ui.views.PreprocessorView"
+             id="edu.usc.cssl.nlputils.common.ui.preprocess.view"
+             name="Pre-Process"
+             restorable="true">
+       </view>
+    </extension>
+    <extension
+         id="preprocess.view"
+         point="org.eclipse.ui.commands">
+      <command
+            id="usc.edu.cssl.common.preprocess.command"
+            name="PreProcess View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.common.ui.handlers.OpenPreProcessViewHandler"
+            commandId="usc.edu.cssl.common.preprocess.command">
+      </handler>
+   </extension>
+   
+</plugin>

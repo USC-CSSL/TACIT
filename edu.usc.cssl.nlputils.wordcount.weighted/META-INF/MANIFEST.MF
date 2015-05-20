@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Weighted Word Count
+Bundle-SymbolicName: edu.usc.cssl.nlputils.wordcount.weighted
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.uc.cssl.nlputils.wordcount.weighted.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.nlputils.common,
+ org.jsoup
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.uc.cssl.nlputils.wordcount.weighted.services;
+  uses:="org.jsoup.nodes,
+   org.eclipse.core.runtime,
+   org.jsoup,
+   edu.usc.nlputils.common.crawlers,
+   snowballstemmer",
+ org.apache.commons.lang3,
+ snowballstemmer
+Bundle-ClassPath: SnowballStemmer.jar,
+ commons-lang3-3.3.2.jar,
+ .

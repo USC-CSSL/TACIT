@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ruleset>
+	<description />
+
+	<rule ref="rulesets/basic.xml/EmptyCatchBlock" /> <!-- mandatory -->
+	<rule ref="rulesets/basic.xml/OverrideBothEqualsAndHashcode" /> <!-- mandatory -->
+	<rule ref="rulesets/basic.xml/ReturnFromFinallyBlock" /> <!-- mandatory -->
+
+	<rule ref="rulesets/clone.xml/CloneMethodMustImplementCloneable" /> <!-- mandatory -->
+
+	<rule ref="rulesets/design.xml/AvoidInstanceofChecksInCatchClause" /> <!-- mandatory -->
+	<rule ref="rulesets/design.xml/DefaultLabelNotLastInSwitchStmt" /> <!-- mandatory -->
+	<rule ref="rulesets/design.xml/MissingBreakInSwitch" /> <!-- mandatory -->
+	<rule ref="rulesets/design.xml/NonCaseLabelInSwitchStatement" /> <!-- mandatory -->
+	<rule ref="rulesets/design.xml/PreserveStackTrace" /> <!-- mandatory -->
+	<rule ref="rulesets/design.xml/SwitchStmtsShouldHaveDefault" /> <!-- mandatory -->
+	<rule ref="rulesets/design.xml/UseLocaleWithCaseConversions" /> <!-- mandatory -->
+
+	<rule ref="rulesets/finalizers.xml/AvoidCallingFinalize" /> <!-- mandatory -->
+	<rule ref="rulesets/finalizers.xml/FinalizeDoesNotCallSuperFinalize" /> <!-- mandatory -->
+	<rule ref="rulesets/finalizers.xml/FinalizeShouldBeProtected" /> <!-- mandatory -->
+
+	<rule ref="rulesets/imports.xml/UnusedImports" /> <!-- mandatory -->
+
+	<rule ref="rulesets/javabeans.xml/MissingSerialVersionUID" /> <!-- mandatory -->
+
+	<rule ref="rulesets/logging-java.xml/SystemPrintln" /> <!-- mandatory -->
+
+	<rule ref="rulesets/naming.xml/ClassNamingConventions" />
+	<rule ref="rulesets/naming.xml/MethodNamingConventions" />
+	<rule ref="rulesets/naming.xml/NoPackage" />
+	<rule ref="rulesets/naming.xml/SuspiciousHashcodeMethodName" /> <!-- mandatory -->
+	<rule ref="rulesets/naming.xml/PackageCase" />
+
+	<rule ref="rulesets/strictexception.xml/AvoidCatchingThrowable" /> <!-- mandatory -->
+	<rule ref="rulesets/strictexception.xml/AvoidThrowingRawExceptionTypes" /> <!-- mandatory -->
+	<rule ref="rulesets/strictexception.xml/DoNotThrowExceptionInFinally" /> <!-- mandatory -->
+
+	<rule ref="rulesets/typeresolution.xml/SignatureDeclareThrowsException" /> <!-- mandatory -->
+
+	<rule ref="rulesets/unusedcode.xml/UnusedLocalVariable" />
+	<rule ref="rulesets/unusedcode.xml/UnusedPrivateField" />
+	<rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod" />
+
+	<!-- self defined XPath rules -->
+	<rule name="InterfaceNamingConvention" message="Name of an Interface should begin with 'I'"
+		class="net.sourceforge.pmd.rules.XPathRule">
+		<description></description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//ClassOrInterfaceDeclaration[@Interface='true'][not(starts-with(@Image, 'I'))]
+					]]>
+				</value>
+			</property>
+		</properties>
+	</rule>
+
+	<rule name="MissingReasonForIgnoringTest" message="There is no reason why a test was set to Ignore"
+		class="net.sourceforge.pmd.rules.XPathRule">
+
+		<description>
+			It was checked if there is String parameter that potentially explains why a test shall be ignored.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//Annotation/*/Name[@Image='Ignore']/..[not(descendant::Literal)]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			@Ignore("all tests of this class have to be ignored till the end of takt 10")
+		</example>
+	</rule>
+
+	<!-- accessibility rules -->
+	<rule name="AccDoNotInstantiateColor"
+		message="Do not directly instatiate org.eclipse.swt.graphics.Color"
+		class="net.sourceforge.pmd.rules.XPathRule">
+		<description>
+			To allow users to configure the UI according to their needs it's not recommended to apply "hard coded" color settings.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					(//ImportDeclaration/Name[@Image='org.eclipse.swt.graphics.Color']/../..
+					//AllocationExpression/ClassOrInterfaceType[@Image='Color'])
+					|
+					//AllocationExpression/ClassOrInterfaceType[@Image='org.eclipse.swt.graphics.Color']
+					]]>
+				</value>
+			</property>
+		</properties>
+	</rule>
+	<rule name="AccDoNotInstantiateFont"
+		message="Do not directly instatiate org.eclipse.swt.graphics.Font"
+		class="net.sourceforge.pmd.rules.XPathRule">
+		<description>
+			To allow users to configure the UI according to their needs it's not recommended to apply "hard coded" font settings.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					(//ImportDeclaration/Name[@Image='org.eclipse.swt.graphics.Font']/../..
+					//AllocationExpression/ClassOrInterfaceType[@Image='Font'])
+					|
+					//AllocationExpression/ClassOrInterfaceType[@Image='org.eclipse.swt.graphics.Font']
+					]]>
+				</value>
+			</property>
+		</properties>
+	</rule>
+	<rule name="AccDoNotUseNonAccessibleColors" message="Do not use non-accessible color (ID)s."
+		class="net.sourceforge.pmd.rules.XPathRule">
+		<description>
+			There is a set of accessible color ID constants defined in org.eclipse.swt.SWT.
+
+			COLOR_WIDGET_FOREGROUND: system color used to paint foreground areas
+			COLOR_WIDGET_BACKGROUND: system color used to paint background areas
+			COLOR_WIDGET_BORDER: system color used to paint border areas
+			COLOR_WIDGET_DARK_SHADOW : system color used to paint dark shadow areas
+			COLOR_WIDGET_NORMAL_SHADOW : system color used to paint normal shadow areas
+			COLOR_WIDGET_LIGHT_SHADOW: system color used to paint light shadow areas
+			COLOR_WIDGET_HIGHLIGHT_SHADOW: system color used to paint highlight shadow areas
+			COLOR_LIST_FOREGROUND: system color used to paint list foreground areas
+			COLOR_LIST_BACKGROUND : system color used to paint list background areas
+			COLOR_LIST_SELECTION: system color used to paint list selection background areas
+			COLOR_LIST_SELECTION_TEXT: system color used to paint list selected text
+			COLOR_INFO_FOREGROUND : system color used to paint tool tip text
+			COLOR_INFO_BACKGROUND: system color used to paint tool tip background areas
+			COLOR_TITLE_FOREGROUND: system color used to paint title text
+			COLOR_TITLE_BACKGROUND: system color used to paint title background areas
+			COLOR_TITLE_BACKGROUND_GRADIENT : system color used to paint title background gradient
+			COLOR_TITLE_INACTIVE_FOREGROUND: system color used to paint inactive title text
+			COLOR_TITLE_INACTIVE_BACKGROUND: system color used to paint inactive title background areas
+			COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT: system color used to paint inactive title background gradient
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//ImportDeclaration/Name[@Image='org.eclipse.swt.SWT']/../../descendant::
+					Expression/PrimaryExpression/PrimaryPrefix/Name[@Image='Display.getSystemColor']/../../
+					PrimarySuffix/Arguments/ArgumentList/Expression/PrimaryExpression/PrimaryPrefix/Name[
+					@Image!='COLOR_WIDGET_FOREGROUND'
+					and
+					@Image!='COLOR_WIDGET_BACKGROUND'
+					and
+					@Image!='COLOR_WIDGET_BORDER'
+					and
+					@Image!='COLOR_WIDGET_DARK_SHADOW'
+					and
+					@Image!='COLOR_WIDGET_NORMAL_SHADOW'
+					and
+					@Image!='COLOR_WIDGET_LIGHT_SHADOW'
+					and
+					@Image!='COLOR_WIDGET_HIGHLIGHT_SHADOW'
+					and
+					@Image!='COLOR_LIST_FOREGROUND'
+					and
+					@Image!='COLOR_LIST_BACKGROUND'
+					and
+					@Image!='COLOR_LIST_SELECTION'
+					and
+					@Image!='COLOR_LIST_SELECTION_TEXT'
+					and
+					@Image!='COLOR_INFO_FOREGROUND'
+					and
+					@Image!='COLOR_INFO_BACKGROUND'
+					and
+					@Image!='COLOR_TITLE_FOREGROUND'
+					and
+					@Image!='COLOR_TITLE_BACKGROUND'
+					and
+					@Image!='COLOR_TITLE_BACKGROUND_GRADIENT'
+					and
+					@Image!='COLOR_TITLE_INACTIVE_FOREGROUND'
+					and
+					@Image!='COLOR_TITLE_INACTIVE_BACKROUND'
+					and
+					@Image!='COLOR_TITLE_INACTIVE_BACKROUND_GRADIENT'
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+	</rule>
+	<rule  name="SecurityDoNotDependOnSystemProperties"
+		message="Program execution shall not depend on arbitrary system properties. Use com.sap.adt.util.configuration.AdtConfiguration instead."
+		class="net.sourceforge.pmd.rules.XPathRule">
+		<description>
+			To avoid backdoors the execution of programs must not depend on arbitrary system properties. Use static methods of com.sap.adt.util.configuration.AdtConfiguration to read system properties if required.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//PrimaryExpression/PrimaryPrefix/Name[@Image='System.getProperty']
+					|
+					//PrimaryExpression/PrimaryPrefix/Name[@Image='Boolean.getBoolean']
+					]]>
+				</value>
+			</property>
+		</properties>
+	</rule>
+
+	<rule name="DefaultContextMenuNotAddedToInputField" message="Default context menu not added to an input field with com.sap.adt.util.ui.SWTUtil.addTextEditMenu()"
+		class="net.sourceforge.pmd.rules.XPathRule">
+		<description>
+			The default context menu was not added to an input field right after instantiating the same.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+						//BlockStatement[not(Statement/Block/BlockStatement)]//AllocationExpression/ClassOrInterfaceType[@Image='Text' or @Image='StyledText']
+						/ancestor::BlockStatement[1]
+						/following-sibling::BlockStatement[1]
+						[not(descendant::StatementExpression/PrimaryExpression/PrimaryPrefix/Name[@Image='SWTUtil.addTextEditMenu'])]
+						/preceding-sibling::BlockStatement[1]
+					]]>
+				</value>
+			</property>
+		</properties>
+	</rule>
+    <rule name="FactoryNotFinal" message="By coding convention, public Adt factories shall be declared final."
+          class="net.sourceforge.pmd.rules.XPathRule">
+    	<description>
+		</description>
+	    <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                        //TypeDeclaration/ClassOrInterfaceDeclaration[(starts-with(@Image,'Adt'))][(ends-with(@Image,'Factory'))][not(ends-with(@Image,'AdapterFactory'))][@Abstract='false'][@Public='true'][@Final='false'][@Interface='false']
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+    <rule name="FactoryConstructorNotPrivate" message="By coding convention, public Adt factories should have a private constructor."
+          class="net.sourceforge.pmd.rules.XPathRule">
+    	<description>
+		</description>
+	    <priority>3</priority>
+       <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                        //TypeDeclaration/ClassOrInterfaceDeclaration[(starts-with(@Image,'Adt'))][(ends-with(@Image,'Factory'))][not(ends-with(@Image,'AdapterFactory'))]/ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration/ConstructorDeclaration[@Private='false']
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+    <rule name="NoFactoryConstructor" message="By coding convention, public Adt factories should have a private constructor."
+          class="net.sourceforge.pmd.rules.XPathRule">
+    	<description>
+		</description>
+	    <priority>3</priority>
+       <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                        //TypeDeclaration/ClassOrInterfaceDeclaration[(starts-with(@Image,'Adt'))][(ends-with(@Image,'Factory'))][not(ends-with(@Image,'AdapterFactory'))]/ClassOrInterfaceBody[count(ClassOrInterfaceBodyDeclaration/ConstructorDeclaration)=0]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+    <rule name="CreateMethodNotStatic" message="Factory methods create... get... and createOrGet... shall be static"
+          class="net.sourceforge.pmd.rules.XPathRule">
+    	<description>
+		</description>
+	    <priority>3</priority>
+       <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                        //TypeDeclaration/ClassOrInterfaceDeclaration[(starts-with(@Image,'Adt'))][(ends-with(@Image,'Factory'))]
+                        [count(ImplementsList)=0][@Final='true'][@Abstract='false'][not(ends-with(@Image,'AdapterFactory'))]/ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration/MethodDeclaration[@Static='false'][@Public='true'][matches(@MethodName,'(get|create|getOrCreate).*')]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

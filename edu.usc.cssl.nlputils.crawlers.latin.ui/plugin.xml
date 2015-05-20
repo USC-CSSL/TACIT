@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+ 
+      <view
+            name="Latin Crawler"
+            class="edu.usc.cssl.nlputils.crawlers.latin.ui.LatinCrawlerView"
+            id="edu.usc.cssl.nlputils.crawlers.latin.ui.view1">
+      </view>
+      
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:crawl">
+             <command
+                  commandId="usc.edu.cssl.crawlers.latin.view.command1"
+                  label="Latin Crawler">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="crawler.latin"
+         point="org.eclipse.ui.commands">
+      <command
+            id="usc.edu.cssl.crawlers.latin.view.command1"
+            name="Latin Crawler">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.crawlers.latin.ui.handlers.OpenLatinCrawlerViewHandler"
+            commandId="usc.edu.cssl.crawlers.latin.view.command1">
+      </handler>
+   </extension>
+   
+   
+   
+   
+   
+   <!-- try -->
+   
+
+
+</plugin>

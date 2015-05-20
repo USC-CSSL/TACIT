@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: NLPUtils
+Bundle-SymbolicName: edu.usc.cssl.nlputils.repository;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.repository.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ org.eclipse.ui.intro,
+ org.eclipse.ui.intro.universal,
+ org.eclipse.help.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension
+         point="org.eclipse.ui.views">
+ 
+      <view
+            name="Heirarchical Cluster View"
+            class="edu.usc.cssl.nlputils.cluster.heirarchical.ui.HeirarchicalClusterView"
+            id="edu.usc.cssl.nlputils.cluster.heirarchical.ui.view1">
+      </view>
+      
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:cluster">
+             <command
+                   commandId="edu.usc.cssl.nlputils.cluster.heirarchical.ui.view1"
+                   label="Heirarchical Cluster View"
+                   tooltip="Heirarchical Cluster View">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="wordcount.weighted"
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.nlputils.cluster.heirarchical.ui.view1"
+            name="Heirarchical Cluster View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.cluster.heirarchical.ui.handlers.OpenHeirarchicalClusterViewHandler"
+            commandId="edu.usc.cssl.nlputils.cluster.heirarchical.ui.view1">
+      </handler>
+   </extension>
+   
+
+</plugin>

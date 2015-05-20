@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Weighted
+Bundle-SymbolicName: edu.usc.cssl.nlputils.wordcount.weighted.ui;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.wordcount.weighted.ui.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ edu.usc.cssl.nlputils.common.ui;bundle-version="0.0.1",
+ org.eclipse.swt,
+ org.eclipse.jface,
+ edu.usc.cssl.nlputils.wordcount.weighted;bundle-version="0.0.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
