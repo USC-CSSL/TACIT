@@ -15,4 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.core.contexts,
  edu.usc.cssl.nlputils.utilities
 Bundle-ClassPath: jsoup-1.7.3.jar,
- .
+ .,
+ org.annolab.tt4j-1.2.1.jar
+Export-Package: org.annolab.tt4j,
+ org.jsoup
