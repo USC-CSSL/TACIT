@@ -8,7 +8,6 @@ Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
- org.jsoup,
  edu.usc.cssl.nlputils.common.ui,
  edu.usc.cssl.nlputils.crawlers.supremecourt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
