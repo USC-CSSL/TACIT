@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Supremecourt
+Bundle-SymbolicName: edu.usc.cssl.nlputils.crawlers.supremecourt
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.uc.cssl.nlputils.crawlers.supremecourt.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.nlputils.common,
+ org.jsoup
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.uc.cssl.nlputils.crawlers.supremecourt.services
