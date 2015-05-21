@@ -9,4 +9,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.usc.nlputils.common.crawlers
+Export-Package: edu.usc.nlputils.common.crawlers,
+ org.jsoup,
+ org.jsoup.nodes,
+ org.jsoup.select
+Bundle-ClassPath: jsoup-1.7.3.jar,
+ .

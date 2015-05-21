@@ -7,8 +7,7 @@ Bundle-Activator: edu.uc.cssl.nlputils.crawlers.supremecourt.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- edu.usc.cssl.nlputils.common,
- org.jsoup
+ edu.usc.cssl.nlputils.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.uc.cssl.nlputils.crawlers.supremecourt.services
