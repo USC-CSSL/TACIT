@@ -122,7 +122,7 @@ public class WeightedCount {
 		// Create Stop Words Set if doStopWords is true
 		if (doStopWords) {
 			startTime = System.currentTimeMillis();
-			stopWordSetBuild(sFile);
+			stopWordSetBuild(new File(stopWordsFile));
 			logger.info("Finished building the Stop Words Set in "
 					+ (System.currentTimeMillis() - startTime)
 					+ " milliseconds.");
