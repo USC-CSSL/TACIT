@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,6 +35,7 @@ import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.nlputils.wordcount.weighted.ui.internal.IWeightedWordCountViewConstants;
 import edu.usc.cssl.nlputils.wordcount.weighted.ui.internal.WeightedWordCountImageRegistry;
 
@@ -276,7 +278,9 @@ public class WeightedWordCountView extends ViewPart implements
 					}
 				};
 				job.setUser(true);
+				if(canProceed()){
 				job.schedule();
+				}
 			};
 		});
 		mgr.add(new Action() {
@@ -297,6 +301,38 @@ public class WeightedWordCountView extends ViewPart implements
 		});
 		form.getToolBarManager().update(true);
 	}
+	protected boolean canProceed() {
+			String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
+			if (message != null) {
+
+				message = layoutData.getOutputLabel().getText() + " " + message;
+				form.getMessageManager().addMessage("location", message, null,
+						IMessageProvider.ERROR);
+				return false;
+			} else {
+				form.getMessageManager().removeMessage("location");
+				// check input
+				if(inputLayoutData.getSelectedFiles().size() < 1 ){
+					form.getMessageManager().addMessage("input", "Select/Add atleast one input file", null,
+							IMessageProvider.ERROR);
+					return false;
+				}
+				else {
+					form.getMessageManager().removeMessage("input");
+					if(dictLayoutData.getSelectedFiles().size() < 1 ){
+						form.getMessageManager().addMessage("dict", "Select/Add atleast one Dictionary file", null,
+								IMessageProvider.ERROR);
+						return false;
+						
+				}
+					else{
+						form.getMessageManager().removeMessage("dict");
+						return true;
+					}
+				}
+			}
+	}
+
 	@Override
 	public void setFocus() {
 		form.setFocus();

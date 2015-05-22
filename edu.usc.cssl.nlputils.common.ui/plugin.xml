@@ -71,6 +71,12 @@
                 mnemonic="l"
                 tooltip="Clustering">
           </menu>
+          <menu
+                id="classify"
+                label="Classify"
+                mnemonic="F"
+                tooltip="Classify">
+          </menu>
          
       </menuContribution>
    </extension>
@@ -78,7 +84,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:view">
+            locationURI="menu:classify">
              <command
                   commandId="usc.edu.cssl.common.progressview.command1"
                   label="Progress View">

@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -29,6 +30,7 @@ public class TargetLocationsGroup {
 
 	private CheckboxTreeViewer fTreeViewer;
 	private Button fAddButton;
+	private Button fAddFileButton;
 	private Button fRemoveButton;
 	private List<String> locationPaths;
 	@SuppressWarnings("unused")
@@ -104,9 +106,12 @@ public class TargetLocationsGroup {
 		buttonComp.setLayout(layout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-		fAddButton = toolkit.createButton(buttonComp, "Add...", SWT.PUSH);
+		fAddButton = toolkit.createButton(buttonComp, "Add Directory...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fAddButton);
+		fAddFileButton = toolkit.createButton(buttonComp, "Add File...", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(fAddFileButton);
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fRemoveButton);
@@ -168,8 +173,20 @@ public class TargetLocationsGroup {
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(fAddButton.getShell(), SWT.OPEN);
-				dlg.setText("Open");
+				DirectoryDialog dlg = new DirectoryDialog(fAddButton.getShell(), SWT.OPEN);
+				dlg.setText("Select Directory");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				updateLocationTree(path);
+			}
+		});
+		
+		fAddFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dlg = new FileDialog(fAddFileButton.getShell(), SWT.OPEN);
+				dlg.setText("Select File");
 				String path = dlg.open();
 				if (path == null)
 					return;
@@ -207,9 +224,7 @@ public class TargetLocationsGroup {
 		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
 				.getSelection();
 		this.locationPaths.remove(sel.getFirstElement().toString());
-		fTreeViewer.setInput(this.locationPaths);
-		fTreeViewer.collapseAll();
-
+		this.fTreeViewer.setInput(this.locationPaths);
 	}
 
 	private void updateButtons() {

@@ -51,6 +51,7 @@ import edu.uc.cssl.nlputils.crawlers.supremecourt.services.SupremCrawlerFilter;
 import edu.uc.cssl.nlputils.crawlers.supremecourt.services.SupremeCourtCrawler;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
+import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.nlputils.crawlers.supremecourt.ui.internal.ISupremeCrawlerUIConstants;
 import edu.usc.cssl.nlputils.crawlers.supremecourt.ui.internal.SupremeCrawlerImageRegistry;
 
@@ -63,6 +64,8 @@ public class SupremeCrawlerView extends ViewPart implements
 	private Button truncateAudio;
 	private Button termBtn;
 	private Combo rangeCombo;
+	private OutputLayoutData layoutData;
+	private IToolBarManager mgr;
 
 	@Override
 	public Image getTitleImage() {
@@ -156,7 +159,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		Label dummyLabel = toolkit.createLabel(sectionClient, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummyLabel);
-		OutputLayoutData layoutData = NlputilsFormComposite
+		layoutData = NlputilsFormComposite
 				.createOutputSection(toolkit, form.getBody(),
 						form.getMessageManager());
 		Composite outputSectionClient = layoutData.getSectionClient();
@@ -165,7 +168,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				.getImage(IMAGE_CRAWL));
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Supreme Crawler");
-		IToolBarManager mgr = form.getToolBarManager();
+		mgr = form.getToolBarManager();
 		addCrawlButton(mmng, layoutData.getOutputLabel(), mgr);
 		mgr.add(new Action() {
 			@Override
@@ -247,7 +250,17 @@ public class SupremeCrawlerView extends ViewPart implements
 	}
 
 	protected boolean canProceedCrawl() {
-		return true;// OutputPathValidation.getInstance().validateOutputDirectory(pa)
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
+		if (message != null) {
+
+			message = layoutData.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("location");
+			return true;
+		}
 	}
 
 	private void createDownloadGroupSection(Composite outputSectionClient) {

@@ -28,7 +28,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 	   * @return Object
 	   */
 	  public Object getParent(Object arg0) {
-	    return "";
+	    return "root";
 	  }
 
 	  /**
@@ -61,7 +61,6 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 			  if(locationObj.isDirectory()){
 				  File[] listFiles = locationObj.listFiles();
 				  for (File file : listFiles) {
-					  if(file.isFile())
 					elementList.add(file.toString());
 				}
 			  }
