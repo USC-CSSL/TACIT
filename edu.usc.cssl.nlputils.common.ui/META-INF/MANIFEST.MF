@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help.ui,
  org.eclipse.help.webapp,
  org.eclipse.ui.forms
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.nlputils.common.ui,
  edu.usc.cssl.nlputils.common.ui.composite.from,
