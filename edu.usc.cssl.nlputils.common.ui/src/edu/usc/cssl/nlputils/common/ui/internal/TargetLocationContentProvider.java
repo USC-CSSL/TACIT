@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -28,7 +29,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 	   * @return Object
 	   */
 	  public Object getParent(Object arg0) {
-	    return "root";
+	    return null;
 	  }
 
 	  /**
@@ -46,6 +47,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 		    // Return whether the parent has children
 		    return obj == null ? false : obj.length > 0;
 	  }
+	  
 
 	  /**
 	   * Gets the root element(s) of the tree
@@ -86,7 +88,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

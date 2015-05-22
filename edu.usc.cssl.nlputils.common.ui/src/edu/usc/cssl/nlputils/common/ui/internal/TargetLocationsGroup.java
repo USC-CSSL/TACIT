@@ -1,6 +1,7 @@
 package edu.usc.cssl.nlputils.common.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -201,7 +202,7 @@ public class TargetLocationsGroup {
 			}
 		});
 		fRemoveButton.setEnabled(true);
-
+        updateButtons();
 	}
 
 	protected void updateLocationTree(String path) {
@@ -220,14 +221,33 @@ public class TargetLocationsGroup {
 	}
 
 	private void handleRemove() {
-
+        List<String> modifiedList = new ArrayList<String>();
+        modifiedList.addAll(this.locationPaths);
 		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
 				.getSelection();
-		this.locationPaths.remove(sel.getFirstElement().toString());
-		this.fTreeViewer.setInput(this.locationPaths);
+		List<String> removeFiles = sel.toList();
+		if(removeFiles.size() > 0){
+			for (String selFile : removeFiles) {
+				modifiedList.remove(selFile);
+			}
+		}
+		this.locationPaths = modifiedList;
+	//	this.fTreeViewer.getTree().removeAll();
+		this.fTreeViewer.setInput(modifiedList);
 	}
 
 	private void updateButtons() {
+		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
+				.getSelection();
+		if(this.locationPaths == null || this.locationPaths.size() < 1){
+			fRemoveButton.setEnabled(false);
+			return;
+		}
+		if(!this.locationPaths.contains(sel.getFirstElement())){
+			fRemoveButton.setEnabled(false);
+			return;
+		}
+		fRemoveButton.setEnabled(true);
 
 	}
 
