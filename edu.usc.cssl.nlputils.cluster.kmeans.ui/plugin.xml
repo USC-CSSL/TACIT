@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension
+         point="org.eclipse.ui.views">
+ 
+      <view
+            name="Kmeans Cluster View"
+            class="edu.usc.cssl.nlputils.cluster.kmeans.ui.KmeansClusterView"
+            id="edu.usc.cssl.nlputils.cluster.kmeansui.view1">
+      </view>
+      
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:cluster">
+             <command
+                   commandId="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1"
+                   label="KMeans Cluster View"
+                   tooltip="KMeans Cluster View">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="wordcount.weighted"
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1"
+            name="KMeansCluster View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.cluster.kmeans.ui.handlers.OpenKmeansClusterViewHandler"
+            commandId="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1">
+      </handler>
+   </extension>
+   
+
+</plugin>

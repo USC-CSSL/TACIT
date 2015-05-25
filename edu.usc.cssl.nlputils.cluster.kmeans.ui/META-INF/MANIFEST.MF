@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Kmeans
+Bundle-SymbolicName: edu.usc.cssl.nlputils.cluster.kmeans.ui;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.cluster.kmeans.ui.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ edu.usc.cssl.nlputils.common.ui;bundle-version="0.0.1",
+ org.eclipse.swt,
+ org.eclipse.jface
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
