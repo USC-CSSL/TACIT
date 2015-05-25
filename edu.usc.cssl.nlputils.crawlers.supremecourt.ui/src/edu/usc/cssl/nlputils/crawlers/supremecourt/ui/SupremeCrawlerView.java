@@ -129,7 +129,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(termBtn);
-		Button issuesBtn = toolkit.createButton(sectionClient, "Issues",
+		final Button issuesBtn = toolkit.createButton(sectionClient, "Issues",
 				SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(issuesBtn);
@@ -190,7 +190,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		toolkit.paintBordersFor(form.getBody());
 	}
 
-	private void addCrawlButton(final IMessageManager mmng, Text outputPath,
+	private void addCrawlButton(final IMessageManager mmng, final Text outputPath,
 			IToolBarManager mgr) {
 		mgr.add(new Action() {
 			@Override
@@ -212,7 +212,7 @@ public class SupremeCrawlerView extends ViewPart implements
 					else
 						selectedFilterValue = "/issues";
 				}
-				SupremeCourtCrawler sc = new SupremeCourtCrawler(
+				final SupremeCourtCrawler sc = new SupremeCourtCrawler(
 						selectedFilterValue, outputPath.getText(),
 						ISupremeCrawlerUIConstants.CRAWLER_URL);
 				sc.setDownloadAudio(downloadAudio.getSelection());
@@ -407,7 +407,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		return sw.toString();
 	}
 
-	private void fireFilterEvent(String segment, final Combo combo) {
+	private void fireFilterEvent(final String segment, final Combo combo) {
 		Job loadFilters = new Job("Load Filter values") {
 
 			private String[] comboLists;

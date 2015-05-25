@@ -695,7 +695,7 @@ public class WeightedCount {
 
 					Object value = map.get(key);
 					if (value != null) {
-						int i = (int) value;
+						int i = ((Integer) value).intValue();
 						map.put(key, i + wordsInPhrase);
 					} else {
 						map.put(key, wordsInPhrase);
@@ -780,7 +780,7 @@ public class WeightedCount {
 					// System.out.println("Treating as one - "+currentWord);
 					Object value = map.get(currentWord);
 					if (value != null) {
-						int i = (int) value;
+						int i = ((Integer) value).intValue();
 						map.put(currentWord, i + 1);
 					} else {
 						map.put(currentWord, 1);
@@ -815,7 +815,7 @@ public class WeightedCount {
 					if (categorizer.query(currentWord) != null) {
 						Object value = map.get(currentWord);
 						if (value != null) {
-							int i = (int) value;
+							int i = ((Integer) value).intValue();
 							map.put(words[0], i + 1);
 						} else {
 							map.put(words[0], 1);
@@ -827,7 +827,7 @@ public class WeightedCount {
 						if (categorizer.query(words[0]) != null) {
 							Object value = map.get(words[0]);
 							if (value != null) {
-								int i = (int) value;
+								int i = ((Integer) value).intValue();
 								map.put(words[0], i + 1);
 							} else {
 								map.put(words[0], 1);
@@ -873,7 +873,7 @@ public class WeightedCount {
 					// with the one below.
 					Object value = map.get(currentWord);
 					if (value != null) {
-						int i = (int) value;
+						int i = ((Integer) value).intValue();
 						map.put(currentWord, i + 1);
 					} else {
 						map.put(currentWord, 1);
@@ -887,7 +887,7 @@ public class WeightedCount {
 							continue;
 						Object value = map.get(part);
 						if (value != null) {
-							int i = (int) value;
+							int i = ((Integer) value).intValue();
 							map.put(part, i + 1);
 						} else {
 							map.put(part, 1);

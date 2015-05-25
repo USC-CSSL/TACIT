@@ -24,7 +24,7 @@ public class SupremCrawlerFilter {
 
 	}
 	public List<String> filters(String segment) throws IOException{
-		List<String> filterContents = new ArrayList<>();
+		List<String> filterContents = new ArrayList<String>();
 			URI crawlUrl = URI.create(this.crawlerUrl+"/"+segment);
 			Document doc = parseContentFromUrl(crawlUrl.toString());
 			Element itemList = doc.select(".exmenu").get(0);

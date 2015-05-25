@@ -195,15 +195,15 @@ public class WeightedWordCountView extends ViewPart implements
 
 			public void run() {
 				// WeightedCount wc = new WeightedCount();
-				String stopWordPath = CommonUiActivator.getDefault()
+				final String stopWordPath = CommonUiActivator.getDefault()
 						.getPreferenceStore().getString("stop_words_path");
 				// lindapulickal: handling case where user types in a file
 				// without extension
-				String outputPath = layoutData.getOutputLabel().getText();
+				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
-				File oFile = new File(outputPath + File.separator + fileName
+				final File oFile = new File(outputPath + File.separator + fileName
 						+ ".csv");
-				File sFile = new File(outputPath + File.separator + fileName
+				final File sFile = new File(outputPath + File.separator + fileName
 						+ ".dat");
 
 				final List<String> inputFiles = inputLayoutData

@@ -121,7 +121,7 @@ public class LatinCrawlerView extends ViewPart implements
 				.hint(100, 200).applyTo(authorTable);
 		authorTable.setBounds(100, 100, 100, 500);
 
-		Button b = toolkit
+		final Button b = toolkit
 				.createButton(authorSectionClient, "Add...", SWT.PUSH); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(b);
 
