@@ -55,7 +55,7 @@
 	<modules>
 	        
 		
-		
+		<module>eclipse-repository</module>
 		<module>edu.usc.cssl.nlputils.repository</module>
 		
 		        <!--   development plug-ins starts -->
