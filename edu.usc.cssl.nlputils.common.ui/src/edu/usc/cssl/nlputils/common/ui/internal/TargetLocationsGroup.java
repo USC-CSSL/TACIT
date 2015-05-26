@@ -107,7 +107,7 @@ public class TargetLocationsGroup {
 		buttonComp.setLayout(layout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-		fAddButton = toolkit.createButton(buttonComp, "Add Directory...", SWT.PUSH);
+		fAddButton = toolkit.createButton(buttonComp, "Add Folder...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fAddButton);
 		fAddFileButton = toolkit.createButton(buttonComp, "Add File...", SWT.PUSH);

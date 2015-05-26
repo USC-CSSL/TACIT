@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import edu.uc.cssl.nlputils.wordcount.weighted.Activator;
 import snowballstemmer.PorterStemmer;
 
-public class WeightedCount {
+public class WordCountApi {
 
 	private StringBuilder readMe = new StringBuilder();
 	private Trie categorizer = new Trie();
@@ -75,12 +75,18 @@ public class WeightedCount {
 	// for calculating punctuation ratios
 	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro,
 			parenth, otherP, allPct;
+	private boolean weighted;
 
-	private static Logger logger = Logger.getLogger(WeightedCount.class
+	private static Logger logger = Logger.getLogger(WordCountApi.class
 			.getName());
 
+	public WordCountApi(boolean weighted) {
+		this.weighted = weighted;
+	}
+
 	// Updated function that can handle multiple input files
-	public void wordCount(SubProgressMonitor subProgressMonitor,List<String> inputFiles, List<String> dictionaryFile,
+	public void wordCount(SubProgressMonitor subProgressMonitor,
+			List<String> inputFiles, List<String> dictionaryFile,
 			String stopWordsFile, String outputFile, String delimiters,
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
@@ -108,10 +114,10 @@ public class WeightedCount {
 		// No errors with the output, dictionary and stop-words paths. Start
 		// processing.
 		long startTime = System.currentTimeMillis();
-        subProgressMonitor.beginTask("Counting Words", 99);
-        if (subProgressMonitor.isCanceled()){
-			 throw new OperationCanceledException(); 
-			 
+		subProgressMonitor.beginTask("Counting Words", 99);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
+
 		}
 		buildCategorizer(dictionaryFile);
 		logger.info("Finished building the dictionary trie in "
@@ -162,7 +168,7 @@ public class WeightedCount {
 	public void countWords(String inputFile, File oFile, File spssFile)
 			throws IOException {
 		File iFile = new File(inputFile);
-		if(iFile.isDirectory()){
+		if (iFile.isDirectory()) {
 			return;
 		}
 		logger.info("Current input file - " + inputFile);
@@ -182,14 +188,6 @@ public class WeightedCount {
 		weirdDashCount = 0;
 		period = comma = colon = semiC = qMark = exclam = dash = quote = apostro = parenth = otherP = allPct = 0;
 		while ((currentLine = br.readLine()) != null) {
-			/*
-			 * noOfLines = noOfLines + StringUtils.countMatches(currentLine,
-			 * ". "); noOfLines = noOfLines +
-			 * StringUtils.countMatches(currentLine, "? "); noOfLines =
-			 * noOfLines + StringUtils.countMatches(currentLine, "! ");
-			 * //noOfLines = noOfLines + 1; // For the final sentence. Removed
-			 * cos LIWC doesnt do this.
-			 */
 
 			Matcher eolMatcher = eol.matcher(currentLine);
 			while (eolMatcher.find())
@@ -346,9 +344,14 @@ public class WeightedCount {
 					// Find the root word as that's what's stored in the
 					// dictionary and weight map
 					String rootWord = categorizer.root(currWord);
-					row.append((multiplier * map.get(currWord) * weightMap.get(
-							rootWord).get(currCat))
-							/ (float) catCount.get(currCat) + ",");
+					if (this.weighted) {
+						row.append((multiplier * map.get(currWord) * weightMap
+								.get(rootWord).get(currCat))
+								/ (float) catCount.get(currCat) + ",");
+					} else {
+						row.append(multiplier * map.get(currWord)
+								/ (float) catCount.get(currCat) + ",");
+					}
 				}
 			}
 			bw.write(row.toString());
@@ -506,13 +509,13 @@ public class WeightedCount {
 				logger.warning("The dictionary file " + dFile + " is empty");
 				appendLog("The dictionary file " + dFile + " is empty");
 			}
+			String[] currentLineTokenizer = currentLine.split("\\s+");
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null
 						&& !currentLine.equals("%"))
 					categories.put(
-							Integer.parseInt(currentLine.split("\\s+")[0]
-									.trim()), currentLine.split("\\s+")[1]
-									.trim());
+							Integer.parseInt(currentLineTokenizer[0].trim()),
+							currentLineTokenizer[1].trim());
 
 			if (currentLine == null) {
 				logger.warning("The dictionary file " + dFile
@@ -536,7 +539,7 @@ public class WeightedCount {
 					String[] words = currentLine.split("\\s+");
 					String currPhrase = words[0];
 					String condPhrase = words[0];
-					for (int i = 2; i < words.length; i = i + 2) {
+					for (int i = initialize(); i < words.length; i = increment(i)) {
 						if (!words[i].matches("\\d+")) {
 							if (words[i].contains("/")) {
 								String[] splits = words[i].split("/");
@@ -559,9 +562,11 @@ public class WeightedCount {
 							}
 							continue;
 						}
-						weights.put(
-								this.categories.get(Integer.parseInt(words[i])),
-								Double.parseDouble(words[i - 1]));
+						if (this.weighted) {
+							weights.put(this.categories.get(Integer
+									.parseInt(words[i])), Double
+									.parseDouble(words[i - 1]));
+						}
 						categories.add(Integer.parseInt(words[i]));
 					}
 
@@ -595,11 +600,27 @@ public class WeightedCount {
 						conditionalCategory.put(condPhrase, condCategories);
 					// categorizer.printTrie();
 
-					weightMap.put(currentWord, weights);
+					if (this.weighted)
+						weightMap.put(currentWord, weights);
 				}
 			}
 			br.close();
 		}
+	}
+
+	private int initialize() {
+
+		if (this.weighted)
+			return 2;
+		else
+			return 1;
+	}
+
+	private int increment(int val) {
+		if (this.weighted) {
+			return val + 2;
+		} else
+			return val + 1;
 	}
 
 	// Adds words and their corresponding count to the hashmap. Returns total
@@ -941,13 +962,11 @@ public class WeightedCount {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
 			String appV = Platform
-					.getBundle("edu.usc.cssl.nlputils.repository")
-					.getHeaders().get("Bundle-Version");
+					.getBundle("edu.usc.cssl.nlputils.repository").getHeaders()
+					.get("Bundle-Version");
 			Date date = new Date();
 			bw.write("Weighted Word Count Output\n--------------------------\n\nApplication Version: "
-					+ appV
-					+ "\nDate: "
-					+ date.toString() + "\n\n");
+					+ appV + "\nDate: " + date.toString() + "\n\n");
 			bw.write(readMe.toString());
 			bw.close();
 		} catch (IOException e) {

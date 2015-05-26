@@ -19,10 +19,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -30,7 +33,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.uc.cssl.nlputils.wordcount.weighted.services.WeightedCount;
+import edu.uc.cssl.nlputils.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
@@ -52,11 +55,12 @@ public class WeightedWordCountView extends ViewPart implements
 	private Button stemEnabled;
 	private Button spssRawFile;
 	private Button wordDistributionFile;
-	private WeightedCount weightCount;
+	private WordCountApi wordCountController;
+	private Button weightedWordCountButton;
+	private Button liwcWordCountButton;
 
 	@Override
 	public void createPartControl(Composite parent) {
-		weightCount = new WeightedCount();
 		toolkit = createFormBodySection(parent);
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED);
@@ -79,6 +83,7 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(sc);
 
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
+
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
 				.applyTo(client);
@@ -92,6 +97,16 @@ public class WeightedWordCountView extends ViewPart implements
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary Details",
 				"Add the location of Dictionary");
+
+		// create type either LIWC or Weighted
+
+		Composite wcTypeComposite = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
+				.applyTo(wcTypeComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(wcTypeComposite);
+
+		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -116,6 +131,32 @@ public class WeightedWordCountView extends ViewPart implements
 		this.setPartName("Weighted Word Count");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+
+	}
+
+	private void createWordCountType(FormToolkit toolkit2, Composite parent,
+			IMessageManager messageManager) {
+
+		Group buttonComposite = new Group(parent, SWT.LEFT);
+		buttonComposite.setText("Word count type");
+		buttonComposite.setBackground(parent.getBackground());
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		buttonComposite.setLayout(layout);
+
+		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		weightedWordCountButton.setText("Weighted Word Count");
+		weightedWordCountButton.setSelection(true);
+		weightedWordCountButton.setBackground(parent.getBackground());
+
+		liwcWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		liwcWordCountButton.setText("LIWC Word Count");
+		liwcWordCountButton.setSelection(false);
+		liwcWordCountButton.setBackground(parent.getBackground());
+
+		Label lblEmpty = new Label(buttonComposite, SWT.None);
+		NlputilsFormComposite.createEmptyRow(toolkit, parent);
 
 	}
 
@@ -201,10 +242,10 @@ public class WeightedWordCountView extends ViewPart implements
 				// without extension
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
-				final File oFile = new File(outputPath + File.separator + fileName
-						+ ".csv");
-				final File sFile = new File(outputPath + File.separator + fileName
-						+ ".dat");
+				final File oFile = new File(outputPath + File.separator
+						+ fileName + ".csv");
+				final File sFile = new File(outputPath + File.separator
+						+ fileName + ".dat");
 
 				final List<String> inputFiles = inputLayoutData
 						.getSelectedFiles();
@@ -215,58 +256,20 @@ public class WeightedWordCountView extends ViewPart implements
 				final boolean isSpss = spssRawFile.getSelection();
 				final boolean isWdist = wordDistributionFile.getSelection();
 				final boolean isStemDic = stemEnabled.getSelection();
-				// Creating a new Job to do word count so that the UI will not
-				// freeze
-				/*
-				 * Job job = new Job("Word Count Job"){ protected IStatus
-				 * run(IProgressMonitor monitor){
-				 * 
-				 * int rc = -1;
-				 * 
-				 * 
-				 * try { rc=wc.wordCount(fInputFiles, fDic, fStop, fOPath,
-				 * "",true, stemming, snowBall, spss,wDist,stemDic); } catch
-				 * (IOException ioe) { ioe.printStackTrace(); } final int
-				 * returnCode = rc; final String errorMessage;
-				 * 
-				 * if (returnCode == -2) errorMessage =
-				 * "Please check the input file path."; else if (returnCode ==
-				 * -3) errorMessage = "Please check the dictionary file path.";
-				 * else if (returnCode == -4) errorMessage =
-				 * "Please check the stop words file path."; else if (returnCode
-				 * == -5) errorMessage = "The output file path is incorrect.";
-				 * else if (returnCode == -6) errorMessage =
-				 * "The SPSS output file path is incorrect."; else if
-				 * (returnCode == 0) errorMessage =
-				 * "Word Count Completed Successfully."; else errorMessage =
-				 * "Word Count failed. Please try again.";
-				 * 
-				 * appendLog(errorMessage);
-				 * appendLog("DONE (Weighted Word Count)");
-				 * 
-				 * Display.getDefault().asyncExec(new Runnable() {
-				 * 
-				 * @Override public void run() { if (returnCode == 0){
-				 * MessageBox message = new MessageBox(shell,
-				 * SWT.ICON_INFORMATION | SWT.OK);
-				 * message.setMessage(errorMessage); message.setText("Success");
-				 * message.open(); } else{ MessageBox message = new
-				 * MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-				 * message.setMessage(errorMessage); message.setText("Error");
-				 * message.open(); } } });
-				 * 
-				 * return Status.OK_STATUS; } }; job.setUser(true);
-				 * job.schedule();
-				 * 
-				 * 
-				 * } });
-				 */
-				Job job = new Job("Crawling...") {
+		
+				Job wordCountJob = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started crawling...", 100);
+						monitor.beginTask("NLPUtils started Analyzing Weighted WordCount...", 100);
 						try {
-							weightCount.wordCount(new SubProgressMonitor(monitor, 100),inputFiles, dictionaryFiles,
+							if (weightedWordCountButton.getSelection()) {
+								wordCountController = new WordCountApi(true);
+							}
+							else {
+								wordCountController = new WordCountApi(false);
+							}
+							wordCountController.wordCount(new SubProgressMonitor(
+									monitor, 100), inputFiles, dictionaryFiles,
 									stopWordPath, outputPath, "", true,
 									isLiwcStemming, isSnowBall, isSpss,
 									isWdist, isStemDic, oFile, sFile);
@@ -277,9 +280,9 @@ public class WeightedWordCountView extends ViewPart implements
 						return Status.OK_STATUS;
 					}
 				};
-				job.setUser(true);
-				if(canProceed()){
-				job.schedule();
+				wordCountJob.setUser(true);
+				if (canProceed()) {
+						wordCountJob.schedule();
 				}
 			};
 		});
@@ -301,36 +304,38 @@ public class WeightedWordCountView extends ViewPart implements
 		});
 		form.getToolBarManager().update(true);
 	}
-	protected boolean canProceed() {
-			String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
-			if (message != null) {
 
-				message = layoutData.getOutputLabel().getText() + " " + message;
-				form.getMessageManager().addMessage("location", message, null,
+	protected boolean canProceed() {
+		String message = OutputPathValidation.getInstance()
+				.validateOutputDirectory(layoutData.getOutputLabel().getText());
+		if (message != null) {
+
+			message = layoutData.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("location");
+			// check input
+			if (inputLayoutData.getSelectedFiles().size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
 						IMessageProvider.ERROR);
 				return false;
 			} else {
-				form.getMessageManager().removeMessage("location");
-				// check input
-				if(inputLayoutData.getSelectedFiles().size() < 1 ){
-					form.getMessageManager().addMessage("input", "Select/Add atleast one input file", null,
+				form.getMessageManager().removeMessage("input");
+				if (dictLayoutData.getSelectedFiles().size() < 1) {
+					form.getMessageManager().addMessage("dict",
+							"Select/Add atleast one Dictionary file", null,
 							IMessageProvider.ERROR);
 					return false;
-				}
-				else {
-					form.getMessageManager().removeMessage("input");
-					if(dictLayoutData.getSelectedFiles().size() < 1 ){
-						form.getMessageManager().addMessage("dict", "Select/Add atleast one Dictionary file", null,
-								IMessageProvider.ERROR);
-						return false;
-						
-				}
-					else{
-						form.getMessageManager().removeMessage("dict");
-						return true;
-					}
+
+				} else {
+					form.getMessageManager().removeMessage("dict");
+					return true;
 				}
 			}
+		}
 	}
 
 	@Override
