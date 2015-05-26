@@ -12,5 +12,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swt,
  org.eclipse.jface,
  edu.usc.cssl.nlputils.wordcount.weighted;bundle-version="0.0.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
+ JavaSE-1.6
 Bundle-ActivationPolicy: lazy
