@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="NLPUtils" uid="NLPUtils" id="edu.usc.cssl.nlputils.repository.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
-
+<product name="NLPUtils" uid="NLPUtils" id="edu.usc.cssl.nlputils.repository.product" application="edu.usc.cssl.nlputils.repository.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -25,10 +24,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
