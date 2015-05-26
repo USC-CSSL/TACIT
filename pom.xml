@@ -68,6 +68,7 @@
 		<module>edu.usc.cssl.nlputils.common.ui</module>
 		<module>edu.usc.cssl.nlputils.common</module>
 		<module>edu.usc.cssl.nlputils.cluster.heirarchical.ui</module>
+		<module>edu.usc.cssl.nlputils.classify.svm.ui</module>
 		<module>edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
 				<!--   development plug-ins ends -->
 			
