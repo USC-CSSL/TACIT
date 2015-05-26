@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.nlputils.classifiy.svm.ui.SVMView"
+            id="edu.usc.cssl.nlputils.classify.svm.ui.view1"
+            name="SVM Classifier">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:classify">
+         <command
+               commandId="edu.usc.cssl.nlputils.classifiy.svm.ui.command1"
+               id="edu.usc.cssl.nlputils.classifiy.svm.ui.view1"
+               label="SVM Classifier"
+               tooltip="SVM Classifier">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="classify.svm"
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="edu.usc.cssl.nlputils.classify.svm.ui.handlers.OpenSVMViewHandler"
+            id="edu.usc.cssl.nlputils.classify.svm.ui.command1"
+            name="SVM Classifier">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.classify.svm.ui.handlers.OpenSVMViewHandler"
+            commandId="edu.usc.cssl.nlputils.classify.svm.ui.command1">
+      </handler>
+   </extension>
+
+</plugin>
