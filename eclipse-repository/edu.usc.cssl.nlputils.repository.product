@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
-
 <product name="NLPUtils" uid="NLPUtils" id="edu.usc.cssl.nlputils.repository.product" application="edu.usc.cssl.nlputils.repository.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
-
    <configIni use="default">
    </configIni>
 
@@ -29,7 +27,6 @@
 
    <plugins>
       <plugin id="com.ibm.icu"/>
-      <plugin id="edu.usc.cssl.nlputils.application"/>
       <plugin id="edu.usc.cssl.nlputils.cluster.heirarchical.ui"/>
       <plugin id="edu.usc.cssl.nlputils.cluster.kmeans.ui"/>
       <plugin id="edu.usc.cssl.nlputils.common"/>
@@ -142,7 +139,6 @@
       <plugin id="org.eclipse.ui.intro.universal"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.jsoup"/>
-      <plugin id="org.ramo.klevis.p2.core.service"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.w3c.css.sac"/>
@@ -158,7 +154,6 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <plugin id="org.ramo.klevis.p2.core.service" autoStart="true" startLevel="2" />
    </configurations>
 
 </product>
