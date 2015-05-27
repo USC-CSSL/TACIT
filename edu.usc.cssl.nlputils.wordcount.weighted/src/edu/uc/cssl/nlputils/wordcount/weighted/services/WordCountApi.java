@@ -509,13 +509,13 @@ public class WordCountApi {
 				logger.warning("The dictionary file " + dFile + " is empty");
 				appendLog("The dictionary file " + dFile + " is empty");
 			}
-			String[] currentLineTokenizer = currentLine.split("\\s+");
+			 
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null
 						&& !currentLine.equals("%"))
 					categories.put(
-							Integer.parseInt(currentLineTokenizer[0].trim()),
-							currentLineTokenizer[1].trim());
+							Integer.parseInt(currentLine.split("\\s+")[0].trim()),
+							currentLine.split("\\s+")[1].trim());
 
 			if (currentLine == null) {
 				logger.warning("The dictionary file " + dFile

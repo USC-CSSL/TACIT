@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IMessageManager;
@@ -163,10 +164,14 @@ public class WeightedWordCountView extends ViewPart implements
 	private void createStemmingOptions(Composite body) {
 		Group downloadGroup = new Group(body, SWT.SHADOW_IN);
 		downloadGroup.setText("Steming");
-		GridDataFactory.fillDefaults().grab(true, true).span(3, 4)
-				.applyTo(downloadGroup);
-		toolkit.adapt(downloadGroup);
 
+		downloadGroup.setBackground(body.getBackground());
+		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		downloadGroup.setLayout(layout);
+
+		
 		stemEnabled = toolkit.createButton(downloadGroup, "Stem Dictionary",
 				SWT.CHECK);
 		stemEnabled.setBounds(10, 10, 10, 10);
@@ -175,6 +180,7 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcStemming = toolkit.createButton(downloadGroup, "LIWC", SWT.RADIO);
 		liwcStemming.setBounds(35, 35, 10, 10);
 		liwcStemming.setEnabled(false);
+		liwcStemming.setSelection(true);
 		liwcStemming.pack();
 
 		snowballStemming = toolkit.createButton(downloadGroup, "Snowball",
@@ -261,13 +267,21 @@ public class WeightedWordCountView extends ViewPart implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started Analyzing Weighted WordCount...", 100);
-						try {
-							if (weightedWordCountButton.getSelection()) {
-								wordCountController = new WordCountApi(true);
-							}
-							else {
-								wordCountController = new WordCountApi(false);
-							}
+						try { 
+							Display.getDefault().syncExec(new Runnable() {
+								
+								@Override
+								public void run() {
+									if (weightedWordCountButton.getSelection()) {
+										wordCountController = new WordCountApi(true);
+									}
+									else {
+										wordCountController = new WordCountApi(false);
+									}
+									
+								}
+							});
+							
 							wordCountController.wordCount(new SubProgressMonitor(
 									monitor, 100), inputFiles, dictionaryFiles,
 									stopWordPath, outputPath, "", true,
