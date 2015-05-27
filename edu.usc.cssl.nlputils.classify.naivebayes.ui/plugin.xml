@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.nlputils.classify.naivebayes.ui.NaiveBayesClassifierView"
+            id="edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview"
+            name="Naive Bayes Classifier"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:classify">
+         <command
+               commandId="edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview"
+               label="Naive Bayes Classifier"
+               style="push"
+               tooltip="Naive Bayes Classifier">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.classify.naivebayes.ui.handlers.NaiveBayesClassifierViewHandler"
+            commandId="edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview"
+            name="Naive Bayes Classifier">
+      </command>
+   </extension>
+
+</plugin>
