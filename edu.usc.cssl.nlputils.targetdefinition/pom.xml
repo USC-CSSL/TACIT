@@ -24,7 +24,7 @@
 	</repositories>
 
 	<artifactId>edu.usc.cssl.nlputils.targetdefinition</artifactId>
-	<packaging>eclipse-plugin</packaging>
+	<packaging>pom</packaging>
 	<groupId>edu.usc.cssl.nlputils.targetdefinition</groupId>
 	<build>
     <plugins>

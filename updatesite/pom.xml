@@ -24,7 +24,6 @@
 	</repositories>
 
 	<artifactId>updatesite</artifactId>
-	<packaging>eclipse-plugin</packaging>
 	<groupId>updatesite</groupId>
 	 <properties>
     <skip-signing>true</skip-signing>
@@ -44,4 +43,5 @@
 
     </plugins>
   </build>
+  <packaging>eclipse-repository</packaging>
 </project>
