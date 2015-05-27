@@ -54,9 +54,7 @@
 	</repositories>
 	<modules>
 	        
-		<module>edu.usc.cssl.nlputils.targetdefinition</module>
-		<module>edu.usc.cssl.nlputils.feature</module>
-		<module>updatesite</module>
+		<module>eclipse-repository</module>
 		<module>edu.usc.cssl.nlputils.repository</module>
 		
 		        <!--   development plug-ins starts -->
