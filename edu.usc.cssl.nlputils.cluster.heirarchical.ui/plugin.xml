@@ -24,7 +24,7 @@
       </menuContribution>
    </extension>
  <extension
-         id="wordcount.weighted"
+         id="cluster.heirarchial"
          point="org.eclipse.ui.commands">
       <command
             id="edu.usc.cssl.nlputils.cluster.heirarchical.ui.view1"

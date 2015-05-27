@@ -12,7 +12,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 	private FormToolkit toolkit;
 	private ScrolledForm form;
-	public static String ID = "edu.usc.cssl.nlputils.classify.svm.ui.view";
+	public static String ID = "edu.usc.cssl.nlputils.classify.svm.ui.view1";
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);

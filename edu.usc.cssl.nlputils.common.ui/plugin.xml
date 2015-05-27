@@ -81,16 +81,6 @@
       </menuContribution>
    </extension>
    <!--  Progress View -->
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="menu:classify">
-             <command
-                  commandId="usc.edu.cssl.common.progressview.command1"
-                  label="Progress View">
-            </command>
-      </menuContribution>
-   </extension>
  <extension
          id="progress.view"
          point="org.eclipse.ui.commands">
