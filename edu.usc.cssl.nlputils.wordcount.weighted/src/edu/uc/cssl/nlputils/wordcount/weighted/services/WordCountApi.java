@@ -124,7 +124,11 @@ public class WordCountApi {
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
 		appendLog("Finished building the dictionary trie in "
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+        subProgressMonitor.worked(10);
+        if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
+		}
 		// Create Stop Words Set if doStopWords is true
 		if (doStopWords) {
 			startTime = System.currentTimeMillis();
@@ -136,10 +140,18 @@ public class WordCountApi {
 					+ (System.currentTimeMillis() - startTime)
 					+ " milliseconds.");
 		}
+		   subProgressMonitor.worked(10);
+		   if (subProgressMonitor.isCanceled()) {
+				throw new OperationCanceledException();
 
+			}
 		// Write the titles in the output file.
 		buildOutputFile(oFile);
+		   subProgressMonitor.worked(10);
+		   if (subProgressMonitor.isCanceled()) {
+				throw new OperationCanceledException();
 
+			}
 		// Write the SPSS file
 		if (doSpss)
 			buildSpssFile(sFile);
@@ -147,7 +159,11 @@ public class WordCountApi {
 		// categorizer.printTrie();
 		// System.out.println(categories);
 		// System.out.println(stopWordSet);
+		   subProgressMonitor.worked(10);
+		   if (subProgressMonitor.isCanceled()) {
+				throw new OperationCanceledException();
 
+			}
 		// for each inputFile,
 		for (String inputFile : inputFiles) {
 
@@ -157,12 +173,27 @@ public class WordCountApi {
 
 			countWords(inputFile, oFile, sFile);
 		}
+		   subProgressMonitor.worked(10);
+		   if (subProgressMonitor.isCanceled()) {
+				throw new OperationCanceledException();
+
+			}
 
 		if (doSpss)
 			finalizeSpssFile(sFile);
+		   subProgressMonitor.worked(10);
+		   if (subProgressMonitor.isCanceled()) {
+				throw new OperationCanceledException();
+
+			}
 		// No errors
 		writeReadMe(outputFile.substring(0,
 				outputFile.lastIndexOf(File.separator)));
+		   subProgressMonitor.worked(39);
+		   if (subProgressMonitor.isCanceled()) {
+				throw new OperationCanceledException();
+
+			}
 	}
 
 	public void countWords(String inputFile, File oFile, File spssFile)

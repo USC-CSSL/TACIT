@@ -248,6 +248,12 @@ public class WeightedWordCountView extends ViewPart implements
 				// without extension
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
+				if(weightedWordCountButton.getSelection()){
+					fileName = "weighted_" +fileName;
+				}
+				else {
+					fileName = "liwc_" +fileName;
+				}
 				final File oFile = new File(outputPath + File.separator
 						+ fileName + ".csv");
 				final File sFile = new File(outputPath + File.separator
@@ -266,7 +272,7 @@ public class WeightedWordCountView extends ViewPart implements
 				Job wordCountJob = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started Analyzing Weighted WordCount...", 100);
+						monitor.beginTask("NLPUtils started Analyzing WordCount...", 100);
 						try { 
 							Display.getDefault().syncExec(new Runnable() {
 								
