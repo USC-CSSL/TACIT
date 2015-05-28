@@ -7,9 +7,8 @@ Bundle-Activator: edu.usc.nlputils.common.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.jsoup;bundle-version="1.7.2"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
- JavaSE-1.6
+ org.jsoup
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.nlputils.common.crawlers
 Bundle-ClassPath: jsoup-1.7.3.jar,
