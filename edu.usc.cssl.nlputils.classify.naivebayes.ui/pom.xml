@@ -8,6 +8,6 @@
     <relativePath>../parent</relativePath>
   </parent>
 	<groupId>edu.usc.nlputils.tools</groupId>
-	<artifactId>edu.usc.cssl.nlputils.wordcount.weighted.ui</artifactId>
+	<artifactId>edu.usc.cssl.nlputils.classify.naivebayes.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
 </project>

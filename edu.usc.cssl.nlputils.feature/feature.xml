@@ -2,7 +2,7 @@
 <feature
       id="edu.usc.cssl.nlputils.feature"
       label="Feature"
-      version="0.0.1.qualifier"
+      version="1.0.0.qualifier"
       provider-name="USC">
 
    <description url="http://www.example.com/description">
@@ -85,28 +85,7 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.latin.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.usc.cssl.nlputils.common.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.usc.cssl.nlputils.crawlers.supremecourt.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.usc.cssl.nlputils.wordcount.weighted.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -127,14 +106,21 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.supremecourt"
+         id="org.apache.commons.lang3"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.latin"
+         id="edu.usc.cssl.nlputils.wordcount.weighted"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.nlputils.classify.svm.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -155,21 +141,35 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.weighted"
+         id="edu.usc.cssl.nlputils.crawlers.latin"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.lang3"
+         id="edu.usc.cssl.nlputils.crawlers.latin.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.classify.svm.ui"
+         id="edu.usc.cssl.nlputils.crawlers.supremecourt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.nlputils.crawlers.supremecourt.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.nlputils.wordcount.weighted.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

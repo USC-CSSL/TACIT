@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="NLPUtils" id="edu.usc.cssl.nlputils.repository.product" application="edu.usc.cssl.nlputils.repository.application" useFeatures="true" includeLaunchers="true">
-
+<product name="NLPUtils" uid="nlputils" id="edu.usc.cssl.nlputils.repository.product" application="edu.usc.cssl.nlputils.repository.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -40,8 +39,13 @@
       <feature id="org.eclipse.emf.common"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.help"/>
-      <feature id="edu.usc.cssl.nlputils.feature" version="0.0.1.qualifier"/>
+      <feature id="edu.usc.cssl.nlputils.feature" version="1.0.0.qualifier"/>
    </features>
 
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+   </configurations>
 
 </product>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Weighted Word Count
 Bundle-SymbolicName: edu.usc.cssl.nlputils.wordcount.weighted
-Bundle-Version: 0.0.1.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.uc.cssl.nlputils.wordcount.weighted.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,

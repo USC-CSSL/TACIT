@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ui
+Bundle-Name: naive bayes
 Bundle-SymbolicName: edu.usc.cssl.nlputils.classify.naivebayes.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.classify.naivebayes.ui.Activator
