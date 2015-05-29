@@ -21,6 +21,7 @@
     <module>../edu.usc.cssl.nlputils.crawlers.latin</module>
     <module>../edu.usc.cssl.nlputils.wordcount.weighted</module>
     <module>../edu.usc.cssl.nlputils.wordcount.weighted.ui</module>
+    <module>../edu.usc.cssl.nlputils.classify.svm</module>
     <module>../nlptoolshelp</module>
     <module>../product</module>
     
