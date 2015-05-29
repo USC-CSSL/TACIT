@@ -86,7 +86,8 @@
              id="edu.usc.cssl.nlputils.common.ui.preprocess.view"
              minimized="false"
              relationship="stack"
-             relative="org.eclipse.ui.editorss">
+             relative="org.eclipse.ui.editorss"
+             visible="false">
        </view>
         <view
              id="edu.usc.cssl.nlputils.cluster.kmeansui.view1"
@@ -95,6 +96,20 @@
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
+        <view
+              id="edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
+        <view
+              id="edu.usc.cssl.nlputils.classify.svm.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
     </perspectiveExtension>
  </extension>
 </plugin>
