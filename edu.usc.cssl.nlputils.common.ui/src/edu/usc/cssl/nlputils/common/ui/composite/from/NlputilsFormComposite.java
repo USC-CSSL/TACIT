@@ -1,5 +1,6 @@
 package edu.usc.cssl.nlputils.common.ui.composite.from;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -14,8 +15,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -116,12 +119,13 @@ public class NlputilsFormComposite {
 		OutputLayoutData layoutData = new OutputLayoutData();
 		layoutData.setOutputLabel(outputLocationTxt);
 		layoutData.setSectionClient(sectionClient);
-		
+
 		return layoutData;
 	}
 
 	public static TableLayoutData createTableSection(final Composite parent,
-			FormToolkit toolkit, GridLayout layout, String title, String description) {
+			FormToolkit toolkit, GridLayout layout, String title,
+			String description, boolean isFolder) {
 		Section section = toolkit.createSection(parent, Section.TWISTIE
 				| Section.TITLE_BAR);
 		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
@@ -155,7 +159,8 @@ public class NlputilsFormComposite {
 
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 200)
 				.span(1, 1).applyTo(pluginTabContainer);
-		targetLocationContent = TargetLocationsGroup.createInForm(scInput, toolkit);
+		targetLocationContent = TargetLocationsGroup.createInForm(scInput,
+				toolkit,isFolder);
 		Label dummyLb1 = toolkit.createLabel(scInput, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(dummyLb1);
@@ -170,5 +175,26 @@ public class NlputilsFormComposite {
 		layoutData.setSectionClient(client);
 		layoutData.setTreeViewer(targetLocationContent.getTreeViewer());
 		return layoutData;
+	}
+
+	public static void updateStatusMessage(IViewSite site, String message,
+			int error) {
+		// update status bar
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (error == IStatus.ERROR) {
+					site.getActionBars().getStatusLineManager()
+							.setErrorMessage(message);
+				}
+				else {
+					site.getActionBars().getStatusLineManager()
+					.setErrorMessage("");
+					site.getActionBars().getStatusLineManager()
+					.setMessage(message);
+				}
+			}
+		});
+
 	}
 }

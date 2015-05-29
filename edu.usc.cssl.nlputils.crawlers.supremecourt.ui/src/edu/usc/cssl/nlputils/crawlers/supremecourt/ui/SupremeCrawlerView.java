@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IMessage;
@@ -234,6 +235,7 @@ public class SupremeCrawlerView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
                         System.out.println("Done!!");
+                        NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is sucessfully completed",IStatus.ERROR);
 						return Status.OK_STATUS;
 					}
 				};

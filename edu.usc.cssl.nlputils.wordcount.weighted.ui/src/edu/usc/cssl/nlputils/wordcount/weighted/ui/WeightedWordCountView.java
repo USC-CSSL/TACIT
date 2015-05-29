@@ -94,10 +94,10 @@ public class WeightedWordCountView extends ViewPart implements
 		layout.numColumns = 2;
 		inputLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Input Details",
-				"Add file(s) or Folder(s) which contains data");
+				"Add file(s) or Folder(s) which contains data", true);
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary Details",
-				"Add the location of Dictionary");
+				"Add the location of Dictionary",false);
 
 		// create type either LIWC or Weighted
 
@@ -297,6 +297,7 @@ public class WeightedWordCountView extends ViewPart implements
 							ioe.printStackTrace();
 						}
 						monitor.done();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Word Count is Sucessfully Completed", IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

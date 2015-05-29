@@ -45,22 +45,23 @@ public class TargetLocationsGroup {
 	 *            parent composite
 	 * @param toolkit
 	 *            toolkit to create the widgets with
+	 * @param isFolder
 	 * @return generated instance of the table part
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent,
-			FormToolkit toolkit) {
+			FormToolkit toolkit, boolean isFolder) {
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
-		contentTable.createFormContents(parent, toolkit);
+		contentTable.createFormContents(parent, toolkit, isFolder);
 		return contentTable;
 	}
 
 	private TargetLocationsGroup(FormToolkit toolKit, Composite parent) {
 		this.toolKit = toolKit;
 	}
-	
+
 	public CheckboxTreeViewer getTreeViewer() {
-	return fTreeViewer;
+		return fTreeViewer;
 	}
 
 	private GridLayout createSectionClientGridLayout(
@@ -91,8 +92,10 @@ public class TargetLocationsGroup {
 	 *            parent composite
 	 * @param toolkit
 	 *            form toolkit to create widgets
+	 * @param isFolder
 	 */
-	private void createFormContents(Composite parent, FormToolkit toolkit) {
+	private void createFormContents(Composite parent, FormToolkit toolkit,
+			boolean isFolder) {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
@@ -106,11 +109,14 @@ public class TargetLocationsGroup {
 		layout.makeColumnsEqualWidth = false;
 		buttonComp.setLayout(layout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
-		fAddButton = toolkit.createButton(buttonComp, "Add Folder...", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(fAddButton);
-		fAddFileButton = toolkit.createButton(buttonComp, "Add File...", SWT.PUSH);
+		if (isFolder) {
+			fAddButton = toolkit.createButton(buttonComp, "Add Folder...",
+					SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddButton);
+		}
+		fAddFileButton = toolkit.createButton(buttonComp, "Add File...",
+				SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fAddFileButton);
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
@@ -171,22 +177,25 @@ public class TargetLocationsGroup {
 	 * calling this method
 	 */
 	private void initializeButtons() {
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dlg = new DirectoryDialog(fAddButton.getShell(), SWT.OPEN);
-				dlg.setText("Select Directory");
-				String path = dlg.open();
-				if (path == null)
-					return;
-				updateLocationTree(path);
-			}
-		});
-		
+		if (fAddButton != null) {
+			fAddButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					DirectoryDialog dlg = new DirectoryDialog(fAddButton
+							.getShell(), SWT.OPEN);
+					dlg.setText("Select Directory");
+					String path = dlg.open();
+					if (path == null)
+						return;
+					updateLocationTree(path);
+				}
+			});
+		}
 		fAddFileButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(fAddFileButton.getShell(), SWT.OPEN);
+				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
+						SWT.OPEN);
 				dlg.setText("Select File");
 				String path = dlg.open();
 				if (path == null)
@@ -202,7 +211,7 @@ public class TargetLocationsGroup {
 			}
 		});
 		fRemoveButton.setEnabled(true);
-        updateButtons();
+		updateButtons();
 	}
 
 	protected void updateLocationTree(String path) {
@@ -221,29 +230,29 @@ public class TargetLocationsGroup {
 	}
 
 	private void handleRemove() {
-        List<String> modifiedList = new ArrayList<String>();
-        modifiedList.addAll(this.locationPaths);
+		List<String> modifiedList = new ArrayList<String>();
+		modifiedList.addAll(this.locationPaths);
 		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
 				.getSelection();
 		List<String> removeFiles = sel.toList();
-		if(removeFiles.size() > 0){
+		if (removeFiles.size() > 0) {
 			for (String selFile : removeFiles) {
 				modifiedList.remove(selFile);
 			}
 		}
 		this.locationPaths = modifiedList;
-	//	this.fTreeViewer.getTree().removeAll();
+		// this.fTreeViewer.getTree().removeAll();
 		this.fTreeViewer.setInput(modifiedList);
 	}
 
 	private void updateButtons() {
 		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
 				.getSelection();
-		if(this.locationPaths == null || this.locationPaths.size() < 1){
+		if (this.locationPaths == null || this.locationPaths.size() < 1) {
 			fRemoveButton.setEnabled(false);
 			return;
 		}
-		if(!this.locationPaths.contains(sel.getFirstElement())){
+		if (!this.locationPaths.contains(sel.getFirstElement())) {
 			fRemoveButton.setEnabled(false);
 			return;
 		}
