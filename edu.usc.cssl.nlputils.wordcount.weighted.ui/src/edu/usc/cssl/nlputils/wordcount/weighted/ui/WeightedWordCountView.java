@@ -93,7 +93,7 @@ public class WeightedWordCountView extends ViewPart implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		inputLayoutData = NlputilsFormComposite.createTableSection(client,
-				toolkit, layout, "Input Dtails",
+				toolkit, layout, "Input Details",
 				"Add file(s) or Folder(s) which contains data");
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary Details",
