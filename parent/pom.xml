@@ -13,15 +13,16 @@
     <module>../edu.usc.cssl.nlputils.common.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.supremecourt</module>
     <module>../edu.usc.cssl.nlputils.crawlers.supremecourt.ui</module>
-    <module>../edu.usc.cssl.nlputils.classify.svm.ui</module>
-    <module>../edu.usc.cssl.nlputils.classify.naivebayes.ui</module>
     <module>../edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
     <module>../edu.usc.cssl.nlputils.cluster.heirarchical.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.latin.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.latin</module>
     <module>../edu.usc.cssl.nlputils.wordcount.weighted</module>
     <module>../edu.usc.cssl.nlputils.wordcount.weighted.ui</module>
+    <module>../edu.usc.cssl.nlputils.classify.svm.ui</module>
     <module>../edu.usc.cssl.nlputils.classify.svm</module>
+    <module>../edu.usc.cssl.nlputils.classify.naivebayes.ui</module>
+    <module>../edu.usc.cssl.nlputils.classify.naivebayes</module>
     <module>../nlptoolshelp</module>
     <module>../product</module>
     
