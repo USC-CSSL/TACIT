@@ -1,6 +1,9 @@
 package edu.usc.cssl.nlputils.classify.naivebayes.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,6 +38,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import bsh.EvalError;
+import edu.usc.cssl.nlputils.classify.naivebayes.services.NaiveBayesClassifier;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.INaiveBayesClassifierViewConstants;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifierViewImageRegistry;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
@@ -45,6 +50,14 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private int classPathCount = 0;
+
+	// Classification parameters
+	private Text classifyInputText;
+	private Text classifyOutputText;
+
+	// Training and Testing data class paths
+	Tree trainingClassPathTree;
+	Tree testingClassPathTree;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -123,8 +136,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		// Create an empty row to create space
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
 		// Create a row that holds the textbox and browse button
-		createBrowseButton(toolkit, sectionClient, "Input Path:", "Browse");
-		createBrowseButton(toolkit, sectionClient, "Output Path:", "Browse");
+		classifyInputText = createBrowseButton(toolkit, sectionClient,
+				"Input Path:", "Browse");
+		classifyOutputText = createBrowseButton(toolkit, sectionClient,
+				"Output Path:", "Browse");
 
 	}
 
@@ -144,12 +159,60 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 
 			public void run() {
+				// Set of inputs that needs to be passed
+
+				// Set of training data class paths
+				ArrayList<String> trainingDataPaths = new ArrayList<String>();
+				TreeItem trainingDataset = trainingClassPathTree.getItem(0);
+				for (TreeItem ti : trainingDataset.getItems()) {
+					trainingDataPaths.add(ti.getData().toString());
+				}
+
+				// Set of testing data class paths
+				ArrayList<String> testingDataPaths = new ArrayList<String>();
+				TreeItem testingDataset = trainingClassPathTree.getItem(0);
+				for (TreeItem ti : testingDataset.getItems()) {
+					testingDataPaths.add(ti.getData().toString());
+				}
+
+				for (String s : trainingDataPaths) {
+					System.out.println("Training class path:" + s);
+				}
+
+				// Classification i/p and o/p paths
+				String classificationInputDir = classifyInputText.getText();
+				String classificationOutputDir = classifyOutputText.getText();
+
+				/*
+				 * File iDir1 = new File(classificationInputDir); File[] iFiles1
+				 * = iDir1.listFiles(); for (File f : iFiles1) { if
+				 * (f.getAbsolutePath().contains("DS_Store")) f.delete(); }
+				 * 
+				 * File iDir2 = new File(classificationOutputDir); File[]
+				 * iFiles2 = iDir2.listFiles(); for (File f : iFiles2) { if
+				 * (f.getAbsolutePath().contains("DS_Store")) f.delete(); }
+				 */
 
 				Job job = new Job("Classifying...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started classifying...",
 								100);
+
+						NaiveBayesClassifier nbc = new NaiveBayesClassifier();
+						try {
+							nbc.classify(trainingDataPaths,
+									classificationInputDir,
+									classificationOutputDir, false, false);
+						} catch (FileNotFoundException e1) {
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						} catch (EvalError e1) {
+							e1.printStackTrace();
+						}
+
+						// return Status.OK_STATUS;
 
 						int i = 0;
 						while (i < 1000000000) {
@@ -170,10 +233,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					}
 				};
 				job.setUser(true);
-				job.schedule();
-
+				job.schedule(); // schedule the job
 			};
 		});
+
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -194,7 +257,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		form.getToolBarManager().update(true);
 	}
 
-	private void createBrowseButton(FormToolkit toolkit, Composite parent,
+	private Text createBrowseButton(FormToolkit toolkit, Composite parent,
 			String labelString, String buttonString) {
 		Label outputPathLbl = toolkit
 				.createLabel(parent, labelString, SWT.NONE);
@@ -221,7 +284,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-
+		return outputLocationTxt;
 	}
 
 	private void createInputSection(final Composite parent,
@@ -244,7 +307,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		client.setLayout(layout);
 		NlputilsFormComposite.createEmptyRow(toolkit, client);
 
-		final Tree trainingClassPathTree = new Tree(client, SWT.NONE);
+		trainingClassPathTree = new Tree(client, SWT.NONE);
 		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 0);
 		gd_tree.heightHint = 100;
 		trainingClassPathTree.setLayoutData(gd_tree);
@@ -276,7 +339,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 
-		final Tree testingClassPathTree = new Tree(client, SWT.NONE);
+		testingClassPathTree = new Tree(client, SWT.NONE);
 		testingClassPathTree.setLayoutData(gd_tree);
 		TreeItem testingItem = new TreeItem(testingClassPathTree, SWT.NULL);
 		testingItem.setText("Test");
