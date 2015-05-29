@@ -1,7 +1,7 @@
 package edu.usc.cssl.nlputils.common.ui.internal;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -222,6 +222,8 @@ public class TargetLocationsGroup {
 		if (!path.equals("root")) {
 			this.locationPaths.add(path);
 			this.fTreeViewer.setInput(this.locationPaths);
+			this.fTreeViewer.setChecked(path, true);
+
 		}
 	}
 
