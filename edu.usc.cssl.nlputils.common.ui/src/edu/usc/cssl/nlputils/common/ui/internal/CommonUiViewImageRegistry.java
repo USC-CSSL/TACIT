@@ -16,14 +16,20 @@ public class CommonUiViewImageRegistry {
 	}
 
 	private CommonUiViewImageRegistry() {
-		
-		ir.put(ICommonUiConstants.IMAGE_LRUN_OBJ, ImageDescriptor
-				.createFromFile(CommonUiViewImageRegistry.class, "/icons/lrun_obj.gif"));
-		
-		ir.put(ICommonUiConstants.IMAGE_HELP_CO, ImageDescriptor
-				.createFromFile(CommonUiViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(ICommonUiConstants.IMAGE_LRUN_OBJ, ImageDescriptor
+				.createFromFile(CommonUiViewImageRegistry.class,
+						"/icons/lrun_obj.gif"));
+
+		ir.put(ICommonUiConstants.IMAGE_HELP_CO, ImageDescriptor
+				.createFromFile(CommonUiViewImageRegistry.class,
+						"/icons/help_contents.gif"));
+		ir.put(ICommonUiConstants.IMAGE_SUCESS_SB, ImageDescriptor
+				.createFromFile(CommonUiViewImageRegistry.class,
+						"/icons/success.gif"));
+		ir.put(ICommonUiConstants.IMAGE_ERROR_SB, ImageDescriptor
+				.createFromFile(CommonUiViewImageRegistry.class,
+						"/icons/error.gif"));
 
 	}
 

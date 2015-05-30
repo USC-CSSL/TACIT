@@ -235,7 +235,7 @@ public class SupremeCrawlerView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
                         System.out.println("Done!!");
-                        NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is sucessfully completed",IStatus.ERROR);
+                        NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is sucessfully completed",IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

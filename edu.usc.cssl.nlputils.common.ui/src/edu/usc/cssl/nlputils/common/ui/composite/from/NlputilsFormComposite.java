@@ -25,6 +25,8 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
+import edu.usc.cssl.nlputils.common.ui.internal.CommonUiViewImageRegistry;
 import edu.usc.cssl.nlputils.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
@@ -49,7 +51,7 @@ public class NlputilsFormComposite {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
-		section.setText("Output Path Details"); //$NON-NLS-1$
+		section.setText("Output Path "); //$NON-NLS-1$
 		section.setDescription("Choose output path for storing the results");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
@@ -185,13 +187,13 @@ public class NlputilsFormComposite {
 			public void run() {
 				if (error == IStatus.ERROR) {
 					site.getActionBars().getStatusLineManager()
-							.setErrorMessage(message);
+							.setErrorMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_ERROR_SB),message);
 				}
 				else {
 					site.getActionBars().getStatusLineManager()
 					.setErrorMessage("");
 					site.getActionBars().getStatusLineManager()
-					.setMessage(message);
+					.setMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_SUCESS_SB),message);
 				}
 			}
 		});
