@@ -96,7 +96,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 		// Create dispatchable input section
 		createInputSection(client, toolkit, layout, "Input Details",
-				"Add folders which contains training and test data");
+				"Add folders which contains training and testing data");
 
 		// Create testing section
 		createTestSection(client, toolkit, layout, "Test",
