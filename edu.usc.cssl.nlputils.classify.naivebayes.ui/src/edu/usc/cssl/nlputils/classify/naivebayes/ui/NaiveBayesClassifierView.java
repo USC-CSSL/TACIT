@@ -367,7 +367,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		client.setLayout(layout);
 		NlputilsFormComposite.createEmptyRow(toolkit, client);
 
-		trainingClassPathTree = new Tree(client, SWT.NONE);
+		trainingClassPathTree = new Tree(client, SWT.MULTI);
 		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 0);
 		gd_tree.heightHint = 100;
 		trainingClassPathTree.setLayoutData(gd_tree);
@@ -399,7 +399,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 
-		testingClassPathTree = new Tree(client, SWT.NONE);
+		testingClassPathTree = new Tree(client, SWT.MULTI);
 		testingClassPathTree.setLayoutData(gd_tree);
 		TreeItem testingItem = new TreeItem(testingClassPathTree, SWT.NULL);
 		testingItem.setText("Test");
@@ -447,15 +447,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				Shell shell = parent.getShell();
 				ClassifierDialog cDialog = new ClassifierDialog(shell);
 				cDialog.create();
-				// cDialog.open(); // To open the created dialog
 				if (cDialog.open() == Window.OK) {
-					// System.out.println(cDialog.getTrainDataPath());
-					// System.out.println(cDialog.getTestDataPath());
 					File file = null;
 					classPathCount++;
 					TreeItem trainingSubItem = new TreeItem(trainingItem,
 							SWT.NULL);
-					trainingSubItem.setText("Class " + classPathCount + " : "
+					trainingSubItem.setText("Class" + " : "
 							+ cDialog.getTrainDataPath());
 					trainingSubItem.setData(cDialog.getTrainDataPath());
 					// helps for lazy expansion
@@ -466,7 +463,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 					TreeItem testingSubItem = new TreeItem(testingItem,
 							SWT.NONE);
-					testingSubItem.setText("Class " + classPathCount + " : "
+					testingSubItem.setText("Class" + " : "
 							+ cDialog.getTestDataPath());
 					testingSubItem.setData(cDialog.getTestDataPath());
 					file = new File(cDialog.getTestDataPath());
@@ -476,11 +473,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 					trainingClassPathTree.getItems()[0].setExpanded(true);
 					testingClassPathTree.getItems()[0].setExpanded(true);
-
-					// Enable the test button if required
-					// if (!testButton.getEnabled())
-					// testButton.setEnabled(true);
-
 				}
 			}
 		});
@@ -489,8 +481,32 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		removeClassButton.setText("Remove class path");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(removeClassButton);
-
+		removeClassButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem[] tempSelected = trainingClassPathTree.getSelection();
+				for (TreeItem ti : tempSelected) {
+					int index = getIndex(ti);
+					if (-1 != index) {
+						testingClassPathTree.getItems()[0].getItem(index)
+								.dispose();
+						ti.dispose();
+					}
+				}
+			}
+		});
 		section.setClient(client);
+	}
+
+	private int getIndex(TreeItem ti) {
+		int count = 0;
+		for (TreeItem tempItem : trainingClassPathTree.getItems()[0].getItems()) {
+			if (tempItem.getData().equals(ti.getData())) {
+				return count;
+			}
+			count++;
+		}
+		return -1; // not possible at all
 	}
 
 	@Override
