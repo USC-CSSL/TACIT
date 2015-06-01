@@ -48,7 +48,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	public static String ID = "edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
-	private int classPathCount = 0;
 
 	// Classification parameters
 	private Text classifyInputText;
@@ -61,7 +60,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 	@Override
 	public void createPartControl(Composite parent) {
-		classPathCount = 0;
 		// Creates toolkit and form
 		toolkit = createFormBodySection(parent, "Naive Bayes Classifier");
 
@@ -110,6 +108,20 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		addButtonsToToolBar();
 	}
 
+	/**
+	 * Creates a test section for Naive Bayes Classifier
+	 * 
+	 * @param parent
+	 *            - Parent composite
+	 * @param toolkit
+	 * @param layout
+	 *            - The layout to be applied on the section
+	 * @param title
+	 *            - Title for the section
+	 * @param description
+	 *            - Description for the section.
+	 * 
+	 */
 	private void createTestSection(final Composite parent, FormToolkit toolkit,
 			GridLayout layout, String title, String description) {
 		// Create output section
@@ -200,6 +212,19 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
 	}
 
+	/**
+	 * Creates a output section for the Naive Bayes Classifier
+	 * 
+	 * @param parent
+	 *            - Parent composite
+	 * @param toolkit
+	 * @param layout
+	 *            - layout to be applied on the section
+	 * @param title
+	 *            - title for the section
+	 * @param description
+	 *            - description to be displayed on the section
+	 */
 	private void createOutputSection(final Composite parent,
 			FormToolkit toolkit, GridLayout layout, String title,
 			String description) {
@@ -237,6 +262,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 	}
 
+	/**
+	 * Adds "Classify" and "Help" buttons on the Naive Bayes Classifier form
+	 */
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
@@ -268,7 +296,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				Job job = new Job("Classifying...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						// monitor.beginTask("NLPUtils started classifying...",100);
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
@@ -310,12 +337,22 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 
 			public void run() {
-
 			};
 		});
 		form.getToolBarManager().update(true);
 	}
 
+	/**
+	 * 
+	 * @param toolkit
+	 * @param parent
+	 *            - Parent Composite
+	 * @param labelString
+	 *            - String for the label
+	 * @param buttonString
+	 *            - String value for the button
+	 * @return - Creates a row with a label, text and button to browse the files
+	 */
 	private Text createBrowseButton(FormToolkit toolkit, Composite parent,
 			String labelString, String buttonString) {
 		Label outputPathLbl = toolkit
@@ -347,6 +384,19 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		return outputLocationTxt;
 	}
 
+	/**
+	 * Creates a input section for Naive Bayes Classifier
+	 * 
+	 * @param parent
+	 *            - Parent composite
+	 * @param toolkit
+	 * @param layout
+	 *            - The layout to be applied on the section
+	 * @param title
+	 *            - Title for the section
+	 * @param description
+	 *            - Description for the section.
+	 */
 	private void createInputSection(final Composite parent,
 			FormToolkit toolkit, GridLayout layout, String title,
 			String description) {
@@ -449,7 +499,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				cDialog.create();
 				if (cDialog.open() == Window.OK) {
 					File file = null;
-					classPathCount++;
 					TreeItem trainingSubItem = new TreeItem(trainingItem,
 							SWT.NULL);
 					trainingSubItem.setText("Class" + " : "
@@ -498,6 +547,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		section.setClient(client);
 	}
 
+	/**
+	 * Gets the index of the given item from Training classes tree
+	 * 
+	 * @param ti
+	 * @return
+	 */
 	private int getIndex(TreeItem ti) {
 		int count = 0;
 		for (TreeItem tempItem : trainingClassPathTree.getItems()[0].getItems()) {
@@ -514,6 +569,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		form.setFocus();
 	}
 
+	/**
+	 * 
+	 * @param parent
+	 * @param title
+	 * @return - Creates a form body section for Naive Bayes Classifier
+	 */
 	private FormToolkit createFormBodySection(Composite parent, String title) {
 		// Every interface requires a toolkit(Display) and form to store the
 		// components

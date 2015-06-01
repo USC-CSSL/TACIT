@@ -175,6 +175,7 @@ public class NaiveBayesClassifier {
 	}
 
 	public void writeReadMe(String location) {
+		// TODO: check whether this is actually needed
 		File readme = new File(location + "_README.txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
