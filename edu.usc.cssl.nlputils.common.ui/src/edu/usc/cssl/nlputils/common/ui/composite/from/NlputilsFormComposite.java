@@ -189,6 +189,11 @@ public class NlputilsFormComposite {
 					site.getActionBars().getStatusLineManager()
 							.setErrorMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_ERROR_SB),message);
 				}
+				else if(error == IStatus.INFO){
+					site.getActionBars().getStatusLineManager()
+					.setMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_ERROR_SB),message);
+
+				}
 				else {
 					site.getActionBars().getStatusLineManager()
 					.setErrorMessage("");

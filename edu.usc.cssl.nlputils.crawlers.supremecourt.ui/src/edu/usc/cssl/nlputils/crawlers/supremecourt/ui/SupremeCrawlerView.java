@@ -24,6 +24,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -164,7 +166,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				.createOutputSection(toolkit, form.getBody(),
 						form.getMessageManager());
 		Composite outputSectionClient = layoutData.getSectionClient();
-		createDownloadGroupSection(outputSectionClient);
+		createDownloadGroupSection(form.getBody());
 		form.setImage(SupremeCrawlerImageRegistry.getImageIconFactory()
 				.getImage(IMAGE_CRAWL));
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -232,6 +234,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 							sc.looper(new SubProgressMonitor(monitor, 100));
 						} catch (IOException e1) {
+							  NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is cancelled ",IStatus.INFO);
 							return Status.CANCEL_STATUS;
 						}
                         System.out.println("Done!!");
@@ -266,22 +269,24 @@ public class SupremeCrawlerView extends ViewPart implements
 	}
 
 	private void createDownloadGroupSection(Composite outputSectionClient) {
-		Group downloadGroup = new Group(outputSectionClient, SWT.SHADOW_IN);
+		
+		Group downloadGroup = new Group(outputSectionClient, SWT.LEFT);
 		downloadGroup.setText("Audio");
-		GridDataFactory.fillDefaults().grab(true, true).span(3, 4)
-				.applyTo(downloadGroup);
-		toolkit.adapt(downloadGroup);
+		downloadGroup.setBackground(outputSectionClient.getBackground());
+		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		downloadGroup.setLayout(layout);
+		downloadGroup.setForeground(outputSectionClient.getForeground());
 
 		downloadAudio = new Button(downloadGroup, SWT.CHECK);
 		downloadAudio.setText("Download Audio");
-		downloadAudio.setBounds(10, 10, 10, 10);
-		downloadAudio.pack();
+		downloadAudio.setBackground(outputSectionClient.getBackground());
 
 		truncateAudio = new Button(downloadGroup, SWT.CHECK);
 		truncateAudio.setText("Truncate (1 MB) ");
-		truncateAudio.setBounds(10, 35, 10, 10);
-		truncateAudio.pack();
 		truncateAudio.setEnabled(false);
+		truncateAudio.setBackground(outputSectionClient.getBackground());
 
 		downloadAudio.addSelectionListener(new SelectionAdapter() {
 
@@ -295,9 +300,8 @@ public class SupremeCrawlerView extends ViewPart implements
 			}
 		});
 
-		Label dummyDownload = toolkit.createLabel(downloadGroup, "", SWT.NONE);
-		dummyDownload.setBounds(10, 45, 10, 10);
-		dummyDownload.pack();
+		Label lblEmpty = new Label(downloadGroup, SWT.None);
+		NlputilsFormComposite.createEmptyRow(toolkit, outputSectionClient);
 	}
 
 	private void addErrorPopup(Form form2) {

@@ -326,13 +326,13 @@ public class WordCountApi {
 			noOfLines = 1;
 
 		writeToFile(oFile, iFile.getName(), totalWords, totalWords
-				/ (float) noOfLines, (sixltr * 100) / (float) totalWords,
+				/ (double) noOfLines, (sixltr * 100) / (double) totalWords,
 				(dicCount * 100) / (float) totalWords, (numerals * 100)
-						/ (float) totalWords, catCount);
+						/ (double) totalWords, catCount);
 		if (doSpss)
 			writeToSpss(spssFile, iFile.getName(), totalWords, totalWords
 					/ (float) noOfLines, (sixltr * 100) / (float) totalWords,
-					(dicCount * 100) / (float) totalWords, catCount);
+					(dicCount * 100) / (double) totalWords, catCount);
 	}
 
 	public void calculateWordDistribution(HashMap<String, Integer> map,
@@ -445,11 +445,11 @@ public class WordCountApi {
 	}
 
 	public void writeToSpss(File spssFile, String docName, int totalCount,
-			float wps, float sixltr, float dic,
+			float wps, float sixltr, double d,
 			HashMap<String, Integer> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
 		row.append("\"" + docName + "\"" + " " + totalCount + " " + wps + " "
-				+ sixltr + " " + dic + " ");
+				+ sixltr + " " + d + " ");
 		int currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
 		// string
@@ -471,11 +471,11 @@ public class WordCountApi {
 	}
 
 	public void writeToFile(File oFile, String docName, int totalCount,
-			float wps, float sixltr, float dic, float numerals,
+			double wps, double d, double dic, double numerals,
 			HashMap<String, Integer> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
 		row.append(docName + ",1," + totalCount + "," + df.format(wps) + ","
-				+ df.format(sixltr) + "," + df.format(dic) + ","
+				+ df.format(d) + "," + df.format(dic) + ","
 				+ df.format(numerals) + ",");
 
 		int currCatCount = 0;

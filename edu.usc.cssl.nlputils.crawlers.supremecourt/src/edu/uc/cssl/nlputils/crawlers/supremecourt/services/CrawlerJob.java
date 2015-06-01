@@ -35,20 +35,13 @@ public class CrawlerJob implements Runnable,ICrawler {
 		this.baseUrl = crawlUrl;
 		this.url = url;
 		this.monitor = monitor;
-
-	
 	}
 	
 	
 	
 	@Override
 	public void run() {
-		this.monitor.beginTask("tt", 1);
-		if(this.monitor.isCanceled()){
-			throw new OperationCanceledException();
-		}
 		crawl(url);
-		this.monitor.worked(1);
     
 	}
 	
@@ -69,6 +62,11 @@ public class CrawlerJob implements Runnable,ICrawler {
 		Element table = doc.select("tbody").get(0);
 		Elements rows = table.select("tr");
 		for (Element row : rows) {
+			
+			 if (monitor.isCanceled()){
+				 throw new OperationCanceledException(); 
+				 
+			}
 			// System.out.println(row.select("a").get(0).attr("href"));
 			String contenturl = baseUrl + row.select("a").get(0).attr("href");
 			// System.out.println(row.select("td").get(1).text().trim());
@@ -80,6 +78,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);
 			System.out.println(contenturl + ", " + filename);
+			
 			// Fixing the unhandled exception without cascading.
 			try {
 				getFiles(contenturl, filename);
@@ -105,21 +104,36 @@ public class CrawlerJob implements Runnable,ICrawler {
 			bw.close();
 			return;
 		}
+		 if (monitor.isCanceled()){
+			 throw new OperationCanceledException(); 
+			 
+		}
 
 		// "-transcript.txt"
-		System.out.println("Writing " + outputDir + "/" + filename
-				+ "-transcript.txt");
+		String outputDetail = "Writing " + outputDir + "/" + filename
+				+ "-transcript.txt";
+		System.out.println(outputDetail);
+		this.monitor.subTask(outputDetail);
 
 		// Element transcript = doc.select("div.hidden").get(0);
 		Element transcript = hidden.get(0);
 		Elements lines = transcript.select("p");
 		for (Element line : lines) {
+			 if (monitor.isCanceled()){
+				 throw new OperationCanceledException(); 
+				 
+			}
 			// System.out.println(line.text());
 			bw.write(line.text() + "\n");
-		}
+		} 
 		bw.close();
+		
 
 		if (this.downloadAudio) {
+			 if (monitor.isCanceled()){
+				 throw new OperationCanceledException(); 
+				 
+			}
 			downloadAudioFilesFromWebPage(filename, doc);
 		}
 
@@ -131,6 +145,10 @@ public class CrawlerJob implements Runnable,ICrawler {
 		Elements links = doc.select(".audio");
 		for (Element mp3 : links) {
 			if (mp3.attr("href").contains(".mp3")) {
+				 if (monitor.isCanceled()){
+					 throw new OperationCanceledException(); 
+					 
+				}
 				downloadTranscriptMp3File(filename, mp3);
 				break; // Once mp3 found, no need to continue for loop
 			}

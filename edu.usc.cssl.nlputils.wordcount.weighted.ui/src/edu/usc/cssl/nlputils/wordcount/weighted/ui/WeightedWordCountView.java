@@ -63,7 +63,6 @@ public class WeightedWordCountView extends ViewPart implements
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
-
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED);
 
@@ -75,15 +74,6 @@ public class WeightedWordCountView extends ViewPart implements
 		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
 				false);
 		section.setDescriptionControl(descriptionFrm);
-		// create type either LIWC or Weighted
-
-		Composite wcTypeComposite = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
-				.applyTo(wcTypeComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
-				.applyTo(wcTypeComposite);
-
-		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -94,6 +84,19 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(sc);
 
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
+		
+		
+		// create type either LIWC or Weighted
+
+				Composite wcTypeComposite = toolkit.createComposite(form.getBody());
+				GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+						.applyTo(wcTypeComposite);
+				GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+						.applyTo(wcTypeComposite);
+
+				createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
+
+		
 
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)

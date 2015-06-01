@@ -1,7 +1,9 @@
 package edu.usc.cssl.nlputils.crawlers.latin.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -9,10 +11,12 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -39,6 +43,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
+import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.nlputils.crawlers.latin.services.LatinCrawler;
 import edu.usc.cssl.nlputils.crawlers.latin.ui.internal.ILatinCrawlerUIConstants;
 import edu.usc.cssl.nlputils.crawlers.latin.ui.internal.LatinCrawlerImageRegistry;
@@ -52,18 +57,21 @@ public class LatinCrawlerView extends ViewPart implements
 	private Table authorTable;
 	private List<String> selectedAuthors;
 	private Set<String> authorListFromWeb;
+	private OutputLayoutData layoutData;
+	private LatinCrawler latinCrawler;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
 	public void createPartControl(Composite parent) {
+		latinCrawler = new LatinCrawler();
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("Latin Crawler"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
-		
+
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED);
 
@@ -75,7 +83,7 @@ public class LatinCrawlerView extends ViewPart implements
 		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
 				false);
 		section.setDescriptionControl(descriptionFrm);
-		
+
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -84,14 +92,14 @@ public class LatinCrawlerView extends ViewPart implements
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
 
-		OutputLayoutData layoutData = NlputilsFormComposite.createOutputSection(
-				toolkit, form.getBody(),form.getMessageManager());
+		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
+				form.getBody(), form.getMessageManager());
 		Composite sectionClient = layoutData.getSectionClient();
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
 
 		Section authorSection = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
-		
+
 		GridDataFactory.fillDefaults().span(3, 1).applyTo(authorSection);
 		authorSection.setExpanded(true);
 		authorSection.setText("Author Details"); //$NON-NLS-1$
@@ -121,8 +129,8 @@ public class LatinCrawlerView extends ViewPart implements
 				.hint(100, 200).applyTo(authorTable);
 		authorTable.setBounds(100, 100, 100, 500);
 
-		final Button b = toolkit
-				.createButton(authorSectionClient, "Add...", SWT.PUSH); //$NON-NLS-1$
+		final Button b = toolkit.createButton(authorSectionClient,
+				"Add...", SWT.PUSH); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(b);
 
 		b.addSelectionListener(new SelectionAdapter() {
@@ -142,22 +150,22 @@ public class LatinCrawlerView extends ViewPart implements
 				"Remove...", SWT.PUSH); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(removeAuthor);
-       
+
 		removeAuthor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+
 				for (int itemIndex : authorTable.getSelectionIndices()) {
-					
-					selectedAuthors.remove(authorTable.getItem(itemIndex).getText());
+
+					selectedAuthors.remove(authorTable.getItem(itemIndex)
+							.getText());
 					authorTable.remove(itemIndex);
-					
+
 				}
-				
+
 			}
 		});
-		
-		
+
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Latin Crawler");
@@ -175,31 +183,54 @@ public class LatinCrawlerView extends ViewPart implements
 			}
 
 			public void run() {
+				latinCrawler.initialize(layoutData.getOutputLabel().getText());
 
 				Job job = new Job("Crawling...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started crawling...", 100);
-						try {
-							if (monitor.isCanceled()) {
-								monitor.done();
-							}
-							Thread.sleep(100000);
 
-						} catch (InterruptedException e) {
+						Iterator<String> authorItr;
+						int totalWork = 1;
+						try {
+
+							if (selectedAuthors.contains("<All>")) {
+								authorItr = authorListFromWeb.iterator();
+								totalWork = authorListFromWeb.size();
+							} else {
+								authorItr = selectedAuthors.iterator();
+								totalWork = selectedAuthors.size();
+							}
+
+							monitor.beginTask("NLPUtils started crawling...",
+									totalWork);
+							while (authorItr.hasNext()) {
+								if (monitor.isCanceled()) {
+									monitor.subTask("Crawling is cancelled...");
+                                    break;                                    
+								}
+								String author = authorItr.next();
+								monitor.subTask("crawling "+ author +"...");
+								latinCrawler.getBooksByAuthor(
+										author,
+										latinCrawler.getAuthorNames().get(
+												author));
+								monitor.worked(1);
+							}
+						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
-						int i = 0;
-						while (i < 1000000000) {
-							i++;
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 						monitor.done();
 						return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
-				job.schedule();
+				if (canProceedCrawl()) {
+					job.schedule();
+				}
 
 			};
 		});
@@ -232,12 +263,38 @@ public class LatinCrawlerView extends ViewPart implements
 
 	}
 
+	private boolean canProceedCrawl() {
+
+		String message = OutputPathValidation.getInstance()
+				.validateOutputDirectory(layoutData.getOutputLabel().getText());
+		if (message != null) {
+
+			message = layoutData.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("location");
+			if (selectedAuthors == null || selectedAuthors.size() < 1) {
+				form.getMessageManager().addMessage("author",
+						"Add atleast one author before start crawing", null,
+						IMessageProvider.ERROR);
+				return false;
+			} else {
+				form.getMessageManager().removeMessage("author");
+
+			}
+			return true;
+		}
+
+	}
+
 	private void handleAdd(Shell shell) throws Exception {
 
 		processElementSelectionDialog(shell);
 
 		authors = new TreeSet<String>();
-		Job listAuthors = new Job("tt") {
+		Job listAuthors = new Job("Retrieving author list ...") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -282,14 +339,14 @@ public class LatinCrawlerView extends ViewPart implements
 		if (selectedAuthors == null) {
 			selectedAuthors = new ArrayList<String>();
 		}
-		
+
 		for (Object object : result) {
 			selectedAuthors.add((String) object);
 		}
-       Collections.sort(selectedAuthors);	
-       authorTable.removeAll();
+		Collections.sort(selectedAuthors);
+		authorTable.removeAll();
 		for (String itemName : selectedAuthors) {
-			
+
 			TableItem item = new TableItem(authorTable, 0);
 			item.setText(itemName);
 		}

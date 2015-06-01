@@ -75,11 +75,12 @@ public class SupremeCourtCrawler {
 					 throw new OperationCanceledException(); 
 					 
 				}
-		      //Runnable worker = ;
-		      new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,url + "&page=" + i,new SubProgressMonitor(monitor,noOfPages)).run();
-		   //   executor.execute(worker);
+		      monitor.subTask("crawling "+url);
+		      new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,url + "&page=" + i,monitor).run();
+		      monitor.worked(1);
 		     
 		    }
+		 
 		    // This will make the executor accept no new threads
 		    // and finish all existing threads in the queue
 		

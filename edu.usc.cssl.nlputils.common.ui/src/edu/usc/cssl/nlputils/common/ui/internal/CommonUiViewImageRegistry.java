@@ -20,7 +20,6 @@ public class CommonUiViewImageRegistry {
 		ir.put(ICommonUiConstants.IMAGE_LRUN_OBJ, ImageDescriptor
 				.createFromFile(CommonUiViewImageRegistry.class,
 						"/icons/lrun_obj.gif"));
-
 		ir.put(ICommonUiConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(CommonUiViewImageRegistry.class,
 						"/icons/help_contents.gif"));
@@ -30,6 +29,9 @@ public class CommonUiViewImageRegistry {
 		ir.put(ICommonUiConstants.IMAGE_ERROR_SB, ImageDescriptor
 				.createFromFile(CommonUiViewImageRegistry.class,
 						"/icons/error.gif"));
+		ir.put(ICommonUiConstants.IMAGE_INFO_SB, ImageDescriptor
+				.createFromFile(CommonUiViewImageRegistry.class,
+						"/icons/info_st_obj.gif"));
 
 	}
 
