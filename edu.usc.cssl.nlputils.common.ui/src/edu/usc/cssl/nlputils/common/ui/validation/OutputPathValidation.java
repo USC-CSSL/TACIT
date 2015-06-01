@@ -33,7 +33,7 @@ public class OutputPathValidation {
 			}
 
 		} else {
-			return "Location cannot be initial";
+			return "Output location cannot be empty";
 		}
 	}
 

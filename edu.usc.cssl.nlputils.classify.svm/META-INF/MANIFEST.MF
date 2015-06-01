@@ -4,8 +4,10 @@ Bundle-Name: Svm
 Bundle-SymbolicName: edu.usc.cssl.nlputils.classify.svm
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.classify.svm.Activator
+Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ edu.usc.cssl.nlputils.common,
  org.jsoup;bundle-version="1.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
  JavaSE-1.6

@@ -4,12 +4,13 @@ Bundle-Name: svm
 Bundle-SymbolicName: edu.usc.cssl.nlputils.classify.svm.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.classifiy.svm.ui.Activator
+Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
- edu.usc.cssl.nlputils.common.ui,
+ edu.usc.cssl.nlputils.common.ui;bundle-version="0.0.1",
  org.eclipse.swt,
- org.eclipse.jface
+ org.eclipse.jface,
+ edu.usc.cssl.nlputils.classify.svm
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: USC

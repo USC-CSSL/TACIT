@@ -120,13 +120,6 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.classify.svm.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.usc.cssl.nlputils.cluster.heirarchical.ui"
          download-size="0"
          install-size="0"
@@ -191,6 +184,13 @@
 
    <plugin
          id="edu.usc.cssl.nlputils.classify.svm"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.nlputils.classify.svm.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

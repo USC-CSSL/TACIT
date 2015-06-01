@@ -1,7 +1,10 @@
 package edu.usc.cssl.nlputils.classifiy.svm.ui;
 
+import java.util.List;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -25,11 +28,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.nlputils.classify.svm.services.SVMClassify;
 import edu.usc.cssl.nlputils.classify.svm.ui.internal.ISVMViewConstants;
 import edu.usc.cssl.nlputils.classify.svm.ui.internal.SVMViewImageRegistry;
+import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 
 public class SVMView extends ViewPart implements ISVMViewConstants {
 
@@ -91,7 +97,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		featureFileButton.pack();
 		
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
-		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("SVM Classification");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
@@ -99,7 +104,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
-		
+				
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor(){
@@ -112,7 +117,18 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			}
 			
 			public void run() {
+				if (!canProceed()) return;
+				final String stopWordPath = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
+				final List<String> class1Files = class1LayoutData.getSelectedFiles();
+				final List<String> class2Files = class2LayoutData.getSelectedFiles();
+				final String class1NameStr = class1Name.getText();
+				final String class2NameStr = class2Name.getText();
+				final int kValueInt = Integer.parseInt(kValue.getText());;
+				final String outputPath = layoutData.getOutputLabel().getText();
+				final boolean featureFile = featureFileButton.getSelection();
+				final boolean ppValue = preprocessButton.getSelection();
 				
+				final SVMClassify svm = new SVMClassify(class1NameStr, class2NameStr, outputPath);
 			};
 		});
 		
@@ -128,10 +144,86 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			}
 			
 			public void run() {
-
+				
 			};
 		});
 		form.getToolBarManager().update(true);
+	}
+	
+	protected boolean canProceed() {
+		//Remove all errors from any previous tries
+		form.getMessageManager().removeMessage("class1");
+		form.getMessageManager().removeMessage("class2");
+		form.getMessageManager().removeMessage("class1Name");
+		form.getMessageManager().removeMessage("class2Name");
+		form.getMessageManager().removeMessage("sameName");
+		form.getMessageManager().removeMessage("kValueEmpty");
+		form.getMessageManager().removeMessage("kValue");
+		form.getMessageManager().removeMessage("output");
+		
+		if (class1LayoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("class1","Select/Add atleast one Class 1 file", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("class1");
+		
+		if (class2LayoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("class2","Select/Add atleast one Class 2 file", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("class2");
+		
+		if (class1Name.getText().trim().length() == 0) {
+			form.getMessageManager().addMessage("class1Name","Class 1 name cannot be empty", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("class1Name");
+		
+		if (class2Name.getText().trim().length() == 0) {
+			form.getMessageManager().addMessage("class2Name","Class 2 name cannot be empty", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("class2Name");
+		
+		if (class2Name.getText().trim().equals(class1Name.getText().trim())) {
+			form.getMessageManager().addMessage("sameName","Class 1 and Class 2 cannot have the same name", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("sameName");
+		
+		String kValueText = kValue.getText();
+		if (kValueText.trim().length() == 0) {
+			form.getMessageManager().addMessage("kValueEmpty","k Value cannot be empty", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("kValueEmpty");
+		
+		int value = 0;
+		try {
+			value = Integer.parseInt(kValueText);
+		}catch(NumberFormatException e) { 
+			form.getMessageManager().addMessage("kValue","k Value should be an integer", null,IMessageProvider.ERROR);
+	        return false; 
+	    } catch(NullPointerException e) {
+	    	form.getMessageManager().addMessage("kValue","k Value should be an integer", null,IMessageProvider.ERROR);
+	        return false;
+	    }
+		if (value < 1){
+			form.getMessageManager().addMessage("kValue","k Value should be greater than 0", null,IMessageProvider.ERROR);
+	        return false;
+		}
+		form.getMessageManager().removeMessage("kValue");
+		
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
+		if (message != null) {
+
+			message = layoutData.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("output", message, null,IMessageProvider.ERROR);
+			return false;
+		} 
+		form.getMessageManager().removeMessage("output");
+		
+		return true;
 	}
 	
 	private void createPreprocessLink(Composite client) {
@@ -184,9 +276,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sectionClient);
 		inputParamsSection.setClient(sectionClient);
 		
-		//Empty row to add gap
-		/*Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(dummy);*/
 		
 		class1Label =  toolkit.createLabel(sectionClient, "Class 1 Label:",SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(class1Label);
@@ -208,7 +297,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		form = toolkit.createScrolledForm(parent);
 
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("SVM Classifier"); //$NON-NLS-1$
+		form.setText("SVM Classifier"); 
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
 				.applyTo(form.getBody());
 		return toolkit;
