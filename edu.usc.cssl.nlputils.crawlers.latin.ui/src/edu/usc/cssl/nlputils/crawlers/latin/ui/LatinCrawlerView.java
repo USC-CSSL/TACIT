@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -59,6 +60,7 @@ public class LatinCrawlerView extends ViewPart implements
 	private Set<String> authorListFromWeb;
 	private OutputLayoutData layoutData;
 	private LatinCrawler latinCrawler;
+	private Button removeAuthor;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -124,30 +126,30 @@ public class LatinCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy1);
 
-		authorTable = toolkit.createTable(authorSectionClient, SWT.BORDER);
+		authorTable = toolkit.createTable(authorSectionClient, SWT.BORDER|SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).span(2, 3)
 				.hint(100, 200).applyTo(authorTable);
 		authorTable.setBounds(100, 100, 100, 500);
+		
 
-		final Button b = toolkit.createButton(authorSectionClient,
+		final Button addAuthorBtn = toolkit.createButton(authorSectionClient,
 				"Add...", SWT.PUSH); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(b);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addAuthorBtn);
 
-		b.addSelectionListener(new SelectionAdapter() {
+		addAuthorBtn.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					handleAdd(b.getShell());
+					handleAdd(addAuthorBtn.getShell());
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
 
-		Button removeAuthor = toolkit.createButton(authorSectionClient,
-				"Remove...", SWT.PUSH); //$NON-NLS-1$
+		removeAuthor = toolkit.createButton(authorSectionClient,
+				"Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(removeAuthor);
 
@@ -155,11 +157,11 @@ public class LatinCrawlerView extends ViewPart implements
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				for (int itemIndex : authorTable.getSelectionIndices()) {
+				for (TableItem item : authorTable.getSelection()) {
 
-					selectedAuthors.remove(authorTable.getItem(itemIndex)
+					selectedAuthors.remove(item
 							.getText());
-					authorTable.remove(itemIndex);
+					item.dispose();
 
 				}
 
@@ -192,15 +194,8 @@ public class LatinCrawlerView extends ViewPart implements
 						Iterator<String> authorItr;
 						int totalWork = 1;
 						try {
-
-							if (selectedAuthors.contains("<All>")) {
-								authorItr = authorListFromWeb.iterator();
-								totalWork = authorListFromWeb.size();
-							} else {
 								authorItr = selectedAuthors.iterator();
 								totalWork = selectedAuthors.size();
-							}
-
 							monitor.beginTask("NLPUtils started crawling...",
 									totalWork);
 							while (authorItr.hasNext()) {
@@ -350,7 +345,7 @@ public class LatinCrawlerView extends ViewPart implements
 			TableItem item = new TableItem(authorTable, 0);
 			item.setText(itemName);
 		}
-
+		
 	}
 
 	static class ArrayLabelProvider extends LabelProvider {

@@ -222,7 +222,8 @@ public class TargetLocationsGroup {
 		if (!path.equals("root")) {
 			this.locationPaths.add(path);
 			this.fTreeViewer.setInput(this.locationPaths);
-			this.fTreeViewer.setChecked(path, true);
+			if (new File(path).isFile())
+				this.fTreeViewer.setChecked(path, true);
 
 		}
 	}

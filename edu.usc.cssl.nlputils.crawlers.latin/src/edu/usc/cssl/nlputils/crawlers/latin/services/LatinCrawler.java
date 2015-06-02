@@ -288,7 +288,7 @@ public class LatinCrawler {
 				"http://www.thelatinlibrary.com/misc.html", true));
 		authorNames.putAll(getAuthorsList(
 				"http://www.thelatinlibrary.com/ius.html", true));
-		authorNames.put("<All>", "All authors in the list");
+		//authorNames.put("<All>", "All authors in the list");
 		return authorNames;
 	}
 
