@@ -2,10 +2,10 @@ package edu.usc.cssl.nlputils.common.ui.preferencepage;
 
 public enum ELanguageType {
 	
-	AUTO("Auto Detect Language"),
-	EN("English"),
-	DE("German"),
-	FR("French"),
+	AUTODETECT,
+	EN,
+	DE,
+	FR,
 	IT,
 	DA,
 	NL,

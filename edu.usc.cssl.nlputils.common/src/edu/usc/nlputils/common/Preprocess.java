@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -42,7 +43,7 @@ public class Preprocess {
 	private boolean doLangDetect = false;
 	private boolean doCleanUp = false;
 	private String delimiters = " .,;'\"!-()[]{}:?";
-	private String[] inputFiles;
+	//private String[] inputFiles;
 	private String outputPath;
 	private String stopwordsFile;
 	private HashSet<String> stopWordsSet = new HashSet<String>();
@@ -50,8 +51,7 @@ public class Preprocess {
 	private String stemLang;
 	
 	
-	public Preprocess(String[] inputFiles){
-		this.inputFiles = inputFiles;
+	public Preprocess(){
 		this.stopwordsFile = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
 		this.delimiters = CommonUiActivator.getDefault().getPreferenceStore().getString("delimeters");
 		this.stemLang = CommonUiActivator.getDefault().getPreferenceStore().getString("language");
@@ -61,11 +61,15 @@ public class Preprocess {
 	}
 	
 	// for File as well as Directory
-	public String doPreprocessing() throws IOException{
+	public String doPreprocessing(List<String> inputFiles) throws IOException{
+		
 		File[] files;
-		files = new File[inputFiles.length];
-		for (int i = 0; i < inputFiles.length; i++) {
-			files[i] = new File(inputFiles[i]);
+		files = new File[inputFiles.size()];
+		int i = 0;
+		for (String filepath : inputFiles) {
+			if ( (new File(filepath).isDirectory())) continue;
+			files[i] = new File(filepath);
+			i = i+1;
 		}
 		/*File input = new File(path);
 		if (input.isDirectory()){

@@ -1,7 +1,12 @@
 package edu.usc.cssl.nlputils.classifiy.svm.ui;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -13,7 +18,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -28,14 +33,15 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.nlputils.classify.svm.services.CrossValidator;
 import edu.usc.cssl.nlputils.classify.svm.services.SVMClassify;
 import edu.usc.cssl.nlputils.classify.svm.ui.internal.ISVMViewConstants;
 import edu.usc.cssl.nlputils.classify.svm.ui.internal.SVMViewImageRegistry;
-import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.nlputils.common.Preprocess;
 
 public class SVMView extends ViewPart implements ISVMViewConstants {
 
@@ -118,7 +124,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			
 			public void run() {
 				if (!canProceed()) return;
-				final String stopWordPath = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
 				final List<String> class1Files = class1LayoutData.getSelectedFiles();
 				final List<String> class2Files = class2LayoutData.getSelectedFiles();
 				final String class1NameStr = class1Name.getText();
@@ -127,8 +132,48 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean featureFile = featureFileButton.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
+				Preprocess preprocessor = new Preprocess();
 				
+				String ppClass1 = "";
+				String ppClass2 = "";
+				if (ppValue){
+					try {
+						ppClass1 = preprocessor.doPreprocessing(class1Files);
+						ppClass2 = preprocessor.doPreprocessing(class2Files);
+					} catch (IOException e) {
+						return;
+					}
+				}
 				final SVMClassify svm = new SVMClassify(class1NameStr, class2NameStr, outputPath);
+				final CrossValidator cv = new CrossValidator();
+				final String fppClass1 = ppClass1;
+				final String fppClass2 = ppClass2;
+				Job job = new Job("Crawler Job"){
+					protected IStatus run(IProgressMonitor monitor){ 
+						
+						try {
+							cv.doCross(svm, class1NameStr, fppClass1, class2NameStr, fppClass2, kValueInt, featureFile);
+						} catch (NumberFormatException | IOException e) {
+							e.printStackTrace();
+						}
+						
+						
+						Display.getDefault().asyncExec(new Runnable() {
+						      @Override
+						      public void run() {
+									if (ppValue && preprocessor.doCleanUp()){
+										preprocessor.clean(fppClass1);
+										System.out.println("Cleaning up preprocessed files - "+fppClass1);
+										preprocessor.clean(fppClass2);
+										System.out.println("Cleaning up preprocessed files - "+fppClass2);
+									}
+						      }
+						    });
+						return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule();
 			};
 		});
 		
@@ -208,8 +253,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	    	form.getMessageManager().addMessage("kValue","k Value should be an integer", null,IMessageProvider.ERROR);
 	        return false;
 	    }
-		if (value < 1){
-			form.getMessageManager().addMessage("kValue","k Value should be greater than 0", null,IMessageProvider.ERROR);
+		if (value < 0){
+			form.getMessageManager().addMessage("kValue","k Value should be greater than or equal to 0", null,IMessageProvider.ERROR);
 	        return false;
 		}
 		form.getMessageManager().removeMessage("kValue");

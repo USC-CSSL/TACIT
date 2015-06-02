@@ -135,7 +135,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		getPreferenceStore().setDefault(DELIMETERS, ".,;'\\\"!-()[]{}:?/@");
 		getPreferenceStore().setDefault(STOP_PATH, "");
 		getPreferenceStore().setDefault(LOWER_CASE, "true");
-		getPreferenceStore().setDefault(LANGUAGE, ELanguageType.AUTO.getText());
+		getPreferenceStore().setDefault(LANGUAGE, ELanguageType.AUTODETECT.toString());
 		getPreferenceStore().setDefault(STEMMING, "false");
 		getPreferenceStore().setDefault(PRE_PROCESSED, "false");
 		getPreferenceStore().setDefault(INITIAL, "true");

@@ -7,9 +7,14 @@ Bundle-Activator: edu.usc.nlputils.common.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.jsoup
+ org.jsoup,
+ edu.usc.cssl.nlputils.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.usc.nlputils.common.crawlers
+Export-Package: bin.edu.usc.nlputils.common,
+ edu.usc.nlputils.common,
+ edu.usc.nlputils.common.crawlers
 Bundle-ClassPath: jsoup-1.7.3.jar,
- .
+ .,
+ SnowballStemmer.jar,
+ langdetect.jar

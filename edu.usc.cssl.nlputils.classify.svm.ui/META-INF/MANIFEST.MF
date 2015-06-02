@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.nlputils.common.ui;bundle-version="0.0.1",
  org.eclipse.swt,
  org.eclipse.jface,
- edu.usc.cssl.nlputils.classify.svm
+ edu.usc.cssl.nlputils.classify.svm,
+ edu.usc.cssl.nlputils.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

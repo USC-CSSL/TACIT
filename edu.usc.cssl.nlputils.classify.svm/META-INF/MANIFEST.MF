@@ -13,3 +13,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
  JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.nlputils.classify.svm.services
+Bundle-ClassPath: commons-math3-3.3.jar,
+ .,
+ libsvm.jar
