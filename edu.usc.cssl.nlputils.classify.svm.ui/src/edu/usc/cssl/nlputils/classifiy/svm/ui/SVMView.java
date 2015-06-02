@@ -132,14 +132,14 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean featureFile = featureFileButton.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
-				Preprocess preprocessor = new Preprocess();
+				Preprocess preprocessor = new Preprocess("SVM_Classifier");
 				
 				String ppClass1 = "";
 				String ppClass2 = "";
 				if (ppValue){
 					try {
-						ppClass1 = preprocessor.doPreprocessing(class1Files);
-						ppClass2 = preprocessor.doPreprocessing(class2Files);
+						ppClass1 = preprocessor.doPreprocessing(class1Files,class1NameStr);
+						ppClass2 = preprocessor.doPreprocessing(class2Files,class2NameStr);
 					} catch (IOException e) {
 						return;
 					}
