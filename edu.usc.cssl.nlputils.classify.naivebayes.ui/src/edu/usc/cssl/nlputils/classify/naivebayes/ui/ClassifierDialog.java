@@ -1,10 +1,14 @@
 package edu.usc.cssl.nlputils.classify.naivebayes.ui;
 
+import java.io.File;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -31,8 +35,9 @@ public class ClassifierDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Naive Bayes Classifier");
-		setMessage("Select folders which contain the train and test data",
+		setTitle("Add Class Path");
+		setMessage(
+				"Select folders which contains the training and testing data",
 				IMessageProvider.INFORMATION);
 	}
 
@@ -58,6 +63,20 @@ public class ClassifierDialog extends TitleAreaDialog {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(trainDataPath); // allows the column to grow
 											// horizontally
+
+		trainDataPath.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateTrainingErrorMessage();
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				updateTrainingErrorMessage();
+			}
+		});
+
 		Button trainBrowseBtn = new Button(container, SWT.PUSH);
 		trainBrowseBtn.setText("Browse");
 
@@ -71,6 +90,9 @@ public class ClassifierDialog extends TitleAreaDialog {
 				if (path == null)
 					return;
 				trainDataPath.setText(path);
+				setMessage(
+						"Select folders which contains the training and testing data",
+						IMessageProvider.INFORMATION);
 			}
 
 			@Override
@@ -89,6 +111,21 @@ public class ClassifierDialog extends TitleAreaDialog {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(testDataPath); // allows the column to grow
 										// horizontally
+
+		testDataPath.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateTestingErrorMessage();
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				updateTestingErrorMessage();
+
+			}
+		});
+
 		Button testBrowseBtn = new Button(container, SWT.PUSH);
 		testBrowseBtn.setText("Browse");
 
@@ -102,6 +139,9 @@ public class ClassifierDialog extends TitleAreaDialog {
 				if (path == null)
 					return;
 				testDataPath.setText(path);
+				setMessage(
+						"Select folders which contains the training and testing data",
+						IMessageProvider.INFORMATION);
 			}
 
 			@Override
@@ -113,10 +153,68 @@ public class ClassifierDialog extends TitleAreaDialog {
 		return area;
 	}
 
+	private void updateTestingErrorMessage() {
+		if (testDataPath.getText().isEmpty()) {
+			setMessage(
+					"Select folders which contains the training and testing data",
+					IMessageProvider.INFORMATION);
+			return;
+		}
+		File tempFile = new File(testDataPath.getText());
+		if (!tempFile.exists() || !tempFile.isDirectory()) {
+			setMessage("Testing class path must be a valid directory location",
+					IMessageProvider.ERROR);
+		} else {
+			setMessage(
+					"Select folders which contains the training and testing data",
+					IMessageProvider.INFORMATION);
+		}
+	}
+
+	private void updateTrainingErrorMessage() {
+		if (trainDataPath.getText().isEmpty()) {
+			setMessage(
+					"Select folders which contains the training and testing data",
+					IMessageProvider.INFORMATION);
+			return;
+		}
+		File tempFile = new File(trainDataPath.getText());
+		if (!tempFile.exists() || !tempFile.isDirectory()) {
+			setMessage(
+					"Training class path must be a valid directory location",
+					IMessageProvider.ERROR);
+		} else {
+			setMessage(
+					"Select folders which contains the training and testing data",
+					IMessageProvider.INFORMATION);
+		}
+	}
+
 	@Override
 	protected void okPressed() {
-		saveInput();
-		super.okPressed();
+		if (validateData()) {
+			saveInput();
+			super.okPressed();
+		}
+	}
+
+	private boolean validateData() {
+		if (trainDataPath.getText().isEmpty()) {
+			setMessage(
+					"Training class path must be a valid directory location",
+					IMessageProvider.ERROR);
+			return false;
+		} else {
+			File tempFile = new File(trainDataPath.getText());
+			if (!tempFile.exists() || !tempFile.isDirectory()) {
+				setMessage(
+						"Training class path must be a valid directory location",
+						IMessageProvider.ERROR);
+				return false;
+			} else {
+				return true;
+			}
+		}
 	}
 
 	@Override
