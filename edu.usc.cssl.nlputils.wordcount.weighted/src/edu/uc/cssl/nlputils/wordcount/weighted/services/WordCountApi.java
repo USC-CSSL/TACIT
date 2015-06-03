@@ -948,7 +948,12 @@ public class WordCountApi {
 				}
 			}
 			currentWord = nextWord;
-		} while (st.hasMoreTokens() || null != currentWord);
+		} while (st.hasMoreTokens() || null != currentWord); // null
+																// !=currentWord
+																// : Otherwise
+																// it will not
+																// process the
+																// last word
 
 		ret[0] = numWords;
 		ret[1] = sixltr;
