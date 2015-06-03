@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import edu.uc.cssl.nlputils.wordcount.weighted.Activator;
 import snowballstemmer.PorterStemmer;
 
 public class WordCountApi {
@@ -124,8 +123,8 @@ public class WordCountApi {
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
 		appendLog("Finished building the dictionary trie in "
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
-        subProgressMonitor.worked(10);
-        if (subProgressMonitor.isCanceled()) {
+		subProgressMonitor.worked(10);
+		if (subProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
@@ -140,18 +139,18 @@ public class WordCountApi {
 					+ (System.currentTimeMillis() - startTime)
 					+ " milliseconds.");
 		}
-		   subProgressMonitor.worked(10);
-		   if (subProgressMonitor.isCanceled()) {
-				throw new OperationCanceledException();
+		subProgressMonitor.worked(10);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
-			}
+		}
 		// Write the titles in the output file.
 		buildOutputFile(oFile);
-		   subProgressMonitor.worked(10);
-		   if (subProgressMonitor.isCanceled()) {
-				throw new OperationCanceledException();
+		subProgressMonitor.worked(10);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
-			}
+		}
 		// Write the SPSS file
 		if (doSpss)
 			buildSpssFile(sFile);
@@ -159,11 +158,11 @@ public class WordCountApi {
 		// categorizer.printTrie();
 		// System.out.println(categories);
 		// System.out.println(stopWordSet);
-		   subProgressMonitor.worked(10);
-		   if (subProgressMonitor.isCanceled()) {
-				throw new OperationCanceledException();
+		subProgressMonitor.worked(10);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
-			}
+		}
 		// for each inputFile,
 		for (String inputFile : inputFiles) {
 
@@ -173,27 +172,27 @@ public class WordCountApi {
 
 			countWords(inputFile, oFile, sFile);
 		}
-		   subProgressMonitor.worked(10);
-		   if (subProgressMonitor.isCanceled()) {
-				throw new OperationCanceledException();
+		subProgressMonitor.worked(10);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
-			}
+		}
 
 		if (doSpss)
 			finalizeSpssFile(sFile);
-		   subProgressMonitor.worked(10);
-		   if (subProgressMonitor.isCanceled()) {
-				throw new OperationCanceledException();
+		subProgressMonitor.worked(10);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
-			}
+		}
 		// No errors
 		writeReadMe(outputFile.substring(0,
 				outputFile.lastIndexOf(File.separator)));
-		   subProgressMonitor.worked(39);
-		   if (subProgressMonitor.isCanceled()) {
-				throw new OperationCanceledException();
+		subProgressMonitor.worked(39);
+		if (subProgressMonitor.isCanceled()) {
+			throw new OperationCanceledException();
 
-			}
+		}
 	}
 
 	public void countWords(String inputFile, File oFile, File spssFile)
@@ -445,8 +444,8 @@ public class WordCountApi {
 	}
 
 	public void writeToSpss(File spssFile, String docName, int totalCount,
-			float wps, float sixltr, double d,
-			HashMap<String, Integer> catCount) throws IOException {
+			float wps, float sixltr, double d, HashMap<String, Integer> catCount)
+			throws IOException {
 		StringBuilder row = new StringBuilder();
 		row.append("\"" + docName + "\"" + " " + totalCount + " " + wps + " "
 				+ sixltr + " " + d + " ");
@@ -540,13 +539,14 @@ public class WordCountApi {
 				logger.warning("The dictionary file " + dFile + " is empty");
 				appendLog("The dictionary file " + dFile + " is empty");
 			}
-			 
+
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null
 						&& !currentLine.equals("%"))
 					categories.put(
-							Integer.parseInt(currentLine.split("\\s+")[0].trim()),
-							currentLine.split("\\s+")[1].trim());
+							Integer.parseInt(currentLine.split("\\s+")[0]
+									.trim()), currentLine.split("\\s+")[1]
+									.trim());
 
 			if (currentLine == null) {
 				logger.warning("The dictionary file " + dFile
@@ -948,7 +948,7 @@ public class WordCountApi {
 				}
 			}
 			currentWord = nextWord;
-		} while (st.hasMoreTokens());
+		} while (st.hasMoreTokens() || null != currentWord);
 
 		ret[0] = numWords;
 		ret[1] = sixltr;
