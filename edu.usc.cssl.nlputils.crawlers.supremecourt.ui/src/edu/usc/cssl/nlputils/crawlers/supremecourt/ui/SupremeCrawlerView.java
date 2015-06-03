@@ -90,7 +90,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		form.setText("Supreme Court Crawler"); //$NON-NLS-1$
 		final IMessageManager mmng = form.getMessageManager();
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
-		addErrorPopup(form.getForm());
+		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED );
 
@@ -158,10 +158,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				rangeCombo.select(0);
 			}
 		});
-
-		Label dummyLabel = toolkit.createLabel(sectionClient, "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
-				.applyTo(dummyLabel);
+		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
 		layoutData = NlputilsFormComposite
 				.createOutputSection(toolkit, form.getBody(),
 						form.getMessageManager());
@@ -255,17 +252,17 @@ public class SupremeCrawlerView extends ViewPart implements
 	}
 
 	protected boolean canProceedCrawl() {
+		boolean canProceed = true;
+		form.getMessageManager().removeMessage("location");
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
-			return false;
-		} else {
-			form.getMessageManager().removeMessage("location");
-			return true;
-		}
+			canProceed = false;
+		} 
+		return canProceed;
 	}
 
 	private void createDownloadGroupSection(Composite outputSectionClient) {
@@ -304,37 +301,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		NlputilsFormComposite.createEmptyRow(toolkit, outputSectionClient);
 	}
 
-	private void addErrorPopup(Form form2) {
-		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				String title = e.getLabel();
-				Object href = e.getHref();
-				if (href instanceof IMessage[]) {
-					// details =
-					// managedForm.getMessageManager().createSummary((IMessage[])href);
-				}
-
-				Point hl = ((Control) e.widget).toDisplay(0, 0);
-				hl.x += 10;
-				hl.y += 10;
-				Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
-				shell.setImage(getImage(form.getMessageType()));
-				shell.setText(title);
-				shell.setLayout(new FillLayout());
-				// ScrolledFormText stext = new ScrolledFormText(shell, false);
-				// stext.setBackground(toolkit.getColors().getBackground());
-				FormText text = toolkit.createFormText(shell, true);
-				configureFormText(form.getForm(), text);
-				// stext.setFormText(text);
-				if (href instanceof IMessage[])
-					text.setText(createFormTextContent((IMessage[]) href),
-							true, false);
-				shell.setLocation(hl);
-				shell.pack();
-				shell.open();
-			}
-		});
-	}
+	
 
 	/**
 	 * Passing the focus request to the viewer's control.
@@ -345,73 +312,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		}
 	}
 
-	private Image getImage(int type) {
-		switch (type) {
-		case IMessageProvider.ERROR:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
-		case IMessageProvider.WARNING:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
-		case IMessageProvider.INFORMATION:
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
-		}
-		return null;
-	}
-
-	private void configureFormText(final Form form, FormText text) {
-		text.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				String is = (String) e.getHref();
-				try {
-					int index = Integer.parseInt(is);
-					IMessage[] messages = form.getChildrenMessages();
-					IMessage message = messages[index];
-					Control c = message.getControl();
-					((FormText) e.widget).getShell().dispose();
-					if (c != null)
-						c.setFocus();
-				} catch (NumberFormatException ex) {
-				}
-			}
-		});
-		text.setImage("error", getImage(IMessageProvider.ERROR));
-		text.setImage("warning", getImage(IMessageProvider.WARNING));
-		text.setImage("info", getImage(IMessageProvider.INFORMATION));
-	}
-
-	private String createFormTextContent(IMessage[] messages) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		pw.println("<form>");
-		for (int i = 0; i < messages.length; i++) {
-			IMessage message = messages[i];
-			pw.print("<li vspace=\"false\" style=\"image\" indent=\"16\" value=\"");
-			switch (message.getMessageType()) {
-			case IMessageProvider.ERROR:
-				pw.print("error");
-				break;
-			case IMessageProvider.WARNING:
-				pw.print("warning");
-				break;
-			case IMessageProvider.INFORMATION:
-				pw.print("info");
-				break;
-			}
-			pw.print("\"> <a href=\"");
-			pw.print(i + "");
-			pw.print("\">");
-			if (message.getPrefix() != null)
-				pw.print(message.getPrefix());
-			pw.print(message.getMessage());
-			pw.println("</a>");
-			pw.println("</li>");
-		}
-		pw.println("</form>");
-		pw.flush();
-		return sw.toString();
-	}
+	
 
 	private void fireFilterEvent(final String segment, final Combo combo) {
 		Job loadFilters = new Job("Load Filter values") {

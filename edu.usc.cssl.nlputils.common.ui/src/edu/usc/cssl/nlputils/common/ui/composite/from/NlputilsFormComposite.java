@@ -1,5 +1,8 @@
 package edu.usc.cssl.nlputils.common.ui.composite.from;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -10,17 +13,28 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -203,5 +217,103 @@ public class NlputilsFormComposite {
 			}
 		});
 
+	}
+	public static void addErrorPopup(Form form,FormToolkit toolkit) {
+		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				String title = e.getLabel();
+				Object href = e.getHref();
+				if (href instanceof IMessage[]) {
+					// details =
+					// managedForm.getMessageManager().createSummary((IMessage[])href);
+				}
+
+				Point hl = ((Control) e.widget).toDisplay(0, 0);
+				hl.x += 10;
+				hl.y += 10;
+				Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
+				shell.setImage(getImage(form.getMessageType()));
+				shell.setText(title);
+				shell.setLayout(new FillLayout());
+				// ScrolledFormText stext = new ScrolledFormText(shell, false);
+				// stext.setBackground(toolkit.getColors().getBackground());
+				FormText text = toolkit.createFormText(shell, true);
+				configureFormText(form, text);
+				// stext.setFormText(text);
+				if (href instanceof IMessage[])
+					text.setText(createFormTextContent((IMessage[]) href),
+							true, false);
+				shell.setLocation(hl);
+				shell.pack();
+				shell.open();
+			}
+		});
+	}
+	private static Image getImage(int type) {
+		switch (type) {
+		case IMessageProvider.ERROR:
+			return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+		case IMessageProvider.WARNING:
+			return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+		case IMessageProvider.INFORMATION:
+			return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+		}
+		return null;
+	}
+
+	private static void configureFormText(final Form form, FormText text) {
+		text.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				String is = (String) e.getHref();
+				try {
+					int index = Integer.parseInt(is);
+					IMessage[] messages = form.getChildrenMessages();
+					IMessage message = messages[index];
+					Control c = message.getControl();
+					((FormText) e.widget).getShell().dispose();
+					if (c != null)
+						c.setFocus();
+				} catch (NumberFormatException ex) {
+				}
+			}
+		});
+		text.setImage("error", getImage(IMessageProvider.ERROR));
+		text.setImage("warning", getImage(IMessageProvider.WARNING));
+		text.setImage("info", getImage(IMessageProvider.INFORMATION));
+	}
+
+	private static String createFormTextContent(IMessage[] messages) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		pw.println("<form>");
+		for (int i = 0; i < messages.length; i++) {
+			IMessage message = messages[i];
+			pw.print("<li vspace=\"false\" style=\"image\" indent=\"16\" value=\"");
+			switch (message.getMessageType()) {
+			case IMessageProvider.ERROR:
+				pw.print("error");
+				break;
+			case IMessageProvider.WARNING:
+				pw.print("warning");
+				break;
+			case IMessageProvider.INFORMATION:
+				pw.print("info");
+				break;
+			}
+			pw.print("\"> <a href=\"");
+			pw.print(i + "");
+			pw.print("\">");
+			if (message.getPrefix() != null)
+				pw.print(message.getPrefix());
+			pw.print(message.getMessage());
+			pw.println("</a>");
+			pw.println("</li>");
+		}
+		pw.println("</form>");
+		pw.flush();
+		return sw.toString();
 	}
 }

@@ -67,7 +67,7 @@ public class KmeansClusterAnalysis {
 		return null;
 	}
 
-	public static void runClustering(int fNumClusters, File[] listOfFiles,
+	public static void runClustering(int fNumClusters, List<File> listOfFiles,
 			String fOutputDir) {
 
 		List<File> inputFiles = new ArrayList<File>();

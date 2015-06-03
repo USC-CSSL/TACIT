@@ -64,7 +64,7 @@ public class HeirarchicalClusterView extends ViewPart implements
 
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-
+		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)

@@ -2,6 +2,7 @@ package edu.usc.cssl.nlputils.cluster.kmeans.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,6 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -40,6 +42,7 @@ import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.KmeansClusterViewImageRe
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 
 public class KmeansClusterView extends ViewPart implements
 		IKmeansClusterViewConstants {
@@ -72,7 +75,7 @@ public class KmeansClusterView extends ViewPart implements
 
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-
+		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -82,8 +85,8 @@ public class KmeansClusterView extends ViewPart implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-		layData = NlputilsFormComposite.createTableSection(
-				client, toolkit, layout, "Input Dtails",
+		layData = NlputilsFormComposite.createTableSection(client, toolkit,
+				layout, "Input Dtails",
 				"Add file(s) or Folder(s) which contains data", true);
 		Composite compInput;
 		compInput = layData.getSectionClient();
@@ -96,8 +99,8 @@ public class KmeansClusterView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		layoutData = NlputilsFormComposite
-				.createOutputSection(toolkit, client1, form.getMessageManager());
+		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
+				client1, form.getMessageManager());
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
@@ -162,7 +165,7 @@ public class KmeansClusterView extends ViewPart implements
 		form = toolkit.createScrolledForm(parent);
 
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("Heirarchial Cluster"); //$NON-NLS-1$
+		form.setText("KMeans Cluster"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
 				.applyTo(form.getBody());
 		return toolkit;
@@ -182,57 +185,77 @@ public class KmeansClusterView extends ViewPart implements
 				return "Analyze";
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-                final int noOfClusters = Integer.valueOf(noClusterTxt.getText()).intValue();
-                Job performCluster = new Job("Clustering...") {
+				final int noOfClusters = Integer
+						.valueOf(noClusterTxt.getText()).intValue();
+				final boolean isPreprocess = preprocessEnabled.getSelection();
+				final List<String> selectedFiles = layData.getSelectedFiles();
+				final String outputPath = layoutData.getOutputLabel().getText();
+				Job performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started clustering...", 100);
-						File[] inputFiles = null ;
-						if (preprocessEnabled.getSelection()) {
+						List<File> inputFiles = new ArrayList<File>();
+						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
-							Preprocess preprocessTask = new Preprocess("KMeans Cluster");
+							Preprocess preprocessTask = new Preprocess(
+									"KMeans Cluster");
 							try {
-								String dirPath = preprocessTask.doPreprocessing(layData.getSelectedFiles(),"");
-								inputFiles = new File(dirPath).listFiles();
+								String dirPath = preprocessTask
+										.doPreprocessing(selectedFiles, "");
+								File[] inputFile = new File(dirPath)
+										.listFiles();
+								for (File iFile : inputFile) {
+									inputFiles.add(iFile);
+								}
+
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-						}
-						else{
-							File[] files;
-							List<String>fileList = layData.getSelectedFiles();
-							inputFiles = new File[fileList.size()];
-							String outputPath;
-							int i = 0;
-							for (String filepath : fileList) {
-								if ( (new File(filepath).isDirectory())) continue;
-								inputFiles[i] = new File(filepath);
-								i = i+1;
+						} else {
+							for (String filepath : selectedFiles) {
+								if ((new File(filepath).isDirectory())) {
+									continue;
+								}
+								inputFiles.add(new File(filepath));
 							}
 						}
-							
-							// kemans processsing
-							long startTime = System.currentTimeMillis();
-							KmeansClusterAnalysis.runClustering(noOfClusters,inputFiles,  layoutData.getOutputLabel().getText());
-							System.out.println("K-Means Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
-					
-							
-							if (monitor.isCanceled()) {
-								throw new OperationCanceledException();
-							}
-						
+
+						// kemans processsing
+						long startTime = System.currentTimeMillis();
+						KmeansClusterAnalysis.runClustering(noOfClusters,
+								inputFiles, outputPath);
+						System.out
+								.println("K-Means Clustering completed successfully in "
+										+ (System.currentTimeMillis() - startTime)
+										+ " milliseconds.");
+
+						if (monitor.isCanceled()) {
+							throw new OperationCanceledException();
+						}
+
 						monitor.done();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.ERROR);
+						
 						return Status.OK_STATUS;
 					}
 				};
 				performCluster.setUser(true);
+				if(canProceedCluster()){
 				performCluster.schedule();
+				}
+				else{
+				NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering cannot be started. Please check the Form status to correct the errors", IStatus.ERROR);
+				}
 
-			};
+			}
+
+			
 		});
 		mgr.add(new Action() {
 			@Override
@@ -256,6 +279,37 @@ public class KmeansClusterView extends ViewPart implements
 	@Override
 	public void setFocus() {
 		form.setFocus();
+	}
+	
+	private boolean canProceedCluster() {
+		boolean canProceed = true;
+		form.getMessageManager().removeMessage("location");
+		form.getMessageManager().removeMessage("input");
+		form.getMessageManager().removeMessage("cluster");
+		String message = OutputPathValidation.getInstance()
+				.validateOutputDirectory(layoutData.getOutputLabel().getText());
+		if (message != null) {
+
+			message = layoutData.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
+			canProceed = false;
+		} 
+			
+			// check input
+			if (layData.getSelectedFiles().size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+		}
+			if (Integer.parseInt(noClusterTxt.getText())<1){
+				form.getMessageManager().addMessage("cluster",
+						"Number of clusters cannot be less than 1", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+			return canProceed;
 	}
 
 }

@@ -93,7 +93,7 @@ public class LatinCrawlerView extends ViewPart implements
 
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-
+		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
 		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
 				form.getBody(), form.getMessageManager());
 		Composite sectionClient = layoutData.getSectionClient();
@@ -126,15 +126,16 @@ public class LatinCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy1);
 
-		authorTable = toolkit.createTable(authorSectionClient, SWT.BORDER|SWT.MULTI);
+		authorTable = toolkit.createTable(authorSectionClient, SWT.BORDER
+				| SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).span(2, 3)
 				.hint(100, 200).applyTo(authorTable);
 		authorTable.setBounds(100, 100, 100, 500);
-		
 
 		final Button addAuthorBtn = toolkit.createButton(authorSectionClient,
 				"Add...", SWT.PUSH); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addAuthorBtn);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(addAuthorBtn);
 
 		addAuthorBtn.addSelectionListener(new SelectionAdapter() {
 
@@ -148,8 +149,8 @@ public class LatinCrawlerView extends ViewPart implements
 			}
 		});
 
-		removeAuthor = toolkit.createButton(authorSectionClient,
-				"Remove...", SWT.PUSH);
+		removeAuthor = toolkit.createButton(authorSectionClient, "Remove...",
+				SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(removeAuthor);
 
@@ -159,8 +160,7 @@ public class LatinCrawlerView extends ViewPart implements
 
 				for (TableItem item : authorTable.getSelection()) {
 
-					selectedAuthors.remove(item
-							.getText());
+					selectedAuthors.remove(item.getText());
 					item.dispose();
 
 				}
@@ -194,17 +194,17 @@ public class LatinCrawlerView extends ViewPart implements
 						Iterator<String> authorItr;
 						int totalWork = 1;
 						try {
-								authorItr = selectedAuthors.iterator();
-								totalWork = selectedAuthors.size();
+							authorItr = selectedAuthors.iterator();
+							totalWork = selectedAuthors.size();
 							monitor.beginTask("NLPUtils started crawling...",
 									totalWork);
 							while (authorItr.hasNext()) {
 								if (monitor.isCanceled()) {
 									monitor.subTask("Crawling is cancelled...");
-                                    break;                                    
+									break;
 								}
 								String author = authorItr.next();
-								monitor.subTask("crawling "+ author +"...");
+								monitor.subTask("crawling " + author + "...");
 								latinCrawler.getBooksByAuthor(
 										author,
 										latinCrawler.getAuthorNames().get(
@@ -259,7 +259,9 @@ public class LatinCrawlerView extends ViewPart implements
 	}
 
 	private boolean canProceedCrawl() {
-
+		boolean canProceed = true;
+		form.getMessageManager().removeMessage("location");
+		form.getMessageManager().removeMessage("author");
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText());
 		if (message != null) {
@@ -267,21 +269,13 @@ public class LatinCrawlerView extends ViewPart implements
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
-			return false;
-		} else {
-			form.getMessageManager().removeMessage("location");
-			if (selectedAuthors == null || selectedAuthors.size() < 1) {
-				form.getMessageManager().addMessage("author",
-						"Add atleast one author before start crawing", null,
-						IMessageProvider.ERROR);
-				return false;
-			} else {
-				form.getMessageManager().removeMessage("author");
-
-			}
-			return true;
 		}
-
+		if (selectedAuthors == null || selectedAuthors.size() < 1) {
+			form.getMessageManager().addMessage("author",
+					"Add atleast one author before start crawing", null,
+					IMessageProvider.ERROR);
+		}
+		return canProceed;
 	}
 
 	private void handleAdd(Shell shell) throws Exception {
@@ -345,7 +339,7 @@ public class LatinCrawlerView extends ViewPart implements
 			TableItem item = new TableItem(authorTable, 0);
 			item.setText(itemName);
 		}
-		
+
 	}
 
 	static class ArrayLabelProvider extends LabelProvider {

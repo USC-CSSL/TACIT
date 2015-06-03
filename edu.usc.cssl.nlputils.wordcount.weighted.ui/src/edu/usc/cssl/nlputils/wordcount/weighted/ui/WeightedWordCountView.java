@@ -84,19 +84,16 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(sc);
 
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
-		
-		
+
 		// create type either LIWC or Weighted
 
-				Composite wcTypeComposite = toolkit.createComposite(form.getBody());
-				GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
-						.applyTo(wcTypeComposite);
-				GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
-						.applyTo(wcTypeComposite);
-
-				createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
-
-		
+		Composite wcTypeComposite = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(wcTypeComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+				.applyTo(wcTypeComposite);
+		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
+		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
@@ -154,13 +151,12 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcWordCountButton.setBackground(parent.getBackground());
 		liwcWordCountButton.setForeground(parent.getForeground());
 
-		
 		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
 		weightedWordCountButton.setText("Weighted Word Count");
 		weightedWordCountButton.setSelection(false);
 		weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
-				
+
 		Label lblEmpty = new Label(buttonComposite, SWT.None);
 		NlputilsFormComposite.createEmptyRow(toolkit, parent);
 
@@ -245,7 +241,6 @@ public class WeightedWordCountView extends ViewPart implements
 			}
 
 			public void run() {
-				// WeightedCount wc = new WeightedCount();
 				final String stopWordPath = CommonUiActivator.getDefault()
 						.getPreferenceStore().getString("stop_words_path");
 				// lindapulickal: handling case where user types in a file
@@ -335,39 +330,35 @@ public class WeightedWordCountView extends ViewPart implements
 		form.getToolBarManager().update(true);
 	}
 
-	protected boolean canProceed() {
+	private boolean canProceed() {
+		boolean canPerform = true;
+		form.getMessageManager().removeMessage("location");
+		form.getMessageManager().removeMessage("input");
+		form.getMessageManager().removeMessage("dict");
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText());
 		if (message != null) {
-
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
-			return false;
-		} else {
-			form.getMessageManager().removeMessage("location");
-			// check input
-			if (inputLayoutData.getSelectedFiles().size() < 1) {
-				form.getMessageManager().addMessage("input",
-						"Select/Add atleast one input file", null,
-						IMessageProvider.ERROR);
-				return false;
-			} else {
-				form.getMessageManager().removeMessage("input");
-				if (dictLayoutData.getSelectedFiles().size() < 1) {
-					form.getMessageManager().addMessage("dict",
-							"Select/Add atleast one Dictionary file", null,
-							IMessageProvider.ERROR);
-					return false;
-
-				} else {
-					form.getMessageManager().removeMessage("dict");
-					return true;
-				}
-			}
+			canPerform = false;
 		}
+		// check input
+		if (inputLayoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
+					IMessageProvider.ERROR);
+			canPerform = false;
+		}
+		if (dictLayoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("dict",
+					"Select/Add atleast one Dictionary file", null,
+					IMessageProvider.ERROR);
+			canPerform = false;
+		}
+		return canPerform;
 	}
-	
+
 	@Override
 	public String getPartName() {
 		// TODO Auto-generated method stub
