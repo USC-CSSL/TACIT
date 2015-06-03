@@ -75,27 +75,21 @@ public class Preprocess {
 		int i = 0;
 		for (String filepath : inputFiles) {
 			if ( (new File(filepath).isDirectory())) continue;
+			if (new File(filepath).getAbsolutePath().contains("DS_Store")) continue;
 			files[i] = new File(filepath);
 			i = i+1;
 		}
-		/*File input = new File(path);
-		if (input.isDirectory()){
-			files = input.listFiles();
-			outputPath = path+System.getProperty("file.separator")+"_preprocessed";
-		} else {
-			files = new File[1];
-			files[0] = input;
-			//outputPath = path.substring(0, path.lastIndexOf(System.getProperty("file.separator")))+System.getProperty("file.separator")+"preprocessed";
-			outputPath = input.getParentFile().getAbsolutePath()+System.getProperty("file.separator")+"_preprocessed";
-		}*/
-		//outputPath = files[0].getParentFile().getAbsolutePath()+System.getProperty("file.separator")+"_preprocessed";
-		outputPath = this.outputPath+File.pathSeparator+callingPlugin+"_"+currTime;
+		
+		outputPath = this.outputPath+File.separator+callingPlugin+"_"+currTime;
 		if (!(new File(outputPath).exists())){
 			new File(outputPath).mkdir();
+			System.out.println("Folder "+outputPath+" created successfully.");
 		}
-		outputPath = outputPath + File.pathSeparator + subFolder;
-		if (new File(outputPath).mkdir()){
-			System.out.println("Output path created successfully.");
+		if (subFolder.trim().length() != 0){
+			outputPath = outputPath + File.separator + subFolder;
+			if (new File(outputPath).mkdir()){
+				System.out.println("Folder "+outputPath+" created successfully.");
+			}
 		}
 		
 		if (stopwordsFile.trim().length() != 0){
@@ -129,7 +123,7 @@ public class Preprocess {
 		}
 		
 		for (File f : files){
-			
+			if (f == null) break;
 			// Mac cache file filtering
 			if (f.getAbsolutePath().contains("DS_Store"))
 				continue;
@@ -264,8 +258,15 @@ public class Preprocess {
 			for (File f:toDel.listFiles()){
 				f.delete();
 			}
-		} 		
+		}
+		File parent = toDel.getParentFile();
 		toDel.delete();
+		if (new File(parent.getAbsolutePath()+File.separator+".DS_Store").exists()){
+			new File(parent.getAbsolutePath()+File.separator+".DS_Store").delete();
+		}
+		if (parent.listFiles().length == 0){
+			parent.delete();
+		}
 	}
 	
 	public boolean doCleanUp() {

@@ -152,23 +152,20 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 					protected IStatus run(IProgressMonitor monitor){ 
 						
 						try {
+							monitor.beginTask("svmtask", 10);
 							cv.doCross(svm, class1NameStr, fppClass1, class2NameStr, fppClass2, kValueInt, featureFile);
+							monitor.worked(5);
+							if (ppValue && preprocessor.doCleanUp()){
+								preprocessor.clean(fppClass1);
+								System.out.println("Cleaning up preprocessed files - "+fppClass1);
+								preprocessor.clean(fppClass2);
+								System.out.println("Cleaning up preprocessed files - "+fppClass2);	
+							}
+							monitor.worked(5);
 						} catch (NumberFormatException | IOException e) {
 							e.printStackTrace();
 						}
-						
-						
-						Display.getDefault().asyncExec(new Runnable() {
-						      @Override
-						      public void run() {
-									if (ppValue && preprocessor.doCleanUp()){
-										preprocessor.clean(fppClass1);
-										System.out.println("Cleaning up preprocessed files - "+fppClass1);
-										preprocessor.clean(fppClass2);
-										System.out.println("Cleaning up preprocessed files - "+fppClass2);
-									}
-						      }
-						    });
+						monitor.done();
 						return Status.OK_STATUS;
 					}
 				};
