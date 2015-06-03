@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -49,43 +50,47 @@ public class Preprocess {
 	private HashSet<String> stopWordsSet = new HashSet<String>();
 	SnowballStemmer stemmer=null;
 	private String stemLang;
+	private String callingPlugin;
+	private String currTime;
 	
 	
-	public Preprocess(){
+	public Preprocess(String caller){
 		this.stopwordsFile = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
 		this.delimiters = CommonUiActivator.getDefault().getPreferenceStore().getString("delimeters");
 		this.stemLang = CommonUiActivator.getDefault().getPreferenceStore().getString("language");
 		this.doLowercase = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("islower_case"));
 		this.doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("isStemming"));
 		this.doCleanUp = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("ispreprocessed"));
+		this.outputPath = CommonUiActivator.getDefault().getPreferenceStore().getString("pp_output_path");
+		this.callingPlugin = caller;
+		this.currTime = String.valueOf(System.currentTimeMillis());
 	}
 	
 	// for File as well as Directory
-	public String doPreprocessing(List<String> inputFiles) throws IOException{
+	public String doPreprocessing(List<String> inputFiles, String subFolder) throws IOException{
 		
 		File[] files;
 		files = new File[inputFiles.size()];
+		String outputPath;
 		int i = 0;
 		for (String filepath : inputFiles) {
 			if ( (new File(filepath).isDirectory())) continue;
+			if (new File(filepath).getAbsolutePath().contains("DS_Store")) continue;
 			files[i] = new File(filepath);
 			i = i+1;
 		}
-		/*File input = new File(path);
-		if (input.isDirectory()){
-			files = input.listFiles();
-			outputPath = path+System.getProperty("file.separator")+"_preprocessed";
-		} else {
-			files = new File[1];
-			files[0] = input;
-			//outputPath = path.substring(0, path.lastIndexOf(System.getProperty("file.separator")))+System.getProperty("file.separator")+"preprocessed";
-			outputPath = input.getParentFile().getAbsolutePath()+System.getProperty("file.separator")+"_preprocessed";
-		}*/
-		outputPath = files[0].getParentFile().getAbsolutePath()+System.getProperty("file.separator")+"_preprocessed";
-		if (new File(outputPath).mkdir()){
-			System.out.println("Output path created successfully.");
+		
+		outputPath = this.outputPath+File.separator+callingPlugin+"_"+currTime;
+		if (!(new File(outputPath).exists())){
+			new File(outputPath).mkdir();
+			System.out.println("Folder "+outputPath+" created successfully.");
 		}
-			
+		if (subFolder.trim().length() != 0){
+			outputPath = outputPath + File.separator + subFolder;
+			if (new File(outputPath).mkdir()){
+				System.out.println("Folder "+outputPath+" created successfully.");
+			}
+		}
 		
 		if (stopwordsFile.trim().length() != 0){
 			doStopWords = true;
@@ -98,7 +103,7 @@ public class Preprocess {
 		}
 		
 		if (doStemming){	// If stemming has to be performed, find the appropriate stemmer.
-			if (stemLang.equals("Auto Detect Language")){
+			if (stemLang.equals("AUTODETECT")){
 				doLangDetect = true;
 				Bundle bundle = Platform.getBundle("edu.usc.cssl.nlputils.common");
 				URL url = FileLocator.find(bundle, new Path("profiles"),null);
@@ -118,7 +123,7 @@ public class Preprocess {
 		}
 		
 		for (File f : files){
-			
+			if (f == null) break;
 			// Mac cache file filtering
 			if (f.getAbsolutePath().contains("DS_Store"))
 				continue;
@@ -253,8 +258,15 @@ public class Preprocess {
 			for (File f:toDel.listFiles()){
 				f.delete();
 			}
-		} 		
+		}
+		File parent = toDel.getParentFile();
 		toDel.delete();
+		if (new File(parent.getAbsolutePath()+File.separator+".DS_Store").exists()){
+			new File(parent.getAbsolutePath()+File.separator+".DS_Store").delete();
+		}
+		if (parent.listFiles().length == 0){
+			parent.delete();
+		}
 	}
 	
 	public boolean doCleanUp() {

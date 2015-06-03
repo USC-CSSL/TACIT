@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -32,6 +33,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Button cleanup;
 	private Text location;
 	private Text delimeters;
+	private Text output;
 
 	public PrepocessorSettings() {
 	}
@@ -68,6 +70,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		stemming = createStemmingSection(sectionClient);
 		lowerCase = createCheckBox(sectionClient, "Convert to Lowercase");
 
+		output = createOutputPathLocation(sectionClient);
 		cleanup = createCheckBox(sectionClient, "Clean up Pre-Processed Files ");
 		initializeDefaultValues();
 		loadValues();
@@ -139,6 +142,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		getPreferenceStore().setDefault(STEMMING, "false");
 		getPreferenceStore().setDefault(PRE_PROCESSED, "false");
 		getPreferenceStore().setDefault(INITIAL, "true");
+		getPreferenceStore().setDefault(OUTPUT_PATH, "");
 	}
 
 	private void setDefaultValues() {
@@ -152,6 +156,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		language.setText(getPreferenceStore().getDefaultString(LANGUAGE));
 		cleanup.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(PRE_PROCESSED)));
+		output.setText(getPreferenceStore().getDefaultString(OUTPUT_PATH));
 		language.setEnabled(false);
 	}
 
@@ -166,6 +171,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		if (stemming.getSelection()) {
 			language.setEnabled(true);
 		}
+		output.setText(load(OUTPUT_PATH));
 
 	}
 
@@ -250,6 +256,38 @@ public class PrepocessorSettings extends PreferencePage implements
 		});
 		return outputLocationTxt;
 	}
+	
+	private Text createOutputPathLocation(Composite sectionClient) {
+		Label locationLbl = new Label(sectionClient, SWT.NONE);
+		locationLbl.setText("Pre-Processed Files Location:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(locationLbl);
+
+		Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(outputLocationTxt);
+		outputLocationTxt.setEditable(false);
+
+		Button browseBtn = new Button(sectionClient, SWT.PUSH);
+		browseBtn.setText("Browse...");
+		browseBtn.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(), SWT.OPEN);
+				dlg.setText("Open");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				outputLocationTxt.setText(path);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		return outputLocationTxt;
+	}
 
 	private Text createDelimeterSection(Composite sectionClient) {
 		Label delimeterLbl = new Label(sectionClient, SWT.NONE);
@@ -273,6 +311,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(LOWER_CASE, Boolean.toString(lowerCase.getSelection()));
 		store(STEMMING, Boolean.toString(stemming.getSelection()));
 		store(LANGUAGE, language.getText());
+		store(OUTPUT_PATH,output.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
 		return super.performOk();
 	}

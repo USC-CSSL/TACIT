@@ -10,6 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  edu.usc.cssl.nlputils.common.ui;bundle-version="0.0.1",
  org.eclipse.swt,
- org.eclipse.jface
+ org.eclipse.jface,
+ edu.usc.cssl.nlputils.common,
+ edu.usc.cssl.nlputils.cluster.kmeans
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

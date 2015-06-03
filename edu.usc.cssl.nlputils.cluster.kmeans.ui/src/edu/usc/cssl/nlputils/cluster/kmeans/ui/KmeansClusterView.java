@@ -1,5 +1,9 @@
 package edu.usc.cssl.nlputils.cluster.kmeans.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -29,6 +33,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.nlputils.common.Preprocess;
+import edu.uc.cssl.nlputils.cluster.kmeans.services.KmeansClusterAnalysis;
 import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.IKmeansClusterViewConstants;
 import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.KmeansClusterViewImageRegistry;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
@@ -40,13 +46,17 @@ public class KmeansClusterView extends ViewPart implements
 	public static String ID = "edu.usc.cssl.nlputils.cluster.kmeansui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
+	private Button preprocessEnabled;
+	private TableLayoutData layData;
+	private Text noClusterTxt;
+	private OutputLayoutData layoutData;
 
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
 		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.EXPANDED );
-          
+				Section.TITLE_BAR | Section.EXPANDED);
+
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
@@ -54,7 +64,7 @@ public class KmeansClusterView extends ViewPart implements
 		FormText descriptionFrm = toolkit.createFormText(section, false);
 		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
 				false);
-		section.setDescriptionControl(descriptionFrm);		
+		section.setDescriptionControl(descriptionFrm);
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -71,12 +81,14 @@ public class KmeansClusterView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-	
-		TableLayoutData layData = NlputilsFormComposite.createTableSection(client, toolkit,
-				layout, "Input Dtails", "Add file(s) or Folder(s) which contains data", true);
+
+		layData = NlputilsFormComposite.createTableSection(
+				client, toolkit, layout, "Input Dtails",
+				"Add file(s) or Folder(s) which contains data", true);
 		Composite compInput;
 		compInput = layData.getSectionClient();
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(compInput);
 		createPreprocessLink(compInput);
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -84,7 +96,7 @@ public class KmeansClusterView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		OutputLayoutData layoutData = NlputilsFormComposite
+		layoutData = NlputilsFormComposite
 				.createOutputSection(toolkit, client1, form.getMessageManager());
 
 		// we dont need stop word's as it will be taken from the preprocessor
@@ -103,18 +115,18 @@ public class KmeansClusterView extends ViewPart implements
 	}
 
 	private void createPreprocessLink(Composite client) {
-		
+
 		Composite clientLink = toolkit.createComposite(client);
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
 				.applyTo(clientLink);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(clientLink);
 
-		Button stemEnabled = toolkit.createButton(clientLink,
-				"", SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(stemEnabled);
-		final Hyperlink link = toolkit
-				.createHyperlink(clientLink, "Preprocess", SWT.NONE);
+		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(preprocessEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
@@ -129,7 +141,8 @@ public class KmeansClusterView extends ViewPart implements
 						new String[] { id }, null).open();
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(link);
 
 	}
 
@@ -138,8 +151,7 @@ public class KmeansClusterView extends ViewPart implements
 				"Number of clusters:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(noClusterTxtLbl);
-		Text noClusterTxt = toolkit.createText(sectionClient, "",
-				SWT.BORDER);
+		noClusterTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
 		noClusterTxt.setText("1");
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(noClusterTxt);
@@ -161,8 +173,7 @@ public class KmeansClusterView extends ViewPart implements
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (KmeansClusterViewImageRegistry
-						.getImageIconFactory()
+				return (KmeansClusterViewImageRegistry.getImageIconFactory()
 						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
@@ -171,42 +182,62 @@ public class KmeansClusterView extends ViewPart implements
 				return "Analyze";
 			}
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
 			public void run() {
-
-				Job job = new Job("Crawling...") {
+                final int noOfClusters = Integer.valueOf(noClusterTxt.getText()).intValue();
+                Job performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started crawling...", 100);
-
-						int i = 0;
-						while (i < 1000000000) {
+						monitor.beginTask("NLPUtils started clustering...", 100);
+						File[] inputFiles = null ;
+						if (preprocessEnabled.getSelection()) {
+							monitor.subTask("Preprocessing...");
+							Preprocess preprocessTask = new Preprocess("KMeans Cluster");
 							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
+								String dirPath = preprocessTask.doPreprocessing(layData.getSelectedFiles(),"");
+								inputFiles = new File(dirPath).listFiles();
+							} catch (IOException e) {
 								e.printStackTrace();
 							}
+						}
+						else{
+							File[] files;
+							List<String>fileList = layData.getSelectedFiles();
+							inputFiles = new File[fileList.size()];
+							String outputPath;
+							int i = 0;
+							for (String filepath : fileList) {
+								if ( (new File(filepath).isDirectory())) continue;
+								inputFiles[i] = new File(filepath);
+								i = i+1;
+							}
+						}
+							
+							// kemans processsing
+							long startTime = System.currentTimeMillis();
+							KmeansClusterAnalysis.runClustering(noOfClusters,inputFiles,  layoutData.getOutputLabel().getText());
+							System.out.println("K-Means Clustering completed successfully in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+					
+							
 							if (monitor.isCanceled()) {
 								throw new OperationCanceledException();
-
 							}
-							i++;
-							monitor.worked(1);
-						}
+						
 						monitor.done();
 						return Status.OK_STATUS;
 					}
 				};
-				job.setUser(true);
-				job.schedule();
+				performCluster.setUser(true);
+				performCluster.schedule();
 
 			};
 		});
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (KmeansClusterViewImageRegistry
-						.getImageIconFactory()
+				return (KmeansClusterViewImageRegistry.getImageIconFactory()
 						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
