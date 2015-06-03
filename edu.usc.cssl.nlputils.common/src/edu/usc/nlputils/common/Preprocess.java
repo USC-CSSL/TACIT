@@ -73,6 +73,7 @@ public class Preprocess {
 		files = new File[inputFiles.size()];
 		String outputPath;
 		int i = 0;
+		boolean outputPathNotSet = false;
 		for (String filepath : inputFiles) {
 			if ( (new File(filepath).isDirectory())) continue;
 			if (new File(filepath).getAbsolutePath().contains("DS_Store")) continue;
@@ -80,7 +81,12 @@ public class Preprocess {
 			i = i+1;
 		}
 		
+		if (this.outputPath == null || this.outputPath.trim().length() == 0){
+			this.outputPath = (new File(inputFiles.get(0)).getParent());
+			outputPathNotSet = true;
+		}
 		outputPath = this.outputPath+File.separator+callingPlugin+"_"+currTime;
+		if (outputPathNotSet) this.outputPath = "";
 		if (!(new File(outputPath).exists())){
 			new File(outputPath).mkdir();
 			System.out.println("Folder "+outputPath+" created successfully.");
