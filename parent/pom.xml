@@ -14,6 +14,7 @@
     <module>../edu.usc.cssl.nlputils.crawlers.supremecourt</module>
     <module>../edu.usc.cssl.nlputils.crawlers.supremecourt.ui</module>
     <module>../edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
+     <module>../edu.usc.cssl.nlputils.cluster.kmeans</module>
     <module>../edu.usc.cssl.nlputils.cluster.heirarchical.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.latin.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.latin</module>

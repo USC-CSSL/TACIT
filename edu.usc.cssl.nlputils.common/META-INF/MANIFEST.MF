@@ -11,8 +11,7 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.nlputils.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: bin.edu.usc.nlputils.common,
- edu.usc.nlputils.common,
+Export-Package: edu.usc.nlputils.common,
  edu.usc.nlputils.common.crawlers
 Bundle-ClassPath: jsoup-1.7.3.jar,
  .,
