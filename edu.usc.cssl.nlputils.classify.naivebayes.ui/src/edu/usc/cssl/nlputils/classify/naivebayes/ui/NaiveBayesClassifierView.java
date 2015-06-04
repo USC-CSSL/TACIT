@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -35,7 +38,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
@@ -44,7 +52,9 @@ import bsh.EvalError;
 import edu.usc.cssl.nlputils.classify.naivebayes.services.NaiveBayesClassifier;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.INaiveBayesClassifierViewConstants;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifierViewImageRegistry;
+import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
+import edu.usc.nlputils.common.Preprocess;
 
 public class NaiveBayesClassifierView extends ViewPart implements
 		INaiveBayesClassifierViewConstants {
@@ -56,6 +66,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private Text classifyInputText;
 	private Text classifyOutputText;
 	private Text testOutputPath;
+	private Button preprocessEnabled;
+
+	private Preprocess preprocessTask;
 
 	// Training and Testing data class paths
 	Tree trainingClassPathTree;
@@ -100,6 +113,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		createInputSection(client, toolkit, layout, "Input Details",
 				"Add folders which contains training and testing data");
 
+		createPreprocessLink(client);
+
 		// Create testing section
 		createTestSection(client, toolkit, layout, "Test",
 				"Choose the output path for testing");
@@ -110,6 +125,40 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
+	}
+
+	/**
+	 * 
+	 * @param client
+	 */
+	private void createPreprocessLink(Composite client) {
+		Composite clientLink = toolkit.createComposite(client);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
+
+		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(preprocessEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Preprocess", SWT.NONE);
+		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		link.addHyperlinkListener(new IHyperlinkListener() {
+			public void linkEntered(HyperlinkEvent e) {
+			}
+
+			public void linkExited(HyperlinkEvent e) {
+			}
+
+			public void linkActivated(HyperlinkEvent e) {
+				String id = "edu.usc.cssl.nlputils.common.ui.prepocessorsettings";
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+						new String[] { id }, null).open();
+			}
+		});
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(link);
 	}
 
 	/**
@@ -172,28 +221,91 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			public void widgetSelected(SelectionEvent e) {
 				// Set of training data class paths
 				ArrayList<String> trainingDataPaths = new ArrayList<String>();
+				ArrayList<String> tempTrainingDataPaths = new ArrayList<String>();
 				TreeItem trainingDataset = trainingClassPathTree.getItem(0);
 				for (TreeItem ti : trainingDataset.getItems()) {
-					trainingDataPaths.add(ti.getData().toString());
+					tempTrainingDataPaths.add(ti.getData().toString());
 				}
 
 				// Set of testing data class paths
+				ArrayList<String> tempTestingDataPaths = new ArrayList<String>();
 				ArrayList<String> testingDataPaths = new ArrayList<String>();
 				TreeItem testingDataset = testingClassPathTree.getItem(0);
 				for (TreeItem ti : testingDataset.getItems()) {
-					testingDataPaths.add(ti.getData().toString());
+					tempTestingDataPaths.add(ti.getData().toString());
 				}
 
 				String testTrainOutputPath = testOutputPath.getText();
+
 				Job job = new Job("Testing...") {
+					private boolean isPreprocessEnabled = false;
+					private String pp_outputPath = null;
+
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						if (monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
-						}
 						NaiveBayesClassifier nbc = new NaiveBayesClassifier();
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								isPreprocessEnabled = preprocessEnabled
+										.getSelection();
+								pp_outputPath = CommonUiActivator.getDefault()
+										.getPreferenceStore()
+										.getString("pp_output_path");
+								if (pp_outputPath.isEmpty()) {
+									form.getMessageManager()
+											.addMessage(
+													"pp_location",
+													"Pre-Processed output location is required for pre-processing",
+													null,
+													IMessageProvider.ERROR);
+								} else {
+									form.getMessageManager().removeMessage(
+											"pp_location");
+								}
+
+							}
+						});
+
+						if (isPreprocessEnabled) {
+							// check whether the location is specified
+							if (pp_outputPath.isEmpty()) {
+								return Status.CANCEL_STATUS;
+							}
+							monitor.subTask("Preprocessing...");
+							try {
+								preprocessTask = new Preprocess(
+										"NB_Classifier_Training_Data");
+								// Preprocess training data
+								for (String dir : tempTrainingDataPaths) {
+									String preprocessedDirPath = preprocessDirectory(dir);
+									// dirPath, Directory path of the
+									// preprocessed files
+									trainingDataPaths.add(preprocessedDirPath);
+								}
+								preprocessTask = new Preprocess(
+										"NB_Classifier_Testing_Data");
+								// Preprocess testing data
+								for (String dir : tempTestingDataPaths) {
+									String preprocessedDirPath = preprocessDirectory(dir);
+									testingDataPaths.add(preprocessedDirPath);
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							for (String path : tempTrainingDataPaths) {
+								trainingDataPaths.add(path);
+							}
+							for (String path : tempTestingDataPaths) {
+								testingDataPaths.add(path);
+							}
+						}
+
+						long startTime = System.currentTimeMillis();
 						// Train and test the dataset
 						try {
+							monitor.subTask("Testing the model...");
 							nbc.train_Test(trainingDataPaths, testingDataPaths,
 									testTrainOutputPath, false, false);
 						} catch (FileNotFoundException e1) {
@@ -203,8 +315,21 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						} catch (EvalError e1) {
 							e1.printStackTrace();
 						}
+
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
+
 						System.out.println("Done!");
 						monitor.done();
+						System.out
+								.println("Naive Bayes classifier testing completed successfully in "
+										+ (System.currentTimeMillis() - startTime)
+										+ " milliseconds.");
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(),
+								"Testing completed successfully!", IStatus.OK);
+
 						return Status.OK_STATUS;
 					}
 				};
@@ -214,6 +339,54 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		});
 		// Create an empty row to create space
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
+	}
+
+	private String preprocessDirectory(String dirPath) throws IOException {
+		// preprocessTask = new Preprocess(dirName);
+		Queue<String> dirs = new LinkedList<String>();
+		dirs.add(dirPath);
+
+		if (!dirs.isEmpty()) {
+			String tempDirPath = dirs.poll();
+			File[] files = new File(tempDirPath).listFiles();
+			ArrayList<String> fileList = new ArrayList<String>();
+			for (File f : files) {
+				if (f.isDirectory()) {
+					dirs.add(f.getAbsolutePath());
+				} else {
+					fileList.add(f.getAbsolutePath());
+				}
+			}
+			if (!fileList.isEmpty()) {
+				String preprocessedDirPath = preprocessTask.doPreprocessing(
+						fileList, new File(dirPath).getName());
+				preprocessSubfolders(dirs, new File(dirPath).getName());
+				return preprocessedDirPath;
+			}
+		}
+		return dirPath;
+	}
+
+	private void preprocessSubfolders(Queue<String> subfolders,
+			String classDirPath) throws IOException {
+		while (!subfolders.isEmpty()) {
+			String tempDirPath = subfolders.poll();
+			File[] files = new File(tempDirPath).listFiles();
+			ArrayList<String> fileList = new ArrayList<String>();
+			for (File f : files) {
+				if (f.isDirectory()) {
+					subfolders.add(f.getAbsolutePath());
+				} else {
+					fileList.add(f.getAbsolutePath());
+				}
+			}
+			if (!fileList.isEmpty()) {
+				String subfolderName = tempDirPath
+						.substring(tempDirPath.indexOf(classDirPath),
+								tempDirPath.length());
+				preprocessTask.doPreprocessing(fileList, subfolderName);
+			}
+		}
 	}
 
 	/**
@@ -288,25 +461,77 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				// Set of inputs that needs to be passed
 				// Set of training data class paths
 				ArrayList<String> trainingDataPaths = new ArrayList<String>();
+				ArrayList<String> tempTrainingDataPaths = new ArrayList<String>();
 				TreeItem trainingDataset = trainingClassPathTree.getItem(0);
 				for (TreeItem ti : trainingDataset.getItems()) {
-					trainingDataPaths.add(ti.getData().toString());
+					tempTrainingDataPaths.add(ti.getData().toString());
 				}
 
-				// Classification i/p and o/p paths
-				String classificationInputDir = classifyInputText.getText();
-				String classificationOutputDir = classifyOutputText.getText();
+				Job job = new Job("Classifying...") {
+					private boolean isPreprocessEnabled = false;
+					private String pp_outputPath = null;
+					// Classification i/p and o/p paths
+					String classificationInputDir = classifyInputText.getText();
+					String classificationOutputDir = classifyOutputText
+							.getText();
 
-				if (canItProceedClassification(trainingDataPaths,
-						classificationInputDir, classificationOutputDir)) {
-					Job job = new Job("Classifying...") {
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {
-							if (monitor.isCanceled()) {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						NaiveBayesClassifier nbc = new NaiveBayesClassifier();
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								isPreprocessEnabled = preprocessEnabled
+										.getSelection();
+								pp_outputPath = CommonUiActivator.getDefault()
+										.getPreferenceStore()
+										.getString("pp_output_path");
+								if (pp_outputPath.isEmpty()) {
+									form.getMessageManager()
+											.addMessage(
+													"pp_location",
+													"Pre-Processed output location is required for pre-processing",
+													null,
+													IMessageProvider.ERROR);
+								} else {
+									form.getMessageManager().removeMessage(
+											"pp_location");
+								}
+							}
+						});
+						if (isPreprocessEnabled) {
+							if (pp_outputPath.isEmpty()) {
 								return Status.CANCEL_STATUS;
 							}
 
-							NaiveBayesClassifier nbc = new NaiveBayesClassifier();
+							monitor.subTask("Preprocessing...");
+							try {
+								// Preprocess training data
+								preprocessTask = new Preprocess(
+										"NB_Classifier_Training_Data");
+								for (String dir : tempTrainingDataPaths) {
+									String preprocessedDirPath = preprocessDirectory(dir);
+									// dirPath, Directory path of the
+									// preprocessed files
+									trainingDataPaths.add(preprocessedDirPath);
+								}
+								// Preprocess the input
+								preprocessTask = new Preprocess(
+										"NB_Classifier_Input_Data");
+								classificationInputDir = preprocessDirectory(classificationInputDir);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							for (String path : tempTrainingDataPaths) {
+								trainingDataPaths.add(path);
+							}
+						}
+
+						if (canItProceedClassification(trainingDataPaths,
+								classificationInputDir, classificationOutputDir)) {
+							long startTime = System.currentTimeMillis();
+							monitor.subTask("Classifying the input data...");
 							try {
 								// Classify the data
 								nbc.classify(trainingDataPaths,
@@ -319,16 +544,28 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							} catch (EvalError e1) {
 								e1.printStackTrace();
 							}
+
+							if (monitor.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
 							System.out.println("Done!");
 							monitor.done();
+							System.out
+									.println("Naive Bayes classifier completed successfully in "
+											+ (System.currentTimeMillis() - startTime)
+											+ " milliseconds.");
+							NlputilsFormComposite.updateStatusMessage(
+									getViewSite(),
+									"Classification completed successfully!",
+									IStatus.OK);
 							return Status.OK_STATUS;
 						}
-					};
-					job.setUser(true);
-					job.schedule(); // schedule the job
-				}
-				;
-			}
+						return Status.CANCEL_STATUS;
+					}
+				};
+				job.setUser(true);
+				job.schedule(); // schedule the job
+			};
 
 		});
 
@@ -515,8 +752,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					TreeItem item = new TreeItem(root, SWT.NULL);
 					item.setText(files[i].getName());
 					item.setData(files[i]);
+					item.setImage(NaiveBayesClassifierViewImageRegistry
+							.getImageIconFactory().getImage(IMAGE_FILE_OBJ));
 					/* Use a dummy item to force the '+' */
 					if (files[i].isDirectory()) {
+						item.setImage(NaiveBayesClassifierViewImageRegistry
+								.getImageIconFactory().getImage(
+										IMAGE_FOLDER_OBJ));
 						new TreeItem(item, SWT.NULL);
 					}
 				}
@@ -546,8 +788,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					TreeItem item = new TreeItem(root, SWT.NULL);
 					item.setText(files[i].getName());
 					item.setData(files[i]);
+					item.setImage(NaiveBayesClassifierViewImageRegistry
+							.getImageIconFactory().getImage(IMAGE_FILE_OBJ));
 					/* Use a dummy item to force the '+' */
 					if (files[i].isDirectory()) {
+						item.setImage(NaiveBayesClassifierViewImageRegistry
+								.getImageIconFactory().getImage(
+										IMAGE_FOLDER_OBJ));
 						new TreeItem(item, SWT.NULL);
 					}
 				}
@@ -581,7 +828,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					// helps for lazy expansion
 					file = new File(cDialog.getTrainDataPath());
 					if (file.isDirectory()) {
+						trainingSubItem
+								.setImage(NaiveBayesClassifierViewImageRegistry
+										.getImageIconFactory().getImage(
+												IMAGE_FOLDER_OBJ));
 						new TreeItem(trainingSubItem, SWT.NULL);
+					} else {
+						trainingSubItem
+								.setImage(NaiveBayesClassifierViewImageRegistry
+										.getImageIconFactory().getImage(
+												IMAGE_FILE_OBJ));
 					}
 
 					TreeItem testingSubItem = new TreeItem(testingItem,
@@ -591,7 +847,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					testingSubItem.setData(cDialog.getTestDataPath());
 					file = new File(cDialog.getTestDataPath());
 					if (file.isDirectory()) {
+						testingSubItem
+								.setImage(NaiveBayesClassifierViewImageRegistry
+										.getImageIconFactory().getImage(
+												IMAGE_FOLDER_OBJ));
 						new TreeItem(testingSubItem, SWT.NULL);
+					} else {
+						testingSubItem
+								.setImage(NaiveBayesClassifierViewImageRegistry
+										.getImageIconFactory().getImage(
+												IMAGE_FILE_OBJ));
 					}
 					trainingClassPathTree.getItems()[0].setExpanded(true);
 					testingClassPathTree.getItems()[0].setExpanded(true);

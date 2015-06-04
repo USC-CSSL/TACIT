@@ -25,6 +25,16 @@ public class NaiveBayesClassifierViewImageRegistry {
 						NaiveBayesClassifierViewImageRegistry.class,
 						"/icons/help_contents.gif"));
 
+		imgReg.put(INaiveBayesClassifierViewConstants.IMAGE_FILE_OBJ,
+				ImageDescriptor.createFromFile(
+						NaiveBayesClassifierViewImageRegistry.class,
+						"/icons/file_obj.gif"));
+
+		imgReg.put(INaiveBayesClassifierViewConstants.IMAGE_FOLDER_OBJ,
+				ImageDescriptor.createFromFile(
+						NaiveBayesClassifierViewImageRegistry.class,
+						"/icons/fldr_obj.gif"));
+
 	}
 
 	public static NaiveBayesClassifierViewImageRegistry getImageIconFactory() {
