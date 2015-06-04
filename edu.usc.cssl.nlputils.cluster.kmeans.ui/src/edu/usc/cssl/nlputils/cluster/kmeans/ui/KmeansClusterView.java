@@ -217,6 +217,7 @@ public class KmeansClusterView extends ViewPart implements
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+							monitor.worked(10);
 						} else {
 							for (String filepath : selectedFiles) {
 								if ((new File(filepath).isDirectory())) {
@@ -224,12 +225,15 @@ public class KmeansClusterView extends ViewPart implements
 								}
 								inputFiles.add(new File(filepath));
 							}
+							monitor.worked(10);
 						}
 
 						// kemans processsing
 						long startTime = System.currentTimeMillis();
+						monitor.subTask("Clustering files...");
 						KmeansClusterAnalysis.runClustering(noOfClusters,
 								inputFiles, outputPath);
+						monitor.worked(80);
 						System.out
 								.println("K-Means Clustering completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
@@ -238,7 +242,7 @@ public class KmeansClusterView extends ViewPart implements
 						if (monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
-
+						monitor.worked(10);
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
 						

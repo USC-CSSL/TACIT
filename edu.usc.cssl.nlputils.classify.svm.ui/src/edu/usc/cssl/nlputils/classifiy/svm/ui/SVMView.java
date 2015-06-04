@@ -131,7 +131,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean featureFile = featureFileButton.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
-				Preprocess preprocessor = new Preprocess("SVM_Classifier");
+				final Preprocess preprocessor = new Preprocess("SVM_Classifier");
 				
 				String ppClass1 = "";
 				String ppClass2 = "";
@@ -161,7 +161,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								System.out.println("Cleaning up preprocessed files - "+fppClass2);	
 							}
 							monitor.worked(5);
-						} catch (NumberFormatException | IOException e) {
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
 							e.printStackTrace();
 						}
 						monitor.done();

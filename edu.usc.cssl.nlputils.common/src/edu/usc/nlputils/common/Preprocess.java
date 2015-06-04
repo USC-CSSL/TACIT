@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -44,92 +43,109 @@ public class Preprocess {
 	private boolean doLangDetect = false;
 	private boolean doCleanUp = false;
 	private String delimiters = " .,;'\"!-()[]{}:?";
-	//private String[] inputFiles;
+	// private String[] inputFiles;
 	private String outputPath;
 	private String stopwordsFile;
 	private HashSet<String> stopWordsSet = new HashSet<String>();
-	SnowballStemmer stemmer=null;
+	SnowballStemmer stemmer = null;
 	private String stemLang;
 	private String callingPlugin;
 	private String currTime;
-	
-	
-	public Preprocess(String caller){
-		this.stopwordsFile = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
-		this.delimiters = CommonUiActivator.getDefault().getPreferenceStore().getString("delimeters");
-		this.stemLang = CommonUiActivator.getDefault().getPreferenceStore().getString("language");
-		this.doLowercase = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("islower_case"));
-		this.doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("isStemming"));
-		this.doCleanUp = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("ispreprocessed"));
-		this.outputPath = CommonUiActivator.getDefault().getPreferenceStore().getString("pp_output_path");
+
+	public Preprocess(String caller) {
+		this.stopwordsFile = CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("stop_words_path");
+		this.delimiters = CommonUiActivator.getDefault().getPreferenceStore()
+				.getString("delimeters");
+		this.stemLang = CommonUiActivator.getDefault().getPreferenceStore()
+				.getString("language");
+		this.doLowercase = Boolean.parseBoolean(CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("islower_case"));
+		this.doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("isStemming"));
+		this.doCleanUp = Boolean.parseBoolean(CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("ispreprocessed"));
+		this.outputPath = CommonUiActivator.getDefault().getPreferenceStore()
+				.getString("pp_output_path");
 		this.callingPlugin = caller;
 		this.currTime = String.valueOf(System.currentTimeMillis());
 	}
-	
+
 	// for File as well as Directory
-	public String doPreprocessing(List<String> inputFiles, String subFolder) throws IOException{
-		
+	public String doPreprocessing(List<String> inputFiles, String subFolder)
+			throws IOException {
+
 		File[] files;
 		files = new File[inputFiles.size()];
 		String outputPath;
 		int i = 0;
 		boolean outputPathNotSet = false;
 		for (String filepath : inputFiles) {
-			if ( (new File(filepath).isDirectory())) continue;
-			if (new File(filepath).getAbsolutePath().contains("DS_Store")) continue;
+			if ((new File(filepath).isDirectory()))
+				continue;
+			if (new File(filepath).getAbsolutePath().contains("DS_Store"))
+				continue;
 			files[i] = new File(filepath);
-			i = i+1;
+			i = i + 1;
 		}
-		
-		if (this.outputPath == null || this.outputPath.trim().length() == 0){
+
+		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
 			this.outputPath = (new File(inputFiles.get(0)).getParent());
 			outputPathNotSet = true;
 		}
-		outputPath = this.outputPath+File.separator+callingPlugin+"_"+currTime;
-		if (outputPathNotSet) this.outputPath = "";
-		if (!(new File(outputPath).exists())){
+		outputPath = this.outputPath + File.separator + callingPlugin + "_"
+				+ currTime;
+		if (outputPathNotSet)
+			this.outputPath = "";
+		if (!(new File(outputPath).exists())) {
 			new File(outputPath).mkdir();
-			System.out.println("Folder "+outputPath+" created successfully.");
+			System.out.println("Folder " + outputPath
+					+ " created successfully.");
 		}
-		if (subFolder.trim().length() != 0){
+		if (subFolder.trim().length() != 0) {
 			outputPath = outputPath + File.separator + subFolder;
-			if (new File(outputPath).mkdir()){
-				System.out.println("Folder "+outputPath+" created successfully.");
+			if (new File(outputPath).mkdir()) {
+				System.out.println("Folder " + outputPath
+						+ " created successfully.");
 			}
 		}
-		
-		if (stopwordsFile.trim().length() != 0){
+
+		if (stopwordsFile.trim().length() != 0) {
 			doStopWords = true;
 			String currentLine;
-			BufferedReader br = new BufferedReader(new FileReader(new File(stopwordsFile)));
-			while ((currentLine = br.readLine())!=null){
+			BufferedReader br = new BufferedReader(new FileReader(new File(
+					stopwordsFile)));
+			while ((currentLine = br.readLine()) != null) {
 				stopWordsSet.add(currentLine.trim().toLowerCase());
 			}
 			br.close();
 		}
-		
-		if (doStemming){	// If stemming has to be performed, find the appropriate stemmer.
-			if (stemLang.equals("AUTODETECT")){
+
+		if (doStemming) { // If stemming has to be performed, find the
+							// appropriate stemmer.
+			if (stemLang.equals("AUTODETECT")) {
 				doLangDetect = true;
-				Bundle bundle = Platform.getBundle("edu.usc.cssl.nlputils.common");
-				URL url = FileLocator.find(bundle, new Path("profiles"),null);
+				Bundle bundle = Platform
+						.getBundle("edu.usc.cssl.nlputils.common");
+				URL url = FileLocator.find(bundle, new Path("profiles"), null);
 				URL fileURL = FileLocator.toFileURL(url);
 				System.out.println(fileURL.getPath());
-				try{
-				DetectorFactory.loadProfile(fileURL.getPath());
-				} catch (com.cybozu.labs.langdetect.LangDetectException ex){
-					//ex.printStackTrace();
-					System.out.println("Exception code - "+ex.getCode());
-					//ex.getCode().toString() -> is not visible!
+				try {
+					DetectorFactory.loadProfile(fileURL.getPath());
+				} catch (com.cybozu.labs.langdetect.LangDetectException ex) {
+					// ex.printStackTrace();
+					System.out.println("Exception code - " + ex.getCode());
+					// ex.getCode().toString() -> is not visible!
 				}
-			} else{
+			} else {
 				doLangDetect = false;
 				stemmer = stemSelect(stemLang);
 			}
 		}
-		
-		for (File f : files){
-			if (f == null) break;
+
+		for (File f : files) {
+			if (f == null)
+				break;
 			// Mac cache file filtering
 			if (f.getAbsolutePath().contains("DS_Store"))
 				continue;
@@ -137,9 +153,8 @@ public class Preprocess {
 			if ("_preprocessed".equals(f.getName()))
 				continue;
 			String inputFile = f.getAbsolutePath();
-			System.out.println("Preprocessing "+inputFile);
-			
-			
+			System.out.println("Preprocessing " + inputFile);
+
 			// doLangDetect only if doStemming is true
 			if (doLangDetect) {
 				try {
@@ -148,19 +163,21 @@ public class Preprocess {
 					e.printStackTrace();
 				}
 			}
-			
-			
+
 			File iFile = new File(inputFile);
-			if (!iFile.exists() || iFile.isDirectory()){
-				System.out.println("Error in input file path "+iFile.getAbsolutePath());
+			if (!iFile.exists() || iFile.isDirectory()) {
+				System.out.println("Error in input file path "
+						+ iFile.getAbsolutePath());
 				continue;
 			}
-			
-		
-			File oFile = new File(outputPath+System.getProperty("file.separator")+f.getName());
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(iFile), "UTF8"));
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(oFile),"UTF-8"));
-			
+
+			File oFile = new File(outputPath
+					+ System.getProperty("file.separator") + f.getName());
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					new FileInputStream(iFile), "UTF8"));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(oFile), "UTF-8"));
+
 			String linear;
 			while ((linear = br.readLine()) != null) {
 				if (linear != "") {
@@ -170,29 +187,30 @@ public class Preprocess {
 						linear = linear.replace(c, ' ');
 					if (doStopWords)
 						linear = removeStopWords(linear);
-					if (doStemming && stemmer!=null)
+					if (doStemming && stemmer != null)
 						linear = stem(linear);
 					bw.write(linear + "\n");
 				}
 			}
 			System.out.println(outputPath
 					+ System.getProperty("file.separator") + f.getName());
-			
+
 			br.close();
 			bw.close();
 		}
-		System.out.println("Preprocessed files stored in "+outputPath);
+		System.out.println("Preprocessed files stored in " + outputPath);
 		return outputPath;
 	}
 
-	private SnowballStemmer findLangStemmer(File iFile) throws IOException, LangDetectException {
+	private SnowballStemmer findLangStemmer(File iFile) throws IOException,
+			LangDetectException {
 		BufferedReader br = new BufferedReader(new FileReader(iFile));
-		String sampleText="";
-		for (int i = 0;i<10;i++){
+		String sampleText = "";
+		for (int i = 0; i < 10; i++) {
 			String currentLine = br.readLine();
 			if (currentLine == null)
 				break;
-			sampleText = sampleText+ currentLine.trim().replace('\n', ' ');
+			sampleText = sampleText + currentLine.trim().replace('\n', ' ');
 		}
 		Detector detector = DetectorFactory.create();
 		detector.append(sampleText);
@@ -202,44 +220,43 @@ public class Preprocess {
 	}
 
 	private String stem(String linear) {
-			if (linear.isEmpty())
-				return "";
-			StringBuilder returnString = new StringBuilder();
-			String[] wordArray = linear.split("\\s+");
-			for (String word: wordArray){
-				stemmer.setCurrent(word);
-				String stemmedWord = "";
-				if(stemmer.stem())
-					 stemmedWord = stemmer.getCurrent();
-				if (!stemmedWord.equals(""))
-					word = stemmedWord;
-				returnString.append(word);
-				returnString.append(' ');
-			}
-			return returnString.toString();
+		if (linear.isEmpty())
+			return "";
+		StringBuilder returnString = new StringBuilder();
+		String[] wordArray = linear.split("\\s+");
+		for (String word : wordArray) {
+			stemmer.setCurrent(word);
+			String stemmedWord = "";
+			if (stemmer.stem())
+				stemmedWord = stemmer.getCurrent();
+			if (!stemmedWord.equals(""))
+				word = stemmedWord;
+			returnString.append(word);
+			returnString.append(' ');
 		}
-		
+		return returnString.toString();
+	}
+
 	private SnowballStemmer stemSelect(String stemLang) {
-		switch(stemLang.toUpperCase()){
-		case "EN":
+		if (stemLang.toUpperCase().equals("EN")) {
 			return new EnglishStemmer();
-		case "DE":
+		} else if (stemLang.toUpperCase().equals("DE")) {
 			return new GermanStemmer();
-		case "FR":
+		} else if (stemLang.toUpperCase().equals("FR")) {
 			return new FrenchStemmer();
-		case "IT":
+		} else if (stemLang.toUpperCase().equals("IT")) {
 			return new ItalianStemmer();
-		case "DA":
+		} else if (stemLang.toUpperCase().equals("DA")) {
 			return new DanishStemmer();
-		case "NL":
+		} else if (stemLang.toUpperCase().equals("NL")) {
 			return new DutchStemmer();
-		case "FI":
+		} else if (stemLang.toUpperCase().equals("FI")) {
 			return new FinnishStemmer();
-		case "HU":
+		} else if (stemLang.toUpperCase().equals("HU")) {
 			return new HungarianStemmer();
-		case "NO":
+		} else if (stemLang.toUpperCase().equals("NO")) {
 			return new NorwegianStemmer();
-		case "TR":
+		} else if (stemLang.toUpperCase().equals("TR")) {
 			return new TurkishStemmer();
 		}
 		return null;
@@ -248,35 +265,37 @@ public class Preprocess {
 	private String removeStopWords(String linear) {
 		StringBuilder returnString = new StringBuilder();
 		String[] wordArray = linear.split("\\s+");
-		for (String word : wordArray){
-			if (!stopWordsSet.contains(word.toLowerCase())){
+		for (String word : wordArray) {
+			if (!stopWordsSet.contains(word.toLowerCase())) {
 				returnString.append(word);
 				returnString.append(' ');
 			}
 		}
 		return returnString.toString();
 	}
-	
-	public void clean(String ppDir){
+
+	public void clean(String ppDir) {
 		File toDel = new File(ppDir);
 		// if folder, delete contents too
-		if (toDel.isDirectory()){
-			for (File f:toDel.listFiles()){
+		if (toDel.isDirectory()) {
+			for (File f : toDel.listFiles()) {
 				f.delete();
 			}
 		}
 		File parent = toDel.getParentFile();
 		toDel.delete();
-		if (new File(parent.getAbsolutePath()+File.separator+".DS_Store").exists()){
-			new File(parent.getAbsolutePath()+File.separator+".DS_Store").delete();
+		if (new File(parent.getAbsolutePath() + File.separator + ".DS_Store")
+				.exists()) {
+			new File(parent.getAbsolutePath() + File.separator + ".DS_Store")
+					.delete();
 		}
-		if (parent.listFiles().length == 0){
+		if (parent.listFiles().length == 0) {
 			parent.delete();
 		}
 	}
-	
+
 	public boolean doCleanUp() {
 		return doCleanUp;
 	}
-	
+
 }

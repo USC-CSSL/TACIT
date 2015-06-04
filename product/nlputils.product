@@ -39,7 +39,7 @@
       <feature id="org.eclipse.emf.common"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.help"/>
-      <feature id="edu.usc.cssl.nlputils.feature" version="1.0.0.qualifier"/>
+      <feature id="edu.usc.cssl.nlputils.feature"/>
    </features>
 
    <configurations>

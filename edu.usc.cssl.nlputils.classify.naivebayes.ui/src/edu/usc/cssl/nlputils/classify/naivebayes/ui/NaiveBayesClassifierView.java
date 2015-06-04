@@ -69,11 +69,14 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private Button preprocessEnabled;
 
 	private Preprocess preprocessTask;
+	private boolean isPreprocessEnabled = false;
+	private String pp_outputPath = null;
 
 	// Training and Testing data class paths
 	Tree trainingClassPathTree;
 	Tree testingClassPathTree;
 	boolean isAnyValidationFailed = false;
+	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -220,23 +223,22 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Set of training data class paths
-				ArrayList<String> trainingDataPaths = new ArrayList<String>();
-				ArrayList<String> tempTrainingDataPaths = new ArrayList<String>();
+				final ArrayList<String> trainingDataPaths = new ArrayList<String>();
+				final ArrayList<String> tempTrainingDataPaths = new ArrayList<String>();
 				TreeItem trainingDataset = trainingClassPathTree.getItem(0);
 				for (TreeItem ti : trainingDataset.getItems()) {
 					tempTrainingDataPaths.add(ti.getData().toString());
 				}
 
 				// Set of testing data class paths
-				ArrayList<String> tempTestingDataPaths = new ArrayList<String>();
-				ArrayList<String> testingDataPaths = new ArrayList<String>();
+				final ArrayList<String> tempTestingDataPaths = new ArrayList<String>();
+				final ArrayList<String> testingDataPaths = new ArrayList<String>();
 				TreeItem testingDataset = testingClassPathTree.getItem(0);
 				for (TreeItem ti : testingDataset.getItems()) {
 					tempTestingDataPaths.add(ti.getData().toString());
 				}
 
-				String testTrainOutputPath = testOutputPath.getText();
-
+				final String testTrainOutputPath = testOutputPath.getText();
 				Job job = new Job("Testing...") {
 					private boolean isPreprocessEnabled = false;
 					private String pp_outputPath = null;
@@ -467,20 +469,20 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			public void run() {
 				// Set of inputs that needs to be passed
 				// Set of training data class paths
-				ArrayList<String> trainingDataPaths = new ArrayList<String>();
-				ArrayList<String> tempTrainingDataPaths = new ArrayList<String>();
+				final ArrayList<String> trainingDataPaths = new ArrayList<String>();
+				final ArrayList<String> tempTrainingDataPaths = new ArrayList<String>();
+
 				TreeItem trainingDataset = trainingClassPathTree.getItem(0);
 				for (TreeItem ti : trainingDataset.getItems()) {
 					tempTrainingDataPaths.add(ti.getData().toString());
 				}
 
 				Job job = new Job("Classifying...") {
-					private boolean isPreprocessEnabled = false;
-					private String pp_outputPath = null;
-					// Classification i/p and o/p paths
-					String classificationInputDir = classifyInputText.getText();
-					String classificationOutputDir = classifyOutputText
-							.getText();
+					
+				// Classification i/p and o/p paths
+				final String classificationOutputDir = classifyOutputText.getText();
+				private String classificationInputDir = classifyInputText.getText();
+
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -665,12 +667,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	 * @return - Creates a row with a label, text and button to browse the files
 	 */
 	private Text createBrowseButton(FormToolkit toolkit, Composite parent,
-			String labelString, String buttonString) {
+			final String labelString, String buttonString) {
 		Label outputPathLbl = toolkit
 				.createLabel(parent, labelString, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(outputPathLbl);
-		Text outputLocationTxt = toolkit.createText(parent, "", SWT.BORDER);
+		final Text outputLocationTxt = toolkit.createText(parent, "",
+				SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 
@@ -685,7 +688,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				validateTextbox(outputLocationTxt, labelString);
 			}
 		});
-		Button browseBtn = toolkit.createButton(parent, buttonString, SWT.PUSH);
+		final Button browseBtn = toolkit.createButton(parent, buttonString,
+				SWT.PUSH);
 		browseBtn.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -745,7 +749,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 0);
 		gd_tree.heightHint = 100;
 		trainingClassPathTree.setLayoutData(gd_tree);
-		TreeItem trainingItem = new TreeItem(trainingClassPathTree, SWT.NULL);
+		final TreeItem trainingItem = new TreeItem(trainingClassPathTree,
+				SWT.NULL);
 		trainingItem.setText("Train");
 		trainingItem.setData("Train");
 		trainingClassPathTree.addListener(SWT.Expand, new Listener() {
@@ -780,7 +785,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 		testingClassPathTree = new Tree(client, SWT.MULTI);
 		testingClassPathTree.setLayoutData(gd_tree);
-		TreeItem testingItem = new TreeItem(testingClassPathTree, SWT.NULL);
+		final TreeItem testingItem = new TreeItem(testingClassPathTree,
+				SWT.NULL);
 		testingItem.setText("Test");
 		testingItem.setData("Test");
 		testingClassPathTree.addListener(SWT.Expand, new Listener() {

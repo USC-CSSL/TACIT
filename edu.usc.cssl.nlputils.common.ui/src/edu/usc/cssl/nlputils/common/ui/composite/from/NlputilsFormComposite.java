@@ -58,7 +58,7 @@ public class NlputilsFormComposite {
 	}
 
 	public static OutputLayoutData createOutputSection(FormToolkit toolkit,
-			Composite parent, IMessageManager mmng) {
+			Composite parent, final IMessageManager mmng) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
 				| Section.EXPANDED | Section.DESCRIPTION);
 
@@ -85,16 +85,16 @@ public class NlputilsFormComposite {
 
 		createEmptyRow(toolkit, sectionClient);
 
-		Label outputPathLbl = toolkit.createLabel(sectionClient,
+		final Label outputPathLbl = toolkit.createLabel(sectionClient,
 				"Output Location:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(outputPathLbl);
-		Text outputLocationTxt = toolkit.createText(sectionClient, "",
+		final Text outputLocationTxt = toolkit.createText(sectionClient, "",
 				SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 
-		Button browseBtn = toolkit.createButton(sectionClient, "Browse...",
+		final Button browseBtn = toolkit.createButton(sectionClient, "Browse...",
 				SWT.PUSH);
 		browseBtn.addSelectionListener(new SelectionListener() {
 
@@ -193,8 +193,8 @@ public class NlputilsFormComposite {
 		return layoutData;
 	}
 
-	public static void updateStatusMessage(IViewSite site, String message,
-			int error) {
+	public static void updateStatusMessage(final IViewSite site, final String message,
+			final int error) {
 		// update status bar
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -218,7 +218,7 @@ public class NlputilsFormComposite {
 		});
 
 	}
-	public static void addErrorPopup(Form form,FormToolkit toolkit) {
+	public static void addErrorPopup(final Form form,final FormToolkit toolkit) {
 		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				String title = e.getLabel();

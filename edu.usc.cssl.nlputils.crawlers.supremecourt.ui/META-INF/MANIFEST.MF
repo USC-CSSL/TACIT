@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  edu.usc.cssl.nlputils.common.ui,
  edu.usc.cssl.nlputils.crawlers.supremecourt
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

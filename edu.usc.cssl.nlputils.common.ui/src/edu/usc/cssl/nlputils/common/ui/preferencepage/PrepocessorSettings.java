@@ -177,13 +177,13 @@ public class PrepocessorSettings extends PreferencePage implements
 
 	private Button createStemmingSection(Composite sectionClient) {
 
-		Button stemming = new Button(sectionClient, SWT.CHECK);
+		final Button stemming = new Button(sectionClient, SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(stemming);
 		stemming.setText("Stemming");
 
 		language = new Combo(sectionClient, SWT.BORDER | SWT.SINGLE);
-		List<String> langs = new ArrayList<>();
+		List<String> langs = new ArrayList<String>();
 		String disp = "";
 		for (ELanguageType enumVal : ELanguageType.values()) {
 			disp = enumVal.toString();
@@ -231,12 +231,12 @@ public class PrepocessorSettings extends PreferencePage implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(locationLbl);
 
-		Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
+		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 		outputLocationTxt.setEditable(false);
 
-		Button browseBtn = new Button(sectionClient, SWT.PUSH);
+		final Button browseBtn = new Button(sectionClient, SWT.PUSH);
 		browseBtn.setText("Browse...");
 		browseBtn.addSelectionListener(new SelectionListener() {
 
@@ -263,12 +263,12 @@ public class PrepocessorSettings extends PreferencePage implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(locationLbl);
 
-		Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
+		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 		outputLocationTxt.setEditable(false);
 
-		Button browseBtn = new Button(sectionClient, SWT.PUSH);
+		final Button browseBtn = new Button(sectionClient, SWT.PUSH);
 		browseBtn.setText("Browse...");
 		browseBtn.addSelectionListener(new SelectionListener() {
 

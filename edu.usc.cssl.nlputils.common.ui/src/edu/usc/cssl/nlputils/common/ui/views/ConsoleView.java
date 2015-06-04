@@ -27,7 +27,7 @@ public class ConsoleView extends ViewPart implements INlpCommonUiConstants{
 		text = new Text(parent, SWT.READ_ONLY | SWT.MULTI);
 		OutputStream out = new OutputStream() {
 			@Override
-			public void write(int b) throws IOException {
+			public void write(final int b) throws IOException {
 				if (text.isDisposed())
 					return;
 				Display.getDefault().asyncExec(new Runnable() {

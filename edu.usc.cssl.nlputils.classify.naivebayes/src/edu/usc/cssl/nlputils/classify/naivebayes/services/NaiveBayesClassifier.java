@@ -57,7 +57,7 @@ public class NaiveBayesClassifier {
 		tempTestDirs = tempTestDirs.substring(0, tempTestDirs.length() - 1);
 		String testDirs[] = tempTestDirs.split(",");
 
-		ArrayList<String> tempT2vArgs = new ArrayList<>(Arrays.asList(
+		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList(
 				"--input", "--output", outputPath + ".train",
 				"--keep-sequence", keepSeq, "--remove-stopwords", stopWords,
 				"--preserve-case", preserveCase));
@@ -68,7 +68,7 @@ public class NaiveBayesClassifier {
 		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(),
 				tempT2vArgs.toArray().length, String[].class);
 
-		ArrayList<String> tempT2vArgsTest = new ArrayList<>(Arrays.asList(
+		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList(
 				"--input", "--output", outputPath + ".test", "--keep-sequence",
 				keepSeq, "--remove-stopwords", stopWords, "--preserve-case",
 				preserveCase, "--use-pipe-from", outputPath + ".train"));
@@ -128,7 +128,7 @@ public class NaiveBayesClassifier {
 		tempSourceDir = tempSourceDir.substring(0, tempSourceDir.length() - 1);
 		String sourceDirs[] = tempSourceDir.split(",");
 
-		ArrayList<String> tempT2vArgs = new ArrayList<>(Arrays.asList(
+		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList(
 				"--input", "--output", outputPath + ".train",
 				"--keep-sequence", keepSeq, "--remove-stopwords", stopWords,
 				"--preserve-case", preserveCase));

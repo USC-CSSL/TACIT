@@ -77,7 +77,7 @@ public class ClassifierDialog extends TitleAreaDialog {
 			}
 		});
 
-		Button trainBrowseBtn = new Button(container, SWT.PUSH);
+		final Button trainBrowseBtn = new Button(container, SWT.PUSH);
 		trainBrowseBtn.setText("Browse");
 
 		trainBrowseBtn.addSelectionListener(new SelectionListener() {
@@ -126,7 +126,7 @@ public class ClassifierDialog extends TitleAreaDialog {
 			}
 		});
 
-		Button testBrowseBtn = new Button(container, SWT.PUSH);
+		final Button testBrowseBtn = new Button(container, SWT.PUSH);
 		testBrowseBtn.setText("Browse");
 
 		testBrowseBtn.addSelectionListener(new SelectionListener() {

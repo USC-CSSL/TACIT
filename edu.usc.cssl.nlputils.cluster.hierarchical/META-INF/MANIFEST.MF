@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Heirarchial Cluster services
+Bundle-SymbolicName: edu.usc.cssl.nlputils.cluster.hierarchical
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.cluster.hierarchical.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.nlputils.common,
+ org.jsoup;bundle-version="1.7.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.nlputils.cluster.hierarchical.services,
+ weka.clusterers,
+ weka.core
+Bundle-ClassPath: weka.jar,
+ .

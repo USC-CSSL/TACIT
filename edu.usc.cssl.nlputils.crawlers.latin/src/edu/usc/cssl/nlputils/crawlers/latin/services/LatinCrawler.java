@@ -24,8 +24,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import edu.usc.cssl.nlputils.crawlers.latin.ILatinCrawlerConstants;
-
 public class LatinCrawler {
 	private StringBuilder readMe = new StringBuilder();
 	String outputDir;

@@ -6,10 +6,15 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_node;
+import libsvm.svm_parameter;
+import libsvm.svm_print_interface;
+import libsvm.svm_problem;
+
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
-
-import libsvm.*;
 
 public class SVMTrain {
 	private svm_parameter param;		// set by parse_command_line

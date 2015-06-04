@@ -1,7 +1,6 @@
 package edu.usc.cssl.nlputils.common.ui.validation;
 
 import java.io.File;
-import java.nio.file.Files;
 
 public class OutputPathValidation {
 
@@ -23,7 +22,7 @@ public class OutputPathValidation {
 		if (location.length() > 0) {
 			File locationFile = new File(location);
 			if (locationFile.exists()) { // check location exists
-				if (Files.isWritable(locationFile.toPath())) {
+				if (locationFile.canWrite()) {
 					return null;
 				} else {
 					return "Permission Denied";

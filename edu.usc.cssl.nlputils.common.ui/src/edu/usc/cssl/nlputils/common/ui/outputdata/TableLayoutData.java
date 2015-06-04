@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 
 public class TableLayoutData {
 	private Composite sectionClient;

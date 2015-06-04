@@ -120,7 +120,7 @@ private void createPreprocessLink(Composite client) {
 		stemEnabled.setEnabled(false);
 		stemEnabled.setSelection(true);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(stemEnabled);
-		Hyperlink link = toolkit
+		final Hyperlink link = toolkit
 				.createHyperlink(clientLink, "Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
