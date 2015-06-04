@@ -76,7 +76,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	Tree trainingClassPathTree;
 	Tree testingClassPathTree;
 	boolean isAnyValidationFailed = false;
-	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -478,16 +477,19 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				}
 
 				Job job = new Job("Classifying...") {
-					
-				// Classification i/p and o/p paths
-				final String classificationOutputDir = classifyOutputText.getText();
-				private String classificationInputDir = classifyInputText.getText();
 
+					// Classification i/p and o/p paths
+					final String classificationOutputDir = classifyOutputText
+							.getText();
+					private String classificationInputDir = classifyInputText
+							.getText();
+					private boolean canItProceed = false;
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NaiveBayesClassifier nbc = new NaiveBayesClassifier();
 						Display.getDefault().syncExec(new Runnable() {
+
 							@Override
 							public void run() {
 								isPreprocessEnabled = preprocessEnabled
@@ -495,23 +497,23 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								pp_outputPath = CommonUiActivator.getDefault()
 										.getPreferenceStore()
 										.getString("pp_output_path");
-								if (pp_outputPath.isEmpty()) {
+								if (isPreprocessEnabled
+										&& pp_outputPath.isEmpty()) {
 									form.getMessageManager()
 											.addMessage(
 													"pp_location",
 													"Pre-Processed output location is required for pre-processing",
 													null,
 													IMessageProvider.ERROR);
+									return;
 								} else {
 									form.getMessageManager().removeMessage(
 											"pp_location");
 								}
-								if (!isPreprocessEnabled) {
-									form.getMessageManager().removeMessage(
-											"pp_location"); // just in case if
-															// there was
-															// error earlier
-								}
+								canItProceed = canItProceedClassification(
+										trainingDataPaths,
+										classificationInputDir,
+										classificationOutputDir);
 							}
 						});
 						if (isPreprocessEnabled) {
@@ -543,8 +545,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							}
 						}
 
-						if (canItProceedClassification(trainingDataPaths,
-								classificationInputDir, classificationOutputDir)) {
+						if (canItProceed) {
 							long startTime = System.currentTimeMillis();
 							monitor.subTask("Classifying the input data...");
 							try {
