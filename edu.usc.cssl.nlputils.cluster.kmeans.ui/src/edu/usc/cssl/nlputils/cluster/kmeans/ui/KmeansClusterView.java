@@ -35,7 +35,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.nlputils.common.Preprocess;
 import edu.uc.cssl.nlputils.cluster.kmeans.services.KmeansClusterAnalysis;
 import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.IKmeansClusterViewConstants;
 import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.KmeansClusterViewImageRegistry;
@@ -43,6 +42,7 @@ import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.nlputils.common.Preprocess;
 
 public class KmeansClusterView extends ViewPart implements
 		IKmeansClusterViewConstants {
@@ -240,7 +240,7 @@ public class KmeansClusterView extends ViewPart implements
 						}
 
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.ERROR);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
 						
 						return Status.OK_STATUS;
 					}
