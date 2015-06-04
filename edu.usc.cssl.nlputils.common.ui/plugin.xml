@@ -77,6 +77,12 @@
                 mnemonic="F"
                 tooltip="Classify">
           </menu>
+          <menu
+                id="topicmodel"
+                label="Topic Model"
+                mnemonic="T"
+                tooltip="Topic Model">
+          </menu>
          
       </menuContribution>
    </extension>
