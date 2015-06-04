@@ -264,6 +264,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 											"pp_location");
 								}
 
+								if (!isPreprocessEnabled) {
+									form.getMessageManager().removeMessage(
+											"pp_location"); // just in case if
+															// there was
+															// error earlier
+								}
+
 							}
 						});
 
@@ -496,6 +503,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								} else {
 									form.getMessageManager().removeMessage(
 											"pp_location");
+								}
+								if (!isPreprocessEnabled) {
+									form.getMessageManager().removeMessage(
+											"pp_location"); // just in case if
+															// there was
+															// error earlier
 								}
 							}
 						});
