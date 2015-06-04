@@ -34,7 +34,6 @@ public class NaiveBayesClassifierViewImageRegistry {
 				ImageDescriptor.createFromFile(
 						NaiveBayesClassifierViewImageRegistry.class,
 						"/icons/fldr_obj.gif"));
-
 	}
 
 	public static NaiveBayesClassifierViewImageRegistry getImageIconFactory() {

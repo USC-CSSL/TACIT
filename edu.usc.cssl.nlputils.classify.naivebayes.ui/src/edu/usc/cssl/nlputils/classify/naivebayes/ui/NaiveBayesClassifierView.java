@@ -825,6 +825,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					trainingSubItem.setText("Class" + " : "
 							+ cDialog.getTrainDataPath());
 					trainingSubItem.setData(cDialog.getTrainDataPath());
+					trainingSubItem
+							.setImage(NaiveBayesClassifierViewImageRegistry
+									.getImageIconFactory().getImage(
+											IMAGE_FILE_OBJ));
 					// helps for lazy expansion
 					file = new File(cDialog.getTrainDataPath());
 					if (file.isDirectory()) {
@@ -833,11 +837,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										.getImageIconFactory().getImage(
 												IMAGE_FOLDER_OBJ));
 						new TreeItem(trainingSubItem, SWT.NULL);
-					} else {
-						trainingSubItem
-								.setImage(NaiveBayesClassifierViewImageRegistry
-										.getImageIconFactory().getImage(
-												IMAGE_FILE_OBJ));
 					}
 
 					TreeItem testingSubItem = new TreeItem(testingItem,
@@ -845,6 +844,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					testingSubItem.setText("Class" + " : "
 							+ cDialog.getTestDataPath());
 					testingSubItem.setData(cDialog.getTestDataPath());
+					testingSubItem
+							.setImage(NaiveBayesClassifierViewImageRegistry
+									.getImageIconFactory().getImage(
+											IMAGE_FILE_OBJ));
 					file = new File(cDialog.getTestDataPath());
 					if (file.isDirectory()) {
 						testingSubItem
@@ -852,11 +855,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										.getImageIconFactory().getImage(
 												IMAGE_FOLDER_OBJ));
 						new TreeItem(testingSubItem, SWT.NULL);
-					} else {
-						testingSubItem
-								.setImage(NaiveBayesClassifierViewImageRegistry
-										.getImageIconFactory().getImage(
-												IMAGE_FILE_OBJ));
 					}
 					trainingClassPathTree.getItems()[0].setExpanded(true);
 					testingClassPathTree.getItems()[0].setExpanded(true);
