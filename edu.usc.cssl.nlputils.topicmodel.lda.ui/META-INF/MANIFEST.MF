@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: LDA UI
+Bundle-SymbolicName: edu.usc.cssl.nlputils.topicmodel.lda.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.topicmodel.lda.ui.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ edu.usc.cssl.nlputils.common.ui,
+ org.eclipse.swt,
+ org.eclipse.jface,
+ edu.usc.cssl.nlputils.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
