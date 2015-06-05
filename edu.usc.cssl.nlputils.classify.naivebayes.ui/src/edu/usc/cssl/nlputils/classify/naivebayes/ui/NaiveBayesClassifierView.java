@@ -130,6 +130,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	}
 
 	/**
+	 * To create hyperlink
 	 * 
 	 * @param client
 	 */
@@ -241,9 +242,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				Job job = new Job("Testing...") {
 					private boolean isPreprocessEnabled = false;
 					private String pp_outputPath = null;
+					private boolean canItProceed = false;
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null);
 						NaiveBayesClassifier nbc = new NaiveBayesClassifier();
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
@@ -253,7 +257,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								pp_outputPath = CommonUiActivator.getDefault()
 										.getPreferenceStore()
 										.getString("pp_output_path");
-								if (pp_outputPath.isEmpty()) {
+								if (isPreprocessEnabled
+										&& pp_outputPath.isEmpty()) {
 									form.getMessageManager()
 											.addMessage(
 													"pp_location",
@@ -265,14 +270,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 											"pp_location");
 								}
 
-								if (!isPreprocessEnabled) {
-									form.getMessageManager().removeMessage(
-											"pp_location"); // just in case if
-															// there was
-															// error earlier
-								}
-
+								canItProceed = canItProceedTesting(
+										tempTrainingDataPaths,
+										tempTestingDataPaths,
+										testTrainOutputPath);
 							}
+
 						});
 
 						if (isPreprocessEnabled) {
@@ -299,7 +302,11 @@ public class NaiveBayesClassifierView extends ViewPart implements
 									testingDataPaths.add(preprocessedDirPath);
 								}
 							} catch (IOException e) {
-								e.printStackTrace();
+								return handleException(monitor, e,
+										"Preprocessing failed. Provide valid data");
+							} catch (Exception e) {
+								return handleException(monitor, e,
+										"Preprocessing failed. Provide valid data");
 							}
 						} else {
 							for (String path : tempTrainingDataPaths) {
@@ -310,35 +317,46 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							}
 						}
 
-						long startTime = System.currentTimeMillis();
-						// Train and test the dataset
-						try {
-							monitor.subTask("Testing the model...");
-							nbc.train_Test(trainingDataPaths, testingDataPaths,
-									testTrainOutputPath, false, false);
-						} catch (FileNotFoundException e1) {
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						} catch (EvalError e1) {
-							e1.printStackTrace();
+						if (canItProceed) {
+							long startTime = System.currentTimeMillis();
+							// Train and test the dataset
+							try {
+								monitor.subTask("Testing the model...");
+								nbc.train_Test(trainingDataPaths,
+										testingDataPaths, testTrainOutputPath,
+										false, false);
+							} catch (FileNotFoundException e1) {
+								return handleException(monitor, e1,
+										"Testing failed. Provide valid data");
+							} catch (IOException e1) {
+								return handleException(monitor, e1,
+										"Testing failed. Provide valid data");
+							} catch (EvalError e1) {
+								return handleException(monitor, e1,
+										"Testing failed. Provide valid data");
+							} catch (Exception e) {
+								return handleException(monitor, e,
+										"Testing failed. Provide valid data");
+							}
+
+							if (monitor.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
+
+							System.out.println("Done!");
+							monitor.done();
+							System.out
+									.println("Naive Bayes classifier testing completed successfully in "
+											+ (System.currentTimeMillis() - startTime)
+											+ " milliseconds.");
+							NlputilsFormComposite.updateStatusMessage(
+									getViewSite(),
+									"Testing completed successfully!",
+									IStatus.OK);
+
+							return Status.OK_STATUS;
 						}
-
-						if (monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
-						}
-
-						System.out.println("Done!");
-						monitor.done();
-						System.out
-								.println("Naive Bayes classifier testing completed successfully in "
-										+ (System.currentTimeMillis() - startTime)
-										+ " milliseconds.");
-						NlputilsFormComposite.updateStatusMessage(
-								getViewSite(),
-								"Testing completed successfully!", IStatus.OK);
-
-						return Status.OK_STATUS;
+						return Status.CANCEL_STATUS;
 					}
 				};
 				job.setUser(true);
@@ -347,6 +365,48 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		});
 		// Create an empty row to create space
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
+	}
+
+	private boolean canItProceedTesting(ArrayList<String> trainingDataPaths,
+			ArrayList<String> testingDataPaths, String testTrainOutputPath) {
+		// Validate Training data paths, Classification input and output
+		if (trainingDataPaths.size() == 0) {
+			form.getMessageManager().addMessage("trainingClasses",
+					"Training classes cannot be empty", null,
+					IMessageProvider.ERROR);
+			return false;
+		} else if (testingDataPaths.size() == 0 || isAllEmpty(testingDataPaths)) {
+			form.getMessageManager().addMessage("testingClasses",
+					"Testing classes cannot be empty", null,
+					IMessageProvider.ERROR);
+			return false;
+		} else if (testTrainOutputPath.isEmpty()
+				|| !isDirectoryValid(testTrainOutputPath)) {
+			form.getMessageManager().addMessage("testTrainOutputPath",
+					"Testing output path must be a valid location", null,
+					IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessages();
+			return true;
+		}
+	}
+
+	/**
+	 * checks whether all the elements in the array list is empty or NONE
+	 * 
+	 * @param testingDataPaths
+	 * @return
+	 */
+	private boolean isAllEmpty(ArrayList<String> testingDataPaths) {
+		int count = 0;
+		for (String path : testingDataPaths) {
+			if (path.isEmpty() || path.equalsIgnoreCase("NONE"))
+				count++;
+		}
+		if (count == testingDataPaths.size())
+			return true;
+		return false;
 	}
 
 	private String preprocessDirectory(String dirPath) throws IOException {
@@ -466,6 +526,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 
 			public void run() {
+				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,
+						null);
+
 				// Set of inputs that needs to be passed
 				// Set of training data class paths
 				final ArrayList<String> trainingDataPaths = new ArrayList<String>();
@@ -511,7 +574,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 											"pp_location");
 								}
 								canItProceed = canItProceedClassification(
-										trainingDataPaths,
+										tempTrainingDataPaths,
 										classificationInputDir,
 										classificationOutputDir);
 							}
@@ -537,7 +600,11 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										"NB_Classifier_Input_Data");
 								classificationInputDir = preprocessDirectory(classificationInputDir);
 							} catch (IOException e) {
-								e.printStackTrace();
+								return handleException(monitor, e,
+										"Preprocessing failed. Provide valid data");
+							} catch (Exception e) {
+								return handleException(monitor, e,
+										"Preprocessing failed. Provide valid data");
 							}
 						} else {
 							for (String path : tempTrainingDataPaths) {
@@ -554,11 +621,17 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										classificationInputDir,
 										classificationOutputDir, false, false);
 							} catch (FileNotFoundException e1) {
-								e1.printStackTrace();
+								return handleException(monitor, e1,
+										"Classification failed. Provide valid data");
 							} catch (IOException e1) {
-								e1.printStackTrace();
+								return handleException(monitor, e1,
+										"Classification failed. Provide valid data");
 							} catch (EvalError e1) {
-								e1.printStackTrace();
+								return handleException(monitor, e1,
+										"Classification failed. Provide valid data");
+							} catch (Exception e) {
+								return handleException(monitor, e,
+										"Classification failed. Provide valid data");
 							}
 
 							if (monitor.isCanceled()) {
@@ -604,6 +677,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		form.getToolBarManager().update(true);
 	}
 
+	private IStatus handleException(IProgressMonitor monitor, Exception e,
+			String message) {
+		monitor.done();
+		System.out.println(message);
+		e.printStackTrace();
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), message,
+				IStatus.ERROR);
+		return Status.CANCEL_STATUS;
+	}
+
 	private boolean canItProceedClassification(
 			ArrayList<String> trainingDataPaths, String classificationInputDir,
 			String classificationOutputDir) {
@@ -631,6 +714,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		}
 	}
 
+	/**
+	 * To validate the given text box
+	 * 
+	 * @param textBox
+	 * @param label
+	 */
 	private void validateTextbox(Text textBox, String label) {
 		if (textBox.getText().isEmpty()) {
 			form.getMessageManager().removeMessage(label);
@@ -646,6 +735,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		}
 	}
 
+	/**
+	 * To check whether the given path is a valid directory
+	 * 
+	 * @param path
+	 * @return
+	 */
 	private boolean isDirectoryValid(String path) {
 		if (path.isEmpty())
 			return false;
@@ -861,13 +956,17 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 					TreeItem testingSubItem = new TreeItem(testingItem,
 							SWT.NONE);
-					testingSubItem.setText("Class" + " : "
-							+ cDialog.getTestDataPath());
+					String tempClassname = "NONE";
+					if (!cDialog.getTestDataPath().isEmpty())
+						tempClassname = cDialog.getTestDataPath();
+					testingSubItem.setText("Class" + " : " + tempClassname);
 					testingSubItem.setData(cDialog.getTestDataPath());
-					testingSubItem
-							.setImage(NaiveBayesClassifierViewImageRegistry
-									.getImageIconFactory().getImage(
-											IMAGE_FILE_OBJ));
+					if (!tempClassname.equalsIgnoreCase("NONE")) {
+						testingSubItem
+								.setImage(NaiveBayesClassifierViewImageRegistry
+										.getImageIconFactory().getImage(
+												IMAGE_FILE_OBJ));
+					}
 					file = new File(cDialog.getTestDataPath());
 					if (file.isDirectory()) {
 						testingSubItem
@@ -878,6 +977,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					}
 					trainingClassPathTree.getItems()[0].setExpanded(true);
 					testingClassPathTree.getItems()[0].setExpanded(true);
+					form.getMessageManager().removeMessage("trainingClasses");
+					form.getMessageManager().removeMessage("testingClasses");
 				}
 			}
 		});

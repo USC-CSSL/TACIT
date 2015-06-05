@@ -39,7 +39,9 @@ public class NaiveBayesClassifier {
 
 		String tempTestDirs = "";
 		for (String classPath : testingClasses) {
-			tempTestDirs += classPath + ",";
+			if (!classPath.isEmpty()) // some test classes can be empty, ignore
+										// them
+				tempTestDirs += classPath + ",";
 		}
 
 		String keepSeq = "FALSE", stopWords = "FALSE", preserveCase = "TRUE";
@@ -68,10 +70,11 @@ public class NaiveBayesClassifier {
 		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(),
 				tempT2vArgs.toArray().length, String[].class);
 
-		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList(
-				"--input", "--output", outputPath + ".test", "--keep-sequence",
-				keepSeq, "--remove-stopwords", stopWords, "--preserve-case",
-				preserveCase, "--use-pipe-from", outputPath + ".train"));
+		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(
+				Arrays.asList("--input", "--output", outputPath + ".test",
+						"--keep-sequence", keepSeq, "--remove-stopwords",
+						stopWords, "--preserve-case", preserveCase,
+						"--use-pipe-from", outputPath + ".train"));
 		// add all the class paths to the argument
 		tempT2vArgsTest.addAll(1, Arrays.asList(testDirs));
 		// convert the object array to string, this feature is available in only

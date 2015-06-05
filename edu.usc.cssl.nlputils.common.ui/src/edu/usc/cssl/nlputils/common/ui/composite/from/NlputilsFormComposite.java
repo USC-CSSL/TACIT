@@ -94,8 +94,8 @@ public class NlputilsFormComposite {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 
-		final Button browseBtn = toolkit.createButton(sectionClient, "Browse...",
-				SWT.PUSH);
+		final Button browseBtn = toolkit.createButton(sectionClient,
+				"Browse...", SWT.PUSH);
 		browseBtn.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -258,7 +258,7 @@ public class NlputilsFormComposite {
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 200)
 				.span(1, 1).applyTo(pluginTabContainer);
 		targetLocationContent = TargetLocationsGroup.createInForm(scInput,
-				toolkit,isFolder);
+				toolkit, isFolder);
 		Label dummyLb1 = toolkit.createLabel(scInput, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(dummyLb1);
@@ -275,32 +275,54 @@ public class NlputilsFormComposite {
 		return layoutData;
 	}
 
-	public static void updateStatusMessage(final IViewSite site, final String message,
-			final int error) {
+	public static void updateStatusMessage(final IViewSite site,
+			final String message, final Integer error) {
 		// update status bar
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (error == IStatus.ERROR) {
+				if (null == error) {
 					site.getActionBars().getStatusLineManager()
-							.setErrorMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_ERROR_SB),message);
-				}
-				else if(error == IStatus.INFO){
+							.setErrorMessage(null);
 					site.getActionBars().getStatusLineManager()
-					.setMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_ERROR_SB),message);
+							.setMessage(null);
+				} else if (error == IStatus.ERROR) {
+					site.getActionBars()
+							.getStatusLineManager()
+							.setErrorMessage(
+									CommonUiViewImageRegistry
+											.getImageIconFactory()
+											.getImage(
+													ICommonUiConstants.IMAGE_ERROR_SB),
+									message);
+				} else if (error == IStatus.INFO) {
+					site.getActionBars()
+							.getStatusLineManager()
+							.setMessage(
+									CommonUiViewImageRegistry
+											.getImageIconFactory()
+											.getImage(
+													ICommonUiConstants.IMAGE_ERROR_SB),
+									message);
 
-				}
-				else {
+				} else if (error == IStatus.OK) {
 					site.getActionBars().getStatusLineManager()
-					.setErrorMessage("");
-					site.getActionBars().getStatusLineManager()
-					.setMessage(CommonUiViewImageRegistry.getImageIconFactory().getImage(ICommonUiConstants.IMAGE_SUCESS_SB),message);
+							.setErrorMessage("");
+					site.getActionBars()
+							.getStatusLineManager()
+							.setMessage(
+									CommonUiViewImageRegistry
+											.getImageIconFactory()
+											.getImage(
+													ICommonUiConstants.IMAGE_SUCESS_SB),
+									message);
 				}
 			}
 		});
 
 	}
-	public static void addErrorPopup(final Form form,final FormToolkit toolkit) {
+
+	public static void addErrorPopup(final Form form, final FormToolkit toolkit) {
 		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				String title = e.getLabel();
@@ -331,6 +353,7 @@ public class NlputilsFormComposite {
 			}
 		});
 	}
+
 	private static Image getImage(int type) {
 		switch (type) {
 		case IMessageProvider.ERROR:
