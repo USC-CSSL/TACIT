@@ -200,6 +200,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								preprocessor.clean(ppClass2);
 								System.out.println("Cleaning up preprocessed files - "+ppClass2);	
 								//monitor.worked(5);
+							
 							}
 
 							monitor.worked(2);
@@ -239,6 +240,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		//Remove all errors from any previous tries
 		form.getMessageManager().removeMessage("class1");
 		form.getMessageManager().removeMessage("class2");
+		form.getMessageManager().removeMessage("class1NoProper");
+		form.getMessageManager().removeMessage("class2NoProper");
 		form.getMessageManager().removeMessage("class1Name");
 		form.getMessageManager().removeMessage("class2Name");
 		form.getMessageManager().removeMessage("sameName");
@@ -246,17 +249,41 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		form.getMessageManager().removeMessage("kValue");
 		form.getMessageManager().removeMessage("output");
 		
-		if (class1LayoutData.getSelectedFiles().size() < 1) {
+		List<String> class1Files = class1LayoutData.getSelectedFiles();
+		List<String> class2Files = class2LayoutData.getSelectedFiles();
+		boolean noProperFiles = true;
+		
+		if (class1Files.size() < 1) {
 			form.getMessageManager().addMessage("class1","Select/Add atleast one Class 1 file", null,IMessageProvider.ERROR);
 			return false;
 		}
 		form.getMessageManager().removeMessage("class1");
+		for (String string : class1Files) {
+			if (new File(string).isFile() && !string.contains("DS_Store")){
+				noProperFiles = false;
+				break;
+			}
+		}
+		if (noProperFiles){
+			form.getMessageManager().addMessage("class1NoProper","Select/Add atleast one Proper Class 1 file", null,IMessageProvider.ERROR);
+			return false;
+		}
 		
-		if (class2LayoutData.getSelectedFiles().size() < 1) {
+		if (class1Files.size() < 1) {
 			form.getMessageManager().addMessage("class2","Select/Add atleast one Class 2 file", null,IMessageProvider.ERROR);
 			return false;
 		}
 		form.getMessageManager().removeMessage("class2");
+		for (String string : class2Files) {
+			if (new File(string).isFile() && !string.contains("DS_Store")){
+				noProperFiles = false;
+				break;
+			}
+		}
+		if (noProperFiles){
+			form.getMessageManager().addMessage("class2NoProper","Select/Add atleast one Proper Class 2 file", null,IMessageProvider.ERROR);
+			return false;
+		}
 		
 		if (class1Name.getText().trim().length() == 0) {
 			form.getMessageManager().addMessage("class1Name","Class 1 name cannot be empty", null,IMessageProvider.ERROR);
