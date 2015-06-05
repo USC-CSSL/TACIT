@@ -1,6 +1,8 @@
 package edu.usc.cssl.nlputils.classifiy.svm.ui;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -140,6 +142,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 						monitor.beginTask("SVM Classification", kValueInt+4);
 						String ppClass1 = "";
 						String ppClass2 = "";
+						File[] class1FilesL;
+						File[] class2FilesL;
 						if (ppValue){
 							try {
 								ppClass1 = preprocessor.doPreprocessing(class1Files,class1NameStr);
@@ -148,12 +152,47 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								return null;
 							}
 							
+							class1FilesL = (new File(ppClass1)).listFiles();
+							class2FilesL = (new File(ppClass2)).listFiles();
+						}
+						else {
+							for (Iterator<String> iter = class1Files.listIterator(); iter.hasNext(); ) {
+							    String string = iter.next();
+							    if ((new File(string)).isDirectory() || string.contains("DS_Store")) {
+							        iter.remove();
+							    }
+							}
+//							for (String string : class1Files) {
+//								if ((new File(string)).isDirectory() || string.contains("DS_Store")){
+//									class1Files.remove(string);
+//								}
+//							}
+							class1FilesL = new File[class1Files.size()];
+							for (int i=0; i < class1Files.size(); i++) {
+								class1FilesL[i] = new File(class1Files.get(i));
+							}
+							
+							for (Iterator<String> iter = class2Files.listIterator(); iter.hasNext(); ) {
+							    String string = iter.next();
+							    if ((new File(string)).isDirectory() || string.contains("DS_Store")) {
+							        iter.remove();
+							    }
+							}
+//							for (String string : class2Files) {
+//								if ((new File(string)).isDirectory() || string.contains("DS_Store")){
+//									class2Files.remove(string);
+//								}
+//							}
+							class2FilesL = new File[class2Files.size()];
+							for (int i=0; i < class2Files.size(); i++) {
+								class2FilesL[i] = new File(class2Files.get(i));
+							}
 						}
 						monitor.worked(2);
 						
 						try {
 							
-							cv.doCross(svm, class1NameStr, ppClass1, class2NameStr, ppClass2, kValueInt, featureFile,monitor);
+							cv.doCross(svm, class1NameStr, class1FilesL, class2NameStr, class2FilesL, kValueInt, featureFile,monitor);
 							//monitor.worked(5);
 							if (ppValue && preprocessor.doCleanUp()){
 								preprocessor.clean(ppClass1);
@@ -163,7 +202,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								//monitor.worked(5);
 							}
 
-							monitor.worked(5);
+							monitor.worked(2);
 						} catch (NumberFormatException e) {
 							e.printStackTrace();
 						} catch (IOException e) {

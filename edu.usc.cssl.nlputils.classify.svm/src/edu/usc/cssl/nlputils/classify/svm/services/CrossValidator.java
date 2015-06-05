@@ -7,11 +7,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CrossValidator {
 
-	public void doCross(SVMClassify svm, String class1Label, String class1Folder, String class2Label, String class2Folder, int kValue, boolean doPredictiveWeights, IProgressMonitor monitor) throws IOException{
-		File folder1 = new File(class1Folder);
-		File folder2 = new File(class2Folder);
-		File[] class1Files = folder1.listFiles();
-		File[] class2Files = folder2.listFiles();
+	public void doCross(SVMClassify svm, String class1Label, File[] class1Files, String class2Label, File[] class2Files, int kValue, boolean doPredictiveWeights, IProgressMonitor monitor) throws IOException{
+//		File folder1 = new File(class1Folder);
+//		File folder2 = new File(class2Folder);
+//		File[] class1Files = folder1.listFiles();
+//		File[] class2Files = folder2.listFiles();
 		int numFiles1 = class1Files.length;
 		int numFiles2 = class2Files.length;
 		
@@ -26,10 +26,19 @@ public class CrossValidator {
 		for (int i=1; i<=kValue;i++){
 			File[] trainFiles1 = new File[trains1];
 			File[] trainFiles2 = new File[trains2];
+			File[] testFiles1 = new File[numFiles1-trains1];
+			File[] testFiles2 = new File[numFiles2-trains2];
 			
 			int currIndex = index1;
 			for (int num =0; num<trains1;num++){
 				trainFiles1[num]=class1Files[currIndex];
+				//System.out.println(files1[currIndex]);
+				currIndex++;
+				if(currIndex >= numFiles1)
+					currIndex=0;
+			}
+			for (int num =0; num < numFiles1-trains1;num++){
+				testFiles1[num]=class1Files[currIndex];
 				//System.out.println(files1[currIndex]);
 				currIndex++;
 				if(currIndex >= numFiles1)
@@ -44,9 +53,16 @@ public class CrossValidator {
 				if(currIndex >= numFiles2)
 					currIndex=0;
 			}
+			for (int num =0; num < numFiles2-trains2;num++){
+				testFiles2[num]=class2Files[currIndex];
+				//System.out.println(files1[currIndex]);
+				currIndex++;
+				if(currIndex >= numFiles1)
+					currIndex=0;
+			}
 			
 			svm.cross_train("k"+i,class1Label, trainFiles1, class2Label, trainFiles2, doPredictiveWeights);
-			accuracies[i-1]=svm.cross_predict("k"+i,class1Label, trainFiles1, class2Label, trainFiles2);
+			accuracies[i-1]=svm.cross_predict("k"+i,class1Label, testFiles1, class2Label, testFiles2);
 			
 			// Clear required globals like dfmap?
 			index1 = index1 + numFiles1-trains1;

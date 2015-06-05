@@ -37,6 +37,8 @@ public class SVMClassify {
 	
 	public void buildDfMap(File inputFile) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
+		
+		//System.out.println("Building map for: "+inputFile.getAbsolutePath());
 		String currentLine;
 		StringBuilder fullFile = new StringBuilder();
 		while ((currentLine = br.readLine())!=null){
