@@ -133,33 +133,36 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final boolean ppValue = preprocessButton.getSelection();
 				final Preprocess preprocessor = new Preprocess("SVM_Classifier");
 				
-				String ppClass1 = "";
-				String ppClass2 = "";
-				if (ppValue){
-					try {
-						ppClass1 = preprocessor.doPreprocessing(class1Files,class1NameStr);
-						ppClass2 = preprocessor.doPreprocessing(class2Files,class2NameStr);
-					} catch (IOException e) {
-						return;
-					}
-				}
 				final SVMClassify svm = new SVMClassify(class1NameStr, class2NameStr, outputPath);
 				final CrossValidator cv = new CrossValidator();
-				final String fppClass1 = ppClass1;
-				final String fppClass2 = ppClass2;
-				Job job = new Job("Crawler Job"){
+				Job job = new Job("Classifier Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
+						monitor.beginTask("SVM Classification", kValueInt+4);
+						String ppClass1 = "";
+						String ppClass2 = "";
+						if (ppValue){
+							try {
+								ppClass1 = preprocessor.doPreprocessing(class1Files,class1NameStr);
+								ppClass2 = preprocessor.doPreprocessing(class2Files,class2NameStr);
+							} catch (IOException e) {
+								return null;
+							}
+							
+						}
+						monitor.worked(2);
 						
 						try {
-							monitor.beginTask("svmtask", 10);
-							cv.doCross(svm, class1NameStr, fppClass1, class2NameStr, fppClass2, kValueInt, featureFile);
-							monitor.worked(5);
+							
+							cv.doCross(svm, class1NameStr, ppClass1, class2NameStr, ppClass2, kValueInt, featureFile,monitor);
+							//monitor.worked(5);
 							if (ppValue && preprocessor.doCleanUp()){
-								preprocessor.clean(fppClass1);
-								System.out.println("Cleaning up preprocessed files - "+fppClass1);
-								preprocessor.clean(fppClass2);
-								System.out.println("Cleaning up preprocessed files - "+fppClass2);	
+								preprocessor.clean(ppClass1);
+								System.out.println("Cleaning up preprocessed files - "+ppClass1);
+								preprocessor.clean(ppClass2);
+								System.out.println("Cleaning up preprocessed files - "+ppClass2);	
+								//monitor.worked(5);
 							}
+
 							monitor.worked(5);
 						} catch (NumberFormatException e) {
 							e.printStackTrace();

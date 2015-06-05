@@ -89,8 +89,9 @@ public class Preprocess {
 			i = i + 1;
 		}
 
-		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
-			this.outputPath = (new File(inputFiles.get(0)).getParent());
+		if (this.outputPath == null || this.outputPath.trim().length() == 0){
+			this.outputPath = System.getProperty("user.dir");
+			//this.outputPath = (new File(inputFiles.get(0)).getParent());
 			outputPathNotSet = true;
 		}
 		outputPath = this.outputPath + File.separator + callingPlugin + "_"

@@ -3,9 +3,11 @@ package edu.usc.cssl.nlputils.classify.svm.services;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 public class CrossValidator {
 
-	public void doCross(SVMClassify svm, String class1Label, String class1Folder, String class2Label, String class2Folder, int kValue, boolean doPredictiveWeights) throws IOException{
+	public void doCross(SVMClassify svm, String class1Label, String class1Folder, String class2Label, String class2Folder, int kValue, boolean doPredictiveWeights, IProgressMonitor monitor) throws IOException{
 		File folder1 = new File(class1Folder);
 		File folder2 = new File(class2Folder);
 		File[] class1Files = folder1.listFiles();
@@ -56,6 +58,7 @@ public class CrossValidator {
 			if (index2 >= numFiles2){
 				index2 = index2 - numFiles2;
 			}
+			monitor.worked(1);
 		}
 	}
 }
