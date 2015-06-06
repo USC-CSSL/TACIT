@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: LDA services
+Bundle-SymbolicName: edu.usc.cssl.nlputils.topicmodel.lda
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.topicmodel.lda.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.nlputils.common,
+ org.jsoup;bundle-version="1.7.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: bsh,
+ edu.usc.cssl.nlputils.topicmodel.lda.services
+Bundle-ClassPath: .,
+ mallet.jar,
+ mallet-deps.jar

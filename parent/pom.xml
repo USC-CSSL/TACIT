@@ -26,7 +26,7 @@
     <module>../edu.usc.cssl.nlputils.classify.naivebayes.ui</module>
     <module>../edu.usc.cssl.nlputils.classify.naivebayes</module>
     <module>../edu.usc.cssl.nlputils.topicmodel.lda.ui</module>
-   <!--  <module>../edu.usc.cssl.nlputils.topicmodel.lda</module> -->
+   <module>../edu.usc.cssl.nlputils.topicmodel.lda</module>
     <module>../nlptoolshelp</module>
     <module>../product</module>
     

@@ -1,13 +1,13 @@
 package edu.usc.cssl.nlputils.topicmodel.lda.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -28,7 +28,6 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -37,8 +36,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
-import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.topicmodel.lda.services.LdaAnalysis;
 import edu.usc.cssl.nlputils.topicmodel.lda.ui.internal.ILdaTopicModelClusterViewConstants;
 import edu.usc.cssl.nlputils.topicmodel.lda.ui.internal.LdaTopicModelViewImageRegistry;
 import edu.usc.nlputils.common.Preprocess;
@@ -54,6 +53,7 @@ public class LdaTopicModelView extends ViewPart implements
 	private OutputLayoutData inputLayoutData;
 	private Text numberOfTopics;
 	private Text prefixTxt;
+	private LdaAnalysis lda = new LdaAnalysis();
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -71,7 +71,7 @@ public class LdaTopicModelView extends ViewPart implements
 
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
+		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -80,20 +80,20 @@ public class LdaTopicModelView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-        // create input data 
+		// create input data
 		inputLayoutData = NlputilsFormComposite.createInputSection(toolkit,
 				client, form.getMessageManager());
 		Composite compInput;
 		// Create pre process link
 		compInput = inputLayoutData.getSectionClient();
 
-		numberOfTopics = createAdditionalOptions(compInput,"No of Topics :","1");
-		
+		numberOfTopics = createAdditionalOptions(compInput, "No of Topics :",
+				"1");
+
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
-		
-		
+
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
@@ -108,7 +108,7 @@ public class LdaTopicModelView extends ViewPart implements
 
 		Composite output = layoutData.getSectionClient();
 
-		prefixTxt = createAdditionalOptions(output,"Output Prefix","Lda_");
+		prefixTxt = createAdditionalOptions(output, "Output Prefix", "Lda_");
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -150,9 +150,10 @@ public class LdaTopicModelView extends ViewPart implements
 
 	}
 
-	private Text createAdditionalOptions(Composite sectionClient,String lblText,String defaultText) {
-		Label simpleTxtLbl = toolkit.createLabel(sectionClient,
-				lblText , SWT.NONE);
+	private Text createAdditionalOptions(Composite sectionClient,
+			String lblText, String defaultText) {
+		Label simpleTxtLbl = toolkit.createLabel(sectionClient, lblText,
+				SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(simpleTxtLbl);
 		Text simpleTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
@@ -193,73 +194,87 @@ public class LdaTopicModelView extends ViewPart implements
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				final int noOfClusters = Integer
-						.valueOf(numberOfTopics.getText()).intValue();
+				final int noOfTopics = Integer.valueOf(
+						numberOfTopics.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = null;
+				final String inputPath = inputLayoutData
+						.getOutputLabel().getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
-				Job performCluster = new Job("Clustering...") {
+				final String preFix =  prefixTxt.getText();
+				Job performCluster = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started clustering...", 100);
-						List<File> inputFiles = new ArrayList<File>();
+						List<String> inputFiles = new ArrayList<String>();
+						String topicModelDirPath = inputPath;
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
 							Preprocess preprocessTask = new Preprocess(
 									"KMeans Cluster");
 							try {
-								String dirPath = preprocessTask
-										.doPreprocessing(selectedFiles, "");
-								File[] inputFile = new File(dirPath)
+								File[] inputFile = new File(inputPath)
 										.listFiles();
 								for (File iFile : inputFile) {
-									inputFiles.add(iFile);
+									inputFiles.add(iFile.toString());
+
 								}
+								topicModelDirPath = preprocessTask
+										.doPreprocessing(inputFiles, "");
 
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 							monitor.worked(10);
-						} else {
-							for (String filepath : selectedFiles) {
-								if ((new File(filepath).isDirectory())) {
-									continue;
-								}
-								inputFiles.add(new File(filepath));
-							}
-							monitor.worked(10);
-						}
+						} 
+						
+						
+						
+						lda.initialize(topicModelDirPath, noOfTopics, outputPath,preFix);
 
-						// kemans processsing
+						// lda processsing
 						long startTime = System.currentTimeMillis();
-						monitor.subTask("Clustering files...");
-						monitor.worked(80);
+						monitor.subTask("Topic Modelling...");
+						try {
+							lda.doLDA(monitor);
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+							return Status.CANCEL_STATUS;
+						} catch (IOException e) {
+							monitor.done();
+							return Status.CANCEL_STATUS;
+						}
+						monitor.worked(20);
 						System.out
-								.println("K-Means Clustering completed successfully in "
+								.println("LDA TOpic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
 
 						if (monitor.isCanceled()) {
-							throw new OperationCanceledException();
+							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
-						
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(),
+								"LDA Topic Modelling is successfully Completed.",
+								IStatus.OK);
+
 						return Status.OK_STATUS;
 					}
 				};
 				performCluster.setUser(true);
-				if(canProceedCluster()){
-				performCluster.schedule();
-				}
-				else{
-				NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering cannot be started. Please check the Form status to correct the errors", IStatus.ERROR);
+				if (canProceedCluster()) {
+					performCluster.schedule();
+				} else {
+					NlputilsFormComposite
+							.updateStatusMessage(
+									getViewSite(),
+									"CLustering cannot be started. Please check the Form status to correct the errors",
+									IStatus.ERROR);
 				}
 
 			}
 
-			
 		});
 		mgr.add(new Action() {
 			@Override
@@ -284,7 +299,7 @@ public class LdaTopicModelView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
-	
+
 	private boolean canProceedCluster() {
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
@@ -298,32 +313,33 @@ public class LdaTopicModelView extends ViewPart implements
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
 			canProceed = false;
-		} 
-		
+		}
+
 		String inputMessage = OutputPathValidation.getInstance()
-				.validateOutputDirectory(inputLayoutData.getOutputLabel().getText());
+				.validateOutputDirectory(
+						inputLayoutData.getOutputLabel().getText());
 		if (message != null) {
 
-			inputMessage = layoutData.getOutputLabel().getText() + " " + inputMessage;
-			form.getMessageManager().addMessage("inputlocation", inputMessage, null,
-					IMessageProvider.ERROR);
-			canProceed = false;
-		} 
-		
-		if (prefixTxt.getText().length() < 1){
-			form.getMessageManager().addMessage("prefix",
-					"Prefix Cannout be empty", null,
-					IMessageProvider.ERROR);
+			inputMessage = layoutData.getOutputLabel().getText() + " "
+					+ inputMessage;
+			form.getMessageManager().addMessage("inputlocation", inputMessage,
+					null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
 
-			if (Integer.parseInt(numberOfTopics.getText())<1){
-				form.getMessageManager().addMessage("topic",
-						"Number of topics cannot be less than 1", null,
-						IMessageProvider.ERROR);
-				canProceed = false;
-			}
-			return canProceed;
+		if (prefixTxt.getText().length() < 1) {
+			form.getMessageManager().addMessage("prefix",
+					"Prefix Cannout be empty", null, IMessageProvider.ERROR);
+			canProceed = false;
+		}
+
+		if (Integer.parseInt(numberOfTopics.getText()) < 1) {
+			form.getMessageManager().addMessage("topic",
+					"Number of topics cannot be less than 1", null,
+					IMessageProvider.ERROR);
+			canProceed = false;
+		}
+		return canProceed;
 	}
 
 }
