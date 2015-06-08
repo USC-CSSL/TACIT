@@ -22,10 +22,10 @@ public class TableLayoutData {
 		return this.treeViewer.getTree();
 	}
 	
-	public List<File> getSelectedItems(int index) {		
+	public List<File> getSelectedItems(TreeItem tree) {		
 		Map<String, TreeItem> subfolders = Collections.synchronizedMap(new LinkedHashMap<String, TreeItem>()); //LinkedHashMap - helps to iterate the key in which it is inserted
 		ArrayList<File> selectedItems = new ArrayList<File>();
-		TreeItem[] children = this.treeViewer.getTree().getItem(index).getItems();
+		TreeItem[] children = tree.getItems();
 		for(TreeItem ti : children) {
 			if(null != ti.getData()) {
 				String filename = ti.getData().toString();				
@@ -45,7 +45,6 @@ public class TableLayoutData {
 		Iterator<Entry<String, TreeItem>> iterator = subfolders.entrySet().iterator();
 		while(iterator.hasNext()) {
 		   Entry<String, TreeItem> entry = iterator.next();
-		   System.out.printf("Key : %s and Value: %s %n", entry.getKey(), entry.getValue());
 		   TreeItem[] children = entry.getValue().getItems();
 		   for(TreeItem ti : children) {
 				if(null != ti.getData()) {
@@ -53,7 +52,6 @@ public class TableLayoutData {
 					if(ti.getChecked()) {
 						if(!(new File(filename).isDirectory())) {
 							selectedItems.add(new File(filename));
-						System.out.println("Selected ite m: "+ filename);
 						}
 						else
 							subfolders.put(new File(filename).getAbsolutePath(), ti);
@@ -61,7 +59,6 @@ public class TableLayoutData {
 				}
 			}
 		}
-		System.out.println("Selected Items :"+ selectedItems.size());
 		return selectedItems;
 	}
 	
