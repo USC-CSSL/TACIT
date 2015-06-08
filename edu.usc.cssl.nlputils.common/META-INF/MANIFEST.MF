@@ -15,6 +15,5 @@ Export-Package: edu.usc.nlputils.common,
  edu.usc.nlputils.common.crawlers
 Bundle-ClassPath: jsoup-1.7.3.jar,
  .,
- SnowballStemmer.jar,
  langdetect.jar,
  commons-io-2.4.jar

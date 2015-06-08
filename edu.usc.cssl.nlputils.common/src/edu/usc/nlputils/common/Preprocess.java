@@ -18,23 +18,22 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import snowballstemmer.DanishStemmer;
-import snowballstemmer.DutchStemmer;
-import snowballstemmer.EnglishStemmer;
-import snowballstemmer.FinnishStemmer;
-import snowballstemmer.FrenchStemmer;
-import snowballstemmer.GermanStemmer;
-import snowballstemmer.HungarianStemmer;
-import snowballstemmer.ItalianStemmer;
-import snowballstemmer.NorwegianStemmer;
-import snowballstemmer.SnowballStemmer;
-import snowballstemmer.TurkishStemmer;
-
 import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.nlputils.common.snowballstemmer.DanishStemmer;
+import edu.usc.nlputils.common.snowballstemmer.DutchStemmer;
+import edu.usc.nlputils.common.snowballstemmer.EnglishStemmer;
+import edu.usc.nlputils.common.snowballstemmer.FinnishStemmer;
+import edu.usc.nlputils.common.snowballstemmer.FrenchStemmer;
+import edu.usc.nlputils.common.snowballstemmer.GermanStemmer;
+import edu.usc.nlputils.common.snowballstemmer.HungarianStemmer;
+import edu.usc.nlputils.common.snowballstemmer.ItalianStemmer;
+import edu.usc.nlputils.common.snowballstemmer.NorwegianStemmer;
+import edu.usc.nlputils.common.snowballstemmer.SnowballStemmer;
+import edu.usc.nlputils.common.snowballstemmer.TurkishStemmer;
 
 public class Preprocess {
 	private boolean doLowercase = false;
