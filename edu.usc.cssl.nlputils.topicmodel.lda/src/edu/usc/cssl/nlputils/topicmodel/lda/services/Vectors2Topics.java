@@ -7,13 +7,20 @@
 
 package edu.usc.cssl.nlputils.topicmodel.lda.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+
+import cc.mallet.topics.PAM4L;
+import cc.mallet.topics.ParallelTopicModel;
+import cc.mallet.topics.PolylingualTopicModel;
+import cc.mallet.topics.TopicalNGrams;
+import cc.mallet.types.FeatureSequence;
+import cc.mallet.types.InstanceList;
 import cc.mallet.util.CommandOption;
 import cc.mallet.util.Randoms;
-import cc.mallet.types.InstanceList;
-import cc.mallet.types.FeatureSequence;
-import cc.mallet.topics.*;
-
-import java.io.*;
 
 /** Perform topic analysis in the style of LDA and its variants.
  *  @author <a href="mailto:mccallum@cs.umass.edu">Andrew McCallum</a>

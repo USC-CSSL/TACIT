@@ -36,6 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.uc.cssl.nlputils.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
@@ -242,7 +243,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 			public void run() {
 				final String stopWordPath = CommonUiActivator.getDefault()
-						.getPreferenceStore().getString("stop_words_path");
+						.getPreferenceStore().getString(IPreprocessorSettingsConstant.STOP_PATH);
 				// lindapulickal: handling case where user types in a file
 				// without extension
 				final String outputPath = layoutData.getOutputLabel().getText();

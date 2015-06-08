@@ -7,16 +7,39 @@
 
 package edu.usc.cssl.nlputils.topicmodel.lda.services;
 
-import java.util.ArrayList;
-import java.util.logging.*;
-import java.util.regex.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
-import cc.mallet.pipe.*;
-import cc.mallet.pipe.iterator.*;
-import cc.mallet.types.*;
-import cc.mallet.util.*;
+import cc.mallet.pipe.CharSequence2TokenSequence;
+import cc.mallet.pipe.CharSequenceRemoveHTML;
+import cc.mallet.pipe.CharSubsequence;
+import cc.mallet.pipe.FeatureSequence2AugmentableFeatureVector;
+import cc.mallet.pipe.Input2CharSequence;
+import cc.mallet.pipe.Pipe;
+import cc.mallet.pipe.PrintInputAndTarget;
+import cc.mallet.pipe.SaveDataInSource;
+import cc.mallet.pipe.SerialPipes;
+import cc.mallet.pipe.Target2Label;
+import cc.mallet.pipe.TokenSequence2FeatureSequence;
+import cc.mallet.pipe.TokenSequence2FeatureSequenceWithBigrams;
+import cc.mallet.pipe.TokenSequenceLowercase;
+import cc.mallet.pipe.TokenSequenceNGrams;
+import cc.mallet.pipe.TokenSequenceRemoveNonAlpha;
+import cc.mallet.pipe.TokenSequenceRemoveStopwords;
+import cc.mallet.pipe.iterator.FileIterator;
+import cc.mallet.types.InstanceList;
+import cc.mallet.util.CharSequenceLexer;
+import cc.mallet.util.CommandOption;
+import cc.mallet.util.MalletLogger;
+import cc.mallet.util.Strings;
 
 /**
  * Convert document files into vectors (a persistent instance list).

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: LDA services
+Bundle-SymbolicName: edu.usc.cssl.nlputils.topicmodel.zlda
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.nlputils.topicmodel.zlda.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.nlputils.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.stanford.nlp.process,
+ edu.usc.cssl.nlputils.topicmodel.zlda.services
+Bundle-ClassPath: .,
+ stanford-corenlp-3.2.0.jar

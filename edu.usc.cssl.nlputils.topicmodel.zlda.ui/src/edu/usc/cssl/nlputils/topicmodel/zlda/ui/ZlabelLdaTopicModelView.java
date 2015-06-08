@@ -1,7 +1,6 @@
 package edu.usc.cssl.nlputils.topicmodel.zlda.ui;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -40,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.topicmodel.zlda.services.ZlabelTopicModelAnalysis;
 import edu.usc.cssl.nlputils.topicmodel.zlda.ui.internal.IZlabelLdaTopicModelClusterViewConstants;
 import edu.usc.cssl.nlputils.topicmodel.zlda.ui.internal.ZlabelLdaTopicModelViewImageRegistry;
 import edu.usc.nlputils.common.Preprocess;
@@ -238,9 +239,10 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						monitor.beginTask("NLPUtils started analyzing...", 100);
 						List<String> inputFiles = new ArrayList<String>();
 						String topicModelDirPath = inputPath;
+						Preprocess  preprocessTask = null;
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
-							Preprocess preprocessTask = new Preprocess(
+							preprocessTask = new Preprocess(
 									"ZLabelLDA");
 							try {
 								File[] inputFile = new File(inputPath)
@@ -258,23 +260,11 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 							monitor.worked(10);
 						} 
 						
-						
-						
-					//	lda.initialize(topicModelDirPath, noOfTopics, outputPath,preFix);
-
-						// lda processsing
 						long startTime = System.currentTimeMillis();
+						
+						ZlabelTopicModelAnalysis zlda = new ZlabelTopicModelAnalysis(new SubProgressMonitor(monitor,70));
 						monitor.subTask("Topic Modelling...");
-//						try {
-//						//	lda.doLDA(monitor);
-//						} catch (FileNotFoundException e) {
-//							e.printStackTrace();
-//							return Status.CANCEL_STATUS;
-//						} catch (IOException e) {
-//							monitor.done();
-//							return Status.CANCEL_STATUS;
-//						}
-						monitor.worked(20);
+						zlda.invokeLDA(topicModelDirPath, seedFilePath, noOfTopics, outputPath);
 						System.out
 								.println("ZLabel LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
@@ -283,6 +273,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
+						monitor.subTask("Cleaning Preprocessed Files...");
+						preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(

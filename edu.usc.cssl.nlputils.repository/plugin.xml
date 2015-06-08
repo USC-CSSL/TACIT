@@ -110,6 +110,20 @@
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
+        <view
+              id="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
+        <view
+              id="edu.usc.cssl.nlputils.topicmodel.lda.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
     </perspectiveExtension>
  </extension>
 </plugin>

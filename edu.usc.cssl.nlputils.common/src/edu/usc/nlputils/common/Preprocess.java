@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -23,6 +24,7 @@ import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.nlputils.common.snowballstemmer.DanishStemmer;
 import edu.usc.nlputils.common.snowballstemmer.DutchStemmer;
 import edu.usc.nlputils.common.snowballstemmer.EnglishStemmer;
@@ -50,6 +52,7 @@ public class Preprocess {
 	private String stemLang;
 	private String callingPlugin;
 	private String currTime;
+	private String preprocessingParentFolder;
 
 	public Preprocess(String caller) {
 		this.stopwordsFile = CommonUiActivator.getDefault()
@@ -76,7 +79,6 @@ public class Preprocess {
 
 		File[] files;
 		files = new File[inputFiles.size()];
-		String outputPath;
 		int i = 0;
 		boolean outputPathNotSet = false;
 		for (String filepath : inputFiles) {
@@ -88,24 +90,25 @@ public class Preprocess {
 			i = i + 1;
 		}
 
-		if (this.outputPath == null || this.outputPath.trim().length() == 0){
+		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
 			this.outputPath = System.getProperty("user.dir");
-			//this.outputPath = (new File(inputFiles.get(0)).getParent());
+			// this.outputPath = (new File(inputFiles.get(0)).getParent());
 			outputPathNotSet = true;
 		}
-		outputPath = this.outputPath + File.separator + callingPlugin + "_"
-				+ currTime;
+		preprocessingParentFolder = this.outputPath + File.separator
+				+ callingPlugin + "_" + currTime;
 		if (outputPathNotSet)
 			this.outputPath = "";
-		if (!(new File(outputPath).exists())) {
-			new File(outputPath).mkdir();
-			System.out.println("Folder " + outputPath
+		if (!(new File(preprocessingParentFolder).exists())) {
+			new File(preprocessingParentFolder).mkdir();
+			System.out.println("Folder " + preprocessingParentFolder
 					+ " created successfully.");
 		}
 		if (subFolder.trim().length() != 0) {
-			outputPath = outputPath + File.separator + subFolder;
-			if (new File(outputPath).mkdir()) {
-				System.out.println("Folder " + outputPath
+			preprocessingParentFolder = preprocessingParentFolder
+					+ File.separator + subFolder;
+			if (new File(preprocessingParentFolder).mkdir()) {
+				System.out.println("Folder " + preprocessingParentFolder
 						+ " created successfully.");
 			}
 		}
@@ -171,7 +174,7 @@ public class Preprocess {
 				continue;
 			}
 
-			File oFile = new File(outputPath
+			File oFile = new File(preprocessingParentFolder
 					+ System.getProperty("file.separator") + f.getName());
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					new FileInputStream(iFile), "UTF8"));
@@ -192,14 +195,15 @@ public class Preprocess {
 					bw.write(linear + "\n");
 				}
 			}
-			System.out.println(outputPath
+			System.out.println(preprocessingParentFolder
 					+ System.getProperty("file.separator") + f.getName());
 
 			br.close();
 			bw.close();
 		}
-		System.out.println("Preprocessed files stored in " + outputPath);
-		return outputPath;
+		System.out.println("Preprocessed files stored in "
+				+ preprocessingParentFolder);
+		return preprocessingParentFolder;
 	}
 
 	private SnowballStemmer findLangStemmer(File iFile) throws IOException,
@@ -274,24 +278,20 @@ public class Preprocess {
 		return returnString.toString();
 	}
 
-	public void clean(String ppDir) {
-		File toDel = new File(ppDir);
-		// if folder, delete contents too
-		if (toDel.isDirectory()) {
-			for (File f : toDel.listFiles()) {
-				f.delete();
-			}
+	public void clean() {
+		final Boolean cleanUp = Boolean.valueOf(CommonUiActivator.getDefault()
+				.getPreferenceStore().getString(IPreprocessorSettingsConstant.PRE_PROCESSED));
+		if(!cleanUp){
+			return;
 		}
-		File parent = toDel.getParentFile();
-		toDel.delete();
-		if (new File(parent.getAbsolutePath() + File.separator + ".DS_Store")
-				.exists()) {
-			new File(parent.getAbsolutePath() + File.separator + ".DS_Store")
-					.delete();
+		File toDel = new File(this.preprocessingParentFolder);
+		try {
+			if (toDel.exists())
+				FileUtils.deleteDirectory(toDel);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		if (parent.listFiles().length == 0) {
-			parent.delete();
-		}
+
 	}
 
 	public boolean doCleanUp() {

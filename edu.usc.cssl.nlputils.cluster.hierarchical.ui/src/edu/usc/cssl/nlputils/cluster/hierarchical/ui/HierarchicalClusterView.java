@@ -234,7 +234,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						      @Override
 						      public void run() {
 						if (isPreprocess && preprocessTask.doCleanUp()){
-							preprocessTask.clean(dirPath);
+							preprocessTask.clean();
 							System.out.println("Cleaning up preprocessed files - "+dirPath);
 						}
 						      }

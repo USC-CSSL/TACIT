@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
 
 public class PrepocessorSettings extends PreferencePage implements
 		IWorkbenchPreferencePage, IPreprocessorSettingsConstant {

@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.PixelConverter;
@@ -26,6 +29,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+
+import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 
 public class TargetLocationsGroup {
 
@@ -184,10 +189,20 @@ public class TargetLocationsGroup {
 					DirectoryDialog dlg = new DirectoryDialog(fAddButton
 							.getShell(), SWT.OPEN);
 					dlg.setText("Select Directory");
-					String path = dlg.open();
+					boolean cannotExit = false;
+					String path = null;
+					while(!cannotExit){
+					path = dlg.open();
 					if (path == null)
 						return;
-					updateLocationTree(path);
+					else{
+					
+						cannotExit = updateLocationTree(path);
+						if(!cannotExit) {
+							ErrorDialog.openError(dlg.getParent(), "Select Diferent Directory", "Please select different Directory",new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID,"The selected Directory is already added to the location"));
+						}
+					}
+				}
 				}
 			});
 		}
@@ -197,10 +212,20 @@ public class TargetLocationsGroup {
 				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
 						SWT.OPEN);
 				dlg.setText("Select File");
-				String path = dlg.open();
+				boolean cannotExit = false;
+				String path = null;
+				while(!cannotExit){
+				path = dlg.open();
 				if (path == null)
 					return;
-				updateLocationTree(path);
+				else{
+				
+					cannotExit = updateLocationTree(path);
+					if(!cannotExit) {
+						ErrorDialog.openError(dlg.getParent(), "Select Diferent File", "Please select different File",new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID,"The selected File is already added to the location"));
+					}
+				}
+			}
 			}
 		});
 
@@ -214,18 +239,22 @@ public class TargetLocationsGroup {
 		updateButtons();
 	}
 
-	protected void updateLocationTree(String path) {
+	protected boolean updateLocationTree(String path) {
 
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<String>();
 		}
 		if (!path.equals("root")) {
+			if(this.locationPaths.contains(path)){
+				return false;
+			}
 			this.locationPaths.add(path);
 			this.fTreeViewer.setInput(this.locationPaths);
 			if (new File(path).isFile())
 				this.fTreeViewer.setChecked(path, true);
 
 		}
+		return true;
 	}
 
 	private void handleEdit() {
