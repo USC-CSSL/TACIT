@@ -18,7 +18,7 @@ public class OutputPathValidation {
 	private OutputPathValidation() {
 	}
 
-	public String validateOutputDirectory(String location) {
+	public String validateOutputDirectory(String location,String label) {
 		if (location.length() > 0) {
 			File locationFile = new File(location);
 			if (locationFile.exists()) { // check location exists
@@ -32,7 +32,7 @@ public class OutputPathValidation {
 			}
 
 		} else {
-			return "Output location cannot be empty";
+			return label+ " location cannot be empty";
 		}
 	}
 

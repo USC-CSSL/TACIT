@@ -326,7 +326,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		}
 		form.getMessageManager().removeMessage("kValue");
 		
-		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;

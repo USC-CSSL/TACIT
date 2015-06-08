@@ -210,7 +210,7 @@ public class LdaTopicModelView extends ViewPart implements
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
 							Preprocess preprocessTask = new Preprocess(
-									"KMeans Cluster");
+									"ZLabel");
 							try {
 								File[] inputFile = new File(inputPath)
 										.listFiles();
@@ -269,7 +269,7 @@ public class LdaTopicModelView extends ViewPart implements
 					NlputilsFormComposite
 							.updateStatusMessage(
 									getViewSite(),
-									"CLustering cannot be started. Please check the Form status to correct the errors",
+									"LDA Topic Modelling cannot be started. Please check the Form status to correct the errors",
 									IStatus.ERROR);
 				}
 
@@ -303,10 +303,11 @@ public class LdaTopicModelView extends ViewPart implements
 	private boolean canProceedCluster() {
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
-		form.getMessageManager().removeMessage("input");
-		form.getMessageManager().removeMessage("cluster");
+		form.getMessageManager().removeMessage("inputlocation");
+		form.getMessageManager().removeMessage("prefix");
+		form.getMessageManager().removeMessage("topic");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText());
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
@@ -317,8 +318,8 @@ public class LdaTopicModelView extends ViewPart implements
 
 		String inputMessage = OutputPathValidation.getInstance()
 				.validateOutputDirectory(
-						inputLayoutData.getOutputLabel().getText());
-		if (message != null) {
+						inputLayoutData.getOutputLabel().getText(),"Input");
+		if (inputMessage != null) {
 
 			inputMessage = layoutData.getOutputLabel().getText() + " "
 					+ inputMessage;

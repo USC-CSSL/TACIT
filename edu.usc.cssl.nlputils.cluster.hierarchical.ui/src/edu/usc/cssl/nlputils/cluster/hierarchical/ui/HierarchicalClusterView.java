@@ -201,7 +201,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
 							preprocessTask = new Preprocess(
-									"Hierarchical Cluster");
+									"HierarchicalCluster");
 							try {
 								dirPath = preprocessTask
 										.doPreprocessing(selectedFiles, "");
@@ -301,7 +301,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutOutputData.getOutputLabel().getText());
+				.validateOutputDirectory(layoutOutputData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 
 			message = layoutOutputData.getOutputLabel().getText() + " " + message;

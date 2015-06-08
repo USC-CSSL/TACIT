@@ -241,7 +241,7 @@ public class SupremeCrawlerView extends ViewPart implements
 	protected boolean canProceedCrawl() {
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
-		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText());
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;

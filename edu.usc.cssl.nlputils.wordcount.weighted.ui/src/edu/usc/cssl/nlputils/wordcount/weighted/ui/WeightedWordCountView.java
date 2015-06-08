@@ -336,7 +336,7 @@ public class WeightedWordCountView extends ViewPart implements
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText());
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,

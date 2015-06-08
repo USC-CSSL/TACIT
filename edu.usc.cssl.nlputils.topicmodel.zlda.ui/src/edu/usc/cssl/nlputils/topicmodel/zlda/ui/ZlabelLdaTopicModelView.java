@@ -1,13 +1,13 @@
-package edu.usc.cssl.nlputils.cluster.kmeans.ui;
+package edu.usc.cssl.nlputils.topicmodel.zlda.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -18,9 +18,12 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -28,31 +31,31 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.uc.cssl.nlputils.cluster.kmeans.services.KmeansClusterAnalysis;
-import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.IKmeansClusterViewConstants;
-import edu.usc.cssl.nlputils.cluster.kmeans.ui.internal.KmeansClusterViewImageRegistry;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
-import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.topicmodel.zlda.ui.internal.IZlabelLdaTopicModelClusterViewConstants;
+import edu.usc.cssl.nlputils.topicmodel.zlda.ui.internal.ZlabelLdaTopicModelViewImageRegistry;
 import edu.usc.nlputils.common.Preprocess;
 
-public class KmeansClusterView extends ViewPart implements
-		IKmeansClusterViewConstants {
-	public static String ID = "edu.usc.cssl.nlputils.cluster.kmeansui.view1";
+public class ZlabelLdaTopicModelView extends ViewPart implements
+		IZlabelLdaTopicModelClusterViewConstants {
+	public static final String ID = "edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private Button preprocessEnabled;
-	private TableLayoutData layData;
-	private Text noClusterTxt;
+
 	private OutputLayoutData layoutData;
+	private OutputLayoutData inputLayoutData;
+	private Text seedFileText;
+	private Text topics;
+	private Button fAddFileButton;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -63,11 +66,6 @@ public class KmeansClusterView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
-		String description = "This section gives details about KMeans clustering ";
-		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
-				false);
-		section.setDescriptionControl(descriptionFrm);
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -75,7 +73,7 @@ public class KmeansClusterView extends ViewPart implements
 
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
+		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -84,15 +82,22 @@ public class KmeansClusterView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-
-		layData = NlputilsFormComposite.createTableSection(client, toolkit,
-				layout, "Input Dtails",
-				"Add file(s) or Folder(s) which contains data", true);
+		// create input data
+		inputLayoutData = NlputilsFormComposite.createInputSection(toolkit,
+				client, form.getMessageManager());
 		Composite compInput;
-		compInput = layData.getSectionClient();
+		// Create pre process link
+		compInput = inputLayoutData.getSectionClient();
+
+		seedFileText = createSeedFileControl(compInput, "Seed File Location :",
+				"");
+
+		topics = createAdditionalOptions(compInput, "Number of Topics :", "1");
+		
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
+
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
@@ -105,13 +110,10 @@ public class KmeansClusterView extends ViewPart implements
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
 
-		Composite output = layoutData.getSectionClient();
-
-		createAdditionalOptions(output);
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
-		this.setPartName("KMeans Cluster");
+		this.setPartName("ZLabel LDA Topic Model");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
 
@@ -149,15 +151,47 @@ public class KmeansClusterView extends ViewPart implements
 
 	}
 
-	private void createAdditionalOptions(Composite sectionClient) {
-		Label noClusterTxtLbl = toolkit.createLabel(sectionClient,
-				"Number of clusters:", SWT.NONE);
+	private Text createAdditionalOptions(Composite sectionClient,
+			String lblText, String defaultText) {
+		Label simpleTxtLbl = toolkit.createLabel(sectionClient, lblText,
+				SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(noClusterTxtLbl);
-		noClusterTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
-		noClusterTxt.setText("1");
+				.applyTo(simpleTxtLbl);
+		Text simpleTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
+		simpleTxt.setText(defaultText);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
-				.applyTo(noClusterTxt);
+				.applyTo(simpleTxt);
+		return simpleTxt;
+	}
+	
+	private Text createSeedFileControl(Composite sectionClient,
+			String lblText, String defaultText) {
+		Label simpleTxtLbl = toolkit.createLabel(sectionClient, lblText,
+				SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(simpleTxtLbl);
+		final Text simpleTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
+		simpleTxt.setText(defaultText);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(simpleTxt);
+		fAddFileButton = toolkit.createButton(sectionClient, "Browse...",
+				SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(fAddFileButton);
+		fAddFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
+						SWT.OPEN);
+				dlg.setText("Select File");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				simpleTxt.setText(path);
+			}
+		});
+
+		return simpleTxt;
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -165,7 +199,7 @@ public class KmeansClusterView extends ViewPart implements
 		form = toolkit.createScrolledForm(parent);
 
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("KMeans Cluster"); //$NON-NLS-1$
+		form.setText("ZLabel LDA Topic Model"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
 				.applyTo(form.getBody());
 		return toolkit;
@@ -176,7 +210,7 @@ public class KmeansClusterView extends ViewPart implements
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (KmeansClusterViewImageRegistry.getImageIconFactory()
+				return (ZlabelLdaTopicModelViewImageRegistry.getImageIconFactory()
 						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
@@ -191,80 +225,92 @@ public class KmeansClusterView extends ViewPart implements
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				final int noOfClusters = Integer
-						.valueOf(noClusterTxt.getText()).intValue();
+				final int noOfTopics = Integer.valueOf(
+						topics.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = layData.getSelectedFiles();
+				final String inputPath = inputLayoutData
+						.getOutputLabel().getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
-				Job performCluster = new Job("Clustering...") {
+				final String seedFilePath =  seedFileText.getText();
+				Job performCluster = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started clustering...", 100);
-						List<File> inputFiles = new ArrayList<File>();
+						monitor.beginTask("NLPUtils started analyzing...", 100);
+						List<String> inputFiles = new ArrayList<String>();
+						String topicModelDirPath = inputPath;
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
 							Preprocess preprocessTask = new Preprocess(
-									"KMeans");
+									"ZLabelLDA");
 							try {
-								String dirPath = preprocessTask
-										.doPreprocessing(selectedFiles, "");
-								File[] inputFile = new File(dirPath)
+								File[] inputFile = new File(inputPath)
 										.listFiles();
 								for (File iFile : inputFile) {
-									inputFiles.add(iFile);
+									inputFiles.add(iFile.toString());
+
 								}
+								topicModelDirPath = preprocessTask
+										.doPreprocessing(inputFiles, "");
 
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 							monitor.worked(10);
-						} else {
-							for (String filepath : selectedFiles) {
-								if ((new File(filepath).isDirectory())) {
-									continue;
-								}
-								inputFiles.add(new File(filepath));
-							}
-							monitor.worked(10);
-						}
+						} 
+						
+						
+						
+					//	lda.initialize(topicModelDirPath, noOfTopics, outputPath,preFix);
 
-						// kemans processsing
+						// lda processsing
 						long startTime = System.currentTimeMillis();
-						monitor.subTask("Clustering files...");
-						KmeansClusterAnalysis.runClustering(noOfClusters,
-								inputFiles, outputPath);
-						monitor.worked(80);
+						monitor.subTask("Topic Modelling...");
+//						try {
+//						//	lda.doLDA(monitor);
+//						} catch (FileNotFoundException e) {
+//							e.printStackTrace();
+//							return Status.CANCEL_STATUS;
+//						} catch (IOException e) {
+//							monitor.done();
+//							return Status.CANCEL_STATUS;
+//						}
+						monitor.worked(20);
 						System.out
-								.println("K-Means Clustering completed successfully in "
+								.println("ZLabel LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
 
 						if (monitor.isCanceled()) {
-							throw new OperationCanceledException();
+							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
-						
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(),
+								"ZLabel LDA Topic Modelling is successfully Completed.",
+								IStatus.OK);
+
 						return Status.OK_STATUS;
 					}
 				};
 				performCluster.setUser(true);
-				if(canProceedCluster()){
-				performCluster.schedule();
-				}
-				else{
-				NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering cannot be started. Please check the Form status to correct the errors", IStatus.ERROR);
+				if (canProceedCluster()) {
+					performCluster.schedule();
+				} else {
+					NlputilsFormComposite
+							.updateStatusMessage(
+									getViewSite(),
+									"ZLabel LDA Topic Modelling cannot be started. Please check the Form status to correct the errors",
+									IStatus.ERROR);
 				}
 
 			}
 
-			
 		});
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (KmeansClusterViewImageRegistry.getImageIconFactory()
+				return (ZlabelLdaTopicModelViewImageRegistry.getImageIconFactory()
 						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
@@ -284,12 +330,13 @@ public class KmeansClusterView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
-	
+
 	private boolean canProceedCluster() {
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
-		form.getMessageManager().removeMessage("input");
-		form.getMessageManager().removeMessage("cluster");
+		form.getMessageManager().removeMessage("inputlocation");
+		form.getMessageManager().removeMessage("topics");
+		form.getMessageManager().removeMessage("seedfile");
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
@@ -298,22 +345,38 @@ public class KmeansClusterView extends ViewPart implements
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
 			canProceed = false;
-		} 
-			
-			// check input
-			if (layData.getSelectedFiles().size() < 1) {
-				form.getMessageManager().addMessage("input",
-						"Select/Add atleast one input file", null,
-						IMessageProvider.ERROR);
-				canProceed = false;
 		}
-			if (Integer.parseInt(noClusterTxt.getText())<1){
-				form.getMessageManager().addMessage("cluster",
-						"Number of clusters cannot be less than 1", null,
-						IMessageProvider.ERROR);
-				canProceed = false;
-			}
-			return canProceed;
+
+		String inputMessage = OutputPathValidation.getInstance()
+				.validateOutputDirectory(
+						inputLayoutData.getOutputLabel().getText(),"Input");
+		if (inputMessage != null) {
+
+			inputMessage = layoutData.getOutputLabel().getText() + " "
+					+ inputMessage;
+			form.getMessageManager().addMessage("inputlocation", inputMessage,
+					null, IMessageProvider.ERROR);
+			canProceed = false;
+		}
+
+		String seedFileMsg = OutputPathValidation.getInstance()
+				.validateOutputDirectory(
+						seedFileText.getText(),"Seed File");
+		if (seedFileMsg != null) {
+
+			seedFileMsg = seedFileText.getText() + " "
+					+ seedFileMsg;
+			form.getMessageManager().addMessage("seedfile", seedFileMsg,
+					null, IMessageProvider.ERROR);
+			canProceed = false;
+		}
+		if (Integer.parseInt(topics.getText()) < 1) {
+			form.getMessageManager().addMessage("topics",
+					"Number of topics cannot be less than 1", null,
+					IMessageProvider.ERROR);
+			canProceed = false;
+		}
+		return canProceed;
 	}
 
 }

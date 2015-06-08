@@ -261,7 +261,7 @@ public class LatinCrawlerView extends ViewPart implements
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("author");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText());
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;

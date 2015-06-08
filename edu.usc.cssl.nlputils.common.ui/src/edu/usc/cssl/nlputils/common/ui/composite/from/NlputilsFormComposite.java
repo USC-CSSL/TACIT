@@ -120,7 +120,7 @@ public class NlputilsFormComposite {
 			public void focusLost(FocusEvent e) {
 				super.focusLost(e);
 				String message = OutputPathValidation.getInstance()
-						.validateOutputDirectory(outputLocationTxt.getText());
+						.validateOutputDirectory(outputLocationTxt.getText(),"Output");
 				if (message != null) {
 
 					message = outputPathLbl.getText() + " " + message;
@@ -202,7 +202,7 @@ public class NlputilsFormComposite {
 			public void focusLost(FocusEvent e) {
 				super.focusLost(e);
 				String message = OutputPathValidation.getInstance()
-						.validateOutputDirectory(outputLocationTxt.getText());
+						.validateOutputDirectory(outputLocationTxt.getText(),"Input");
 				if (message != null) {
 
 					message = outputPathLbl.getText() + " " + message;
