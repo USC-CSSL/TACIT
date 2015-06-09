@@ -22,16 +22,16 @@ public class TableLayoutData {
 		return this.treeViewer.getTree();
 	}
 	
-	public List<File> getSelectedItems(TreeItem tree) {		
+	public List<String> getSelectedItems(TreeItem tree) {		
 		Map<String, TreeItem> subfolders = Collections.synchronizedMap(new LinkedHashMap<String, TreeItem>()); //LinkedHashMap - helps to iterate the key in which it is inserted
-		ArrayList<File> selectedItems = new ArrayList<File>();
+		ArrayList<String> selectedItems = new ArrayList<String>();
 		TreeItem[] children = tree.getItems();
 		for(TreeItem ti : children) {
 			if(null != ti.getData()) {
 				String filename = ti.getData().toString();				
 				if(ti.getChecked()) {
 					if(!(new File(filename).isDirectory())) {
-						selectedItems.add(new File(filename));
+						selectedItems.add(filename);
 					} else {
 						subfolders.put(new File(filename).getAbsolutePath(), ti);
 					}
@@ -41,7 +41,7 @@ public class TableLayoutData {
 		return processSubfolders(subfolders, selectedItems);
 	}
 	
-	public List<File> processSubfolders(Map<String, TreeItem> subfolders, ArrayList<File> selectedItems) {		
+	public List<String> processSubfolders(Map<String, TreeItem> subfolders, ArrayList<String> selectedItems) {		
 		Iterator<Entry<String, TreeItem>> iterator = subfolders.entrySet().iterator();
 		while(iterator.hasNext()) {
 		   Entry<String, TreeItem> entry = iterator.next();
@@ -51,7 +51,7 @@ public class TableLayoutData {
 					String filename = ti.getData().toString();				
 					if(ti.getChecked()) {
 						if(!(new File(filename).isDirectory())) {
-							selectedItems.add(new File(filename));
+							selectedItems.add(filename);
 						}
 						else
 							subfolders.put(new File(filename).getAbsolutePath(), ti);
