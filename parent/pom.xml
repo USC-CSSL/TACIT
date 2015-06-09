@@ -21,6 +21,8 @@
     <module>../edu.usc.cssl.nlputils.crawlers.latin</module>
     <module>../edu.usc.cssl.nlputils.wordcount.weighted</module>
     <module>../edu.usc.cssl.nlputils.wordcount.weighted.ui</module>
+    <module>../edu.usc.cssl.nlputils.wordcount.standard.ui</module>
+    <module>../edu.usc.cssl.nlputils.wordcount.standard</module>
     <module>../edu.usc.cssl.nlputils.classify.svm.ui</module>
     <module>../edu.usc.cssl.nlputils.classify.svm</module>
     <module>../edu.usc.cssl.nlputils.classify.naivebayes.ui</module>

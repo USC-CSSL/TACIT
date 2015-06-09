@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import snowballstemmer.PorterStemmer;
+import edu.usc.nlputils.common.snowballstemmer.PorterStemmer;
 
 public class WordCountApi {
 

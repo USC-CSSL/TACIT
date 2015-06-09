@@ -8,7 +8,8 @@ Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  edu.usc.cssl.nlputils.common,
- org.jsoup;bundle-version="1.7.2"
+ org.jsoup;bundle-version="1.7.2",
+ edu.usc.cssl.nlputils.wordcount.weighted
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.uc.cssl.nlputils.wordcount.weighted.services;
@@ -17,8 +18,6 @@ Export-Package: edu.uc.cssl.nlputils.wordcount.weighted.services;
    org.jsoup,
    edu.usc.nlputils.common.crawlers,
    snowballstemmer",
- org.apache.commons.lang3,
- snowballstemmer
-Bundle-ClassPath: SnowballStemmer.jar,
- commons-lang3-3.3.2.jar,
+ org.apache.commons.lang3
+Bundle-ClassPath: commons-lang3-3.3.2.jar,
  .

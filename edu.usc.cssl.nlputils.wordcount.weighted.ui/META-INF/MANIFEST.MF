@@ -8,9 +8,9 @@ Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
- edu.usc.cssl.nlputils.common.ui;bundle-version="0.0.1",
+ edu.usc.cssl.nlputils.common.ui,
  org.eclipse.swt,
  org.eclipse.jface,
- edu.usc.cssl.nlputils.wordcount.weighted;bundle-version="0.0.1"
+ edu.usc.cssl.nlputils.wordcount.weighted
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
