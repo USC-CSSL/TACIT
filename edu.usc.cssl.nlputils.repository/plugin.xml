@@ -124,6 +124,13 @@
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
+        <view
+              id="edu.usc.cssl.nlputils.wordcount.standard.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
     </perspectiveExtension>
  </extension>
 </plugin>
