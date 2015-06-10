@@ -9,28 +9,54 @@
 <modules>
     <module>../edu.usc.cssl.nlputils.feature</module>
     <module>../edu.usc.cssl.nlputils.repository</module>
+    
+            <!--  Common Framework plugins -->
     <module>../edu.usc.cssl.nlputils.common</module>
     <module>../edu.usc.cssl.nlputils.common.ui</module>
-    <module>../edu.usc.cssl.nlputils.crawlers.supremecourt</module>
+    
+                <!-- Crawlers  -->
     <module>../edu.usc.cssl.nlputils.crawlers.supremecourt.ui</module>
-    <module>../edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
-    <module>../edu.usc.cssl.nlputils.cluster.kmeans</module>
-    <module>../edu.usc.cssl.nlputils.cluster.hierarchical</module>
-    <module>../edu.usc.cssl.nlputils.cluster.hierarchical.ui</module>
+    <module>../edu.usc.cssl.nlputils.crawlers.supremecourt</module>
+    
     <module>../edu.usc.cssl.nlputils.crawlers.latin.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.latin</module>
-    <module>../edu.usc.cssl.nlputils.wordcount.weighted</module>
+    
+               <!-- Cluster  -->
+    
+    <module>../edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
+    <module>../edu.usc.cssl.nlputils.cluster.kmeans</module>
+    
+    <module>../edu.usc.cssl.nlputils.cluster.hierarchical.ui</module>
+    <module>../edu.usc.cssl.nlputils.cluster.hierarchical</module>
+
+    			
+    			<!--  Word Count -->
+    			
     <module>../edu.usc.cssl.nlputils.wordcount.weighted.ui</module>
+    <module>../edu.usc.cssl.nlputils.wordcount.weighted</module>
+    
     <module>../edu.usc.cssl.nlputils.wordcount.standard.ui</module>
     <module>../edu.usc.cssl.nlputils.wordcount.standard</module>
+    
+    <module>../edu.usc.cssl.nlputils.wordcount.cooccurrence.ui</module>
+    <module>../edu.usc.cssl.nlputils.wordcount.cooccurrence</module>
+    
+   				 <!--  Classify  -->
+   				 
     <module>../edu.usc.cssl.nlputils.classify.svm.ui</module>
     <module>../edu.usc.cssl.nlputils.classify.svm</module>
+    
     <module>../edu.usc.cssl.nlputils.classify.naivebayes.ui</module>
     <module>../edu.usc.cssl.nlputils.classify.naivebayes</module>
+    
+     				<!--  Topic Model  -->
     <module>../edu.usc.cssl.nlputils.topicmodel.lda.ui</module>
    <module>../edu.usc.cssl.nlputils.topicmodel.lda</module>
+   
    <module>../edu.usc.cssl.nlputils.topicmodel.zlda.ui</module>
    <module>../edu.usc.cssl.nlputils.topicmodel.zlda</module>
+   
+                    <!--  Help  -->
     <module>../nlptoolshelp</module>
     <module>../product</module>
     
