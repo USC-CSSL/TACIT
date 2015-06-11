@@ -14,16 +14,41 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-public class JsonStructure {
+public class JsonHandler {
 
-	public HashMap<String, String> findJsonStructure(String dirpath) throws JsonSyntaxException, JsonIOException, FileNotFoundException{
+	private String[] keyList;
+	public JsonHandler() {
+		
+	}
+	
+	public JsonHandler(String[] keyList) {
+		for (int i = 0; i < keyList.length; i++) {
+			keyList[i] = keyList[i].trim();
+		}
+		
+		this.keyList = new String[keyList.length];
+		this.keyList = keyList.clone();
+	}
+	
+	public HashMap<String, String> findJsonStructure(String dirpath) {
 		HashMap<String,String> resultsHash = new HashMap<String, String>();
 		File[] fileList = (new File(dirpath)).listFiles();
 		int numFiles = fileList.length;
 		Random rand = new Random();
 		int randIndex = rand.nextInt(numFiles-1);
 		
-		resultsHash = getKeysFromJson(fileList[randIndex].getAbsolutePath(),resultsHash);
+		try {
+			resultsHash = getKeysFromJson(fileList[randIndex].getAbsolutePath(),resultsHash);
+		} catch (JsonSyntaxException e) {
+			
+			e.printStackTrace();
+		} catch (JsonIOException e) {
+			
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		}
 		return resultsHash;
 	}
 	
@@ -43,12 +68,12 @@ public class JsonStructure {
 	    if (o instanceof Map)
 	    {
 	      Map map = (Map) o;
-	      keys.addAll(map.keySet()); // collect keys at current level in hierarchy
+	      keys.addAll(map.keySet()); 
 	      values = map.values();
 	    }
 	    else if (o instanceof Collection)
 	      values = (Collection) o;
-	    else // nothing further to collect keys from
+	    else 
 	      return;
 	
 	    Integer collectionIndex = 0;
@@ -63,8 +88,46 @@ public class JsonStructure {
 	    		else resultsHash.put(currentPos.toString(), value.toString());
 	    	}
 	    	listPos++;
-	      collectAllTheKeys(keys, value,currentPos,keys.size(),resultsHash);
-	      currentPos.remove(currentPos.size()-1);
+	    	collectAllTheKeys(keys, value,currentPos,keys.size(),resultsHash);
+	    	currentPos.remove(currentPos.size()-1);
 	    }
 	 }
+  	
+  	public String findVal(String fileName) {
+  		Object things = null;
+		try {
+			things = new Gson().fromJson(new FileReader(fileName), Object.class);
+		} catch (JsonSyntaxException e) {
+			
+			e.printStackTrace();
+		} catch (JsonIOException e) {
+			
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		String value = findVal_R(things, keyList, 0);
+  		return value;
+  	}
+  	
+  	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private String findVal_R(Object json, String[] keyList, int index) {
+		
+		if (json instanceof Map) {
+			Map map = (Map) json;
+			return findVal_R(map.get(keyList[index]), keyList, index+1);
+		}
+		else if (json instanceof Collection) {
+			Collection values = (Collection) json;
+			Object[] valuearray = (Object[]) values.toArray(new Object[values.size()]);
+			return findVal_R(valuearray[Integer.parseInt(keyList[index])],keyList,index+1);
+		}
+		else {
+			String retVal = json.toString();
+			return retVal;
+		}
+		
+		//return null;
+	}
 }
