@@ -14,43 +14,34 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class CrossValidator {
 	
-	private void purgeDirectory(File dir) {
-		if(dir.listFiles().length>0) {
-		    for (File file: dir.listFiles()) {
-		        if (file.isDirectory()) 
-		        	purgeDirectory(file);
-		        file.delete();
-		    }
-		}
-	}
-	
-	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, String classificationOutputDir, int kValue) throws IOException, EvalError{
+	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue) throws IOException, EvalError{
 		
 		HashMap<Integer, String> performance = new HashMap<Integer,  String>();
 		
 		int[] index = new int[classPaths.size()];
-		String tmpLocation = System.getProperty("user.dir") + File.separator + "NB_Classifier";
+		String tmpLocation = nbc.getTmpLocation();
 		if(!new File(tmpLocation).exists()) {
 			new File(tmpLocation).mkdir();	
 		}
 		
-		String tempTrainDir = tmpLocation + File.separator + "Train";
-		if(!new File(tempTrainDir).exists()) {
-			new File(tempTrainDir).mkdir();	
+		String trainDir = tmpLocation + File.separator + "Train";
+		if(!new File(trainDir).exists()) {
+			new File(trainDir).mkdir();	
 		}
 
-		String tempTestDir = tmpLocation + File.separator + "Test";
-		if(!new File(tempTestDir).exists()) {
-			new File(tempTestDir).mkdir();	
+		String testDir = tmpLocation + File.separator + "Test";
+		if(!new File(testDir).exists()) {
+			new File(testDir).mkdir();	
 		}	
 		
+		ConsoleView.printlInConsole("---------- Cross Validation Starts ------------");
 		for (int i=1; i<=kValue; i++) {
 			int count = 0;
+			ConsoleView.printlInConsole ("------ Trial "+ i +"------");
 			ArrayList<String> trainingDataPaths = new ArrayList<String>();
 			ArrayList<String> testingDataPaths = new ArrayList<String>();
 			
 			for(String path : classPaths.keySet()) {
-				
 				List<String> selectedFiles =  classPaths.get(path);
 				int numFiles = classPaths.get(path).size();
 				int trainingSetSize = (int)Math.floor(0.90 * numFiles);
@@ -62,10 +53,10 @@ public class CrossValidator {
 				int currIndex = index[count];
 				
 				String className = new File(path).getName();
-				tempTrainDir = tmpLocation + File.separator + "Train"+ File.separator + className;
-				ConsoleView.printlInConsoleln("Training data dir :"+ tempTrainDir);
+				String tempTrainDir = trainDir + File.separator + className;
+				System.out.println("Training data dir :"+ tempTrainDir);
 				if(new File(tempTrainDir).exists()) {
-					purgeDirectory(new File(tempTrainDir)); 
+					nbc.purgeDirectory(new File(tempTrainDir)); 
 				}
 				new File(tempTrainDir).mkdir();
 				
@@ -78,11 +69,11 @@ public class CrossValidator {
 					if(currIndex >= numFiles)
 						currIndex = 0;
 				}
-				
-				tempTestDir = tmpLocation + File.separator + "Test"+ File.separator + className;
-				ConsoleView.printlInConsoleln("Testing data dir :"+ tempTestDir);
+				String tempTestDir = testDir + File.separator + className;
+				System.out.println("Testing data dir :"+ tempTestDir);
+
 				if(new File(tempTestDir).exists()) {
-					purgeDirectory(new File(tempTestDir)); 
+					nbc.purgeDirectory(new File(tempTestDir)); 
 				}
 				new File(tempTestDir).mkdir();
 			
@@ -106,20 +97,23 @@ public class CrossValidator {
 				}
 				count++;
 			}
-			
+
+			System.out.println("Training data paths ..");
 			ConsoleView.printlInConsoleln("Training data paths ..");
 			for(String s : trainingDataPaths)
-				ConsoleView.printlInConsoleln(s);
+				System.out.println(s);
 			
-			ConsoleView.printlInConsoleln("Testing data paths ..");
+			System.out.println("Testing data paths ..");
 			for(String s : testingDataPaths)
-				ConsoleView.printlInConsoleln(s);
-			
+				System.out.println(s);
 			
 			// Perform classification
-			String result = nbc.predict(trainingDataPaths, testingDataPaths, classificationOutputDir, false, false);
+			String result = nbc.predict(trainingDataPaths, testingDataPaths, false, false);
 			performance.put(i, result);
 		}
+		ConsoleView.printlInConsole("---------- Cross Validation Finished ------------");
+		nbc.purgeDirectory(new File(trainDir));
+		nbc.purgeDirectory(new File(testDir));
 		return performance;
 	}
 }

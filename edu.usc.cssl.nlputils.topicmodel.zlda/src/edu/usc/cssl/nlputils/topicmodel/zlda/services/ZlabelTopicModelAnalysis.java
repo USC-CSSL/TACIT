@@ -44,7 +44,7 @@ public class ZlabelTopicModelAnalysis {
 		monitor.worked(5);
 
 
-		ConsoleView.printlInConsoleln("running zlabel LDA...");
+		ConsoleView.writeInConsole("running zlabel LDA...");
 		DTWC dtwc = new DTWC(inputFiles, preSeedFile,this.monitor);
 		dtwc.computeDocumentVectors();
 		if (monitor.isCanceled()) {
@@ -147,7 +147,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			fw.close();
 			this.monitor.worked(15);
 			this.monitor.subTask("writing Phi values for each stopic in phi.csv");
-			ConsoleView.printlInConsoleln("\nPhi values for each stopic stored in "
+			ConsoleView.writeInConsole("\nPhi values for each stopic stored in "
 					+ outputdir + File.separator + "phi.csv");
 			fw = new FileWriter(
 					new File(outputdir + File.separator + "phi.csv"));
@@ -171,7 +171,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			fw.close();
 			this.monitor.worked(15);
 			this.monitor.subTask("writing Theta values for each stopic in theta.csv");
-			ConsoleView.printlInConsoleln("\nTheta values for each document stored in "
+			ConsoleView.writeInConsole("\nTheta values for each document stored in "
 					+ outputdir + File.separator + "theta.csv");
 			fw = new FileWriter(new File(outputdir + File.separator
 					+ "theta.csv"));
@@ -189,9 +189,9 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			fw.flush();
 			fw.close();
 		} catch (Exception e) {
-			ConsoleView.printlInConsoleln("Error writing output to files " + e);
+			ConsoleView.writeInConsole("Error writing output to files " + e);
 		}
-		ConsoleView.printlInConsoleln("\nDone zlabel LDA...");
+		ConsoleView.writeInConsole("\nDone zlabel LDA...");
 		this.monitor.worked(15);
 		this.monitor.done();
 	}

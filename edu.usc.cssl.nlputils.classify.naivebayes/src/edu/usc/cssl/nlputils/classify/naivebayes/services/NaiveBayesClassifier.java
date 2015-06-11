@@ -21,18 +21,32 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 public class NaiveBayesClassifier {
 	private StringBuilder readMe = new StringBuilder();
 	private String tmpLocation;
+	private String outputDir; 
 	
 	public NaiveBayesClassifier() {
 		this.tmpLocation = System.getProperty("user.dir") + File.separator + "NB_Classifier";
+		this.outputDir = this.tmpLocation + File.separator + "Output";
 		//this.tmpLocation = "F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\preprocess\\NB_Classifier";
+		
+		String outputDir = this.outputDir;
+		if(!new File(outputDir).exists()) {
+			new File(outputDir).mkdirs();	
+		}
+		
 	}
 	
-	public String predict(ArrayList<String> trainingClasses, ArrayList<String> testingClasses, String outputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
+	public String getTmpLocation() {
+		return this.tmpLocation;
+	}
+	public String predict(ArrayList<String> trainingClasses, ArrayList<String> testingClasses, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
 		Calendar cal = Calendar.getInstance();
 		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
 
-		if(trainingClasses.isEmpty() || testingClasses.isEmpty() || outputDir.isEmpty()) 
+		if(trainingClasses.isEmpty() || testingClasses.isEmpty())
 			return null;
+		
+		String outputDir = this.outputDir;
+		
 		String tempOutputPath = "";
 		String tempTrainDirs = "";
 		// Create a output filename and comma separated source directories
@@ -77,12 +91,12 @@ public class NaiveBayesClassifier {
 		String[] v2cArgs = { "--training-file", outputPath + ".train","--testing-file", outputPath + ".test", "--output-classifier",outputPath + ".out" };
 
 		Text2Vectors.main(t2vArgs);
-		ConsoleView.printlInConsoleln("Created training file " + outputPath + ".train");
+		System.out.println("Created training file " + outputPath + ".train");
 		Text2Vectors.main(t2vArgs_test);
-		ConsoleView.printlInConsoleln("Created test file " + outputPath + ".test");
+		System.out.println("Created test file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
-		ConsoleView.printlInConsoleln("Created classifier output file " + outputPath+ ".out");
-		ConsoleView.printlInConsoleln(result.get(0));
+		ConsoleView.printlInConsole("\nCreated classifier output file " + outputPath+ ".out");
+		System.out.println(result.get(0));
 		writeReadMe(outputPath);
 		return result.get(0);
 	}
@@ -123,16 +137,16 @@ public class NaiveBayesClassifier {
 		String[] t2vArgs_test = { "--input", classificationInputDir, "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train" };
 		String[] v2cArgs = { "--training-file", outputPath + ".train", "--testing-file", outputPath + ".test", "--output-classifier", outputPath + ".out", "--report", "test:raw"};
 
-		ConsoleView.printlInConsoleln("Args :" + Arrays.toString(t2vArgs));
-		ConsoleView.printlInConsoleln("Args test :" + Arrays.toString(t2vArgs_test));
-		ConsoleView.printlInConsoleln("Command args :" + Arrays.toString(v2cArgs));
+		System.out.println("Args :" + Arrays.toString(t2vArgs));
+		System.out.println("Args test :" + Arrays.toString(t2vArgs_test));
+		System.out.println("Command args :" + Arrays.toString(v2cArgs));
 
 		Text2Vectors.main(t2vArgs);
-		ConsoleView.printlInConsoleln("Created training file " + outputPath + ".train");
+		System.out.println("Created training file " + outputPath + ".train");
 		Text2Vectors.main(t2vArgs_test);
-		ConsoleView.printlInConsoleln("Created validation file " + outputPath + ".test");
+		System.out.println("Created validation file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
-		ConsoleView.printlInConsoleln("Created classifier output file " + outputPath + ".out");
+		ConsoleView.printlInConsole("\nCreated classifier output file " + outputPath + ".out");
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "_output.csv")));
 		bw.write("File, Predicted Class, Other Classes\n");
@@ -178,8 +192,8 @@ public class NaiveBayesClassifier {
 		
 		//Vectors2Classify.resetDefaultValues();
 		Text2Vectors.main(t2vArgs);
-		ConsoleView.printlInConsoleln("Command args :" + Arrays.toString(t2vArgs));
-		ConsoleView.printlInConsoleln("Created training file " + outputPath + ".train");
+		//ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs));
+		//ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
 		
 		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train"));
 		// add all the class paths to the argument
@@ -193,12 +207,14 @@ public class NaiveBayesClassifier {
 				
 		//String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
 		String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
-		ConsoleView.printlInConsoleln("Command args :" + Arrays.toString(v2cArgs));
+		//ConsoleView.writeInConsole("Command args :" + Arrays.toString(v2cArgs));
 		Vectors2Classify.main(v2cArgs);
 		return;
 	}
 	
-	private void purgeDirectory(File dir) {
+	public void purgeDirectory(File dir) {
+		if(null == dir || !dir.exists() || !dir.isDirectory()) 
+			return;
 		if(dir.listFiles().length>0) {
 		    for (File file: dir.listFiles()) {
 		        if (file.isDirectory()) 
@@ -223,7 +239,7 @@ public class NaiveBayesClassifier {
 			// Create respective class directories
 			String className = new File(key).getName();
 			tempTrainDir = tmpLocation + File.separator + className;
-			ConsoleView.printlInConsoleln("Training data dir :"+ tempTrainDir);
+			System.out.println("Training data dir :"+ tempTrainDir);
 			if(new File(tempTrainDir).exists()) {
 				purgeDirectory(new File(tempTrainDir)); 
 			}
@@ -250,11 +266,6 @@ public class NaiveBayesClassifier {
 		//Reset the default values
 		crossValidate(trainingDataPaths, outputPath, false, false, kValue);
 		//delete the temp files
-		/*String tmpLocation = this.tmpLocation;
-		if(new File(tmpLocation).exists()) {
-			purgeDirectory(new File(tmpLocation));
-			Files.delete(new File(tmpLocation).toPath());
-		}*/
 	}
 	
 	public void writeReadMe(String location) {
@@ -275,6 +286,27 @@ public class NaiveBayesClassifier {
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void deleteTempDirectories(ArrayList<String> trainingDataPaths) {
+		for(String s : trainingDataPaths) {
+			System.out.println("Cleaning directory "+ s);
+			purgeDirectory(new File(s));
+			new File(s).delete();
+		}
+		//purgeDirectory(new File(this.tmpLocation));
+		//new File(this.tmpLocation).delete();
+	}
+
+	public void selectAllFiles(String DirPath, ArrayList<String> files) {
+		File dir = new File(DirPath);
+		for(File f : dir.listFiles()) {
+			if(f.isDirectory()) {
+				selectAllFiles(f.getAbsolutePath(), files);
+			} else {
+				files.add(f.getAbsolutePath());
+			}
 		}
 	}
 }

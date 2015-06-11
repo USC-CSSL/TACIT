@@ -209,7 +209,7 @@ public class Vectors2Topics {
 
 		if (usePAM.value) {
 			InstanceList ilist = InstanceList.load (new File(inputFile.value));
-			ConsoleView.printlInConsoleln ("Data loaded.");
+			ConsoleView.writeInConsole ("Data loaded.");
 			if (inputModelFilename.value != null)
 				throw new IllegalArgumentException ("--input-model not supported with --use-pam.");
 			PAM4L pam = new PAM4L(pamNumSupertopics.value, pamNumSubtopics.value);
@@ -244,7 +244,7 @@ public class Vectors2Topics {
 		
 		else if (useNgrams.value) {
 			InstanceList ilist = InstanceList.load (new File(inputFile.value));
-			ConsoleView.printlInConsoleln ("Data loaded.");
+			ConsoleView.writeInConsole ("Data loaded.");
 			if (inputModelFilename.value != null)
 				throw new IllegalArgumentException ("--input-model not supported with --use-ngrams.");
 			TopicalNGrams tng = new TopicalNGrams(numTopics.value,
@@ -287,11 +287,11 @@ public class Vectors2Topics {
 			InstanceList[] training = new InstanceList[ languageInputFiles.value.length ];
 			for (int i=0; i < training.length; i++) {
 				training[i] = InstanceList.load(new File(languageInputFiles.value[i]));
-				if (training[i] != null) { ConsoleView.printlInConsoleln(i + " is not null"); }
-				else { ConsoleView.printlInConsoleln(i + " is null"); }
+				if (training[i] != null) { ConsoleView.writeInConsole(i + " is not null"); }
+				else { ConsoleView.writeInConsole(i + " is null"); }
 			}
 
-			ConsoleView.printlInConsoleln ("Data loaded.");
+			ConsoleView.writeInConsole ("Data loaded.");
 			
 			// For historical reasons we currently only support FeatureSequence data,
 			//  not the FeatureVector, which is the default for the input functions.
@@ -384,7 +384,7 @@ public class Vectors2Topics {
 			} 
 			else {
 				InstanceList training = InstanceList.load (new File(inputFile.value));
-				ConsoleView.printlInConsoleln ("Data loaded.");
+				ConsoleView.writeInConsole ("Data loaded.");
 
 				if (training.size() > 0 &&
 					training.get(0) != null) {

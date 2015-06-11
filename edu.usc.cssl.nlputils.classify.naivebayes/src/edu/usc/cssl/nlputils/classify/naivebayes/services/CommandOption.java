@@ -149,7 +149,6 @@ public abstract class CommandOption
 		if (options == null)
 			throw new IllegalArgumentException ("No CommandOptions registered for class "+owner);
 		int count = options.size()-1;
-		ConsoleView.printlInConsoleln("printing command options...******");
 		while(count >=0) {			
 			//ConsoleView.writeInConsole(options.getCommandOption(count).name + ":" + options.getCommandOption(count).invoked);
 			options.getCommandOption(count).invoked = false;

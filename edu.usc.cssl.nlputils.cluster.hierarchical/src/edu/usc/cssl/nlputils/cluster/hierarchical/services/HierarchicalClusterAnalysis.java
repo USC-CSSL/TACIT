@@ -42,7 +42,7 @@ public class HierarchicalClusterAnalysis {
 
 			Instances docs = new Instances("text_files", atts, 0);
 
-			ConsoleView.printlInConsoleln(outputPath);
+			ConsoleView.writeInConsole(outputPath);
 
 			for (int i = 0; i < inputFiles.size(); i++) {
 
@@ -54,7 +54,7 @@ public class HierarchicalClusterAnalysis {
 							content);
 					docs.add(new Instance(1.0, newInst));
 				} catch (Exception e) {
-					ConsoleView.printlInConsoleln("Exception occurred in reading files"
+					ConsoleView.writeInConsole("Exception occurred in reading files"
 							+ e);
 				}
 			}
@@ -69,7 +69,7 @@ public class HierarchicalClusterAnalysis {
 			subProgressMonitor.worked(20);
 			String g = aggHierarchical.graph();
 			String output = formatGraph(g, inputFiles);
-			ConsoleView.printlInConsoleln("Network " + output);
+			ConsoleView.writeInConsole("Network " + output);
 			subProgressMonitor.subTask("Foramting Image");
 			aggHierarchical.linkTypeTipText();
 			subProgressMonitor.worked(15);
@@ -138,7 +138,7 @@ public class HierarchicalClusterAnalysis {
 		int count = 0;
 
 		fgraph.append(graph.substring(0, 7));
-		ConsoleView.printlInConsoleln(graph);
+		ConsoleView.writeInConsole(graph);
 		while (i < len) {
 			c = input.charAt(i);
 			if (c == '(') {
@@ -159,7 +159,7 @@ public class HierarchicalClusterAnalysis {
 				i++;
 			}
 		}
-		ConsoleView.printlInConsoleln(fgraph.toString());
+		ConsoleView.writeInConsole(fgraph.toString());
 		return fgraph.toString();
 	}
 
@@ -176,7 +176,7 @@ public class HierarchicalClusterAnalysis {
 		}
 		subProgressMonitor.beginTask("Running CLustering", 50);
 		subProgressMonitor.subTask("Running Hierarchical Clustering...");
-		ConsoleView.printlInConsoleln("Running Hierarchical Clustering...");
+		ConsoleView.writeInConsole("Running Hierarchical Clustering...");
 		String clusters = doClustering(inputFiles, fOutputDir, fSaveImg,
 				new SubProgressMonitor(subProgressMonitor, 45));
 		if (subProgressMonitor.isCanceled()) {
@@ -185,19 +185,19 @@ public class HierarchicalClusterAnalysis {
 		if (clusters == null) {
 			return null;
 		}
-		ConsoleView.printlInConsoleln("Output for Hierarchical Clustering");
-		ConsoleView.printlInConsoleln("Mapping of document ID to actual names");
+		ConsoleView.writeInConsole("Output for Hierarchical Clustering");
+		ConsoleView.writeInConsole("Mapping of document ID to actual names");
 		subProgressMonitor.subTask("Mapping of document ID to actual names");
 		for (int i = 0; i < inputFiles.size(); i++) {
-			ConsoleView.printlInConsoleln((i + 1) + " " + inputFiles.get(i).getName());
+			ConsoleView.writeInConsole((i + 1) + " " + inputFiles.get(i).getName());
 		}
 		subProgressMonitor.worked(5);
-		ConsoleView.printlInConsoleln("Clusters formed: \n");
+		ConsoleView.writeInConsole("Clusters formed: \n");
 
-		ConsoleView.printlInConsoleln(clusters);
-		ConsoleView.printlInConsoleln("Saving the output to cluster.txt");
+		ConsoleView.writeInConsole(clusters);
+		ConsoleView.writeInConsole("Saving the output to cluster.txt");
 		subProgressMonitor.subTask("Saving the output to cluster.txt");
-		ConsoleView.printlInConsoleln("\nDone Hierarchical Clustering...");
+		ConsoleView.writeInConsole("\nDone Hierarchical Clustering...");
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return clusters;

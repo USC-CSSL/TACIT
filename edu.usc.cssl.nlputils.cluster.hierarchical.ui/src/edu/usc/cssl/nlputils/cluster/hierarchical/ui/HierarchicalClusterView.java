@@ -240,7 +240,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						      public void run() {
 						if (isPreprocess && preprocessTask.doCleanUp()){
 							preprocessTask.clean();
-							ConsoleView.printlInConsoleln("Cleaning up preprocessed files - "+dirPath);
+							ConsoleView.writeInConsole("Cleaning up preprocessed files - "+dirPath);
 						}
 						      }
 						

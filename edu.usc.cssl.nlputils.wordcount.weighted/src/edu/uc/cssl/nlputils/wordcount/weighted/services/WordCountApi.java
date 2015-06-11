@@ -971,7 +971,7 @@ public class WordCountApi {
 	}
 
 	private void appendLog(String message) {
-		ConsoleView.printlInConsoleln(message);
+		ConsoleView.writeInConsole(message);
 	}
 
 	public static String trimChars(String source, String trimChars) {

@@ -20,14 +20,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -49,6 +54,7 @@ import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifie
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.Preprocess;
 
 public class NaiveBayesClassifierView extends ViewPart implements
@@ -66,8 +72,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 	private Preprocess preprocessTask;
 	private boolean isPreprocessEnabled = false;
-	private String pp_outputPath = null;
+	private boolean isClassificationEnabled = false;
+	boolean canProceed = false;
+	
+	private Button classificationEnabled;
 
+	HashMap<String, List<String>> classPaths;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
@@ -93,14 +104,24 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		layout.numColumns = 2;
 		
 		//Create table layout to hold the input data
-		classLayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class Details","Add File(s) or Folder(s) which contains data", true);		
+		classLayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class Details","Add File(s) or Folder(s) which contains data", true);	
 		//Create preprocess link
 		createPreprocessLink(client);
 		createNBClassifierInputParameters(client); // to get k-value
 		// Create ouput section
-		createOutputSection(client, layout, "Classify", "Choose the input and output path for classification"); // Create dispatchable output section
+		//createOutputSection(client, layout, "Classify", "Choose the input and output path for classification"); // Create dispatchable output section
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
+		
+		client.addListener(SWT.FOCUSED, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				System.out.println("Focussed");
+				consolidateSelectedFiles(classLayoutData, classPaths);
+				canItProceed(classPaths);
+			}
+		});
 	}
 
 	/**
@@ -267,8 +288,11 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			@Override
 			public void keyReleased(KeyEvent e) {
 	             if(!(e.character>='0' && e.character<='9')) {
+	            	 form.getMessageManager() .addMessage( "kvalue", "Provide valid K-Value for cross validation", null, IMessageProvider.ERROR);
 	            	 kValueText.setText(""); 
-	             }				
+	             } else {
+	            	 form.getMessageManager().removeMessage("kvalue");
+	             }
 			}
 			
 			@Override
@@ -276,8 +300,152 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				// TODO Auto-generated method stub			
 			}
 		});
+		
+		NlputilsFormComposite.createEmptyRow(toolkit, client);
+		createClassificationParameters(client);
+		
 	}
 
+	private void createClassificationParameters(Composite client) {
+		Group group = new Group(client, SWT.SHADOW_IN);
+		group.setText("Classification");
+
+		group.setBackground(client.getBackground());
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
+
+		classificationEnabled = toolkit.createButton(group, "Classify Data", SWT.CHECK);
+		classificationEnabled.setBounds(10, 10, 10, 10);
+		classificationEnabled.pack();
+			
+		NlputilsFormComposite.createEmptyRow(toolkit, group);
+		
+		/*
+		ScrolledComposite sc = new ScrolledComposite(group, SWT.H_SCROLL | SWT.V_SCROLL);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
+		sc.pack();
+		sc.setEnabled(false);*/
+		
+		final Composite sectionClient = toolkit.createComposite(group);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
+		sectionClient.setEnabled(false);
+		sectionClient.pack();
+		
+	
+		// Create a row that holds the textbox and browse button
+		final Label inputPathLabel = toolkit.createLabel(sectionClient, "Input Path:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(inputPathLabel);
+		classifyInputText = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classifyInputText);
+		classifyInputText.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				inputPathListener(classifyInputText, "Input path must be a valid diretory location");
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				inputPathListener(classifyInputText, "Input path must be a valid diretory location");
+			}
+		});
+		final Button browseBtn1 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
+		browseBtn1.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = openBrowseDialog(browseBtn1);
+				if(null == path) return;
+				classifyInputText.setText(path);
+				form.getMessageManager().removeMessage("classifyInput");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+		});
+		inputPathLabel.setEnabled(false);
+		classifyInputText.setEnabled(false);
+		browseBtn1.setEnabled(false);
+		
+		//Output path
+		final Label outputPathLabel = toolkit.createLabel(sectionClient, "Output Path:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(outputPathLabel);
+		classifyOutputText = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classifyOutputText);
+		classifyOutputText.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				outputPathListener(classifyOutputText, "Output path must be a valid diretory location");
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				outputPathListener(classifyOutputText, "Output path must be a valid diretory location");
+			}
+		});
+		final Button browseBtn2 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
+		browseBtn2.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = openBrowseDialog(browseBtn2);
+				if(null == path) return;
+				classifyOutputText.setText(path);
+				form.getMessageManager().removeMessage("classifyOutput");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+		});
+		outputPathLabel.setEnabled(false);
+		classifyOutputText.setEnabled(false);
+		browseBtn2.setEnabled(false);
+		
+		classificationEnabled.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (classificationEnabled.getSelection()) {					
+					sectionClient.setEnabled(true);
+					
+					inputPathLabel.setEnabled(true);
+					classifyInputText.setEnabled(true);
+					browseBtn1.setEnabled(true);
+					
+					inputPathLabel.setEnabled(true);
+					outputPathLabel.setEnabled(true);
+					classifyOutputText.setEnabled(true);
+					browseBtn2.setEnabled(true);
+					
+					inputPathListener(classifyInputText, "Input path must be a valid diretory location");
+					outputPathListener(classifyOutputText, "Output path must be a valid diretory location");
+					
+				} else {					
+					sectionClient.setEnabled(false);
+					
+					inputPathLabel.setEnabled(false);
+					classifyInputText.setEnabled(false);
+					browseBtn1.setEnabled(false);
+					
+					outputPathLabel.setEnabled(false);
+					classifyOutputText.setEnabled(false);
+					browseBtn2.setEnabled(false);
+					
+					form.getMessageManager().removeMessage("classifyInput");
+					form.getMessageManager().removeMessage("classifyOutput");
+				}
+			}
+		}); 
+		
+		NlputilsFormComposite.createEmptyRow(toolkit, group);
+	}
+	
 	/**
 	 * To create hyperlink
 	 * 
@@ -307,6 +475,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,new String[] { id }, null).open();
 			}
 		});
+
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
 	}
 
@@ -327,88 +496,106 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				return "Classify";
 			}
 
+			String classificationInputDir;
 			@Override
 			public void run() {
 				// Classification i/p and o/p paths
 				final String classificationOutputDir = classifyOutputText.getText();
-				final String classificationInputDir = classifyInputText.getText();
+				classificationInputDir = classifyInputText.getText();
 				final ArrayList<String> trainingDataPaths = new ArrayList<String>();
-				final int kValue = Integer.parseInt(kValueText.getText());
+				final String tempkValue = kValueText.getText();
 				
-				final HashMap<String, List<String>> classPaths = new HashMap<String, List<String>>();
+				classPaths = new HashMap<String, List<String>>();
 				consolidateSelectedFiles(classLayoutData, classPaths);
 				final HashMap<String, List<String>> tempClassPaths = new HashMap<String, List<String>>();
-				
-				final boolean canItProceed = false;
 				final NaiveBayesClassifier nbc = new NaiveBayesClassifier();
 				final CrossValidator cv = new CrossValidator();
 				
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 				Job job = new Job("Classifying...") {
 					@Override
-					protected IStatus run(IProgressMonitor monitor) {						
-						
+					protected IStatus run(IProgressMonitor monitor) {
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
+								canProceed = canItProceed(classPaths);
 								isPreprocessEnabled = preprocessEnabled.getSelection();
-								pp_outputPath = CommonUiActivator.getDefault().getPreferenceStore().getString("pp_output_path");
-								if (isPreprocessEnabled && pp_outputPath.isEmpty()) {
-									form.getMessageManager() .addMessage( "pp_location", "Pre-Processed output location is required for pre-processing", null, IMessageProvider.ERROR);
-									return;
-								} else {
-									form.getMessageManager().removeMessage("pp_location");
-								}
+								isClassificationEnabled = classificationEnabled.getSelection();
 							}
 						});
+						
 						HashMap<Integer, String> perf;
-						if(isPreprocessEnabled) {							
-							// check whether the location is specified
-							if (pp_outputPath.isEmpty()) {
-								return Status.CANCEL_STATUS;
-							}
-							monitor.subTask("Preprocessing...");
-							try {
-								preprocessTask = new Preprocess("NB_Classifier");
-								for(String dirPath : classPaths.keySet()) {
-									List<String> selectedFiles = classPaths.get(dirPath);
-									String preprocessedDirPath = preprocessTask.doPreprocessing(selectedFiles, new File(dirPath).getName());
-									trainingDataPaths.add(preprocessedDirPath);									
-									List<String> temp = new ArrayList<String>();
-									for(File f: new File(preprocessedDirPath).listFiles()) {
-										temp.add(f.getAbsolutePath());
+						if(canProceed) {
+							int kValue = Integer.parseInt(tempkValue);
+							if(isPreprocessEnabled) {							
+								monitor.subTask("Preprocessing...");
+								try {
+									preprocessTask = new Preprocess("NB_Classifier");
+									for(String dirPath : classPaths.keySet()) {
+										List<String> selectedFiles = classPaths.get(dirPath);
+										String preprocessedDirPath = preprocessTask.doPreprocessing(selectedFiles, new File(dirPath).getName());
+										trainingDataPaths.add(preprocessedDirPath);									
+										List<String> temp = new ArrayList<String>();
+										for(File f: new File(preprocessedDirPath).listFiles()) {
+											temp.add(f.getAbsolutePath());
+										}
+										tempClassPaths.put(preprocessedDirPath, temp);
 									}
-									tempClassPaths.put(preprocessedDirPath, temp);
+									
+									// preprocess the inputDir if required
+									if(isClassificationEnabled) {
+										ArrayList<String> files = new ArrayList<String>(); 
+										nbc.selectAllFiles(classificationInputDir, files);
+										classificationInputDir = preprocessTask.doPreprocessing(files, new File(classificationInputDir).getName());
+									}
+									
+								} catch (Exception e) {
+									return handleException(monitor, e, "Preprocessing failed. Provide valid data");
+								}							
+							} else { // consolidate the files into respective classes
+								try {
+									nbc.createTempDirectories(classPaths, trainingDataPaths);
+								} catch (IOException e) {
+									return handleException(monitor, e, "Classification failed. Provide valid data");
+								}
+							}
+							try {
+								perf = (!isPreprocessEnabled) ? cv.doCross(nbc, classPaths, kValue) :  cv.doCross(nbc, tempClassPaths, kValue);
+								//nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation
+								if(isClassificationEnabled) {
+									ConsoleView.printlInConsole("---------- Classification Starts ------------");
+									nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
+									ConsoleView.printlInConsole("---------- Classification Finished ------------");
 								}
 								
-							} catch (Exception e) {
-								return handleException(monitor, e, "Preprocessing failed. Provide valid data");
-							}							
-						} else { // consolidate the files into respective classes
-							try {
-								nbc.createTempDirectories(classPaths, trainingDataPaths);
+								double avgAccuracy = 0.0;
+								ConsoleView.printlInConsole("------Cross Validation Results------");
+								for(Integer trialNum : perf.keySet()) {
+									ConsoleView.printlInConsole("Trial "+ trialNum);
+									if(null != perf.get(trialNum)) {
+										String[] results = perf.get(trialNum).split("=");
+										for(int i = 0; i<results.length; i++) {
+											if(results[i].contains("test accuracy mean")) {
+												avgAccuracy+=Double.parseDouble(results[i+1].split(" ")[1]);
+											}
+										}
+										ConsoleView.printlInConsole(perf.get(trialNum));
+									}
+								}	
+								ConsoleView.printlInConsole("Average test accuracy = "+ avgAccuracy/kValue);
+								if(!isPreprocessEnabled) 
+									nbc.deleteTempDirectories(trainingDataPaths);
 							} catch (IOException e) {
 								return handleException(monitor, e, "Classification failed. Provide valid data");
+							} catch (EvalError e) {
+								return handleException(monitor, e, "Classification failed. Provide valid data");
 							}
+							monitor.done();
+							return Status.OK_STATUS;
+						} else {
+							monitor.done();
+							return Status.CANCEL_STATUS;
 						}
-						try {
-							perf = (!isPreprocessEnabled) ? cv.doCross(nbc, classPaths, classificationOutputDir, kValue) :  cv.doCross(nbc, tempClassPaths, classificationOutputDir, kValue);
-							//nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation	
-							nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
-							
-							System.out.println("------Cross Validation Results------");
-							for(Integer trialNum : perf.keySet()) {
-								System.out.println("Trial "+ trialNum);
-								System.out.println(perf.get(trialNum));
-							}
-							
-						} catch (IOException e) {
-							e.printStackTrace();
-						} catch (EvalError e) {
-							e.printStackTrace();
-						}
-						monitor.done();
-						return Status.CANCEL_STATUS;
 					}
 				};
 				job.setUser(true);
@@ -433,6 +620,70 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			};
 		});
 		form.getToolBarManager().update(true);
+	}
+	
+	
+	private boolean canItProceed(HashMap<String, List<String>> classPaths) {
+	
+		// Class paths 
+		if(classPaths.size() <2 && classLayoutData.getTree().getItemCount() < 2) {
+			form.getMessageManager().addMessage("classes", "Provide atleast 2 valid class paths", null, IMessageProvider.ERROR);
+			return false;
+		} else if(classLayoutData.getTree().getItemCount() > 1 && classPaths.size() < 2){
+			form.getMessageManager().addMessage("classes", "Select the required classes", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("classes");
+		}
+		
+		// Preprocessing
+		isPreprocessEnabled = preprocessEnabled.getSelection();
+		String tempPPOutputPath = CommonUiActivator.getDefault().getPreferenceStore().getString("pp_output_path");
+		if (isPreprocessEnabled && tempPPOutputPath.isEmpty()) {
+			form.getMessageManager() .addMessage("pp_location", "Pre-Processed output location is required for pre-processing", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("pp_location");
+		}
+		
+		// K-Vlaue
+		if(kValueText.getText().isEmpty()) {
+			form.getMessageManager() .addMessage( "kvalue", "Provide valid K-Value for cross validation", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("kvalue");
+		}
+		
+		// Classification parameters
+		isClassificationEnabled = classificationEnabled.getSelection();
+		if(isClassificationEnabled) {
+			if (classifyInputText.getText().isEmpty()) {
+				form.getMessageManager().addMessage("classifyInput", "Input path must be a valid diretory location", null, IMessageProvider.ERROR);
+				return false;
+			}
+			File tempFile1 = new File(classifyInputText.getText());
+			if (!tempFile1.exists() || !tempFile1.isDirectory()) {
+				form.getMessageManager().addMessage("classifyInput", "Input path must be a valid diretory location", null, IMessageProvider.ERROR);
+			} else {
+				form.getMessageManager().removeMessage("classifyInput");
+			}
+			
+			if (classifyOutputText.getText().isEmpty()) {
+				form.getMessageManager().addMessage("classifyInput", "Input path must be a valid diretory location", null, IMessageProvider.ERROR);
+				return false;
+			}
+			File tempFile2 = new File(classifyOutputText.getText());
+			if (!tempFile2.exists() || !tempFile2.isDirectory()) {
+				form.getMessageManager().addMessage("classifyInput", "Input path must be a valid diretory location", null, IMessageProvider.ERROR);
+			} else {
+				form.getMessageManager().removeMessage("classifyInput");
+			}
+		} else {
+			form.getMessageManager().removeMessage("classifyInputText");
+			form.getMessageManager().removeMessage("classifyOutputText");
+		}
+		
+		return true;
 	}
 	
 	protected void consolidateSelectedFiles(TableLayoutData classLayoutData, HashMap<String, List<String>> classPaths) {

@@ -102,14 +102,14 @@ public class Preprocess {
 			this.outputPath = "";
 		if (!(new File(preprocessingParentFolder).exists())) {
 			new File(preprocessingParentFolder).mkdir();
-			ConsoleView.printlInConsoleln("Folder " + preprocessingParentFolder
+			ConsoleView.writeInConsole("Folder " + preprocessingParentFolder
 					+ " created successfully.");
 		}
 		if (subFolder.trim().length() != 0) {
 			preprocessingParentFolder = preprocessingParentFolder
 					+ File.separator + subFolder;
 			if (new File(preprocessingParentFolder).mkdir()) {
-				ConsoleView.printlInConsoleln("Folder " + preprocessingParentFolder
+				ConsoleView.writeInConsole("Folder " + preprocessingParentFolder
 						+ " created successfully.");
 			}
 		}
@@ -133,12 +133,12 @@ public class Preprocess {
 						.getBundle("edu.usc.cssl.nlputils.common");
 				URL url = FileLocator.find(bundle, new Path("profiles"), null);
 				URL fileURL = FileLocator.toFileURL(url);
-				ConsoleView.printlInConsoleln(fileURL.getPath());
+				ConsoleView.writeInConsole(fileURL.getPath());
 				try {
 					DetectorFactory.loadProfile(fileURL.getPath());
 				} catch (com.cybozu.labs.langdetect.LangDetectException ex) {
 					// ex.printStackTrace();
-					ConsoleView.printlInConsoleln("Exception code - " + ex.getCode());
+					ConsoleView.writeInConsole("Exception code - " + ex.getCode());
 					// ex.getCode().toString() -> is not visible!
 				}
 			} else {
@@ -157,7 +157,7 @@ public class Preprocess {
 			if ("_preprocessed".equals(f.getName()))
 				continue;
 			String inputFile = f.getAbsolutePath();
-			ConsoleView.printlInConsoleln("Preprocessing " + inputFile);
+			ConsoleView.writeInConsole("Preprocessing " + inputFile);
 
 			// doLangDetect only if doStemming is true
 			if (doLangDetect) {
@@ -170,7 +170,7 @@ public class Preprocess {
 
 			File iFile = new File(inputFile);
 			if (!iFile.exists() || iFile.isDirectory()) {
-				ConsoleView.printlInConsoleln("Error in input file path "
+				ConsoleView.writeInConsole("Error in input file path "
 						+ iFile.getAbsolutePath());
 				continue;
 			}
@@ -196,13 +196,13 @@ public class Preprocess {
 					bw.write(linear + "\n");
 				}
 			}
-			ConsoleView.printlInConsoleln(preprocessingParentFolder
+			ConsoleView.writeInConsole(preprocessingParentFolder
 					+ System.getProperty("file.separator") + f.getName());
 
 			br.close();
 			bw.close();
 		}
-		ConsoleView.printlInConsoleln("Preprocessed files stored in "
+		ConsoleView.writeInConsole("Preprocessed files stored in "
 				+ preprocessingParentFolder);
 		return preprocessingParentFolder;
 	}

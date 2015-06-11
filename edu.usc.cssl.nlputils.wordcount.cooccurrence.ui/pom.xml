@@ -8,6 +8,6 @@
     <relativePath>../parent</relativePath>
   </parent>
 	<groupId>edu.usc.nlputils.tools</groupId>
-	<artifactId>edu.usc.cssl.nlputils.wordcount.cooccurrence.ui</artifactId>
+	<artifactId>edu.usc.cssl.nlputils.wordcount.standard.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
 </project>
