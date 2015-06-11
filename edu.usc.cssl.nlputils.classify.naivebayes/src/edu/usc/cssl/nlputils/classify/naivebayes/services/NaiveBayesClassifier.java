@@ -12,49 +12,119 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.Platform;
 
 import bsh.EvalError;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class NaiveBayesClassifier {
 	private StringBuilder readMe = new StringBuilder();
 	private String tmpLocation;
 	
 	public NaiveBayesClassifier() {
-		//this.tmpLocation = System.getProperty("user.dir") + File.separator + "NB_Classifier";
-		this.tmpLocation = "F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\preprocess\\NB_Classifier";
+		this.tmpLocation = System.getProperty("user.dir") + File.separator + "NB_Classifier";
+		//this.tmpLocation = "F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\preprocess\\NB_Classifier";
 	}
+	
+	public String predict(ArrayList<String> trainingClasses, ArrayList<String> testingClasses, String outputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
+		Calendar cal = Calendar.getInstance();
+		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
+
+		if(trainingClasses.isEmpty() || testingClasses.isEmpty() || outputDir.isEmpty()) 
+			return null;
+		String tempOutputPath = "";
+		String tempTrainDirs = "";
+		// Create a output filename and comma separated source directories
+		for (String classPath : trainingClasses) {
+			tempOutputPath += classPath.substring(classPath.lastIndexOf(System.getProperty("file.separator")) + 1) + "_";
+			tempTrainDirs += classPath + ",";
+		}
+		String outputPath = outputDir + System.getProperty("file.separator")+ tempOutputPath.substring(0, tempOutputPath.length() - 1) + dateString + "-" + System.currentTimeMillis();
+
+		String tempTestDirs = "";
+		for (String classPath : testingClasses) {
+			if (!classPath.isEmpty()) 
+				tempTestDirs += classPath + ",";
+		}
+
+		String keepSeq = "FALSE", stopWords = "FALSE", preserveCase = "TRUE";
+
+		if (removeStopwords) {
+			stopWords = "TRUE";
+		}
+		if (doLowercase) {
+			preserveCase = "FALSE";
+		}
+
+		// Set up the args
+		tempTrainDirs = tempTrainDirs.substring(0, tempTrainDirs.length() - 1);
+		String trainDirs[] = tempTrainDirs.split(",");
+		tempTestDirs = tempTestDirs.substring(0, tempTestDirs.length() - 1);
+		String testDirs[] = tempTestDirs.split(",");
+
+		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train","--keep-sequence", keepSeq, "--remove-stopwords", stopWords,"--preserve-case", preserveCase));
+		// add all the class paths to the argument
+		tempT2vArgs.addAll(1, Arrays.asList(trainDirs));
+		// convert the object array to string, this feature is available in only java 1.6 or greater
+		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(), tempT2vArgs.toArray().length, String[].class);
+
+		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".test","--keep-sequence", keepSeq, "--remove-stopwords",stopWords, "--preserve-case", preserveCase,"--use-pipe-from", outputPath + ".train"));
+		// add all the class paths to the argument
+		tempT2vArgsTest.addAll(1, Arrays.asList(testDirs));
+		String[] t2vArgs_test = Arrays.copyOf(tempT2vArgsTest.toArray(),tempT2vArgsTest.toArray().length, String[].class);
+		
+		String[] v2cArgs = { "--training-file", outputPath + ".train","--testing-file", outputPath + ".test", "--output-classifier",outputPath + ".out" };
+
+		Text2Vectors.main(t2vArgs);
+		ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
+		Text2Vectors.main(t2vArgs_test);
+		ConsoleView.writeInConsole("Created test file " + outputPath + ".test");
+		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
+		ConsoleView.writeInConsole("Created classifier output file " + outputPath+ ".out");
+		ConsoleView.writeInConsole(result.get(0));
+		writeReadMe(outputPath);
+		return result.get(0);
+	}
+
+	
 	public void classify(ArrayList<String> trainingClasses, String classificationInputDir, String classificationOutputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
 		ConsoleView.writeInConsole("Classification starts ..");
 		Calendar cal = Calendar.getInstance();
 		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
-
+		if(trainingClasses.isEmpty() || classificationInputDir.isEmpty() || classificationOutputDir.isEmpty()) 
+			return;
 		String tempOutputPath = "";
 		String tempSourceDir = "";
 		// Create a output filename and comma separated source directories
 		for (String classPath : trainingClasses) {
-			tempOutputPath += classPath.substring(classPath.lastIndexOf(System .getProperty("file.separator")) + 1) + "_";
+			tempOutputPath += classPath.substring(classPath.lastIndexOf(System.getProperty("file.separator")) + 1) + "_";
 			tempSourceDir += classPath + ",";
 		}
 		String outputPath = classificationOutputDir + System.getProperty("file.separator") + tempOutputPath.substring(0, tempOutputPath.length() - 1) + dateString + "-" + System.currentTimeMillis();
 
 		String keepSeq = "FALSE", stopWords = "FALSE", preserveCase = "TRUE";
-		if (removeStopwords) 
+		if (removeStopwords) {
 			stopWords = "TRUE";
-		if (doLowercase)
+		}
+		if (doLowercase) {
 			preserveCase = "FALSE";
+		}
 
 		// Set up the args
 		tempSourceDir = tempSourceDir.substring(0, tempSourceDir.length() - 1);
 		String sourceDirs[] = tempSourceDir.split(",");
 
-		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList( "--input", "--output", outputPath + ".train", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords,"--preserve-case", preserveCase));
-		tempT2vArgs.addAll(1, Arrays.asList(sourceDirs)); // add all the class paths to the argument
+		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase));
+		// add all the class paths to the argument
+		tempT2vArgs.addAll(1, Arrays.asList(sourceDirs));
 		// convert the object array to string, this feature is available in only java 1.6 or greater
-		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(), tempT2vArgs.toArray().length, String[].class);
+		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(),tempT2vArgs.toArray().length, String[].class);
 		String[] t2vArgs_test = { "--input", classificationInputDir, "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train" };
 		String[] v2cArgs = { "--training-file", outputPath + ".train", "--testing-file", outputPath + ".test", "--output-classifier", outputPath + ".out", "--report", "test:raw"};
 
+		ConsoleView.writeInConsole("Args :" + Arrays.toString(t2vArgs));
+		ConsoleView.writeInConsole("Args test :" + Arrays.toString(t2vArgs_test));
 		ConsoleView.writeInConsole("Command args :" + Arrays.toString(v2cArgs));
 
 		Text2Vectors.main(t2vArgs);
@@ -63,10 +133,10 @@ public class NaiveBayesClassifier {
 		ConsoleView.writeInConsole("Created validation file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
 		ConsoleView.writeInConsole("Created classifier output file " + outputPath + ".out");
-		
+
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "_output.csv")));
 		bw.write("File, Predicted Class, Other Classes\n");
-		for (String s : result) 
+		for (String s : result)
 			bw.write(s + "\n");
 		bw.close();
 
@@ -74,7 +144,7 @@ public class NaiveBayesClassifier {
 		writeReadMe(outputPath);
 	}
 	
-	public void crossValidate(ArrayList<String> trainingClasses, String outputDir, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {
+	private void crossValidate(ArrayList<String> trainingClasses, String outputDir, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {
 		ConsoleView.writeInConsole("Classification starts ..");
 		Calendar cal = Calendar.getInstance();
 		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-"+ cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
@@ -99,12 +169,14 @@ public class NaiveBayesClassifier {
 		tempSourceDir = tempSourceDir.substring(0, tempSourceDir.length() - 1);
 		String sourceDirs[] = tempSourceDir.split(",");
 
-		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase));
+		//ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase));
+		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train"));
 		// add all the class paths to the argument
 		tempT2vArgs.addAll(1, Arrays.asList(sourceDirs));
 		// convert the object array to string, this feature is available in only java 1.6 or greater
 		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(), tempT2vArgs.toArray().length, String[].class);
 		
+		//Vectors2Classify.resetDefaultValues();
 		Text2Vectors.main(t2vArgs);
 		ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs));
 		ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
@@ -112,16 +184,16 @@ public class NaiveBayesClassifier {
 		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train"));
 		// add all the class paths to the argument
 		tempT2vArgsTest.addAll(1, Arrays.asList(sourceDirs));
-		// convert the object array to string, this feature is available in only java 1.6 or greater
+		//convert the object array to string, this feature is available in only java 1.6 or greater
 		String[] t2vArgs_test = Arrays.copyOf(tempT2vArgsTest.toArray(), tempT2vArgsTest.toArray().length, String[].class);
 				
-		Text2Vectors.main(t2vArgs_test);
-		ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs_test));
-		ConsoleView.writeInConsole("Created test file " + outputPath + ".test");
+		//Text2Vectors.main(t2vArgs_test);
+		//ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs_test));
+		//ConsoleView.writeInConsole("Created test file " + outputPath + ".test");
 				
-		String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue)};
+		//String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
+		String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
 		ConsoleView.writeInConsole("Command args :" + Arrays.toString(v2cArgs));
-		
 		Vectors2Classify.main(v2cArgs);
 		return;
 	}
@@ -138,9 +210,7 @@ public class NaiveBayesClassifier {
 	
 	public void createTempDirectories(HashMap<String, List<String>> classPaths, ArrayList<String> trainingDataPaths) throws IOException {
 		String tmpLocation = this.tmpLocation;
-		if(new File(tmpLocation).exists()) {
-			purgeDirectory(new File(tmpLocation)); 
-		} else {
+		if(!new File(tmpLocation).exists()) {
 			new File(tmpLocation).mkdirs();	
 		}
 		
@@ -161,13 +231,23 @@ public class NaiveBayesClassifier {
 			
 			for (int num = 0; num<numFiles; num++) {
 				files[num] = new File(classFiles.get(num));
-				Files.copy(files[num].toPath(), new File(tempTrainDir+ File.separator + files[num].getName()).toPath(), new CopyOption[] { REPLACE_EXISTING });
+				//new File(files[num].getAbsolutePath(), new File(tempTrainDir + File.separator + files[num].getName()).getAbsolutePath());
+				//Files.copy(files[num].toPath(), new File(tempTrainDir+ File.separator + files[num].getName()).toPath(), new CopyOption[] { REPLACE_EXISTING });
+				FileUtils.copyFileToDirectory(files[num], new File(tempTrainDir));
 			}
 			trainingDataPaths.add(new File(tempTrainDir).getAbsolutePath());	
 		}
 	}
 	
+	public void doClassify(ArrayList<String> trainingClasses, String classificationInputDir, String classificationOutputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
+		//Reset the default values
+		//Vectors2Classify.resetDefaultValues();
+		classify(trainingClasses, classificationInputDir, classificationOutputDir, removeStopwords, doLowercase);
+		ConsoleView.writeInConsole("Cross Validation value :" + Vectors2Classify.crossValidation.value);
+	}
+	
 	public void doCross(ArrayList<String> trainingDataPaths, String outputPath, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {
+		//Reset the default values
 		crossValidate(trainingDataPaths, outputPath, false, false, kValue);
 		//delete the temp files
 		/*String tmpLocation = this.tmpLocation;

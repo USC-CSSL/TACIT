@@ -27,16 +27,15 @@ import cc.mallet.classify.Classifier;
 import cc.mallet.classify.ClassifierTrainer;
 import cc.mallet.classify.Trial;
 import cc.mallet.classify.evaluate.ConfusionMatrix;
-import cc.mallet.types.CrossValidationIterator;
 import cc.mallet.types.Instance;
 import cc.mallet.types.InstanceList;
 import cc.mallet.types.Labeling;
 import cc.mallet.types.MatrixOps;
 import cc.mallet.util.BshInterpreter;
-import cc.mallet.util.CommandOption;
 import cc.mallet.util.MalletLogger;
 import cc.mallet.util.MalletProgressMessageLogger;
 import cc.mallet.util.ProgressMessageLogFormatter;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 /**
  * Classify documents, run trials, print statistics from a vector file.
@@ -79,6 +78,7 @@ public abstract class Vectors2Classify {
 			true,
 			new String[] { "test:accuracy", "test:confusion", "train:accuracy" },
 			"", null) {
+		@Override
 		public void postParsing(CommandOption.List list) {
 			java.lang.String defaultRawFormatting = "siw";
 
@@ -160,6 +160,7 @@ public abstract class Vectors2Classify {
 					+ "If no '(' appears, then \"new \" will be prepended and \"Trainer()\" will be appended."
 					+ "You may use this option mutiple times to compare multiple classifiers.",
 			null) {
+		@Override
 		public void postParsing(CommandOption.List list) {
 			classifierTrainerStrings.add(this.value);
 		}
@@ -304,7 +305,9 @@ public abstract class Vectors2Classify {
 	public static ArrayList<String> main(String[] args) throws bsh.EvalError,
 			java.io.IOException {
 		result.clear();
-
+		classifierTrainerStrings = new ArrayList<String>();
+		ReportOptions = new boolean[][]{{false, false, false, false}, {false, false, false, false}, {false, false, false, false}};
+			
 		double pvalue = 0;
 		// Process the command-line options
 		CommandOption
@@ -320,7 +323,9 @@ public abstract class Vectors2Classify {
 		}
 
 		if (!report.wasInvoked()) {
-			report.postParsing(null); // force postprocessing of default value
+			ReportOptions = new boolean[][]{{true, false, false, false}, {true, false, true, false}, {false, false, false, false}};
+			//report.postParsing(null); // force postprocessing of default value
+			
 		}
 
 		int verbosity = verbosityOption.value;
@@ -354,6 +359,7 @@ public abstract class Vectors2Classify {
 			// Read in the InstanceList, from stdin if the input filename is
 			// "-".
 			ilist = InstanceList.load(new File(inputFile.value));
+			//ilist = new InstanceList(ilist.getAlphabet(), ilist.getAlphabet());
 		} else { // user specified separate files for testing and training sets.
 			trainingFileIlist = InstanceList.load(new File(trainingFile.value));
 			logger.info("Training vectors loaded from " + trainingFile.value);
@@ -468,6 +474,7 @@ public abstract class Vectors2Classify {
 				throw new RuntimeException(
 						"At least two folds (set with --cross-validation) are required for cross validation");
 			}
+			//ConsoleView.writeInConsole("Alphabets : "+ ilist.getDataAlphabet() +":"+ ilist.getTargetAlphabet());
 			cvIter = new CrossValidationIterator(ilist, crossValidation.value,
 					r);
 		} else {
@@ -538,7 +545,7 @@ public abstract class Vectors2Classify {
 				Trial trainTrial = new Trial(classifier, ilists[0]);
 				// assert (ilists[1].size() > 0);
 				Trial testTrial = new Trial(classifier, ilists[1]);
-				Trial validationTrial = new Trial(classifier, ilists[2]);
+				Trial validationTrial = new Trial(classifier, ilists[2]);				
 
 				// gdruck - only perform evaluation if requested in report
 				// options
@@ -599,6 +606,7 @@ public abstract class Vectors2Classify {
 							+ trainer.toString());
 					ConsoleView.writeInConsole(" Raw Testing Data");
 					printTrialClassification(testTrial);
+					ConsoleView.writeInConsole("Report Option :"+(ReportOptions[ReportOption.test][ReportOption.raw]));
 				}
 
 				if (ReportOptions[ReportOption.validation][ReportOption.raw]) {
@@ -765,7 +773,7 @@ public abstract class Vectors2Classify {
 		for (Classification c : trial) {
 			String classification = "";
 			Instance instance = c.getInstance();
-			System.out.print(instance.getName() + " " + instance.getTarget()
+			ConsoleView.writeInConsole(instance.getName() + " " + instance.getTarget()
 					+ " ");
 			classification = instance.getName() + "," + instance.getTarget()
 					+ " ";
@@ -774,11 +782,11 @@ public abstract class Vectors2Classify {
 				classification = classification
 						+ labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + ",";
-				System.out.print(labeling.getLabelAtRank(j).toString() + ":"
+				ConsoleView.writeInConsole(labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + " ");
 			}
 			result.add(classification);
-			ConsoleView.writeInConsole();
+			ConsoleView.writeInConsole("\n");
 		}
 	}
 

@@ -42,13 +42,13 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import bsh.EvalError;
+import edu.usc.cssl.nlputils.classify.naivebayes.services.CrossValidator;
 import edu.usc.cssl.nlputils.classify.naivebayes.services.NaiveBayesClassifier;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.INaiveBayesClassifierViewConstants;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifierViewImageRegistry;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
-import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.Preprocess;
 
 public class NaiveBayesClassifierView extends ViewPart implements
@@ -337,9 +337,11 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				
 				final HashMap<String, List<String>> classPaths = new HashMap<String, List<String>>();
 				consolidateSelectedFiles(classLayoutData, classPaths);
+				final HashMap<String, List<String>> tempClassPaths = new HashMap<String, List<String>>();
 				
 				final boolean canItProceed = false;
 				final NaiveBayesClassifier nbc = new NaiveBayesClassifier();
+				final CrossValidator cv = new CrossValidator();
 				
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 				Job job = new Job("Classifying...") {
@@ -359,7 +361,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								}
 							}
 						});
-						if(isPreprocessEnabled) {
+						HashMap<Integer, String> perf;
+						if(isPreprocessEnabled) {							
 							// check whether the location is specified
 							if (pp_outputPath.isEmpty()) {
 								return Status.CANCEL_STATUS;
@@ -370,8 +373,14 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								for(String dirPath : classPaths.keySet()) {
 									List<String> selectedFiles = classPaths.get(dirPath);
 									String preprocessedDirPath = preprocessTask.doPreprocessing(selectedFiles, new File(dirPath).getName());
-									trainingDataPaths.add(preprocessedDirPath);
+									trainingDataPaths.add(preprocessedDirPath);									
+									List<String> temp = new ArrayList<String>();
+									for(File f: new File(preprocessedDirPath).listFiles()) {
+										temp.add(f.getAbsolutePath());
+									}
+									tempClassPaths.put(preprocessedDirPath, temp);
 								}
+								
 							} catch (Exception e) {
 								return handleException(monitor, e, "Preprocessing failed. Provide valid data");
 							}							
@@ -383,8 +392,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							}
 						}
 						try {
-							nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation
-							//nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
+							perf = (!isPreprocessEnabled) ? cv.doCross(nbc, classPaths, classificationOutputDir, kValue) :  cv.doCross(nbc, tempClassPaths, classificationOutputDir, kValue);
+							//nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation	
+							nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
+							
+							System.out.println("------Cross Validation Results------");
+							for(Integer trialNum : perf.keySet()) {
+								System.out.println("Trial "+ trialNum);
+								System.out.println(perf.get(trialNum));
+							}
+							
 						} catch (IOException e) {
 							e.printStackTrace();
 						} catch (EvalError e) {
@@ -431,7 +448,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 	private IStatus handleException(IProgressMonitor monitor, Exception e, String message) {
 		monitor.done();
-		ConsoleView.writeInConsole(message);
+		System.out.println(message);
 		e.printStackTrace();
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
 		return Status.CANCEL_STATUS;
