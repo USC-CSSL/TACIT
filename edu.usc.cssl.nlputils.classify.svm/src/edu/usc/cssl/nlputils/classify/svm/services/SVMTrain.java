@@ -104,13 +104,13 @@ public class SVMTrain {
 				if(target[i] == prob.y[i])
 					++total_correct;
 			System.out.print("Cross Validation Accuracy = "+100.0*total_correct/prob.l+"%\n");
-			ConsoleView.writeInConsole("Trials " + prob.l + " correct " + total_correct);
+			ConsoleView.printlInConsoleln("Trials " + prob.l + " correct " + total_correct);
 			try{
 			BinomialTest binomtest = new BinomialTest();
 			pvalue = binomtest.binomialTest(prob.l, total_correct, 0.5, AlternativeHypothesis.TWO_SIDED);
-			ConsoleView.writeInConsole("Pvalue = " +(pvalue));
+			ConsoleView.printlInConsoleln("Pvalue = " +(pvalue));
 			}catch(Exception e){
-				ConsoleView.writeInConsole("Exception in binomial p value " + e);
+				ConsoleView.printlInConsoleln("Exception in binomial p value " + e);
 			}
 			crossValResult = 100.0*total_correct/prob.l;
 		}
@@ -118,7 +118,7 @@ public class SVMTrain {
 	
 	private void run(String argv[]) throws IOException
 	{
-		ConsoleView.writeInConsole(String.valueOf(argv.length));
+		ConsoleView.printlInConsoleln(String.valueOf(argv.length));
 		parse_command_line(argv);
 		read_problem();
 		error_msg = svm.svm_check_parameter(prob,param);

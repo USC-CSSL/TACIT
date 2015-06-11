@@ -57,10 +57,10 @@ public class LdaAnalysis {
 		Vectors2Topics.main(v2tArgs);
 		monitor.worked(5);
 		monitor.subTask("Created complete state file "+outputPath+".topic-state.gz");
-		ConsoleView.writeInConsole("Created complete state file "+outputPath+".topic-state.gz");
-		ConsoleView.writeInConsole("Created topic keys file "+outputPath+".topic_keys.txt");
-		ConsoleView.writeInConsole("Created topic composition file "+outputPath+".topic_composition.txt");
-		ConsoleView.writeInConsole("Created topic word counts file "+outputPath+".word_counts.txt");
+		ConsoleView.printlInConsoleln("Created complete state file "+outputPath+".topic-state.gz");
+		ConsoleView.printlInConsoleln("Created topic keys file "+outputPath+".topic_keys.txt");
+		ConsoleView.printlInConsoleln("Created topic composition file "+outputPath+".topic_composition.txt");
+		ConsoleView.printlInConsoleln("Created topic word counts file "+outputPath+".word_counts.txt");
 
 		monitor.subTask("Convert "+outputPath+".topic_keys to csv");
 		convert2csv(outputPath+".topic_keys",false);
@@ -72,8 +72,8 @@ public class LdaAnalysis {
 		convert2csv(outputPath+".word_counts", true);
 		monitor.worked(5);
 		
-		ConsoleView.writeInConsole("Created topic keys csv file "+outputPath+".topic_keys.csv");
-		ConsoleView.writeInConsole("Created topic composition csv file "+outputPath+".topic_composition.csv");
+		ConsoleView.printlInConsoleln("Created topic keys csv file "+outputPath+".topic_keys.csv");
+		ConsoleView.printlInConsoleln("Created topic composition csv file "+outputPath+".topic_composition.csv");
 		monitor.subTask("writing Read Me File");
 		writeReadMe(outputPath);
 		monitor.worked(5);

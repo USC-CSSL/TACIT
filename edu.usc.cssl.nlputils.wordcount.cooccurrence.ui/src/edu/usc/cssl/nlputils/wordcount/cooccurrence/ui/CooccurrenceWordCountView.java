@@ -304,7 +304,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 											getViewSite(),
 											"Co-occurrence Analysis is Sucessfully Completed",
 											IStatus.OK);
-							ConsoleView.writeInConsole("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+							ConsoleView.printlInConsoleln("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 							preprocessTask.clean();
 							return Status.OK_STATUS;
 						} else {

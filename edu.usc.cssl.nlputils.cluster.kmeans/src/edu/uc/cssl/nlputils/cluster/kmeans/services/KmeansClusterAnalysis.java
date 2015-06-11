@@ -40,7 +40,7 @@ public class KmeansClusterAnalysis {
 							content);
 					docs.add(new Instance(1.0, newInst));
 				} catch (Exception e) {
-					ConsoleView.writeInConsole("Exception occurred in reading files"
+					ConsoleView.printlInConsoleln("Exception occurred in reading files"
 							+ e);
 					return null;
 				}
@@ -63,7 +63,7 @@ public class KmeansClusterAnalysis {
 
 			return assignments;
 		} catch (Exception e) {
-			ConsoleView.writeInConsole("Exception occurred in K means " + e);
+			ConsoleView.printlInConsoleln("Exception occurred in K means " + e);
 		}
 		return null;
 	}
@@ -78,16 +78,16 @@ public class KmeansClusterAnalysis {
 			inputFiles.add(f);
 		}
 
-		ConsoleView.writeInConsole("Running KMeans Clustering...");
+		ConsoleView.printlInConsoleln("Running KMeans Clustering...");
 
 		int[] clusters = doClustering(inputFiles, fNumClusters);
 		if (clusters == null) {
-			ConsoleView.writeInConsole("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
+			ConsoleView.printlInConsoleln("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
 			return;
 		}
 		int i = 0;
-		ConsoleView.writeInConsole("Output for KMeans Clustering");
-		ConsoleView.writeInConsole("Clusters formed: \n");
+		ConsoleView.printlInConsoleln("Output for KMeans Clustering");
+		ConsoleView.printlInConsoleln("Clusters formed: \n");
 
 		Map<Integer, List<String>> outputClusters = new HashMap<Integer, List<String>>();
 		for (i = 0; i < fNumClusters; i++) {
@@ -105,23 +105,23 @@ public class KmeansClusterAnalysis {
 
 		try {
 			String op = fOutputDir + File.separator + "KMeansClusters.txt";
-			ConsoleView.writeInConsole("Saving the output for Kmeans clustering in " + op);
+			ConsoleView.printlInConsoleln("Saving the output for Kmeans clustering in " + op);
 			FileWriter fw = new FileWriter(new File(op));
 			for (int c : outputClusters.keySet()) {
 				System.out.printf("Cluster %d \n", c);
-				ConsoleView.writeInConsole("Cluster " + c + ": \n");
+				ConsoleView.printlInConsoleln("Cluster " + c + ": \n");
 				fw.write("Cluster " + c + ": \n");
 				vec = outputClusters.get(c);
 				for (String f : vec) {
-					ConsoleView.writeInConsole("File " + f);
+					ConsoleView.printlInConsoleln("File " + f);
 					fw.write("File" + f + "\n");
 				}
 				fw.write("\n");
-				ConsoleView.writeInConsole("");
+				ConsoleView.printlInConsoleln("");
 			}
 			fw.close();
 		} catch (IOException e) {
-			ConsoleView.writeInConsole("Error writing output to files" + e);
+			ConsoleView.printlInConsoleln("Error writing output to files" + e);
 		}
 
 	}

@@ -197,7 +197,7 @@ public class SVMClassify {
 				buildDfMap(file);
 			}
 			//ConsoleView.writeInConsole("dfmap -"+dfMap);
-			ConsoleView.writeInConsole("Finished building document frequency map.");
+			ConsoleView.printlInConsoleln("Finished building document frequency map.");
 		}
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
@@ -216,24 +216,24 @@ public class SVMClassify {
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
-		ConsoleView.writeInConsole("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
-		ConsoleView.writeInConsole("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
+		ConsoleView.printlInConsoleln("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
+		ConsoleView.printlInConsoleln("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
 		bw.close();
 		
 		String[] train_arguments;
 		
-		ConsoleView.writeInConsole("Linear Kernel selected");
+		ConsoleView.printlInConsoleln("Linear Kernel selected");
 		train_arguments = new String[4];
 		train_arguments[0] = "-t";
 		train_arguments[1] = "0";
 		train_arguments[2] = trainFile.getAbsolutePath();
 		train_arguments[3] = modelFile.getAbsolutePath();
 		
-		ConsoleView.writeInConsole("Training the classifier...");
+		ConsoleView.printlInConsoleln("Training the classifier...");
 		double[] result  = SVMTrain.main(train_arguments);
 		double crossValResult = result[0];
 		double pvalue = result[1];
-		ConsoleView.writeInConsole("Model file created - "+modelFile.getAbsolutePath());
+		ConsoleView.printlInConsoleln("Model file created - "+modelFile.getAbsolutePath());
 		
 		// Saving the feature map
 		File hashmap = new File(intermediatePath+"_"+kVal+".hashmap");
@@ -241,7 +241,7 @@ public class SVMClassify {
 		oos.writeObject(featureMap);
 		oos.flush();
 		oos.close();
-		ConsoleView.writeInConsole("Feature Map saved - "+hashmap.getAbsolutePath());
+		ConsoleView.printlInConsoleln("Feature Map saved - "+hashmap.getAbsolutePath());
 		
 		
 		HashMap<Integer,String> reverseMap = new HashMap<Integer,String>();
@@ -260,7 +260,7 @@ public class SVMClassify {
 			//System.out.print(i+" ");
 			weightsWriter.write(reverseMap.get(i)+","+i+","+weightsMap.get(i)+"\n");
 		}
-		ConsoleView.writeInConsole("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
+		ConsoleView.printlInConsoleln("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
 		weightsWriter.close();
 		}
 		
@@ -286,7 +286,7 @@ public class SVMClassify {
 				buildDfMap(file);
 			}
 			//ConsoleView.writeInConsole("dfmap -"+dfMap);
-			ConsoleView.writeInConsole("Finished building document frequency map.");
+			ConsoleView.printlInConsoleln("Finished building document frequency map.");
 		}
 				
 		// Create a test file just like the training file was created.
@@ -308,9 +308,9 @@ public class SVMClassify {
 			bw.write("-1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
 		}
-		ConsoleView.writeInConsole("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		ConsoleView.printlInConsoleln("Finished building SVM-format test file - "+testFile.getAbsolutePath());
 		bw.close();
-		ConsoleView.writeInConsole("Model file loaded - "+modelFile.getAbsolutePath());
+		ConsoleView.printlInConsoleln("Model file loaded - "+modelFile.getAbsolutePath());
 		String[] predict_arguments = new String[3];
 		predict_arguments[0] = testFile.getAbsolutePath();
 		predict_arguments[1] = modelFile.getAbsolutePath();
@@ -321,9 +321,9 @@ public class SVMClassify {
 		BinomialTest btest = new BinomialTest();
 		double p =0.5;
 		double pvalue = btest.binomialTest(total, correct, p, AlternativeHypothesis.TWO_SIDED);
-		ConsoleView.writeInConsole("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
-		ConsoleView.writeInConsole("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
-		ConsoleView.writeInConsole("P value  = " + pvalue);
+		ConsoleView.printlInConsoleln("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
+		ConsoleView.printlInConsoleln("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		ConsoleView.printlInConsoleln("P value  = " + pvalue);
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
 		//ConsoleView.writeInConsole(nf.format(pvalue));
