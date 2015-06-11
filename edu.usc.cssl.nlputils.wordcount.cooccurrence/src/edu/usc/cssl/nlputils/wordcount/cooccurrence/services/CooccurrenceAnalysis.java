@@ -91,7 +91,7 @@ public class CooccurrenceAnalysis {
 				count = 0;
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;
-				ConsoleView.writeInConsole("Processing");
+				ConsoleView.printlInConsoleln("Processing");
 
 				List<String> words = new ArrayList<String>();
 				if (!f.exists() || f.isDirectory())
@@ -185,10 +185,10 @@ public class CooccurrenceAnalysis {
 				writePhrases(phrase);
 			}
 
-			ConsoleView.writeInConsole(String.valueOf(phrase.size()));
+			ConsoleView.printlInConsoleln(String.valueOf(phrase.size()));
 			return true;
 		} catch (Exception e) {
-			ConsoleView.writeInConsole("Exception occurred in Cooccurrence Analysis "
+			ConsoleView.printlInConsoleln("Exception occurred in Cooccurrence Analysis "
 					+ e);
 		}
 
@@ -210,7 +210,7 @@ public class CooccurrenceAnalysis {
 			}
 			fw.close();
 		} catch (IOException e) {
-			ConsoleView.writeInConsole("Error writing output to file phrases.txt " + e);
+			ConsoleView.printlInConsoleln("Error writing output to file phrases.txt " + e);
 		}
 	}
 
@@ -235,7 +235,7 @@ public class CooccurrenceAnalysis {
 		SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
 		Map<String, Integer> vec = null;
 
-		ConsoleView.writeInConsole(keys.size());
+		ConsoleView.printlInConsoleln(keys.size());
 		try {
 			FileWriter fw = new FileWriter(new File(outputPath + File.separator
 					+ "word-to-word-matrix.csv"));
@@ -259,7 +259,7 @@ public class CooccurrenceAnalysis {
 			}
 			fw.close();
 		} catch (IOException e) {
-			ConsoleView.writeInConsole("Error writing output to files" + e);
+			ConsoleView.printlInConsoleln("Error writing output to files" + e);
 		}
 	}
 
@@ -302,7 +302,7 @@ public class CooccurrenceAnalysis {
 	}
 
 	private void appendLog(String string) {
-		ConsoleView.writeInConsole(string);
+		ConsoleView.printlInConsoleln(string);
 
 	}
 }

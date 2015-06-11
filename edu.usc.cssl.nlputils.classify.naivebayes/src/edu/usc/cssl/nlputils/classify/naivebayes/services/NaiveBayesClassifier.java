@@ -77,19 +77,19 @@ public class NaiveBayesClassifier {
 		String[] v2cArgs = { "--training-file", outputPath + ".train","--testing-file", outputPath + ".test", "--output-classifier",outputPath + ".out" };
 
 		Text2Vectors.main(t2vArgs);
-		ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
+		ConsoleView.printlInConsoleln("Created training file " + outputPath + ".train");
 		Text2Vectors.main(t2vArgs_test);
-		ConsoleView.writeInConsole("Created test file " + outputPath + ".test");
+		ConsoleView.printlInConsoleln("Created test file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
-		ConsoleView.writeInConsole("Created classifier output file " + outputPath+ ".out");
-		ConsoleView.writeInConsole(result.get(0));
+		ConsoleView.printlInConsoleln("Created classifier output file " + outputPath+ ".out");
+		ConsoleView.printlInConsoleln(result.get(0));
 		writeReadMe(outputPath);
 		return result.get(0);
 	}
 
 	
 	public void classify(ArrayList<String> trainingClasses, String classificationInputDir, String classificationOutputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
-		ConsoleView.writeInConsole("Classification starts ..");
+		ConsoleView.printlInConsoleln("Classification starts ..");
 		Calendar cal = Calendar.getInstance();
 		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
 		if(trainingClasses.isEmpty() || classificationInputDir.isEmpty() || classificationOutputDir.isEmpty()) 
@@ -123,16 +123,16 @@ public class NaiveBayesClassifier {
 		String[] t2vArgs_test = { "--input", classificationInputDir, "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train" };
 		String[] v2cArgs = { "--training-file", outputPath + ".train", "--testing-file", outputPath + ".test", "--output-classifier", outputPath + ".out", "--report", "test:raw"};
 
-		ConsoleView.writeInConsole("Args :" + Arrays.toString(t2vArgs));
-		ConsoleView.writeInConsole("Args test :" + Arrays.toString(t2vArgs_test));
-		ConsoleView.writeInConsole("Command args :" + Arrays.toString(v2cArgs));
+		ConsoleView.printlInConsoleln("Args :" + Arrays.toString(t2vArgs));
+		ConsoleView.printlInConsoleln("Args test :" + Arrays.toString(t2vArgs_test));
+		ConsoleView.printlInConsoleln("Command args :" + Arrays.toString(v2cArgs));
 
 		Text2Vectors.main(t2vArgs);
-		ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
+		ConsoleView.printlInConsoleln("Created training file " + outputPath + ".train");
 		Text2Vectors.main(t2vArgs_test);
-		ConsoleView.writeInConsole("Created validation file " + outputPath + ".test");
+		ConsoleView.printlInConsoleln("Created validation file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
-		ConsoleView.writeInConsole("Created classifier output file " + outputPath + ".out");
+		ConsoleView.printlInConsoleln("Created classifier output file " + outputPath + ".out");
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "_output.csv")));
 		bw.write("File, Predicted Class, Other Classes\n");
@@ -140,12 +140,12 @@ public class NaiveBayesClassifier {
 			bw.write(s + "\n");
 		bw.close();
 
-		ConsoleView.writeInConsole("Created prediction CSV file " + outputPath + "_output.csv");
+		ConsoleView.printlInConsoleln("Created prediction CSV file " + outputPath + "_output.csv");
 		writeReadMe(outputPath);
 	}
 	
 	private void crossValidate(ArrayList<String> trainingClasses, String outputDir, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {
-		ConsoleView.writeInConsole("Classification starts ..");
+		ConsoleView.printlInConsoleln("Classification starts ..");
 		Calendar cal = Calendar.getInstance();
 		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-"+ cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
 
@@ -178,8 +178,8 @@ public class NaiveBayesClassifier {
 		
 		//Vectors2Classify.resetDefaultValues();
 		Text2Vectors.main(t2vArgs);
-		ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs));
-		ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
+		ConsoleView.printlInConsoleln("Command args :" + Arrays.toString(t2vArgs));
+		ConsoleView.printlInConsoleln("Created training file " + outputPath + ".train");
 		
 		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train"));
 		// add all the class paths to the argument
@@ -193,7 +193,7 @@ public class NaiveBayesClassifier {
 				
 		//String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
 		String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
-		ConsoleView.writeInConsole("Command args :" + Arrays.toString(v2cArgs));
+		ConsoleView.printlInConsoleln("Command args :" + Arrays.toString(v2cArgs));
 		Vectors2Classify.main(v2cArgs);
 		return;
 	}
@@ -223,7 +223,7 @@ public class NaiveBayesClassifier {
 			// Create respective class directories
 			String className = new File(key).getName();
 			tempTrainDir = tmpLocation + File.separator + className;
-			ConsoleView.writeInConsole("Training data dir :"+ tempTrainDir);
+			ConsoleView.printlInConsoleln("Training data dir :"+ tempTrainDir);
 			if(new File(tempTrainDir).exists()) {
 				purgeDirectory(new File(tempTrainDir)); 
 			}
@@ -243,7 +243,7 @@ public class NaiveBayesClassifier {
 		//Reset the default values
 		//Vectors2Classify.resetDefaultValues();
 		classify(trainingClasses, classificationInputDir, classificationOutputDir, removeStopwords, doLowercase);
-		ConsoleView.writeInConsole("Cross Validation value :" + Vectors2Classify.crossValidation.value);
+		ConsoleView.printlInConsoleln("Cross Validation value :" + Vectors2Classify.crossValidation.value);
 	}
 	
 	public void doCross(ArrayList<String> trainingDataPaths, String outputPath, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {

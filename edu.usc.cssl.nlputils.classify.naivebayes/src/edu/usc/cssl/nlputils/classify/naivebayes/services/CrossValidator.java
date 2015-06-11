@@ -63,7 +63,7 @@ public class CrossValidator {
 				
 				String className = new File(path).getName();
 				tempTrainDir = tmpLocation + File.separator + "Train"+ File.separator + className;
-				ConsoleView.writeInConsole("Training data dir :"+ tempTrainDir);
+				ConsoleView.printlInConsoleln("Training data dir :"+ tempTrainDir);
 				if(new File(tempTrainDir).exists()) {
 					purgeDirectory(new File(tempTrainDir)); 
 				}
@@ -80,7 +80,7 @@ public class CrossValidator {
 				}
 				
 				tempTestDir = tmpLocation + File.separator + "Test"+ File.separator + className;
-				ConsoleView.writeInConsole("Testing data dir :"+ tempTestDir);
+				ConsoleView.printlInConsoleln("Testing data dir :"+ tempTestDir);
 				if(new File(tempTestDir).exists()) {
 					purgeDirectory(new File(tempTestDir)); 
 				}
@@ -107,13 +107,13 @@ public class CrossValidator {
 				count++;
 			}
 			
-			ConsoleView.writeInConsole("Training data paths ..");
+			ConsoleView.printlInConsoleln("Training data paths ..");
 			for(String s : trainingDataPaths)
-				ConsoleView.writeInConsole(s);
+				ConsoleView.printlInConsoleln(s);
 			
-			ConsoleView.writeInConsole("Testing data paths ..");
+			ConsoleView.printlInConsoleln("Testing data paths ..");
 			for(String s : testingDataPaths)
-				ConsoleView.writeInConsole(s);
+				ConsoleView.printlInConsoleln(s);
 			
 			
 			// Perform classification

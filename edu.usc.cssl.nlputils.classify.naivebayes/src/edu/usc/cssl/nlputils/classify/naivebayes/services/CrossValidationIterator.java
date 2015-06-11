@@ -57,7 +57,7 @@ implements java.util.Iterator<InstanceList[]>, Serializable {
         for (int i=0; i < nfolds; i++) { 
             proportions[i] = fraction;
         }
-        ConsoleView.writeInConsole("Target Alphabet :" + ilist.getTargetAlphabet() + ":"+ ilist.getDataAlphabet());
+        ConsoleView.printlInConsoleln("Target Alphabet :" + ilist.getTargetAlphabet() + ":"+ ilist.getDataAlphabet());
         this.folds = ilist.split (r, proportions);
     }
 

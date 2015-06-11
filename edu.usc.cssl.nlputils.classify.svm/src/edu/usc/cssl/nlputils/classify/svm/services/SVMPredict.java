@@ -135,7 +135,7 @@ public class SVMPredict {
 		else{
 			SVMPredict.info("Accuracy = "+(double)correct/total*100+
 					"% ("+correct+"/"+total+") (classification)\n");
-			ConsoleView.writeInConsole(total + " " + correct + " " + (double)1/nr_class + " ");
+			ConsoleView.printlInConsoleln(total + " " + correct + " " + (double)1/nr_class + " ");
 			BinomialTest btest = new BinomialTest();
 			pvalue = btest.binomialTest(total, correct, (double)0.5, AlternativeHypothesis.TWO_SIDED);
 		}

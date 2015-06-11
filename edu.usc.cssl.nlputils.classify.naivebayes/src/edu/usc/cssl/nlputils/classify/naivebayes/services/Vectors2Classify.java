@@ -483,7 +483,7 @@ public abstract class Vectors2Classify {
 
 		String[] trainerNames = new String[numTrainers];
 		for (int trialIndex = 0; trialIndex < numTrials; trialIndex++) {
-			ConsoleView.writeInConsole("\n-------------------- Trial " + trialIndex
+			ConsoleView.printlInConsoleln("\n-------------------- Trial " + trialIndex
 					+ "  --------------------\n");
 			InstanceList[] ilists;
 			BitSet unlabeledIndices = null;
@@ -531,7 +531,7 @@ public abstract class Vectors2Classify {
 				ClassifierTrainer trainer = getTrainer(classifierTrainerStrings
 						.get(c));
 				trainer.setValidationInstances(ilists[2]);
-				ConsoleView.writeInConsole("Trial " + trialIndex + " Training "
+				ConsoleView.printlInConsoleln("Trial " + trialIndex + " Training "
 						+ trainer + " with " + ilists[0].size() + " instances");
 				if (unlabeledProportionOption.value > 0)
 					ilists[0].hideSomeLabels(unlabeledIndices);
@@ -539,7 +539,7 @@ public abstract class Vectors2Classify {
 				if (unlabeledProportionOption.value > 0)
 					ilists[0].unhideAllLabels();
 
-				ConsoleView.writeInConsole("Trial " + trialIndex + " Training "
+				ConsoleView.printlInConsoleln("Trial " + trialIndex + " Training "
 						+ trainer.toString() + " finished");
 				time[c] = System.currentTimeMillis() - time[c];
 				Trial trainTrial = new Trial(classifier, ilists[0]);
@@ -595,27 +595,27 @@ public abstract class Vectors2Classify {
 
 				// raw output
 				if (ReportOptions[ReportOption.train][ReportOption.raw]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString());
-					ConsoleView.writeInConsole(" Raw Training Data");
+					ConsoleView.printlInConsoleln(" Raw Training Data");
 					printTrialClassification(trainTrial);
 				}
 
 				if (ReportOptions[ReportOption.test][ReportOption.raw]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString());
-					ConsoleView.writeInConsole(" Raw Testing Data");
+					ConsoleView.printlInConsoleln(" Raw Testing Data");
 					printTrialClassification(testTrial);
-					ConsoleView.writeInConsole("Report Option :"+(ReportOptions[ReportOption.test][ReportOption.raw]));
+					ConsoleView.printlInConsoleln("Report Option :"+(ReportOptions[ReportOption.test][ReportOption.raw]));
 				}
 
 				if (ReportOptions[ReportOption.validation][ReportOption.raw]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString());
-					ConsoleView.writeInConsole(" Raw Validation Data");
+					ConsoleView.printlInConsoleln(" Raw Validation Data");
 					printTrialClassification(validationTrial);
 				}
-				ConsoleView.writeInConsole("Bino test vars size " + ilists[1].size()
+				ConsoleView.printlInConsoleln("Bino test vars size " + ilists[1].size()
 						+ "and accuracy + " + testTrial.getAccuracy()
 						+ " then success " + (int) testTrial.getAccuracy()
 						* ilists[1].size());
@@ -624,11 +624,11 @@ public abstract class Vectors2Classify {
 
 				// train
 				if (ReportOptions[ReportOption.train][ReportOption.confusion]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString()
 							+ " Training Data Confusion Matrix");
 					if (ilists[0].size() > 0)
-						ConsoleView.writeInConsole(trainConfusionMatrix[c][trialIndex]);
+						ConsoleView.printlInConsoleln(trainConfusionMatrix[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.train][ReportOption.accuracy]) {
@@ -639,24 +639,24 @@ public abstract class Vectors2Classify {
 					if (pvalue != 0) {
 						if (pvalue > 0.5)
 							pvalue = Math.abs(pvalue - 1);
-						ConsoleView.writeInConsole("P value = " + pvalue + "\n");
+						ConsoleView.printlInConsoleln("P value = " + pvalue + "\n");
 					}
 
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString() + " training data accuracy= "
 							+ trainAccuracy[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.train][ReportOption.f1]) {
 					String label = ReportOptionArgs[ReportOption.train][ReportOption.f1];
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString() + " training data F1(" + label
 							+ ") = " + trainTrial.getF1(label));
 				}
 
 				// validation
 				if (ReportOptions[ReportOption.validation][ReportOption.confusion]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString()
 							+ " Validation Data Confusion Matrix");
 					if (ilists[2].size() > 0)
@@ -665,7 +665,7 @@ public abstract class Vectors2Classify {
 				}
 
 				if (ReportOptions[ReportOption.validation][ReportOption.accuracy]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString()
 							+ " validation data accuracy= "
 							+ validationAccuracy[c][trialIndex]);
@@ -673,18 +673,18 @@ public abstract class Vectors2Classify {
 
 				if (ReportOptions[ReportOption.validation][ReportOption.f1]) {
 					String label = ReportOptionArgs[ReportOption.validation][ReportOption.f1];
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString() + " validation data F1("
 							+ label + ") = " + validationTrial.getF1(label));
 				}
 
 				// test
 				if (ReportOptions[ReportOption.test][ReportOption.confusion]) {
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString()
 							+ " Test Data Confusion Matrix");
 					if (ilists[1].size() > 0)
-						ConsoleView.writeInConsole(testConfusionMatrix[c][trialIndex]);
+						ConsoleView.printlInConsoleln(testConfusionMatrix[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.test][ReportOption.accuracy]) {
@@ -694,17 +694,17 @@ public abstract class Vectors2Classify {
 					if (pvalue != 0) {
 						if (pvalue > 0.5)
 							pvalue = Math.abs(pvalue - 1);
-						ConsoleView.writeInConsole("P value = " + pvalue + " \n");
+						ConsoleView.printlInConsoleln("P value = " + pvalue + " \n");
 					}
 
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString() + " test data accuracy= "
 							+ testAccuracy[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.test][ReportOption.f1]) {
 					String label = ReportOptionArgs[ReportOption.test][ReportOption.f1];
-					ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "
+					ConsoleView.printlInConsoleln("Trial " + trialIndex + " Trainer "
 							+ trainer.toString() + " test data F1(" + label
 							+ ") = " + testTrial.getF1(label));
 				}
@@ -718,15 +718,15 @@ public abstract class Vectors2Classify {
 		// New reporting
 		// "[train|test|validation]:[accuracy|f1|confusion|raw]"
 		for (int c = 0; c < numTrainers; c++) {
-			ConsoleView.writeInConsole("\n" + trainerNames[c].toString());
+			ConsoleView.printlInConsoleln("\n" + trainerNames[c].toString());
 			if (ReportOptions[ReportOption.train][ReportOption.accuracy])
-				ConsoleView.writeInConsole("Summary. train accuracy mean = "
+				ConsoleView.printlInConsoleln("Summary. train accuracy mean = "
 						+ MatrixOps.mean(trainAccuracy[c]) + " stddev = "
 						+ MatrixOps.stddev(trainAccuracy[c]) + " stderr = "
 						+ MatrixOps.stderr(trainAccuracy[c]));
 
 			if (ReportOptions[ReportOption.validation][ReportOption.accuracy])
-				ConsoleView.writeInConsole("Summary. validation accuracy mean = "
+				ConsoleView.printlInConsoleln("Summary. validation accuracy mean = "
 						+ MatrixOps.mean(validationAccuracy[c]) + " stddev = "
 						+ MatrixOps.stddev(validationAccuracy[c])
 						+ " stderr = "
@@ -734,13 +734,13 @@ public abstract class Vectors2Classify {
 
 			if (ReportOptions[ReportOption.test][ReportOption.accuracy]) {
 				if (pvalue != 0)
-					ConsoleView.writeInConsole("Summary. test accuracy mean = "
+					ConsoleView.printlInConsoleln("Summary. test accuracy mean = "
 							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
 							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
 							+ MatrixOps.stderr(testAccuracy[c]) + " pvalue = "
 							+ pvalue);
 				else
-					ConsoleView.writeInConsole("Summary. test accuracy mean = "
+					ConsoleView.printlInConsoleln("Summary. test accuracy mean = "
 							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
 							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
 							+ MatrixOps.stderr(testAccuracy[c])
@@ -773,7 +773,7 @@ public abstract class Vectors2Classify {
 		for (Classification c : trial) {
 			String classification = "";
 			Instance instance = c.getInstance();
-			ConsoleView.writeInConsole(instance.getName() + " " + instance.getTarget()
+			ConsoleView.printlInConsoleln(instance.getName() + " " + instance.getTarget()
 					+ " ");
 			classification = instance.getName() + "," + instance.getTarget()
 					+ " ";
@@ -782,11 +782,11 @@ public abstract class Vectors2Classify {
 				classification = classification
 						+ labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + ",";
-				ConsoleView.writeInConsole(labeling.getLabelAtRank(j).toString() + ":"
+				ConsoleView.printlInConsoleln(labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + " ");
 			}
 			result.add(classification);
-			ConsoleView.writeInConsole("\n");
+			ConsoleView.printlInConsoleln("\n");
 		}
 	}
 
@@ -877,11 +877,11 @@ public abstract class Vectors2Classify {
 						// }
 						methods[j].invoke(trainer, parameterList);
 					} catch (IllegalAccessException e) {
-						ConsoleView.writeInConsole("IllegalAccessException " + e);
+						ConsoleView.printlInConsoleln("IllegalAccessException " + e);
 						throw new IllegalArgumentException(
 								"Java access error calling setter\n" + e);
 					} catch (InvocationTargetException e) {
-						ConsoleView.writeInConsole("IllegalTargetException " + e);
+						ConsoleView.printlInConsoleln("IllegalTargetException " + e);
 						throw new IllegalArgumentException(
 								"Java target error calling setter\n" + e);
 					}
@@ -890,14 +890,14 @@ public abstract class Vectors2Classify {
 				}
 			}
 			if (!foundSetter) {
-				ConsoleView.writeInConsole("Parameter " + parameterName
+				ConsoleView.printlInConsoleln("Parameter " + parameterName
 						+ " not found on trainer " + constructorName);
-				ConsoleView.writeInConsole("Available parameters for "
+				ConsoleView.printlInConsoleln("Available parameters for "
 						+ constructorName);
 				for (int j = 0; j < methods.length; j++) {
 					if (methods[j].getName().startsWith("set")
 							&& methods[j].getParameterTypes().length == 1) {
-						ConsoleView.writeInConsole(Character.toLowerCase(methods[j]
+						ConsoleView.printlInConsoleln(Character.toLowerCase(methods[j]
 								.getName().charAt(3))
 								+ methods[j].getName().substring(4));
 					}

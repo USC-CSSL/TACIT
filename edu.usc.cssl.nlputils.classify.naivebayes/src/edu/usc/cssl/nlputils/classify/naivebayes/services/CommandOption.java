@@ -149,7 +149,7 @@ public abstract class CommandOption
 		if (options == null)
 			throw new IllegalArgumentException ("No CommandOptions registered for class "+owner);
 		int count = options.size()-1;
-		ConsoleView.writeInConsole("printing command options...******");
+		ConsoleView.printlInConsoleln("printing command options...******");
 		while(count >=0) {			
 			//ConsoleView.writeInConsole(options.getCommandOption(count).name + ":" + options.getCommandOption(count).invoked);
 			options.getCommandOption(count).invoked = false;
@@ -223,7 +223,7 @@ public abstract class CommandOption
 
 		for (int i=0; i < options.size(); i++) {
 			CommandOption option = options.getCommandOption(i);
-			ConsoleView.writeInConsole(option.getName() + "\t=\t" + option.valueToString());
+			ConsoleView.printlInConsoleln(option.getName() + "\t=\t" + option.valueToString());
 		}
 	}
 
@@ -777,10 +777,10 @@ public abstract class CommandOption
 							//							}
 							methods[j].invoke(this.value, parameterList);
 						} catch ( IllegalAccessException e) {
-							ConsoleView.writeInConsole("IllegalAccessException " + e);
+							ConsoleView.printlInConsoleln("IllegalAccessException " + e);
 							throw new IllegalArgumentException ("Java access error calling setter\n"+e);
 						}  catch ( InvocationTargetException e) {
-							ConsoleView.writeInConsole("IllegalTargetException " + e);
+							ConsoleView.printlInConsoleln("IllegalTargetException " + e);
 							throw new IllegalArgumentException ("Java target error calling setter\n"+e);
 						}
 						foundSetter = true;
@@ -788,11 +788,11 @@ public abstract class CommandOption
 					}
 				}
 				if (!foundSetter){
-	                ConsoleView.writeInConsole("Parameter " + parameterName + " not found on trainer " + constructorName);
-					ConsoleView.writeInConsole("Available parameters for " + constructorName);
+	                ConsoleView.printlInConsoleln("Parameter " + parameterName + " not found on trainer " + constructorName);
+					ConsoleView.printlInConsoleln("Available parameters for " + constructorName);
 					for (int j=0; j<methods.length; j++){
 						if ( methods[j].getName().startsWith("set") && methods[j].getParameterTypes().length == 1){
-							ConsoleView.writeInConsole(Character.toLowerCase(methods[j].getName().charAt(3)) +
+							ConsoleView.printlInConsoleln(Character.toLowerCase(methods[j].getName().charAt(3)) +
 							                   methods[j].getName().substring(4));
 						}
 					}

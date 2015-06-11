@@ -56,8 +56,20 @@ public class ConsoleView extends ViewPart implements INlpCommonUiConstants {
 			}
 		});
 	}
+	
+	public static void printlInConsoleln() {
+		// update status bar
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if(text!= null){
+				text.append("\n");
+				}
+			}
+		});
+	}
 
-	public static void writeInConsole(final Object log) {
+	public static void printlInConsoleln(final Object log) {
 		// update status bar
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -65,6 +77,18 @@ public class ConsoleView extends ViewPart implements INlpCommonUiConstants {
 				if(text!= null){
 				text.append(String.valueOf(log));
 				text.append("\n");
+				}
+			}
+		});
+	}
+	
+	public static void printlInConsole(final Object log) {
+		// update status bar
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if(text!= null){
+				text.append(String.valueOf(log));
 				}
 			}
 		});

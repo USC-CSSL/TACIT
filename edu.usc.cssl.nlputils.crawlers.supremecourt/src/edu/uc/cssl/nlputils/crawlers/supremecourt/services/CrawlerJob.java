@@ -78,13 +78,13 @@ public class CrawlerJob implements Runnable,ICrawler {
 			String filename = row.select("td").get(1).text().trim() + "_"
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);
-			ConsoleView.writeInConsole(contenturl + ", " + filename);
+			ConsoleView.printlInConsoleln(contenturl + ", " + filename);
 			
 			// Fixing the unhandled exception without cascading.
 			try {
 				getFiles(contenturl, filename);
 			} catch (IOException e) {
-				ConsoleView.writeInConsole("Error Accessing the URL " + contenturl);
+				ConsoleView.printlInConsoleln("Error Accessing the URL " + contenturl);
 				e.printStackTrace();
 			}
 			// break;
@@ -101,7 +101,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 
 		Elements hidden = doc.select("div.hidden");
 		if (hidden.size() == 0) {
-			ConsoleView.writeInConsole("No data. Skipping page " + contenturl);
+			ConsoleView.printlInConsoleln("No data. Skipping page " + contenturl);
 			bw.close();
 			return;
 		}
@@ -113,7 +113,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 		// "-transcript.txt"
 		String outputDetail = "Writing " + outputDir + "/" + filename
 				+ "-transcript.txt";
-		ConsoleView.writeInConsole(outputDetail);
+		ConsoleView.printlInConsoleln(outputDetail);
 		this.monitor.subTask(outputDetail);
 
 		// Element transcript = doc.select("div.hidden").get(0);
@@ -157,7 +157,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 	}
 
 	private void downloadTranscriptMp3File(String filename, Element mp3) {
-		ConsoleView.writeInConsole("Downloading " + baseUrl + mp3.attr("href"));
+		ConsoleView.printlInConsoleln("Downloading " + baseUrl + mp3.attr("href"));
 		Response audio;
 		FileOutputStream fos;
 		try {
