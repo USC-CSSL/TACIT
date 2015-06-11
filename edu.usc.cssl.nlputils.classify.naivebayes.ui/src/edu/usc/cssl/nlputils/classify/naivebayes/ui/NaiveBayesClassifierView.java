@@ -563,15 +563,15 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								perf = (!isPreprocessEnabled) ? cv.doCross(nbc, classPaths, kValue) :  cv.doCross(nbc, tempClassPaths, kValue);
 								//nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation
 								if(isClassificationEnabled) {
-									ConsoleView.printlInConsole("---------- Classification Starts ------------");
+									ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
 									nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
-									ConsoleView.printlInConsole("---------- Classification Finished ------------");
+									ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 								}
 								
 								double avgAccuracy = 0.0;
-								ConsoleView.printlInConsole("------Cross Validation Results------");
+								ConsoleView.printlInConsoleln("------Cross Validation Results------");
 								for(Integer trialNum : perf.keySet()) {
-									ConsoleView.printlInConsole("Trial "+ trialNum);
+									ConsoleView.printlInConsoleln("Trial "+ trialNum);
 									if(null != perf.get(trialNum)) {
 										String[] results = perf.get(trialNum).split("=");
 										for(int i = 0; i<results.length; i++) {
@@ -579,10 +579,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 												avgAccuracy+=Double.parseDouble(results[i+1].split(" ")[1]);
 											}
 										}
-										ConsoleView.printlInConsole(perf.get(trialNum));
+										ConsoleView.printlInConsoleln(perf.get(trialNum));
 									}
 								}	
-								ConsoleView.printlInConsole("Average test accuracy = "+ avgAccuracy/kValue);
+								ConsoleView.printlInConsoleln("Average test accuracy = "+ avgAccuracy/kValue);
 								if(!isPreprocessEnabled) 
 									nbc.deleteTempDirectories(trainingDataPaths);
 							} catch (IOException e) {

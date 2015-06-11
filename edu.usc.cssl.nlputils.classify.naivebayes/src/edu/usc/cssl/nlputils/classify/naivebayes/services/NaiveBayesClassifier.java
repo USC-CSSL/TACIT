@@ -95,7 +95,7 @@ public class NaiveBayesClassifier {
 		Text2Vectors.main(t2vArgs_test);
 		System.out.println("Created test file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
-		ConsoleView.printlInConsole("\nCreated classifier output file " + outputPath+ ".out");
+		ConsoleView.printlInConsoleln("\nCreated classifier output file " + outputPath+ ".out");
 		System.out.println(result.get(0));
 		writeReadMe(outputPath);
 		return result.get(0);
@@ -146,7 +146,7 @@ public class NaiveBayesClassifier {
 		Text2Vectors.main(t2vArgs_test);
 		System.out.println("Created validation file " + outputPath + ".test");
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
-		ConsoleView.printlInConsole("\nCreated classifier output file " + outputPath + ".out");
+		ConsoleView.printlInConsoleln("\nCreated classifier output file " + outputPath + ".out");
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "_output.csv")));
 		bw.write("File, Predicted Class, Other Classes\n");

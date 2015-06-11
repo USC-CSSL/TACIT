@@ -86,8 +86,6 @@ public abstract class CommandOption
 	/** Give this CommandOption the opportunity to process the index'th argument in args.
 		Return the next unprocessed index. */
 	public int process (java.lang.String[] args, int index) {
-
-		//ConsoleView.writeInConsole (name + " processing arg " + args[index]);
 		if (args.length == 0)
 			return index;
 
@@ -150,7 +148,6 @@ public abstract class CommandOption
 			throw new IllegalArgumentException ("No CommandOptions registered for class "+owner);
 		int count = options.size()-1;
 		while(count >=0) {			
-			//ConsoleView.writeInConsole(options.getCommandOption(count).name + ":" + options.getCommandOption(count).invoked);
 			options.getCommandOption(count).invoked = false;
 			count--;
 		}
@@ -757,23 +754,11 @@ public abstract class CommandOption
 
 				boolean foundSetter = false;
 				for (int j=0; j<methods.length; j++){
-					//					ConsoleView.writeInConsole("method " + j + " name is " + methods[j].getName());
-					//					ConsoleView.writeInConsole("set" + Character.toUpperCase(parameterName.charAt(0)) + parameterName.substring(1));
 					if ( ("set" + Character.toUpperCase(parameterName.charAt(0)) + parameterName.substring(1)).equals(methods[j].getName()) &&
 						 methods[j].getParameterTypes().length == 1){
-						//						ConsoleView.writeInConsole("Matched method " + methods[j].getName());
-						//						Class[] ptypes = methods[j].getParameterTypes();
-						//						ConsoleView.writeInConsole("Parameter types:");
-						//						for (int k=0; k<ptypes.length; k++){
-						//							ConsoleView.writeInConsole("class " + k + " = " + ptypes[k].getName());
-						//						}
 
 						try {
 							java.lang.Object[] parameterList = new java.lang.Object[]{parameterValueObject};
-							//							ConsoleView.writeInConsole("Argument types:");
-							//							for (int k=0; k<parameterList.length; k++){
-							//								ConsoleView.writeInConsole("class " + k + " = " + parameterList[k].getClass().getName());
-							//							}
 							methods[j].invoke(this.value, parameterList);
 						} catch ( IllegalAccessException e) {
 							ConsoleView.printlInConsoleln("IllegalAccessException " + e);

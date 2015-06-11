@@ -532,7 +532,7 @@ public abstract class Vectors2Classify {
 						.get(c));
 				trainer.setValidationInstances(ilists[2]);
 				// ConsoleView.writeInConsole("Trial " + trialIndex + " Training " + trainer + " with " + ilists[0].size() + " instances");
-				ConsoleView.printlInConsole("Training " + trainer + " with " + ilists[0].size() + " instances");
+				ConsoleView.printlInConsoleln("Training " + trainer + " with " + ilists[0].size() + " instances");
 				if (unlabeledProportionOption.value > 0)
 					ilists[0].hideSomeLabels(unlabeledIndices);
 				Classifier classifier = trainer.train(ilists[0]);
@@ -540,7 +540,7 @@ public abstract class Vectors2Classify {
 					ilists[0].unhideAllLabels();
 
 				//ConsoleView.writeInConsole("Trial " + trialIndex + " Training " + trainer.toString() + " finished");
-				ConsoleView.printlInConsole("Training " + trainer.toString() + " finished");
+				ConsoleView.printlInConsoleln("Training " + trainer.toString() + " finished");
 				time[c] = System.currentTimeMillis() - time[c];
 				Trial trainTrial = new Trial(classifier, ilists[0]);
 				// assert (ilists[1].size() > 0);
@@ -622,9 +622,9 @@ public abstract class Vectors2Classify {
 				// train
 				if (ReportOptions[ReportOption.train][ReportOption.confusion]) {
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " 	+ trainer.toString() + " Training Data Confusion Matrix");
-					ConsoleView.printlInConsole(trainer.toString() + " Training Data Confusion Matrix");
+					ConsoleView.printlInConsoleln(trainer.toString() + " Training Data Confusion Matrix");
 					if (ilists[0].size() > 0)
-						ConsoleView.printlInConsole(trainConfusionMatrix[c][trialIndex]);
+						ConsoleView.printlInConsoleln(trainConfusionMatrix[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.train][ReportOption.accuracy]) {
@@ -635,44 +635,44 @@ public abstract class Vectors2Classify {
 					if (pvalue != 0) {
 						if (pvalue > 0.5)
 							pvalue = Math.abs(pvalue - 1);
-						ConsoleView.printlInConsole("P value = " + pvalue + "\n");
+						ConsoleView.printlInConsoleln("P value = " + pvalue + "\n");
 					}
 
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " training data accuracy= " + trainAccuracy[c][trialIndex]);
-					ConsoleView.printlInConsole(trainer.toString() + " training data accuracy= " + trainAccuracy[c][trialIndex]);
+					ConsoleView.printlInConsoleln(trainer.toString() + " training data accuracy= " + trainAccuracy[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.train][ReportOption.f1]) {
 					String label = ReportOptionArgs[ReportOption.train][ReportOption.f1];
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer "+ trainer.toString() + " training data F1(" + label + ") = " + trainTrial.getF1(label));
-					ConsoleView.printlInConsole(trainer.toString() + " training data F1(" + label + ") = " + trainTrial.getF1(label));
+					ConsoleView.printlInConsoleln(trainer.toString() + " training data F1(" + label + ") = " + trainTrial.getF1(label));
 				}
 
 				// validation
 				if (ReportOptions[ReportOption.validation][ReportOption.confusion]) {
 				//	ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " Validation Data Confusion Matrix");
-					ConsoleView.printlInConsole(trainer.toString() + " Validation Data Confusion Matrix");
+					ConsoleView.printlInConsoleln(trainer.toString() + " Validation Data Confusion Matrix");
 					if (ilists[2].size() > 0)
-						ConsoleView.printlInConsole(validationConfusionMatrix[c][trialIndex]);
+						ConsoleView.printlInConsoleln(validationConfusionMatrix[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.validation][ReportOption.accuracy]) {
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " validation data accuracy= " + validationAccuracy[c][trialIndex]);
-					ConsoleView.printlInConsole(trainer.toString() + " validation data accuracy= " + validationAccuracy[c][trialIndex]);
+					ConsoleView.printlInConsoleln(trainer.toString() + " validation data accuracy= " + validationAccuracy[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.validation][ReportOption.f1]) {
 					String label = ReportOptionArgs[ReportOption.validation][ReportOption.f1];
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " validation data F1(" + label + ") = " + validationTrial.getF1(label));
-					ConsoleView.printlInConsole(trainer.toString() + " validation data F1(" + label + ") = " + validationTrial.getF1(label));
+					ConsoleView.printlInConsoleln(trainer.toString() + " validation data F1(" + label + ") = " + validationTrial.getF1(label));
 				}
 
 				// test
 				if (ReportOptions[ReportOption.test][ReportOption.confusion]) {
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " Test Data Confusion Matrix");
-					ConsoleView.printlInConsole(trainer.toString() + " Test Data Confusion Matrix");
+					ConsoleView.printlInConsoleln(trainer.toString() + " Test Data Confusion Matrix");
 					if (ilists[1].size() > 0)
-						ConsoleView.printlInConsole(testConfusionMatrix[c][trialIndex]);
+						ConsoleView.printlInConsoleln(testConfusionMatrix[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.test][ReportOption.accuracy]) {
@@ -682,17 +682,17 @@ public abstract class Vectors2Classify {
 					if (pvalue != 0) {
 						if (pvalue > 0.5)
 							pvalue = Math.abs(pvalue - 1);
-						ConsoleView.printlInConsole("P value = " + pvalue + " \n");
+						ConsoleView.printlInConsoleln("P value = " + pvalue + " \n");
 					}
 
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " test data accuracy= " + testAccuracy[c][trialIndex]);
-					ConsoleView.printlInConsole(trainer.toString() + " test data accuracy= " + testAccuracy[c][trialIndex]);
+					ConsoleView.printlInConsoleln(trainer.toString() + " test data accuracy= " + testAccuracy[c][trialIndex]);
 				}
 
 				if (ReportOptions[ReportOption.test][ReportOption.f1]) {
 					String label = ReportOptionArgs[ReportOption.test][ReportOption.f1];
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " test data F1(" + label + ") = " + testTrial.getF1(label));
-					ConsoleView.printlInConsole(trainer.toString() + " test data F1(" + label + ") = " + testTrial.getF1(label));
+					ConsoleView.printlInConsoleln(trainer.toString() + " test data F1(" + label + ") = " + testTrial.getF1(label));
 				}
 
 				if (trialIndex == 0)
@@ -706,13 +706,13 @@ public abstract class Vectors2Classify {
 		for (int c = 0; c < numTrainers; c++) {
 			ConsoleView.printlInConsole("\n" + trainerNames[c].toString());
 			if (ReportOptions[ReportOption.train][ReportOption.accuracy])
-				ConsoleView.printlInConsole("Summary. train accuracy mean = "
+				ConsoleView.printlInConsoleln("Summary. train accuracy mean = "
 						+ MatrixOps.mean(trainAccuracy[c]) + " stddev = "
 						+ MatrixOps.stddev(trainAccuracy[c]) + " stderr = "
 						+ MatrixOps.stderr(trainAccuracy[c]));
 
 			if (ReportOptions[ReportOption.validation][ReportOption.accuracy])
-				ConsoleView.printlInConsole("Summary. validation accuracy mean = "
+				ConsoleView.printlInConsoleln("Summary. validation accuracy mean = "
 						+ MatrixOps.mean(validationAccuracy[c]) + " stddev = "
 						+ MatrixOps.stddev(validationAccuracy[c])
 						+ " stderr = "
@@ -720,13 +720,13 @@ public abstract class Vectors2Classify {
 
 			if (ReportOptions[ReportOption.test][ReportOption.accuracy]) {
 				if (pvalue != 0)
-					ConsoleView.printlInConsole("Summary. test accuracy mean = "
+					ConsoleView.printlInConsoleln("Summary. test accuracy mean = "
 							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
 							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
 							+ MatrixOps.stderr(testAccuracy[c]) + " pvalue = "
 							+ pvalue);
 				else
-					ConsoleView.printlInConsole("Summary. test accuracy mean = "
+					ConsoleView.printlInConsoleln("Summary. test accuracy mean = "
 							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
 							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
 							+ MatrixOps.stderr(testAccuracy[c])

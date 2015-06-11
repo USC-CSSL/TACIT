@@ -14,7 +14,6 @@ import java.util.NoSuchElementException;
 
 import cc.mallet.types.InstanceList;
 import cc.mallet.types.MultiInstanceList;
-import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 /**
  * An iterator which splits an {@link InstanceList} into n-folds and iterates
@@ -57,7 +56,6 @@ implements java.util.Iterator<InstanceList[]>, Serializable {
         for (int i=0; i < nfolds; i++) { 
             proportions[i] = fraction;
         }
-        ConsoleView.printlInConsoleln("Target Alphabet :" + ilist.getTargetAlphabet() + ":"+ ilist.getDataAlphabet());
         this.folds = ilist.split (r, proportions);
     }
 

@@ -34,10 +34,10 @@ public class CrossValidator {
 			new File(testDir).mkdir();	
 		}	
 		
-		ConsoleView.printlInConsole("---------- Cross Validation Starts ------------");
+		ConsoleView.printlInConsoleln("---------- Cross Validation Starts ------------");
 		for (int i=1; i<=kValue; i++) {
 			int count = 0;
-			ConsoleView.printlInConsole ("------ Trial "+ i +"------");
+			ConsoleView.printlInConsoleln ("------ Trial "+ i +"------");
 			ArrayList<String> trainingDataPaths = new ArrayList<String>();
 			ArrayList<String> testingDataPaths = new ArrayList<String>();
 			
@@ -99,7 +99,6 @@ public class CrossValidator {
 			}
 
 			System.out.println("Training data paths ..");
-			ConsoleView.printlInConsoleln("Training data paths ..");
 			for(String s : trainingDataPaths)
 				System.out.println(s);
 			
@@ -111,7 +110,7 @@ public class CrossValidator {
 			String result = nbc.predict(trainingDataPaths, testingDataPaths, false, false);
 			performance.put(i, result);
 		}
-		ConsoleView.printlInConsole("---------- Cross Validation Finished ------------");
+		ConsoleView.printlInConsoleln("---------- Cross Validation Finished ------------");
 		nbc.purgeDirectory(new File(trainDir));
 		nbc.purgeDirectory(new File(testDir));
 		return performance;
