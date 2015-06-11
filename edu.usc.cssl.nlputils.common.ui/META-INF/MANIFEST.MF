@@ -17,4 +17,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.nlputils.common.ui,
  edu.usc.cssl.nlputils.common.ui.composite.from,
  edu.usc.cssl.nlputils.common.ui.outputdata,
- edu.usc.cssl.nlputils.common.ui.validation
+ edu.usc.cssl.nlputils.common.ui.validation,
+ edu.usc.cssl.nlputils.common.ui.views

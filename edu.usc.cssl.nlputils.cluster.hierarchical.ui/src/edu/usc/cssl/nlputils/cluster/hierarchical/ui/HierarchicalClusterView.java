@@ -2,7 +2,10 @@ package edu.usc.cssl.nlputils.cluster.hierarchical.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +45,7 @@ import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.Preprocess;
 
 public class HierarchicalClusterView extends ViewPart implements
@@ -182,8 +186,9 @@ public class HierarchicalClusterView extends ViewPart implements
 			}
 
 			public void run() {
-
-				
+				final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
+				final Calendar cal = Calendar.getInstance();
+				ConsoleView.writeInConsoleHeader("Hierarchical clustering started "+(dateFormat.format(cal.getTime())));
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final List<String> selectedFiles = layoutData.getSelectedFiles();
 				final String outputPath = layoutOutputData.getOutputLabel().getText();
@@ -235,7 +240,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						      public void run() {
 						if (isPreprocess && preprocessTask.doCleanUp()){
 							preprocessTask.clean();
-							System.out.println("Cleaning up preprocessed files - "+dirPath);
+							ConsoleView.writeInConsole("Cleaning up preprocessed files - "+dirPath);
 						}
 						      }
 						
@@ -252,7 +257,7 @@ public class HierarchicalClusterView extends ViewPart implements
 
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
-						
+						ConsoleView.writeInConsoleHeader("<terminated> Hierarchical clustering  "+(dateFormat.format(cal.getTime())));
 						return Status.OK_STATUS;
 					}
 				};

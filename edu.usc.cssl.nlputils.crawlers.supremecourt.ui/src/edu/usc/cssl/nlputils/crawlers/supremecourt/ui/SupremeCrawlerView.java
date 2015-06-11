@@ -42,6 +42,7 @@ import edu.uc.cssl.nlputils.crawlers.supremecourt.services.SupremeCourtCrawler;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.cssl.nlputils.crawlers.supremecourt.ui.internal.ISupremeCrawlerUIConstants;
 import edu.usc.cssl.nlputils.crawlers.supremecourt.ui.internal.SupremeCrawlerImageRegistry;
 
@@ -221,7 +222,7 @@ public class SupremeCrawlerView extends ViewPart implements
 							  NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is cancelled ",IStatus.INFO);
 							return Status.CANCEL_STATUS;
 						}
-                        System.out.println("Done!!");
+						ConsoleView.writeInConsole("Done!!");
                         NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is sucessfully completed",IStatus.OK);
 						return Status.OK_STATUS;
 					}

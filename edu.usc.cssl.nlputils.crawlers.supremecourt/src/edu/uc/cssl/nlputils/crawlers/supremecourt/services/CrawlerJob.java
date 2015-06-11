@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.crawlers.ICrawler;
 
 public class CrawlerJob implements Runnable,ICrawler {
@@ -77,7 +78,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 			String filename = row.select("td").get(1).text().trim() + "_"
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);
-			System.out.println(contenturl + ", " + filename);
+			ConsoleView.writeInConsole(contenturl + ", " + filename);
 			
 			// Fixing the unhandled exception without cascading.
 			try {
@@ -112,7 +113,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 		// "-transcript.txt"
 		String outputDetail = "Writing " + outputDir + "/" + filename
 				+ "-transcript.txt";
-		System.out.println(outputDetail);
+		ConsoleView.writeInConsole(outputDetail);
 		this.monitor.subTask(outputDetail);
 
 		// Element transcript = doc.select("div.hidden").get(0);
