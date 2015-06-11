@@ -14,6 +14,8 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 public class CooccurrenceAnalysis {
 
 	private static String delimiters = "";// " .,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>";
@@ -89,7 +91,7 @@ public class CooccurrenceAnalysis {
 				count = 0;
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;
-				System.out.println("Processing");
+				ConsoleView.writeInConsole("Processing");
 
 				List<String> words = new ArrayList<String>();
 				if (!f.exists() || f.isDirectory())
@@ -147,7 +149,7 @@ public class CooccurrenceAnalysis {
 						if (buildMatrix) {
 
 							Map<String, Integer> vec = null;
-							// System.out.println("Building word mat for " +
+							// ConsoleView.writeInConsole("Building word mat for " +
 							// word);
 							if (wordMat.containsKey(word)) {
 								vec = wordMat.get(word);
@@ -183,10 +185,10 @@ public class CooccurrenceAnalysis {
 				writePhrases(phrase);
 			}
 
-			System.out.println(phrase.size());
+			ConsoleView.writeInConsole(String.valueOf(phrase.size()));
 			return true;
 		} catch (Exception e) {
-			System.out.println("Exception occurred in Cooccurrence Analysis "
+			ConsoleView.writeInConsole("Exception occurred in Cooccurrence Analysis "
 					+ e);
 		}
 
@@ -208,7 +210,7 @@ public class CooccurrenceAnalysis {
 			}
 			fw.close();
 		} catch (IOException e) {
-			System.out.println("Error writing output to file phrases.txt " + e);
+			ConsoleView.writeInConsole("Error writing output to file phrases.txt " + e);
 		}
 	}
 
@@ -233,7 +235,7 @@ public class CooccurrenceAnalysis {
 		SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
 		Map<String, Integer> vec = null;
 
-		System.out.println(keys.size());
+		ConsoleView.writeInConsole(keys.size());
 		try {
 			FileWriter fw = new FileWriter(new File(outputPath + File.separator
 					+ "word-to-word-matrix.csv"));
@@ -257,7 +259,7 @@ public class CooccurrenceAnalysis {
 			}
 			fw.close();
 		} catch (IOException e) {
-			System.out.println("Error writing output to files" + e);
+			ConsoleView.writeInConsole("Error writing output to files" + e);
 		}
 	}
 
@@ -277,7 +279,7 @@ public class CooccurrenceAnalysis {
 		if (fOption)
 			buildMatrix = true;
 
-		// System.out.println("Running Co-occurrence Analysis...");
+		// ConsoleView.writeInConsole("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
 		boolean isSuccess = calculateCooccurrences(selectedFiles,
 				seedFileLocation, windowSize, fOutputDir, threshold,
@@ -300,7 +302,7 @@ public class CooccurrenceAnalysis {
 	}
 
 	private void appendLog(String string) {
-		System.out.println(string);
+		ConsoleView.writeInConsole(string);
 
 	}
 }

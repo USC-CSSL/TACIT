@@ -9,7 +9,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  edu.usc.cssl.nlputils.common,
  org.jsoup;bundle-version="1.7.2",
- edu.usc.cssl.nlputils.wordcount.weighted
+ edu.usc.cssl.nlputils.wordcount.weighted,
+ edu.usc.cssl.nlputils.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.uc.cssl.nlputils.wordcount.weighted.services;

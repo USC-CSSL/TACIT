@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 public class Trie {
 
 	private class Node {
@@ -40,12 +42,12 @@ public class Trie {
 		int i=0;
 		
 		while(next != null && i != word.length()-1){
-			//System.out.println(i+"/"+word.length() +" "+ word.charAt(i));
+			//ConsoleView.writeInConsole(i+"/"+word.length() +" "+ word.charAt(i));
 			prev = next;
 			next = next.children.get(word.charAt(i+1));
-			//System.out.println("Prev - " + prev.character);
+			//ConsoleView.writeInConsole("Prev - " + prev.character);
 			//if (next!=null)
-			//System.out.println("Next - " + next.character);
+			//ConsoleView.writeInConsole("Next - " + next.character);
 			i++;
 		}
 		
@@ -56,13 +58,13 @@ public class Trie {
 			while( i != word.length()){
 				n = new Node(word.charAt(i), null, false);
 				prev.children.put(word.charAt(i), n);
-				//System.out.println("Inserted - " + n.character);
+				//ConsoleView.writeInConsole("Inserted - " + n.character);
 				prev = n;
 				i++;
 			}
 		} else {
 			// The string is in the trie. mark the current node's isWord to true to mark it as a valid word.
-			//System.out.println("Marking "+next.character+" as valid.");
+			//ConsoleView.writeInConsole("Marking "+next.character+" as valid.");
 			//next.isWord = true; - instead, just set prev = next as the remaining instructions outside the condition do the rest.
 			prev = next;
 		}
@@ -89,7 +91,6 @@ public class Trie {
 				s.push((Node)pair.getValue());
 			}
 		}
-		System.out.println();
 	}
 	
 	public List<Integer> query(String word){

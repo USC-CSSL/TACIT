@@ -17,6 +17,8 @@ import java.util.TreeMap;
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 
 public class SVMClassify {
 	private String dateString;
@@ -38,7 +40,7 @@ public class SVMClassify {
 	public void buildDfMap(File inputFile) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
 		
-		//System.out.println("Building map for: "+inputFile.getAbsolutePath());
+		//ConsoleView.writeInConsole("Building map for: "+inputFile.getAbsolutePath());
 		String currentLine;
 		StringBuilder fullFile = new StringBuilder();
 		while ((currentLine = br.readLine())!=null){
@@ -71,12 +73,12 @@ public class SVMClassify {
 		while((currentLine = br.readLine())!=null){
 			fullFile.append(currentLine+' ');
 		}
-		//System.out.println(fullFile);
+		//ConsoleView.writeInConsole(fullFile);
 		String input = fullFile.toString();
 		for (char c:delimiters.toCharArray())
 			input = input.replace(c, ' ');
 		
-		//System.out.println(input);
+		//ConsoleView.writeInConsole(input);
 		for (String word: input.split("\\s+")){
 			if(!hashMap.containsKey(word))
 				hashMap.put(word, (double)1);
@@ -92,14 +94,14 @@ public class SVMClassify {
 			Integer docsContaining;
 			if ((docsContaining = dfMap.get(word))!=null){
 				tfidf = hashMap.get(word) * (Math.log10(noOfDocuments / (double)docsContaining));
-				//System.out.println(word+" - "+noOfDocuments+"/"+(double)docsContaining);
+				//ConsoleView.writeInConsole(word+" - "+noOfDocuments+"/"+(double)docsContaining);
 			} else {
 				continue;		// If new word, none of the training documents will contain it. So, skip.
 			}
 			hashMap.put(word, tfidf);
 		}
 		}
-		//System.out.println(hashMap);
+		//ConsoleView.writeInConsole(hashMap);
 		br.close();
 		return hashMap;
 	}
@@ -115,13 +117,13 @@ public class SVMClassify {
 				integerMap.put(featureMapIndex, bow.get(word));
 			}
 		}
-		//System.out.println(integerMap.toString());
-		//System.out.println(bow.toString());
+		//ConsoleView.writeInConsole(integerMap.toString());
+		//ConsoleView.writeInConsole(bow.toString());
 		StringBuilder sb = new StringBuilder();
 		for (int i:integerMap.keySet()){
 			sb.append(i+":"+integerMap.get(i)+" ");
 		}
-		//System.out.println(sb.toString().trim());
+		//ConsoleView.writeInConsole(sb.toString().trim());
 		return sb.toString().trim();
 	}
 	
@@ -153,12 +155,12 @@ public class SVMClassify {
 		while ((currentLine = br.readLine())!=null){
 			String[] items = currentLine.split("\\s+");
 			double alpha = Double.parseDouble(items[0]);
-			//System.out.println(alpha);
+			//ConsoleView.writeInConsole(alpha);
 			for (int i = 1;i<items.length;i++) {
 				String[] pair = items[i].split(":");
 				int featureID = Integer.parseInt(pair[0]);
 				double weight = Double.parseDouble(pair[1]);
-				//System.out.println(pair[0]+" "+pair[1]);
+				//ConsoleView.writeInConsole(pair[0]+" "+pair[1]);
 				if (weights.containsKey(featureID)){
 					weights.put(featureID, weights.get(featureID)+ (alpha*weight));
 				} else {
@@ -166,7 +168,7 @@ public class SVMClassify {
 				}
 			}
 		}
-		//System.out.println(weights);
+		//ConsoleView.writeInConsole(weights);
 		br.close();
 		return weights;
 	}
@@ -194,8 +196,8 @@ public class SVMClassify {
 				noOfDocuments = noOfDocuments+1;	// Count the total no of documents
 				buildDfMap(file);
 			}
-			//System.out.println("dfmap -"+dfMap);
-			System.out.println("Finished building document frequency map.");
+			//ConsoleView.writeInConsole("dfmap -"+dfMap);
+			ConsoleView.writeInConsole("Finished building document frequency map.");
 		}
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
@@ -203,35 +205,35 @@ public class SVMClassify {
 		for (File file:trainFiles1){
 			if (file.getAbsolutePath().contains("DS_Store"))
 				continue;
-			//System.out.println("Reading File "+file.toString());
+			//ConsoleView.writeInConsole("Reading File "+file.toString());
 			bw.write("+1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:trainFiles2){
 			if (file.getAbsolutePath().contains("DS_Store"))
 				continue;
-			//System.out.println("Reading File "+file.toString());
+			//ConsoleView.writeInConsole("Reading File "+file.toString());
 			bw.write("-1 "+BowToString(fileToBow(file)));
 			bw.newLine();
 		}
-		System.out.println("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
-		System.out.println("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
+		ConsoleView.writeInConsole("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
+		ConsoleView.writeInConsole("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
 		bw.close();
 		
 		String[] train_arguments;
 		
-		System.out.println("Linear Kernel selected");
+		ConsoleView.writeInConsole("Linear Kernel selected");
 		train_arguments = new String[4];
 		train_arguments[0] = "-t";
 		train_arguments[1] = "0";
 		train_arguments[2] = trainFile.getAbsolutePath();
 		train_arguments[3] = modelFile.getAbsolutePath();
 		
-		System.out.println("Training the classifier...");
+		ConsoleView.writeInConsole("Training the classifier...");
 		double[] result  = SVMTrain.main(train_arguments);
 		double crossValResult = result[0];
 		double pvalue = result[1];
-		System.out.println("Model file created - "+modelFile.getAbsolutePath());
+		ConsoleView.writeInConsole("Model file created - "+modelFile.getAbsolutePath());
 		
 		// Saving the feature map
 		File hashmap = new File(intermediatePath+"_"+kVal+".hashmap");
@@ -239,7 +241,7 @@ public class SVMClassify {
 		oos.writeObject(featureMap);
 		oos.flush();
 		oos.close();
-		System.out.println("Feature Map saved - "+hashmap.getAbsolutePath());
+		ConsoleView.writeInConsole("Feature Map saved - "+hashmap.getAbsolutePath());
 		
 		
 		HashMap<Integer,String> reverseMap = new HashMap<Integer,String>();
@@ -258,7 +260,7 @@ public class SVMClassify {
 			//System.out.print(i+" ");
 			weightsWriter.write(reverseMap.get(i)+","+i+","+weightsMap.get(i)+"\n");
 		}
-		System.out.println("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
+		ConsoleView.writeInConsole("Created Predictive Weights file - "+weightsFile.getAbsolutePath());
 		weightsWriter.close();
 		}
 		
@@ -283,8 +285,8 @@ public class SVMClassify {
 				noOfDocuments = noOfDocuments + 1;
 				buildDfMap(file);
 			}
-			//System.out.println("dfmap -"+dfMap);
-			System.out.println("Finished building document frequency map.");
+			//ConsoleView.writeInConsole("dfmap -"+dfMap);
+			ConsoleView.writeInConsole("Finished building document frequency map.");
 		}
 				
 		// Create a test file just like the training file was created.
@@ -295,20 +297,20 @@ public class SVMClassify {
 		for (File file:testFiles1){
 			if (file.getAbsolutePath().contains("DS_Store"))
 				continue;
-			//System.out.println("Reading File "+file.toString());
+			//ConsoleView.writeInConsole("Reading File "+file.toString());
 			bw.write("+1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
 		}
 		for (File file:testFiles2){
 			if (file.getAbsolutePath().contains("DS_Store"))
 				continue;
-			//System.out.println("Reading File "+file.toString());
+			//ConsoleView.writeInConsole("Reading File "+file.toString());
 			bw.write("-1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
 		}
-		System.out.println("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		ConsoleView.writeInConsole("Finished building SVM-format test file - "+testFile.getAbsolutePath());
 		bw.close();
-		System.out.println("Model file loaded - "+modelFile.getAbsolutePath());
+		ConsoleView.writeInConsole("Model file loaded - "+modelFile.getAbsolutePath());
 		String[] predict_arguments = new String[3];
 		predict_arguments[0] = testFile.getAbsolutePath();
 		predict_arguments[1] = modelFile.getAbsolutePath();
@@ -319,12 +321,12 @@ public class SVMClassify {
 		BinomialTest btest = new BinomialTest();
 		double p =0.5;
 		double pvalue = btest.binomialTest(total, correct, p, AlternativeHypothesis.TWO_SIDED);
-		System.out.println("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
-		System.out.println("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
-		System.out.println("P value  = " + pvalue);
+		ConsoleView.writeInConsole("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
+		ConsoleView.writeInConsole("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
+		ConsoleView.writeInConsole("P value  = " + pvalue);
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
-		//System.out.println(nf.format(pvalue));
+		//ConsoleView.writeInConsole(nf.format(pvalue));
 		if(pvalue != 0){
 			if(pvalue > 0.5)
 				pvalue = Math.abs(pvalue -1);

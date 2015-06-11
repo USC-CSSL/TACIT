@@ -16,6 +16,8 @@ import libsvm.svm_problem;
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 public class SVMTrain {
 	private svm_parameter param;		// set by parse_command_line
 	private svm_problem prob;		// set by read_problem
@@ -102,13 +104,13 @@ public class SVMTrain {
 				if(target[i] == prob.y[i])
 					++total_correct;
 			System.out.print("Cross Validation Accuracy = "+100.0*total_correct/prob.l+"%\n");
-			System.out.println("Trials " + prob.l + " correct " + total_correct);
+			ConsoleView.writeInConsole("Trials " + prob.l + " correct " + total_correct);
 			try{
 			BinomialTest binomtest = new BinomialTest();
 			pvalue = binomtest.binomialTest(prob.l, total_correct, 0.5, AlternativeHypothesis.TWO_SIDED);
-			System.out.println("Pvalue = " +(pvalue));
+			ConsoleView.writeInConsole("Pvalue = " +(pvalue));
 			}catch(Exception e){
-				System.out.println("Exception in binomial p value " + e);
+				ConsoleView.writeInConsole("Exception in binomial p value " + e);
 			}
 			crossValResult = 100.0*total_correct/prob.l;
 		}
@@ -116,7 +118,7 @@ public class SVMTrain {
 	
 	private void run(String argv[]) throws IOException
 	{
-		System.out.println(argv.length);
+		ConsoleView.writeInConsole(String.valueOf(argv.length));
 		parse_command_line(argv);
 		read_problem();
 		error_msg = svm.svm_check_parameter(prob,param);

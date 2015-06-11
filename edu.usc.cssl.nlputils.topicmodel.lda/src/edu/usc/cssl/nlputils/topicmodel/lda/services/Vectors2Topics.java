@@ -21,6 +21,7 @@ import cc.mallet.types.FeatureSequence;
 import cc.mallet.types.InstanceList;
 import cc.mallet.util.CommandOption;
 import cc.mallet.util.Randoms;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 /** Perform topic analysis in the style of LDA and its variants.
  *  @author <a href="mailto:mccallum@cs.umass.edu">Andrew McCallum</a>
@@ -208,7 +209,7 @@ public class Vectors2Topics {
 
 		if (usePAM.value) {
 			InstanceList ilist = InstanceList.load (new File(inputFile.value));
-			System.out.println ("Data loaded.");
+			ConsoleView.writeInConsole ("Data loaded.");
 			if (inputModelFilename.value != null)
 				throw new IllegalArgumentException ("--input-model not supported with --use-pam.");
 			PAM4L pam = new PAM4L(pamNumSupertopics.value, pamNumSubtopics.value);
@@ -243,7 +244,7 @@ public class Vectors2Topics {
 		
 		else if (useNgrams.value) {
 			InstanceList ilist = InstanceList.load (new File(inputFile.value));
-			System.out.println ("Data loaded.");
+			ConsoleView.writeInConsole ("Data loaded.");
 			if (inputModelFilename.value != null)
 				throw new IllegalArgumentException ("--input-model not supported with --use-ngrams.");
 			TopicalNGrams tng = new TopicalNGrams(numTopics.value,
@@ -286,11 +287,11 @@ public class Vectors2Topics {
 			InstanceList[] training = new InstanceList[ languageInputFiles.value.length ];
 			for (int i=0; i < training.length; i++) {
 				training[i] = InstanceList.load(new File(languageInputFiles.value[i]));
-				if (training[i] != null) { System.out.println(i + " is not null"); }
-				else { System.out.println(i + " is null"); }
+				if (training[i] != null) { ConsoleView.writeInConsole(i + " is not null"); }
+				else { ConsoleView.writeInConsole(i + " is null"); }
 			}
 
-			System.out.println ("Data loaded.");
+			ConsoleView.writeInConsole ("Data loaded.");
 			
 			// For historical reasons we currently only support FeatureSequence data,
 			//  not the FeatureVector, which is the default for the input functions.
@@ -376,14 +377,14 @@ public class Vectors2Topics {
 				// Loading new data is optional if we are restoring a saved state.
 				if (inputFile.value != null) {
 					InstanceList instances = InstanceList.load (new File(inputFile.value));
-					System.out.println ("Data loaded.");
+					ConsoleView.writeInConsole ("Data loaded.");
 					lda.addInstances(instances);
 				}
 				*/
 			} 
 			else {
 				InstanceList training = InstanceList.load (new File(inputFile.value));
-				System.out.println ("Data loaded.");
+				ConsoleView.writeInConsole ("Data loaded.");
 
 				if (training.size() > 0 &&
 					training.get(0) != null) {

@@ -18,8 +18,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;

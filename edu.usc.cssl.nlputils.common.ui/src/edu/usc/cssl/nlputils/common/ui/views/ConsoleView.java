@@ -1,16 +1,11 @@
 package edu.usc.cssl.nlputils.common.ui.views;
 
-import java.io.PrintStream;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -62,13 +57,13 @@ public class ConsoleView extends ViewPart implements INlpCommonUiConstants {
 		});
 	}
 
-	public static void writeInConsole(final String log) {
+	public static void writeInConsole(final Object log) {
 		// update status bar
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if(text!= null){
-				text.append(log);
+				text.append(String.valueOf(log));
 				text.append("\n");
 				}
 			}

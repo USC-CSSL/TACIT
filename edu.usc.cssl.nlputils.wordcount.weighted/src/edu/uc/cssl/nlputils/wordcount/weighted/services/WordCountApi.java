@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.snowballstemmer.PorterStemmer;
 
 public class WordCountApi {
@@ -156,8 +157,8 @@ public class WordCountApi {
 			buildSpssFile(sFile);
 
 		// categorizer.printTrie();
-		// System.out.println(categories);
-		// System.out.println(stopWordSet);
+		// ConsoleView.writeInConsole(categories);
+		// ConsoleView.writeInConsole(stopWordSet);
 		subProgressMonitor.worked(10);
 		if (subProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -284,7 +285,7 @@ public class WordCountApi {
 															// here.
 				for (int i : currCategories) {
 					currCategoryName = categories.get(i);
-					// System.out.println(currCategoryName+"->"+currWord);
+					// ConsoleView.writeInConsole(currCategoryName+"->"+currWord);
 					if (catCount.get(currCategoryName) != null) {
 						// catCount.put(currCategoryName,
 						// catCount.get(currCategoryName)+1);
@@ -312,7 +313,7 @@ public class WordCountApi {
 
 				}
 			} else {
-				// System.out.println("No category -> "+currWord);
+				// ConsoleView.writeInConsole("No category -> "+currWord);
 			}
 		}
 		// If Word Distribution output is enabled, calculate the values
@@ -615,8 +616,8 @@ public class WordCountApi {
 							currentWord = stemmedWord;
 					}
 
-					// System.out.println(currentWord);
-					// System.out.println(words[0]+" "+categories);
+					// ConsoleView.writeInConsole(currentWord);
+					// ConsoleView.writeInConsole(words[0]+" "+categories);
 
 					// do Stemming or not. if Stemming is disabled, remove *
 					// from the dictionary words
@@ -704,9 +705,9 @@ public class WordCountApi {
 				Matcher m = p.matcher(line);
 				ArrayList<Integer> indexes = new ArrayList<Integer>();
 				while (m.find()) {
-					// System.out.println(m.group());
-					// System.out.println(m.start()+1);
-					// System.out.println(m.end());
+					// ConsoleView.writeInConsole(m.group());
+					// ConsoleView.writeInConsole(m.start()+1);
+					// ConsoleView.writeInConsole(m.end());
 					String match = m.group();
 					indexes.add(m.start() + 1);
 					indexes.add(m.end());
@@ -731,7 +732,7 @@ public class WordCountApi {
 					int diff = indexes.get(i + 1) - indexes.get(i);
 					for (int j = 0; j < indexes.size(); j++)
 						indexes.set(j, indexes.get(j) - diff);
-					// System.out.println(line);
+					// ConsoleView.writeInConsole(line);
 				}
 				indexes.clear();
 
@@ -762,9 +763,9 @@ public class WordCountApi {
 					int diff = indexes.get(i + 1) - indexes.get(i);
 					for (int j = 0; j < indexes.size(); j++)
 						indexes.set(j, indexes.get(j) - diff);
-					// System.out.println(line);
+					// ConsoleView.writeInConsole(line);
 				}
-				// System.out.println("Phrase removed - "+line);
+				// ConsoleView.writeInConsole("Phrase removed - "+line);
 
 			}
 		}
@@ -809,13 +810,13 @@ public class WordCountApi {
 				numWords = numWords + 1;
 				if (currentWord.length() > 6) {
 					sixltr = sixltr + 1;
-					// System.out.println(currentWord+" "+sixltr);
+					// ConsoleView.writeInConsole(currentWord+" "+sixltr);
 				}
 			}
 
 			/*
 			 * numWords = numWords + 1; if (currentWord.length()>6){ sixltr =
-			 * sixltr + 1; //System.out.println(currentWord+" "+sixltr); }
+			 * sixltr + 1; //ConsoleView.writeInConsole(currentWord+" "+sixltr); }
 			 */
 
 			boolean treatAsOne = true;
@@ -829,7 +830,7 @@ public class WordCountApi {
 						&& !categorizer.checkHyphen(currentWord)) {
 					// treat as one word.
 					// numWords = numWords; already 1 added above
-					// System.out.println("Treating as one - "+currentWord);
+					// ConsoleView.writeInConsole("Treating as one - "+currentWord);
 					Object value = map.get(currentWord);
 					if (value != null) {
 						int i = ((Integer) value).intValue();
@@ -970,7 +971,7 @@ public class WordCountApi {
 	}
 
 	private void appendLog(String message) {
-		System.out.println(message);
+		ConsoleView.writeInConsole(message);
 	}
 
 	public static String trimChars(String source, String trimChars) {

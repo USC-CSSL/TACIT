@@ -32,14 +32,14 @@ public class CrossValidator {
 			int currIndex = index1;
 			for (int num =0; num<trains1;num++){
 				trainFiles1[num]=class1Files[currIndex];
-				//System.out.println(files1[currIndex]);
+				//ConsoleView.writeInConsole(files1[currIndex]);
 				currIndex++;
 				if(currIndex >= numFiles1)
 					currIndex=0;
 			}
 			for (int num =0; num < numFiles1-trains1;num++){
 				testFiles1[num]=class1Files[currIndex];
-				//System.out.println(files1[currIndex]);
+				//ConsoleView.writeInConsole(files1[currIndex]);
 				currIndex++;
 				if(currIndex >= numFiles1)
 					currIndex=0;
@@ -48,14 +48,14 @@ public class CrossValidator {
 			currIndex = index2;
 			for (int num =0; num<trains2;num++){
 				trainFiles2[num]=class2Files[currIndex];
-				//System.out.println(files2[currIndex]);
+				//ConsoleView.writeInConsole(files2[currIndex]);
 				currIndex++;
 				if(currIndex >= numFiles2)
 					currIndex=0;
 			}
 			for (int num =0; num < numFiles2-trains2;num++){
 				testFiles2[num]=class2Files[currIndex];
-				//System.out.println(files1[currIndex]);
+				//ConsoleView.writeInConsole(files1[currIndex]);
 				currIndex++;
 				if(currIndex >= numFiles1)
 					currIndex=0;

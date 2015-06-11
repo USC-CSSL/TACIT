@@ -16,6 +16,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class KmeansClusterAnalysis {
 	private static int[] doClustering(List<File> inputFiles, int numOfClusters) {
@@ -39,7 +40,7 @@ public class KmeansClusterAnalysis {
 							content);
 					docs.add(new Instance(1.0, newInst));
 				} catch (Exception e) {
-					System.out.println("Exception occurred in reading files"
+					ConsoleView.writeInConsole("Exception occurred in reading files"
 							+ e);
 					return null;
 				}
@@ -62,7 +63,7 @@ public class KmeansClusterAnalysis {
 
 			return assignments;
 		} catch (Exception e) {
-			System.out.println("Exception occurred in K means " + e);
+			ConsoleView.writeInConsole("Exception occurred in K means " + e);
 		}
 		return null;
 	}
@@ -77,16 +78,16 @@ public class KmeansClusterAnalysis {
 			inputFiles.add(f);
 		}
 
-		System.out.println("Running KMeans Clustering...");
+		ConsoleView.writeInConsole("Running KMeans Clustering...");
 
 		int[] clusters = doClustering(inputFiles, fNumClusters);
 		if (clusters == null) {
-			System.out.println("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
+			ConsoleView.writeInConsole("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
 			return;
 		}
 		int i = 0;
-		System.out.println("Output for KMeans Clustering");
-		System.out.println("Clusters formed: \n");
+		ConsoleView.writeInConsole("Output for KMeans Clustering");
+		ConsoleView.writeInConsole("Clusters formed: \n");
 
 		Map<Integer, List<String>> outputClusters = new HashMap<Integer, List<String>>();
 		for (i = 0; i < fNumClusters; i++) {
@@ -104,23 +105,23 @@ public class KmeansClusterAnalysis {
 
 		try {
 			String op = fOutputDir + File.separator + "KMeansClusters.txt";
-			System.out.println("Saving the output for Kmeans clustering in " + op);
+			ConsoleView.writeInConsole("Saving the output for Kmeans clustering in " + op);
 			FileWriter fw = new FileWriter(new File(op));
 			for (int c : outputClusters.keySet()) {
 				System.out.printf("Cluster %d \n", c);
-				System.out.println("Cluster " + c + ": \n");
+				ConsoleView.writeInConsole("Cluster " + c + ": \n");
 				fw.write("Cluster " + c + ": \n");
 				vec = outputClusters.get(c);
 				for (String f : vec) {
-					System.out.println("File " + f);
+					ConsoleView.writeInConsole("File " + f);
 					fw.write("File" + f + "\n");
 				}
 				fw.write("\n");
-				System.out.println("");
+				ConsoleView.writeInConsole("");
 			}
 			fw.close();
 		} catch (IOException e) {
-			System.out.println("Error writing output to files" + e);
+			ConsoleView.writeInConsole("Error writing output to files" + e);
 		}
 
 	}

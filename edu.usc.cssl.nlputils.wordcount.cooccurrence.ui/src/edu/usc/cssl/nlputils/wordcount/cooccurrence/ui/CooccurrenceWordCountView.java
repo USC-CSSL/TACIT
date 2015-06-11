@@ -41,6 +41,7 @@ import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.cssl.nlputils.wordcount.cooccurrence.services.CooccurrenceAnalysis;
 import edu.usc.cssl.nlputils.wordcount.cooccurrence.ui.internal.CooccurrenceWordCountImageRegistry;
 import edu.usc.cssl.nlputils.wordcount.cooccurrence.ui.internal.ICooccurrenceWordCountViewConstants;
@@ -303,7 +304,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 											getViewSite(),
 											"Co-occurrence Analysis is Sucessfully Completed",
 											IStatus.OK);
-							System.out.println("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+							ConsoleView.writeInConsole("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 							preprocessTask.clean();
 							return Status.OK_STATUS;
 						} else {

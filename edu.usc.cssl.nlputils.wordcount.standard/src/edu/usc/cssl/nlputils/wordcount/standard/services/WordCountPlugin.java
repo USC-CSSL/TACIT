@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.snowballstemmer.PorterStemmer;
 
 public class WordCountPlugin {
@@ -184,7 +185,7 @@ public class WordCountPlugin {
 			}
 
 		} catch (Exception e) {
-			System.out.println("Error processing file " + inputFile
+			ConsoleView.writeInConsole("Error processing file " + inputFile
 					+ " .Exception " + e);
 		}
 	}
@@ -193,7 +194,7 @@ public class WordCountPlugin {
 	public void writeToOutput(String outputPath) {
 		Map<String, Double> vec = null;
 
-		System.out.println(keys.size());
+		ConsoleView.writeInConsole(keys.size());
 		try {
 			File file = new File(outputPath +File.separator
 					+ "document-to-word-matrix.csv");

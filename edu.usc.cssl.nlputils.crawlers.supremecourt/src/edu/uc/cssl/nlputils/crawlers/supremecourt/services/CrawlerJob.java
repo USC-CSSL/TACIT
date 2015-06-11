@@ -68,9 +68,9 @@ public class CrawlerJob implements Runnable,ICrawler {
 				 throw new OperationCanceledException(); 
 				 
 			}
-			// System.out.println(row.select("a").get(0).attr("href"));
+			// ConsoleView.writeInConsole(row.select("a").get(0).attr("href"));
 			String contenturl = baseUrl + row.select("a").get(0).attr("href");
-			// System.out.println(row.select("td").get(1).text().trim());
+			// ConsoleView.writeInConsole(row.select("td").get(1).text().trim());
 			String date = row.select("td").get(2).text().trim();
 			// Skip if no argument date
 			if (date.equals(""))
@@ -84,7 +84,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 			try {
 				getFiles(contenturl, filename);
 			} catch (IOException e) {
-				System.out.println("Error Accessing the URL " + contenturl);
+				ConsoleView.writeInConsole("Error Accessing the URL " + contenturl);
 				e.printStackTrace();
 			}
 			// break;
@@ -101,7 +101,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 
 		Elements hidden = doc.select("div.hidden");
 		if (hidden.size() == 0) {
-			System.out.println("No data. Skipping page " + contenturl);
+			ConsoleView.writeInConsole("No data. Skipping page " + contenturl);
 			bw.close();
 			return;
 		}
@@ -124,7 +124,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 				 throw new OperationCanceledException(); 
 				 
 			}
-			// System.out.println(line.text());
+			// ConsoleView.writeInConsole(line.text());
 			bw.write(line.text() + "\n");
 		} 
 		bw.close();
@@ -157,7 +157,7 @@ public class CrawlerJob implements Runnable,ICrawler {
 	}
 
 	private void downloadTranscriptMp3File(String filename, Element mp3) {
-		System.out.println("Downloading " + baseUrl + mp3.attr("href"));
+		ConsoleView.writeInConsole("Downloading " + baseUrl + mp3.attr("href"));
 		Response audio;
 		FileOutputStream fos;
 		try {

@@ -27,6 +27,7 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class HierarchicalClusterAnalysis {
 	public static String doClustering(List<File> inputFiles, String outputPath,
@@ -41,7 +42,7 @@ public class HierarchicalClusterAnalysis {
 
 			Instances docs = new Instances("text_files", atts, 0);
 
-			System.out.println(outputPath);
+			ConsoleView.writeInConsole(outputPath);
 
 			for (int i = 0; i < inputFiles.size(); i++) {
 
@@ -53,7 +54,7 @@ public class HierarchicalClusterAnalysis {
 							content);
 					docs.add(new Instance(1.0, newInst));
 				} catch (Exception e) {
-					System.out.println("Exception occurred in reading files"
+					ConsoleView.writeInConsole("Exception occurred in reading files"
 							+ e);
 				}
 			}
@@ -68,7 +69,7 @@ public class HierarchicalClusterAnalysis {
 			subProgressMonitor.worked(20);
 			String g = aggHierarchical.graph();
 			String output = formatGraph(g, inputFiles);
-			System.out.println("Network " + output);
+			ConsoleView.writeInConsole("Network " + output);
 			subProgressMonitor.subTask("Foramting Image");
 			aggHierarchical.linkTypeTipText();
 			subProgressMonitor.worked(15);
@@ -137,7 +138,7 @@ public class HierarchicalClusterAnalysis {
 		int count = 0;
 
 		fgraph.append(graph.substring(0, 7));
-		System.out.println(graph);
+		ConsoleView.writeInConsole(graph);
 		while (i < len) {
 			c = input.charAt(i);
 			if (c == '(') {
@@ -150,7 +151,7 @@ public class HierarchicalClusterAnalysis {
 				while (i < len
 						&& (input.charAt(i) != ',' && input.charAt(i) != '(')) {
 					fgraph.append(input.charAt(i++));
-					// System.out.println(fgraph.toString());
+					// ConsoleView.writeInConsole(fgraph.toString());
 				}
 				if (i < len)
 					fgraph.append(input.charAt(i++));
@@ -158,7 +159,7 @@ public class HierarchicalClusterAnalysis {
 				i++;
 			}
 		}
-		System.out.println(fgraph.toString());
+		ConsoleView.writeInConsole(fgraph.toString());
 		return fgraph.toString();
 	}
 
@@ -175,7 +176,7 @@ public class HierarchicalClusterAnalysis {
 		}
 		subProgressMonitor.beginTask("Running CLustering", 50);
 		subProgressMonitor.subTask("Running Hierarchical Clustering...");
-		System.out.println("Running Hierarchical Clustering...");
+		ConsoleView.writeInConsole("Running Hierarchical Clustering...");
 		String clusters = doClustering(inputFiles, fOutputDir, fSaveImg,
 				new SubProgressMonitor(subProgressMonitor, 45));
 		if (subProgressMonitor.isCanceled()) {
@@ -184,19 +185,19 @@ public class HierarchicalClusterAnalysis {
 		if (clusters == null) {
 			return null;
 		}
-		System.out.println("Output for Hierarchical Clustering");
-		System.out.println("Mapping of document ID to actual names");
+		ConsoleView.writeInConsole("Output for Hierarchical Clustering");
+		ConsoleView.writeInConsole("Mapping of document ID to actual names");
 		subProgressMonitor.subTask("Mapping of document ID to actual names");
 		for (int i = 0; i < inputFiles.size(); i++) {
-			System.out.println((i + 1) + " " + inputFiles.get(i).getName());
+			ConsoleView.writeInConsole((i + 1) + " " + inputFiles.get(i).getName());
 		}
 		subProgressMonitor.worked(5);
-		System.out.println("Clusters formed: \n");
+		ConsoleView.writeInConsole("Clusters formed: \n");
 
-		System.out.println(clusters);
-		System.out.println("Saving the output to cluster.txt");
+		ConsoleView.writeInConsole(clusters);
+		ConsoleView.writeInConsole("Saving the output to cluster.txt");
 		subProgressMonitor.subTask("Saving the output to cluster.txt");
-		System.out.println("\nDone Hierarchical Clustering...");
+		ConsoleView.writeInConsole("\nDone Hierarchical Clustering...");
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return clusters;

@@ -10,6 +10,8 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.Platform;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 
 public class ZlabelLDA {
 
@@ -118,7 +120,7 @@ public class ZlabelLDA {
 	private boolean givenInit(){
 		
 		if(init.length != documents.length){
-			System.out.println("Number of documents/number of init samples mismatch");
+			ConsoleView.writeInConsole("Number of documents/number of init samples mismatch");
 			return false;
 		}
 		
@@ -136,14 +138,14 @@ public class ZlabelLDA {
 			docSample = sample[d];
 			
 			if(docInit.length != documents[d].length){
-				System.out.println("Init sample/doc-length mismatch");
+				ConsoleView.writeInConsole("Init sample/doc-length mismatch");
 				return false;
 			}
 			
 			for(int i=0; i<doc.length; i++){
 				zi = docInit[i];
 				if(zi < 0 || zi >= T){
-					System.out.println("Non-numeric or out of range sample value");
+					ConsoleView.writeInConsole("Non-numeric or out of range sample value");
 					return false;
 				}
 				
@@ -419,14 +421,14 @@ public class ZlabelLDA {
 		else{
 		/* If f-label is provided, check validity - non-negative values, etc. */
 			if(fLabel.length != numberOfDocuments){
-				System.out.println("f-label array has size less than the number of documents");
+				ConsoleView.writeInConsole("f-label array has size less than the number of documents");
 				appendLog("f-label array has size less than the number of documents");
 				return false;
 			}
 			else{
 				for(int i=0; i<fLabel.length; i++){
 					if(fLabel[i] < 0){
-						System.out.println("Negative f-label - not valid input");
+						ConsoleView.writeInConsole("Negative f-label - not valid input");
 						appendLog("Negative f-label - not valid input");
 						return false;
 					}
@@ -439,7 +441,7 @@ public class ZlabelLDA {
 		
 		/* The number of maps in topicSeeds should be the same as the number of documents */
 		if(topicSeeds.length != documents.length){
-			System.out.println("Topic Seeds array/ no. of documents size mismatch");
+			ConsoleView.writeInConsole("Topic Seeds array/ no. of documents size mismatch");
 			appendLog("Topic Seeds array/ no. of documents size mismatch");
 			return false;
 		}
@@ -447,7 +449,7 @@ public class ZlabelLDA {
 		/* Get information from parameters and check dimensionality agreement */
 		
 		if(alpha[0] == null || beta[0] == null){
-			System.out.println("Invalid alpha or beta value");
+			ConsoleView.writeInConsole("Invalid alpha or beta value");
 			appendLog("Invalid alpha or beta value");
 			return false;
 		}
@@ -460,7 +462,7 @@ public class ZlabelLDA {
 		
 		/* fmax needs to be the same as the dimensions of alpha */
 		if(F-1 != fmax){
-			System.out.println("Alpha/f dimensionality mismatch");
+			ConsoleView.writeInConsole("Alpha/f dimensionality mismatch");
 			appendLog("Alpha/f dimensionality mismatch");
 			return false;
 		}
@@ -471,7 +473,7 @@ public class ZlabelLDA {
 		
 		/* Beta must have the same number of rows as the number of topics we want */
 		if(T != beta.length){
-			System.out.println("Beta size/no. of topics mismatch");
+			ConsoleView.writeInConsole("Beta size/no. of topics mismatch");
 			appendLog("Beta size/no. of topics mismatch");
 			return false;
 		}
@@ -479,7 +481,7 @@ public class ZlabelLDA {
 		for(int i=1; i<alpha.length; i++){
 			/* The lists in alpha must have the same dimensions */
 			if(alpha[i].length != T){
-				System.out.println("Alpha arrays do not have the same dimensionality");
+				ConsoleView.writeInConsole("Alpha arrays do not have the same dimensionality");
 				appendLog("Alpha arrays do not have the same dimensionality");
 				return false;
 			}
@@ -488,7 +490,7 @@ public class ZlabelLDA {
 		for(int i=1; i<beta.length; i++){
 			/* The lists in beta must have the same dimensions */
 			if(beta[i].length != W){
-				System.out.println("Beta arrays do not have the same dimensionality");
+				ConsoleView.writeInConsole("Beta arrays do not have the same dimensionality");
 				appendLog("Beta arrays do not have the same dimensionality");
 				return false;
 			}
@@ -498,7 +500,7 @@ public class ZlabelLDA {
 		for(int i=0; i<alpha.length; i++){
 			for(int j=0; j<alpha[i].length; j++){
 				if(alpha[i][j] < 0){
-					System.out.println("Invalid value in the alpha array");
+					ConsoleView.writeInConsole("Invalid value in the alpha array");
 					appendLog("Invalid value in the alpha array");
 					return false;
 				}
@@ -508,7 +510,7 @@ public class ZlabelLDA {
 		for(int i=0; i<beta.length; i++){
 			for(int j=0; j<beta[i].length; j++){
 				if(beta[i][j] < 0){
-					System.out.println("Invalid value in the beta array");
+					ConsoleView.writeInConsole("Invalid value in the beta array");
 					appendLog("Invalid value in the beta array");
 					return false;
 				}
@@ -524,7 +526,7 @@ public class ZlabelLDA {
 				if(topicSeeds[i][j] != null){
 					for(int k=0; k<topicSeeds[i][j].length; k++){
 						if(topicSeeds[i][j][k] < 0 || topicSeeds[i][j][k] >= T ){
-							System.out.println("The topic seed value is invalid");
+							ConsoleView.writeInConsole("The topic seed value is invalid");
 							appendLog("The topic seed value is invalid");
 							return false;
 						}
@@ -538,7 +540,7 @@ public class ZlabelLDA {
 		for(int i=0; i<documents.length; i++){
 			for(int j=0; j<documents[i].length; j++){
 				if(documents[i][j] < 0 || documents[i][j] >= W){
-					System.out.println("The word value in document is invalid");
+					ConsoleView.writeInConsole("The word value in document is invalid");
 					appendLog("The word value in document is invalid");
 					return false;
 				}
@@ -575,7 +577,7 @@ public class ZlabelLDA {
 	public boolean zLDA(){
 	
 		if(validateInput() != true){
-			System.out.println("Invalid Input");
+			ConsoleView.writeInConsole("Invalid Input");
 			return false; 
 		}
 		prevTime = 0;
@@ -604,7 +606,7 @@ public class ZlabelLDA {
 	
 	private StringBuilder readMe = new StringBuilder();
 	private void appendLog(String message){
-		System.out.println(message);
+		ConsoleView.writeInConsole(message);
 			readMe.append(message+"\n");
 	}
 	public void writeReadMe(String location){

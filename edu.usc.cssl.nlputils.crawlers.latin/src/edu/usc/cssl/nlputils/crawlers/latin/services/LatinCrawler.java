@@ -405,7 +405,7 @@ public class LatinCrawler {
 				getContent(aurl, bookname, apath);
 			}
 		} catch (Exception e) {
-			// System.out.println("Something went wrong when extracting books of Author "
+			// ConsoleView.writeInConsole("Something went wrong when extracting books of Author "
 			// + author + e);
 		}
 	}
@@ -502,7 +502,7 @@ public class LatinCrawler {
 				}
 				j++;
 			} catch (Exception e) {
-				// System.out.println("Something went wrong when extracting books of Author "
+				// ConsoleView.writeInConsole("Something went wrong when extracting books of Author "
 				// + author);
 			}
 		}
@@ -592,7 +592,7 @@ public class LatinCrawler {
 	 * if(skipBooks.contains(name)) continue; String aurl = output +
 	 * File.separator + name; File authorDir = new File(aurl);
 	 * if(!authorDir.exists()){ authorDir.mkdirs(); }
-	 * //System.out.println("Extracting Books of Author  "+ name +"...");
+	 * //ConsoleView.writeInConsole("Extracting Books of Author  "+ name +"...");
 	 * appendLog("\nExtracting Books of Author  "+ name +"..."); getBooks(name,
 	 * url, aurl); i++;
 	 * 

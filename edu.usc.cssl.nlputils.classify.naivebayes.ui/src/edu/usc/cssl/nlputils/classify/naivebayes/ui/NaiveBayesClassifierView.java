@@ -48,6 +48,7 @@ import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifie
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.Preprocess;
 
 public class NaiveBayesClassifierView extends ViewPart implements
@@ -430,7 +431,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 	private IStatus handleException(IProgressMonitor monitor, Exception e, String message) {
 		monitor.done();
-		System.out.println(message);
+		ConsoleView.writeInConsole(message);
 		e.printStackTrace();
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
 		return Status.CANCEL_STATUS;
