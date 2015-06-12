@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import bsh.EvalError;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
@@ -14,7 +15,7 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class CrossValidator {
 	
-	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue) throws IOException, EvalError{
+	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue, IProgressMonitor monitor) throws IOException, EvalError{
 		
 		HashMap<Integer, String> performance = new HashMap<Integer,  String>();
 		
@@ -36,6 +37,10 @@ public class CrossValidator {
 		
 		ConsoleView.printlInConsoleln("---------- Cross Validation Starts ------------");
 		for (int i=1; i<=kValue; i++) {
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling.. ");
+				return null;
+			}
 			int count = 0;
 			ConsoleView.printlInConsoleln ("------ Trial "+ i +"------");
 			ArrayList<String> trainingDataPaths = new ArrayList<String>();
@@ -106,9 +111,18 @@ public class CrossValidator {
 			for(String s : testingDataPaths)
 				System.out.println(s);
 			
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling.. ");
+				return null;
+			}
 			// Perform classification
 			String result = nbc.predict(trainingDataPaths, testingDataPaths, false, false);
 			performance.put(i, result);
+			monitor.worked(7); // for each trial
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling.. ");
+				return null;
+			}
 		}
 		ConsoleView.printlInConsoleln("---------- Cross Validation Finished ------------");
 		nbc.purgeDirectory(new File(trainDir));

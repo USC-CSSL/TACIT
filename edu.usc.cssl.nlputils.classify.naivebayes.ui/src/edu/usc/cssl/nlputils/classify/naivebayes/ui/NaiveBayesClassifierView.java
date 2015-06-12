@@ -512,64 +512,96 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				final CrossValidator cv = new CrossValidator();
 				
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
-				Job job = new Job("Classifying...") {
+				final Job job = new Job("Naive Bayes Classification") {
+					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						monitor.beginTask("Running Naive Bayes Classification..." , 100);
+						
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
-								canProceed = canItProceed(classPaths);
 								isPreprocessEnabled = preprocessEnabled.getSelection();
 								isClassificationEnabled = classificationEnabled.getSelection();
 							}
 						});
 						
 						HashMap<Integer, String> perf;
-						if(canProceed) {
-							int kValue = Integer.parseInt(tempkValue);
-							if(isPreprocessEnabled) {							
-								monitor.subTask("Preprocessing...");
-								try {
-									preprocessTask = new Preprocess("NB_Classifier");
-									for(String dirPath : classPaths.keySet()) {
-										List<String> selectedFiles = classPaths.get(dirPath);
-										String preprocessedDirPath = preprocessTask.doPreprocessing(selectedFiles, new File(dirPath).getName());
-										trainingDataPaths.add(preprocessedDirPath);									
-										List<String> temp = new ArrayList<String>();
-										for(File f: new File(preprocessedDirPath).listFiles()) {
-											temp.add(f.getAbsolutePath());
-										}
-										tempClassPaths.put(preprocessedDirPath, temp);
-									}
-									
-									// preprocess the inputDir if required
-									if(isClassificationEnabled) {
-										ArrayList<String> files = new ArrayList<String>(); 
-										nbc.selectAllFiles(classificationInputDir, files);
-										classificationInputDir = preprocessTask.doPreprocessing(files, new File(classificationInputDir).getName());
-									}
-									
-								} catch (Exception e) {
-									return handleException(monitor, e, "Preprocessing failed. Provide valid data");
-								}							
-							} else { // consolidate the files into respective classes
-								try {
-									nbc.createTempDirectories(classPaths, trainingDataPaths);
-								} catch (IOException e) {
-									return handleException(monitor, e, "Classification failed. Provide valid data");
-								}
-							}
+						if(monitor.isCanceled()) 
+							handledCancelRequest("Cancelled");
+						
+						int kValue = Integer.parseInt(tempkValue);
+						monitor.worked(1); // done with the validation
+						if(isPreprocessEnabled) {							
+							monitor.subTask("Preprocessing...");
 							try {
-								perf = (!isPreprocessEnabled) ? cv.doCross(nbc, classPaths, kValue) :  cv.doCross(nbc, tempClassPaths, kValue);
-								//nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation
-								if(isClassificationEnabled) {
-									ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
-									nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
-									ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
+								preprocessTask = new Preprocess("NB_Classifier");
+								for(String dirPath : classPaths.keySet()) {
+									if(monitor.isCanceled()) {
+										handledCancelRequest("Cancelled");
+									}
+									
+									List<String> selectedFiles = classPaths.get(dirPath);
+									String preprocessedDirPath = preprocessTask.doPreprocessing(selectedFiles, new File(dirPath).getName());
+									trainingDataPaths.add(preprocessedDirPath);									
+									List<String> temp = new ArrayList<String>();
+									for(File f: new File(preprocessedDirPath).listFiles()) {
+										temp.add(f.getAbsolutePath());
+									}
+									tempClassPaths.put(preprocessedDirPath, temp);
+									monitor.worked(1); // for the pre-processing of each directory
+									if(monitor.isCanceled())
+										handledCancelRequest("Cancelled");
 								}
 								
-								double avgAccuracy = 0.0;
-								ConsoleView.printlInConsoleln("------Cross Validation Results------");
+								if(monitor.isCanceled())
+									handledCancelRequest("Cancelled");								
+								// preprocess the inputDir if required
+								if(isClassificationEnabled) {
+									ArrayList<String> files = new ArrayList<String>(); 
+									nbc.selectAllFiles(classificationInputDir, files);
+									classificationInputDir = preprocessTask.doPreprocessing(files, new File(classificationInputDir).getName());
+									monitor.worked(1); 
+								}
+								if(monitor.isCanceled()) 
+									handledCancelRequest("Cancelled");
+							} catch (Exception e) {
+								return handleException(monitor, e, "Preprocessing failed. Provide valid data");
+							}
+							monitor.worked(10);
+						} else { // consolidate the files into respective classes
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
+							try {
+								nbc.createTempDirectories(classPaths, trainingDataPaths, monitor);
+							} catch (IOException e) {
+								return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
+							}
+							monitor.worked(10); // after creating temp directories
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");	
+						}
+						try {
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
+							monitor.subTask("Cross validating...");
+							perf = (!isPreprocessEnabled) ? cv.doCross(nbc, classPaths, kValue, monitor) :  cv.doCross(nbc, tempClassPaths, kValue, monitor);
+							monitor.worked(40);
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
+							//nbc.doCross(trainingDataPaths, classificationOutputDir, false, false, kValue); // perform cross validation
+							if(isClassificationEnabled) {
+								monitor.subTask("Classifying...");
+								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
+								nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
+								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
+							}
+							monitor.worked(15);
+							if(monitor.isCanceled())
+								handledCancelRequest("Cancelled");							
+							double avgAccuracy = 0.0;
+							ConsoleView.printlInConsoleln("------Cross Validation Results------");
+							if(null != perf) {
 								for(Integer trialNum : perf.keySet()) {
 									ConsoleView.printlInConsoleln("Trial "+ trialNum);
 									if(null != perf.get(trialNum)) {
@@ -581,25 +613,40 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										}
 										ConsoleView.printlInConsoleln(perf.get(trialNum));
 									}
-								}	
-								ConsoleView.printlInConsoleln("Average test accuracy = "+ avgAccuracy/kValue);
-								if(!isPreprocessEnabled) 
-									nbc.deleteTempDirectories(trainingDataPaths);
-							} catch (IOException e) {
-								return handleException(monitor, e, "Classification failed. Provide valid data");
-							} catch (EvalError e) {
-								return handleException(monitor, e, "Classification failed. Provide valid data");
+								}
 							}
-							monitor.done();
-							return Status.OK_STATUS;
-						} else {
-							monitor.done();
-							return Status.CANCEL_STATUS;
+							monitor.worked(10);
+							ConsoleView.printlInConsoleln("Average test accuracy = "+ avgAccuracy/kValue);
+							if(monitor.isCanceled())
+								handledCancelRequest("Cancelled");
+							if(!isPreprocessEnabled) 
+								nbc.deleteTempDirectories(trainingDataPaths);
+							monitor.worked(10);
+							if(monitor.isCanceled())
+								handledCancelRequest("Cancelled");
+						} catch (IOException e) {
+							return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
+						} catch (EvalError e) {
+							return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
 						}
+						if(monitor.isCanceled())
+							handledCancelRequest("Cancelled");
+						monitor.worked(100);
+						monitor.done();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), " Naive Bayes Classifier Completed Successfully!", IStatus.INFO);
+						return Status.OK_STATUS;						
 					}
+					@Override
+					protected void canceling() {
+						//done(Status.CANCEL_STATUS);						
+					}
+					
 				};
 				job.setUser(true);
-				job.schedule(); // schedule the job
+				canProceed = canItProceed(classPaths);
+				if(canProceed) {
+					job.schedule(); // schedule the job
+				}
 			};
 
 		});
@@ -620,6 +667,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			};
 		});
 		form.getToolBarManager().update(true);
+	}
+	
+	private IStatus handledCancelRequest(String message) {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
+		return Status.CANCEL_STATUS;
+		
 	}
 	
 	

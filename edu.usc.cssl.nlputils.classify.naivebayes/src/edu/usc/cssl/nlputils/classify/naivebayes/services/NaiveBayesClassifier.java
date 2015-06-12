@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 import bsh.EvalError;
@@ -32,7 +33,6 @@ public class NaiveBayesClassifier {
 		if(!new File(outputDir).exists()) {
 			new File(outputDir).mkdirs();	
 		}
-		
 	}
 	
 	public String getTmpLocation() {
@@ -158,60 +158,6 @@ public class NaiveBayesClassifier {
 		writeReadMe(outputPath);
 	}
 	
-	private void crossValidate(ArrayList<String> trainingClasses, String outputDir, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {
-		ConsoleView.printlInConsoleln("Classification starts ..");
-		Calendar cal = Calendar.getInstance();
-		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-"+ cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
-
-		String tempOutputPath = "";
-		String tempSourceDir = "";
-		
-		// Create a output filename and comma separated source directories
-		for (String classPath : trainingClasses) {
-			tempOutputPath += classPath.substring(classPath.lastIndexOf(System.getProperty("file.separator")) + 1) + "_";
-			tempSourceDir += classPath + ",";
-		}
-		
-		String keepSeq = "FALSE", stopWords = "FALSE", preserveCase = "TRUE";
-		if (removeStopwords) 
-			stopWords = "TRUE";
-		if (doLowercase)
-			preserveCase = "FALSE";
-		
-		String outputPath = outputDir + System.getProperty("file.separator") + tempOutputPath.substring(0, tempOutputPath.length() - 1) + dateString + "-" + System.currentTimeMillis();
-
-		tempSourceDir = tempSourceDir.substring(0, tempSourceDir.length() - 1);
-		String sourceDirs[] = tempSourceDir.split(",");
-
-		//ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase));
-		ArrayList<String> tempT2vArgs = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".train"));
-		// add all the class paths to the argument
-		tempT2vArgs.addAll(1, Arrays.asList(sourceDirs));
-		// convert the object array to string, this feature is available in only java 1.6 or greater
-		String[] t2vArgs = Arrays.copyOf(tempT2vArgs.toArray(), tempT2vArgs.toArray().length, String[].class);
-		
-		//Vectors2Classify.resetDefaultValues();
-		Text2Vectors.main(t2vArgs);
-		//ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs));
-		//ConsoleView.writeInConsole("Created training file " + outputPath + ".train");
-		
-		ArrayList<String> tempT2vArgsTest = new ArrayList<String>(Arrays.asList("--input", "--output", outputPath + ".test", "--keep-sequence", keepSeq, "--remove-stopwords", stopWords, "--preserve-case", preserveCase, "--use-pipe-from", outputPath + ".train"));
-		// add all the class paths to the argument
-		tempT2vArgsTest.addAll(1, Arrays.asList(sourceDirs));
-		//convert the object array to string, this feature is available in only java 1.6 or greater
-		String[] t2vArgs_test = Arrays.copyOf(tempT2vArgsTest.toArray(), tempT2vArgsTest.toArray().length, String[].class);
-				
-		//Text2Vectors.main(t2vArgs_test);
-		//ConsoleView.writeInConsole("Command args :" + Arrays.toString(t2vArgs_test));
-		//ConsoleView.writeInConsole("Created test file " + outputPath + ".test");
-				
-		//String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
-		String[] v2cArgs = { "--input", outputPath + ".train", "--training-portion", String.valueOf(0.6), "--cross-validation", String.valueOf(kValue), "--trainer", "NaiveBayes"};
-		//ConsoleView.writeInConsole("Command args :" + Arrays.toString(v2cArgs));
-		Vectors2Classify.main(v2cArgs);
-		return;
-	}
-	
 	public void purgeDirectory(File dir) {
 		if(null == dir || !dir.exists() || !dir.isDirectory()) 
 			return;
@@ -224,7 +170,7 @@ public class NaiveBayesClassifier {
 		}
 	}
 	
-	public void createTempDirectories(HashMap<String, List<String>> classPaths, ArrayList<String> trainingDataPaths) throws IOException {
+	public void createTempDirectories(HashMap<String, List<String>> classPaths, ArrayList<String> trainingDataPaths, IProgressMonitor monitor) throws IOException {
 		String tmpLocation = this.tmpLocation;
 		if(!new File(tmpLocation).exists()) {
 			new File(tmpLocation).mkdirs();	
@@ -252,20 +198,8 @@ public class NaiveBayesClassifier {
 				FileUtils.copyFileToDirectory(files[num], new File(tempTrainDir));
 			}
 			trainingDataPaths.add(new File(tempTrainDir).getAbsolutePath());	
+			monitor.worked(1); // processing of each directory/class
 		}
-	}
-	
-	public void doClassify(ArrayList<String> trainingClasses, String classificationInputDir, String classificationOutputDir, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
-		//Reset the default values
-		//Vectors2Classify.resetDefaultValues();
-		classify(trainingClasses, classificationInputDir, classificationOutputDir, removeStopwords, doLowercase);
-		ConsoleView.printlInConsoleln("Cross Validation value :" + Vectors2Classify.crossValidation.value);
-	}
-	
-	public void doCross(ArrayList<String> trainingDataPaths, String outputPath, boolean removeStopwords, boolean doLowercase, int kValue) throws FileNotFoundException, IOException, EvalError {
-		//Reset the default values
-		crossValidate(trainingDataPaths, outputPath, false, false, kValue);
-		//delete the temp files
 	}
 	
 	public void writeReadMe(String location) {
