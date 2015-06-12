@@ -185,7 +185,7 @@ public class WordCountPlugin {
 			}
 
 		} catch (Exception e) {
-			ConsoleView.writeInConsole("Error processing file " + inputFile
+			ConsoleView.printlInConsoleln("Error processing file " + inputFile
 					+ " .Exception " + e);
 		}
 	}
@@ -194,7 +194,7 @@ public class WordCountPlugin {
 	public void writeToOutput(String outputPath) {
 		Map<String, Double> vec = null;
 
-		ConsoleView.writeInConsole(keys.size());
+		ConsoleView.printlInConsoleln(keys.size());
 		try {
 			File file = new File(outputPath +File.separator
 					+ "document-to-word-matrix.csv");
