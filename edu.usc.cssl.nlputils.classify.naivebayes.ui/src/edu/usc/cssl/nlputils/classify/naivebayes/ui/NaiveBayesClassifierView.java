@@ -603,7 +603,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							ConsoleView.printlInConsoleln("------Cross Validation Results------");
 							if(null != perf) {
 								for(Integer trialNum : perf.keySet()) {
-									ConsoleView.printlInConsoleln("Trial "+ trialNum);
+									ConsoleView.printlInConsoleln("Fold "+ trialNum);
 									if(null != perf.get(trialNum)) {
 										String[] results = perf.get(trialNum).split("=");
 										for(int i = 0; i<results.length; i++) {
