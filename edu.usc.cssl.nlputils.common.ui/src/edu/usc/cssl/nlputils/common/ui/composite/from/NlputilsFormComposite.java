@@ -1,5 +1,6 @@
 package edu.usc.cssl.nlputils.common.ui.composite.from;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -11,6 +12,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -114,7 +117,7 @@ public class NlputilsFormComposite {
 			}
 		});
 
-		outputLocationTxt.addFocusListener(new FocusAdapter() {
+	/*	outputLocationTxt.addFocusListener(new FocusAdapter() {
 
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -130,7 +133,21 @@ public class NlputilsFormComposite {
 					mmng.removeMessage("location");
 				}
 			}
+		}); 
+	*/
+		
+		outputLocationTxt.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				outputPathListener(outputLocationTxt, mmng, outputPathLbl);
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				outputPathListener(outputLocationTxt, mmng, outputPathLbl);
+			}
 		});
+		
 
 		OutputLayoutData layoutData = new OutputLayoutData();
 		layoutData.setOutputLabel(outputLocationTxt);
@@ -138,6 +155,26 @@ public class NlputilsFormComposite {
 
 		return layoutData;
 	}
+	
+	protected static void outputPathListener(Text outputLocationTxt, IMessageManager mmng, Label outputPathLbl) {
+		if (outputLocationTxt.getText().isEmpty()) {
+			mmng.addMessage("output", "Output path must be a valid diretory location", null, IMessageProvider.ERROR);
+			return;
+		}
+		File tempFile = new File(outputLocationTxt.getText());
+		if (!tempFile.exists() || !tempFile.isDirectory()) {
+			mmng.addMessage("output", "Output path must be a valid diretory location", null, IMessageProvider.ERROR);
+		} else {
+			String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLocationTxt.getText(),"Output");
+			if (message != null) {
+				message = outputPathLbl.getText() + " " + message;
+				mmng.addMessage("output", message, null, IMessageProvider.ERROR);
+			} else {
+				mmng.removeMessage("output");
+			}			
+		}	
+	}
+	
 	
 	public static OutputLayoutData createInputSection(FormToolkit toolkit,
 			Composite parent, final IMessageManager mmng) {
@@ -324,6 +361,7 @@ public class NlputilsFormComposite {
 
 	public static void addErrorPopup(final Form form, final FormToolkit toolkit) {
 		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String title = e.getLabel();
 				Object href = e.getHref();
@@ -371,6 +409,7 @@ public class NlputilsFormComposite {
 
 	private static void configureFormText(final Form form, FormText text) {
 		text.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String is = (String) e.getHref();
 				try {

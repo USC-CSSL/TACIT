@@ -15,7 +15,7 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class CrossValidator {
 	
-	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue, IProgressMonitor monitor) throws IOException, EvalError{
+	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue, IProgressMonitor monitor, String outputDir) throws IOException, EvalError{
 		
 		HashMap<Integer, String> performance = new HashMap<Integer,  String>();
 		
@@ -42,7 +42,7 @@ public class CrossValidator {
 				return null;
 			}
 			int count = 0;
-			ConsoleView.printlInConsoleln ("------ Trial "+ i +"------");
+			ConsoleView.printlInConsoleln ("------ Fold "+ i +"------");
 			ArrayList<String> trainingDataPaths = new ArrayList<String>();
 			ArrayList<String> testingDataPaths = new ArrayList<String>();
 			
@@ -116,7 +116,7 @@ public class CrossValidator {
 				return null;
 			}
 			// Perform classification
-			String result = nbc.predict(trainingDataPaths, testingDataPaths, false, false);
+			String result = nbc.predict(trainingDataPaths, testingDataPaths, outputDir, false, false);
 			performance.put(i, result);
 			monitor.worked(7); // for each trial
 			if(monitor.isCanceled()) {
