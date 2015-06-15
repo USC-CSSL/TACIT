@@ -266,7 +266,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			return false;
 		}
 		
-		if (class1Files.size() < 1) {
+		noProperFiles = true;
+		if (class2Files.size() < 1) {
 			form.getMessageManager().addMessage("class2","Select/Add atleast one Class 2 file", null,IMessageProvider.ERROR);
 			return false;
 		}

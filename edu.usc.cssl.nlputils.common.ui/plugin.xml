@@ -224,5 +224,40 @@
             commandId="usc.edu.cssl.common.preprocess.command">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.nlputils.common.ui.views.CorpusManagementView"
+            id="edu.usc.cssl.nlputils.common.ui.corpusmanagement.view1"
+            name="Corpus Management"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:view">
+         <command
+               commandId="edu.usc.cssl.nlputils.common.ui.corpusmanagement.view1"
+               label="Corpus Management"
+               tooltip="Corpus Management">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="corpusmanagement.view"
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.nlputils.common.ui.corpusmanagement.view1"
+            name="Corpus Management">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.nlputils.common.ui.handlers.OpenCorpusManagementViewHandler"
+            commandId="edu.usc.cssl.nlputils.common.ui.corpusmanagement.view1">
+      </handler>
+   </extension>
    
 </plugin>
