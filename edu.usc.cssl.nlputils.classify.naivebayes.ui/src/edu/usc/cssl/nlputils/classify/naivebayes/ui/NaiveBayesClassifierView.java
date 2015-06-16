@@ -52,7 +52,6 @@ import edu.usc.cssl.nlputils.classify.naivebayes.services.CrossValidator;
 import edu.usc.cssl.nlputils.classify.naivebayes.services.NaiveBayesClassifier;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.INaiveBayesClassifierViewConstants;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifierViewImageRegistry;
-import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
@@ -238,25 +237,28 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		
 	}
 
-	protected void inputPathListener(Text classifyInputText, String errorMessage) {
+	protected boolean inputPathListener(Text classifyInputText, String errorMessage) {
 		if(classificationEnabled.getSelection()) {
 			if (classifyInputText.getText().isEmpty()) {
 				form.getMessageManager().addMessage("classifyInput", errorMessage, null, IMessageProvider.ERROR);
-				return;
+				return false;
 			}
 			File tempFile = new File(classifyInputText.getText());
 			if (!tempFile.exists() || !tempFile.isDirectory()) {
 				form.getMessageManager().addMessage("classifyInput", errorMessage, null, IMessageProvider.ERROR);
+				return false;
 			} else {
 				form.getMessageManager().removeMessage("classifyInput");
 				String message = validateInputDirectory(classifyInputText.getText().toString());
 				if(null != message) {
 					form.getMessageManager().addMessage("classifyInput", message, null, IMessageProvider.ERROR);
+					return false;
 				}
 			}		
 		} else {
 			form.getMessageManager().removeMessage("classifyInput");
 		}
+		return true;
 	}
 	
 	public String validateInputDirectory(String location) {
@@ -278,26 +280,29 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		}
 	}
 	
-	protected void outputPathListener(Text classifyOutputText, String errorMessage) {
+	protected boolean outputPathListener(Text classifyOutputText, String errorMessage) {
 		if(classificationEnabled.getSelection()) {
 			if (classifyOutputText.getText().isEmpty()) {
 				form.getMessageManager().addMessage("classifyOutput", errorMessage, null, IMessageProvider.ERROR);
-				return;
+				return false;
 			}
 			File tempFile = new File(classifyOutputText.getText());
 			if (!tempFile.exists() || !tempFile.isDirectory()) {
 				form.getMessageManager().addMessage("classifyOutput", errorMessage, null, IMessageProvider.ERROR);
+				return false;
 			} else {
 				form.getMessageManager().removeMessage("classifyOutput");
 				String message = validateOutputDirectory(classifyOutputText.getText().toString());
 				if(null != message) {
 					form.getMessageManager().addMessage("classifyOutput", message, null, IMessageProvider.ERROR);
+					return false;
 				}			
 			}
 		}
 		else {
 			form.getMessageManager().removeMessage("classifyOutput");
 		}
+		return true;
 	}
 
 	private void createNBClassifierInputParameters(Composite client) {
@@ -682,7 +687,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							handledCancelRequest("Cancelled");
 						monitor.worked(100);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), " Naive Bayes Classifier Completed Successfully!", IStatus.INFO);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Naive Bayes Classifier Completed Successfully", IStatus.OK);
 						return Status.OK_STATUS;						
 					}
 					@Override
@@ -739,14 +744,14 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		}
 		
 		// Preprocessing
-		isPreprocessEnabled = preprocessEnabled.getSelection();
+		/*isPreprocessEnabled = preprocessEnabled.getSelection();
 		String tempPPOutputPath = CommonUiActivator.getDefault().getPreferenceStore().getString("pp_output_path");
 		if (isPreprocessEnabled && tempPPOutputPath.isEmpty()) {
 			form.getMessageManager() .addMessage("pp_location", "Pre-Processed output location is required for pre-processing", null, IMessageProvider.ERROR);
 			return false;
 		} else {
 			form.getMessageManager().removeMessage("pp_location");
-		}
+		}*/
 		
 		// K-Vlaue
 		if(kValueText.getText().isEmpty()) {
@@ -768,8 +773,11 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		// Classification parameters
 		isClassificationEnabled = classificationEnabled.getSelection();
 		if(isClassificationEnabled) {
-			inputPathListener(classifyInputText, "Classifciation Input path must be a valid diretory location");
-			outputPathListener(classifyOutputText, "Classifciation Output path must be a valid diretory location");
+			if(!inputPathListener(classifyInputText, "Classifciation Input path must be a valid diretory location")) {
+				return false;				
+			} else if(!outputPathListener(classifyOutputText, "Classifciation Output path must be a valid diretory location")) {
+				return false;
+			}
 		} else {
 			form.getMessageManager().removeMessage("classifyInputText");
 			form.getMessageManager().removeMessage("classifyOutputText");
