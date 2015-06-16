@@ -19,7 +19,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
@@ -98,7 +97,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				      public void run() {
 				    	  congress.setItems(congresses);
 				    	  congress.select(0);
-				    	  congress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 				      }});
 				
 				return null;

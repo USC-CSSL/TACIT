@@ -6,6 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.crawlers.senate.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.jsoup;bundle-version="1.7.3"
+ org.jsoup
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
