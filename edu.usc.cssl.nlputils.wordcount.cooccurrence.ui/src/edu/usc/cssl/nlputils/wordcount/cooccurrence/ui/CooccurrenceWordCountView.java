@@ -345,6 +345,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");

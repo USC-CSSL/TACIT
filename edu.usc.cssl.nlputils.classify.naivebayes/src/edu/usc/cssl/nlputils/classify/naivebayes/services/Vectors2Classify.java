@@ -635,7 +635,7 @@ public abstract class Vectors2Classify {
 					if (pvalue != 0) {
 						if (pvalue > 0.5)
 							pvalue = Math.abs(pvalue - 1);
-						ConsoleView.printlInConsoleln("P value = " + pvalue + "\n");
+						ConsoleView.printlInConsoleln("Binomial 2-Sided P value = " + pvalue + "\n");
 					}
 
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " training data accuracy= " + trainAccuracy[c][trialIndex]);
@@ -682,7 +682,7 @@ public abstract class Vectors2Classify {
 					if (pvalue != 0) {
 						if (pvalue > 0.5)
 							pvalue = Math.abs(pvalue - 1);
-						ConsoleView.printlInConsoleln("P value = " + pvalue + " \n");
+						ConsoleView.printlInConsoleln("Binomial 2-Sided P value = " + pvalue + " \n");
 					}
 
 					//ConsoleView.writeInConsole("Trial " + trialIndex + " Trainer " + trainer.toString() + " test data accuracy= " + testAccuracy[c][trialIndex]);
@@ -704,21 +704,60 @@ public abstract class Vectors2Classify {
 		// New reporting
 		// "[train|test|validation]:[accuracy|f1|confusion|raw]"
 		for (int c = 0; c < numTrainers; c++) {
-			ConsoleView.printlInConsole("\n" + trainerNames[c].toString());
-			if (ReportOptions[ReportOption.train][ReportOption.accuracy])
-				ConsoleView.printlInConsoleln("Summary. train accuracy mean = "
+			ConsoleView.printlInConsole("\n" + trainerNames[c].toString()+ "\n");
+			if (ReportOptions[ReportOption.train][ReportOption.accuracy]) {
+				/*ConsoleView.printlInConsoleln("Summary. train accuracy mean = "
 						+ MatrixOps.mean(trainAccuracy[c]) + " stddev = "
 						+ MatrixOps.stddev(trainAccuracy[c]) + " stderr = "
-						+ MatrixOps.stderr(trainAccuracy[c]));
+						+ MatrixOps.stderr(trainAccuracy[c])); */
+				
+				String trainResult = "";
+				if (pvalue != 0)
+					trainResult+="Summary. train accuracy = " + MatrixOps.mean(trainAccuracy[c]);
+				else
+					trainResult+="Summary. train accuracy = " + MatrixOps.mean(trainAccuracy[c]);
 
-			if (ReportOptions[ReportOption.validation][ReportOption.accuracy])
+				if(numTrials > 1) {
+					trainResult+=" stddev = " + MatrixOps.stddev(trainAccuracy[c]) + " stderr = "+ MatrixOps.stderr(trainAccuracy[c]);
+				}	
+				ConsoleView.printlInConsoleln(trainResult);
+				
+			}
+
+			if (ReportOptions[ReportOption.validation][ReportOption.accuracy]) {
+				/*
 				ConsoleView.printlInConsoleln("Summary. validation accuracy mean = "
 						+ MatrixOps.mean(validationAccuracy[c]) + " stddev = "
 						+ MatrixOps.stddev(validationAccuracy[c])
 						+ " stderr = "
-						+ MatrixOps.stderr(validationAccuracy[c]));
+						+ MatrixOps.stderr(validationAccuracy[c]));*/
+				
+				String validationResult = "";
+				if (pvalue != 0)
+					validationResult+="Summary. validation accuracy = " + MatrixOps.mean(validationAccuracy[c]);
+				else
+					validationResult+="Summary. validation accuracy = " + MatrixOps.mean(validationAccuracy[c]);
+
+				if(numTrials > 1) {
+					validationResult+=" stddev = " + MatrixOps.stddev(validationAccuracy[c]) + " stderr = "+ MatrixOps.stderr(validationAccuracy[c]);
+				}	
+				ConsoleView.printlInConsoleln(validationResult);
+				
+			}
 
 			if (ReportOptions[ReportOption.test][ReportOption.accuracy]) {
+				String testResult = "";
+				if (pvalue != 0)
+					testResult+="Summary. test accuracy = " + MatrixOps.mean(testAccuracy[c]) + " Binomial 2-Sided Pvalue = " + pvalue;
+				else
+					testResult+="Summary. test accuracy = " + MatrixOps.mean(testAccuracy[c]) + " Pvalue < 10^(-1022)\n";
+
+				if(numTrials > 1) {
+					testResult+=" stddev = " + MatrixOps.stddev(testAccuracy[c]) + " stderr = "+ MatrixOps.stderr(testAccuracy[c]);
+				}	
+				ConsoleView.printlInConsoleln(testResult);
+				
+				/*
 				if (pvalue != 0)
 					ConsoleView.printlInConsoleln("Summary. test accuracy mean = "
 							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
@@ -730,25 +769,20 @@ public abstract class Vectors2Classify {
 							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
 							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
 							+ MatrixOps.stderr(testAccuracy[c])
-							+ " P value < 10^(-1022)\n");
+							+ " P value < 10^(-1022)\n"); */
 			}
 
 			// If we are testing the classifier with two folders, result will be
 			// empty - no report is generated
 			if (result.isEmpty()) {
 				if (pvalue != 0)
-					result.add("Summary. test accuracy mean = "
-							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
-							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
-							+ MatrixOps.stderr(testAccuracy[c]) + " Pvalue = "
-							+ pvalue);
+					result.add("Summary. test accuracy = " + MatrixOps.mean(testAccuracy[c]) + " Binomial 2-Sided  Pvalue = " + pvalue);
 				else
-					result.add("Summary. test accuracy mean = "
-							+ MatrixOps.mean(testAccuracy[c]) + " stddev = "
-							+ MatrixOps.stddev(testAccuracy[c]) + " stderr = "
-							+ MatrixOps.stderr(testAccuracy[c])
-							+ " Pvalue < 10^(-1022)\n");
+					result.add("Summary. test accuracy = " + MatrixOps.mean(testAccuracy[c]) + " Pvalue < 10^(-1022)\n");
 
+				if(numTrials > 1) {
+					result.add(" stddev = " + MatrixOps.stddev(testAccuracy[c]) + " stderr = "+ MatrixOps.stderr(testAccuracy[c]));
+				}				
 			}
 		} // end for each trainer
 

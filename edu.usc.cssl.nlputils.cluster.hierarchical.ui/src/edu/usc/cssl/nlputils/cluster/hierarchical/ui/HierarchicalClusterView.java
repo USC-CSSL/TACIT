@@ -193,6 +193,7 @@ public class HierarchicalClusterView extends ViewPart implements
 				final List<String> selectedFiles = layoutData.getSelectedFiles();
 				final String outputPath = layoutOutputData.getOutputLabel().getText();
 				final boolean isSaveImage = saveImage.getSelection();
+				
 				Job performCluster = new Job("Clustering...") {
 					private Preprocess preprocessTask;
 					private String dirPath;
@@ -302,6 +303,7 @@ public class HierarchicalClusterView extends ViewPart implements
 	}
 	
 	private boolean canProceedCluster() {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");

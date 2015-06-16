@@ -38,14 +38,14 @@ public class NaiveBayesClassifier {
 	public String getTmpLocation() {
 		return this.tmpLocation;
 	}
-	public String predict(ArrayList<String> trainingClasses, ArrayList<String> testingClasses, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
+	public String predict(ArrayList<String> trainingClasses, ArrayList<String> testingClasses, String outputDirectory, boolean removeStopwords, boolean doLowercase) throws FileNotFoundException, IOException, EvalError {
 		Calendar cal = Calendar.getInstance();
 		String dateString = "" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE) + "-" + cal.get(Calendar.YEAR);
 
 		if(trainingClasses.isEmpty() || testingClasses.isEmpty())
 			return null;
 		
-		String outputDir = this.outputDir;
+		String outputDir = (outputDirectory.isEmpty()) ? this.outputDir : outputDirectory;
 		
 		String tempOutputPath = "";
 		String tempTrainDirs = "";
@@ -229,8 +229,8 @@ public class NaiveBayesClassifier {
 			purgeDirectory(new File(s));
 			new File(s).delete();
 		}
-		//purgeDirectory(new File(this.tmpLocation));
-		//new File(this.tmpLocation).delete();
+		purgeDirectory(new File(this.tmpLocation));
+		new File(this.tmpLocation).delete();
 	}
 
 	public void selectAllFiles(String DirPath, ArrayList<String> files) {

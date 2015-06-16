@@ -138,6 +138,13 @@
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
+         <view
+               id="edu.usc.cssl.nlputils.crawlers.senate.ui.senatecrawlerview"
+               minimized="true"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss"
+               visible="false">
+         </view>
     </perspectiveExtension>
  </extension>
 </plugin>

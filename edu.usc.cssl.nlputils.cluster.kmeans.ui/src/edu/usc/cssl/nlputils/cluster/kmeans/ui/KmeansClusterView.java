@@ -287,6 +287,7 @@ public class KmeansClusterView extends ViewPart implements
 	
 	private boolean canProceedCluster() {
 		boolean canProceed = true;
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("cluster");

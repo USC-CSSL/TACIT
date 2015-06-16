@@ -183,6 +183,7 @@ public class LatinCrawlerView extends ViewPart implements
 			}
 
 			public void run() {
+				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 				latinCrawler.initialize(layoutData.getOutputLabel().getText());
 
 				Job job = new Job("Crawling...") {
@@ -257,6 +258,7 @@ public class LatinCrawlerView extends ViewPart implements
 	}
 
 	private boolean canProceedCrawl() {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("author");
