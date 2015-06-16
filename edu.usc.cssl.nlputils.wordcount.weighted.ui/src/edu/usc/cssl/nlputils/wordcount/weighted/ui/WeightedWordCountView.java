@@ -333,6 +333,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 	private boolean canProceed() {
 		boolean canPerform = true;
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");

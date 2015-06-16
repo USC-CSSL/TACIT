@@ -324,6 +324,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 	}
 
 	private boolean canProceedCluster() {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("inputlocation");

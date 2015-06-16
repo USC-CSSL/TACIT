@@ -235,6 +235,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	
 	protected boolean canProceed() {
 		//Remove all errors from any previous tries
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		form.getMessageManager().removeMessage("class1");
 		form.getMessageManager().removeMessage("class2");
 		form.getMessageManager().removeMessage("class1NoProper");
