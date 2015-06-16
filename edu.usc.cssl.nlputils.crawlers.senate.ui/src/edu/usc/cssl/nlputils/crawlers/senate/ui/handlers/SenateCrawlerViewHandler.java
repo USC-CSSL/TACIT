@@ -21,5 +21,4 @@ public class SenateCrawlerViewHandler extends AbstractHandler {
 		}
 		return null;
 	}
-
 }
