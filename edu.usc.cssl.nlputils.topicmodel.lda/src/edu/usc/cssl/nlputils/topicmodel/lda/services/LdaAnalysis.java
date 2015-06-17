@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,10 +37,7 @@ public class LdaAnalysis {
 	
 	public void doLDA(IProgressMonitor monitor) throws FileNotFoundException, IOException{
 		Calendar cal = Calendar.getInstance();
-		Date date = new Date(System.currentTimeMillis());
-		DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
-		String dateFormatted = formatter.format(date);
-		String dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR)+"-"+dateFormatted;
+		String dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR)+"-"+System.currentTimeMillis();
 		String outputPath = outputDir+System.getProperty("file.separator")+label+"-"+dateString;
 		
 		String keepSeq = "TRUE", stopWords = "FALSE", preserveCase = "TRUE";
