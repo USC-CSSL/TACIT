@@ -8,6 +8,6 @@
     <relativePath>../parent</relativePath>
   </parent>
 	<groupId>edu.usc.nlputils.tools</groupId>
-	<artifactId>edu.usc.cssl.nlputils.crawlers.senate.ui</artifactId>
+	<artifactId>edu.usc.cssl.nlputils.crawlers.senate</artifactId>
 	<packaging>eclipse-plugin</packaging>
 </project>
