@@ -781,8 +781,10 @@ public class WordCountApi {
 				nextWord = trimChars(st.nextToken(), punctuations);
 			// String currentWord = st.nextToken();
 
-			if (currentWord == null || currentWord.equals(""))
+			if (currentWord == null || currentWord.equals("")){
+				currentWord = nextWord;
 				continue;
+			}
 
 			// Checking numerals
 			matcher = pattern.matcher(currentWord);
