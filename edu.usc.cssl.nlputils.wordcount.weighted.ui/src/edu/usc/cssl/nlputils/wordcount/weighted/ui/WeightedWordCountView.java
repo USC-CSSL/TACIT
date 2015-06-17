@@ -123,6 +123,12 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(compInput);
 
 		createPreprocessLink(compInput);
+		
+		createStemmingOptions(form.getBody());
+		
+		createAdditionalOptions(toolkit, form.getBody());
+		
+		NlputilsFormComposite.createEmptyRow(toolkit, form.getBody());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -133,14 +139,8 @@ public class WeightedWordCountView extends ViewPart implements
 		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
 				client1, form.getMessageManager());
 
-		// we dont need stop word's as it will be taken from the preprocessor
-		// settings
 
-		Composite output = layoutData.getSectionClient();
-
-		createAdditionalOptions(toolkit, output);
-
-		createStemmingOptions(form.getBody());
+		
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
