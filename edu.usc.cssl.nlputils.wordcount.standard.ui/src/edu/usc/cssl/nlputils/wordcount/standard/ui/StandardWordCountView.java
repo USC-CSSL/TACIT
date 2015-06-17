@@ -137,7 +137,7 @@ public class StandardWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(stopWordPathEnabled);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
-				"Stop Word Path", SWT.NONE);
+				"Stop Words Location", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
