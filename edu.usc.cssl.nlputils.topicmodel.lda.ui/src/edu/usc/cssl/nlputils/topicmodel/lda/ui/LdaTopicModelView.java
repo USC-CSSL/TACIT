@@ -329,7 +329,7 @@ public class LdaTopicModelView extends ViewPart implements
 						inputLayoutData.getOutputLabel().getText(),"Input");
 		if (inputMessage != null) {
 
-			inputMessage = layoutData.getOutputLabel().getText() + " "
+			inputMessage = inputLayoutData.getOutputLabel().getText() + " "
 					+ inputMessage;
 			form.getMessageManager().addMessage("inputlocation", inputMessage,
 					null, IMessageProvider.ERROR);
