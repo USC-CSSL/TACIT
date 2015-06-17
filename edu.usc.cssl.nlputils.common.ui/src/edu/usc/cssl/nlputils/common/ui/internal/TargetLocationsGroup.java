@@ -150,7 +150,7 @@ public class TargetLocationsGroup {
 	 */
 	private void initializeTreeViewer(Composite tree) {
 
-		fTreeViewer = new CheckboxTreeViewer(tree, SWT.NONE);
+		fTreeViewer = new CheckboxTreeViewer(tree, SWT.NONE | SWT.MULTI);
 		fTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTreeViewer.setContentProvider(new TargetLocationContentProvider());
 		fTreeViewer.setLabelProvider(new TargetLocationLabelProvider());
@@ -202,7 +202,7 @@ public class TargetLocationsGroup {
 							return;
 						else {
 
-							cannotExit = updateLocationTree(path);
+							cannotExit = updateLocationTree(new String[]{path});
 							if (!cannotExit) {
 								ErrorDialog.openError(
 										dlg.getParent(),
@@ -221,7 +221,7 @@ public class TargetLocationsGroup {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
-						SWT.OPEN);
+						SWT.OPEN | SWT.MULTI);
 				dlg.setText("Select File");
 				boolean cannotExit = false;
 				String path = null;
@@ -231,7 +231,7 @@ public class TargetLocationsGroup {
 						return;
 					else {
 
-						cannotExit = updateLocationTree(path);
+						cannotExit = updateLocationTree(dlg.getFileNames());
 						if (!cannotExit) {
 							ErrorDialog.openError(
 									dlg.getParent(),
@@ -256,27 +256,43 @@ public class TargetLocationsGroup {
 		updateButtons();
 	}
 
-	protected boolean updateLocationTree(String path) {
+	protected boolean updateLocationTree(String[] path) {
 
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}
 		if (!path.equals("root")) {
-			if (this.locationPaths.contains(path)) {
+			if (checkExistensence(path)) {
 				return false;
 			}
-			TreeParent node = new TreeParent(path);
-			if (new File(path).isDirectory()) {
-				processSubFiles(node);
+			for (String file : path) {
+				TreeParent node = new TreeParent(file);
+				if (new File(file).isDirectory()) {
+					processSubFiles(node);
+				}
+				this.locationPaths.add(node);
+				this.fTreeViewer.refresh();
+				this.fTreeViewer.setChecked(node, true);
+				fTreeViewer.setSubtreeChecked(node, true);
 			}
-			this.locationPaths.add(node);
-			this.fTreeViewer.refresh();
-			this.fTreeViewer.setChecked(node, true);
-			fTreeViewer.setSubtreeChecked(node, true);
 			// }
 
 		}
 		return true;
+	}
+
+	private boolean checkExistensence(String[] path) {
+
+		for (TreeParent node : locationPaths) {
+
+			for (String file : path) {
+				if (file.equals(node.getName())) {
+					return true;
+				}
+			}
+
+		}
+		return false;
 	}
 
 	private void processSubFiles(TreeParent node) {

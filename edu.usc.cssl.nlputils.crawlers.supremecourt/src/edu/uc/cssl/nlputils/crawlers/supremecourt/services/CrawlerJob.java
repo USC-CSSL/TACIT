@@ -27,12 +27,12 @@ public class CrawlerJob implements Runnable,ICrawler {
 	private String url;
 	private IProgressMonitor monitor;
 
-	public CrawlerJob(String filter, String outputDir, String crawlUrl,String url, IProgressMonitor monitor) {
+	public CrawlerJob(String filter, String outputDir, String crawlUrl,String url, IProgressMonitor monitor,boolean downloadAudio,boolean truncate) {
 
 		this.filter = filter;
 		this.outputDir = outputDir;
-		this.truncate = false;
-		this.downloadAudio = false;
+		this.truncate = truncate;
+		this.downloadAudio = downloadAudio;
 		this.baseUrl = crawlUrl;
 		this.url = url;
 		this.monitor = monitor;

@@ -66,13 +66,13 @@ public class SupremeCourtCrawler {
 			}
 		// ExecutorService executor = Executors.newFixedThreadPool(5);
         
-		 for (int i = 0; i <= noOfPages; i++) {
+ 		 for (int i = 0; i <= noOfPages; i++) {
 			  if (monitor.isCanceled()){
 					 throw new OperationCanceledException(); 
 					 
 				}
 		      monitor.subTask("crawling "+url);
-		      new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,url + "&page=" + i,monitor).run();
+		      new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,url + "&page=" + i,monitor,isDownloadAudio(),isTruncate()).run();
 		      monitor.worked(1);
 		     
 		    }
