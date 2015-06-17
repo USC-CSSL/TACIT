@@ -21,6 +21,9 @@
     <module>../edu.usc.cssl.nlputils.crawlers.latin.ui</module>
     <module>../edu.usc.cssl.nlputils.crawlers.latin</module>
     
+     <module>../edu.usc.cssl.nlputils.crawlers.senate.ui</module>
+    <module>../edu.usc.cssl.nlputils.crawlers.senate</module>
+    
                <!-- Cluster  -->
     
     <module>../edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
