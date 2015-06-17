@@ -66,6 +66,7 @@ public class WeightedWordCountView extends ViewPart implements
 	private Button weightedWordCountButton;
 	private Button liwcWordCountButton;
 	private Button stopWordPathEnabled;
+	private Job wordCountJob;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -99,7 +100,7 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(wcTypeComposite);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
 				.applyTo(wcTypeComposite);
-		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
+		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
 		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		Composite client = toolkit.createComposite(form.getBody());
@@ -111,14 +112,15 @@ public class WeightedWordCountView extends ViewPart implements
 		layout.numColumns = 2;
 		inputLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Input",
-				"Add file(s) or Folder(s) which contains data", true);
+				"Add File(s) and Folder(s) to include in analysis.", true);
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary", "Add location of Dictionary",
 				false);
-		
+
 		Composite compInput;
 		compInput = form.getBody();
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(compInput);
 
 		createPreprocessLink(compInput);
 
@@ -145,22 +147,30 @@ public class WeightedWordCountView extends ViewPart implements
 		toolkit.paintBordersFor(form.getBody());
 
 	}
-	
-private void createPreprocessLink(Composite client) {
-		
+
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return wordCountJob;
+		}
+		return super.getAdapter(adapter);
+	}
+
+	private void createPreprocessLink(Composite client) {
+
 		Composite clientLink = toolkit.createComposite(client);
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
 				.applyTo(clientLink);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(clientLink);
 
-		stopWordPathEnabled = toolkit.createButton(clientLink,
-				"", SWT.CHECK);
+		stopWordPathEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
 		stopWordPathEnabled.setEnabled(false);
 		stopWordPathEnabled.setSelection(true);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(stopWordPathEnabled);
-		final Hyperlink link = toolkit
-				.createHyperlink(clientLink, "Stop Words Location", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(stopWordPathEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Stop Words Location", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
@@ -175,10 +185,10 @@ private void createPreprocessLink(Composite client) {
 						new String[] { id }, null).open();
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(link);
 
 	}
-
 
 	private void createWordCountType(FormToolkit toolkit2, Composite parent,
 			IMessageManager messageManager) {
@@ -276,6 +286,7 @@ private void createPreprocessLink(Composite client) {
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
+
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (WeightedWordCountImageRegistry.getImageIconFactory()
@@ -289,7 +300,8 @@ private void createPreprocessLink(Composite client) {
 
 			public void run() {
 				final String stopWordPath = CommonUiActivator.getDefault()
-						.getPreferenceStore().getString(IPreprocessorSettingsConstant.STOP_PATH);
+						.getPreferenceStore()
+						.getString(IPreprocessorSettingsConstant.STOP_PATH);
 				// lindapulickal: handling case where user types in a file
 				// without extension
 				final String outputPath = layoutData.getOutputLabel().getText();
@@ -314,7 +326,7 @@ private void createPreprocessLink(Composite client) {
 				final boolean isWdist = wordDistributionFile.getSelection();
 				final boolean isStemDic = stemEnabled.getSelection();
 
-				Job wordCountJob = new Job("Analyzing...") {
+				wordCountJob = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask(
@@ -379,12 +391,13 @@ private void createPreprocessLink(Composite client) {
 
 	private boolean canProceed() {
 		boolean canPerform = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,

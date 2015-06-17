@@ -57,6 +57,7 @@ public class SupremeCrawlerView extends ViewPart implements
 	private Combo rangeCombo;
 	private OutputLayoutData layoutData;
 	private IToolBarManager mgr;
+	protected Job job;
 
 	@Override
 	public Image getTitleImage() {
@@ -78,9 +79,9 @@ public class SupremeCrawlerView extends ViewPart implements
 		form.setText("Supreme Court Crawler"); //$NON-NLS-1$
 		final IMessageManager mmng = form.getMessageManager();
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
-		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
+		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
 		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.EXPANDED );
+				Section.TITLE_BAR | Section.EXPANDED);
 
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
@@ -147,9 +148,8 @@ public class SupremeCrawlerView extends ViewPart implements
 			}
 		});
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
-		layoutData = NlputilsFormComposite
-				.createOutputSection(toolkit, form.getBody(),
-						form.getMessageManager());
+		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
+				form.getBody(), form.getMessageManager());
 		Composite outputSectionClient = layoutData.getSectionClient();
 		createDownloadGroupSection(form.getBody());
 		form.setImage(SupremeCrawlerImageRegistry.getImageIconFactory()
@@ -178,8 +178,16 @@ public class SupremeCrawlerView extends ViewPart implements
 		toolkit.paintBordersFor(form.getBody());
 	}
 
-	private void addCrawlButton(final IMessageManager mmng, final Text outputPath,
-			IToolBarManager mgr) {
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return job;
+		}
+		return super.getAdapter(adapter);
+	}
+
+	private void addCrawlButton(final IMessageManager mmng,
+			final Text outputPath, IToolBarManager mgr) {
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -206,7 +214,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				sc.setDownloadAudio(downloadAudio.getSelection());
 				sc.setTruncate(truncateAudio.getSelection());
 
-				Job job = new Job("Crawling...") {
+				job = new Job("Crawling...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started crawling...", 100);
@@ -219,11 +227,16 @@ public class SupremeCrawlerView extends ViewPart implements
 
 							sc.looper(new SubProgressMonitor(monitor, 100));
 						} catch (IOException e1) {
-							  NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is cancelled ",IStatus.INFO);
+							NlputilsFormComposite.updateStatusMessage(
+									getViewSite(), "Crawling is cancelled ",
+									IStatus.INFO);
 							return Status.CANCEL_STATUS;
 						}
 						ConsoleView.printlInConsoleln("Done!!");
-                        NlputilsFormComposite.updateStatusMessage(getViewSite(),"Crawling is sucessfully completed",IStatus.OK);
+						NlputilsFormComposite
+								.updateStatusMessage(getViewSite(),
+										"Crawling is sucessfully completed",
+										IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};
@@ -241,21 +254,23 @@ public class SupremeCrawlerView extends ViewPart implements
 
 	protected boolean canProceedCrawl() {
 		boolean canProceed = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null);
 		form.getMessageManager().removeMessage("location");
-		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
+		String message = OutputPathValidation.getInstance()
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
 			canProceed = false;
-		} 
+		}
 		return canProceed;
 	}
 
 	private void createDownloadGroupSection(Composite outputSectionClient) {
-		
+
 		Group downloadGroup = new Group(outputSectionClient, SWT.LEFT);
 		downloadGroup.setText("Audio");
 		downloadGroup.setBackground(outputSectionClient.getBackground());
@@ -290,8 +305,6 @@ public class SupremeCrawlerView extends ViewPart implements
 		NlputilsFormComposite.createEmptyRow(toolkit, outputSectionClient);
 	}
 
-	
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -300,8 +313,6 @@ public class SupremeCrawlerView extends ViewPart implements
 			form.setFocus();
 		}
 	}
-
-	
 
 	private void fireFilterEvent(final String segment, final Combo combo) {
 		Job loadFilters = new Job("Load Filter values") {

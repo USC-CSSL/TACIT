@@ -54,6 +54,7 @@ public class LdaTopicModelView extends ViewPart implements
 	private Text numberOfTopics;
 	private Text prefixTxt;
 	private LdaAnalysis lda = new LdaAnalysis();
+	protected Job job;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -201,7 +202,7 @@ public class LdaTopicModelView extends ViewPart implements
 						.getOutputLabel().getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final String preFix =  prefixTxt.getText();
-				Job performCluster = new Job("Analyzing...") {
+				 job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started clustering...", 100);
@@ -262,9 +263,9 @@ public class LdaTopicModelView extends ViewPart implements
 						return Status.OK_STATUS;
 					}
 				};
-				performCluster.setUser(true);
+				job.setUser(true);
 				if (canProceedCluster()) {
-					performCluster.schedule();
+					job.schedule();
 				} else {
 					NlputilsFormComposite
 							.updateStatusMessage(
@@ -343,5 +344,14 @@ public class LdaTopicModelView extends ViewPart implements
 		}
 		return canProceed;
 	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return job;
+		}
+		return super.getAdapter(adapter);
+	}
+
 
 }

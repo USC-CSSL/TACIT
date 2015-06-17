@@ -82,6 +82,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	HashMap<String, List<String>> classPaths;
 
 	private OutputLayoutData outputLayout;
+
+	protected Job job;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -108,7 +110,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		layout.numColumns = 2;
 		
 		//Create table layout to hold the input data
-		classLayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class Details","Add File(s) or Folder(s) which contains data", true);	
+		classLayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class Details","Add File(s) and Folder(s) to include in analysis.", true);	
 		//Create preprocess link
 		createPreprocessLink(client);
 		createNBClassifierInputParameters(client); // to get k-value
@@ -128,106 +130,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 	}
-
-	/**
-	 * Creates a output section for the Naive Bayes Classifier
-	 * 
-	 * @param parent
-	 *            - Parent composite
-	 * @param toolkit
-	 * @param layout
-	 *            - layout to be applied on the section
-	 * @param title
-	 *            - title for the section
-	 * @param description
-	 *            - description to be displayed on the section
-	 */
-	private void createOutputSection(final Composite parent, GridLayout layout, String title, String description) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
-		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
-		section.setText(title);
-		section.setDescription(description);
-
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL| SWT.V_SCROLL);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
-
-		// Create composite to hold other widgets
-		Composite sectionClient = toolkit.createComposite(section);
-		sc.setContent(sectionClient);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
-		section.setClient(sectionClient);
-
-		// Create an empty row to create space
-		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
-		// Create a row that holds the textbox and browse button
-		Label inputPathLabel = toolkit.createLabel(sectionClient, "Input Path:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(inputPathLabel);
-		classifyInputText = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classifyInputText);
-		classifyInputText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				inputPathListener(classifyInputText, "Classification Input path must be a valid diretory location");
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				inputPathListener(classifyInputText, "Classification Input path must be a valid diretory location");
-			}
-		});
-		final Button browseBtn1 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
-		browseBtn1.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String path = openBrowseDialog(browseBtn1);
-				if(null == path) return;
-				classifyInputText.setText(path);
-				form.getMessageManager().removeMessage("classifyInput");
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
-		});
-		
-		//Output path
-		Label outputPathLabel = toolkit.createLabel(sectionClient, "Output Path:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(outputPathLabel);
-		classifyOutputText = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classifyOutputText);
-		classifyOutputText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				outputPathListener(classifyOutputText, "Classification Output path must be a valid diretory location");
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				outputPathListener(classifyOutputText, "Classification Output path must be a valid diretory location");
-			}
-		});
-		final Button browseBtn2 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
-		browseBtn2.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String path = openBrowseDialog(browseBtn2);
-				if(null == path) return;
-				classifyOutputText.setText(path);
-				form.getMessageManager().removeMessage("classifyOutput");
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
-		});	
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return job;
+		}
+		return super.getAdapter(adapter);
 	}
 
+	
 	
 	protected String openBrowseDialog(Button browseBtn) {
 		DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(), SWT.OPEN);
@@ -368,15 +280,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			
 		NlputilsFormComposite.createEmptyRow(toolkit, group);
 		
-		/*
-		ScrolledComposite sc = new ScrolledComposite(group, SWT.H_SCROLL | SWT.V_SCROLL);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
-		sc.pack();
-		sc.setEnabled(false);*/
-		
+	
 		final Composite sectionClient = toolkit.createComposite(group);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(sectionClient);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
@@ -560,7 +464,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				outputDir = outputLayout.getOutputLabel().getText();
 				
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
-				final Job job = new Job("Naive Bayes Classification") {
+				job = new Job("Naive Bayes Classification") {
 					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {

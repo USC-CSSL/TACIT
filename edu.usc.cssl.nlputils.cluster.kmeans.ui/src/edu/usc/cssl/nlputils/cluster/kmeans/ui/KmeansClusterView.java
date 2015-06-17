@@ -53,6 +53,7 @@ public class KmeansClusterView extends ViewPart implements
 	private TableLayoutData layData;
 	private Text noClusterTxt;
 	private OutputLayoutData layoutData;
+	protected Job performCluster;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -87,7 +88,7 @@ public class KmeansClusterView extends ViewPart implements
 
 		layData = NlputilsFormComposite.createTableSection(client, toolkit,
 				layout, "Input Dtails",
-				"Add file(s) or Folder(s) which contains data", true);
+				"Add File(s) and Folder(s) to include in analysis.", true);
 		Composite compInput;
 		compInput = layData.getSectionClient();
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
@@ -115,6 +116,13 @@ public class KmeansClusterView extends ViewPart implements
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
 
+	}
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return performCluster;
+		}
+		return super.getAdapter(adapter);
 	}
 
 	private void createPreprocessLink(Composite client) {
@@ -196,7 +204,7 @@ public class KmeansClusterView extends ViewPart implements
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final List<String> selectedFiles = layData.getSelectedFiles();
 				final String outputPath = layoutData.getOutputLabel().getText();
-				Job performCluster = new Job("Clustering...") {
+				 performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started clustering...", 100);
