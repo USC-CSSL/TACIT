@@ -7,8 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -22,18 +27,23 @@ public class LdaAnalysis {
 	private int numTopics;
 	private String outputDir;
 	private String label;
+	private boolean wordWeights;
 	
-	public void initialize(String sourceDir, int numTopics, String outputDir, String label){
+	public void initialize(String sourceDir, int numTopics, String outputDir, String label, boolean wordWeights){
 		this.sourceDir = sourceDir;
 		this.numTopics = numTopics;
 		this.outputDir = outputDir;
 		this.label = label;
+		this.wordWeights = wordWeights;
 	}
 	
 	public void doLDA(IProgressMonitor monitor) throws FileNotFoundException, IOException{
 		Calendar cal = Calendar.getInstance();
-		String dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		String outputPath = outputDir+System.getProperty("file.separator")+label+"-"+dateString+"-"+System.currentTimeMillis();
+		Date date = new Date(System.currentTimeMillis());
+		DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+		String dateFormatted = formatter.format(date);
+		String dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR)+"-"+dateFormatted;
+		String outputPath = outputDir+System.getProperty("file.separator")+label+"-"+dateString;
 		
 		String keepSeq = "TRUE", stopWords = "FALSE", preserveCase = "TRUE";
 		
@@ -57,49 +67,164 @@ public class LdaAnalysis {
 		Vectors2Topics.main(v2tArgs);
 		monitor.worked(5);
 		monitor.subTask("Created complete state file "+outputPath+".topic-state.gz");
-		ConsoleView.printlInConsoleln("Created complete state file "+outputPath+".topic-state.gz");
-		ConsoleView.printlInConsoleln("Created topic keys file "+outputPath+".topic_keys.txt");
-		ConsoleView.printlInConsoleln("Created topic composition file "+outputPath+".topic_composition.txt");
-		ConsoleView.printlInConsoleln("Created topic word counts file "+outputPath+".word_counts.txt");
+//		ConsoleView.printlInConsoleln("Created complete state file "+outputPath+".topic-state.gz");
+//		ConsoleView.printlInConsoleln("Created topic keys file "+outputPath+".topic_keys.txt");
+//		ConsoleView.printlInConsoleln("Created topic composition file "+outputPath+".topic_composition.txt");
+//		ConsoleView.printlInConsoleln("Created topic word counts file "+outputPath+".word_counts.txt");
 
+		
 		monitor.subTask("Convert "+outputPath+".topic_keys to csv");
-		convert2csv(outputPath+".topic_keys",false);
+		convertKeys2csv(outputPath+".topic_keys");
+		ConsoleView.printlInConsoleln("Created topic keys file "+outputPath+".topic_keys.csv");
 		monitor.worked(5);
 		monitor.subTask("Convert "+outputPath+".topic_composition to csv");
-		convert2csv(outputPath+".topic_composition",false);
+		convertComposition2csv(outputPath+".topic_composition");
+		ConsoleView.printlInConsoleln("Created topic composition file "+outputPath+".topic_composition.csv");
 		monitor.worked(5);
 		monitor.subTask("Convert "+outputPath+".word_counts to csv");
-		convert2csv(outputPath+".word_counts", true);
+		if (wordWeights) {
+			convertWeights2csv(outputPath+".word_weights");
+			ConsoleView.printlInConsoleln("Created word weights file "+outputPath+".word_weights.csv");
+		}
+		
 		monitor.worked(5);
 		
-		ConsoleView.printlInConsoleln("Created topic keys csv file "+outputPath+".topic_keys.csv");
-		ConsoleView.printlInConsoleln("Created topic composition csv file "+outputPath+".topic_composition.csv");
-		monitor.subTask("writing Read Me File");
-		writeReadMe(outputPath);
+		deleteFiles(outputPath);
 		monitor.worked(5);
 	}
 	
+	private void deleteFiles(String outputPath) {
+		File toDel = new File(outputPath+".topic-state.gz");
+		toDel.delete();
+		toDel = new File(outputPath+".word_counts.txt");
+		toDel.delete();
+		toDel = new File(outputPath+".topic_keys.txt");
+		toDel.delete();
+		toDel = new File(outputPath+".topic_composition.txt");
+		toDel.delete();
+		toDel = new File(outputPath+".word_weights.txt");
+		toDel.delete();
+		toDel = new File(outputPath+".mallet");
+		toDel.delete();
+	}
 	
-	private void convert2csv(String string, boolean space) {
+	private void convertWeights2csv(String fileName) {
+		
+		BufferedReader br;
+		BufferedWriter bw;
 		try {
-			BufferedReader br;
-			BufferedWriter bw;
-			br = new BufferedReader(new FileReader(new File(string+".txt")));
-			bw = new BufferedWriter(new FileWriter(new File(string+".csv")));
-			String currentLine;
+			br = new BufferedReader(new FileReader(new File(fileName+".txt")));
+			bw = new BufferedWriter(new FileWriter(new File(fileName+".csv")));
+			
+			String currentLine = "Topic,Word,Weight";
+			bw.write(currentLine);
+			bw.newLine();
 			while((currentLine = br.readLine())!=null){
-				if (space)
-					bw.write(currentLine.replace(' ', ','));
-				else
-				bw.write(currentLine.replace('\t', ','));
+				currentLine = currentLine.replace('\t', ',');
+				List<String> wordList = Arrays.asList(currentLine.split(","));
+				bw.write(wordList.get(0)+","+wordList.get(1)+","+wordList.get(2));
 				bw.newLine();
 			}
 			br.close();
 			bw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+	}
+	
+	private void convertKeys2csv(String fileName) {
+		
+		BufferedReader br;
+		BufferedWriter bw;
+		try {
+			br = new BufferedReader(new FileReader(new File(fileName+".txt")));
+			bw = new BufferedWriter(new FileWriter(new File(fileName+".csv")));
+			
+			String currentLine = "Topic,Keywords";
+			bw.write(currentLine);
+			bw.newLine();
+			while((currentLine = br.readLine())!=null){
+				currentLine = currentLine.replace('\t', ',');
+				List<String> wordList = Arrays.asList(currentLine.split(","));
+				bw.write(wordList.get(0)+","+wordList.get(2));
+				bw.newLine();
+			}
+			br.close();
+			bw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
+	}
+	
+	private void convertComposition2csv(String fileName) {
+		
+		BufferedReader br;
+		BufferedWriter bw;
+		try {
+			br = new BufferedReader(new FileReader(new File(fileName+".txt")));
+			bw = new BufferedWriter(new FileWriter(new File(fileName+".csv")));
+			
+			String currentLine = br.readLine();
+			currentLine = "Number,File Name";
+			for (int i=0; i < numTopics; i++){
+				currentLine = currentLine+","+"Topic "+i+" Probability";
+			}
+			bw.write(currentLine);
+			bw.newLine();
+			while((currentLine = br.readLine())!=null){
+				currentLine = currentLine.replace('\t', ',');
+				List<String> wordList = Arrays.asList(currentLine.split(","));
+				
+				HashMap<String, String> probabilities = new HashMap<String, String>();
+				
+				for (int i=2; i<wordList.size(); i=i+2){
+					probabilities.put(wordList.get(i), wordList.get(i+1));
+				}
+				currentLine = wordList.get(0)+","+wordList.get(1);
+				//bw.write(wordList.get(0)+","+wordList.get(1));
+				for (int i=0; i<numTopics; i++){
+					String keyVal = probabilities.get(Integer.toString(i));
+					currentLine = currentLine+","+keyVal;
+				}
+				bw.write(currentLine);
+				bw.newLine();
+			}
+			br.close();
+			bw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+//	private void convert2csv(String string, boolean space, String header) {
+//		try {
+//			BufferedReader br;
+//			BufferedWriter bw;
+//			br = new BufferedReader(new FileReader(new File(string+".txt")));
+//			bw = new BufferedWriter(new FileWriter(new File(string+".csv")));
+//			String currentLine;
+//			while((currentLine = br.readLine())!=null){
+//				if (space)
+//					bw.write(currentLine.replace(' ', ','));
+//				else
+//				bw.write(currentLine.replace('\t', ','));
+//				bw.newLine();
+//			}
+//			br.close();
+//			bw.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		}
 
 	
 	public void writeReadMe(String location){
