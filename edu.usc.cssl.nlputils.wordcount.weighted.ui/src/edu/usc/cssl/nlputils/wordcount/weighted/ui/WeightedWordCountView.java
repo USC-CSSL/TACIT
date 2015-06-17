@@ -26,10 +26,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
@@ -60,6 +65,7 @@ public class WeightedWordCountView extends ViewPart implements
 	private WordCountApi wordCountController;
 	private Button weightedWordCountButton;
 	private Button liwcWordCountButton;
+	private Button stopWordPathEnabled;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -109,6 +115,12 @@ public class WeightedWordCountView extends ViewPart implements
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary", "Add location of Dictionary",
 				false);
+		
+		Composite compInput;
+		compInput = form.getBody();
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
+
+		createPreprocessLink(compInput);
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -133,6 +145,40 @@ public class WeightedWordCountView extends ViewPart implements
 		toolkit.paintBordersFor(form.getBody());
 
 	}
+	
+private void createPreprocessLink(Composite client) {
+		
+		Composite clientLink = toolkit.createComposite(client);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
+
+		stopWordPathEnabled = toolkit.createButton(clientLink,
+				"", SWT.CHECK);
+		stopWordPathEnabled.setEnabled(false);
+		stopWordPathEnabled.setSelection(true);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(stopWordPathEnabled);
+		final Hyperlink link = toolkit
+				.createHyperlink(clientLink, "Stop Words Location", SWT.NONE);
+		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		link.addHyperlinkListener(new IHyperlinkListener() {
+			public void linkEntered(HyperlinkEvent e) {
+			}
+
+			public void linkExited(HyperlinkEvent e) {
+			}
+
+			public void linkActivated(HyperlinkEvent e) {
+				String id = "edu.usc.cssl.nlputils.common.ui.prepocessorsettings";
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+						new String[] { id }, null).open();
+			}
+		});
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+
+	}
+
 
 	private void createWordCountType(FormToolkit toolkit2, Composite parent,
 			IMessageManager messageManager) {
