@@ -87,11 +87,6 @@ public class SupremeCrawlerView extends ViewPart implements
 				.applyTo(section);
 		section.setExpanded(true);
 		section.setText("Crawler Details"); //$NON-NLS-1$
-		String description = "This sections gives details about the crawler settigs";
-		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
-				false);
-		section.setDescriptionControl(descriptionFrm);
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);

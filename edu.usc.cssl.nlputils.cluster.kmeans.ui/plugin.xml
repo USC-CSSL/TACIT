@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Kmeans Cluster View"
+            name="KMeans Cluster"
             class="edu.usc.cssl.nlputils.cluster.kmeans.ui.KmeansClusterView"
             id="edu.usc.cssl.nlputils.cluster.kmeansui.view1">
       </view>

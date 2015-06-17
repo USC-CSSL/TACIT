@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Z-Label LDA Topic Model View"
+            name="Z-Label LDA Topic Model"
             class="edu.usc.cssl.nlputils.topicmodel.zlda.ui.ZlabelLdaTopicModelView"
             id="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1">
       </view>
@@ -18,8 +18,8 @@
             locationURI="menu:topicmodel">
              <command
                    commandId="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1"
-                   label="Z-Label LDA Topic Model View"
-                   tooltip="Z-Label LDA Topic Model View">
+                   label="Z-Label LDA Topic Model"
+                   tooltip="Z-Label LDA Topic Model">
             </command>
       </menuContribution>
    </extension>
