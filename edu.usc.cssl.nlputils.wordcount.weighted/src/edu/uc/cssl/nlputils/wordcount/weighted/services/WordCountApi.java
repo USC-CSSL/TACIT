@@ -93,7 +93,7 @@ public class WordCountApi {
 			boolean doWordDistribution, boolean stemDictionary, File oFile,
 			File sFile) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
-			this.delimiters = " ";
+			this.delimiters = " -";
 		else
 			this.delimiters = delimiters;
 		this.doLower = doLower;
@@ -243,6 +243,8 @@ public class WordCountApi {
 						+ StringUtils.countMatches(currentLine,
 								String.valueOf(c));
 			}
+			
+			System.out.println();
 
 			int[] i = process(currentLine, map);
 			totalWords = totalWords + i[0];
@@ -467,7 +469,7 @@ public class WordCountApi {
 		bw.write(row.toString());
 		bw.newLine();
 		bw.close();
-		logger.info("SPSS File Updated Successfully");
+		ConsoleView.printlInConsole("SPSS File Updated Successfully");
 	}
 
 	public void writeToFile(File oFile, String docName, int totalCount,

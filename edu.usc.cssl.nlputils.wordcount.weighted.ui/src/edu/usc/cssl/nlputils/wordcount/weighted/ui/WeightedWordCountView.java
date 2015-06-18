@@ -67,6 +67,7 @@ public class WeightedWordCountView extends ViewPart implements
 	private Button liwcWordCountButton;
 	private Button stopWordPathEnabled;
 	private Job wordCountJob;
+	private Button standardWordCountButton;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -123,11 +124,11 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(compInput);
 
 		createPreprocessLink(compInput);
-		
+
 		createStemmingOptions(form.getBody());
-		
+
 		createAdditionalOptions(toolkit, form.getBody());
-		
+
 		NlputilsFormComposite.createEmptyRow(toolkit, form.getBody());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
@@ -138,9 +139,6 @@ public class WeightedWordCountView extends ViewPart implements
 
 		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
 				client1, form.getMessageManager());
-
-
-		
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
@@ -213,6 +211,12 @@ public class WeightedWordCountView extends ViewPart implements
 		weightedWordCountButton.setSelection(false);
 		weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
+		
+		standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		standardWordCountButton.setText("Standard Word Count");
+		standardWordCountButton.setSelection(false);
+		standardWordCountButton.setBackground(parent.getBackground());
+		standardWordCountButton.setForeground(parent.getForeground());
 
 		Label lblEmpty = new Label(buttonComposite, SWT.None);
 		NlputilsFormComposite.createEmptyRow(toolkit, parent);
@@ -307,9 +311,10 @@ public class WeightedWordCountView extends ViewPart implements
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
 				if (weightedWordCountButton.getSelection()) {
-					fileName = "weighted_" + fileName;
+					fileName = "weighted_" + fileName
+							+ System.currentTimeMillis();
 				} else {
-					fileName = "liwc_" + fileName;
+					fileName = "liwc_" + fileName + System.currentTimeMillis();
 				}
 				final File oFile = new File(outputPath + File.separator
 						+ fileName + ".csv");
