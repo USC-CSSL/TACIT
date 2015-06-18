@@ -3,11 +3,11 @@
 		<link rel="stylesheet" type="text/css" href="sample.css">
 	</head>
 	<body>
-		<center><h3>NLP Utils User Guide</h3></center>
+		<center><h3>TACIT User Guide</h3></center>
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">LIWC-Style Word Count</td>
+				<td class = "header">LIWC-Style Word Count/ Weighted Word Count</td>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -15,8 +15,9 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>If you're new to Git or distributed version control systems generally, then you might want to read Git for Eclipse Users first. More background and details can be found in the on-line book Pro Git. <br><br>
-							If you are coming from CVS, you can find common CVS workflows for Git <a href = "http://wiki.eclipse.org/Platform-releng/Git_Workflows" target="_blank">Platform-releng/Git Workflows</a>. 
+						<td>Word count programs (or dictionary methods) are text analysis tools that quantify the frequency of topics of interest across a document or set of documents that reflects . To accomplish this task, word count programs require a user-defined dictionary of topics, with pre-identified words for each topic. Using this dictionary, the word count program then counts the number of times words in each topic domains occur and calculates the percentage of each document that reflects each topic. <br><br>
+							
+							LIWC-style word  <a href = "http://wiki.eclipse.org/Platform-releng/Git_Workflows" target="_blank">Platform-releng/Git Workflows</a>. 
 							
 						</td>
 					</tr>
@@ -25,32 +26,40 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Basic Tutorial: Adding a project to version control</td>
+						<td class = "head">Basic Tutorial: Word Count</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Configuration</td>
+						<td class = "subtitle">Word Count Types</td>
 					</tr>
 					<tr>
-						<td class = "section">Identifying yourself</td>
+						<td class = "section">LIWC-style word count</td>
 					</tr>
 					<tr>
-						<td>Whenever the history of the repository is changed (technically, whenever a commit is created), Git keeps track of the user who created that commit. The identification consists of a name (typically a person's name) and an e-mail address. This information is stored in file ~/.gitconfig under dedicated keys. 
+						<td> LIWC stemming explanation compared to snowball stemming
+						</td>
+					</tr>
+					<tr>
+						<td class = "section">Weighted Word Count</td>
+					</tr>
+					<tr>
+						<td>Required components, weights etc <a href = "http://meh.ryanb.cc/" target="_blank">Program that can make dictionary with word count weights</a>. 
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Input: Corpus Files</td>
+					</tr>
+					<tr>
+						<td> Input files should be in .txt format.   
 
-<br><br>
-EGit will ask you for this information when you create your first commit. By default, this dialog is shown only once until you create a new workspace or tick the checkbox "Show initial configuration dialog" on the Git Preference page:
-							<br>
 							<img class="image" src="images/temp.png" alt="Identifying yourself">
  							<br>
 						</td>
 					</tr>
 					<tr>
-						<td class = "section">Identifying yourself</td>
+						<td class = "subtitle">Dictionary Selection</td>
 					</tr>
 					<tr>
-						<td>Whenever the history of the repository is changed (technically, whenever a commit is created), Git keeps track of the user who created that commit. The identification consists of a name (typically a person's name) and an e-mail address. This information is stored in file ~/.gitconfig under dedicated keys. 
-
-<br><br>
-EGit will ask you for this information when you create your first commit. By default, this dialog is shown only once until you create a new workspace or tick the checkbox "Show initial configuration dialog" on the Git Preference page:
+						<td> Selecting dictionary location, list of basic dictionary requirements and link to dictionary overview page. 
 							<br>
 							<img class="image" src="images/temp.png" alt="Identifying yourself">
  							<br>
