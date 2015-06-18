@@ -272,7 +272,7 @@ public class LatinCrawler {
 		this.outputDir = outputDir;
 	}
 
-	public Map<String, String> getAuthorNames() throws Exception {
+	public Map<String, String> getAuthorNames() throws IOException {
 		Map<String, String> authorNames = new HashMap<String, String>();
 		authorNames.putAll(getAuthorsList("http://www.thelatinlibrary.com/",
 				false));
@@ -290,8 +290,8 @@ public class LatinCrawler {
 		return authorNames;
 	}
 
-	public Map<String, String> getAuthorsList(String url, boolean isSubAuthor)
-			throws Exception {
+	public Map<String, String> getAuthorsList(String url, boolean isSubAuthor) throws IOException
+			 {
 		int i, size = 0;
 		String name;
 		Map<String, String> authorNames = new HashMap<String, String>();

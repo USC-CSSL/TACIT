@@ -57,6 +57,7 @@ public class HierarchicalClusterView extends ViewPart implements
 	private TableLayoutData layoutData;
 	private OutputLayoutData layoutOutputData;
 	private Button saveImage;
+	protected Job performCluster;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -90,7 +91,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		layout.numColumns = 1;
 	
 	   layoutData = NlputilsFormComposite.createTableSection(client, toolkit,
-				layout, "Input Dtails", "Add file(s) or Folder(s) which contains data", true);
+				layout, "Input Dtails", "Add File(s) and Folder(s) to include in analysis.", true);
 		Composite compInput;
 		compInput = layoutData.getSectionClient();
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
@@ -119,6 +120,15 @@ public class HierarchicalClusterView extends ViewPart implements
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
 
+	}
+	
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return performCluster;
+		}
+		return super.getAdapter(adapter);
 	}
 
 	private void createPreprocessLink(Composite client) {
@@ -194,7 +204,7 @@ public class HierarchicalClusterView extends ViewPart implements
 				final String outputPath = layoutOutputData.getOutputLabel().getText();
 				final boolean isSaveImage = saveImage.getSelection();
 				
-				Job performCluster = new Job("Clustering...") {
+				 performCluster = new Job("Clustering...") {
 					private Preprocess preprocessTask;
 					private String dirPath;
 

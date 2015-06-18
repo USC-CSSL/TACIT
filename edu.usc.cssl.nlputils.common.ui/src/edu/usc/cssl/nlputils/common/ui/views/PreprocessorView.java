@@ -75,7 +75,7 @@ public class PreprocessorView extends ViewPart {
 		layout.numColumns = 1;
 	
 		TableLayoutData layData = NlputilsFormComposite.createTableSection(client, toolkit,
-				layout, "Input Dtails", "Add file(s) or Folder(s) which contains data", true);
+				layout, "Input Dtails", "Add File(s) and Folder(s) to include in analysis.", true);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(layData.getSectionClient());
 
 		createPreprocessLink(layData.getSectionClient());

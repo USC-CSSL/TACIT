@@ -81,7 +81,7 @@ public class Preprocess {
 		File[] files;
 		files = new File[inputFiles.size()];
 		int i = 0;
-		boolean outputPathNotSet = false;
+		//boolean outputPathNotSet = false;
 		for (String filepath : inputFiles) {
 			if ((new File(filepath).isDirectory()))
 				continue;
@@ -91,15 +91,15 @@ public class Preprocess {
 			i = i + 1;
 		}
 
-		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
-			this.outputPath = System.getProperty("user.dir");
-			// this.outputPath = (new File(inputFiles.get(0)).getParent());
-			outputPathNotSet = true;
-		}
+//		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
+//			this.outputPath = System.getProperty("user.dir");
+//			// this.outputPath = (new File(inputFiles.get(0)).getParent());
+//			outputPathNotSet = true;
+//		}
 		preprocessingParentFolder = this.outputPath + File.separator
 				+ callingPlugin + "_" + currTime;
-		if (outputPathNotSet)
-			this.outputPath = "";
+//		if (outputPathNotSet)
+//			this.outputPath = "";
 		if (!(new File(preprocessingParentFolder).exists())) {
 			new File(preprocessingParentFolder).mkdir();
 			ConsoleView.printlInConsoleln("Folder " + preprocessingParentFolder

@@ -1,7 +1,5 @@
 package edu.usc.cssl.nlputils.common.ui.internal;
 
-import java.io.File;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -9,18 +7,18 @@ import org.eclipse.swt.graphics.Image;
 import edu.usc.cssl.nlputils.common.ui.utility.INlpCommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.utility.IconRegistry;
 
-public class TargetLocationLabelProvider implements  ILabelProvider{
+public class TargetLocationLabelProvider implements ILabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -32,27 +30,30 @@ public class TargetLocationLabelProvider implements  ILabelProvider{
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	  public Image getImage(Object arg0) {
-		  if(arg0 instanceof String){
-			  File locationObj = new File((String) arg0);
-			  if(locationObj.isDirectory()){
-				  return IconRegistry.getImageIconFactory().getImage(INlpCommonUiConstants.FLDR_OBJ);
-				
-			  }	
-		  }
-		  return IconRegistry.getImageIconFactory().getImage(INlpCommonUiConstants.FILE_OBJ);
-			  
-	  }
+	public Image getImage(Object arg0) {
+		if (arg0 instanceof String) {
+			return IconRegistry.getImageIconFactory().getImage(
+					INlpCommonUiConstants.FILE_OBJ);
+
+		} else if (arg0 instanceof TreeParent) {
+			TreeParent parent = (TreeParent) arg0;
+			if (parent.getFiles().size() == 0 && parent.getFolder().size() == 0) {
+				return IconRegistry.getImageIconFactory().getImage(
+						INlpCommonUiConstants.FILE_OBJ);
+			}
+		}
+
+		return IconRegistry.getImageIconFactory().getImage(
+				INlpCommonUiConstants.FLDR_OBJ);
+
+	}
 
 	@Override
 	public String getText(Object element) {
-		return (String) element;
+		return element.toString();
 	}
-	
-	
-
 
 }

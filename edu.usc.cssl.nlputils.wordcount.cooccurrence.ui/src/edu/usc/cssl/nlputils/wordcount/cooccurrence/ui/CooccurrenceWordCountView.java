@@ -61,7 +61,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private Text seedFile;
 	private Text windowSize;
 	private Text thresholdValue;
-
+	private Job cooccurrenceAnalysisJob;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -95,7 +95,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 		inputLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Input Dtails",
-				"Add file(s) or Folder(s) which contains data", true);
+				"Add File(s) and Folder(s) to include in analysis.", true);
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
@@ -135,6 +135,14 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(numTxt);
 		return numTxt;
+	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return cooccurrenceAnalysisJob;
+		}
+		return super.getAdapter(adapter);
 	}
 
 	private void createPreprocessLink(Composite client) {
@@ -222,6 +230,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
+
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (CooccurrenceWordCountImageRegistry
@@ -243,9 +252,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();
-				// Creating a new Job to do Word Count so that the UI will not
-				// freeze
-				Job cooccurrenceAnalysisJob = new Job(
+				cooccurrenceAnalysisJob = new Job(
 						"Co-occurrence Analysis...") {
 					private Preprocess preprocessTask;
 					private String dirPath;

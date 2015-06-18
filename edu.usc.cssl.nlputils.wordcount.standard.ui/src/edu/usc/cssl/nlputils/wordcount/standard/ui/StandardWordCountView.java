@@ -49,6 +49,7 @@ public class StandardWordCountView extends ViewPart implements
 	private TableLayoutData dictLayoutData;
 	private Button stemEnabled;
 	private Button stopWordPathEnabled;
+	protected Job wordCountJob;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -79,7 +80,7 @@ public class StandardWordCountView extends ViewPart implements
 		layout.numColumns = 2;
 		inputLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Input",
-				"Add file(s) or Folder(s) which contains data", true);
+				"Add File(s) and Folder(s) to include in analysis.", true);
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary", "Add location of Dictionary",
 				false);
@@ -114,6 +115,15 @@ public class StandardWordCountView extends ViewPart implements
 				.applyTo(stemEnabled);
 
 	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return wordCountJob;
+		}
+		return super.getAdapter(adapter);
+	}
+
 
 	private void createStopWordPathLink(Composite client) {
 
@@ -127,7 +137,7 @@ public class StandardWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(stopWordPathEnabled);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
-				"Stop Word Path", SWT.NONE);
+				"Stop Words Location", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
@@ -194,7 +204,7 @@ public class StandardWordCountView extends ViewPart implements
 				final WordCountPlugin wc = new WordCountPlugin();
 				
 				// Creating a new Job to do Word Count so that the UI will not freeze
-				Job wordCountJob = new Job("Word Count Plugin Job"){
+				 wordCountJob = new Job("Word Count Plugin Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 				
 				int rc = -1;

@@ -60,6 +60,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	private Text kValue;
 	private Button preprocessButton;
 	private Button featureFileButton;
+	protected Job job;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -86,8 +87,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		class1LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 1 Details","Add File(s) or Folder(s) which contains data", true);
-		class2LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 2 Details","Add File(s) or Folder(s) which contains data", true);
+		class1LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 1 Details","Add File(s) and Folder(s) to include in analysis.", true);
+		class2LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 2 Details","Add File(s) and Folder(s) to include in analysis.", true);
 	
 		createPreprocessLink(form.getBody());
 		createInputParams(form.getBody());
@@ -109,6 +110,13 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		toolkit.paintBordersFor(form.getBody());
 	}
 	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return job;
+		}
+		return super.getAdapter(adapter);
+	}
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
 				
@@ -137,7 +145,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				
 				final SVMClassify svm = new SVMClassify(class1NameStr, class2NameStr, outputPath);
 				final CrossValidator cv = new CrossValidator();
-				Job job = new Job("Classifier Job"){
+				 job = new Job("Classifier Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 						monitor.beginTask("SVM Classification", kValueInt+4);
 						String ppClass1 = "";

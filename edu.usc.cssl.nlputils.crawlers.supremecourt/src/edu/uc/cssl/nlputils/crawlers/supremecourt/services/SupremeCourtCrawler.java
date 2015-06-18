@@ -16,6 +16,7 @@ public class SupremeCourtCrawler {
 	private String filter, url, outputDir;
 	private boolean truncate, downloadAudio;
 	private String baseUrl;
+	private CrawlerJob crawler;
 
 	public SupremeCourtCrawler(String filter, String outputDir, String crawlUrl) {
 		this.filter = filter;
@@ -65,14 +66,14 @@ public class SupremeCourtCrawler {
 				 
 			}
 		// ExecutorService executor = Executors.newFixedThreadPool(5);
-        
-		 for (int i = 0; i <= noOfPages; i++) {
+		 crawler =  new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,monitor,isDownloadAudio(),isTruncate());
+ 		 for (int i = 0; i <= noOfPages; i++) {
 			  if (monitor.isCanceled()){
 					 throw new OperationCanceledException(); 
 					 
 				}
 		      monitor.subTask("crawling "+url);
-		      new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,url + "&page=" + i,monitor).run();
+		      crawler.run(url + "&page=" + i);
 		      monitor.worked(1);
 		     
 		    }

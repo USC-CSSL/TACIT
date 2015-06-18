@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Hierarchical Cluster View"
+            name="Hierarchical Cluster"
             class="edu.usc.cssl.nlputils.cluster.hierarchical.ui.HierarchicalClusterView"
             id="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1">
       </view>

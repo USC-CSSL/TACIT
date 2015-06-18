@@ -57,6 +57,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 	private Text seedFileText;
 	private Text topics;
 	private Button fAddFileButton;
+	protected Job job;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -233,7 +234,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						.getOutputLabel().getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final String seedFilePath =  seedFileText.getText();
-				Job performCluster = new Job("Analyzing...") {
+				 job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started analyzing...", 100);
@@ -285,9 +286,9 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						return Status.OK_STATUS;
 					}
 				};
-				performCluster.setUser(true);
-				if (canProceedCluster()) {
-					performCluster.schedule();
+				job.setUser(true);
+				if (canProceedJob()) {
+					job.schedule();
 				} else {
 					NlputilsFormComposite
 							.updateStatusMessage(
@@ -322,8 +323,17 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return job;
+		}
+		return super.getAdapter(adapter);
+	}
 
-	private boolean canProceedCluster() {
+
+	private boolean canProceedJob() {
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
@@ -345,7 +355,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						inputLayoutData.getOutputLabel().getText(),"Input");
 		if (inputMessage != null) {
 
-			inputMessage = layoutData.getOutputLabel().getText() + " "
+			inputMessage = inputLayoutData.getOutputLabel().getText() + " "
 					+ inputMessage;
 			form.getMessageManager().addMessage("inputlocation", inputMessage,
 					null, IMessageProvider.ERROR);

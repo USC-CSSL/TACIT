@@ -54,6 +54,8 @@ public class LdaTopicModelView extends ViewPart implements
 	private Text numberOfTopics;
 	private Text prefixTxt;
 	private LdaAnalysis lda = new LdaAnalysis();
+	protected Job job;
+	private Button wordWeights;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -109,6 +111,8 @@ public class LdaTopicModelView extends ViewPart implements
 		Composite output = layoutData.getSectionClient();
 
 		prefixTxt = createAdditionalOptions(output, "Output Prefix", "Lda_");
+		
+		wordWeights = toolkit.createButton(output, "Create Word Weight File", SWT.CHECK);
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -201,7 +205,9 @@ public class LdaTopicModelView extends ViewPart implements
 						.getOutputLabel().getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final String preFix =  prefixTxt.getText();
-				Job performCluster = new Job("Analyzing...") {
+				final boolean wordWeightFile = wordWeights.getSelection();
+				
+				 job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("NLPUtils started clustering...", 100);
@@ -215,6 +221,7 @@ public class LdaTopicModelView extends ViewPart implements
 								File[] inputFile = new File(inputPath)
 										.listFiles();
 								for (File iFile : inputFile) {
+									if (iFile.getAbsolutePath().contains("DS_Store")) continue;
 									inputFiles.add(iFile.toString());
 
 								}
@@ -229,7 +236,7 @@ public class LdaTopicModelView extends ViewPart implements
 						
 						
 						
-						lda.initialize(topicModelDirPath, noOfTopics, outputPath,preFix);
+						lda.initialize(topicModelDirPath, noOfTopics, outputPath,preFix,wordWeightFile);
 
 						// lda processsing
 						long startTime = System.currentTimeMillis();
@@ -262,9 +269,9 @@ public class LdaTopicModelView extends ViewPart implements
 						return Status.OK_STATUS;
 					}
 				};
-				performCluster.setUser(true);
+				job.setUser(true);
 				if (canProceedCluster()) {
-					performCluster.schedule();
+					job.schedule();
 				} else {
 					NlputilsFormComposite
 							.updateStatusMessage(
@@ -322,7 +329,7 @@ public class LdaTopicModelView extends ViewPart implements
 						inputLayoutData.getOutputLabel().getText(),"Input");
 		if (inputMessage != null) {
 
-			inputMessage = layoutData.getOutputLabel().getText() + " "
+			inputMessage = inputLayoutData.getOutputLabel().getText() + " "
 					+ inputMessage;
 			form.getMessageManager().addMessage("inputlocation", inputMessage,
 					null, IMessageProvider.ERROR);
@@ -343,5 +350,14 @@ public class LdaTopicModelView extends ViewPart implements
 		}
 		return canProceed;
 	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return job;
+		}
+		return super.getAdapter(adapter);
+	}
+
 
 }

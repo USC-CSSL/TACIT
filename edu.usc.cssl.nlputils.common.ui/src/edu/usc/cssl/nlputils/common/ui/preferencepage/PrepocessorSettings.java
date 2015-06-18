@@ -143,7 +143,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		getPreferenceStore().setDefault(STEMMING, "false");
 		getPreferenceStore().setDefault(PRE_PROCESSED, "false");
 		getPreferenceStore().setDefault(INITIAL, "true");
-		getPreferenceStore().setDefault(OUTPUT_PATH, "");
+		getPreferenceStore().setDefault(OUTPUT_PATH, System.getProperty("user.dir"));
 	}
 
 	private void setDefaultValues() {
@@ -267,6 +267,9 @@ public class PrepocessorSettings extends PreferencePage implements
 		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
+		
+//		String cwd = System.getProperty("user.dir");
+//		outputLocationTxt.setText(cwd);
 		outputLocationTxt.setEditable(false);
 
 		final Button browseBtn = new Button(sectionClient, SWT.PUSH);

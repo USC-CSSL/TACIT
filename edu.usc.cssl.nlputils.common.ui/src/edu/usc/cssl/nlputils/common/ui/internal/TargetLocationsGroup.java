@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
@@ -38,7 +39,7 @@ public class TargetLocationsGroup {
 	private Button fAddButton;
 	private Button fAddFileButton;
 	private Button fRemoveButton;
-	private List<String> locationPaths;
+	private List<TreeParent> locationPaths;
 	@SuppressWarnings("unused")
 	private FormToolkit toolKit;
 
@@ -149,10 +150,14 @@ public class TargetLocationsGroup {
 	 */
 	private void initializeTreeViewer(Composite tree) {
 
-		fTreeViewer = new CheckboxTreeViewer(tree, SWT.NONE);
+		fTreeViewer = new CheckboxTreeViewer(tree, SWT.NONE | SWT.MULTI);
 		fTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTreeViewer.setContentProvider(new TargetLocationContentProvider());
 		fTreeViewer.setLabelProvider(new TargetLocationLabelProvider());
+		if (this.locationPaths == null) {
+			this.locationPaths = new ArrayList<TreeParent>();
+		}
+		this.fTreeViewer.setInput(this.locationPaths);
 
 		fTreeViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -191,18 +196,24 @@ public class TargetLocationsGroup {
 					dlg.setText("Select Directory");
 					boolean cannotExit = false;
 					String path = null;
-					while(!cannotExit){
-					path = dlg.open();
-					if (path == null)
-						return;
-					else{
-					
-						cannotExit = updateLocationTree(path);
-						if(!cannotExit) {
-							ErrorDialog.openError(dlg.getParent(), "Select Diferent Directory", "Please select different Directory",new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID,"The selected Directory is already added to the location"));
+					while (!cannotExit) {
+						path = dlg.open();
+						if (path == null)
+							return;
+						else {
+
+							cannotExit = updateLocationTree(new String[]{path});
+							if (!cannotExit) {
+								ErrorDialog.openError(
+										dlg.getParent(),
+										"Select Diferent Directory",
+										"Please select different Directory",
+										new Status(IStatus.ERROR,
+												CommonUiActivator.PLUGIN_ID,
+												"The selected Directory is already added to the location"));
+							}
 						}
 					}
-				}
 				}
 			});
 		}
@@ -210,22 +221,33 @@ public class TargetLocationsGroup {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
-						SWT.OPEN);
+						SWT.OPEN | SWT.MULTI);
 				dlg.setText("Select File");
 				boolean cannotExit = false;
 				String path = null;
-				while(!cannotExit){
-				path = dlg.open();
-				if (path == null)
-					return;
-				else{
-				
-					cannotExit = updateLocationTree(path);
-					if(!cannotExit) {
-						ErrorDialog.openError(dlg.getParent(), "Select Diferent File", "Please select different File",new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID,"The selected File is already added to the location"));
+				while (!cannotExit) {
+					path = dlg.open();
+					if (path == null)
+						return;
+					else {
+                        String[] listFile = dlg.getFileNames();
+                        String [] fullFile = new String[listFile.length];
+                       for (int i = 0; i < listFile.length; i++) {
+                    	   fullFile[i] = dlg.getFilterPath()+File.separator+listFile[i];
+					}
+                        
+						cannotExit = updateLocationTree(fullFile);
+						if (!cannotExit) {
+							ErrorDialog.openError(
+									dlg.getParent(),
+									"Select Diferent File",
+									"Please select different File",
+									new Status(IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID,
+											"The selected File is already added to the location"));
+						}
 					}
 				}
-			}
 			}
 		});
 
@@ -239,22 +261,58 @@ public class TargetLocationsGroup {
 		updateButtons();
 	}
 
-	protected boolean updateLocationTree(String path) {
+	protected boolean updateLocationTree(String[] path) {
 
 		if (this.locationPaths == null) {
-			this.locationPaths = new ArrayList<String>();
+			this.locationPaths = new ArrayList<TreeParent>();
 		}
 		if (!path.equals("root")) {
-			if(this.locationPaths.contains(path)){
+			if (checkExistensence(path)) {
 				return false;
 			}
-			this.locationPaths.add(path);
-			this.fTreeViewer.setInput(this.locationPaths);
-			if (new File(path).isFile())
-				this.fTreeViewer.setChecked(path, true);
+			for (String file : path) {
+				TreeParent node = new TreeParent(file);
+				if (new File(file).isDirectory()) {
+					processSubFiles(node);
+				}
+				this.locationPaths.add(node);
+				this.fTreeViewer.refresh();
+				this.fTreeViewer.setChecked(node, true);
+				fTreeViewer.setSubtreeChecked(node, true);
+			}
+			// }
 
 		}
 		return true;
+	}
+
+	private boolean checkExistensence(String[] path) {
+
+		for (TreeParent node : locationPaths) {
+
+			for (String file : path) {
+				if (file.equals(node.getName())) {
+					return true;
+				}
+			}
+
+		}
+		return false;
+	}
+
+	private void processSubFiles(TreeParent node) {
+
+		for (File input : new File(node.getName()).listFiles()) {
+
+			if (input.isFile()) {
+				node.addChildren(input.getAbsolutePath());
+			} else {
+				TreeParent subFolder = new TreeParent(input.getAbsolutePath());
+				processSubFiles(subFolder);
+				node.addChildren(subFolder);
+			}
+		}
+
 	}
 
 	private void handleEdit() {
@@ -262,19 +320,11 @@ public class TargetLocationsGroup {
 	}
 
 	private void handleRemove() {
-		List<String> modifiedList = new ArrayList<String>();
-		modifiedList.addAll(this.locationPaths);
-		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
-				.getSelection();
-		List<String> removeFiles = sel.toList();
-		if (removeFiles.size() > 0) {
-			for (String selFile : removeFiles) {
-				modifiedList.remove(selFile);
-			}
+		TreeItem[] items = fTreeViewer.getTree().getSelection();
+		for (TreeItem treeItem : items) {
+			this.locationPaths.remove(treeItem.getData());
 		}
-		this.locationPaths = modifiedList;
-		// this.fTreeViewer.getTree().removeAll();
-		this.fTreeViewer.setInput(modifiedList);
+		fTreeViewer.refresh();
 	}
 
 	private void updateButtons() {

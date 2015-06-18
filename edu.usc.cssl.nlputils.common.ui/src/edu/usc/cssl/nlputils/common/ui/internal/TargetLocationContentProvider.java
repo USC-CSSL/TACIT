@@ -56,26 +56,25 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 	   * @return Object[]
 	   */
 	  public Object[] getElements(Object arg0) {
-		  List elementList = new ArrayList<String>();
-		  if(arg0 instanceof String){
-			  File locationObj = new File((String) arg0);
-			  if(locationObj.isDirectory()){
-				  File[] listFiles = locationObj.listFiles();
-				  for (File file : listFiles) {
-					elementList.add(file.toString());
-				}
-			  }
+		  List<Object> elements = new ArrayList<Object>();
+		  if(arg0 instanceof List){
+			  List<Object> elementList = (List<Object>) arg0;
+			  elements.addAll(elementList);
 		  }
 			  else {
-				  if(arg0 instanceof List){
-					  elementList.addAll((List) arg0);
+				  if(arg0 instanceof TreeParent){
+					  TreeParent parent = (TreeParent) arg0;
+					  for (String file : parent.getFiles()) {
+						  elements.add(file);
+					}
+					  for(TreeParent child : parent.getFolder()){
+						  elements.add(child);
+					  }
 				  }
-				  else{
-				  elementList.add(arg0);
-				  }
+				 
 			  }
 		  
-		  return elementList.toArray();
+		  return elements.toArray();
 		  
 	  }
 
@@ -88,7 +87,11 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		
-		
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return this.equals(obj);
+	}
 }

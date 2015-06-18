@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.ui,
  org.jsoup
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.nlputils.crawlers.senate.services
