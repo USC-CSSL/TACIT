@@ -261,10 +261,7 @@ public class LdaTopicModelView extends ViewPart implements
 						}
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(
-								getViewSite(),
-								"LDA Topic Modelling is successfully Completed.",
-								IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "LDA analysis completed", IStatus.OK);
 
 						return Status.OK_STATUS;
 					}

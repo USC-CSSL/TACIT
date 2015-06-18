@@ -252,8 +252,8 @@ public class KmeansClusterView extends ViewPart implements
 						}
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
 						
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "k-Means clustering completed", IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

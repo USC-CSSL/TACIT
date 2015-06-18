@@ -357,10 +357,7 @@ public class WeightedWordCountView extends ViewPart implements
 							ioe.printStackTrace();
 						}
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(
-								getViewSite(),
-								"Word Count is Sucessfully Completed",
-								IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Word count analysis completed", IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

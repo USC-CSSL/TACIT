@@ -232,6 +232,10 @@ public class LatinCrawlerView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						} 
 						monitor.done();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(),
+								"Crawling completed",
+								IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

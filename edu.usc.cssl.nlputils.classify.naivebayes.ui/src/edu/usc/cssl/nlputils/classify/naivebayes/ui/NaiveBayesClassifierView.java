@@ -591,7 +591,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							handledCancelRequest("Cancelled");
 						monitor.worked(100);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Naive Bayes Classifier Completed Successfully", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Naive Bayes analysis completed", IStatus.OK);
 						return Status.OK_STATUS;						
 					}
 					@Override

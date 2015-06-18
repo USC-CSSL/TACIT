@@ -306,11 +306,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 										isBuildMatrix);
 
 						if (result) {
-							NlputilsFormComposite
-									.updateStatusMessage(
-											getViewSite(),
-											"Co-occurrence Analysis is Sucessfully Completed",
-											IStatus.OK);
+							NlputilsFormComposite.updateStatusMessage(getViewSite(), "Cooccurence analysis completed", IStatus.OK);
 							ConsoleView.printlInConsoleln("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
 							preprocessTask.clean();
 							return Status.OK_STATUS;

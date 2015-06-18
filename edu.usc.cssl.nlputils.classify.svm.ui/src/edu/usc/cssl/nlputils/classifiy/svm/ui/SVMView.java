@@ -215,6 +215,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 							e.printStackTrace();
 						}
 						monitor.done();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "SVM analysis completed", IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

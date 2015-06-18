@@ -269,6 +269,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
 						ConsoleView.writeInConsoleHeader("<terminated> Hierarchical clustering  "+(dateFormat.format(cal.getTime())));
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Hierarchical clustering completed", IStatus.OK);
 						return Status.OK_STATUS;
 					}
 				};

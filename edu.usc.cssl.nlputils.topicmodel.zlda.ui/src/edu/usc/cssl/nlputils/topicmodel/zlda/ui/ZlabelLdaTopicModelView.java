@@ -278,10 +278,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(
-								getViewSite(),
-								"ZLabel LDA Topic Modelling is successfully Completed.",
-								IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "z-Label LDA analysis completed", IStatus.OK);;
 
 						return Status.OK_STATUS;
 					}
