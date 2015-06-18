@@ -230,8 +230,13 @@ public class TargetLocationsGroup {
 					if (path == null)
 						return;
 					else {
-
-						cannotExit = updateLocationTree(dlg.getFileNames());
+                        String[] listFile = dlg.getFileNames();
+                        String [] fullFile = new String[listFile.length];
+                       for (int i = 0; i < listFile.length; i++) {
+                    	   fullFile[i] = dlg.getFilterPath()+File.separator+listFile[i];
+					}
+                        
+						cannotExit = updateLocationTree(fullFile);
 						if (!cannotExit) {
 							ErrorDialog.openError(
 									dlg.getParent(),
