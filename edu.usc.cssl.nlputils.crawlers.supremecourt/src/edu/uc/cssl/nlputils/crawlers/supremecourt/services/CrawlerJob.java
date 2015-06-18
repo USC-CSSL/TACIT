@@ -15,9 +15,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
-import edu.usc.nlputils.common.crawlers.ICrawler;
 
-public class CrawlerJob implements Runnable,ICrawler {
+public class CrawlerJob{
 
 	private String filter;
 	private String outputDir;
@@ -27,36 +26,30 @@ public class CrawlerJob implements Runnable,ICrawler {
 	private String url;
 	private IProgressMonitor monitor;
 
-	public CrawlerJob(String filter, String outputDir, String crawlUrl,String url, IProgressMonitor monitor,boolean downloadAudio,boolean truncate) {
+	public CrawlerJob(String filter, String outputDir, String crawlUrl, IProgressMonitor monitor,boolean downloadAudio,boolean truncate) {
 
 		this.filter = filter;
 		this.outputDir = outputDir;
 		this.truncate = truncate;
 		this.downloadAudio = downloadAudio;
 		this.baseUrl = crawlUrl;
-		this.url = url;
 		this.monitor = monitor;
 	}
 	
 	
 	
-	@Override
-	public void run() {
+	public void run(String url) throws IOException {
 		crawl(url);
     
 	}
 	
-	protected Document retrieveDocumentFromUrl(String url) {
+	protected Document retrieveDocumentFromUrl(String url) throws IOException {
 		Document doc = null;
-		try {
-			doc = Jsoup.connect(url).timeout(10 * 1000).get();
-		} catch (IOException e) {
-			// Error handling->will do later
-		}
+		doc = Jsoup.connect(url).timeout(10 * 1000).get();
 		return doc;
 	}
 
-	public void crawl(String url) {
+	public void crawl(String url) throws IOException {
 		
 		
 		Document doc = retrieveDocumentFromUrl(url);

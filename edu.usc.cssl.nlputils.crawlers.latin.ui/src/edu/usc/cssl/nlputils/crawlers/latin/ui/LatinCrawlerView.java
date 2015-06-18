@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -40,9 +41,11 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.cssl.nlputils.crawlers.latin.services.LatinCrawler;
 import edu.usc.cssl.nlputils.crawlers.latin.ui.internal.ILatinCrawlerUIConstants;
 import edu.usc.cssl.nlputils.crawlers.latin.ui.internal.LatinCrawlerImageRegistry;
@@ -139,11 +142,7 @@ public class LatinCrawlerView extends ViewPart implements
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					handleAdd(addAuthorBtn.getShell());
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
+				handleAdd(addAuthorBtn.getShell());
 			}
 		});
 
@@ -210,13 +209,28 @@ public class LatinCrawlerView extends ViewPart implements
 												author));
 								monitor.worked(1);
 							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						} catch (final IOException exception) {
+							ConsoleView.printlInConsole(exception.toString());
+							Display.getDefault().syncExec(new Runnable() {
+
+								@Override
+								public void run() {
+									ErrorDialog
+											.openError(
+													Display.getDefault().getActiveShell(),
+													"Problem Occurred",
+													"Please Check your connectivity to server",
+													new Status(IStatus.ERROR,
+															CommonUiActivator.PLUGIN_ID,
+															exception.getMessage()));
+
+								}
+							});
+							NlputilsFormComposite.updateStatusMessage(
+									getViewSite(), "Crawling is stopped ",
+									IStatus.INFO);
+							return Status.CANCEL_STATUS;
+						} 
 						monitor.done();
 						return Status.OK_STATUS;
 					}
@@ -278,7 +292,7 @@ public class LatinCrawlerView extends ViewPart implements
 		return canProceed;
 	}
 
-	private void handleAdd(Shell shell) throws Exception {
+	private void handleAdd(Shell shell)  {
 
 		processElementSelectionDialog(shell);
 
@@ -304,9 +318,23 @@ public class LatinCrawlerView extends ViewPart implements
 
 						}
 					});
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (final IOException exception) {
+					ConsoleView.printlInConsole(exception.toString());
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							ErrorDialog
+									.openError(
+											Display.getDefault().getActiveShell(),
+											"Problem Occurred",
+											"Please Check your connectivity to server",
+											new Status(IStatus.ERROR,
+													CommonUiActivator.PLUGIN_ID,
+													"Network is not reachable"));
+
+						}
+					});
 				}
 				return Status.OK_STATUS;
 

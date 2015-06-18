@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -39,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.uc.cssl.nlputils.crawlers.supremecourt.services.SupremCrawlerFilter;
 import edu.uc.cssl.nlputils.crawlers.supremecourt.services.SupremeCourtCrawler;
+import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
@@ -221,13 +223,29 @@ public class SupremeCrawlerView extends ViewPart implements
 						try {
 
 							sc.looper(new SubProgressMonitor(monitor, 100));
-						} catch (IOException e1) {
+						} catch (final IOException exception) {
+							ConsoleView.printlInConsole(exception.toString());
+							Display.getDefault().syncExec(new Runnable() {
+
+								@Override
+								public void run() {
+									ErrorDialog
+											.openError(
+													Display.getDefault().getActiveShell(),
+													"Problem Occurred",
+													"Please Check your connectivity to server",
+													new Status(IStatus.ERROR,
+															CommonUiActivator.PLUGIN_ID,
+															exception.getMessage()));
+
+								}
+							});
 							NlputilsFormComposite.updateStatusMessage(
-									getViewSite(), "Crawling is cancelled ",
+									getViewSite(), "Crawling is stopped ",
 									IStatus.INFO);
 							return Status.CANCEL_STATUS;
 						}
-						ConsoleView.printlInConsoleln("Done!!");
+						ConsoleView.printlInConsoleln("Crawling is sucessfully completed");
 						NlputilsFormComposite
 								.updateStatusMessage(getViewSite(),
 										"Crawling is sucessfully completed",
