@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeItem;
@@ -308,7 +309,7 @@ public class TargetLocationsGroup {
 
 			}
 			for (String file : path) {
-				TreeParent node = new TreeParent(file);
+				final TreeParent node = new TreeParent(file);
 				if (new File(file).isDirectory()) {
 					if(FileUtils.sizeOfDirectory(new File(file)) <= 0){
 						return "The selected Folder " + file + " is empty";
@@ -317,8 +318,16 @@ public class TargetLocationsGroup {
 				}
 				this.locationPaths.add(node);
 				this.fTreeViewer.refresh();
-				this.fTreeViewer.setChecked(node, true);
-				fTreeViewer.setSubtreeChecked(node, true);
+				Display.getDefault().syncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						fTreeViewer.setChecked(node, true);
+						fTreeViewer.setSubtreeChecked(node, true);
+						
+					}
+				});
 			}
 			// }
 

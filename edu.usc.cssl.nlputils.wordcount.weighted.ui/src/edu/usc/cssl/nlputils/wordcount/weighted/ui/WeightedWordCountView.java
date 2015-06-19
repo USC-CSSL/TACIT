@@ -266,7 +266,7 @@ public class WeightedWordCountView extends ViewPart implements
 	}
 
 	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
-		spssRawFile = toolkit.createButton(output, "Create SPSS raw file",
+		spssRawFile = toolkit.createButton(output, "Create .DAT file",
 				SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(spssRawFile);
