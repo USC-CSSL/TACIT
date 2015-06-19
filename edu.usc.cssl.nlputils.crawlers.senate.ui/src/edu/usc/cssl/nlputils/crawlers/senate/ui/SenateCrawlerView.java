@@ -14,13 +14,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,6 +36,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -39,6 +44,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
+import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.nlputils.crawlers.senate.services.AvailableRecords;
 import edu.usc.cssl.nlputils.crawlers.senate.services.SenateCrawler;
 import edu.usc.cssl.nlputils.crawlers.senate.ui.internal.ISenateCrawlerViewConstants;
@@ -64,6 +70,9 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	
 	private DateTime toDate;
 	private DateTime fromDate;
+	private Button limitRecords;
+	private Combo cmbSort;
+	private Text limitText;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -90,6 +99,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		layout.numColumns = 2;
 		
 		createSenateInputParameters(client);
+		NlputilsFormComposite.createEmptyRow(toolkit, client);
 		outputLayout = NlputilsFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
@@ -114,22 +124,28 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
 		inputParamsSection.setClient(sectionClient);
 		
+		String[] loading = {"Loading..."};
+
 		Label congressLabel = toolkit.createLabel(sectionClient, "Congress:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(congressLabel);
 		cmbCongress = new Combo(sectionClient, SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbCongress);
 		toolkit.adapt(cmbCongress);
+		cmbCongress.setItems(loading);
+		cmbCongress.select(0);
 
 		Label senatorLabel = toolkit.createLabel(sectionClient, "Senator:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(senatorLabel);
 		cmbSenator = new Combo(sectionClient, SWT.FLAT);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbSenator);
 		toolkit.adapt(cmbSenator);
+		cmbSenator.setItems(loading);
+		cmbSenator.select(0);
 	
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
 		
 		Group group = new Group(client, SWT.SHADOW_IN);
-		group.setText("Date");
+		group.setText("Date \u0026 Limit Records");
 
 		group.setBackground(client.getBackground());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -148,10 +164,17 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		dateRangeClient.setEnabled(false);
 		dateRangeClient.pack();
 
-//		Label fromLabel = toolkit.createLabel(dateRangeClient, "", SWT.NONE);
-//		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
-		fromDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN);
+		final Composite fromClinet = toolkit.createComposite(dateRangeClient);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(fromClinet);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(fromClinet);
+		//fromClinet.setEnabled(false);
+		//fromClinet.pack();
+		
+		final Label fromLabel = toolkit.createLabel(fromClinet, "From:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
+		fromDate = new DateTime(fromClinet, SWT.DATE | SWT.DROP_DOWN);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(fromDate);
+		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
 		
 		fromDate.addListener(SWT.Selection, new Listener()
@@ -180,8 +203,17 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
-		toDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN);
+		final Composite toClient = toolkit.createComposite(dateRangeClient);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(toClient);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(toClient);
+		//toClient.setEnabled(false);
+		//toClient.pack();
+		
+		final Label toLabel = toolkit.createLabel(toClient, "To:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
+		toDate = new DateTime(toClient, SWT.DATE | SWT.DROP_DOWN);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(toDate);
+		toLabel.setEnabled(false);
 		toDate.setEnabled(false);
 		
 		toDate.addListener(SWT.Selection, new Listener()
@@ -210,6 +242,75 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
+		NlputilsFormComposite.createEmptyRow(toolkit, group);
+		
+		limitRecords = toolkit.createButton(group, "Limit Records per Senator", SWT.CHECK);
+		limitRecords.setBounds(10, 10, 10, 10);
+		limitRecords.pack();
+		limitRecords.addSelectionListener(new SelectionListener() {			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(!limitRecords.getSelection()){
+					form.getMessageManager().removeMessage("limitText");
+				}				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub			
+			}
+		});
+				
+		final Composite limitRecordsClient = toolkit.createComposite(group);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitRecordsClient);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(limitRecordsClient);
+		limitRecordsClient.setEnabled(false);
+		limitRecordsClient.pack();
+		
+		final Composite sortClient = toolkit.createComposite(limitRecordsClient);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(sortClient);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sortClient);
+		
+		final Label sortLabel = toolkit.createLabel(sortClient, "Limit Records", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
+		sortLabel.setEnabled(false);
+		cmbSort = new Combo(sortClient, SWT.FLAT);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbSort);
+		cmbSort.setEnabled(false);
+		toolkit.adapt(cmbSort);
+		cmbSort.add("From Begining");
+		cmbSort.add("From End");
+		cmbSort.select(0);
+		
+		final Composite limitClient = toolkit.createComposite(limitRecordsClient);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitClient);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(limitClient);
+		
+		
+		final Label limitLabel = toolkit.createLabel(limitClient, "# Records", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
+		limitLabel.setEnabled(false);
+		limitText = toolkit.createText(limitClient, "",SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(limitText);
+		limitText.setEnabled(false);
+		
+		limitText.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyReleased(KeyEvent e) {
+	             if(!(e.character>='0' && e.character<='9')) {
+	            	 form.getMessageManager() .addMessage( "limitText", "Provide valid no.of.records per senator", null, IMessageProvider.ERROR);
+	            	 limitText.setText(""); 
+	             } else {
+	            	 form.getMessageManager().removeMessage("limitText");
+	             }			
+			}			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub			
+			}
+		});
+		
+		
 		Job loadFieldValuesJob = new Job("Loading form field values") {			
 			HashMap<String, String> congressDetails = null;
 			final ArrayList<String> tempCongress = new ArrayList<String>();
@@ -224,6 +325,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				Display.getDefault().syncExec(new Runnable() {
 				      @Override
 				      public void run() {
+				    	  cmbCongress.removeAll();
 				    	  for(String key : congressDetails.keySet()) {
 				    		  tempCongress.add(key);
 				    		  String value = congressDetails.get(key);
@@ -324,15 +426,38 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			public void widgetSelected(SelectionEvent e) {
 				if (dateRange.getSelection()) {					
 					dateRangeClient.setEnabled(true);
+					fromLabel.setEnabled(true);
 					fromDate.setEnabled(true);
+					toLabel.setEnabled(true);
 					toDate.setEnabled(true);
 				} else {					
 					dateRangeClient.setEnabled(false);
+					fromLabel.setEnabled(false);
 					fromDate.setEnabled(false);
+					toLabel.setEnabled(false);
 					toDate.setEnabled(false);
 				}
 			}
-		});		
+		});	
+		
+		limitRecords.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (limitRecords.getSelection()) {					
+					limitRecordsClient.setEnabled(true);
+					sortLabel.setEnabled(true);
+					cmbSort.setEnabled(true);
+					limitLabel.setEnabled(true);
+					limitText.setEnabled(true);
+				} else {					
+					limitRecordsClient.setEnabled(false);
+					sortLabel.setEnabled(false);
+					cmbSort.setEnabled(false);
+					limitLabel.setEnabled(false);
+					limitText.setEnabled(false);
+				}
+			}
+		});
 	}
 	
 	
@@ -354,26 +479,59 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 
 			String dateFrom = "";
 			String dateTo = "";
+			int maxDocs = -1;
+			String sortType = "Default";
+			String congressNum = "-1";
+			String senatorDetails = "";
+			String outputDir = "";
+			private boolean canProceed;
 			@Override
 			public void run() {
 				final SenateCrawler sc = new SenateCrawler();
-				final String senatorDetails = cmbSenator.getText();
-				final String congressNum = congresses[cmbCongress.getSelectionIndex()];		
-				final String outputDir = outputLayout.getOutputLabel().getText();	
-				
-				if (dateRange.getSelection()) {
-					dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
-					dateTo = (toDate.getMonth()+1)+"/"+toDate.getDay()+"/"+toDate.getYear();
-				}
 
-				final Job job = new Job("Senate Crawler") {
+				final Job job = new Job("Senate Crawler") {					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("Running Senate Crawler..." , 100);
+						Display.getDefault().syncExec(new Runnable() {
+							
+							@Override
+							public void run() {
+								if(congresses[cmbCongress.getSelectionIndex()].indexOf("All")!=-1) {
+									congressNum = "-1";
+								} else {
+									congressNum = congresses[cmbCongress.getSelectionIndex()];	
+								}
+								senatorDetails = cmbSenator.getText();
+								if (dateRange.getSelection()) {
+									dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
+									dateTo = (toDate.getMonth()+1)+"/"+toDate.getDay()+"/"+toDate.getYear();
+								} else {
+									dateFrom = "";
+									dateTo = "";
+								}
+								if(limitRecords.getSelection()) {
+									//sort by date : begining
+									sortType = cmbSort.getSelection().equals("From Begining") ? "Default" : "Date"; 
+									maxDocs = Integer.parseInt(limitText.getText());
+								} else {
+									maxDocs = -1;
+									sortType = "Default";
+								}
+								outputDir = outputLayout.getOutputLabel().getText();	
+							}
+						});
+						
+						final ArrayList<Integer> allCongresses = new ArrayList<Integer>();
+						for(String s: congresses) {
+							if(!s.contains("All"))
+								allCongresses.add(Integer.parseInt(s));
+						}
+												
 						try {
 							monitor.subTask("Initializing");
 							monitor.worked(5);
-							sc.initialize(-1, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, congresses);
+							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses);
 							monitor.worked(50);
 							
 							monitor.subTask("Crawling");							
@@ -390,10 +548,12 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						return Status.OK_STATUS;
 					}					
 				};	
-				
 				job.setUser(true);
-				job.schedule();
-			};
+				canProceed = canItProceed();
+				if(canProceed) {
+					job.schedule(); // schedule the job
+				}
+			}
 		});
 
 		mgr.add(new Action() {
@@ -415,6 +575,27 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	}
 	
 
+
+	private boolean canItProceed() {
+		if(limitRecords.getSelection()) {
+			if(limitText.getText().isEmpty()) {
+				form.getMessageManager() .addMessage( "limitText", "Provide valid no.of.records per senator", null, IMessageProvider.ERROR);
+				return false;
+			}
+		}
+		
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
+		if (message != null) {
+			message = outputLayout.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("output", message, null,IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("output");
+		}
+		
+		return true;
+	};
+	
 	@Override
 	public void setFocus() {
 		form.setFocus();

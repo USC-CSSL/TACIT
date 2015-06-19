@@ -24,6 +24,7 @@ public class SenateCrawler {
 	int maxDocs = 10;
 	String outputDir;
 	BufferedWriter csvWriter;
+	String sortType;
 	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
 	private String senText;
 	private int congressNum;
@@ -100,17 +101,20 @@ public class SenateCrawler {
 		}
 	}
 	
-	public void initialize(int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, String[] allCongresses) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
 		this.senText = senText;
 		this.congressNum = congressNum;
+		this.sortType = sortType;
+		this.congresses = allCongresses;
 		
 		System.out.println("Congress num :"+ congressNum);
 		System.out.println("Senator name :"+ senText);
 		System.out.println("Max docs :"+ maxDocs);
+		System.out.println("Sort Type : "+ sortType);		
 		System.out.println("From date :"+ dateFrom);
 		System.out.println("To Date: "+ dateTo);		
 	}
@@ -133,7 +137,7 @@ public class SenateCrawler {
 				.data("LBDateSel","Thru")		// "" | 1st | 2nd | Thru -- all sessions, 1st session, 2nd session, range
 				.data("DateFrom",dateFrom)
 				.data("DateTo",dateTo)
-				.data("sort","Date")		// Default | Date
+				.data("sort",sortType)		// Default | Date
 				.data("submit","SEARCH")
 				.userAgent("Mozilla")
 				.timeout(10*1000)
