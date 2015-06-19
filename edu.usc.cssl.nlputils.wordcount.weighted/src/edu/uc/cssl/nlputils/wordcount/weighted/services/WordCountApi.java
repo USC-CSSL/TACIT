@@ -237,8 +237,13 @@ public class WordCountApi {
 			apostro = apostro + StringUtils.countMatches(currentLine, "'");
 			parenth = parenth + StringUtils.countMatches(currentLine, "(");
 			parenth = parenth + StringUtils.countMatches(currentLine, ")");
+			parenth = parenth + StringUtils.countMatches(currentLine, "{");
+			parenth = parenth + StringUtils.countMatches(currentLine, "}");
+			parenth = parenth + StringUtils.countMatches(currentLine, "[");
+			parenth = parenth + StringUtils.countMatches(currentLine, "]");
 
-			for (char c : "#$%&*+=/\\<>@_^`~|{}[]".toCharArray()) {
+			
+			for (char c : "#$%&*+=/\\<>@_^`~|".toCharArray()) {
 				otherP = otherP
 						+ StringUtils.countMatches(currentLine,
 								String.valueOf(c));
