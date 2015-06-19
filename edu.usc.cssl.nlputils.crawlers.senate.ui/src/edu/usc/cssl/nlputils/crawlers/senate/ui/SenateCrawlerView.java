@@ -234,13 +234,13 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				    		  if(key.equalsIgnoreCase("All")) {
 				    			  String[] tempYears = value.split("-");
 				    			  Calendar cal = Calendar.getInstance();
-				    			  cal.set(Integer.parseInt(tempYears[0]), 0, 0);
+				    			  cal.set(Integer.parseInt(tempYears[0]), 0, 1);
 				    			  minDate = cal.getTime();
 				    			  fromDate.setMonth(cal.get(Calendar.MONTH));
 				    			  fromDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
 				    			  fromDate.setYear(cal.get(Calendar.YEAR));
 					                
-				    			  cal.set(Integer.parseInt(tempYears[1]), 0, 0);
+				    			  cal.set(Integer.parseInt(tempYears[1]), 11, 31);
 				    			  toDate.setMonth(cal.get(Calendar.MONTH));
 				    			  toDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
 				    			  toDate.setYear(cal.get(Calendar.YEAR));
@@ -272,7 +272,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				return Status.OK_STATUS;
 			}
 		};
-		loadFieldValuesJob.setUser(true);
+		//loadFieldValuesJob.setUser(true);
 		loadFieldValuesJob.schedule();
 		
 		cmbCongress.addSelectionListener(new SelectionAdapter() {
@@ -332,8 +332,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 					toDate.setEnabled(false);
 				}
 			}
-		});
-		
+		});		
 	}
 	
 	
