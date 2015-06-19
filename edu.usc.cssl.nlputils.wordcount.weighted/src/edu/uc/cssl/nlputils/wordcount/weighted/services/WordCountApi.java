@@ -179,8 +179,7 @@ public class WordCountApi {
 
 		}
 
-		if (doSpss)
-			finalizeSpssFile(sFile);
+		
 		subProgressMonitor.worked(10);
 		if (subProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -427,11 +426,10 @@ public class WordCountApi {
 
 	public void buildSpssFile(File spssFile) throws IOException {
 		StringBuilder titles = new StringBuilder();
-		titles.append("DATA LIST LIST\n/ Filename A(40) WC WPS Sixltr Dic ");
+		titles.append("Filename A(40) WC WPS Sixltr Dic ");
 		for (String title : categories.values()) {
 			titles.append(title + " ");
 		}
-		titles.append(".\nBEGIN DATA.");
 		FileWriter fw = new FileWriter(spssFile);
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write(titles.toString());
@@ -440,16 +438,7 @@ public class WordCountApi {
 		// logger.info("Created the SPSS output File.");
 	}
 
-	public void finalizeSpssFile(File spssFile) throws IOException {
-		String end = "END DATA.\n\nLIST.";
-		FileWriter fw = new FileWriter(spssFile, true);
-		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(end);
-		bw.newLine();
-		bw.close();
-		logger.info("Created the SPSS output File.");
-		appendLog("Created the SPSS output File.");
-	}
+
 
 	public void writeToSpss(File spssFile, String docName, int totalCount,
 			float wps, float sixltr, double d, HashMap<String, Integer> catCount)
