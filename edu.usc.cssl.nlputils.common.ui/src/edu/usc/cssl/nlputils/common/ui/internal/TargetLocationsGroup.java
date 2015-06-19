@@ -12,9 +12,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -28,6 +26,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -42,6 +41,7 @@ public class TargetLocationsGroup {
 	private List<TreeParent> locationPaths;
 	@SuppressWarnings("unused")
 	private FormToolkit toolKit;
+	private Label dummy;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -106,7 +106,6 @@ public class TargetLocationsGroup {
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_VERTICAL));
-
 		initializeTreeViewer(comp);
 
 		Composite buttonComp = toolkit.createComposite(comp);
@@ -129,6 +128,9 @@ public class TargetLocationsGroup {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fRemoveButton);
 		initializeButtons();
+		dummy = toolkit.createLabel(parent, "");
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(dummy);
 		toolkit.paintBordersFor(comp);
 	}
 
@@ -141,6 +143,15 @@ public class TargetLocationsGroup {
 		gd.horizontalSpan = hspan;
 		g.setLayoutData(gd);
 		return g;
+	}
+
+	private void updateSelectionText() {
+		int totalFiles = calculateFiles(fTreeViewer.getCheckedElements());
+		if (locationPaths.size() > 0)
+			dummy.setText("No of files selected : "+String.valueOf(totalFiles));
+		else {
+			dummy.setText("");
+		}
 	}
 
 	/**
@@ -163,15 +174,10 @@ public class TargetLocationsGroup {
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
 						updateButtons();
+						updateSelectionText();
 					}
+
 				});
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					handleEdit();
-				}
-			}
-		});
 
 		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -179,6 +185,24 @@ public class TargetLocationsGroup {
 						event.getChecked());
 			}
 		});
+
+	}
+
+	private int calculateFiles(Object[] objects) {
+		int select = 0;
+		String fileName="";
+		for (Object file : objects) {
+			if(file instanceof String){
+				fileName = (String) file;
+			}
+			else{
+				fileName = ((TreeParent) file).getName();
+			}
+			if (new File(fileName).isFile()) {
+				select++;
+			}
+		}
+		return select;
 
 	}
 
@@ -202,7 +226,7 @@ public class TargetLocationsGroup {
 							return;
 						else {
 
-							cannotExit = updateLocationTree(new String[]{path});
+							cannotExit = updateLocationTree(new String[] { path });
 							if (!cannotExit) {
 								ErrorDialog.openError(
 										dlg.getParent(),
@@ -230,12 +254,13 @@ public class TargetLocationsGroup {
 					if (path == null)
 						return;
 					else {
-                        String[] listFile = dlg.getFileNames();
-                        String [] fullFile = new String[listFile.length];
-                       for (int i = 0; i < listFile.length; i++) {
-                    	   fullFile[i] = dlg.getFilterPath()+File.separator+listFile[i];
-					}
-                        
+						String[] listFile = dlg.getFileNames();
+						String[] fullFile = new String[listFile.length];
+						for (int i = 0; i < listFile.length; i++) {
+							fullFile[i] = dlg.getFilterPath() + File.separator
+									+ listFile[i];
+						}
+
 						cannotExit = updateLocationTree(fullFile);
 						if (!cannotExit) {
 							ErrorDialog.openError(
@@ -283,6 +308,7 @@ public class TargetLocationsGroup {
 			// }
 
 		}
+		updateSelectionText();
 		return true;
 	}
 
@@ -315,16 +341,13 @@ public class TargetLocationsGroup {
 
 	}
 
-	private void handleEdit() {
-
-	}
-
 	private void handleRemove() {
 		TreeItem[] items = fTreeViewer.getTree().getSelection();
 		for (TreeItem treeItem : items) {
 			this.locationPaths.remove(treeItem.getData());
 		}
 		fTreeViewer.refresh();
+		updateSelectionText();
 	}
 
 	private void updateButtons() {
