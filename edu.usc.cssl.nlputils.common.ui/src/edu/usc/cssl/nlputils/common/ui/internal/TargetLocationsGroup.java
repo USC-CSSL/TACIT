@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class TargetLocationsGroup {
 
@@ -148,7 +150,8 @@ public class TargetLocationsGroup {
 	private void updateSelectionText() {
 		int totalFiles = calculateFiles(fTreeViewer.getCheckedElements());
 		if (locationPaths.size() > 0)
-			dummy.setText("No of files selected : "+String.valueOf(totalFiles));
+			dummy.setText("No of files selected : "
+					+ String.valueOf(totalFiles));
 		else {
 			dummy.setText("");
 		}
@@ -183,6 +186,7 @@ public class TargetLocationsGroup {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fTreeViewer.setSubtreeChecked(event.getElement(),
 						event.getChecked());
+				updateSelectionText();
 			}
 		});
 
@@ -190,12 +194,11 @@ public class TargetLocationsGroup {
 
 	private int calculateFiles(Object[] objects) {
 		int select = 0;
-		String fileName="";
+		String fileName = "";
 		for (Object file : objects) {
-			if(file instanceof String){
+			if (file instanceof String) {
 				fileName = (String) file;
-			}
-			else{
+			} else {
 				fileName = ((TreeParent) file).getName();
 			}
 			if (new File(fileName).isFile()) {
@@ -217,26 +220,27 @@ public class TargetLocationsGroup {
 				public void widgetSelected(SelectionEvent e) {
 					DirectoryDialog dlg = new DirectoryDialog(fAddButton
 							.getShell(), SWT.OPEN);
-					dlg.setText("Select Directory");
-					boolean cannotExit = false;
+					dlg.setText("Select Folder");
 					String path = null;
-					while (!cannotExit) {
+					String message = "";
+					boolean canExit = false;
+					while (!canExit) {
 						path = dlg.open();
 						if (path == null)
 							return;
-						else {
 
-							cannotExit = updateLocationTree(new String[] { path });
-							if (!cannotExit) {
-								ErrorDialog.openError(
-										dlg.getParent(),
-										"Select Diferent Directory",
-										"Please select different Directory",
-										new Status(IStatus.ERROR,
-												CommonUiActivator.PLUGIN_ID,
-												"The selected Directory is already added to the location"));
-							}
+						message = updateLocationTree(new String[] { path });
+						if (!message.equals("")) {
+							ErrorDialog.openError(dlg.getParent(),
+									"Select Different Folder",
+									"Please select different Folder", new Status(
+											IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID,
+											message));
+						} else {
+							canExit = true;
 						}
+
 					}
 				}
 			});
@@ -247,9 +251,10 @@ public class TargetLocationsGroup {
 				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
 						SWT.OPEN | SWT.MULTI);
 				dlg.setText("Select File");
-				boolean cannotExit = false;
+				String message = "";
 				String path = null;
-				while (!cannotExit) {
+				boolean canExit = false;
+				while (!canExit) {
 					path = dlg.open();
 					if (path == null)
 						return;
@@ -261,15 +266,16 @@ public class TargetLocationsGroup {
 									+ listFile[i];
 						}
 
-						cannotExit = updateLocationTree(fullFile);
-						if (!cannotExit) {
-							ErrorDialog.openError(
-									dlg.getParent(),
-									"Select Diferent File",
-									"Please select different File",
-									new Status(IStatus.ERROR,
+						message = updateLocationTree(fullFile);
+						if (!message.equals("")) {
+							ErrorDialog.openError(dlg.getParent(),
+									"Select Different File",
+									"Please select different File", new Status(
+											IStatus.ERROR,
 											CommonUiActivator.PLUGIN_ID,
-											"The selected File is already added to the location"));
+											message));
+						} else {
+							canExit = true;
 						}
 					}
 				}
@@ -286,18 +292,27 @@ public class TargetLocationsGroup {
 		updateButtons();
 	}
 
-	protected boolean updateLocationTree(String[] path) {
+	private String updateLocationTree(String[] path) {
 
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}
 		if (!path.equals("root")) {
 			if (checkExistensence(path)) {
-				return false;
+				return "The selected File is already added to the location";
+			} else {
+				String sizeMessage = sizeCheck(path);
+				if (!sizeMessage.equals("")) {
+					return "The selected file(s) " + sizeMessage + " is empty";
+				}
+
 			}
 			for (String file : path) {
 				TreeParent node = new TreeParent(file);
 				if (new File(file).isDirectory()) {
+					if(FileUtils.sizeOfDirectory(new File(file)) <= 0){
+						return "The selected Folder " + file + " is empty";
+					}
 					processSubFiles(node);
 				}
 				this.locationPaths.add(node);
@@ -309,7 +324,23 @@ public class TargetLocationsGroup {
 
 		}
 		updateSelectionText();
-		return true;
+		return "";
+	}
+
+	private String sizeCheck(String[] path) {
+		String result = "";
+		for (String file : path) {
+			if (new File(file).isFile()) {
+				if (FileUtils.sizeOf(new File(file)) < 1) {
+					if(result.equals("")){
+						result =  " "+file;
+					}else{
+					result = result + "," + file;
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	private boolean checkExistensence(String[] path) {
@@ -330,12 +361,15 @@ public class TargetLocationsGroup {
 
 		for (File input : new File(node.getName()).listFiles()) {
 
-			if (input.isFile()) {
+			if (input.isFile() && FileUtils.sizeOf(input)>0) {
 				node.addChildren(input.getAbsolutePath());
-			} else {
+			} else if(input.isDirectory()) {
 				TreeParent subFolder = new TreeParent(input.getAbsolutePath());
 				processSubFiles(subFolder);
 				node.addChildren(subFolder);
+			}
+			else{
+				ConsoleView.printlInConsoleln(input.getName() + " is ignored since it is empty ");
 			}
 		}
 
