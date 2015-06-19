@@ -62,9 +62,9 @@ public class WordCountApi {
 	Pattern eol = Pattern.compile("\\w+\\s*[.?!]+\\B");
 
 	// compound word detection
-	Pattern compoundPattern = Pattern.compile("[\\w\\d]+[-]{1}[\\w\\d]+");
+	Pattern compoundPattern = Pattern.compile("[\\w\\d]+[\\p{Punct}&&[^-]]*[-]{1}[\\p{Punct}&&[^-]]*[\\w\\d]+");
 
-	Pattern doubleHyphenPattern = Pattern.compile("[\\w\\d]+[-]{2}[\\w\\d]+");
+	Pattern doubleHyphenPattern = Pattern.compile("[\\w\\d]+[\\p{Punct}&&[^-]]*[-]{2}[\\p{Punct}&&[^-]]*[\\w\\d]+");
 
 	// Regular word
 	Pattern regularPattern = Pattern.compile("[\\w\\d]+");
@@ -829,7 +829,7 @@ public class WordCountApi {
 			// if double quotes, convert to single quotes and treat as a single
 			// word in the lookup
 			if (dh.find()) {
-				currentWord = currentWord.replace("--", "-").toLowerCase();
+				currentWord = currentWord.replaceFirst("--", "-").toLowerCase();
 				if (categorizer.query(currentWord) != null
 						&& !categorizer.checkHyphen(currentWord)) {
 					// treat as one word.
@@ -842,7 +842,7 @@ public class WordCountApi {
 					} else {
 						map.put(currentWord, 1);
 					}
-					String[] words = currentWord.split("-");
+					String[] words = currentWord.split("-",2);
 					int hyphened = 0;
 					// boolean allFound = true;
 					for (String s : words) {
@@ -857,7 +857,7 @@ public class WordCountApi {
 					weirdDashCount = weirdDashCount + hyphened; // twice if two
 																// dashes
 				} else {
-					String[] words = currentWord.split("-");
+					String[] words = currentWord.split("-",2);
 					int hyphened = -1;
 					// boolean allFound = true;
 					for (String s : words) {
