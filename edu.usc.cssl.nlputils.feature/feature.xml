@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="org.eclipse.equinox.p2.user.ui"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.core.runtime" version="3.6.0" match="compatible"/>
       <import plugin="org.eclipse.jface" version="3.6.0" match="compatible"/>
@@ -30,10 +34,14 @@
       <import plugin="org.eclipse.help.base" version="4.0.0" match="compatible"/>
       <import plugin="org.eclipse.equinox.jsp.jasper.registry" version="1.0.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.http.registry" version="1.0.200" match="greaterOrEqual"/>
+      <import plugin="org.jsoup" version="1.7.2" match="greaterOrEqual"/>
       <import plugin="edu.usc.cssl.nlputils.common.ui" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.swt"/>
-      <import plugin="edu.usc.cssl.nlputils.wordcount.weighted" version="0.0.1" match="greaterOrEqual"/>
-      <import plugin="org.apache.commons.lang3"/>
+      <import plugin="org.eclipse.ui.forms" version="3.6.100" match="greaterOrEqual"/>
+      <import plugin="edu.usc.cssl.nlputils.common.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.common"/>
+      <import plugin="org.eclipse.ecf.identity"/>
    </requires>
 
    <plugin
@@ -273,6 +281,20 @@
 
    <plugin
          id="edu.usc.cssl.nlputils.crawlers.senate"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.ds"
          download-size="0"
          install-size="0"
          version="0.0.0"

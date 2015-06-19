@@ -40,9 +40,20 @@
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.help"/>
       <feature id="edu.usc.cssl.nlputils.feature"/>
+      <feature id="org.eclipse.equinox.p2.core.feature"/>
+      <feature id="org.eclipse.equinox.p2.user.ui"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature"/>
+      <feature id="org.eclipse.ecf.core.feature"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.feature"/>
+      <feature id="org.eclipse.ecf.core.ssl.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
    </features>
 
    <configurations>
+      <plugin id="nlputils" autoStart="false" startLevel="5" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />

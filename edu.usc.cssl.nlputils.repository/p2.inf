@@ -1,0 +1,3 @@
+instructions.configure=\
+   addRepository(name:My Update Site,type:0,location:http${#58}//my.company.com/update/);\
+   addRepository(name:My Update Site,type:1,location:http${#58}//my.company.com/update/);
