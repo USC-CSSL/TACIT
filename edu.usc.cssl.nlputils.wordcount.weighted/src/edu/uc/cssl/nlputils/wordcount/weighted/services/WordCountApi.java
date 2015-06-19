@@ -93,7 +93,7 @@ public class WordCountApi {
 			boolean doWordDistribution, boolean stemDictionary, File oFile,
 			File sFile) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
-			this.delimiters = " -";
+			this.delimiters = " ";
 		else
 			this.delimiters = delimiters;
 		this.doLower = doLower;

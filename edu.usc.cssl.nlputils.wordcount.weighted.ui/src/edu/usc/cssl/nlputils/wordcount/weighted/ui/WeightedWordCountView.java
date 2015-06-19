@@ -105,7 +105,7 @@ public class WeightedWordCountView extends ViewPart implements
 		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		Composite client = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
 				.applyTo(client);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client);
@@ -212,11 +212,11 @@ public class WeightedWordCountView extends ViewPart implements
 		weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
 		
-		standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
-		standardWordCountButton.setText("Standard Word Count");
-		standardWordCountButton.setSelection(false);
-		standardWordCountButton.setBackground(parent.getBackground());
-		standardWordCountButton.setForeground(parent.getForeground());
+//		standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
+//		standardWordCountButton.setText("Standard Word Count");
+//		standardWordCountButton.setSelection(false);
+//		standardWordCountButton.setBackground(parent.getBackground());
+//		standardWordCountButton.setForeground(parent.getForeground());
 
 		Label lblEmpty = new Label(buttonComposite, SWT.None);
 		NlputilsFormComposite.createEmptyRow(toolkit, parent);
