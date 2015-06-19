@@ -147,4 +147,18 @@
          </view>
     </perspectiveExtension>
  </extension>
+ 
+  <extension
+         point="org.eclipse.ui.installationPages">
+          <page
+            name="Installed Software Page"
+            class="org.eclipse.equinox.p2.ui.InstalledSoftwarePage"
+            id="10.org.eclipse.equinox.p2.examples.rcp.cloud.InstalledSoftwarePage">
+          </page>
+          <page
+            name="Installed Software History"
+            class="org.eclipse.equinox.p2.ui.RevertProfilePage"
+            id="11.org.eclipse.equinox.p2.examples.rcp.cloud.RevertProfilePage">
+          </page>
+    </extension>
 </plugin>
