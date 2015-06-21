@@ -92,7 +92,7 @@ public class KmeansClusterView extends ViewPart implements
 
 		layData = NlputilsFormComposite.createTableSection(client, toolkit,
 				layout, "Input Dtails",
-				"Add File(s) and Folder(s) to include in analysis.", true);
+				"Add File(s) and Folder(s) to include in analysis.", true, true);
 		Composite compInput;
 		compInput = layData.getSectionClient();
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)

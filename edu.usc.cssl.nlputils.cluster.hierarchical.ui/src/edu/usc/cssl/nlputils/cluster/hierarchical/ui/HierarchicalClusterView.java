@@ -91,7 +91,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		layout.numColumns = 1;
 	
 	   layoutData = NlputilsFormComposite.createTableSection(client, toolkit,
-				layout, "Input Dtails", "Add File(s) and Folder(s) to include in analysis.", true);
+				layout, "Input Dtails", "Add File(s) and Folder(s) to include in analysis.", true, true);
 		Composite compInput;
 		compInput = layoutData.getSectionClient();
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);

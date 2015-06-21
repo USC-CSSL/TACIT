@@ -58,10 +58,10 @@ public class TargetLocationsGroup {
 	 * @return generated instance of the table part
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent,
-			FormToolkit toolkit, boolean isFolder) {
+			FormToolkit toolkit, boolean isFolder, boolean isFile) {
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
-		contentTable.createFormContents(parent, toolkit, isFolder);
+		contentTable.createFormContents(parent, toolkit, isFolder,isFile);
 		return contentTable;
 	}
 
@@ -104,7 +104,7 @@ public class TargetLocationsGroup {
 	 * @param isFolder
 	 */
 	private void createFormContents(Composite parent, FormToolkit toolkit,
-			boolean isFolder) {
+			boolean isFolder, boolean isFile) {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
@@ -123,10 +123,12 @@ public class TargetLocationsGroup {
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddButton);
 		}
-		fAddFileButton = toolkit.createButton(buttonComp, "Add File...",
-				SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(fAddFileButton);
+		if (isFile) {
+			fAddFileButton = toolkit.createButton(buttonComp, "Add File...",
+					SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddFileButton);
+		}
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fRemoveButton);
@@ -246,42 +248,44 @@ public class TargetLocationsGroup {
 				}
 			});
 		}
-		fAddFileButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
-						SWT.OPEN | SWT.MULTI);
-				dlg.setText("Select File");
-				String message = "";
-				String path = null;
-				boolean canExit = false;
-				while (!canExit) {
-					path = dlg.open();
-					if (path == null)
-						return;
-					else {
-						String[] listFile = dlg.getFileNames();
-						String[] fullFile = new String[listFile.length];
-						for (int i = 0; i < listFile.length; i++) {
-							fullFile[i] = dlg.getFilterPath() + File.separator
-									+ listFile[i];
-						}
-
-						message = updateLocationTree(fullFile);
-						if (!message.equals("")) {
-							ErrorDialog.openError(dlg.getParent(),
-									"Select Different File",
-									"Please select different File", new Status(
-											IStatus.ERROR,
-											CommonUiActivator.PLUGIN_ID,
-											message));
-						} else {
-							canExit = true;
+		if (fAddFileButton != null) {
+			fAddFileButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
+							SWT.OPEN | SWT.MULTI);
+					dlg.setText("Select File");
+					String message = "";
+					String path = null;
+					boolean canExit = false;
+					while (!canExit) {
+						path = dlg.open();
+						if (path == null)
+							return;
+						else {
+							String[] listFile = dlg.getFileNames();
+							String[] fullFile = new String[listFile.length];
+							for (int i = 0; i < listFile.length; i++) {
+								fullFile[i] = dlg.getFilterPath() + File.separator
+										+ listFile[i];
+							}
+	
+							message = updateLocationTree(fullFile);
+							if (!message.equals("")) {
+								ErrorDialog.openError(dlg.getParent(),
+										"Select Different File",
+										"Please select different File", new Status(
+												IStatus.ERROR,
+												CommonUiActivator.PLUGIN_ID,
+												message));
+							} else {
+								canExit = true;
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
 
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			@Override

@@ -113,10 +113,10 @@ public class WeightedWordCountView extends ViewPart implements
 		layout.numColumns = 2;
 		inputLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Input",
-				"Add File(s) and Folder(s) to include in analysis.", true);
+				"Add File(s) and Folder(s) to include in analysis.", true, true);
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary", "Add location of Dictionary",
-				false);
+				false, true);
 
 		Composite compInput;
 		compInput = form.getBody();
