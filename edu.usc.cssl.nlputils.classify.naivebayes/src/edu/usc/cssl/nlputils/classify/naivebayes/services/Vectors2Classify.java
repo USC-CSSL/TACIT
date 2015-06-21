@@ -801,7 +801,7 @@ public abstract class Vectors2Classify {
 			for (int j = 0; j < labeling.numLocations(); j++) {
 				if(!labeling.getLabelAtRank(j).toString().isEmpty()) {
 				classification = classification
-						+ labeling.getLabelAtRank(j).toString() + ":"
+						+ labeling.getLabelAtRank(j).toString() + ","
 						+ labeling.getValueAtRank(j) + ",";
 				System.out.print(labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + " ");

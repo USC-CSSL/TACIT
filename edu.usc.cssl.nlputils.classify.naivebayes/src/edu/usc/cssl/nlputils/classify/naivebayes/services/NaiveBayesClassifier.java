@@ -149,7 +149,7 @@ public class NaiveBayesClassifier {
 		ConsoleView.printlInConsoleln("\nCreated classifier output file " + outputPath + ".out");
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "_output.csv")));
-		bw.write("File, Predicted Class, Other Classes\n");
+		bw.write("File,Predicted Class,Predicted Class Probability,Other Classes\n");
 		for (String s : result)
 			bw.write(s + "\n");
 		bw.close();
