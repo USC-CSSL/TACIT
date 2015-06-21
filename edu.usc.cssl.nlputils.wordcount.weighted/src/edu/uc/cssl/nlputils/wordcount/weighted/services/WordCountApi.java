@@ -593,7 +593,7 @@ public class WordCountApi {
 						if (this.weighted) {
 							weights.put(this.categories.get(Integer
 									.parseInt(words[i])), Double
-									.parseDouble(words[i - 1]));
+									.parseDouble(words[i + 1]));
 						}
 						categories.add(Integer.parseInt(words[i]));
 					}
@@ -637,11 +637,12 @@ public class WordCountApi {
 	}
 
 	private int initialize() {
-
-		if (this.weighted)
+		return 1;
+		/*if (this.weighted)
 			return 2;
 		else
 			return 1;
+		*/
 	}
 
 	private int increment(int val) {
