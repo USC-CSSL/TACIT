@@ -118,7 +118,8 @@ public class SVMTrain {
 	
 	private void run(String argv[]) throws IOException
 	{
-		ConsoleView.printlInConsoleln(String.valueOf(argv.length));
+		ConsoleView.printlInConsoleln("");
+		//ConsoleView.printlInConsoleln(String.valueOf(argv.length));
 		parse_command_line(argv);
 		read_problem();
 		error_msg = svm.svm_check_parameter(prob,param);
