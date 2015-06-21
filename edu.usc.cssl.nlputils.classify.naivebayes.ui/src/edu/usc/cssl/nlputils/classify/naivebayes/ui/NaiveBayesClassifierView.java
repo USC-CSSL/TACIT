@@ -106,7 +106,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		layout.numColumns = 2;
 		
 		//Create table layout to hold the input data
-		classLayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class Details","Add File(s) and Folder(s) to include in analysis.", true);	
+		classLayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class Details","Add File(s) and Folder(s) to include in analysis.", true, false);	
 		//Create preprocess link
 		createPreprocessLink(client);
 		createNBClassifierInputParameters(client); // to get k-value
