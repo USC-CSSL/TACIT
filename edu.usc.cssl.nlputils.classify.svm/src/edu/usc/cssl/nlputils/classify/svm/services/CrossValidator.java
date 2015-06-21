@@ -87,6 +87,6 @@ public class CrossValidator {
 		}
 		
 		ConsoleView.printlInConsoleln("");
-		ConsoleView.printlInConsoleln("Average accuracy over "+kValue+" folds: "+averageAccuracy/accuracies.length+"%");
+		ConsoleView.printlInConsoleln("Average accuracy over "+kValue+" folds = "+averageAccuracy/accuracies.length+"%");
 	}
 }
