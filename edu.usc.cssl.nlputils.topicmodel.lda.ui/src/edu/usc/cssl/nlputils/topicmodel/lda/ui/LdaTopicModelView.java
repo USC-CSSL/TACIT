@@ -210,7 +210,7 @@ public class LdaTopicModelView extends ViewPart implements
 				 job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started clustering...", 100);
+						monitor.beginTask("NLPUtils started analyzing...", 100);
 						List<String> inputFiles = new ArrayList<String>();
 						String topicModelDirPath = inputPath;
 						if (isPreprocess) {

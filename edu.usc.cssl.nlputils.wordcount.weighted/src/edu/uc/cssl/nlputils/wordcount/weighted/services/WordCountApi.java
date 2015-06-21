@@ -1001,7 +1001,14 @@ public class WordCountApi {
 					.getBundle("edu.usc.cssl.nlputils.repository").getHeaders()
 					.get("Bundle-Version");
 			Date date = new Date();
-			bw.write("Weighted Word Count Output\n--------------------------\n\nApplication Version: "
+			String title = "";
+			if(this.weighted){
+				title = "Weighted";
+			}
+			else {
+				title = "LIWC";
+			}
+			bw.write(title+" Word Count Output\n--------------------------\n\nApplication Version: "
 					+ appV + "\nDate: " + date.toString() + "\n\n");
 			bw.write(readMe.toString());
 			bw.close();
