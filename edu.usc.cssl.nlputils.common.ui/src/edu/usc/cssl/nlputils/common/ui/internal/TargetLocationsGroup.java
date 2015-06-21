@@ -309,6 +309,7 @@ public class TargetLocationsGroup {
 
 			}
 			for (String file : path) {
+				if (file.contains(".DS_Store")) continue;
 				final TreeParent node = new TreeParent(file);
 				if (new File(file).isDirectory()) {
 					if(FileUtils.sizeOfDirectory(new File(file)) <= 0){
@@ -370,6 +371,7 @@ public class TargetLocationsGroup {
 
 		for (File input : new File(node.getName()).listFiles()) {
 
+			if (input.getAbsolutePath().contains(".DS_Store")) continue;
 			if (input.isFile() && FileUtils.sizeOf(input)>0) {
 				node.addChildren(input.getAbsolutePath());
 			} else if(input.isDirectory()) {
