@@ -492,7 +492,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				final Job job = new Job("Senate Crawler") {					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("Running Senate Crawler..." , 100);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+						monitor.beginTask("Running Senate Crawler..." , 100);						
 						Display.getDefault().syncExec(new Runnable() {
 							
 							@Override
@@ -527,24 +528,35 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 							if(!s.contains("All"))
 								allCongresses.add(Integer.parseInt(s));
 						}
-												
+							
+						if(monitor.isCanceled()) 
+							handledCancelRequest("Cancelled");
 						try {
 							monitor.subTask("Initializing");
 							monitor.worked(5);
-							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses);
-							monitor.worked(50);
-							
-							monitor.subTask("Crawling");							
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
+							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor);
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
+							monitor.worked(5);
+														
+							monitor.subTask("Crawling");
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
 							sc.crawl();
+							if(monitor.isCanceled()) 
+								handledCancelRequest("Cancelled");
 							monitor.worked(50);
 						} catch (NumberFormatException e) {						
-							e.printStackTrace();
+							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						} catch (IOException e) {							
-							e.printStackTrace();
+							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						}
 						monitor.worked(100);
 						monitor.done();
 						System.out.println("Done");
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully", IStatus.OK);
 						return Status.OK_STATUS;
 					}					
 				};	
@@ -574,7 +586,19 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		form.getToolBarManager().update(true);
 	}
 	
-
+	private IStatus handleException(IProgressMonitor monitor, Exception e, String message) {
+		monitor.done();
+		System.out.println(message);
+		e.printStackTrace();
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
+		return Status.CANCEL_STATUS;
+	}
+	
+	private IStatus handledCancelRequest(String message) {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
+		return Status.CANCEL_STATUS;
+		
+	}
 
 	private boolean canItProceed() {
 		if(limitRecords.getSelection()) {

@@ -39,11 +39,15 @@ public class SenateCrawler {
 			String senText = senItem.text().replace("\u00A0", " ");
 			if (senText.contains("Any Senator"))		// We just need the senator names
 				continue;
-			searchSenatorRecords(congress,senText);
+			searchSenatorRecords(congress,senText, 0);
 		}
 	}
 
 	public void crawl() throws IOException{
+		if(null != monitor && monitor.isCanceled()) {
+			monitor.subTask("Cancelling.. ");
+			return;
+		}
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String dateString = dateFormat.format(date);
@@ -52,30 +56,57 @@ public class SenateCrawler {
 		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
 		csvWriter.newLine();
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
-			if (congressNum != -1)
-				getAll(congressNum, senText);
-			else {
-				for (int congress : congresses) {
-					if(null != monitor && monitor.isCanceled()) return;
-					getAll(congress, senText);
+			if (congressNum != -1) {
+				if(null != monitor && monitor.isCanceled()) {
+					monitor.subTask("Cancelling.. ");
+					return;
 				}
+				getAll(congressNum, senText, 80);
+		    }else {
+				for (int congress : congresses) {
+					if(null != monitor && monitor.isCanceled()) {
+						monitor.subTask("Cancelling.. ");
+						return;
+					}
+					/*if(monitor!=null) 
+						monitor.worked(80/congresses.size());
+						*/
+					getAll(congress, senText, 80/congresses.size());
+				}
+			}
+			if(null != monitor && monitor.isCanceled()) {
+				monitor.subTask("Cancelling.. ");
+				return;
 			}
 		} 		
 		else {
 			if (congressNum == -1) {
 				for (int congress: congresses) {
-					if(null != monitor && monitor.isCanceled()) return;
+					if(null != monitor && monitor.isCanceled()) {
+						monitor.subTask("Cancelling.. ");
+						return;
+					}
+					if(monitor!=null) 
+						monitor.worked(80/congresses.size());
 					System.out.println("Extracting Records from Congress "+congress+"...");
-					searchSenatorRecords(congress, senText);
+					searchSenatorRecords(congress, senText, 0);
 				}
 			} else {
+				if(null != monitor && monitor.isCanceled()) {
+					monitor.subTask("Cancelling.. ");
+					return;
+				}
 				System.out.println("Extracting Records from Congress "+congressNum+"...");
-				searchSenatorRecords(congressNum, senText);
+				searchSenatorRecords(congressNum, senText, 1);
+			}
+			if(null != monitor && monitor.isCanceled()) {
+				monitor.subTask("Cancelling.. ");
+				return;
 			}
 		}
 		csvWriter.close();
 	}
-	public void getAll(int congressNum, String senText) throws IOException{
+	public void getAll(int congressNum, String senText, int totalProgress) throws IOException{
 		System.out.println("Extracting Senators of Congress "+congressNum+"...");
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congressNum).timeout(10*1000).get();
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
@@ -96,12 +127,14 @@ public class SenateCrawler {
 			if (senText.contains("All Independents")){
 				if (!senator.contains("(I-"))
 					continue;
-			}
-			searchSenatorRecords(congressNum, senator);
+			}			
+			searchSenatorRecords(congressNum, senator, 0);
+			if(null != monitor && monitor.isCanceled())
+				monitor.worked(totalProgress/senList.size());
 		}
 	}
 	
-	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
@@ -110,6 +143,7 @@ public class SenateCrawler {
 		this.congressNum = congressNum;
 		this.sortType = sortType;
 		this.congresses = allCongresses;
+		this.monitor = monitor;
 		
 		System.out.println("Congress num :"+ congressNum);
 		System.out.println("Senator name :"+ senText);
@@ -117,9 +151,13 @@ public class SenateCrawler {
 		System.out.println("Sort Type : "+ sortType);		
 		System.out.println("From date :"+ dateFrom);
 		System.out.println("To Date: "+ dateTo);		
+		if(null != monitor && monitor.isCanceled()) {
+			monitor.subTask("Cancelling.. ");
+			return;
+		}
 	}
 
-	public void searchSenatorRecords(int congress,String senText) throws IOException{
+	public void searchSenatorRecords(int congress,String senText, int singleSenator) throws IOException{
 		System.out.println("Current Senator - "+senText);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
@@ -160,10 +198,26 @@ public class SenateCrawler {
 		links = relevantLinks;
 		
 		String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
-		
+
 		int count = 0;
+		int tempCount = 0;
 		// Process each search result
 		for (Element link : links) {
+			if(null != monitor && monitor.isCanceled()) {
+				monitor.subTask("Cancelling.. ");
+				return;
+			}
+			tempCount++;
+			if(1 == singleSenator) {
+				int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;				
+				int higherSize = tempMaxDocs > links.size() ? links.size() : tempMaxDocs;				
+				int totalCount = higherSize/80;
+				if(tempCount % totalCount == 0) {
+					tempCount = 0;
+					monitor.worked(1);
+				}
+				
+			}
 			if (maxDocs==-1)
 				count=-2000;
 			if (count++>=maxDocs)
@@ -261,7 +315,7 @@ public class SenateCrawler {
 	}
 	
 	private boolean isNumeric(String word){
-		try{
+		try {
 			Integer.parseInt(word);
 			return true;
 		} catch (NumberFormatException e) {
