@@ -87,8 +87,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		class1LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 1 Details","Add File(s) and Folder(s) to include in analysis.", true);
-		class2LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 2 Details","Add File(s) and Folder(s) to include in analysis.", true);
+		class1LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 1 Details","Add File(s) and Folder(s) to include in analysis.", true, true);
+		class2LayoutData = NlputilsFormComposite.createTableSection(client,toolkit, layout, "Class 2 Details","Add File(s) and Folder(s) to include in analysis.", true, true);
 	
 		createPreprocessLink(form.getBody());
 		createInputParams(form.getBody());

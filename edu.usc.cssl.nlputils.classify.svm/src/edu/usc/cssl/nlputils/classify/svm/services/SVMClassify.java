@@ -323,7 +323,7 @@ public class SVMClassify {
 		double pvalue = btest.binomialTest(total, correct, p, AlternativeHypothesis.TWO_SIDED);
 		ConsoleView.printlInConsoleln("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
 		ConsoleView.printlInConsoleln("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
-		ConsoleView.printlInConsoleln("P value  = " + pvalue);
+		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
 		//ConsoleView.writeInConsole(nf.format(pvalue));

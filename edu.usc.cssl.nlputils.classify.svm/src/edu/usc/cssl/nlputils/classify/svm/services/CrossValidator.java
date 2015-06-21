@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 public class CrossValidator {
 
 	public void doCross(SVMClassify svm, String class1Label, File[] class1Files, String class2Label, File[] class2Files, int kValue, boolean doPredictiveWeights, IProgressMonitor monitor) throws IOException{
@@ -24,6 +26,7 @@ public class CrossValidator {
 		int index2 = 0;
 		
 		for (int i=1; i<=kValue;i++){
+			ConsoleView.printlInConsoleln("--- Fold "+i+" ---");
 			File[] trainFiles1 = new File[trains1];
 			File[] trainFiles2 = new File[trains2];
 			File[] testFiles1 = new File[numFiles1-trains1];
@@ -76,5 +79,14 @@ public class CrossValidator {
 			}
 			monitor.worked(1);
 		}
+		
+		double averageAccuracy = 0;
+		
+		for (int j = 0; j < accuracies.length; j++) {
+			averageAccuracy = averageAccuracy+accuracies[j];
+		}
+		
+		ConsoleView.printlInConsoleln("");
+		ConsoleView.printlInConsoleln("Average accuracy over "+kValue+" folds = "+averageAccuracy/accuracies.length+"%");
 	}
 }
