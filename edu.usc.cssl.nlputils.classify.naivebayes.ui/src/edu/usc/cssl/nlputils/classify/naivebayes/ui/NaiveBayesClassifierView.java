@@ -36,8 +36,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -46,7 +44,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.ViewPart;
 
 import bsh.EvalError;
@@ -56,9 +53,7 @@ import edu.usc.cssl.nlputils.classify.naivebayes.services.NaiveBayesClassifier;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.INaiveBayesClassifierViewConstants;
 import edu.usc.cssl.nlputils.classify.naivebayes.ui.internal.NaiveBayesClassifierViewImageRegistry;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
-import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
-import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.Preprocess;
 
@@ -72,7 +67,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	// Classification parameters
 	private Text kValueText;
 	private Text classifyInputText;
-	private Text classifyOutputText;
+	private Text outputPath;
 	private Button preprocessEnabled;
 
 	private Preprocess preprocessTask;
@@ -83,9 +78,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private Button classificationEnabled;
 
 	HashMap<String, List<String>> classPaths;
-
-	private OutputLayoutData outputLayout;
-
+	
 	protected Job job;
 	
 	@Override
@@ -119,7 +112,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		createNBClassifierInputParameters(client); // to get k-value
 		// Create ouput section
 		//createOutputSection(client, layout, "Classify", "Choose the input and output path for classification"); // Create dispatchable output section
-		outputLayout = NlputilsFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
+		//outputLayout = NlputilsFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
 		
@@ -191,32 +184,28 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		if (locationFile.canWrite()) {
 			return null;
 		} else {
-			return "Classification Output Path : Permission Denied";
+			return "Output Path : Permission Denied";
 		}
 	}
 	
-	protected boolean outputPathListener(Text classifyOutputText, String errorMessage) {
-		if(classificationEnabled.getSelection()) {
-			if (classifyOutputText.getText().isEmpty()) {
-				form.getMessageManager().addMessage("classifyOutput", errorMessage, null, IMessageProvider.ERROR);
-				return false;
-			}
-			File tempFile = new File(classifyOutputText.getText());
-			if (!tempFile.exists() || !tempFile.isDirectory()) {
-				form.getMessageManager().addMessage("classifyOutput", errorMessage, null, IMessageProvider.ERROR);
-				return false;
-			} else {
-				form.getMessageManager().removeMessage("classifyOutput");
-				String message = validateOutputDirectory(classifyOutputText.getText().toString());
-				if(null != message) {
-					form.getMessageManager().addMessage("classifyOutput", message, null, IMessageProvider.ERROR);
-					return false;
-				}			
-			}
+	protected boolean outputPathListener(Text outputText, String errorMessage) {
+		if (outputText.getText().isEmpty()) {
+			form.getMessageManager().addMessage("outputPath", errorMessage, null, IMessageProvider.ERROR);
+			return false;
 		}
-		else {
-			form.getMessageManager().removeMessage("classifyOutput");
+		File tempFile = new File(outputText.getText());
+		if (!tempFile.exists() || !tempFile.isDirectory()) {
+			form.getMessageManager().addMessage("outputPath", errorMessage, null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("outputPath");
+			String message = validateOutputDirectory(outputText.getText().toString());
+			if(null != message) {
+				form.getMessageManager().addMessage("outputPath", message, null, IMessageProvider.ERROR);
+				return false;
+			}			
 		}
+
 		return true;
 	}
 
@@ -236,13 +225,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		Composite sectionClient = toolkit.createComposite(inputParamsSection);
 		sc.setContent(sectionClient);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
 		inputParamsSection.setClient(sectionClient);
 		
 		kValueLabel = toolkit.createLabel(sectionClient, "k Value for Cross Validation:",SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(kValueLabel);
 		kValueText = toolkit.createText(sectionClient, "",SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(kValueText);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(kValueText);
 		
 		kValueText.addKeyListener(new KeyListener() {
 			
@@ -263,6 +252,39 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		});
 		
 		NlputilsFormComposite.createEmptyRow(toolkit, client);
+		
+		//Output path
+		final Label outputPathLabel = toolkit.createLabel(sectionClient, "Output Path:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(outputPathLabel);
+		outputPath = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(outputPath);
+		outputPath.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				outputPathListener(outputPath, "Output path must be a valid diretory location");
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				outputPathListener(outputPath, "Output path must be a valid diretory location");
+			}
+		});
+		final Button browseBtn2 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
+		browseBtn2.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = openBrowseDialog(browseBtn2);
+				if(null == path) return;
+				outputPath.setText(path);
+				form.getMessageManager().removeMessage("outputPath");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+		});
+		
 		createClassificationParameters(client);
 		
 	}
@@ -292,19 +314,19 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		
 	
 		// Create a row that holds the textbox and browse button
-		final Label inputPathLabel = toolkit.createLabel(sectionClient, "Input Path:", SWT.NONE);
+		final Label inputPathLabel = toolkit.createLabel(sectionClient, "Classification Input Path:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(inputPathLabel);
 		classifyInputText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classifyInputText);
 		classifyInputText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				inputPathListener(classifyInputText, "Input path must be a valid diretory location");
+				inputPathListener(classifyInputText, "Classification input path must be a valid diretory location");
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				inputPathListener(classifyInputText, "Input path must be a valid diretory location");
+				inputPathListener(classifyInputText, "Classification input path must be a valid diretory location");
 			}
 		});
 		final Button browseBtn1 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
@@ -326,41 +348,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		classifyInputText.setEnabled(false);
 		browseBtn1.setEnabled(false);
 		
-		//Output path
-		final Label outputPathLabel = toolkit.createLabel(sectionClient, "Output Path:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(outputPathLabel);
-		classifyOutputText = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classifyOutputText);
-		classifyOutputText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				outputPathListener(classifyOutputText, "Output path must be a valid diretory location");
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				outputPathListener(classifyOutputText, "Output path must be a valid diretory location");
-			}
-		});
-		final Button browseBtn2 = toolkit.createButton(sectionClient, "Browse", SWT.PUSH);
-		browseBtn2.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String path = openBrowseDialog(browseBtn2);
-				if(null == path) return;
-				classifyOutputText.setText(path);
-				form.getMessageManager().removeMessage("classifyOutput");
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
-		});
-		outputPathLabel.setEnabled(false);
-		classifyOutputText.setEnabled(false);
-		browseBtn2.setEnabled(false);
-		
 		classificationEnabled.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -370,14 +357,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					inputPathLabel.setEnabled(true);
 					classifyInputText.setEnabled(true);
 					browseBtn1.setEnabled(true);
-					
-					inputPathLabel.setEnabled(true);
-					outputPathLabel.setEnabled(true);
-					classifyOutputText.setEnabled(true);
-					browseBtn2.setEnabled(true);
-					
-					inputPathListener(classifyInputText, "Input path must be a valid diretory location");
-					outputPathListener(classifyOutputText, "Output path must be a valid diretory location");
+					inputPathListener(classifyInputText, "Classification input path must be a valid diretory location");
 					
 				} else {					
 					sectionClient.setEnabled(false);
@@ -385,13 +365,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					inputPathLabel.setEnabled(false);
 					classifyInputText.setEnabled(false);
 					browseBtn1.setEnabled(false);
-					
-					outputPathLabel.setEnabled(false);
-					classifyOutputText.setEnabled(false);
-					browseBtn2.setEnabled(false);
-					
+
 					form.getMessageManager().removeMessage("classifyInput");
-					form.getMessageManager().removeMessage("classifyOutput");
 				}
 			}
 		}); 
@@ -450,11 +425,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 
 			String classificationInputDir;
-			String outputDir;
 			@Override
 			public void run() {
 				// Classification i/p and o/p paths
-				final String classificationOutputDir = classifyOutputText.getText();
+				final String outputDir = outputPath.getText();
 				classificationInputDir = classifyInputText.getText();
 				final ArrayList<String> trainingDataPaths = new ArrayList<String>();
 				final String tempkValue = kValueText.getText();
@@ -464,7 +438,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				final HashMap<String, List<String>> tempClassPaths = new HashMap<String, List<String>>();
 				final NaiveBayesClassifier nbc = new NaiveBayesClassifier();
 				final CrossValidator cv = new CrossValidator();				
-				outputDir = outputLayout.getOutputLabel().getText();
 				
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
 				job = new Job("Naive Bayes Classification") {
@@ -549,7 +522,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							if(isClassificationEnabled) {
 								monitor.subTask("Classifying...");
 								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
-								nbc.classify(trainingDataPaths, classificationInputDir, classificationOutputDir, false, false);
+								nbc.classify(trainingDataPaths, classificationInputDir, outputDir, false, false);
 								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 							}
 							monitor.worked(15);
@@ -669,13 +642,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			form.getMessageManager().removeMessage("kvalue");
 		}
 		
-		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
-		if (message != null) {
-			message = outputLayout.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("output", message, null,IMessageProvider.ERROR);
+		if(!outputPathListener(outputPath, "Output path must be a valid diretory location")){
 			return false;
-		} else {
-			form.getMessageManager().removeMessage("output");
 		}
 		
 		// Classification parameters
@@ -683,12 +651,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		if(isClassificationEnabled) {
 			if(!inputPathListener(classifyInputText, "Classifciation Input path must be a valid diretory location")) {
 				return false;				
-			} else if(!outputPathListener(classifyOutputText, "Classifciation Output path must be a valid diretory location")) {
-				return false;
 			}
 		} else {
 			form.getMessageManager().removeMessage("classifyInputText");
-			form.getMessageManager().removeMessage("classifyOutputText");
 		}
 		
 		return true;
