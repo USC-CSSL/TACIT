@@ -81,7 +81,7 @@ public class Preprocess {
 		File[] files;
 		files = new File[inputFiles.size()];
 		int i = 0;
-		//boolean outputPathNotSet = false;
+		boolean outputPathNotSet = false;
 		for (String filepath : inputFiles) {
 			if ((new File(filepath).isDirectory()))
 				continue;
@@ -91,15 +91,15 @@ public class Preprocess {
 			i = i + 1;
 		}
 
-//		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
-//			this.outputPath = System.getProperty("user.dir");
-//			// this.outputPath = (new File(inputFiles.get(0)).getParent());
-//			outputPathNotSet = true;
-//		}
+		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
+			this.outputPath = System.getProperty("user.dir");
+		//	this.outputPath = (new File(inputFiles.get(0)).getParent());
+			outputPathNotSet = true;
+		}
 		preprocessingParentFolder = this.outputPath + File.separator
 				+ callingPlugin + "_" + currTime;
-//		if (outputPathNotSet)
-//			this.outputPath = "";
+		if (outputPathNotSet)
+			this.outputPath = "";
 		if (!(new File(preprocessingParentFolder).exists())) {
 			new File(preprocessingParentFolder).mkdir();
 			ConsoleView.printlInConsoleln("Folder " + preprocessingParentFolder
@@ -133,7 +133,7 @@ public class Preprocess {
 						.getBundle("edu.usc.cssl.nlputils.common");
 				URL url = FileLocator.find(bundle, new Path("profiles"), null);
 				URL fileURL = FileLocator.toFileURL(url);
-				ConsoleView.printlInConsoleln(fileURL.getPath());
+				//ConsoleView.printlInConsoleln(fileURL.getPath());
 				try {
 					DetectorFactory.loadProfile(fileURL.getPath());
 				} catch (com.cybozu.labs.langdetect.LangDetectException ex) {
@@ -147,7 +147,18 @@ public class Preprocess {
 			}
 		}
 
+		int currentCount = 0;
+		int adder = files.length/10;
+		int breakPoint = adder;
+		int statusPoint = 0;
+		ConsoleView.printlInConsoleln("Preprocessing Status: " + statusPoint*10+"% completed");
 		for (File f : files) {
+			currentCount++;
+			if (currentCount >= breakPoint){
+				statusPoint++;
+				ConsoleView.printlInConsoleln("Preprocessing Status: " + statusPoint*10+"% completed");
+				breakPoint = breakPoint+adder;
+			}
 			if (f == null)
 				break;
 			// Mac cache file filtering
@@ -157,7 +168,7 @@ public class Preprocess {
 			if ("_preprocessed".equals(f.getName()))
 				continue;
 			String inputFile = f.getAbsolutePath();
-			ConsoleView.printlInConsoleln("Preprocessing " + inputFile);
+			//ConsoleView.printlInConsoleln("Preprocessing " + inputFile);
 
 			// doLangDetect only if doStemming is true
 			if (doLangDetect) {
@@ -196,12 +207,13 @@ public class Preprocess {
 					bw.write(linear + "\n");
 				}
 			}
-			ConsoleView.printlInConsoleln(preprocessingParentFolder
-					+ System.getProperty("file.separator") + f.getName());
+			//ConsoleView.printlInConsoleln(preprocessingParentFolder
+			//		+ System.getProperty("file.separator") + f.getName());
 
 			br.close();
 			bw.close();
 		}
+		//ConsoleView.printlInConsoleln("Preprocessing Status: 100% completed");
 		ConsoleView.printlInConsoleln("Preprocessed files stored in "
 				+ preprocessingParentFolder);
 		return preprocessingParentFolder;
