@@ -45,6 +45,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.cssl.nlputils.crawlers.senate.services.AvailableRecords;
 import edu.usc.cssl.nlputils.crawlers.senate.services.SenateCrawler;
 import edu.usc.cssl.nlputils.crawlers.senate.ui.internal.ISenateCrawlerViewConstants;
@@ -555,7 +556,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						}
 						monitor.worked(100);
 						monitor.done();
-						System.out.println("Done");
+						ConsoleView.printlInConsoleln("Done");
 						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully", IStatus.OK);
 						return Status.OK_STATUS;
 					}					

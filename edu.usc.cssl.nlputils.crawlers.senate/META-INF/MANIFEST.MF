@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.crawlers.senate.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.jsoup
+ org.jsoup,
+ edu.usc.cssl.nlputils.common.ui,
+ edu.usc.cssl.nlputils.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.nlputils.crawlers.senate.services

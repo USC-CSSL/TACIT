@@ -17,6 +17,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 
 public class SenateCrawler {
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
@@ -31,7 +33,7 @@ public class SenateCrawler {
 	IProgressMonitor monitor;
 	
 	private void getSenators(int congress) throws IOException {
-		System.out.println("Extracting Senators of Congress "+congress+"...");
+		ConsoleView.printlInConsoleln("Extracting Senators of Congress "+congress+"...");
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
 		
@@ -107,7 +109,7 @@ public class SenateCrawler {
 		csvWriter.close();
 	}
 	public void getAll(int congressNum, String senText, int totalProgress) throws IOException{
-		System.out.println("Extracting Senators of Congress "+congressNum+"...");
+		ConsoleView.printlInConsoleln("Extracting Senators of Congress "+congressNum+"...");
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congressNum).timeout(10*1000).get();
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
 		
@@ -158,7 +160,7 @@ public class SenateCrawler {
 	}
 
 	public void searchSenatorRecords(int congress,String senText, int singleSenator) throws IOException{
-		System.out.println("Current Senator - "+senText);
+		ConsoleView.printlInConsoleln("Current Senator - "+senText);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
 				.data("queryr"+congress,"")	// Important. 113 - congress number. Make this auto? If removed, "Database Missing" error
@@ -191,7 +193,7 @@ public class SenateCrawler {
 		}
 		
 		if (relevantLinks.size() == 0){
-			System.out.println("No Records Found.");
+			ConsoleView.printlInConsoleln("No Records Found.");
 			return;
 		}
 		
@@ -211,7 +213,7 @@ public class SenateCrawler {
 			if(1 == singleSenator) {
 				int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;				
 				int higherSize = tempMaxDocs > links.size() ? links.size() : tempMaxDocs;				
-				int totalCount = higherSize/80;
+				int totalCount = higherSize>80 ? higherSize/80 : 80/higherSize;
 				if(tempCount % totalCount == 0) {
 					tempCount = 0;
 					monitor.worked(1);
@@ -224,7 +226,7 @@ public class SenateCrawler {
 				break;
 			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
 			System.out.println(recordDate);
-			System.out.println("Processing "+link.text());
+			ConsoleView.printlInConsoleln("Processing "+link.text());
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
 			
@@ -260,7 +262,7 @@ public class SenateCrawler {
 	}
 
 	private void writeToFile(String fileName, String[] contents) throws IOException {
-		System.out.println("Writing senator data - "+fileName);
+		ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
 		bw.newLine();
