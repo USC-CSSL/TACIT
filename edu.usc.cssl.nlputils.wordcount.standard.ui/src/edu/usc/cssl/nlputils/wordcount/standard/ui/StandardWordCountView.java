@@ -206,8 +206,10 @@ public class StandardWordCountView extends ViewPart implements
 				// Creating a new Job to do Word Count so that the UI will not freeze
 				 wordCountJob = new Job("Word Count Plugin Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
-				
-				int rc = -1;
+						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "", IStatus.OK);
+						
+						int rc = -1;
 				
 				try {
 						//Niki Change here

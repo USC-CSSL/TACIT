@@ -214,6 +214,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				job = new Job("Crawling...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						NlputilsFormComposite.setConsoleViewInFocus();
 						monitor.beginTask("NLPUtils started crawling...", 100);
 
 						if (monitor.isCanceled()) {

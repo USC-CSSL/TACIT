@@ -237,6 +237,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				 job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						NlputilsFormComposite.setConsoleViewInFocus();
 						monitor.beginTask("NLPUtils started analyzing...", 100);
 						List<String> inputFiles = new ArrayList<String>();
 						String topicModelDirPath = inputPath;

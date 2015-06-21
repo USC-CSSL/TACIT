@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IMessage;
@@ -48,6 +49,7 @@ import edu.usc.cssl.nlputils.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class NlputilsFormComposite {
 
@@ -117,37 +119,30 @@ public class NlputilsFormComposite {
 			}
 		});
 
-	/*	outputLocationTxt.addFocusListener(new FocusAdapter() {
+		/*
+		 * outputLocationTxt.addFocusListener(new FocusAdapter() {
+		 * 
+		 * @Override public void focusLost(FocusEvent e) { super.focusLost(e);
+		 * String message = OutputPathValidation.getInstance()
+		 * .validateOutputDirectory(outputLocationTxt.getText(),"Output"); if
+		 * (message != null) {
+		 * 
+		 * message = outputPathLbl.getText() + " " + message;
+		 * mmng.addMessage("location", message, null, IMessageProvider.ERROR); }
+		 * else { mmng.removeMessage("location"); } } });
+		 */
 
-			@Override
-			public void focusLost(FocusEvent e) {
-				super.focusLost(e);
-				String message = OutputPathValidation.getInstance()
-						.validateOutputDirectory(outputLocationTxt.getText(),"Output");
-				if (message != null) {
-
-					message = outputPathLbl.getText() + " " + message;
-					mmng.addMessage("location", message, null,
-							IMessageProvider.ERROR);
-				} else {
-					mmng.removeMessage("location");
-				}
-			}
-		}); 
-	*/
-		
 		outputLocationTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				outputPathListener(outputLocationTxt, mmng, outputPathLbl);
 			}
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 				outputPathListener(outputLocationTxt, mmng, outputPathLbl);
 			}
 		});
-		
 
 		OutputLayoutData layoutData = new OutputLayoutData();
 		layoutData.setOutputLabel(outputLocationTxt);
@@ -155,27 +150,33 @@ public class NlputilsFormComposite {
 
 		return layoutData;
 	}
-	
-	protected static void outputPathListener(Text outputLocationTxt, IMessageManager mmng, Label outputPathLbl) {
+
+	protected static void outputPathListener(Text outputLocationTxt,
+			IMessageManager mmng, Label outputPathLbl) {
 		if (outputLocationTxt.getText().isEmpty()) {
-			mmng.addMessage("output", "Output path must be a valid diretory location", null, IMessageProvider.ERROR);
+			mmng.addMessage("output",
+					"Output path must be a valid diretory location", null,
+					IMessageProvider.ERROR);
 			return;
 		}
 		File tempFile = new File(outputLocationTxt.getText());
 		if (!tempFile.exists() || !tempFile.isDirectory()) {
-			mmng.addMessage("output", "Output path must be a valid diretory location", null, IMessageProvider.ERROR);
+			mmng.addMessage("output",
+					"Output path must be a valid diretory location", null,
+					IMessageProvider.ERROR);
 		} else {
-			String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLocationTxt.getText(),"Output");
+			String message = OutputPathValidation.getInstance()
+					.validateOutputDirectory(outputLocationTxt.getText(),
+							"Output");
 			if (message != null) {
 				message = outputPathLbl.getText() + " " + message;
 				mmng.addMessage("output", message, null, IMessageProvider.ERROR);
 			} else {
 				mmng.removeMessage("output");
-			}			
-		}	
+			}
+		}
 	}
-	
-	
+
 	public static OutputLayoutData createInputSection(FormToolkit toolkit,
 			Composite parent, final IMessageManager mmng) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
@@ -213,8 +214,8 @@ public class NlputilsFormComposite {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 
-		final Button browseBtn = toolkit.createButton(sectionClient, "Browse...",
-				SWT.PUSH);
+		final Button browseBtn = toolkit.createButton(sectionClient,
+				"Browse...", SWT.PUSH);
 		browseBtn.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -239,7 +240,8 @@ public class NlputilsFormComposite {
 			public void focusLost(FocusEvent e) {
 				super.focusLost(e);
 				String message = OutputPathValidation.getInstance()
-						.validateOutputDirectory(outputLocationTxt.getText(),"Input");
+						.validateOutputDirectory(outputLocationTxt.getText(),
+								"Input");
 				if (message != null) {
 
 					message = outputPathLbl.getText() + " " + message;
@@ -459,5 +461,22 @@ public class NlputilsFormComposite {
 		pw.println("</form>");
 		pw.flush();
 		return sw.toString();
+	}
+
+	public static void setConsoleViewInFocus() {
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getActivePage().showView(ConsoleView.ID);
+				} catch (PartInitException e1) {
+
+				}
+
+			}
+		});
+
 	}
 }

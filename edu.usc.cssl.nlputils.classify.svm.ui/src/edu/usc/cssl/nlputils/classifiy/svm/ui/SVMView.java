@@ -147,6 +147,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final CrossValidator cv = new CrossValidator();
 				 job = new Job("Classifier Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
+						NlputilsFormComposite.setConsoleViewInFocus();
 						monitor.beginTask("SVM Classification", kValueInt+4);
 						String ppClass1 = "";
 						String ppClass2 = "";

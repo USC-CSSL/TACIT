@@ -189,6 +189,7 @@ public class LatinCrawlerView extends ViewPart implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 
+						NlputilsFormComposite.setConsoleViewInFocus();
 						Iterator<String> authorItr;
 						int totalWork = 1;
 						try {

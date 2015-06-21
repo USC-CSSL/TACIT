@@ -36,6 +36,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -44,6 +46,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.ViewPart;
 
 import bsh.EvalError;
@@ -468,6 +471,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						NlputilsFormComposite.setConsoleViewInFocus();
 						monitor.beginTask("Running Naive Bayes Classification..." , 100);
 						
 						Display.getDefault().syncExec(new Runnable() {

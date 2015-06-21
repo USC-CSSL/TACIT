@@ -254,13 +254,14 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				final String thresholdLimit = thresholdValue.getText();
 				cooccurrenceAnalysisJob = new Job(
 						"Co-occurrence Analysis...") {
+					
 					private Preprocess preprocessTask;
 					private String dirPath;
 					private String seedFilePath;
 					private String seedFileLocation;
 
 					protected IStatus run(IProgressMonitor monitor) {
-
+						NlputilsFormComposite.setConsoleViewInFocus();
 						monitor.beginTask("NLPUtils started clustering...", 100);
 						preprocessTask = null;
 						dirPath = "";

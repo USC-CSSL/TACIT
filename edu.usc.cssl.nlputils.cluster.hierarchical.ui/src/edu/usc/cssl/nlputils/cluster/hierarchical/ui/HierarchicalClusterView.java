@@ -210,6 +210,7 @@ public class HierarchicalClusterView extends ViewPart implements
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						NlputilsFormComposite.setConsoleViewInFocus();
 						monitor.beginTask("NLPUtils started clustering...", 100);
 						preprocessTask = null;
 						dirPath = "";
