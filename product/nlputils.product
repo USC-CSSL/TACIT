@@ -3,6 +3,7 @@
 
 <product name="NLPUtils" uid="nlputils" id="edu.usc.cssl.nlputils.repository.product" application="edu.usc.cssl.nlputils.repository.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -25,7 +26,6 @@
       </win>
    </launcher>
 
-   <intro introId="edu.usc.cssl.nlputils.common.ui.intro"/>
 
    <vm>
    </vm>

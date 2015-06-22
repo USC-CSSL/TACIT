@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
 <!-- intro -->
-  <extension
+ <!-- <extension
          point="org.eclipse.ui.intro">
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
@@ -13,8 +13,8 @@
             introId="edu.usc.cssl.nlputils.common.ui.intro"
             productId="edu.usc.cssl.nlputils.repository.product">
       </introProductBinding>
-   </extension>
-   <extension
+   </extension> 
+  <extension
          point="org.eclipse.ui.intro.config">
       <config
             introId="edu.usc.cssl.nlputils.common.ui.intro"
@@ -41,7 +41,7 @@
             </implementation>
          </presentation>
       </config>
-   </extension>
+   </extension> -->
    <!-- Main menu -->
     <extension
          point="org.eclipse.ui.menus">
