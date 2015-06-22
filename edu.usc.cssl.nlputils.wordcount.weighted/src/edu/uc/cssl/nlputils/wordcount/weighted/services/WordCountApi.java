@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -85,7 +86,7 @@ public class WordCountApi {
 	}
 
 	// Updated function that can handle multiple input files
-	public void wordCount(SubProgressMonitor subProgressMonitor,
+	public void wordCount(IProgressMonitor monitor,
 			List<String> inputFiles, List<String> dictionaryFile,
 			String stopWordsFile, String outputFile, String delimiters,
 			boolean doLower, boolean doLiwcStemming,
@@ -114,24 +115,26 @@ public class WordCountApi {
 		// No errors with the output, dictionary and stop-words paths. Start
 		// processing.
 		long startTime = System.currentTimeMillis();
-		subProgressMonitor.beginTask("Counting Words", 99);
-		if (subProgressMonitor.isCanceled()) {
+		monitor.subTask("Counting Words");
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
+		monitor.subTask("Building Category...");
 		buildCategorizer(dictionaryFile);
 		logger.info("Finished building the dictionary trie in "
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
 		appendLog("Finished building the dictionary trie in "
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
-		subProgressMonitor.worked(10);
-		if (subProgressMonitor.isCanceled()) {
+		monitor.worked(10);
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
 		// Create Stop Words Set if doStopWords is true
 		if (doStopWords) {
 			startTime = System.currentTimeMillis();
+			monitor.subTask("Removing Stop words...");
 			stopWordSetBuild(new File(stopWordsFile));
 			logger.info("Finished building the Stop Words Set in "
 					+ (System.currentTimeMillis() - startTime)
@@ -140,27 +143,28 @@ public class WordCountApi {
 					+ (System.currentTimeMillis() - startTime)
 					+ " milliseconds.");
 		}
-		subProgressMonitor.worked(10);
-		if (subProgressMonitor.isCanceled()) {
+		monitor.worked(10);
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
 		// Write the titles in the output file.
+		monitor.subTask("Writing Header...");
 		buildOutputFile(oFile);
-		subProgressMonitor.worked(10);
-		if (subProgressMonitor.isCanceled()) {
+		monitor.worked(2);
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
 		// Write the SPSS file
-		if (doSpss)
+		if (doSpss){
+			monitor.subTask("Writing File "+sFile.getName() + "...");
 			buildSpssFile(sFile);
+		}
+		monitor.worked(10);
+			
 
-		// categorizer.printTrie();
-		// ConsoleView.writeInConsole(categories);
-		// ConsoleView.writeInConsole(stopWordSet);
-		subProgressMonitor.worked(10);
-		if (subProgressMonitor.isCanceled()) {
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
@@ -170,26 +174,27 @@ public class WordCountApi {
 			// Mac cache file filtering
 			if (inputFile.contains("DS_Store"))
 				continue;
-
+			monitor.subTask("Counting Words at " + inputFile );
 			countWords(inputFile, oFile, sFile);
+			monitor.worked(1);
 		}
-		subProgressMonitor.worked(10);
-		if (subProgressMonitor.isCanceled()) {
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
 
 		
-		subProgressMonitor.worked(10);
-		if (subProgressMonitor.isCanceled()) {
+		monitor.worked(10);
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
 		// No errors
+		monitor.subTask("Writing Read Me File...");
 		writeReadMe(outputFile.substring(0,
 				outputFile.lastIndexOf(File.separator)));
-		subProgressMonitor.worked(39);
-		if (subProgressMonitor.isCanceled()) {
+		monitor.worked(5);
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 
 		}
@@ -323,9 +328,11 @@ public class WordCountApi {
 			}
 		}
 		// If Word Distribution output is enabled, calculate the values
-		if (doWordDistribution)
+		if (doWordDistribution){
+			
 			calculateWordDistribution(map, catCount, wordCategories, inputFile,
 					oFile);
+		}
 
 		// If there are no punctuation marks, minimum number of lines = 1
 		if (noOfLines == 0)

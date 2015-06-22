@@ -339,7 +339,7 @@ public class WeightedWordCountView extends ViewPart implements
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), null, null, form);
 						monitor.beginTask(
-								"NLPUtils started Analyzing WordCount...", 100);
+								"NLPUtils started Analyzing WordCount...", inputFiles.size()+20);
 						try {
 							Display.getDefault().syncExec(new Runnable() {
 
@@ -357,15 +357,15 @@ public class WeightedWordCountView extends ViewPart implements
 							});
 
 							wordCountController.wordCount(
-									new SubProgressMonitor(monitor, 100),
+									monitor,
 									inputFiles, dictionaryFiles, stopWordPath,
 									outputPath, "", true, isLiwcStemming,
 									isSnowBall, isSpss, isWdist, isStemDic,
 									oFile, sFile);
+							monitor.done();
 						} catch (IOException ioe) {
 							ioe.printStackTrace();
 						}
-						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "Word count analysis completed",
 								IStatus.OK, form);
