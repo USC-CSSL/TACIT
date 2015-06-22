@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
-
 public class Trie {
 
 	private class Node {

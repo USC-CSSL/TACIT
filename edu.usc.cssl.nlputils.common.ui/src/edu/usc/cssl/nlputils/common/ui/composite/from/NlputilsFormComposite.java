@@ -41,6 +41,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
@@ -315,7 +316,7 @@ public class NlputilsFormComposite {
 	}
 
 	public static void updateStatusMessage(final IViewSite site,
-			final String message, final Integer error) {
+			final String message, final Integer error,final ScrolledForm form) {
 		// update status bar
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -356,6 +357,10 @@ public class NlputilsFormComposite {
 													ICommonUiConstants.IMAGE_SUCESS_SB),
 									message);
 				}
+			
+						form.setFocus();
+						
+					
 			}
 		});
 

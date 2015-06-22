@@ -62,6 +62,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private Text windowSize;
 	private Text thresholdValue;
 	private Job cooccurrenceAnalysisJob;
+
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -93,9 +94,10 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-		inputLayoutData = NlputilsFormComposite.createTableSection(client,
-				toolkit, layout, "Input Dtails",
-				"Add File(s) and Folder(s) to include in analysis.", true, true);
+		inputLayoutData = NlputilsFormComposite
+				.createTableSection(client, toolkit, layout, "Input Dtails",
+						"Add File(s) and Folder(s) to include in analysis.",
+						true, true);
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
@@ -136,7 +138,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				.applyTo(numTxt);
 		return numTxt;
 	}
-	
+
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Job.class) {
@@ -252,9 +254,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();
-				cooccurrenceAnalysisJob = new Job(
-						"Co-occurrence Analysis...") {
-					
+				cooccurrenceAnalysisJob = new Job("Co-occurrence Analysis...") {
+
 					private Preprocess preprocessTask;
 					private String dirPath;
 					private String seedFilePath;
@@ -262,6 +263,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						monitor.beginTask("NLPUtils started clustering...", 100);
 						preprocessTask = null;
 						dirPath = "";
@@ -307,8 +310,14 @@ public class CooccurrenceWordCountView extends ViewPart implements
 										isBuildMatrix);
 
 						if (result) {
-							NlputilsFormComposite.updateStatusMessage(getViewSite(), "Cooccurence analysis completed", IStatus.OK);
-							ConsoleView.printlInConsoleln("Co-occurrence Analysis completed in "+(System.currentTimeMillis()-startTime)+" milliseconds.");
+							NlputilsFormComposite.updateStatusMessage(
+									getViewSite(),
+									"Cooccurence analysis completed",
+									IStatus.OK, form);
+							ConsoleView
+									.printlInConsoleln("Co-occurrence Analysis completed in "
+											+ (System.currentTimeMillis() - startTime)
+											+ " milliseconds.");
 							preprocessTask.clean();
 							return Status.OK_STATUS;
 						} else {
@@ -316,7 +325,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 									.updateStatusMessage(
 											getViewSite(),
 											"Co-occurrence Analysis is not Completed. Please check the log in the console",
-											IStatus.ERROR);
+											IStatus.ERROR, form);
 							preprocessTask.clean();
 							return Status.CANCEL_STATUS;
 						}
@@ -349,7 +358,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");

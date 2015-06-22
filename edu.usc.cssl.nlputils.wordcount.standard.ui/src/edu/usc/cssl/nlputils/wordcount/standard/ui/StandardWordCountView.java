@@ -207,7 +207,7 @@ public class StandardWordCountView extends ViewPart implements
 				 wordCountJob = new Job("Word Count Plugin Job"){
 					protected IStatus run(IProgressMonitor monitor){ 
 						NlputilsFormComposite.setConsoleViewInFocus();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "", null, form);
 						
 						int rc = -1;
 				
@@ -218,7 +218,7 @@ public class StandardWordCountView extends ViewPart implements
 					ioe.printStackTrace();
 					return Status.CANCEL_STATUS;
 				}
-				NlputilsFormComposite.updateStatusMessage(getViewSite(), "Word count analysis completed", IStatus.OK);
+				NlputilsFormComposite.updateStatusMessage(getViewSite(), "Word count analysis completed", IStatus.OK, form);
 				return Status.OK_STATUS;
 					}
 				};
@@ -248,7 +248,7 @@ public class StandardWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null, form);
 		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");

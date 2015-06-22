@@ -111,9 +111,10 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		inputLayoutData = NlputilsFormComposite.createTableSection(client,
-				toolkit, layout, "Input",
-				"Add File(s) and Folder(s) to include in analysis.", true, true);
+		inputLayoutData = NlputilsFormComposite
+				.createTableSection(client, toolkit, layout, "Input",
+						"Add File(s) and Folder(s) to include in analysis.",
+						true, true);
 		dictLayoutData = NlputilsFormComposite.createTableSection(client,
 				toolkit, layout, "Dictionary", "Add location of Dictionary",
 				false, true);
@@ -211,12 +212,12 @@ public class WeightedWordCountView extends ViewPart implements
 		weightedWordCountButton.setSelection(false);
 		weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
-		
-//		standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
-//		standardWordCountButton.setText("Standard Word Count");
-//		standardWordCountButton.setSelection(false);
-//		standardWordCountButton.setBackground(parent.getBackground());
-//		standardWordCountButton.setForeground(parent.getForeground());
+
+		// standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		// standardWordCountButton.setText("Standard Word Count");
+		// standardWordCountButton.setSelection(false);
+		// standardWordCountButton.setBackground(parent.getBackground());
+		// standardWordCountButton.setForeground(parent.getForeground());
 
 		Label lblEmpty = new Label(buttonComposite, SWT.None);
 		NlputilsFormComposite.createEmptyRow(toolkit, parent);
@@ -334,6 +335,9 @@ public class WeightedWordCountView extends ViewPart implements
 				wordCountJob = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						monitor.beginTask(
 								"NLPUtils started Analyzing WordCount...", 100);
 						try {
@@ -362,7 +366,9 @@ public class WeightedWordCountView extends ViewPart implements
 							ioe.printStackTrace();
 						}
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Word count analysis completed", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), "Word count analysis completed",
+								IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -393,7 +399,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 	private boolean canProceed() {
 		boolean canPerform = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");

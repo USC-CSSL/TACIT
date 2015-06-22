@@ -111,8 +111,9 @@ public class LdaTopicModelView extends ViewPart implements
 		Composite output = layoutData.getSectionClient();
 
 		prefixTxt = createAdditionalOptions(output, "Output Prefix", "Lda_");
-		
-		wordWeights = toolkit.createButton(output, "Create Word Weight File", SWT.CHECK);
+
+		wordWeights = toolkit.createButton(output, "Create Word Weight File",
+				SWT.CHECK);
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -198,31 +199,34 @@ public class LdaTopicModelView extends ViewPart implements
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				final int noOfTopics = Integer.valueOf(
-						numberOfTopics.getText()).intValue();
+				final int noOfTopics = Integer
+						.valueOf(numberOfTopics.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final String inputPath = inputLayoutData
-						.getOutputLabel().getText();
+				final String inputPath = inputLayoutData.getOutputLabel()
+						.getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
-				final String preFix =  prefixTxt.getText();
+				final String preFix = prefixTxt.getText();
 				final boolean wordWeightFile = wordWeights.getSelection();
-				
-				 job = new Job("Analyzing...") {
+
+				job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						monitor.beginTask("NLPUtils started analyzing...", 100);
 						List<String> inputFiles = new ArrayList<String>();
 						String topicModelDirPath = inputPath;
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
-							Preprocess preprocessTask = new Preprocess(
-									"ZLabel");
+							Preprocess preprocessTask = new Preprocess("ZLabel");
 							try {
 								File[] inputFile = new File(inputPath)
 										.listFiles();
 								for (File iFile : inputFile) {
-									if (iFile.getAbsolutePath().contains("DS_Store")) continue;
+									if (iFile.getAbsolutePath().contains(
+											"DS_Store"))
+										continue;
 									inputFiles.add(iFile.toString());
 
 								}
@@ -233,11 +237,10 @@ public class LdaTopicModelView extends ViewPart implements
 								e.printStackTrace();
 							}
 							monitor.worked(10);
-						} 
-						
-						
-						
-						lda.initialize(topicModelDirPath, noOfTopics, outputPath,preFix,wordWeightFile);
+						}
+
+						lda.initialize(topicModelDirPath, noOfTopics,
+								outputPath, preFix, wordWeightFile);
 
 						// lda processsing
 						long startTime = System.currentTimeMillis();
@@ -262,7 +265,9 @@ public class LdaTopicModelView extends ViewPart implements
 						}
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "LDA analysis completed", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), "LDA analysis completed",
+								IStatus.OK, form);
 
 						return Status.OK_STATUS;
 					}
@@ -275,7 +280,7 @@ public class LdaTopicModelView extends ViewPart implements
 							.updateStatusMessage(
 									getViewSite(),
 									"LDA Topic Modelling cannot be started. Please check the Form status to correct the errors",
-									IStatus.ERROR);
+									IStatus.ERROR, form);
 				}
 
 			}
@@ -306,14 +311,15 @@ public class LdaTopicModelView extends ViewPart implements
 	}
 
 	private boolean canProceedCluster() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("inputlocation");
 		form.getMessageManager().removeMessage("prefix");
 		form.getMessageManager().removeMessage("topic");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
@@ -324,7 +330,7 @@ public class LdaTopicModelView extends ViewPart implements
 
 		String inputMessage = OutputPathValidation.getInstance()
 				.validateOutputDirectory(
-						inputLayoutData.getOutputLabel().getText(),"Input");
+						inputLayoutData.getOutputLabel().getText(), "Input");
 		if (inputMessage != null) {
 
 			inputMessage = inputLayoutData.getOutputLabel().getText() + " "
@@ -348,7 +354,7 @@ public class LdaTopicModelView extends ViewPart implements
 		}
 		return canProceed;
 	}
-	
+
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Job.class) {
@@ -356,6 +362,5 @@ public class LdaTopicModelView extends ViewPart implements
 		}
 		return super.getAdapter(adapter);
 	}
-
 
 }

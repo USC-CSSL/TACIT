@@ -63,8 +63,8 @@ public class HierarchicalClusterView extends ViewPart implements
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
 		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.EXPANDED );
-          
+				Section.TITLE_BAR | Section.EXPANDED);
+
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
@@ -72,7 +72,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		FormText descriptionFrm = toolkit.createFormText(section, false);
 		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
 				false);
-		section.setDescriptionControl(descriptionFrm);		
+		section.setDescriptionControl(descriptionFrm);
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -80,7 +80,7 @@ public class HierarchicalClusterView extends ViewPart implements
 
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-		NlputilsFormComposite.addErrorPopup(form.getForm(),toolkit);
+		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
 		NlputilsFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -89,12 +89,15 @@ public class HierarchicalClusterView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-	
-	   layoutData = NlputilsFormComposite.createTableSection(client, toolkit,
-				layout, "Input Dtails", "Add File(s) and Folder(s) to include in analysis.", true, true);
+
+		layoutData = NlputilsFormComposite
+				.createTableSection(client, toolkit, layout, "Input Dtails",
+						"Add File(s) and Folder(s) to include in analysis.",
+						true, true);
 		Composite compInput;
 		compInput = layoutData.getSectionClient();
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(compInput);
 
 		createPreprocessLink(compInput);
 
@@ -104,8 +107,8 @@ public class HierarchicalClusterView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		layoutOutputData = NlputilsFormComposite
-				.createOutputSection(toolkit, client1, form.getMessageManager());
+		layoutOutputData = NlputilsFormComposite.createOutputSection(toolkit,
+				client1, form.getMessageManager());
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
@@ -121,8 +124,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		toolkit.paintBordersFor(form.getBody());
 
 	}
-	
-	
+
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Job.class) {
@@ -132,18 +134,18 @@ public class HierarchicalClusterView extends ViewPart implements
 	}
 
 	private void createPreprocessLink(Composite client) {
-		
+
 		Composite clientLink = toolkit.createComposite(client);
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
 				.applyTo(clientLink);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(clientLink);
 
-		preprocessEnabled = toolkit.createButton(clientLink,
-				"", SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(preprocessEnabled);
-		final Hyperlink link = toolkit
-				.createHyperlink(clientLink, "Preprocess", SWT.NONE);
+		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(preprocessEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
@@ -158,15 +160,15 @@ public class HierarchicalClusterView extends ViewPart implements
 						new String[] { id }, null).open();
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(link);
 
 	}
 
 	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
-		saveImage = toolkit.createButton(output,
-				"Save Dendogram as Image", SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false)
-				.applyTo(saveImage);
+		saveImage = toolkit.createButton(output, "Save Dendogram as Image",
+				SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).applyTo(saveImage);
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -196,21 +198,28 @@ public class HierarchicalClusterView extends ViewPart implements
 			}
 
 			public void run() {
-				final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
+				final DateFormat dateFormat = new SimpleDateFormat(
+						"MMM dd, yyyy, HH:mm:ss aaa");
 				final Calendar cal = Calendar.getInstance();
-				ConsoleView.writeInConsoleHeader("Hierarchical clustering started "+(dateFormat.format(cal.getTime())));
+				ConsoleView
+						.writeInConsoleHeader("Hierarchical clustering started "
+								+ (dateFormat.format(cal.getTime())));
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = layoutData.getSelectedFiles();
-				final String outputPath = layoutOutputData.getOutputLabel().getText();
+				final List<String> selectedFiles = layoutData
+						.getSelectedFiles();
+				final String outputPath = layoutOutputData.getOutputLabel()
+						.getText();
 				final boolean isSaveImage = saveImage.getSelection();
-				
-				 performCluster = new Job("Clustering...") {
+
+				performCluster = new Job("Clustering...") {
 					private Preprocess preprocessTask;
 					private String dirPath;
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						monitor.beginTask("NLPUtils started clustering...", 100);
 						preprocessTask = null;
 						dirPath = "";
@@ -220,8 +229,8 @@ public class HierarchicalClusterView extends ViewPart implements
 							preprocessTask = new Preprocess(
 									"HierarchicalCluster");
 							try {
-								dirPath = preprocessTask
-										.doPreprocessing(selectedFiles, "");
+								dirPath = preprocessTask.doPreprocessing(
+										selectedFiles, "");
 								File[] inputFile = new File(dirPath)
 										.listFiles();
 								for (File iFile : inputFile) {
@@ -242,21 +251,25 @@ public class HierarchicalClusterView extends ViewPart implements
 
 						// Hierarchical processing
 						long startTime = System.currentTimeMillis();
-						HierarchicalClusterAnalysis.runClustering(inputFiles, outputPath, isSaveImage,new SubProgressMonitor(monitor, 50));
+						HierarchicalClusterAnalysis.runClustering(inputFiles,
+								outputPath, isSaveImage,
+								new SubProgressMonitor(monitor, 50));
 						if (monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
-						
+
 						Display.getDefault().asyncExec(new Runnable() {
-						      @Override
-						      public void run() {
-						if (isPreprocess && preprocessTask.doCleanUp()){
-							preprocessTask.clean();
-							ConsoleView.printlInConsoleln("Cleaning up preprocessed files - "+dirPath);
-						}
-						      }
-						
-								});
+							@Override
+							public void run() {
+								if (isPreprocess && preprocessTask.doCleanUp()) {
+									preprocessTask.clean();
+									ConsoleView
+											.printlInConsoleln("Cleaning up preprocessed files - "
+													+ dirPath);
+								}
+							}
+
+						});
 
 						System.out
 								.println("Hierarchical Clustering completed successfully in "
@@ -268,26 +281,36 @@ public class HierarchicalClusterView extends ViewPart implements
 						}
 
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.", IStatus.OK);
-						ConsoleView.writeInConsoleHeader("<terminated> Hierarchical clustering  "+(dateFormat.format(cal.getTime())));
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Hierarchical clustering completed", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(),
+								"CLustering is successfully Completed.",
+								IStatus.OK, form);
+						ConsoleView
+								.writeInConsoleHeader("<terminated> Hierarchical clustering  "
+										+ (dateFormat.format(cal.getTime())));
+						NlputilsFormComposite
+								.updateStatusMessage(getViewSite(),
+										"Hierarchical clustering completed",
+										IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
-			
+
 				performCluster.setUser(true);
-				if(canProceedCluster()){
-				performCluster.schedule();
-				}
-				else{
-				NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering cannot be started. Please check the Form status to correct the errors", IStatus.ERROR);
+				if (canProceedCluster()) {
+					performCluster.schedule();
+				} else {
+					NlputilsFormComposite
+							.updateStatusMessage(
+									getViewSite(),
+									"CLustering cannot be started. Please check the Form status to correct the errors",
+									IStatus.ERROR, form);
 				}
 
-			
 			}
-				
+
 		});
-				
+
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -305,7 +328,7 @@ public class HierarchicalClusterView extends ViewPart implements
 
 			};
 		});
-			
+
 		form.getToolBarManager().update(true);
 	}
 
@@ -313,30 +336,32 @@ public class HierarchicalClusterView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
-	
+
 	private boolean canProceedCluster() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutOutputData.getOutputLabel().getText(),"Output");
+				.validateOutputDirectory(
+						layoutOutputData.getOutputLabel().getText(), "Output");
 		if (message != null) {
 
-			message = layoutOutputData.getOutputLabel().getText() + " " + message;
+			message = layoutOutputData.getOutputLabel().getText() + " "
+					+ message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
 			canProceed = false;
-		} 
-			
-			// check input
-			if (layoutData.getSelectedFiles().size() < 1) {
-				form.getMessageManager().addMessage("input",
-						"Select/Add atleast one input file", null,
-						IMessageProvider.ERROR);
-				canProceed = false;
 		}
-			return canProceed;
+
+		// check input
+		if (layoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
+					IMessageProvider.ERROR);
+			canProceed = false;
+		}
+		return canProceed;
 	}
 
 }

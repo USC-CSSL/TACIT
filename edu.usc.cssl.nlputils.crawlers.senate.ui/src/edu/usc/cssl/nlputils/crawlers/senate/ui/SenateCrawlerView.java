@@ -493,7 +493,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				final Job job = new Job("Senate Crawler") {					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null, form);
 						monitor.beginTask("Running Senate Crawler..." , 100);						
 						Display.getDefault().syncExec(new Runnable() {
 							
@@ -557,7 +558,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						monitor.worked(100);
 						monitor.done();
 						ConsoleView.printlInConsoleln("Done");
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully", IStatus.OK, form);
 						return Status.OK_STATUS;
 					}					
 				};	
@@ -591,12 +592,12 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		monitor.done();
 		System.out.println(message);
 		e.printStackTrace();
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		return Status.CANCEL_STATUS;
 	}
 	
 	private IStatus handledCancelRequest(String message) {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		return Status.CANCEL_STATUS;
 		
 	}

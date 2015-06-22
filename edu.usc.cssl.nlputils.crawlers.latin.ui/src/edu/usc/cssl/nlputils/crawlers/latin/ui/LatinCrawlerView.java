@@ -182,7 +182,8 @@ public class LatinCrawlerView extends ViewPart implements
 			}
 
 			public void run() {
-				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,
+						null, form);
 				latinCrawler.initialize(layoutData.getOutputLabel().getText());
 
 				Job job = new Job("Crawling...") {
@@ -190,6 +191,8 @@ public class LatinCrawlerView extends ViewPart implements
 					protected IStatus run(IProgressMonitor monitor) {
 
 						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						Iterator<String> authorItr;
 						int totalWork = 1;
 						try {
@@ -218,25 +221,35 @@ public class LatinCrawlerView extends ViewPart implements
 								public void run() {
 									ErrorDialog
 											.openError(
-													Display.getDefault().getActiveShell(),
+													Display.getDefault()
+															.getActiveShell(),
 													"Problem Occurred",
 													"Please Check your connectivity to server",
-													new Status(IStatus.ERROR,
+													new Status(
+															IStatus.ERROR,
 															CommonUiActivator.PLUGIN_ID,
-															exception.getMessage()));
+															exception
+																	.getMessage()));
 
 								}
 							});
 							NlputilsFormComposite.updateStatusMessage(
 									getViewSite(), "Crawling is stopped ",
-									IStatus.INFO);
+									IStatus.INFO, form);
 							return Status.CANCEL_STATUS;
-						} 
+						}
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(
-								getViewSite(),
-								"Crawling completed",
-								IStatus.OK);
+						NlputilsFormComposite
+								.updateStatusMessage(getViewSite(),
+										"Crawling completed", IStatus.OK, form);
+						Display.getDefault().syncExec(new Runnable() {
+							
+							@Override
+							public void run() {
+								setFocus();
+								
+							}
+						});
 						return Status.OK_STATUS;
 					}
 				};
@@ -277,12 +290,13 @@ public class LatinCrawlerView extends ViewPart implements
 	}
 
 	private boolean canProceedCrawl() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("author");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
@@ -297,7 +311,7 @@ public class LatinCrawlerView extends ViewPart implements
 		return canProceed;
 	}
 
-	private void handleAdd(Shell shell)  {
+	private void handleAdd(Shell shell) {
 
 		processElementSelectionDialog(shell);
 
@@ -329,14 +343,12 @@ public class LatinCrawlerView extends ViewPart implements
 
 						@Override
 						public void run() {
-							ErrorDialog
-									.openError(
-											Display.getDefault().getActiveShell(),
-											"Problem Occurred",
-											"Please Check your connectivity to server",
-											new Status(IStatus.ERROR,
-													CommonUiActivator.PLUGIN_ID,
-													"Network is not reachable"));
+							ErrorDialog.openError(Display.getDefault()
+									.getActiveShell(), "Problem Occurred",
+									"Please Check your connectivity to server",
+									new Status(IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID,
+											"Network is not reachable"));
 
 						}
 					});

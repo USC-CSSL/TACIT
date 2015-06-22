@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IMessageManager;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -215,6 +214,8 @@ public class SupremeCrawlerView extends ViewPart implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						monitor.beginTask("NLPUtils started crawling...", 100);
 
 						if (monitor.isCanceled()) {
@@ -232,22 +233,28 @@ public class SupremeCrawlerView extends ViewPart implements
 								public void run() {
 									ErrorDialog
 											.openError(
-													Display.getDefault().getActiveShell(),
+													Display.getDefault()
+															.getActiveShell(),
 													"Problem Occurred",
 													"Please Check your connectivity to server",
-													new Status(IStatus.ERROR,
+													new Status(
+															IStatus.ERROR,
 															CommonUiActivator.PLUGIN_ID,
-															exception.getMessage()));
+															exception
+																	.getMessage()));
 
 								}
 							});
 							NlputilsFormComposite.updateStatusMessage(
 									getViewSite(), "Crawling is stopped ",
-									IStatus.INFO);
+									IStatus.INFO, form);
 							return Status.CANCEL_STATUS;
 						}
-						ConsoleView.printlInConsoleln("Crawling is sucessfully completed");
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK);
+						ConsoleView
+								.printlInConsoleln("Crawling is sucessfully completed");
+						NlputilsFormComposite
+								.updateStatusMessage(getViewSite(),
+										"Crawling completed", IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -265,7 +272,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 	protected boolean canProceedCrawl() {
 		boolean canProceed = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),

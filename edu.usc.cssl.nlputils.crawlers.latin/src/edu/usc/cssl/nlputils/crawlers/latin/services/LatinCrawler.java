@@ -24,6 +24,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+
 public class LatinCrawler {
 	private StringBuilder readMe = new StringBuilder();
 	String outputDir;
@@ -64,17 +66,16 @@ public class LatinCrawler {
 		skipBooks.add("Paulus Diaconus");
 	}
 
-	
-	
-	
-	/** 
-	 * Connect to the url and retrieve the document 
+	/**
+	 * Connect to the url and retrieve the document
 	 */
-	
+
 	protected Document retrieveDocumentFromUrl(String url) {
 		Document doc = null;
 		try {
+			monitor.subTask("Retrieving content from " +url);
 			doc = Jsoup.connect(url).timeout(10 * 1000).get();
+		    ConsoleView.printlInConsole("Connecting "+url);
 		} catch (IOException e) {
 			// Error handling->will do later
 		}
@@ -82,188 +83,212 @@ public class LatinCrawler {
 	}
 
 	/**
-	 * Crawls the website http://www.thelatinlibrary.com/ and extract all books into specified output folder 
+	 * Crawls the website http://www.thelatinlibrary.com/ and extract all books
+	 * into specified output folder
+	 * 
 	 * @throws IOException
 	 */
-	public void crawl(SubProgressMonitor monitor,int work) throws IOException{
+	public void crawl(SubProgressMonitor monitor, int work) throws IOException {
 		this.monitor = monitor;
 		this.work = work;
 		monitor.beginTask("crawling Author list...", work);
 		getAllBooks();
+		writeReadMe(this.outputDir);
 		this.monitor.done();
 	}
-	
+
 	private void getAllBooks() throws IOException {
 		Set<String> authors = (Set<String>) authorNames.keySet();
 		int singleWork = work / authors.size();
-		for(String name:authors){
-			if(monitor.isCanceled()){
-				throw new OperationCanceledException(); 
+		for (String name : authors) {
+			monitor.subTask("Crawling " + name);
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
 			}
 			getBooksByAuthor(name, authorNames.get(name));
 			monitor.worked(singleWork);
 		}
 		return;
 	}
-	
+
 	/**
 	 * 
-	 * @param name : name of the author
-	 * @param url : url of author's page which lists all his books
+	 * @param name
+	 *            : name of the author
+	 * @param url
+	 *            : url of author's page which lists all his books
 	 * @throws IOException
 	 */
-	public void getBooksByAuthor(String author, String url) throws IOException {		
+	public void getBooksByAuthor(String author, String url) throws IOException {
 		Assert.isNotNull(author, "Parameter author can't be empty");
 		Assert.isNotNull(author, "Parameter url can't be empty");
-		
+
 		String authDir = outputDir + File.separator + author;
 		createIfMissing(authDir);
-		
+
 		Map<String, BookData> myBooks = new HashMap<String, BookData>();
 		try {
 			Document doc = retrieveDocumentFromUrl(url);// Jsoup.connect(url).timeout(10*1000).get();
-			Boolean isText = doc.getElementsByTag("a").get(0).attr("abs:href").contains("#");
-			if(!isText) { 
+			Boolean isText = doc.getElementsByTag("a").get(0).attr("abs:href")
+					.contains("#");
+			if (!isText) {
 				getBooksByPage(doc, author, authDir, myBooks);
 			}
-			if(isText || myBooks.size() == 0) {
+			if (isText || myBooks.size() == 0) {
 				myBooks.put(url, new BookData(author, url, authDir));
 			}
-		} catch(Exception e) {	
+		} catch (Exception e) {
 		}
-		
-		for (Map.Entry<String, BookData> entry : myBooks.entrySet())
-		{
+
+		for (Map.Entry<String, BookData> entry : myBooks.entrySet()) {
 			String bookName = entry.getValue().getBookName();
 			String bookUrl = entry.getValue().getBookUrl();
 			String bookDir = entry.getValue().getBookDir();
 			getBookContent(bookUrl, bookName, bookDir);
 		}
-	}		
-	
+	}
+
 	class BookData {
-		
+
 		private String bookName;
 		private String bookUrl;
 		private String bookDir;
-		
+
 		BookData(String bookName, String bookUrl, String bookDir) {
 			this.bookName = bookName;
 			this.bookUrl = bookUrl;
 			this.bookDir = bookDir;
 		}
+
 		public String getBookUrl() {
 			return bookUrl;
 		}
+
 		public String getBookDir() {
 			return bookDir;
 		}
+
 		public String getBookName() {
 			return bookName;
 		}
+
 		public void setBookName(String bookName) {
 			this.bookName = bookName;
 		}
+
 		public void setBookUrl(String bookUrl) {
 			this.bookUrl = bookUrl;
 		}
+
 		public void setBookDir(String bookDir) {
 			this.bookDir = bookDir;
-		}		
+		}
 	}
 
 	/**
 	 * 
-	 * @param doc This is the document from which books are collected.
-	 * @param author This is the author of all the books in this page
-	 * @param authDir This is the output directory of author. Books are to be extracted into this directory 
-	 * @param bookList The book information gathered from the page is filled into this Map for the callee function to access
+	 * @param doc
+	 *            This is the document from which books are collected.
+	 * @param author
+	 *            This is the author of all the books in this page
+	 * @param authDir
+	 *            This is the output directory of author. Books are to be
+	 *            extracted into this directory
+	 * @param bookList
+	 *            The book information gathered from the page is filled into
+	 *            this Map for the callee function to access
 	 */
-	private void getBooksByPage(Document doc, String author, String authDir, Map<String, BookData> bookList){
-		Elements subLists = doc.select("div.work"); //the books are listed inside div.work
-		Elements subHeaders = doc.select("h2.work"); //headers of sections 
-		
-		//sometimes there are no div.work . Instead books are listed inside a table element.
-		if(subLists.size() == 0 ) {
+	private void getBooksByPage(Document doc, String author, String authDir,
+			Map<String, BookData> bookList) {
+		Elements subLists = doc.select("div.work"); // the books are listed
+													// inside div.work
+		Elements subHeaders = doc.select("h2.work"); // headers of sections
+
+		// sometimes there are no div.work . Instead books are listed inside a
+		// table element.
+		if (subLists.size() == 0) {
 			Elements tableLists = doc.select("table");
-			for (Element table : tableLists ) {
-				if(table.getElementsByTag("a").size() > 0) {
+			for (Element table : tableLists) {
+				if (table.getElementsByTag("a").size() > 0) {
 					subLists.add(table);
-				}
-				else {
+				} else {
 					subHeaders.add(table);
 				}
 			}
-		}	
-		
+		}
+
 		int i = 0, size1 = subLists.size(), size2 = subHeaders.size(), j = 0;
 		Element head = null;
 		String subDir = "";
-		authDir +=  File.separator; //books will be inside authDir>subDir>
-		
-		while(i< size1 || j<size2) {
-			try{
-				if(j < size2) {
+		authDir += File.separator; // books will be inside authDir>subDir>
+
+		while (i < size1 || j < size2) {
+			try {
+				if (j < size2) {
 					head = subHeaders.get(j);
 					Elements booksLink = head.getElementsByTag("a");
-					boolean booksPresent = getBooksFromElement(booksLink, bookList, subDir, author);
+					boolean booksPresent = getBooksFromElement(booksLink,
+							bookList, subDir, author);
 					if (booksPresent) {
 						j++;
 						continue;
 					}
-					subDir = authDir + head.text() + File.separator;		
-				}
-				else
+					subDir = authDir + head.text() + File.separator;
+				} else
 					subDir = authDir + File.separator;
 
-				if(i < size1) {
-					Elements booksLink = subLists.get(i).getElementsByTag("a");				
+				if (i < size1) {
+					Elements booksLink = subLists.get(i).getElementsByTag("a");
 					getBooksFromElement(booksLink, bookList, subDir, author);
-					i++;	
+					i++;
 				}
 				j++;
-			} catch(Exception e) {
+			} catch (Exception e) {
 			}
 		}
 	}
-	
-	private boolean getBooksFromElement(Elements bookLinks, Map<String, BookData> bookList, String bookDir, String author) {
-		if(bookLinks.size() <= 0)
+
+	private boolean getBooksFromElement(Elements bookLinks,
+			Map<String, BookData> bookList, String bookDir, String author) {
+		if (bookLinks.size() <= 0)
 			return false;
-		for(int i=0; i<bookLinks.size(); i++) {
+		for (int i = 0; i < bookLinks.size(); i++) {
 			String bookUrl = bookLinks.get(i).attr("abs:href");
-			String bookName  = bookLinks.get(i).text();
-			if(skipBooks.contains(bookName))
+			String bookName = bookLinks.get(i).text();
+			if (skipBooks.contains(bookName))
 				continue;
-			if(authorNames.containsKey(bookName)|| (bookName.toLowerCase()).equals(author.toLowerCase()))
-				continue;						
+			if (authorNames.containsKey(bookName)
+					|| (bookName.toLowerCase()).equals(author.toLowerCase()))
+				continue;
 			BookData book = new BookData(bookName, bookUrl, bookDir);
 			bookList.put(bookUrl, book);
 		}
-		return true;	
+		return true;
 	}
-	
+
 	private String getBookNameFromBook(Document bookDoc, String defBookName) {
-		
+
 		String bookName = defBookName;
-		if(bookDoc.select("p.pagehead")!= null && bookDoc.select("p.pagehead").size() > 0 )
+		if (bookDoc.select("p.pagehead") != null
+				&& bookDoc.select("p.pagehead").size() > 0)
 			bookName = bookDoc.select("p.pagehead").last().text();
-		else if(bookDoc.select("h1")!= null && bookDoc.select("h1").size() >  0)
+		else if (bookDoc.select("h1") != null
+				&& bookDoc.select("h1").size() > 0)
 			bookName = bookDoc.select("h1").first().text();
-		else if(bookDoc.select("title")!=null)
+		else if (bookDoc.select("title") != null)
 			bookName = bookDoc.select("title").first().text();
 		return bookName;
 	}
-	
-	
-	
+
 	/**
 	 * Creates a directory in the file system if it does not already exists
-	 * @param folder : full path of the directory which has to be created. 
+	 * 
+	 * @param folder
+	 *            : full path of the directory which has to be created.
 	 */
 	private void createIfMissing(String folder) {
 		File path = new File(folder);
-		if (!path.exists()){
+		if (!path.exists()) {
 			path.mkdirs();
 		}
 	}
@@ -286,12 +311,12 @@ public class LatinCrawler {
 				"http://www.thelatinlibrary.com/misc.html", true));
 		authorNames.putAll(getAuthorsList(
 				"http://www.thelatinlibrary.com/ius.html", true));
-		//authorNames.put("<All>", "All authors in the list");
+		// authorNames.put("<All>", "All authors in the list");
 		return authorNames;
 	}
 
-	public Map<String, String> getAuthorsList(String url, boolean isSubAuthor) throws IOException
-			 {
+	public Map<String, String> getAuthorsList(String url, boolean isSubAuthor)
+			throws IOException {
 		int i, size = 0;
 		String name;
 		Map<String, String> authorNames = new HashMap<String, String>();
@@ -524,6 +549,8 @@ public class LatinCrawler {
 				getBookContent(bookUri, bookDir, authorDir);
 				return;
 			}
+			ConsoleView.printlInConsoleln("Writing Content at " + authorDir
+					+ System.getProperty("file.separator") + bookDir + ".txt");
 			for (Element c : content) {
 				csvWriter.write(c.text() + "\n");
 			}
@@ -535,50 +562,56 @@ public class LatinCrawler {
 		}
 	}
 
-
-	private void getBookContent(String bookUri, String bookName, String bookDir) throws IOException {
-		BufferedWriter csvWriter= null;
+	private void getBookContent(String bookUri, String bookName, String bookDir)
+			throws IOException {
+		BufferedWriter csvWriter = null;
 		try {
-			Document doc = retrieveDocumentFromUrl(bookUri);//Jsoup.connect(bookUri).timeout(10*10000).get();
-			//bookName = getBookNameFromDoc(doc, bookName);
-			bookName = bookName.replaceAll("[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
+			Document doc = retrieveDocumentFromUrl(bookUri);// Jsoup.connect(bookUri).timeout(10*10000).get();
+			// bookName = getBookNameFromDoc(doc, bookName);
+			bookName = bookName.replaceAll(
+					"[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
 			createIfMissing(bookDir);
-			csvWriter  = new BufferedWriter(new FileWriter(new File(bookDir + System.getProperty("file.separator") + bookName+".txt")));
-			Elements content = doc.getElementsByTag("p"); 
-			if(content.size() == 0)
-			{
-				if(csvWriter!=null)
+			csvWriter = new BufferedWriter(
+					new FileWriter(new File(bookDir
+							+ System.getProperty("file.separator") + bookName
+							+ ".txt")));
+			Elements content = doc.getElementsByTag("p");
+			if (content.size() == 0) {
+				if (csvWriter != null)
 					csvWriter.close();
 				getBookContent2(bookUri, bookName, bookDir);
 				return;
 			}
-			for (Element c : content){
-				csvWriter.write(c.text()+"\n");
+			for (Element c : content) {
+				csvWriter.write(c.text() + "\n");
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			getBookContent2(bookUri, bookName, bookDir);
-		}finally{
-			if(csvWriter!=null)
+		} finally {
+			if (csvWriter != null)
 				csvWriter.close();
 		}
 	}
-	
 
-	private void getBookContent2(String bookUri, String bookDir, String authorDir) throws IOException {
-		BufferedWriter csvWriter= null;
-		try{
-			csvWriter  = new BufferedWriter(new FileWriter(new File(authorDir + System.getProperty("file.separator") + bookDir+".txt")));
-			Document doc = Jsoup.parse(new URL(bookUri).openStream(), "UTF-16", bookUri);
-			Elements content = doc.getElementsByTag("p"); 
-				for (Element c : content){
-					csvWriter.write(c.text()+"\n");
-				}
-			}catch(Exception e){
-			}finally{
-				if(csvWriter!=null)
-					csvWriter.close();
+	private void getBookContent2(String bookUri, String bookDir,
+			String authorDir) throws IOException {
+		BufferedWriter csvWriter = null;
+		try {
+			csvWriter = new BufferedWriter(new FileWriter(new File(authorDir
+					+ System.getProperty("file.separator") + bookDir + ".txt")));
+			Document doc = Jsoup.parse(new URL(bookUri).openStream(), "UTF-16",
+					bookUri);
+			Elements content = doc.getElementsByTag("p");
+			for (Element c : content) {
+				csvWriter.write(c.text() + "\n");
 			}
-	}	/* The sub libraries */
+		} catch (Exception e) {
+		} finally {
+			if (csvWriter != null)
+				csvWriter.close();
+		}
+	} /* The sub libraries */
+
 	/*
 	 * public void getAllSubAuthors(String connectUrl, String output) throws
 	 * IOException{ int i = 0, size = 0; String name, url; Document doc =
@@ -592,9 +625,9 @@ public class LatinCrawler {
 	 * if(skipBooks.contains(name)) continue; String aurl = output +
 	 * File.separator + name; File authorDir = new File(aurl);
 	 * if(!authorDir.exists()){ authorDir.mkdirs(); }
-	 * //ConsoleView.writeInConsole("Extracting Books of Author  "+ name +"...");
-	 * appendLog("\nExtracting Books of Author  "+ name +"..."); getBooks(name,
-	 * url, aurl); i++;
+	 * //ConsoleView.writeInConsole("Extracting Books of Author  "+ name
+	 * +"..."); appendLog("\nExtracting Books of Author  "+ name +"...");
+	 * getBooks(name, url, aurl); i++;
 	 * 
 	 * }
 	 * 
@@ -611,7 +644,8 @@ public class LatinCrawler {
 	 */
 
 	public void writeReadMe(String location) {
-		File readme = new File(location + "/README.txt");
+		monitor.subTask("Writing Read Me ...");
+		File readme = new File(location + File.separator + "README.txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
 			String plugV = Platform

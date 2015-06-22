@@ -21,11 +21,8 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -45,7 +42,6 @@ import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
-import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.Preprocess;
 
 public class KmeansClusterView extends ViewPart implements
@@ -211,7 +207,8 @@ public class KmeansClusterView extends ViewPart implements
 				 performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-					NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null, form);
 						monitor.beginTask("NLPUtils started clustering...", 100);
 						List<File> inputFiles = new ArrayList<File>();
 						if (isPreprocess) {
@@ -258,7 +255,7 @@ public class KmeansClusterView extends ViewPart implements
 						monitor.worked(10);
 						monitor.done();
 						
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "k-Means clustering completed", IStatus.OK);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "k-Means clustering completed", IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -267,7 +264,7 @@ public class KmeansClusterView extends ViewPart implements
 				performCluster.schedule();
 				}
 				else{
-				NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering cannot be started. Please check the Form status to correct the errors", IStatus.ERROR);
+				NlputilsFormComposite.updateStatusMessage(getViewSite(), "CLustering cannot be started. Please check the Form status to correct the errors", IStatus.ERROR, form);
 				}
 
 			}
@@ -300,7 +297,7 @@ public class KmeansClusterView extends ViewPart implements
 	
 	private boolean canProceedCluster() {
 		boolean canProceed = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null, form);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("cluster");

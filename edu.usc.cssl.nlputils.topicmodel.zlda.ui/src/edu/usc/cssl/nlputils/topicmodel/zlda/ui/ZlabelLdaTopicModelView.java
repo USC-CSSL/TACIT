@@ -95,7 +95,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				"");
 
 		topics = createAdditionalOptions(compInput, "Number of Topics :", "1");
-		
+
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
@@ -111,7 +111,6 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
-
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -165,14 +164,15 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				.applyTo(simpleTxt);
 		return simpleTxt;
 	}
-	
-	private Text createSeedFileControl(Composite sectionClient,
-			String lblText, String defaultText) {
+
+	private Text createSeedFileControl(Composite sectionClient, String lblText,
+			String defaultText) {
 		Label simpleTxtLbl = toolkit.createLabel(sectionClient, lblText,
 				SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(simpleTxtLbl);
-		final Text simpleTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
+		final Text simpleTxt = toolkit
+				.createText(sectionClient, "", SWT.BORDER);
 		simpleTxt.setText(defaultText);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(simpleTxt);
@@ -212,7 +212,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (ZlabelLdaTopicModelViewImageRegistry.getImageIconFactory()
+				return (ZlabelLdaTopicModelViewImageRegistry
+						.getImageIconFactory()
 						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
@@ -227,25 +228,26 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				final int noOfTopics = Integer.valueOf(
-						topics.getText()).intValue();
+				final int noOfTopics = Integer.valueOf(topics.getText())
+						.intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final String inputPath = inputLayoutData
-						.getOutputLabel().getText();
+				final String inputPath = inputLayoutData.getOutputLabel()
+						.getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
-				final String seedFilePath =  seedFileText.getText();
-				 job = new Job("Analyzing...") {
+				final String seedFilePath = seedFileText.getText();
+				job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), null, null, form);
 						monitor.beginTask("NLPUtils started analyzing...", 100);
 						List<String> inputFiles = new ArrayList<String>();
 						String topicModelDirPath = inputPath;
-						Preprocess  preprocessTask = null;
+						Preprocess preprocessTask = null;
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
-							preprocessTask = new Preprocess(
-									"ZLabelLDA");
+							preprocessTask = new Preprocess("ZLabelLDA");
 							try {
 								File[] inputFile = new File(inputPath)
 										.listFiles();
@@ -260,13 +262,15 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								e.printStackTrace();
 							}
 							monitor.worked(10);
-						} 
-						
+						}
+
 						long startTime = System.currentTimeMillis();
-						
-						ZlabelTopicModelAnalysis zlda = new ZlabelTopicModelAnalysis(new SubProgressMonitor(monitor,70));
+
+						ZlabelTopicModelAnalysis zlda = new ZlabelTopicModelAnalysis(
+								new SubProgressMonitor(monitor, 70));
 						monitor.subTask("Topic Modelling...");
-						zlda.invokeLDA(topicModelDirPath, seedFilePath, noOfTopics, outputPath);
+						zlda.invokeLDA(topicModelDirPath, seedFilePath,
+								noOfTopics, outputPath);
 						System.out
 								.println("ZLabel LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
@@ -279,7 +283,10 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "z-Label LDA analysis completed", IStatus.OK);;
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(),
+								"z-Label LDA analysis completed", IStatus.OK, form);
+						;
 
 						return Status.OK_STATUS;
 					}
@@ -292,7 +299,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 							.updateStatusMessage(
 									getViewSite(),
 									"ZLabel LDA Topic Modelling cannot be started. Please check the Form status to correct the errors",
-									IStatus.ERROR);
+									IStatus.ERROR, form);
 				}
 
 			}
@@ -301,7 +308,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (ZlabelLdaTopicModelViewImageRegistry.getImageIconFactory()
+				return (ZlabelLdaTopicModelViewImageRegistry
+						.getImageIconFactory()
 						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
@@ -321,7 +329,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
-	
+
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Job.class) {
@@ -330,16 +338,16 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		return super.getAdapter(adapter);
 	}
 
-
 	private boolean canProceedJob() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("inputlocation");
 		form.getMessageManager().removeMessage("topics");
 		form.getMessageManager().removeMessage("seedfile");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
@@ -350,7 +358,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 
 		String inputMessage = OutputPathValidation.getInstance()
 				.validateOutputDirectory(
-						inputLayoutData.getOutputLabel().getText(),"Input");
+						inputLayoutData.getOutputLabel().getText(), "Input");
 		if (inputMessage != null) {
 
 			inputMessage = inputLayoutData.getOutputLabel().getText() + " "
@@ -361,14 +369,12 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		}
 
 		String seedFileMsg = OutputPathValidation.getInstance()
-				.validateOutputDirectory(
-						seedFileText.getText(),"Seed File");
+				.validateOutputDirectory(seedFileText.getText(), "Seed File");
 		if (seedFileMsg != null) {
 
-			seedFileMsg = seedFileText.getText() + " "
-					+ seedFileMsg;
-			form.getMessageManager().addMessage("seedfile", seedFileMsg,
-					null, IMessageProvider.ERROR);
+			seedFileMsg = seedFileText.getText() + " " + seedFileMsg;
+			form.getMessageManager().addMessage("seedfile", seedFileMsg, null,
+					IMessageProvider.ERROR);
 			canProceed = false;
 		}
 		if (Integer.parseInt(topics.getText()) < 1) {

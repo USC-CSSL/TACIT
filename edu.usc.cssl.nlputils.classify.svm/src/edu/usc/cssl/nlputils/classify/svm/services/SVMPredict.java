@@ -18,8 +18,6 @@ import libsvm.svm_print_interface;
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
 
-import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
-
 public class SVMPredict {
 
 	private static svm_print_interface svm_print_null = new svm_print_interface()
