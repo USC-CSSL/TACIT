@@ -2,12 +2,12 @@ package edu.usc.cssl.nlputils.wordcount.weighted.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -39,6 +40,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.nlputils.common.Preprocess;
 import edu.uc.cssl.nlputils.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
@@ -119,14 +121,17 @@ public class WeightedWordCountView extends ViewPart implements
 				toolkit, layout, "Dictionary", "Add location of Dictionary",
 				false, true);
 
-		Composite compInput;
-		compInput = form.getBody();
+		Composite compInput = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
+				.applyTo(compInput);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(compInput);
+		layout = new GridLayout();
+		layout.numColumns = 2;
 
 		createPreprocessLink(compInput);
 
-		createStemmingOptions(form.getBody());
+		createStemmingOptions(compInput);
 
 		createAdditionalOptions(toolkit, form.getBody());
 
@@ -169,7 +174,7 @@ public class WeightedWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(stopWordPathEnabled);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
-				"Stop Words Location", SWT.NONE);
+				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
@@ -206,6 +211,34 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcWordCountButton.setSelection(true);
 		liwcWordCountButton.setBackground(parent.getBackground());
 		liwcWordCountButton.setForeground(parent.getForeground());
+		liwcWordCountButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (liwcWordCountButton.getSelection()) {
+					stemEnabled.setEnabled(false);
+					stemEnabled.setSelection(false);
+					liwcStemming.setEnabled(false);
+					liwcStemming.setSelection(false);
+					snowballStemming.setSelection(false);
+					snowballStemming.setEnabled(false);
+					stopWordPathEnabled.setSelection(false);
+				} else {
+					stemEnabled.setEnabled(true);
+					stemEnabled.setSelection(false);
+					liwcStemming.setSelection(false);
+					snowballStemming.setSelection(false);
+					stopWordPathEnabled.setEnabled(true);
+				}
+
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
 		weightedWordCountButton.setText("Weighted Word Count");
@@ -225,29 +258,25 @@ public class WeightedWordCountView extends ViewPart implements
 	}
 
 	private void createStemmingOptions(Composite body) {
-		Group downloadGroup = new Group(body, SWT.SHADOW_IN);
-		downloadGroup.setText("Steming");
+		Composite downloadGroup = toolkit.createComposite(body, SWT.NONE);
+		// downloadGroup.setText("Steming");
 
-		downloadGroup.setBackground(body.getBackground());
 		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
+		layout.numColumns = 3;
 		downloadGroup.setLayout(layout);
 
 		stemEnabled = toolkit.createButton(downloadGroup, "Stem Dictionary",
 				SWT.CHECK);
-		stemEnabled.setBounds(10, 10, 10, 10);
 		stemEnabled.pack();
 
 		liwcStemming = toolkit.createButton(downloadGroup, "LIWC", SWT.RADIO);
-		liwcStemming.setBounds(35, 35, 10, 10);
 		liwcStemming.setEnabled(false);
-		liwcStemming.setSelection(true);
+		liwcStemming.setSelection(false);
 		liwcStemming.pack();
 
 		snowballStemming = toolkit.createButton(downloadGroup, "Snowball",
 				SWT.RADIO);
-		snowballStemming.setBounds(35, 60, 10, 10);
 		snowballStemming.setEnabled(false);
 		snowballStemming.pack();
 
@@ -257,12 +286,17 @@ public class WeightedWordCountView extends ViewPart implements
 				if (stemEnabled.getSelection()) {
 					liwcStemming.setEnabled(true);
 					snowballStemming.setEnabled(true);
+					if (!liwcStemming.getSelection()
+							&& !snowballStemming.getSelection()) {
+						snowballStemming.setSelection(true);
+					}
 				} else {
 					liwcStemming.setEnabled(false);
 					snowballStemming.setEnabled(false);
 				}
 			}
 		});
+		stemEnabled.setEnabled(false);
 
 	}
 
@@ -309,6 +343,7 @@ public class WeightedWordCountView extends ViewPart implements
 						.getString(IPreprocessorSettingsConstant.STOP_PATH);
 				// lindapulickal: handling case where user types in a file
 				// without extension
+
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
 				if (weightedWordCountButton.getSelection()) {
@@ -331,15 +366,20 @@ public class WeightedWordCountView extends ViewPart implements
 				final boolean isSpss = spssRawFile.getSelection();
 				final boolean isWdist = wordDistributionFile.getSelection();
 				final boolean isStemDic = stemEnabled.getSelection();
-
+                final boolean isPreprocess = stopWordPathEnabled.getSelection();
 				wordCountJob = new Job("Analyzing...") {
+					private Preprocess preprocessTask;
+					private String dirPath;
+
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
+						List<File> selectedFiles = new ArrayList<File>();
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), null, null, form);
 						monitor.beginTask(
-								"NLPUtils started Analyzing WordCount...", inputFiles.size()+20);
+								"NLPUtils started Analyzing WordCount...",
+								inputFiles.size() + 20);
 						try {
 							Display.getDefault().syncExec(new Runnable() {
 
@@ -355,13 +395,35 @@ public class WeightedWordCountView extends ViewPart implements
 
 								}
 							});
+							if (isPreprocess) {
+								monitor.subTask("Preprocessing...");
+								preprocessTask = new Preprocess(
+										"WeightedWordCount");
+								try {
+									dirPath = preprocessTask
+											.doPreprocessing(inputFiles, "");
+									File[] inputFile = new File(dirPath)
+											.listFiles();
+									for (File iFile : inputFile) {
+										selectedFiles.add(iFile);
+									}
 
-							wordCountController.wordCount(
-									monitor,
-									inputFiles, dictionaryFiles, stopWordPath,
-									outputPath, "", true, isLiwcStemming,
-									isSnowBall, isSpss, isWdist, isStemDic,
-									oFile, sFile);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							} else {
+								for (String filepath : inputFiles) {
+									if ((new File(filepath).isDirectory())) {
+										continue;
+									}
+									selectedFiles.add(new File(filepath));
+								}
+							}
+
+							wordCountController.wordCount(monitor, selectedFiles,
+									dictionaryFiles, stopWordPath, outputPath,
+									"", true, isLiwcStemming, isSnowBall,
+									isSpss, isWdist, isStemDic, oFile, sFile);
 							monitor.done();
 						} catch (IOException ioe) {
 							ioe.printStackTrace();
@@ -369,6 +431,7 @@ public class WeightedWordCountView extends ViewPart implements
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "Word count analysis completed",
 								IStatus.OK, form);
+						monitor.done();
 						return Status.OK_STATUS;
 					}
 				};
@@ -399,7 +462,8 @@ public class WeightedWordCountView extends ViewPart implements
 
 	private boolean canProceed() {
 		boolean canPerform = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null,
+				form);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");

@@ -168,15 +168,16 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		final Composite fromClinet = toolkit.createComposite(dateRangeClient);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(fromClinet);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(fromClinet);
-		//fromClinet.setEnabled(false);
-		//fromClinet.pack();
+		fromClinet.setEnabled(false);
+		fromClinet.pack();
 		
 		final Label fromLabel = toolkit.createLabel(fromClinet, "From:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
-		fromDate = new DateTime(fromClinet, SWT.DATE | SWT.DROP_DOWN);
+		fromDate = new DateTime(fromClinet, SWT.DATE | SWT.BORDER | SWT.DROP_DOWN | SWT.WRAP);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
+		//fromDate.setBackgroundMode(mode);
 		
 		fromDate.addListener(SWT.Selection, new Listener()
 		{
@@ -207,8 +208,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		final Composite toClient = toolkit.createComposite(dateRangeClient);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(toClient);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(toClient);
-		//toClient.setEnabled(false);
-		//toClient.pack();
+		toClient.setEnabled(false);
+		toClient.pack();
 		
 		final Label toLabel = toolkit.createLabel(toClient, "To:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
@@ -243,7 +244,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
-		NlputilsFormComposite.createEmptyRow(toolkit, group);
+		//NlputilsFormComposite.createEmptyRow(toolkit, group);
 		
 		limitRecords = toolkit.createButton(group, "Limit Records per Senator", SWT.CHECK);
 		limitRecords.setBounds(10, 10, 10, 10);
@@ -427,12 +428,17 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			public void widgetSelected(SelectionEvent e) {
 				if (dateRange.getSelection()) {					
 					dateRangeClient.setEnabled(true);
+					fromClinet.setEnabled(true);
+					toClient.setEnabled(true);
 					fromLabel.setEnabled(true);
 					fromDate.setEnabled(true);
 					toLabel.setEnabled(true);
 					toDate.setEnabled(true);
+					
 				} else {					
 					dateRangeClient.setEnabled(false);
+					fromClinet.setEnabled(false);
+					toClient.setEnabled(false);
 					fromLabel.setEnabled(false);
 					fromDate.setEnabled(false);
 					toLabel.setEnabled(false);
