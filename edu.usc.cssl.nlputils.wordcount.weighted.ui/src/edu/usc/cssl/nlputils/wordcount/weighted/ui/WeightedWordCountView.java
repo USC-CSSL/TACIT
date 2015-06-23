@@ -421,14 +421,10 @@ public class WeightedWordCountView extends ViewPart implements
 								}
 							}
 
-							Boolean createReadMe;
-							String readMeStr = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CREATE_README);
-							if (readMeStr == null || readMeStr == "") createReadMe = true;
-							else createReadMe = Boolean.valueOf(readMeStr);
 							wordCountController.wordCount(monitor, selectedFiles,
 									dictionaryFiles, stopWordPath, outputPath,
 									"", true, isLiwcStemming, isSnowBall,
-									isSpss, isWdist, isStemDic, createReadMe, oFile, sFile);
+									isSpss, isWdist, isStemDic, oFile, sFile);
 							monitor.done();
 						} catch (IOException ioe) {
 							ioe.printStackTrace();

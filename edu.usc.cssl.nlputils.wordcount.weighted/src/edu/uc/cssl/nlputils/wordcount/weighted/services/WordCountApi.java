@@ -26,7 +26,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
+import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 import edu.usc.nlputils.common.snowballstemmer.PorterStemmer;
 
 public class WordCountApi {
@@ -89,7 +92,7 @@ public class WordCountApi {
 			String stopWordsFile, String outputFile, String delimiters,
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
-			boolean doWordDistribution, boolean stemDictionary, boolean createReadMe, File oFile,
+			boolean doWordDistribution, boolean stemDictionary, File oFile,
 			File sFile) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
 			this.delimiters = " ";
@@ -189,8 +192,9 @@ public class WordCountApi {
 		}
 		// No errors
 		monitor.subTask("Writing Read Me File...");
+		if(this.weighted) TacitUtility.createReadMe(outputFile, "Weighted Word Count");
+		else TacitUtility.createReadMe(outputFile, "LIWC Word Count");
 		
-		if (createReadMe) writeReadMe(outputFile);
 		monitor.worked(5);
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -1014,30 +1018,6 @@ public class WordCountApi {
 			return source.substring(start, length);
 		} else {
 			return source;
-		}
-	}
-
-	public void writeReadMe(String location) {
-		File readme = new File(location + "/README.txt");
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
-			String appV = "TACIT v" + Platform
-					.getBundle("edu.usc.cssl.nlputils.repository").getHeaders()
-					.get("Bundle-Version");
-			Date date = new Date();
-			String title = "";
-			if(this.weighted){
-				title = "Weighted";
-			}
-			else {
-				title = "LIWC";
-			}
-			bw.write(title+" Word Count Output\n--------------------------\n\nApplication: "
-					+ appV + "\nDate: " + date.toString() + "\n\n");
-			bw.write(readMe.toString());
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 }
