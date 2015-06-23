@@ -86,7 +86,7 @@ public class WordCountApi {
 
 	// Updated function that can handle multiple input files
 	public void wordCount(IProgressMonitor monitor,
-			List<String> inputFiles, List<String> dictionaryFile,
+			List<File> inputFiles, List<String> dictionaryFile,
 			String stopWordsFile, String outputFile, String delimiters,
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
@@ -168,10 +168,10 @@ public class WordCountApi {
 
 		}
 		// for each inputFile,
-		for (String inputFile : inputFiles) {
+		for (File inputFile : inputFiles) {
 
 			// Mac cache file filtering
-			if (inputFile.contains("DS_Store"))
+			if (inputFile.getAbsolutePath().contains("DS_Store"))
 				continue;
 			monitor.subTask("Counting Words at " + inputFile );
 			countWords(inputFile, oFile, sFile);
@@ -199,14 +199,14 @@ public class WordCountApi {
 		}
 	}
 
-	public void countWords(String inputFile, File oFile, File spssFile)
+	public void countWords(File iFile, File oFile, File spssFile)
 			throws IOException {
-		File iFile = new File(inputFile);
+	
 		if (iFile.isDirectory()) {
 			return;
 		}
-		logger.info("Current input file - " + inputFile);
-		appendLog("Current input file - " + inputFile);
+		logger.info("Current input file - " + iFile.getName());
+		appendLog("Current input file - " + iFile.getAbsolutePath());
 		// For calculating Category wise distribution of each word.
 		HashMap<String, HashSet<String>> wordCategories = new HashMap<String, HashSet<String>>();
 
@@ -346,7 +346,7 @@ public class WordCountApi {
 		// If Word Distribution output is enabled, calculate the values
 		if (doWordDistribution){
 			
-			calculateWordDistribution(map, catCount, wordCategories, inputFile,
+			calculateWordDistribution(map, catCount, wordCategories, iFile.getAbsolutePath(),
 					oFile);
 		}
 
