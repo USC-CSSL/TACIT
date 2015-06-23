@@ -225,7 +225,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							cv.doCross(svm, class1NameStr, class1FilesL,
 									class2NameStr, class2FilesL, kValueInt,
-									featureFile, monitor);
+									featureFile, outputPath, monitor);
 							// monitor.worked(5);
 							if (ppValue && preprocessor.doCleanUp()) {
 								preprocessor.clean();

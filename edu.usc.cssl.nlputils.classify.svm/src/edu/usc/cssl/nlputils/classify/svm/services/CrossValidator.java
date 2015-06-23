@@ -1,15 +1,21 @@
 package edu.usc.cssl.nlputils.classify.svm.services;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 
 public class CrossValidator {
 
-	public void doCross(SVMClassify svm, String class1Label, File[] class1Files, String class2Label, File[] class2Files, int kValue, boolean doPredictiveWeights, IProgressMonitor monitor) throws IOException{
+	public void doCross(SVMClassify svm, String class1Label, File[] class1Files, String class2Label, File[] class2Files, int kValue, boolean doPredictiveWeights, String outputPath, IProgressMonitor monitor) throws IOException{
 //		File folder1 = new File(class1Folder);
 //		File folder2 = new File(class2Folder);
 //		File[] class1Files = folder1.listFiles();
@@ -88,5 +94,37 @@ public class CrossValidator {
 		
 		ConsoleView.printlInConsoleln("");
 		ConsoleView.printlInConsoleln("Average accuracy over "+kValue+" folds = "+averageAccuracy/accuracies.length+"%");
+		
+		writeToCSV(accuracies,outputPath);
+		TacitUtility.createReadMe(outputPath, "SVM Classification");
+	}
+	
+	private void writeToCSV(double[] accuracies, String output){
+		double averageAccuracy = 0;
+		
+		for (int j = 0; j < accuracies.length; j++) {
+			averageAccuracy = averageAccuracy+accuracies[j];
+		}
+		
+		DateFormat df = new SimpleDateFormat("dd-MM-yy HH:mm:ss");
+		Date dateobj = new Date();
+		
+		String outputPath = output+System.getProperty("file.separator")+"SVM_Classification_"+df.format(dateobj)+".csv";
+		
+		File outFile = new File(outputPath);
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+			bw.write("Run,Accuracy");
+			bw.newLine();
+			
+			for (int i=0; i < accuracies.length; i++){
+				bw.write(Integer.toString(i+1)+","+Double.toString(accuracies[i]));
+				bw.newLine();
+			}
+			bw.write("Average accuracy,"+Double.toString(averageAccuracy/accuracies.length));
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
