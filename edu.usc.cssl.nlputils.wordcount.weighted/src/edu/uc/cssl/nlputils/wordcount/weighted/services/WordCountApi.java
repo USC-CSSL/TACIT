@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.snowballstemmer.PorterStemmer;
@@ -272,7 +271,7 @@ public class WordCountApi {
 				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
 
 		// Calculate Category-wise count
-		HashMap<String, Integer> catCount = new HashMap<String, Integer>();
+		HashMap<String, Double> catCount = new HashMap<String, Double>();
 		List<Integer> currCategories;
 		int dicCount = 0;
 		String currCategoryName = "";
@@ -303,12 +302,29 @@ public class WordCountApi {
 						// Add 1 to count the unique words in the category.
 						// Add map.get(currWord), i.e, the num of each word to
 						// count total number of words in the category
+						double currWordWeight = 1.0;
+						if(null != this.weightMap.get(currWord)) {
+							currWordWeight = this.weightMap.get(currWord).get(currCategoryName);
+						}
+						if(this.weighted)
 						catCount.put(
 								currCategoryName,
-								catCount.get(currCategoryName)
-										+ map.get(currWord));
+								catCount.get(currCategoryName) + (map.get(currWord)* currWordWeight));
+						else 
+							catCount.put(
+									currCategoryName,
+									catCount.get(currCategoryName)
+											+ map.get(currWord));
 					} else {
-						catCount.put(currCategoryName, map.get(currWord));
+						double currWordWeight = 1.0;
+						if(null != this.weightMap.get(currWord)) {
+							currWordWeight = this.weightMap.get(currWord).get(currCategoryName);
+						}
+						
+						if(this.weighted)
+							catCount.put(currCategoryName, (map.get(currWord) * currWordWeight));
+						else
+						catCount.put(currCategoryName, (double) map.get(currWord));
 					}
 
 					// Populate the Category Set for each Word
@@ -349,7 +365,7 @@ public class WordCountApi {
 	}
 
 	public void calculateWordDistribution(HashMap<String, Integer> map,
-			HashMap<String, Integer> catCount,
+			HashMap<String, Double> catCount,
 			HashMap<String, HashSet<String>> wordCategories, String inputFile,
 			File oFile) throws IOException {
 		File outputDir = oFile.getParentFile();
@@ -390,11 +406,11 @@ public class WordCountApi {
 					String rootWord = categorizer.root(currWord);
 					if (this.weighted) {
 						row.append((multiplier * map.get(currWord) * weightMap
-								.get(rootWord).get(currCat))
-								/ (float) catCount.get(currCat) + ",");
+								.get(rootWord).get(currCat) * weightMap.get(rootWord).get(currCat))
+								/ catCount.get(currCat) + ",");
 					} else {
 						row.append(multiplier * map.get(currWord)
-								/ (float) catCount.get(currCat) + ",");
+								/ catCount.get(currCat) + ",");
 					}
 				}
 			}
@@ -448,12 +464,12 @@ public class WordCountApi {
 
 
 	public void writeToSpss(File spssFile, String docName, int totalCount,
-			float wps, float sixltr, double d, HashMap<String, Integer> catCount)
+			float wps, float sixltr, double d, HashMap<String, Double> catCount)
 			throws IOException {
 		StringBuilder row = new StringBuilder();
 		row.append("\"" + docName + "\"" + " " + totalCount + " " + wps + " "
 				+ sixltr + " " + d + " ");
-		int currCatCount = 0;
+		double currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
 		// string
 		for (String title : categories.values()) {
@@ -461,7 +477,7 @@ public class WordCountApi {
 				currCatCount = 0;
 			else
 				currCatCount = catCount.get(title);
-			row.append(((currCatCount * 100) / (float) totalCount) + " ");
+			row.append(((currCatCount * 100) / totalCount) + " ");
 		}
 		// Append mode because the titles are already written. Append a row
 		// corresponding to each input file
@@ -475,13 +491,13 @@ public class WordCountApi {
 
 	public void writeToFile(File oFile, String docName, int totalCount,
 			double wps, double d, double dic, double numerals,
-			HashMap<String, Integer> catCount) throws IOException {
+			HashMap<String, Double> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
 		row.append(docName + ",1," + totalCount + "," + df.format(wps) + ","
 				+ df.format(d) + "," + df.format(dic) + ","
 				+ df.format(numerals) + ",");
 
-		int currCatCount = 0;
+		double currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
 		// string
 		for (String title : categories.values()) {
@@ -489,7 +505,7 @@ public class WordCountApi {
 				currCatCount = 0;
 			else
 				currCatCount = catCount.get(title);
-			row.append(df.format(((currCatCount * 100) / (float) totalCount))
+			row.append(df.format(((currCatCount * 100) / totalCount))
 					+ ",");
 		}
 
