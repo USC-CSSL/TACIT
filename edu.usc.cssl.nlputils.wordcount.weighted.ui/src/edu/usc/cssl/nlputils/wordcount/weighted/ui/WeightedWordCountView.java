@@ -171,7 +171,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 		stopWordPathEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
 		stopWordPathEnabled.setEnabled(false);
-		stopWordPathEnabled.setSelection(true);
+		stopWordPathEnabled.setSelection(false);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(stopWordPathEnabled);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
