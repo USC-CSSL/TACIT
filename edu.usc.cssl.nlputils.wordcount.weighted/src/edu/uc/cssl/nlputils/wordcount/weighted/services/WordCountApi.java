@@ -69,8 +69,7 @@ public class WordCountApi {
 	// Regular word
 	Pattern regularPattern = Pattern.compile("[\\w\\d]+");
 
-	// for rounding off the decimals
-	DecimalFormat df = new DecimalFormat("#.##");
+	
 
 	// for calculating punctuation ratios
 	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro,
@@ -371,9 +370,11 @@ public class WordCountApi {
 		File outputDir = oFile.getParentFile();
 		String iFilename = inputFile.substring(inputFile.lastIndexOf(System
 				.getProperty("file.separator")));
-		File wdFile = new File(outputDir.getAbsolutePath()
-				+ System.getProperty("file.separator") + iFilename
-				+ "_wordDistribution.csv");
+		String outputPath = outputDir.getAbsolutePath()+ System.getProperty("file.separator") + iFilename
+				+ "_wordDistribution";
+		if(this.weighted) outputPath = outputPath + "_LIWC"+System.currentTimeMillis()+".csv";
+		else outputPath = outputPath + "_WWC"+System.currentTimeMillis()+".csv";
+		File wdFile = new File(outputPath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
 		bw.write("Word,Count,");
 		StringBuilder toWrite = new StringBuilder();
@@ -493,9 +494,9 @@ public class WordCountApi {
 			double wps, double d, double dic, double numerals,
 			HashMap<String, Double> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
-		row.append(docName + ",1," + totalCount + "," + df.format(wps) + ","
-				+ df.format(d) + "," + df.format(dic) + ","
-				+ df.format(numerals) + ",");
+		row.append(docName + ",1," + totalCount + "," + wps + ","
+				+ d + "," + dic + ","
+				+ numerals + ",");
 
 		double currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
@@ -505,25 +506,25 @@ public class WordCountApi {
 				currCatCount = 0;
 			else
 				currCatCount = catCount.get(title);
-			row.append(df.format(((currCatCount * 100) / totalCount))
+			row.append((((currCatCount * 100) / totalCount))
 					+ ",");
 		}
 
 		// Period, Comma, Colon, SemiC, QMark, Exclam, Dash, Quote, Apostro,
 		// Parenth, OtherP, AllPct
-		row.append(df.format(((period * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((comma * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((colon * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((semiC * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((qMark * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((exclam * 100) / (float) totalCount)) + ",");
+		row.append((((period * 100) / (float) totalCount)) + ",");
+		row.append((((comma * 100) / (float) totalCount)) + ",");
+		row.append((((colon * 100) / (float) totalCount)) + ",");
+		row.append((((semiC * 100) / (float) totalCount)) + ",");
+		row.append((((qMark * 100) / (float) totalCount)) + ",");
+		row.append((((exclam * 100) / (float) totalCount)) + ",");
 		// row.append(df.format(((dash*100)/(float)totalCount))+","); correct
 		// way
 		dash = (dash * 2) - weirdDashCount;
-		row.append(df.format(((dash * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((quote * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((apostro * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((parenth * 50) / (float) totalCount)) + ","); // multiply
+		row.append((((dash * 100) / (float) totalCount)) + ",");
+		row.append((((quote * 100) / (float) totalCount)) + ",");
+		row.append((((apostro * 100) / (float) totalCount)) + ",");
+		row.append((((parenth * 50) / (float) totalCount)) + ","); // multiply
 																			// by
 																			// 50
 																			// =
@@ -535,8 +536,8 @@ public class WordCountApi {
 																			// counted
 																			// as
 																			// pairs
-		row.append(df.format(((otherP * 100) / (float) totalCount)) + ",");
-		row.append(df.format(((allPct * 100) / (float) totalCount)) + ",");
+		row.append((((otherP * 100) / (float) totalCount)) + ",");
+		row.append((((allPct * 100) / (float) totalCount)) + ",");
 
 		// Append mode because the titles are already written. Append a row
 		// corresponding to each input file
