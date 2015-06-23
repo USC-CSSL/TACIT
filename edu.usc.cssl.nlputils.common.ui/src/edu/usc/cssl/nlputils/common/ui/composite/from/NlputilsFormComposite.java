@@ -3,6 +3,9 @@ package edu.usc.cssl.nlputils.common.ui.composite.from;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -316,7 +319,7 @@ public class NlputilsFormComposite {
 	}
 
 	public static void updateStatusMessage(final IViewSite site,
-			final String message, final Integer error,final ScrolledForm form) {
+			final String message, final Integer error, final ScrolledForm form) {
 		// update status bar
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -357,10 +360,9 @@ public class NlputilsFormComposite {
 													ICommonUiConstants.IMAGE_SUCESS_SB),
 									message);
 				}
-			
-						form.setFocus();
-						
-					
+
+				form.setFocus();
+
 			}
 		});
 
@@ -483,5 +485,13 @@ public class NlputilsFormComposite {
 			}
 		});
 
+	}
+
+	public static void writeConsoleHeaderBegining(String statusText) {
+		final DateFormat dateFormat = new SimpleDateFormat(
+				"MMM dd, yyyy, HH:mm:ss aaa");
+		final Calendar cal = Calendar.getInstance();
+		ConsoleView.writeInConsoleHeader(statusText
+				+ (dateFormat.format(cal.getTime())));
 	}
 }

@@ -98,11 +98,7 @@ public class LatinCrawlerView extends ViewPart implements
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
 		NlputilsFormComposite.addErrorPopup(form.getForm(), toolkit);
-		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
-				form.getBody(), form.getMessageManager());
-		Composite sectionClient = layoutData.getSectionClient();
-		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
-
+		
 		Section authorSection = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
 
@@ -167,7 +163,11 @@ public class LatinCrawlerView extends ViewPart implements
 
 			}
 		});
+		NlputilsFormComposite.createEmptyRow(toolkit, form.getBody());
 
+		layoutData = NlputilsFormComposite.createOutputSection(toolkit,
+				form.getBody(), form.getMessageManager());
+		
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Latin Crawler");
@@ -244,7 +244,7 @@ public class LatinCrawlerView extends ViewPart implements
 									getViewSite(), "Crawling is stopped ",
 									IStatus.INFO, form);
 							ConsoleView
-							.writeInConsoleHeader("<terminated> Lating crawling  "
+							.writeInConsoleHeader("<terminated> Latin crawling  "
 									+ (dateFormat.format(cal.getTime())));
 							return Status.CANCEL_STATUS;
 						}
@@ -253,7 +253,7 @@ public class LatinCrawlerView extends ViewPart implements
 								.updateStatusMessage(getViewSite(),
 										"Crawling completed", IStatus.OK, form);
 						ConsoleView
-						.writeInConsoleHeader("<terminated> Lating crawling  "
+						.writeInConsoleHeader("<terminated> Latin crawling  "
 								+ (dateFormat.format(cal.getTime())));
 						
 						return Status.OK_STATUS;

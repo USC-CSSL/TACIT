@@ -37,6 +37,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.cssl.nlputils.topicmodel.lda.services.LdaAnalysis;
 import edu.usc.cssl.nlputils.topicmodel.lda.ui.internal.ILdaTopicModelClusterViewConstants;
 import edu.usc.cssl.nlputils.topicmodel.lda.ui.internal.LdaTopicModelViewImageRegistry;
@@ -207,7 +208,7 @@ public class LdaTopicModelView extends ViewPart implements
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final String preFix = prefixTxt.getText();
 				final boolean wordWeightFile = wordWeights.getSelection();
-
+				NlputilsFormComposite.writeConsoleHeaderBegining("Topic Modelling started  ");
 				job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -248,23 +249,26 @@ public class LdaTopicModelView extends ViewPart implements
 						try {
 							lda.doLDA(monitor);
 						} catch (FileNotFoundException e) {
+							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						} catch (IOException e) {
 							monitor.done();
+							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(20);
-						System.out
-								.println("LDA TOpic Modelling completed successfully in "
+						ConsoleView.printlInConsoleln("LDA TOpic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
 
 						if (monitor.isCanceled()) {
+							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(10);
 						monitor.done();
+						NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "LDA analysis completed",
 								IStatus.OK, form);

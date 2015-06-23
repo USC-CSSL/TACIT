@@ -339,6 +339,8 @@ public class WeightedWordCountView extends ViewPart implements
 			}
 
 			public void run() {
+				NlputilsFormComposite
+				.writeConsoleHeaderBegining("Word count analysis");
 				final String stopWordPath = CommonUiActivator.getDefault()
 						.getPreferenceStore()
 						.getString(IPreprocessorSettingsConstant.STOP_PATH);
@@ -425,13 +427,18 @@ public class WeightedWordCountView extends ViewPart implements
 									dictionaryFiles, stopWordPath, outputPath,
 									"", true, isLiwcStemming, isSnowBall,
 									isSpss, isWdist, isStemDic, oFile, sFile);
-							monitor.done();
+							
 						} catch (IOException ioe) {
+							
 							ioe.printStackTrace();
 						}
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "Word count analysis completed",
 								IStatus.OK, form);
+						monitor.subTask("Cleaning Preprocessed Files...");
+						preprocessTask.clean();
+						NlputilsFormComposite
+						.writeConsoleHeaderBegining("<terminated> Word count analysis");
 						monitor.done();
 						return Status.OK_STATUS;
 					}

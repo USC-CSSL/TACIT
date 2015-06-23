@@ -14,6 +14,8 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class CooccurrenceAnalysis {
@@ -64,7 +66,7 @@ public class CooccurrenceAnalysis {
 
 	public boolean calculateCooccurrences(List<String> selectedFiles,
 			String seedFile, int windowSize, String outputPath, int threshold,
-			boolean buildMatrix) {
+			boolean buildMatrix, IProgressMonitor monitor) {
 
 		String currentLine = null;
 		Queue<String> q = new LinkedList<String>();
@@ -88,10 +90,11 @@ public class CooccurrenceAnalysis {
 			int seedWordCount = seedWords.size();
 			int count;
 			for (File f : listOfFiles) {
+				monitor.subTask("Processing inout file "+f.getName());
+				appendLog("Processing inout file "+f.getName());
 				count = 0;
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;
-				ConsoleView.printlInConsoleln("Processing");
 
 				List<String> words = new ArrayList<String>();
 				if (!f.exists() || f.isDirectory())
@@ -176,15 +179,20 @@ public class CooccurrenceAnalysis {
 					}
 				}
 				br.close();
+				monitor.worked(1);
 			}
 
 			if (buildMatrix) {
+				monitor.subTask("Writing Word Matrix");
 				writeWordMatrix();
+				
 			}
+			monitor.worked(10);
 			if (ret && phrase.size() > 0) {
+				monitor.subTask("Writing Phrases");
 				writePhrases(phrase);
 			}
-
+			monitor.worked(10);
 			ConsoleView.printlInConsoleln(String.valueOf(phrase.size()));
 			return true;
 		} catch (Exception e) {
@@ -208,6 +216,8 @@ public class CooccurrenceAnalysis {
 			for (String p : phrases) {
 				fw.write(p + "\n");
 			}
+			ConsoleView.printlInConsoleln("Writing phrases at "+outputPath + File.separator
+					+ "phrases.txt");
 			fw.close();
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to file phrases.txt " + e);
@@ -234,8 +244,7 @@ public class CooccurrenceAnalysis {
 
 		SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
 		Map<String, Integer> vec = null;
-
-		ConsoleView.printlInConsoleln(keys.size());
+        
 		try {
 			FileWriter fw = new FileWriter(new File(outputPath + File.separator
 					+ "word-to-word-matrix.csv"));
@@ -257,6 +266,7 @@ public class CooccurrenceAnalysis {
 				}
 				fw.write("\n");
 			}
+			appendLog("Writng Word Matrix into word-to-word-matrix.csv");
 			fw.close();
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to files" + e);
@@ -265,7 +275,7 @@ public class CooccurrenceAnalysis {
 
 	public boolean invokeCooccurrence(List<String> selectedFiles,
 			String seedFileLocation, String fOutputDir, String numTopics,
-			String ftxtThreshold, boolean fOption) {
+			String ftxtThreshold, boolean fOption, IProgressMonitor monitor) {
 
 		int windowSize = 0;
 		if (!numTopics.equals(""))
@@ -283,7 +293,7 @@ public class CooccurrenceAnalysis {
 		appendLog("Running Co-occurrence Analysis...");
 		boolean isSuccess = calculateCooccurrences(selectedFiles,
 				seedFileLocation, windowSize, fOutputDir, threshold,
-				buildMatrix);
+				buildMatrix,monitor);
 		if (isSuccess == false) {
 			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
 			return isSuccess;

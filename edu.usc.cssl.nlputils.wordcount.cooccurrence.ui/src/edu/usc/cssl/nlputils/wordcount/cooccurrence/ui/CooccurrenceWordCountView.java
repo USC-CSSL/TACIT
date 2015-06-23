@@ -254,6 +254,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();
+				NlputilsFormComposite
+						.writeConsoleHeaderBegining("Co-occurrence Analysis started  ");
 				cooccurrenceAnalysisJob = new Job("Co-occurrence Analysis...") {
 
 					private Preprocess preprocessTask;
@@ -265,21 +267,25 @@ public class CooccurrenceWordCountView extends ViewPart implements
 						NlputilsFormComposite.setConsoleViewInFocus();
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), null, null, form);
-						monitor.beginTask("NLPUtils started clustering...", 100);
+						monitor.beginTask("NLPUtils started clustering...",
+								selectedFiles.size() + 40);
 						preprocessTask = null;
 						dirPath = "";
 						seedFilePath = seedFile.getText();
 						List<File> inputFiles = new ArrayList<File>();
 						if (isPreprocess) {
-							monitor.subTask("Preprocessing...");
+							monitor.subTask("Preprocessing Input Files...");
 							preprocessTask = new Preprocess(
 									"CooccurrenceAnalysis");
 							try {
 								dirPath = preprocessTask.doPreprocessing(
 										selectedFiles, "");
+								monitor.worked(10);
 								ArrayList<String> seedList = new ArrayList<String>();
 								seedList.add(seedFilePath);
+								monitor.subTask("Preprocessing Seed File...");
 								preprocessTask.doPreprocessing(seedList, "");
+								monitor.worked(5);
 								seedFileLocation = new File(dirPath
 										+ File.separator
 										+ new File(seedFilePath).getName())
@@ -300,6 +306,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 								}
 								inputFiles.add(new File(filepath));
 							}
+							monitor.worked(15);
 						}
 
 						long startTime = System.currentTimeMillis();
@@ -307,7 +314,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 								.invokeCooccurrence(selectedFiles,
 										seedFileLocation, outputPath,
 										windowSizeStr, thresholdLimit,
-										isBuildMatrix);
+										isBuildMatrix, monitor);
 
 						if (result) {
 							NlputilsFormComposite.updateStatusMessage(
@@ -318,7 +325,13 @@ public class CooccurrenceWordCountView extends ViewPart implements
 									.printlInConsoleln("Co-occurrence Analysis completed in "
 											+ (System.currentTimeMillis() - startTime)
 											+ " milliseconds.");
-							preprocessTask.clean();
+							if (preprocessEnabled.getSelection()) {
+								monitor.subTask("Cleaning up Pre-processed Files");
+								preprocessTask.clean();
+							}
+							monitor.worked(5);
+							NlputilsFormComposite
+							.writeConsoleHeaderBegining("<terminated> Co-occurrence Analysis");
 							return Status.OK_STATUS;
 						} else {
 							NlputilsFormComposite
@@ -326,7 +339,13 @@ public class CooccurrenceWordCountView extends ViewPart implements
 											getViewSite(),
 											"Co-occurrence Analysis is not Completed. Please check the log in the console",
 											IStatus.ERROR, form);
-							preprocessTask.clean();
+							if (preprocessEnabled.getSelection()) {
+								monitor.subTask("Cleaning up Pre-processed Files");
+								preprocessTask.clean();
+							}
+							monitor.worked(5);
+							NlputilsFormComposite
+							.writeConsoleHeaderBegining("<terminated> Co-occurrence Analysis");
 							return Status.CANCEL_STATUS;
 						}
 					}
@@ -358,7 +377,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null,
+				form);
 		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
