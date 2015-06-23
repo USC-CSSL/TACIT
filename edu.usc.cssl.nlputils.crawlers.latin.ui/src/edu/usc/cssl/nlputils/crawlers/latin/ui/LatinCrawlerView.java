@@ -1,7 +1,10 @@
 package edu.usc.cssl.nlputils.crawlers.latin.ui;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -190,9 +193,12 @@ public class LatinCrawlerView extends ViewPart implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 
-						NlputilsFormComposite.setConsoleViewInFocus();
-						NlputilsFormComposite.updateStatusMessage(
-								getViewSite(), null, null, form);
+						final DateFormat dateFormat = new SimpleDateFormat(
+								"MMM dd, yyyy, HH:mm:ss aaa");
+						final Calendar cal = Calendar.getInstance();
+						ConsoleView
+								.writeInConsoleHeader("Latin Crawling started "
+										+ (dateFormat.format(cal.getTime())));
 						Iterator<String> authorItr;
 						int totalWork = 1;
 						try {
@@ -203,16 +209,17 @@ public class LatinCrawlerView extends ViewPart implements
 							while (authorItr.hasNext()) {
 								if (monitor.isCanceled()) {
 									monitor.subTask("Crawling is cancelled...");
-									break;
+									return Status.CANCEL_STATUS;
 								}
 								String author = authorItr.next();
 								monitor.subTask("crawling " + author + "...");
 								latinCrawler.getBooksByAuthor(
 										author,
 										latinCrawler.getAuthorNames().get(
-												author));
+												author),monitor);
 								monitor.worked(1);
 							}
+							
 						} catch (final IOException exception) {
 							ConsoleView.printlInConsole(exception.toString());
 							Display.getDefault().syncExec(new Runnable() {
@@ -236,20 +243,19 @@ public class LatinCrawlerView extends ViewPart implements
 							NlputilsFormComposite.updateStatusMessage(
 									getViewSite(), "Crawling is stopped ",
 									IStatus.INFO, form);
+							ConsoleView
+							.writeInConsoleHeader("<terminated> Lating crawling  "
+									+ (dateFormat.format(cal.getTime())));
 							return Status.CANCEL_STATUS;
 						}
 						monitor.done();
 						NlputilsFormComposite
 								.updateStatusMessage(getViewSite(),
 										"Crawling completed", IStatus.OK, form);
-						Display.getDefault().syncExec(new Runnable() {
-							
-							@Override
-							public void run() {
-								setFocus();
-								
-							}
-						});
+						ConsoleView
+						.writeInConsoleHeader("<terminated> Lating crawling  "
+								+ (dateFormat.format(cal.getTime())));
+						
 						return Status.OK_STATUS;
 					}
 				};

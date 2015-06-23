@@ -109,6 +109,7 @@ public class ConsoleView extends ViewPart implements INlpCommonUiConstants {
 
 			public void run() {
 				text.setText("");
+				header.setText("Nothing to display");
 			};
 		});
 
