@@ -43,6 +43,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.nlputils.common.Preprocess;
 import edu.uc.cssl.nlputils.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
@@ -420,10 +421,14 @@ public class WeightedWordCountView extends ViewPart implements
 								}
 							}
 
+							Boolean createReadMe;
+							String readMeStr = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CREATE_README);
+							if (readMeStr == null || readMeStr == "") createReadMe = true;
+							else createReadMe = Boolean.valueOf(readMeStr);
 							wordCountController.wordCount(monitor, selectedFiles,
 									dictionaryFiles, stopWordPath, outputPath,
 									"", true, isLiwcStemming, isSnowBall,
-									isSpss, isWdist, isStemDic, oFile, sFile);
+									isSpss, isWdist, isStemDic, createReadMe, oFile, sFile);
 							monitor.done();
 						} catch (IOException ioe) {
 							ioe.printStackTrace();

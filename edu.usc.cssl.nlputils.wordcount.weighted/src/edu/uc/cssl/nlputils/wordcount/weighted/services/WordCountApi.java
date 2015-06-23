@@ -89,7 +89,7 @@ public class WordCountApi {
 			String stopWordsFile, String outputFile, String delimiters,
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
-			boolean doWordDistribution, boolean stemDictionary, File oFile,
+			boolean doWordDistribution, boolean stemDictionary, boolean createReadMe, File oFile,
 			File sFile) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
 			this.delimiters = " ";
@@ -189,8 +189,8 @@ public class WordCountApi {
 		}
 		// No errors
 		monitor.subTask("Writing Read Me File...");
-		writeReadMe(outputFile.substring(0,
-				outputFile.lastIndexOf(File.separator)));
+		
+		if (createReadMe) writeReadMe(outputFile);
 		monitor.worked(5);
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -1021,7 +1021,7 @@ public class WordCountApi {
 		File readme = new File(location + "/README.txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
-			String appV = Platform
+			String appV = "TACIT v" + Platform
 					.getBundle("edu.usc.cssl.nlputils.repository").getHeaders()
 					.get("Bundle-Version");
 			Date date = new Date();
@@ -1032,7 +1032,7 @@ public class WordCountApi {
 			else {
 				title = "LIWC";
 			}
-			bw.write(title+" Word Count Output\n--------------------------\n\nApplication Version: "
+			bw.write(title+" Word Count Output\n--------------------------\n\nApplication: "
 					+ appV + "\nDate: " + date.toString() + "\n\n");
 			bw.write(readMe.toString());
 			bw.close();
