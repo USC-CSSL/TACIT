@@ -297,7 +297,7 @@ public class Preprocess {
 		if(!cleanUp){
 			return;
 		}
-		File toDel = new File(this.preprocessingParentFolder);
+		File toDel = new File(this.outputPath+System.getProperty("file.separator")+this.callingPlugin+"_"+this.currTime);
 		try {
 			if (toDel.exists())
 				FileUtils.deleteDirectory(toDel);
