@@ -8,13 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 
 import bsh.EvalError;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
@@ -98,7 +96,7 @@ public class NaiveBayesClassifier {
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
 		ConsoleView.printlInConsoleln("\nCreated classifier output file " + outputPath+ ".out");
 		System.out.println(result.get(0));
-		TacitUtility.createReadMe(outputPath,"Naive Bayes's");
+		TacitUtility.createReadMe(outputDirectory,"Naive Bayes's");
 		
 		return result.get(0);
 	}
@@ -157,7 +155,7 @@ public class NaiveBayesClassifier {
 		bw.close();
 
 		ConsoleView.printlInConsoleln("Created prediction CSV file " + outputPath + "_output.csv");
-		TacitUtility.createReadMe(outputPath,"Naive Bayes's");
+		TacitUtility.createReadMe(classificationOutputDir,"Naive Bayes's");
 	}
 	
 	public void purgeDirectory(File dir) {

@@ -680,6 +680,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							NlputilsFormComposite
 									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 						}
+						if(isPreprocessEnabled){
+							preprocessTask.clean();
+						}
 						monitor.worked(100);
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(
@@ -729,6 +732,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private IStatus handledCancelRequest(String message) {
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), message,
 				IStatus.ERROR, form);
+		if(isPreprocessEnabled){
+			preprocessTask.clean();
+		}
 		return Status.CANCEL_STATUS;
 
 	}
