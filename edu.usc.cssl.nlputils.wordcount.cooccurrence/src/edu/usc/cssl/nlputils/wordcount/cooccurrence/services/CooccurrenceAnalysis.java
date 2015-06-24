@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 
 public class CooccurrenceAnalysis {
 
@@ -194,6 +195,7 @@ public class CooccurrenceAnalysis {
 			}
 			monitor.worked(10);
 			ConsoleView.printlInConsoleln(String.valueOf(phrase.size()));
+			TacitUtility.createReadMe(outputPath, "Cooccurrence Analysis");
 			return true;
 		} catch (Exception e) {
 			ConsoleView.printlInConsoleln("Exception occurred in Cooccurrence Analysis "

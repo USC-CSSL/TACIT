@@ -25,7 +25,6 @@ public class TacitUtility {
 		
 		if (!createReadMe) return;
 		
-		StringBuilder readMe = new StringBuilder();
 		File readme = new File(location + "/README.txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
@@ -33,9 +32,15 @@ public class TacitUtility {
 					.getBundle(Activator.PLUGIN_ID).getHeaders()
 					.get("Bundle-Version");
 			Date date = new Date();
-			bw.write(title+" Output\n--------------------------\n\nApplication: "
-					+ appV + "\nDate: " + date.toString() + "\n\n");
-			bw.write(readMe.toString());
+			bw.write(title+" Output");
+			bw.newLine();
+			bw.write("--------------------------");
+			bw.newLine();
+			bw.newLine();
+			bw.write("Application: "+ appV );
+			bw.newLine();
+			bw.write("Date: " + date.toString());
+			bw.newLine();
 			bw.close();
 			ConsoleView.printlInConsoleln("Finished creating README file");
 		} catch (IOException e) {
