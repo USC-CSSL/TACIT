@@ -95,8 +95,25 @@ public class CrossValidator {
 		ConsoleView.printlInConsoleln("");
 		ConsoleView.printlInConsoleln("Average accuracy over "+kValue+" folds = "+averageAccuracy/accuracies.length+"%");
 		
+		clearFiles(kValue,outputPath);
 		writeToCSV(accuracies,outputPath);
 		TacitUtility.createReadMe(outputPath, "SVM Classification");
+	}
+	
+	private void clearFiles(int kValue, String outputPath) {
+		ConsoleView.printlInConsoleln("Clearing temporary files");
+		for (int i=0; i<kValue; i++){
+			File toDelete = new File(outputPath+System.getProperty("file.separator")+"SVM_Classification_k"+Integer.toString(i+1)+".hashmap");
+			toDelete.delete();
+			toDelete = new File(outputPath+System.getProperty("file.separator")+"SVM_Classification_k"+Integer.toString(i+1)+".model");
+			toDelete.delete();
+			toDelete = new File(outputPath+System.getProperty("file.separator")+"SVM_Classification_k"+Integer.toString(i+1)+".out");
+			toDelete.delete();
+			toDelete = new File(outputPath+System.getProperty("file.separator")+"SVM_Classification_k"+Integer.toString(i+1)+".test");
+			toDelete.delete();
+			toDelete = new File(outputPath+System.getProperty("file.separator")+"SVM_Classification_k"+Integer.toString(i+1)+".train");
+			toDelete.delete();
+		}
 	}
 	
 	private void writeToCSV(double[] accuracies, String output){
@@ -106,7 +123,7 @@ public class CrossValidator {
 			averageAccuracy = averageAccuracy+accuracies[j];
 		}
 		
-		DateFormat df = new SimpleDateFormat("dd-MM-yy HH:mm:ss");
+		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
 		Date dateobj = new Date();
 		
 		String outputPath = output+System.getProperty("file.separator")+"SVM_Classification_"+df.format(dateobj)+".csv";
@@ -123,6 +140,7 @@ public class CrossValidator {
 			}
 			bw.write("Average accuracy,"+Double.toString(averageAccuracy/accuracies.length));
 			bw.close();
+			ConsoleView.printlInConsoleln("Finished creating output File - "+outputPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
