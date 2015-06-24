@@ -28,6 +28,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 
 public class HierarchicalClusterAnalysis {
 	public static String doClustering(List<File> inputFiles, String outputPath,
@@ -119,6 +120,7 @@ public class HierarchicalClusterAnalysis {
 			}
 			buf.write(output);
 			buf.close();
+			
 			subProgressMonitor.done();
 			return output;
 		} catch (Exception e) {
@@ -198,6 +200,7 @@ public class HierarchicalClusterAnalysis {
 		ConsoleView.printlInConsoleln("Saving the output to cluster.txt");
 		subProgressMonitor.subTask("Saving the output to cluster.txt");
 		ConsoleView.printlInConsoleln("\nDone Hierarchical Clustering...");
+		TacitUtility.createReadMe(fOutputDir, "Hierarchical Clustering");
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return clusters;
