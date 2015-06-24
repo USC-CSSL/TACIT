@@ -149,36 +149,99 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
 		
-		Group group = new Group(client, SWT.SHADOW_IN);
-		group.setText("Date \u0026 Limit Records");
+		
+		
+		Group limitGroup = new Group(client, SWT.SHADOW_IN);
+		limitGroup.setText("Limit Records");
+		limitGroup.setBackground(client.getBackground());
+		limitGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout limitLayout = new GridLayout();
+		limitLayout.numColumns = 1;
+		limitGroup.setLayout(limitLayout);
+	
+		limitRecords = toolkit.createButton(limitGroup, "Limit Records per Senator", SWT.CHECK);
+		limitRecords.setBounds(10, 10, 10, 10);
+		limitRecords.pack();
+		
+		final Composite limitRecordsClient = toolkit.createComposite(limitGroup);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitRecordsClient);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(limitRecordsClient);
+		limitRecordsClient.setEnabled(false);
+		limitRecordsClient.pack();
+	
+		limitRecords.addSelectionListener(new SelectionListener() {			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(!limitRecords.getSelection()){
+					form.getMessageManager().removeMessage("limitText");
+				}				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub			
+			}
+		});
+		
+		final Label sortLabel = toolkit.createLabel(limitRecordsClient, "Limit Records", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
+		sortLabel.setEnabled(false);
+		cmbSort = new Combo(limitRecordsClient, SWT.FLAT);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbSort);
+		cmbSort.setEnabled(false);
+		toolkit.adapt(cmbSort);
+		cmbSort.add("From Begining");
+		cmbSort.add("From End");
+		cmbSort.select(0);
 
-		group.setBackground(client.getBackground());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final Label limitLabel = toolkit.createLabel(limitRecordsClient, "# Records", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
+		limitLabel.setEnabled(false);
+		limitText = toolkit.createText(limitRecordsClient, "",SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(limitText);
+		limitText.setEnabled(false);
+		
+		limitText.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyReleased(KeyEvent e) {
+	             if(!(e.character>='0' && e.character<='9')) {
+	            	 form.getMessageManager() .addMessage( "limitText", "Provide valid no.of.records per senator", null, IMessageProvider.ERROR);
+	            	 limitText.setText(""); 
+	             } else {
+	            	 form.getMessageManager().removeMessage("limitText");
+	             }			
+			}			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub			
+			}
+		});
+		
+		NlputilsFormComposite.createEmptyRow(toolkit, client);
+		
+		Group dateGroup = new Group(client, SWT.SHADOW_IN);
+		dateGroup.setText("Date");
+		dateGroup.setBackground(client.getBackground());
+		dateGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		group.setLayout(layout);
+		dateGroup.setLayout(layout);
 
-		dateRange = toolkit.createButton(group, "Specify Date Range", SWT.CHECK);
+		dateRange = toolkit.createButton(dateGroup, "Specify Date Range", SWT.CHECK);
 		dateRange.setBounds(10, 10, 10, 10);
 		dateRange.pack();
 		
 		//NlputilsFormComposite.createEmptyRow(toolkit, group);
-		final Composite dateRangeClient = toolkit.createComposite(group);
+		final Composite dateRangeClient = toolkit.createComposite(dateGroup);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(dateRangeClient);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(dateRangeClient);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateRangeClient);
 		dateRangeClient.setEnabled(false);
 		dateRangeClient.pack();
-
-		final Composite fromClinet = toolkit.createComposite(dateRangeClient);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(fromClinet);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(fromClinet);
-		//fromClinet.setEnabled(false);
-		//fromClinet.pack();
 		
-		final Label fromLabel = toolkit.createLabel(fromClinet, "From:", SWT.NONE);
+		final Label fromLabel = toolkit.createLabel(dateRangeClient, "From:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
-		fromDate = new DateTime(fromClinet, SWT.DATE | SWT.DROP_DOWN);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(fromDate);
+		fromDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
 		
@@ -208,16 +271,10 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
-		final Composite toClient = toolkit.createComposite(dateRangeClient);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(toClient);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(toClient);
-		//toClient.setEnabled(false);
-		//toClient.pack();
-		
-		final Label toLabel = toolkit.createLabel(toClient, "To:", SWT.NONE);
+		final Label toLabel = toolkit.createLabel(dateRangeClient, "To:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
-		toDate = new DateTime(toClient, SWT.DATE | SWT.DROP_DOWN);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(toDate);
+		toDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toDate);
 		toLabel.setEnabled(false);
 		toDate.setEnabled(false);
 		
@@ -246,75 +303,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	            }
 			}
 		});
-		
-		NlputilsFormComposite.createEmptyRow(toolkit, group);
-		
-		limitRecords = toolkit.createButton(group, "Limit Records per Senator", SWT.CHECK);
-		limitRecords.setBounds(10, 10, 10, 10);
-		limitRecords.pack();
-		limitRecords.addSelectionListener(new SelectionListener() {			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(!limitRecords.getSelection()){
-					form.getMessageManager().removeMessage("limitText");
-				}				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub			
-			}
-		});
-				
-		final Composite limitRecordsClient = toolkit.createComposite(group);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitRecordsClient);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(limitRecordsClient);
-		limitRecordsClient.setEnabled(false);
-		limitRecordsClient.pack();
-		
-		final Composite sortClient = toolkit.createComposite(limitRecordsClient);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(sortClient);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sortClient);
-		
-		final Label sortLabel = toolkit.createLabel(sortClient, "Limit Records", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
-		sortLabel.setEnabled(false);
-		cmbSort = new Combo(sortClient, SWT.FLAT);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbSort);
-		cmbSort.setEnabled(false);
-		toolkit.adapt(cmbSort);
-		cmbSort.add("From Begining");
-		cmbSort.add("From End");
-		cmbSort.select(0);
-		
-		final Composite limitClient = toolkit.createComposite(limitRecordsClient);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitClient);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(limitClient);
-		
-		
-		final Label limitLabel = toolkit.createLabel(limitClient, "# Records", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
-		limitLabel.setEnabled(false);
-		limitText = toolkit.createText(limitClient, "",SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(limitText);
-		limitText.setEnabled(false);
-		
-		limitText.addKeyListener(new KeyListener() {			
-			@Override
-			public void keyReleased(KeyEvent e) {
-	             if(!(e.character>='0' && e.character<='9')) {
-	            	 form.getMessageManager() .addMessage( "limitText", "Provide valid no.of.records per senator", null, IMessageProvider.ERROR);
-	            	 limitText.setText(""); 
-	             } else {
-	            	 form.getMessageManager().removeMessage("limitText");
-	             }			
-			}			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub			
-			}
-		});
-		
+
 		
 		Job loadFieldValuesJob = new Job("Loading form field values") {			
 			HashMap<String, String> congressDetails = null;
@@ -464,7 +453,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		limitRecords.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (limitRecords.getSelection()) {					
+				if (limitRecords.getSelection()) {	
 					limitRecordsClient.setEnabled(true);
 					sortLabel.setEnabled(true);
 					cmbSort.setEnabled(true);
