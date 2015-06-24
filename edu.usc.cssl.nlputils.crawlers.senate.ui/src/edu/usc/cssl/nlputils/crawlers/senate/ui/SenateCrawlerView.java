@@ -153,17 +153,16 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		
 		Group limitGroup = new Group(client, SWT.SHADOW_IN);
 		limitGroup.setText("Limit Records");
-		limitGroup.setBackground(client.getBackground());
+		//limitGroup.setBackground(client.getBackground());
 		limitGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout limitLayout = new GridLayout();
 		limitLayout.numColumns = 1;
 		limitGroup.setLayout(limitLayout);
 	
-		limitRecords = toolkit.createButton(limitGroup, "Limit Records per Senator", SWT.CHECK);
-		limitRecords.setBounds(10, 10, 10, 10);
-		limitRecords.pack();
+		limitRecords = new Button(limitGroup, SWT.CHECK);
+		limitRecords.setText("Limit Records per Senator");		
 		
-		final Composite limitRecordsClient = toolkit.createComposite(limitGroup);
+		final Composite limitRecordsClient = new Composite(limitGroup, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitRecordsClient);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(limitRecordsClient);
 		limitRecordsClient.setEnabled(false);
@@ -183,7 +182,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
-		final Label sortLabel = toolkit.createLabel(limitRecordsClient, "Limit Records", SWT.NONE);
+		final Label sortLabel = new Label(limitRecordsClient, SWT.NONE);
+		sortLabel.setText("Limit Records");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
 		sortLabel.setEnabled(false);
 		cmbSort = new Combo(limitRecordsClient, SWT.FLAT);
@@ -194,10 +194,11 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		cmbSort.add("From End");
 		cmbSort.select(0);
 
-		final Label limitLabel = toolkit.createLabel(limitRecordsClient, "# Records", SWT.NONE);
+		final Label limitLabel = new Label(limitRecordsClient, SWT.NONE);
+		limitLabel.setText("# Records");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
 		limitLabel.setEnabled(false);
-		limitText = toolkit.createText(limitRecordsClient, "",SWT.BORDER);
+		limitText = new Text(limitRecordsClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(limitText);
 		limitText.setEnabled(false);
 		
@@ -221,24 +222,23 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		
 		Group dateGroup = new Group(client, SWT.SHADOW_IN);
 		dateGroup.setText("Date");
-		dateGroup.setBackground(client.getBackground());
 		dateGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		dateGroup.setLayout(layout);
 
-		dateRange = toolkit.createButton(dateGroup, "Specify Date Range", SWT.CHECK);
-		dateRange.setBounds(10, 10, 10, 10);
-		dateRange.pack();
+		dateRange = new Button(dateGroup, SWT.CHECK);
+		dateRange.setText("Specify Date Range");
 		
 		//NlputilsFormComposite.createEmptyRow(toolkit, group);
-		final Composite dateRangeClient = toolkit.createComposite(dateGroup);
+		final Composite dateRangeClient = new Composite(dateGroup, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(dateRangeClient);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateRangeClient);
 		dateRangeClient.setEnabled(false);
 		dateRangeClient.pack();
 		
-		final Label fromLabel = toolkit.createLabel(dateRangeClient, "From:", SWT.NONE);
+		final Label fromLabel = new Label(dateRangeClient, SWT.NONE);
+		fromLabel.setText("From:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
 		fromDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
@@ -271,7 +271,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
-		final Label toLabel = toolkit.createLabel(dateRangeClient, "To:", SWT.NONE);
+		final Label toLabel = new Label(dateRangeClient, SWT.NONE);
+		toLabel.setText("To:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
 		toDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toDate);
