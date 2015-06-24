@@ -2,6 +2,7 @@ package edu.usc.nlputils.common;
 
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
 import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
+import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.cssl.nlputils.repository.Activator;
 
 import java.io.BufferedWriter;
@@ -36,6 +37,7 @@ public class TacitUtility {
 					+ appV + "\nDate: " + date.toString() + "\n\n");
 			bw.write(readMe.toString());
 			bw.close();
+			ConsoleView.printlInConsoleln("Finished creating README file");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
