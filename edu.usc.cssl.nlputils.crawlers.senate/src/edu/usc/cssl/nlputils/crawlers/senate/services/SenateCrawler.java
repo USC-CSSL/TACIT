@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,20 +32,10 @@ public class SenateCrawler {
 	private String senText;
 	private int congressNum;
 	IProgressMonitor monitor;
+	String[] senList;
+	int progressSize;
+	private HashMap<String, String> senatorMap;
 	
-	private void getSenators(int congress) throws IOException {
-		ConsoleView.printlInConsoleln("Extracting Senators of Congress "+congress+"...");
-		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
-		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
-		
-		for (Element senItem : senList){
-			String senText = senItem.text().replace("\u00A0", " ");
-			if (senText.contains("Any Senator"))		// We just need the senator names
-				continue;
-			searchSenatorRecords(congress,senText, 0);
-		}
-	}
-
 	public void crawl() throws IOException{
 		if(null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
@@ -63,17 +54,14 @@ public class SenateCrawler {
 					monitor.subTask("Cancelling.. ");
 					return;
 				}
-				getAll(congressNum, senText, 80);
+				getAll(congressNum, senText, this.progressSize);
 		    }else {
 				for (int congress : congresses) {
 					if(null != monitor && monitor.isCanceled()) {
 						monitor.subTask("Cancelling.. ");
 						return;
 					}
-					/*if(monitor!=null) 
-						monitor.worked(80/congresses.size());
-						*/
-					getAll(congress, senText, 80/congresses.size());
+					getAll(congress, senText, this.progressSize/congresses.size());
 				}
 			}
 			if(null != monitor && monitor.isCanceled()) {
@@ -82,7 +70,7 @@ public class SenateCrawler {
 			}
 		} 		
 		else {
-			if (congressNum == -1) {
+			if (congressNum == -1) { // All congress
 				for (int congress: congresses) {
 					if(null != monitor && monitor.isCanceled()) {
 						monitor.subTask("Cancelling.. ");
@@ -91,7 +79,7 @@ public class SenateCrawler {
 					if(monitor!=null) 
 						monitor.worked(80/congresses.size());
 					System.out.println("Extracting Records from Congress "+congress+"...");
-					searchSenatorRecords(congress, senText, 0);
+					searchSenatorRecords(congress, senText, this.progressSize/congresses.size());
 				}
 			} else {
 				if(null != monitor && monitor.isCanceled()) {
@@ -99,7 +87,7 @@ public class SenateCrawler {
 					return;
 				}
 				System.out.println("Extracting Records from Congress "+congressNum+"...");
-				searchSenatorRecords(congressNum, senText, 1);
+				searchSenatorRecords(congressNum, senText, this.progressSize);
 			}
 			if(null != monitor && monitor.isCanceled()) {
 				monitor.subTask("Cancelling.. ");
@@ -108,35 +96,49 @@ public class SenateCrawler {
 		}
 		csvWriter.close();
 	}
-	public void getAll(int congressNum, String senText, int totalProgress) throws IOException{
-		ConsoleView.printlInConsoleln("Extracting Senators of Congress "+congressNum+"...");
+	public void getAll(int congressNum, String senText, int maxProgressLimit) throws IOException{
+	/*	ConsoleView.printlInConsoleln("Extracting Senators of Congress "+congressNum);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congressNum).timeout(10*1000).get();
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
-		
-		for (Element senItem : senList){
+		*/
+		boolean foundSenator = false;
+		for (String senator : senatorMap.keySet()){
+			String senatorNewName = senatorMap.get(senator);
 			if(null != monitor && monitor.isCanceled()) return;
-			String senator = senItem.text().replace("\u00A0", " ");
+			//String senator = senItem.text().replace("\u00A0", " ");
 			if (senator.contains("Any Senator"))		// We just need the senator names
 				continue;
 			if (senText.contains("All Republicans")){
-				if (!senator.contains("(R-"))
+				if (!senatorNewName.contains("(R-"))
 					continue;
 			}
 			if (senText.contains("All Democrats")){
-				if (!senator.contains("(D-"))
+				if (!senatorNewName.contains("(D-"))
 					continue;
 			}
 			if (senText.contains("All Independents")){
-				if (!senator.contains("(I-"))
+				if (!senatorNewName.contains("(I-"))
 					continue;
 			}			
-			searchSenatorRecords(congressNum, senator, 0);
-			if(null != monitor && monitor.isCanceled())
-				monitor.worked(totalProgress/senList.size());
+			searchSenatorRecords(congressNum, senator, maxProgressLimit/senatorMap.keySet().size());
+			foundSenator = true;
 		}
+		if(!foundSenator){
+			if(senText.contains("All Republicans")) {
+				ConsoleView.printlInConsoleln("No republicans found");
+			}			
+			else if(senText.contains("All Democrats")) {
+				ConsoleView.printlInConsoleln("No democrats found");
+			}
+			else if(senText.contains("All Independents")) {
+				ConsoleView.printlInConsoleln("No independents found");
+			}else {
+				ConsoleView.printlInConsoleln("No senators found");
+			}
+		}			
 	}
 	
-	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize, HashMap<String, String> senators) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
@@ -146,6 +148,8 @@ public class SenateCrawler {
 		this.sortType = sortType;
 		this.congresses = allCongresses;
 		this.monitor = monitor;
+		this.progressSize = progressSize;
+		this.senatorMap = senators;
 		
 		System.out.println("Congress num :"+ congressNum);
 		System.out.println("Senator name :"+ senText);
@@ -159,7 +163,7 @@ public class SenateCrawler {
 		}
 	}
 
-	public void searchSenatorRecords(int congress,String senText, int singleSenator) throws IOException{
+	public void searchSenatorRecords(int congress,String senText, int progressSize) throws IOException, NullPointerException{
 		ConsoleView.printlInConsoleln("Current Senator - "+senText);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
@@ -209,24 +213,13 @@ public class SenateCrawler {
 				monitor.subTask("Cancelling.. ");
 				return;
 			}
-			tempCount++;
-			if(1 == singleSenator) {
-				int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;				
-				int higherSize = tempMaxDocs > links.size() ? links.size() : tempMaxDocs;				
-				int totalCount = higherSize>80 ? higherSize/80 : 80/higherSize;
-				if(tempCount % totalCount == 0) {
-					tempCount = 0;
-					monitor.worked(1);
-				}
-				
-			}
 			if (maxDocs==-1)
 				count=-2000;
 			if (count++>=maxDocs)
 				break;
 			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
 			System.out.println(recordDate);
-			ConsoleView.printlInConsoleln("Processing "+link.text());
+			System.out.println("Processing "+link.text());
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
 			
@@ -258,9 +251,29 @@ public class SenateCrawler {
 				csvWriter.newLine();
 				csvWriter.flush();
 			}
+			
+			tempCount++;
+			tempCount = updateWork(maxDocs, links.size(), progressSize, tempCount);
+			
 		}
 	}
 
+	private int updateWork(int maxDocs, int totalLinks, int progressSize, int tempCount) {
+		int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;				
+		int numDocs2Download = tempMaxDocs > totalLinks ? totalLinks : tempMaxDocs;	
+		if(numDocs2Download>progressSize) { // worked should be 1 
+			int totalCount = numDocs2Download/progressSize;
+			totalCount++;
+			if(tempCount % totalCount == 0) {
+				tempCount = 0;
+				monitor.worked(1);
+			}
+		} else {
+			
+			monitor.worked((progressSize/numDocs2Download)-1);
+		}
+		return tempCount;
+	}
 	private void writeToFile(String fileName, String[] contents) throws IOException {
 		ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDir+System.getProperty("file.separator")+fileName)));

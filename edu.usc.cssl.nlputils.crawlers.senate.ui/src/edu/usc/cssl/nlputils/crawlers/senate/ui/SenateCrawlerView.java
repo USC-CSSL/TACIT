@@ -62,6 +62,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	
 	private String[] allSenators;
 	private String[] congresses;
+	private HashMap<String, String> senators;
 	private String[] congressYears;
 	
 	private Date maxDate;
@@ -74,6 +75,9 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	private Button limitRecords;
 	private Combo cmbSort;
 	private Text limitText;
+	
+	private int totalSenators;
+	private int progressSize = 100;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -168,16 +172,15 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		final Composite fromClinet = toolkit.createComposite(dateRangeClient);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(fromClinet);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(fromClinet);
-		fromClinet.setEnabled(false);
-		fromClinet.pack();
+		//fromClinet.setEnabled(false);
+		//fromClinet.pack();
 		
 		final Label fromLabel = toolkit.createLabel(fromClinet, "From:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
-		fromDate = new DateTime(fromClinet, SWT.DATE | SWT.BORDER | SWT.DROP_DOWN | SWT.WRAP);
+		fromDate = new DateTime(fromClinet, SWT.DATE | SWT.DROP_DOWN);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
-		//fromDate.setBackgroundMode(mode);
 		
 		fromDate.addListener(SWT.Selection, new Listener()
 		{
@@ -208,8 +211,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		final Composite toClient = toolkit.createComposite(dateRangeClient);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,0).applyTo(toClient);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(toClient);
-		toClient.setEnabled(false);
-		toClient.pack();
+		//toClient.setEnabled(false);
+		//toClient.pack();
 		
 		final Label toLabel = toolkit.createLabel(toClient, "To:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
@@ -244,7 +247,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			}
 		});
 		
-		//NlputilsFormComposite.createEmptyRow(toolkit, group);
+		NlputilsFormComposite.createEmptyRow(toolkit, group);
 		
 		limitRecords = toolkit.createButton(group, "Limit Records per Senator", SWT.CHECK);
 		limitRecords.setBounds(10, 10, 10, 10);
@@ -357,14 +360,22 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				congresses = tempCongress.toArray(new String[0]);
 				congressYears = tempCongressYears.toArray(new String[0]);
 				try {
-					allSenators = AvailableRecords.getAllSenators(congresses);
+					int count = 0;
+					HashMap<String, String> tempSenators = AvailableRecords.getAllSenators(congresses);
+					allSenators =  new String[tempSenators.size()];
+					for(String oldSenatorDet : tempSenators.keySet()) {
+						allSenators[count++] = tempSenators.get(oldSenatorDet);
+					}
+					senators = tempSenators;
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
 				// Async callback to access UI elements 
 				Display.getDefault().asyncExec(new Runnable() {
-				      @Override
-				      public void run() {	
+
+					@Override
+				      public void run() {
+				    	  totalSenators = allSenators.length + 5;
 				    	  cmbSenator.setItems(allSenators);
 				    	  cmbSenator.add("All Senators", 0);
 				    	  cmbSenator.add("All Democrats", 1);
@@ -395,7 +406,15 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						cmbSenator.select(0);
 					}
 					else {
-						cmbSenator.setItems(AvailableRecords.getSenators(selectedCongress));
+						int count = 0;
+						HashMap<String, String> tempSenators = AvailableRecords.getSenators(selectedCongress);
+						String[] availableSenators = new String[tempSenators.size()];
+						for(String oldSenatorDet : tempSenators.keySet()) {
+							availableSenators[count++] = tempSenators.get(oldSenatorDet);
+						}
+						senators = tempSenators;
+						
+						cmbSenator.setItems(availableSenators);
 						cmbSenator.add("All Senators", 0);
 						cmbSenator.add("All Democrats", 1);
 						cmbSenator.add("All Republicans", 2);
@@ -428,17 +447,12 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			public void widgetSelected(SelectionEvent e) {
 				if (dateRange.getSelection()) {					
 					dateRangeClient.setEnabled(true);
-					fromClinet.setEnabled(true);
-					toClient.setEnabled(true);
 					fromLabel.setEnabled(true);
 					fromDate.setEnabled(true);
 					toLabel.setEnabled(true);
 					toDate.setEnabled(true);
-					
 				} else {					
 					dateRangeClient.setEnabled(false);
-					fromClinet.setEnabled(false);
-					toClient.setEnabled(false);
 					fromLabel.setEnabled(false);
 					fromDate.setEnabled(false);
 					toLabel.setEnabled(false);
@@ -500,8 +514,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null, form);
-						monitor.beginTask("Running Senate Crawler..." , 100);						
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), null,null, form);						
 						Display.getDefault().syncExec(new Runnable() {
 							
 							@Override
@@ -511,7 +524,17 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								} else {
 									congressNum = congresses[cmbCongress.getSelectionIndex()];	
 								}
-								senatorDetails = cmbSenator.getText();
+								if(!cmbSenator.getText().contains("All")) {
+									for(String senator : senators.keySet()) {
+										if(senators.get(senator) == cmbSenator.getText()) {
+											senatorDetails = senator;
+											break;
+										}
+									}
+								} else {
+									senatorDetails = cmbSenator.getText();
+								}
+								
 								if (dateRange.getSelection()) {
 									dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
 									dateTo = (toDate.getMonth()+1)+"/"+toDate.getDay()+"/"+toDate.getYear();
@@ -531,6 +554,17 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 							}
 						});
 						
+						if(senatorDetails.contains("All") && congressNum.equals("-1")) { // all senators and all congresses
+							progressSize = (totalSenators * congresses.length)+50;
+						} else if(congressNum.equals("-1")) {
+							progressSize = (30 * congresses.length) + 50;
+						} else {
+							progressSize +=50;
+						}
+					
+						monitor.beginTask("Running Senate Crawler..." , progressSize);
+						
+						
 						final ArrayList<Integer> allCongresses = new ArrayList<Integer>();
 						for(String s: congresses) {
 							if(!s.contains("All"))
@@ -538,24 +572,24 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						}
 							
 						if(monitor.isCanceled()) 
-							handledCancelRequest("Cancelled");
+							return handledCancelRequest("Cancelled");
 						try {
 							monitor.subTask("Initializing");
-							monitor.worked(5);
+							monitor.worked(10);
 							if(monitor.isCanceled()) 
-								handledCancelRequest("Cancelled");
-							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor);
+								return handledCancelRequest("Cancelled");
+							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30, senators);
 							if(monitor.isCanceled()) 
-								handledCancelRequest("Cancelled");
-							monitor.worked(5);
+								return handledCancelRequest("Cancelled");
+							monitor.worked(10);
 														
 							monitor.subTask("Crawling");
 							if(monitor.isCanceled()) 
-								handledCancelRequest("Cancelled");
+								return handledCancelRequest("Cancelled");
 							sc.crawl();
 							if(monitor.isCanceled()) 
-								handledCancelRequest("Cancelled");
-							monitor.worked(50);
+								return handledCancelRequest("Cancelled");
+							monitor.worked(10);
 						} catch (NumberFormatException e) {						
 							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						} catch (IOException e) {							
