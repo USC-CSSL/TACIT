@@ -436,7 +436,7 @@ public class WeightedWordCountView extends ViewPart implements
 								getViewSite(), "Word count analysis completed",
 								IStatus.OK, form);
 						monitor.subTask("Cleaning Preprocessed Files...");
-						preprocessTask.clean();
+						if (isPreprocess) preprocessTask.clean();
 						NlputilsFormComposite
 						.writeConsoleHeaderBegining("<terminated> Word count analysis");
 						monitor.done();
