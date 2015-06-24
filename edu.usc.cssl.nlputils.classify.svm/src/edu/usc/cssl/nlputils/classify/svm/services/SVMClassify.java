@@ -21,7 +21,6 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 
 public class SVMClassify {
-	private String dateString;
 	private String intermediatePath;
 	private File modelFile;
 	private boolean doTfidf;
@@ -32,9 +31,7 @@ public class SVMClassify {
 	private int noOfDocuments = 0;
 	
 	public SVMClassify(String class1Name, String class2Name, String outputFolder){
-		Calendar cal = Calendar.getInstance();
-		this.dateString = ""+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE)+"-"+cal.get(Calendar.YEAR);
-		this.intermediatePath = outputFolder+System.getProperty("file.separator")+class1Name+"_"+class2Name+"_"+dateString+"-"+System.currentTimeMillis();
+		this.intermediatePath = outputFolder+System.getProperty("file.separator")+"SVM_Classification";
 	}
 	
 	public void buildDfMap(File inputFile) throws IOException{
@@ -217,7 +214,7 @@ public class SVMClassify {
 			bw.newLine();
 		}
 		ConsoleView.printlInConsoleln("Total number of documents - "+noOfDocuments+". Total unique features - "+featureMapIndex);
-		ConsoleView.printlInConsoleln("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
+		//ConsoleView.printlInConsoleln("Finished building SVM-format training file - "+trainFile.getAbsolutePath());
 		bw.close();
 		
 		String[] train_arguments;
@@ -233,7 +230,7 @@ public class SVMClassify {
 		double[] result  = SVMTrain.main(train_arguments);
 		double crossValResult = result[0];
 		double pvalue = result[1];
-		ConsoleView.printlInConsoleln("Model file created - "+modelFile.getAbsolutePath());
+		//ConsoleView.printlInConsoleln("Model file created - "+modelFile.getAbsolutePath());
 		
 		// Saving the feature map
 		File hashmap = new File(intermediatePath+"_"+kVal+".hashmap");
@@ -241,7 +238,7 @@ public class SVMClassify {
 		oos.writeObject(featureMap);
 		oos.flush();
 		oos.close();
-		ConsoleView.printlInConsoleln("Feature Map saved - "+hashmap.getAbsolutePath());
+		//ConsoleView.printlInConsoleln("Feature Map saved - "+hashmap.getAbsolutePath());
 		
 		
 		HashMap<Integer,String> reverseMap = new HashMap<Integer,String>();
@@ -308,9 +305,9 @@ public class SVMClassify {
 			bw.write("-1 "+BowToTestString(fileToBow(file)));
 			bw.newLine();
 		}
-		ConsoleView.printlInConsoleln("Finished building SVM-format test file - "+testFile.getAbsolutePath());
+		//ConsoleView.printlInConsoleln("Finished building SVM-format test file - "+testFile.getAbsolutePath());
 		bw.close();
-		ConsoleView.printlInConsoleln("Model file loaded - "+modelFile.getAbsolutePath());
+		//ConsoleView.printlInConsoleln("Model file loaded - "+modelFile.getAbsolutePath());
 		String[] predict_arguments = new String[3];
 		predict_arguments[0] = testFile.getAbsolutePath();
 		predict_arguments[1] = modelFile.getAbsolutePath();
@@ -321,7 +318,7 @@ public class SVMClassify {
 		BinomialTest btest = new BinomialTest();
 		double p =0.5;
 		double pvalue = btest.binomialTest(total, correct, p, AlternativeHypothesis.TWO_SIDED);
-		ConsoleView.printlInConsoleln("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
+		//ConsoleView.printlInConsoleln("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
 		ConsoleView.printlInConsoleln("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
 		NumberFormat nf = NumberFormat.getInstance();

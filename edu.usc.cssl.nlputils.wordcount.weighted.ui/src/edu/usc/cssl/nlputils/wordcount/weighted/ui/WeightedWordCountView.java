@@ -43,6 +43,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.nlputils.common.Preprocess;
 import edu.uc.cssl.nlputils.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
+import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
@@ -170,7 +171,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 		stopWordPathEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
 		stopWordPathEnabled.setEnabled(false);
-		stopWordPathEnabled.setSelection(true);
+		stopWordPathEnabled.setSelection(false);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(stopWordPathEnabled);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
@@ -338,6 +339,8 @@ public class WeightedWordCountView extends ViewPart implements
 			}
 
 			public void run() {
+				NlputilsFormComposite
+				.writeConsoleHeaderBegining("Word count analysis");
 				final String stopWordPath = CommonUiActivator.getDefault()
 						.getPreferenceStore()
 						.getString(IPreprocessorSettingsConstant.STOP_PATH);
@@ -424,13 +427,18 @@ public class WeightedWordCountView extends ViewPart implements
 									dictionaryFiles, stopWordPath, outputPath,
 									"", true, isLiwcStemming, isSnowBall,
 									isSpss, isWdist, isStemDic, oFile, sFile);
-							monitor.done();
+							
 						} catch (IOException ioe) {
+							
 							ioe.printStackTrace();
 						}
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "Word count analysis completed",
 								IStatus.OK, form);
+						monitor.subTask("Cleaning Preprocessed Files...");
+						preprocessTask.clean();
+						NlputilsFormComposite
+						.writeConsoleHeaderBegining("<terminated> Word count analysis");
 						monitor.done();
 						return Status.OK_STATUS;
 					}

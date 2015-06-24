@@ -169,6 +169,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final SVMClassify svm = new SVMClassify(class1NameStr,
 						class2NameStr, outputPath);
 				final CrossValidator cv = new CrossValidator();
+				NlputilsFormComposite.writeConsoleHeaderBegining("SVM classification started  ");
 				job = new Job("Classifier Job") {
 					protected IStatus run(IProgressMonitor monitor) {
 						NlputilsFormComposite.setConsoleViewInFocus();
@@ -200,12 +201,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 									iter.remove();
 								}
 							}
-							// for (String string : class1Files) {
-							// if ((new File(string)).isDirectory() ||
-							// string.contains("DS_Store")){
-							// class1Files.remove(string);
-							// }
-							// }
 							class1FilesL = new File[class1Files.size()];
 							for (int i = 0; i < class1Files.size(); i++) {
 								class1FilesL[i] = new File(class1Files.get(i));
@@ -219,12 +214,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 									iter.remove();
 								}
 							}
-							// for (String string : class2Files) {
-							// if ((new File(string)).isDirectory() ||
-							// string.contains("DS_Store")){
-							// class2Files.remove(string);
-							// }
-							// }
 							class2FilesL = new File[class2Files.size()];
 							for (int i = 0; i < class2Files.size(); i++) {
 								class2FilesL[i] = new File(class2Files.get(i));
@@ -236,7 +225,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							cv.doCross(svm, class1NameStr, class1FilesL,
 									class2NameStr, class2FilesL, kValueInt,
-									featureFile, monitor);
+									featureFile, outputPath, monitor);
 							// monitor.worked(5);
 							if (ppValue && preprocessor.doCleanUp()) {
 								preprocessor.clean();
@@ -246,14 +235,17 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							monitor.worked(2);
 						} catch (NumberFormatException e) {
+							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> SVM classification ");
 							e.printStackTrace();
 						} catch (IOException e) {
+							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> SVM classification ");
 							e.printStackTrace();
 						}
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "SVM analysis completed",
 								IStatus.OK, form);
+						NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> SVM classification ");
 						return Status.OK_STATUS;
 					}
 				};

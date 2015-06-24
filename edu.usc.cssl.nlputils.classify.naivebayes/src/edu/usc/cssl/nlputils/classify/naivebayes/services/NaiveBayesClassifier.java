@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 
 import bsh.EvalError;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 
 public class NaiveBayesClassifier {
 	private StringBuilder readMe = new StringBuilder();
@@ -97,7 +98,8 @@ public class NaiveBayesClassifier {
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
 		ConsoleView.printlInConsoleln("\nCreated classifier output file " + outputPath+ ".out");
 		System.out.println(result.get(0));
-		writeReadMe(outputPath);
+		TacitUtility.createReadMe(outputPath,"Naive Bayes's");
+		
 		return result.get(0);
 	}
 
@@ -155,7 +157,7 @@ public class NaiveBayesClassifier {
 		bw.close();
 
 		ConsoleView.printlInConsoleln("Created prediction CSV file " + outputPath + "_output.csv");
-		writeReadMe(outputPath);
+		TacitUtility.createReadMe(outputPath,"Naive Bayes's");
 	}
 	
 	public void purgeDirectory(File dir) {
@@ -202,26 +204,6 @@ public class NaiveBayesClassifier {
 		}
 	}
 	
-	public void writeReadMe(String location) {
-		// TODO: check whether this is actually needed
-		File readme = new File(location + "_README.txt");
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
-			String plugV = Platform .getBundle("edu.usc.cssl.nlputils.classify.naivebayes").getHeaders().get("Bundle-Version");
-			String appV = Platform .getBundle("edu.usc.cssl.nlputils.classify.naivebayes").getHeaders().get("Bundle-Version");
-			Date date = new Date();
-			bw.write("Naive Bayes Output\n------------------\n\nApplication Version: "
-					+ appV
-					+ "\nPlugin Version: "
-					+ plugV
-					+ "\nDate: "
-					+ date.toString() + "\n\n");
-			bw.write(readMe.toString());
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public void deleteTempDirectories(ArrayList<String> trainingDataPaths) {
 		for(String s : trainingDataPaths) {

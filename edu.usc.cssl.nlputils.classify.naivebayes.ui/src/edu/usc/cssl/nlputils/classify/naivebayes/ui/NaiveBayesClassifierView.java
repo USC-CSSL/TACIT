@@ -493,6 +493,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				final NaiveBayesClassifier nbc = new NaiveBayesClassifier();
 				final CrossValidator cv = new CrossValidator();
 
+				NlputilsFormComposite
+						.writeConsoleHeaderBegining("Naive Bayes Classification started ");
+
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), null,
 						null, form);
 				job = new Job("Naive Bayes Classification") {
@@ -655,22 +658,36 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							if (!isPreprocessEnabled)
 								nbc.deleteTempDirectories(trainingDataPaths);
 							monitor.worked(10);
-							if (monitor.isCanceled())
+							if (monitor.isCanceled()) {
 								handledCancelRequest("Cancelled");
+								NlputilsFormComposite
+										.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+							}
 						} catch (IOException e) {
+							NlputilsFormComposite
+									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 							return handleException(monitor, e,
 									"Naive Bayes Classifier failed. Provide valid data");
 						} catch (EvalError e) {
+							NlputilsFormComposite
+									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 							return handleException(monitor, e,
 									"Naive Bayes Classifier failed. Provide valid data");
+
 						}
-						if (monitor.isCanceled())
+						if (monitor.isCanceled()) {
 							handledCancelRequest("Cancelled");
+							NlputilsFormComposite
+									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+						}
 						monitor.worked(100);
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(),
-								"Naive Bayes analysis completed", IStatus.OK, form);
+								"Naive Bayes analysis completed", IStatus.OK,
+								form);
+						NlputilsFormComposite
+								.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 						return Status.OK_STATUS;
 					}
 

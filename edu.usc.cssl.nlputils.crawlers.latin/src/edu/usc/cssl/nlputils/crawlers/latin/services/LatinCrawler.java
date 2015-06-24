@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -31,7 +32,7 @@ public class LatinCrawler {
 	String outputDir;
 	private Map<String, String> authorNames;
 	Set<String> skipBooks;
-	private SubProgressMonitor monitor;
+	private IProgressMonitor monitor;
 	private int work;
 
 	public LatinCrawler() {
@@ -74,8 +75,8 @@ public class LatinCrawler {
 		Document doc = null;
 		try {
 			monitor.subTask("Retrieving content from " +url);
+			ConsoleView.printlInConsoleln("Connecting "+url);
 			doc = Jsoup.connect(url).timeout(10 * 1000).get();
-		    ConsoleView.printlInConsole("Connecting "+url);
 		} catch (IOException e) {
 			// Error handling->will do later
 		}
@@ -88,28 +89,28 @@ public class LatinCrawler {
 	 * 
 	 * @throws IOException
 	 */
-	public void crawl(SubProgressMonitor monitor, int work) throws IOException {
-		this.monitor = monitor;
-		this.work = work;
-		monitor.beginTask("crawling Author list...", work);
-		getAllBooks();
-		writeReadMe(this.outputDir);
-		this.monitor.done();
-	}
-
-	private void getAllBooks() throws IOException {
-		Set<String> authors = (Set<String>) authorNames.keySet();
-		int singleWork = work / authors.size();
-		for (String name : authors) {
-			monitor.subTask("Crawling " + name);
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-			getBooksByAuthor(name, authorNames.get(name));
-			monitor.worked(singleWork);
-		}
-		return;
-	}
+//	public void crawl(SubProgressMonitor monitor, int work) throws IOException {
+//		this.monitor = monitor;
+//		this.work = work;
+//		monitor.beginTask("crawling Author list...", work);
+//		getAllBooks();
+//		writeReadMe(this.outputDir);
+//		this.monitor.done();
+//	}
+//
+//	private void getAllBooks() throws IOException {
+//		Set<String> authors = (Set<String>) authorNames.keySet();
+//		int singleWork = work / authors.size();
+//		for (String name : authors) {
+//			monitor.subTask("Crawling " + name);
+//			if (monitor.isCanceled()) {
+//				throw new OperationCanceledException();
+//			}
+//			getBooksByAuthor(name, authorNames.get(name));
+//			monitor.worked(singleWork);
+//		}
+//		return;
+//	}
 
 	/**
 	 * 
@@ -117,12 +118,13 @@ public class LatinCrawler {
 	 *            : name of the author
 	 * @param url
 	 *            : url of author's page which lists all his books
+	 * @param monitor2 
 	 * @throws IOException
 	 */
-	public void getBooksByAuthor(String author, String url) throws IOException {
+	public void getBooksByAuthor(String author, String url, IProgressMonitor monitor2) throws IOException {
 		Assert.isNotNull(author, "Parameter author can't be empty");
 		Assert.isNotNull(author, "Parameter url can't be empty");
-
+       this.monitor = monitor2;
 		String authDir = outputDir + File.separator + author;
 		createIfMissing(authDir);
 
@@ -138,6 +140,7 @@ public class LatinCrawler {
 				myBooks.put(url, new BookData(author, url, authDir));
 			}
 		} catch (Exception e) {
+			System.out.println(e);
 		}
 
 		for (Map.Entry<String, BookData> entry : myBooks.entrySet()) {
@@ -264,20 +267,6 @@ public class LatinCrawler {
 			bookList.put(bookUrl, book);
 		}
 		return true;
-	}
-
-	private String getBookNameFromBook(Document bookDoc, String defBookName) {
-
-		String bookName = defBookName;
-		if (bookDoc.select("p.pagehead") != null
-				&& bookDoc.select("p.pagehead").size() > 0)
-			bookName = bookDoc.select("p.pagehead").last().text();
-		else if (bookDoc.select("h1") != null
-				&& bookDoc.select("h1").size() > 0)
-			bookName = bookDoc.select("h1").first().text();
-		else if (bookDoc.select("title") != null)
-			bookName = bookDoc.select("title").first().text();
-		return bookName;
 	}
 
 	/**
@@ -571,10 +560,11 @@ public class LatinCrawler {
 			bookName = bookName.replaceAll(
 					"[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
 			createIfMissing(bookDir);
+			File fName = new File(bookDir
+					+ System.getProperty("file.separator") + bookName
+					+ ".txt");
 			csvWriter = new BufferedWriter(
-					new FileWriter(new File(bookDir
-							+ System.getProperty("file.separator") + bookName
-							+ ".txt")));
+					new FileWriter(fName));
 			Elements content = doc.getElementsByTag("p");
 			if (content.size() == 0) {
 				if (csvWriter != null)
@@ -585,6 +575,7 @@ public class LatinCrawler {
 			for (Element c : content) {
 				csvWriter.write(c.text() + "\n");
 			}
+			ConsoleView.printlInConsoleln("Writing Content at"+fName.getAbsolutePath());
 		} catch (Exception e) {
 			getBookContent2(bookUri, bookName, bookDir);
 		} finally {
@@ -597,11 +588,13 @@ public class LatinCrawler {
 			String authorDir) throws IOException {
 		BufferedWriter csvWriter = null;
 		try {
-			csvWriter = new BufferedWriter(new FileWriter(new File(authorDir
-					+ System.getProperty("file.separator") + bookDir + ".txt")));
+			File fName = new File(authorDir
+					+ System.getProperty("file.separator") + bookDir + ".txt");
+			csvWriter = new BufferedWriter(new FileWriter(fName));
 			Document doc = Jsoup.parse(new URL(bookUri).openStream(), "UTF-16",
 					bookUri);
 			Elements content = doc.getElementsByTag("p");
+			ConsoleView.printlInConsoleln("Writing Contents at " +fName.getAbsolutePath());
 			for (Element c : content) {
 				csvWriter.write(c.text() + "\n");
 			}

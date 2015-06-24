@@ -235,6 +235,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						.getText();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final String seedFilePath = seedFileText.getText();
+				NlputilsFormComposite.writeConsoleHeaderBegining("Topic Modelling  started ");
 				job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -259,6 +260,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 										.doPreprocessing(inputFiles, "");
 
 							} catch (IOException e) {
+								NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 								e.printStackTrace();
 							}
 							monitor.worked(10);
@@ -275,8 +277,9 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								.println("ZLabel LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
-
+						NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 						if (monitor.isCanceled()) {
+							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 							return Status.CANCEL_STATUS;
 						}
 						monitor.subTask("Cleaning Preprocessed Files...");
@@ -287,7 +290,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								getViewSite(),
 								"z-Label LDA analysis completed", IStatus.OK, form);
 						;
-
+						NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 						return Status.OK_STATUS;
 					}
 				};

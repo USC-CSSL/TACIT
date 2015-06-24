@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 
 
 public class LdaAnalysis {
@@ -85,6 +86,7 @@ public class LdaAnalysis {
 		monitor.worked(5);
 		
 		deleteFiles(outputPath);
+		TacitUtility.createReadMe(outputPath, "LDA Analysis");
 		monitor.worked(5);
 	}
 	

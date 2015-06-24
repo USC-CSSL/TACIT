@@ -209,6 +209,8 @@ public class SupremeCrawlerView extends ViewPart implements
 						ISupremeCrawlerUIConstants.CRAWLER_URL);
 				sc.setDownloadAudio(downloadAudio.getSelection());
 				sc.setTruncate(truncateAudio.getSelection());
+				NlputilsFormComposite
+						.writeConsoleHeaderBegining("Crawling started  ");
 
 				job = new Job("Crawling...") {
 					@Override
@@ -219,6 +221,8 @@ public class SupremeCrawlerView extends ViewPart implements
 						monitor.beginTask("NLPUtils started crawling...", 100);
 
 						if (monitor.isCanceled()) {
+							NlputilsFormComposite
+									.writeConsoleHeaderBegining("<terminated> Crawling  ");
 							return Status.CANCEL_STATUS;
 						}
 
@@ -245,16 +249,20 @@ public class SupremeCrawlerView extends ViewPart implements
 
 								}
 							});
+							NlputilsFormComposite
+									.writeConsoleHeaderBegining("<terminated> Crawling  ");
 							NlputilsFormComposite.updateStatusMessage(
 									getViewSite(), "Crawling is stopped ",
 									IStatus.INFO, form);
 							return Status.CANCEL_STATUS;
 						}
+						NlputilsFormComposite
+								.writeConsoleHeaderBegining("<terminated> Crawling  ");
 						ConsoleView
 								.printlInConsoleln("Crawling is sucessfully completed");
-						NlputilsFormComposite
-								.updateStatusMessage(getViewSite(),
-										"Crawling completed", IStatus.OK, form);
+						NlputilsFormComposite.updateStatusMessage(
+								getViewSite(), "Crawling completed",
+								IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -263,8 +271,6 @@ public class SupremeCrawlerView extends ViewPart implements
 
 					job.schedule();
 
-				} else {
-
 				}
 			};
 		});
@@ -272,7 +278,8 @@ public class SupremeCrawlerView extends ViewPart implements
 
 	protected boolean canProceedCrawl() {
 		boolean canProceed = true;
-		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null,
+				form);
 		form.getMessageManager().removeMessage("location");
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),

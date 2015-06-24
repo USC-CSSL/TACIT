@@ -186,8 +186,8 @@ public class StandardWordCountView extends ViewPart implements
 				final String stopWordPath = CommonUiActivator.getDefault()
 						.getPreferenceStore()
 						.getString(IPreprocessorSettingsConstant.STOP_PATH);
-				// lindapulickal: handling case where user types in a file
-				// without extension
+				NlputilsFormComposite
+				.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "standard_wordcount";
 				
@@ -219,6 +219,8 @@ public class StandardWordCountView extends ViewPart implements
 					return Status.CANCEL_STATUS;
 				}
 				NlputilsFormComposite.updateStatusMessage(getViewSite(), "Word count analysis completed", IStatus.OK, form);
+				NlputilsFormComposite
+				.writeConsoleHeaderBegining("<terminated> Word count analysis");
 				return Status.OK_STATUS;
 					}
 				};

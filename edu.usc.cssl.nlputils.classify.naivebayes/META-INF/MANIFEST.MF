@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.nlputils.classify.naivebayes.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- edu.usc.cssl.nlputils.common.ui
+ edu.usc.cssl.nlputils.common.ui,
+ edu.usc.cssl.nlputils.common;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: bsh,

@@ -17,6 +17,7 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
+import edu.usc.nlputils.common.TacitUtility;
 
 public class KmeansClusterAnalysis {
 	private static int[] doClustering(List<File> inputFiles, int numOfClusters) {
@@ -120,6 +121,7 @@ public class KmeansClusterAnalysis {
 				ConsoleView.printlInConsoleln("");
 			}
 			fw.close();
+			TacitUtility.createReadMe(fOutputDir, "K Means Clustering");
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to files" + e);
 		}
