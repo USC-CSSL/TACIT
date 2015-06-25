@@ -66,7 +66,7 @@ public class CrossValidator {
 				testFiles2[num]=class2Files[currIndex];
 				//ConsoleView.writeInConsole(files1[currIndex]);
 				currIndex++;
-				if(currIndex >= numFiles1)
+				if(currIndex >= numFiles2)
 					currIndex=0;
 			}
 			
