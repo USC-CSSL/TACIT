@@ -151,13 +151,15 @@ public class Preprocess {
 		int adder = files.length/10;
 		int breakPoint = adder;
 		int statusPoint = 0;
-		ConsoleView.printlInConsoleln("Preprocessing Status: " + statusPoint*10+"% completed");
+		ConsoleView.printlInConsoleln("Preprocessing Status: 0% completed");
 		for (File f : files) {
 			currentCount++;
 			if (currentCount >= breakPoint){
-				statusPoint++;
-				ConsoleView.printlInConsoleln("Preprocessing Status: " + statusPoint*10+"% completed");
-				breakPoint = breakPoint+adder;
+				if (statusPoint != 9){ 
+					statusPoint++;
+					ConsoleView.printlInConsoleln("Preprocessing Status: " + statusPoint*10+"% completed");
+					breakPoint = breakPoint+adder;
+				}
 			}
 			if (f == null)
 				break;
@@ -213,6 +215,7 @@ public class Preprocess {
 			br.close();
 			bw.close();
 		}
+		ConsoleView.printlInConsoleln("Preprocessing Status: 100% completed");
 		//ConsoleView.printlInConsoleln("Preprocessing Status: 100% completed");
 		ConsoleView.printlInConsoleln("Preprocessed files stored in "
 				+ preprocessingParentFolder);

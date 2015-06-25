@@ -631,7 +631,7 @@ public class WordCountApi {
 					if (phraseDetect)
 						currentWord = currPhrase;
 
-					if (stemDictionary) {
+					if (stemDictionary && !doLiwcStemming) {
 						currentWord = currentWord.replace("*", "");
 						stemmer.setCurrent(currentWord);
 						String stemmedWord = "";
