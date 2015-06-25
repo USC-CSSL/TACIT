@@ -26,6 +26,8 @@ public class CrawlerJob {
 	private String baseUrl;
 	private String url;
 	private IProgressMonitor monitor;
+	private FileWriter fileWriter;
+	private BufferedWriter bw;
 
 	public CrawlerJob(String filter, String outputDir, String crawlUrl,
 			IProgressMonitor monitor, boolean downloadAudio, boolean truncate) {
@@ -36,6 +38,47 @@ public class CrawlerJob {
 		this.downloadAudio = downloadAudio;
 		this.baseUrl = crawlUrl;
 		this.monitor = monitor;
+		openSummaryFile();
+	}
+
+	private void openSummaryFile() {
+		try {
+			fileWriter = new FileWriter(this.outputDir + "/" + "summary_"
+					+ System.currentTimeMillis() + ".csv");
+			bw = new BufferedWriter(fileWriter);
+
+			addContentsToSummary("Case", "Docket No", "Argued", "Decided",
+					"Majority Author", "Vote", "File Type","File name");
+		} catch (IOException e) {
+		}
+
+	}
+
+	private void addContentsToSummary(String... contents) {
+
+		try {
+			for (String content : contents) {
+				if (content.contains(",")) {
+					content = content.replace(",", " ");
+				}
+				bw.write(content);
+				bw.write(",");
+
+			}
+			bw.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void summaryFileClose() {
+		try {
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void run(String url) throws IOException {
@@ -65,8 +108,10 @@ public class CrawlerJob {
 			// ConsoleView.writeInConsole(row.select("td").get(1).text().trim());
 			String date = row.select("td").get(2).text().trim();
 			// Skip if no argument date
-			if (date.equals("")){
-				ConsoleView.printlInConsoleln("No argument date found for "+row.select("td").get(1).text().trim() +". Hence it will not be crawled ");
+			if (date.equals("")) {
+				ConsoleView.printlInConsoleln("No argument date found for "
+						+ row.select("td").get(1).text().trim()
+						+ ". Hence it will not be crawled ");
 				continue;
 			}
 			String filename = row.select("td").get(1).text().trim() + "_"
@@ -76,7 +121,29 @@ public class CrawlerJob {
 
 			// Fixing the unhandled exception without cascading.
 			try {
-				getFiles(contenturl, filename);
+				String fileName = getFiles(contenturl, filename);
+				if (fileName.length() > 1){
+					if(fileName.contains(",")){
+						addContentsToSummary(row.select("td").get(0).text(), row
+								.select("td").get(1).text(), row.select("td")
+								.get(2).text(), row.select("td").get(3).text(), row
+								.select("td").get(4).text(), row.select("td")
+								.get(5).text(), "Transcript",fileName.split(",")[0]);
+						addContentsToSummary(row.select("td").get(0).text(), row
+								.select("td").get(1).text(), row.select("td")
+								.get(2).text(), row.select("td").get(3).text(), row
+								.select("td").get(4).text(), row.select("td")
+								.get(5).text(), "Mp3",fileName.split(",")[1]);
+					}
+					else{
+						addContentsToSummary(row.select("td").get(0).text(), row
+								.select("td").get(1).text(), row.select("td")
+								.get(2).text(), row.select("td").get(3).text(), row
+								.select("td").get(4).text(), row.select("td")
+								.get(5).text(), "Transcript",fileName);
+					}
+				}
+					
 			} catch (IOException e) {
 				ConsoleView.printlInConsoleln("Error Accessing the URL "
 						+ contenturl);
@@ -86,7 +153,7 @@ public class CrawlerJob {
 		}
 	}
 
-	private void getFiles(String contenturl, String filename)
+	private String getFiles(String contenturl, String filename)
 			throws IOException {
 		File trans = new File(this.outputDir + "/" + filename
 				+ "-transcript.txt");
@@ -99,7 +166,7 @@ public class CrawlerJob {
 			ConsoleView.printlInConsoleln("No data. Skipping page "
 					+ contenturl);
 			bw.close();
-			return;
+			return "";
 		}
 		if (monitor.isCanceled()) {
 			bw.close();
@@ -128,18 +195,22 @@ public class CrawlerJob {
 		if (FileUtils.sizeOf(trans) <= 0) {
 			trans.delete();
 		}
-
+		String dwn = "";
 		if (this.downloadAudio) {
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 
 			}
-			downloadAudioFilesFromWebPage(filename, doc);
+			dwn = downloadAudioFilesFromWebPage(filename, doc);
 		}
+		if (dwn.length() > 1) {
+			return outputDir + "/" + filename + "-transcript.txt" + "," + dwn;
+		}
+		return outputDir + "/" + filename + "-transcript.txt";
 
 	}
 
-	public void downloadAudioFilesFromWebPage(String filename, Document doc)
+	public String downloadAudioFilesFromWebPage(String filename, Document doc)
 			throws IOException {
 		// "-argument.mp3"
 		Elements links = doc.select(".audio");
@@ -149,13 +220,14 @@ public class CrawlerJob {
 					throw new OperationCanceledException();
 
 				}
-				downloadTranscriptMp3File(filename, mp3);
-				break; // Once mp3 found, no need to continue for loop
+				return downloadTranscriptMp3File(filename, mp3);
+				// Once mp3 found, no need to continue for loop
 			}
 		}
+		return "";
 	}
 
-	private void downloadTranscriptMp3File(String filename, Element mp3)
+	private String downloadTranscriptMp3File(String filename, Element mp3)
 			throws IOException {
 		ConsoleView.printlInConsoleln("Downloading " + baseUrl
 				+ mp3.attr("href"));
@@ -169,6 +241,7 @@ public class CrawlerJob {
 		if (FileUtils.sizeOf(file) <= 0) {
 			file.delete();
 		}
+		return file.getAbsolutePath();
 	}
 
 	protected Response downloadAudio(Element mp3) throws IOException {

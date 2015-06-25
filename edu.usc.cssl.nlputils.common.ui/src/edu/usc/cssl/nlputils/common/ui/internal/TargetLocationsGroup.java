@@ -298,28 +298,27 @@ public class TargetLocationsGroup {
 	}
 
 	private String updateLocationTree(String[] path) {
-
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}
 		if (!path.equals("root")) {
 			if (checkExistensence(path)) {
 				return "The selected File is already added to the location";
-			} else {
-				String sizeMessage = sizeCheck(path);
-				if (!sizeMessage.equals("")) {
-					return "The selected file(s) " + sizeMessage + " is empty";
-				}
-
-			}
+			} 
 			for (String file : path) {
 				if (file.contains(".DS_Store")) continue;
 				final TreeParent node = new TreeParent(file);
 				if (new File(file).isDirectory()) {
 					if(FileUtils.sizeOfDirectory(new File(file)) <= 0){
-						return "The selected Folder " + file + " is empty";
+						return "The selected Folder " + file + " is empty . Hence, it is not added to the list";
 					}
 					processSubFiles(node);
+				}
+				else {
+					if(!sizeCheck(new String[]{file}).equals("")){
+						ConsoleView.printlInConsoleln("File "+file+" is empty. Hence, it is not added to the list");
+						continue;
+					}
 				}
 				this.locationPaths.add(node);
 				this.fTreeViewer.refresh();
@@ -384,7 +383,8 @@ public class TargetLocationsGroup {
 				node.addChildren(subFolder);
 			}
 			else{
-				ConsoleView.printlInConsoleln(input.getName() + " is ignored since it is empty ");
+				ConsoleView.printlInConsoleln("File "+input.getAbsolutePath()+" is empty. Hence, it is not added to the list");
+				continue;
 			}
 		}
 

@@ -455,7 +455,7 @@ public class WordCountApi {
 
 	public void buildSpssFile(File spssFile) throws IOException {
 		StringBuilder titles = new StringBuilder();
-		titles.append("Filename A(40) WC WPS Sixltr Dic ");
+		titles.append("Filename WC WPS Sixltr Dic ");
 		for (String title : categories.values()) {
 			titles.append(title + " ");
 		}
@@ -492,7 +492,7 @@ public class WordCountApi {
 		bw.write(row.toString());
 		bw.newLine();
 		bw.close();
-		ConsoleView.printlInConsole("SPSS File Updated Successfully");
+		ConsoleView.printlInConsole("DAT File Updated Successfully");
 	}
 
 	public void writeToFile(File oFile, String docName, int totalCount,

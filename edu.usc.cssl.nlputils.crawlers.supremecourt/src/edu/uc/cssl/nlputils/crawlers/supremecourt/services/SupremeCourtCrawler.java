@@ -77,6 +77,7 @@ public class SupremeCourtCrawler {
 		      monitor.worked(1);
 		     
 		    }
+ 		crawler.summaryFileClose();
 		 
 		    // This will make the executor accept no new threads
 		    // and finish all existing threads in the queue
