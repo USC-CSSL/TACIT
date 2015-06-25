@@ -593,6 +593,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						} catch (IOException e) {							
 							return handleException(monitor, e, "Crawling failed. Provide valid data");
+						} catch(Exception e) {
+							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						}
 						monitor.worked(100);
 						monitor.done();
