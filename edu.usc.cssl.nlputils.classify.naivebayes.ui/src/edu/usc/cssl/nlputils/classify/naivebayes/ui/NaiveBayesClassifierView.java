@@ -330,20 +330,21 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		Group group = new Group(client, SWT.SHADOW_IN);
 		group.setText("Classification");
 
-		group.setBackground(client.getBackground());
+		//group.setBackground(client.getBackground());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		group.setLayout(layout);
 
-		classificationEnabled = toolkit.createButton(group, "Classify Data",
+		classificationEnabled = new Button(group,
 				SWT.CHECK);
+		classificationEnabled.setText("Classify Data");
 		classificationEnabled.setBounds(10, 10, 10, 10);
 		classificationEnabled.pack();
 
-		NlputilsFormComposite.createEmptyRow(toolkit, group);
+		//NlputilsFormComposite.createEmptyRow(toolkit, group);
 
-		final Composite sectionClient = toolkit.createComposite(group);
+		final Composite sectionClient = new Composite(group, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(sectionClient);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
@@ -352,11 +353,11 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		sectionClient.pack();
 
 		// Create a row that holds the textbox and browse button
-		final Label inputPathLabel = toolkit.createLabel(sectionClient,
-				"Classification Input Path:", SWT.NONE);
+		final Label inputPathLabel = new Label(sectionClient, SWT.NONE);
+		inputPathLabel.setText("Classification Input Path:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(inputPathLabel);
-		classifyInputText = toolkit.createText(sectionClient, "", SWT.BORDER);
+		classifyInputText = new Text(sectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(classifyInputText);
 		classifyInputText.addKeyListener(new KeyListener() {
@@ -372,8 +373,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						"Classification input path must be a valid diretory location");
 			}
 		});
-		final Button browseBtn1 = toolkit.createButton(sectionClient, "Browse",
+		final Button browseBtn1 = new Button(sectionClient,
 				SWT.PUSH);
+		browseBtn1.setText("Browse");
 		browseBtn1.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -407,17 +409,15 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 				} else {
 					sectionClient.setEnabled(false);
-
 					inputPathLabel.setEnabled(false);
 					classifyInputText.setEnabled(false);
 					browseBtn1.setEnabled(false);
-
 					form.getMessageManager().removeMessage("classifyInput");
 				}
 			}
 		});
 
-		NlputilsFormComposite.createEmptyRow(toolkit, group);
+		//NlputilsFormComposite.createEmptyRow(sectionClient, group);
 	}
 
 	/**
