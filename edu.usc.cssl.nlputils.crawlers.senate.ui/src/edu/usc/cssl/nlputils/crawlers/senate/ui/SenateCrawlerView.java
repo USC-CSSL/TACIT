@@ -350,13 +350,22 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				congresses = tempCongress.toArray(new String[0]);
 				congressYears = tempCongressYears.toArray(new String[0]);
 				try {
-					int count = 0;
+					/*int count = 0;
 					HashMap<String, String> tempSenators = AvailableRecords.getAllSenators(congresses);
 					allSenators =  new String[tempSenators.size()];
 					for(String oldSenatorDet : tempSenators.keySet()) {
-						allSenators[count++] = tempSenators.get(oldSenatorDet);
+						boolean senatorFound = false;
+						for(String s : allSenators) {
+							if(tempSenators.get(oldSenatorDet) == s) {
+								senatorFound = true;
+								break;
+							}
+						}
+						if(!senatorFound)
+							allSenators[count++] = tempSenators.get(oldSenatorDet);
 					}
-					senators = tempSenators;
+					senators = tempSenators;*/
+					allSenators = AvailableRecords.getAllSenators(congresses);
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
@@ -396,15 +405,15 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						cmbSenator.select(0);
 					}
 					else {
-						int count = 0;
+						/*int count = 0;
 						HashMap<String, String> tempSenators = AvailableRecords.getSenators(selectedCongress);
 						String[] availableSenators = new String[tempSenators.size()];
 						for(String oldSenatorDet : tempSenators.keySet()) {
 							availableSenators[count++] = tempSenators.get(oldSenatorDet);
 						}
 						senators = tempSenators;
-						
-						cmbSenator.setItems(availableSenators);
+						*/
+						cmbSenator.setItems(AvailableRecords.getSenators(selectedCongress));
 						cmbSenator.add("All Senators", 0);
 						cmbSenator.add("All Democrats", 1);
 						cmbSenator.add("All Republicans", 2);
@@ -514,7 +523,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								} else {
 									congressNum = congresses[cmbCongress.getSelectionIndex()];	
 								}
-								if(!cmbSenator.getText().contains("All")) {
+								/*if(!cmbSenator.getText().contains("All")) {
 									for(String senator : senators.keySet()) {
 										if(senators.get(senator) == cmbSenator.getText()) {
 											senatorDetails = senator;
@@ -523,8 +532,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 									}
 								} else {
 									senatorDetails = cmbSenator.getText();
-								}
-								
+								}*/
+								senatorDetails = cmbSenator.getText();
 								if (dateRange.getSelection()) {
 									dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
 									dateTo = (toDate.getMonth()+1)+"/"+toDate.getDay()+"/"+toDate.getYear();
@@ -568,7 +577,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 							monitor.worked(10);
 							if(monitor.isCanceled()) 
 								return handledCancelRequest("Cancelled");
-							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30, senators);
+							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30);
 							if(monitor.isCanceled()) 
 								return handledCancelRequest("Cancelled");
 							monitor.worked(10);

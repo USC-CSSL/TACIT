@@ -34,7 +34,9 @@ public class SenateCrawler {
 	IProgressMonitor monitor;
 	String[] senList;
 	int progressSize;
-	private HashMap<String, String> senatorMap;
+	
+	HashMap<String, HashMap<String, String>> congressSenatorMap = AvailableRecords.getCongressSenatorMap(); 
+	HashMap<String, String> senatorDetails = SenatorDetails.getSenatorDetails(); // to populate all senator details
 	
 	public void crawl() throws IOException{
 		if(null != monitor && monitor.isCanceled()) {
@@ -46,7 +48,7 @@ public class SenateCrawler {
 		String dateString = dateFormat.format(date);
 		
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "records_"+dateString+".csv")));
-		csvWriter.write("Congress,Date,Senator,Attributes,Title,File");
+		csvWriter.write("Congress,Date,Senator,Political Affiliation,Attributes,Title,File");
 		csvWriter.newLine();
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
 			if (congressNum != -1) {
@@ -70,6 +72,15 @@ public class SenateCrawler {
 			}
 		} 		
 		else {
+			String politicalAffiliation =  "";
+			if(senText.lastIndexOf('(')!=-1) {
+				String affiliation = senText.substring(senText.lastIndexOf('(')+1, senText.length()-1);
+				if(-1 != affiliation.indexOf('-'))
+					politicalAffiliation = affiliation.split("-")[0];
+				else 
+					politicalAffiliation = senatorDetails.get(senText).split("-")[0];
+			}
+			
 			if (congressNum == -1) { // All congress
 				for (int congress: congresses) {
 					if(null != monitor && monitor.isCanceled()) {
@@ -79,7 +90,8 @@ public class SenateCrawler {
 					if(monitor!=null) 
 						monitor.worked(80/congresses.size());
 					System.out.println("Extracting Records from Congress "+congress+"...");
-					searchSenatorRecords(congress, senText, this.progressSize/congresses.size());
+					String senatorName = congressSenatorMap.get(String.valueOf(congress)).get(senText);
+					searchSenatorRecords(congress, senatorName, this.progressSize/congresses.size(), politicalAffiliation);
 				}
 			} else {
 				if(null != monitor && monitor.isCanceled()) {
@@ -87,7 +99,8 @@ public class SenateCrawler {
 					return;
 				}
 				System.out.println("Extracting Records from Congress "+congressNum+"...");
-				searchSenatorRecords(congressNum, senText, this.progressSize);
+				String senatorName = congressSenatorMap.get(String.valueOf(congressNum)).get(senText);
+				searchSenatorRecords(congressNum, senatorName, this.progressSize, politicalAffiliation);
 			}
 			if(null != monitor && monitor.isCanceled()) {
 				monitor.subTask("Cancelling.. ");
@@ -102,25 +115,33 @@ public class SenateCrawler {
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
 		*/
 		boolean foundSenator = false;
-		for (String senator : senatorMap.keySet()){
-			String senatorNewName = senatorMap.get(senator);
+		for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
+			String senatorName =  senator;
 			if(null != monitor && monitor.isCanceled()) return;
 			//String senator = senItem.text().replace("\u00A0", " ");
 			if (senator.contains("Any Senator"))		// We just need the senator names
 				continue;
 			if (senText.contains("All Republicans")){
-				if (!senatorNewName.contains("(R-"))
+				if (!senatorName.contains("(R-"))
 					continue;
 			}
 			if (senText.contains("All Democrats")){
-				if (!senatorNewName.contains("(D-"))
+				if (!senatorName.contains("(D-"))
 					continue;
 			}
 			if (senText.contains("All Independents")){
-				if (!senatorNewName.contains("(I-"))
+				if (!senatorName.contains("(I-"))
 					continue;
-			}			
-			searchSenatorRecords(congressNum, senator, maxProgressLimit/senatorMap.keySet().size());
+			}
+			String politicalAffiliation =  "";
+			if(senatorName.lastIndexOf('(')!=-1) {
+				String affiliation = senatorName.substring(senatorName.lastIndexOf('(')+1, senatorName.length()-1);
+				if(-1 != affiliation.indexOf('-'))
+					politicalAffiliation = affiliation.split("-")[0];
+				else 
+					politicalAffiliation = senatorDetails.get(senatorName).split("-")[0];
+			}
+			searchSenatorRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), maxProgressLimit/congressSenatorMap.get(String.valueOf(congressNum)).keySet().size(), politicalAffiliation);
 			foundSenator = true;
 		}
 		if(!foundSenator){
@@ -138,7 +159,7 @@ public class SenateCrawler {
 		}			
 	}
 	
-	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize, HashMap<String, String> senators) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
@@ -149,7 +170,6 @@ public class SenateCrawler {
 		this.congresses = allCongresses;
 		this.monitor = monitor;
 		this.progressSize = progressSize;
-		this.senatorMap = senators;
 		
 		System.out.println("Congress num :"+ congressNum);
 		System.out.println("Senator name :"+ senText);
@@ -163,7 +183,7 @@ public class SenateCrawler {
 		}
 	}
 
-	public void searchSenatorRecords(int congress,String senText, int progressSize) throws IOException, NullPointerException{
+	public void searchSenatorRecords(int congress,String senText, int progressSize, String politicalAffiliation) throws IOException, NullPointerException{
 		ConsoleView.printlInConsoleln("Current Senator - "+senText);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
@@ -247,14 +267,13 @@ public class SenateCrawler {
 					shortTitle = title.substring(0, 15).trim().replaceAll("[^\\w\\s]", "");
 				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
 				writeToFile(fileName, contents);
-				csvWriter.write(congress+","+recordDate+","+lastName+","+senatorAttribs+","+title+","+fileName);
+				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+senatorAttribs+","+title+","+fileName);
 				csvWriter.newLine();
 				csvWriter.flush();
 			}
 			
 			tempCount++;
 			tempCount = updateWork(maxDocs, links.size(), progressSize, tempCount);
-			
 		}
 	}
 
