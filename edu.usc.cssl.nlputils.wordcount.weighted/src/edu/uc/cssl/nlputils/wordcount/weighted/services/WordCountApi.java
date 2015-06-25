@@ -105,6 +105,7 @@ public class WordCountApi {
 		this.doSnowballStemming = doSnowBallStemming;
 		this.stemDictionary = stemDictionary;
 
+		if (!this.weighted) this.doLiwcStemming = true;
 		appendLog("Processing...");
 
 		if (stopWordsFile.equals(null) || stopWordsFile.equals(""))
