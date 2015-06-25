@@ -283,7 +283,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
 						monitor.subTask("Cleaning Preprocessed Files...");
-						preprocessTask.clean();
+						if (isPreprocess) preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(
