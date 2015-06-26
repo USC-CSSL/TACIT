@@ -67,18 +67,24 @@ public class SupremeCourtCrawler {
 			}
 		// ExecutorService executor = Executors.newFixedThreadPool(5);
 		 crawler =  new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,monitor,isDownloadAudio(),isTruncate());
+		 try{
  		 for (int i = 0; i <= noOfPages; i++) {
 			  if (monitor.isCanceled()){
 					 throw new OperationCanceledException(); 
 					 
 				}
 		      monitor.subTask("crawling "+url);
+		     
 		      crawler.run(url + "&page=" + i);
 		      monitor.worked(1);
 		     
 		    }
- 		crawler.summaryFileClose();
-		 
+		 }
+		 catch(IOException exc){
+			 crawler.summaryFileClose();
+             throw exc;			 
+		 }
+		 crawler.summaryFileClose();
 		    // This will make the executor accept no new threads
 		    // and finish all existing threads in the queue
 		

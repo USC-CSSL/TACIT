@@ -182,6 +182,9 @@ public class CrawlerJob {
 		// Element transcript = doc.select("div.hidden").get(0);
 		Element transcript = hidden.get(0);
 		Elements lines = transcript.select("p");
+		if(lines.size()<1){
+			lines = doc.select("div.content").select("p");
+		}
 		for (Element line : lines) {
 			if (monitor.isCanceled()) {
 				bw.close();
