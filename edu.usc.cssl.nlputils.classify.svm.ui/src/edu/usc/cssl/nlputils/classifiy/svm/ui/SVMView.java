@@ -297,7 +297,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 					IMessageProvider.ERROR);
 			return false;
 		}
-		form.getMessageManager().removeMessage("class1");
+		
 		for (String string : class1Files) {
 			if (new File(string).isFile() && !string.contains("DS_Store")) {
 				noProperFiles = false;

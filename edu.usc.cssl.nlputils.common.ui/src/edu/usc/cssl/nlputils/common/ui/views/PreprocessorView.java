@@ -1,5 +1,8 @@
 package edu.usc.cssl.nlputils.common.ui.views;
 
+import java.io.File;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -7,6 +10,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -38,8 +42,10 @@ public class PreprocessorView extends ViewPart {
 	public static final String ID = "edu.usc.cssl.nlputils.common.ui.preprocess.view";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
+	private Text outputLocationTxt;
+	private TableLayoutData layData;
 	public PreprocessorView() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
@@ -73,7 +79,7 @@ public class PreprocessorView extends ViewPart {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 	
-		TableLayoutData layData = NlputilsFormComposite.createTableSection(client, toolkit,
+		layData = NlputilsFormComposite.createTableSection(client, toolkit,
 				layout, "Input Details", "Add File(s) and Folder(s) to include in analysis.", true, true);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(layData.getSectionClient());
 
@@ -99,7 +105,7 @@ public class PreprocessorView extends ViewPart {
 				"Output Folder Name:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(outputPathLbl);
-		Text outputLocationTxt = toolkit.createText(sectionClient, "",
+		outputLocationTxt = toolkit.createText(sectionClient, "",
 				SWT.BORDER);
 		outputLocationTxt.setText("preprocessed");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
@@ -166,36 +172,11 @@ public class PreprocessorView extends ViewPart {
 			}
 	
 			public void run() {
-	
-				Job job = new Job("PreProcessing...") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("NLPUtils started preprocessing...", 100);
-	
-						int i = 0;
-						while (i < 1000000000) {
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if (monitor.isCanceled()) {
-								throw new OperationCanceledException();
-	
-							}
-							i++;
-							monitor.worked(1);
-						}
-						monitor.done();
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				job.schedule();
+				if (!canProceed()) return;
 	
 			};
 		});
+		
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -217,9 +198,47 @@ public class PreprocessorView extends ViewPart {
 	}
 
 
+	private boolean canProceed() {
+		NlputilsFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+		form.getMessageManager().removeMessage("input");
+		form.getMessageManager().removeMessage("inputNoProper");
+		form.getMessageManager().removeMessage("noOutput");
+		
+		List<String> inputFiles = layData.getSelectedFiles();
+		boolean noProperFiles = true;
+
+		if (inputFiles.size() < 1) {
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one Class 1 file", null,
+					IMessageProvider.ERROR);
+			return false;
+		}
+		
+		for (String string : inputFiles) {
+			if (new File(string).isFile() && !string.contains("DS_Store")) {
+				noProperFiles = false;
+				break;
+			}
+		}
+		if (noProperFiles) {
+			form.getMessageManager().addMessage("inputNoProper",
+					"Select/Add atleast one Proper Class 1 file", null,
+					IMessageProvider.ERROR);
+			return false;
+		}
+		
+		if (outputLocationTxt.getText().trim().length() == 0) {
+			form.getMessageManager().addMessage("noOutput",
+					"Add output location", null,
+					IMessageProvider.ERROR);
+			return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
