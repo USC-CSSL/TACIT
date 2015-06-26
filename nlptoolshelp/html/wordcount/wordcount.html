@@ -7,7 +7,7 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">Standard Word Count</td>
+				<td class = "header">Word Count</td>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -16,8 +16,9 @@
 					</tr>
 					<tr>
 						<td>Word count programs (or dictionary methods) are text analysis tools that quantify the frequency of topics of interest across a document or set of documents that reflects . To accomplish this task, word count programs require a user-defined dictionary of topics, with pre-identified words for each topic. Using this dictionary, the word count program then counts the number of times words in each topic domains occur and calculates the percentage of each document that reflects each topic. <br><br>
-							The Standard Word Count plugin does xxx.  <br><br>
-							For information about weighted word count or LIWC-style word count refer to xxxxx.  
+							The TACIT plugin includes three different word count techniques:  Standard Word Count, LIWC-style Word Count, and Weighted Word Count. For detailed descriptions of each of these
+							options, see "Selecting a Word Count Technique" below.   <br><br>
+					
 						</td>
 					</tr>
 				</table>
@@ -27,14 +28,30 @@
 					<tr>
 						<td class = "head">Basic Tutorial: Word Count</td>
 					</tr>
-					
 					<tr>
-						<td class = "subtitle">Input: Corpus Files</td>
+						<td class = "subtitle">Selecting a Word Count Technique</td>
 					</tr>
 					<tr>
-						<td>Types of files/selection process 
-
-							<img class="image" src="images/temp.png" alt="Identifying yourself">
+						<td class = "section">Standard Word Count</td>
+					</tr>
+					<tr>
+						<td class = "section">LIWC-Style Word Count</td>
+					</tr>
+					<tr>
+						<td class = "section">Weighted Word Count</td>
+					</tr>
+					<tr>
+						<td>Required components, weights etc <a href = "http://meh.ryanb.cc/" target="_blank">Program that can make dictionary with word count weights</a>. 
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Specifying Input Files for Analysis</td>
+					</tr>
+					<tr>
+						<td> All input files must be in .txt format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						 <br><br>To specify which files you would like to analyze, select <b>Add Folder</b> or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders cannot be removed without removing the entire folder.
+						<br><br> <b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
+						<br><b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
  							<br>
 						</td>
 					</tr>
@@ -42,12 +59,32 @@
 						<td class = "subtitle">Dictionary Selection</td>
 					</tr>
 					<tr>
-						<td> Selecting dictionary location, list of basic dictionary requirements and link to dictionary overview page. 
+						<td> All dictionary files must be in .txt format to be compatible with TACIT. For dictionary specifications, see the Dictionary Help Page.  
+						
+						<br><br>To add a dictionary to be used for word count analysis, click the <b>Add Files</b> button on the right side of the Dictionary panel. All files added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the dictionary file name. The number of files selected for analysis is indicated at the bottom of the dictionary panel. To de-select an unwanted file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.
 							<br>
 							<img class="image" src="images/temp.png" alt="Identifying yourself">
  							<br>
 						</td>
-					</tr>					
+					</tr>	
+					<tr>
+						<td class = "section">Using Multiple Dictionaries</td>
+					</tr>
+					<tr>
+						<td> TACIT allows users to analyze text using multiple dictionaries simultaneously. However, category number assignment must be consistent across all included dictionaries. Specifically, if category 2 is pronoun in Dictionary_1, the program will assume that category 2 is also pronoun for Dictionary_2. However, both dictionaries do not require that all categories be present. You may introduce additional set of categories in the second dictionary file, as long as the category numbers used are unique from those found in the first dictionary file.
+					</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Understanding Word Count Output</td>
+					</tr>
+					<tr>
+						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
+
+							<br>
+							<img class="image" src="images/temp.png" alt="Identifying yourself">
+ 							<br>
+						</td>
+					</tr>									
 				</table>
 			</tr>	
 		</table>

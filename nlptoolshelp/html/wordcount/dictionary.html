@@ -24,10 +24,38 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Dictionary Creation</td>
+						<td class = "head">Dictionary Formatting</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Category Creation</td>
+					</tr>
+					<tr>
+						<td> At the beginning of your dictionary .txt file, you need to indicate the categories that your dictionary's words will reflect. To do this, the first line of the file should have the <b> % </b> symbol. For each subsequent line, put the number you will use to indicate the category followed by a space and then the name of the category. Once you have listed all of your categories, add another <b> % </b> to the next line.  For example, the beginning of your file should look like this:
+								<br> %
+								<br> 1 funct
+								<br> 2 pronoun
+								<br> 3 ppron
+								<br> 4 article
+								<br>%
+							<br><br> On the next line, you will start listing the words that are included in the categories with one word per line. To indicate which category or categories that word belongs to, tab over once and then add the category number. If the word belongs to multiple categories, you can list multiple category numbers after the word separated by one tab in between each number. For example:
+							<br> "about	1	16	17"  indicates that the word about should be counted for categories 1, 16 and 17.
+						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Stemming</td>
+					</tr>
+					<tr>
+						<td> Fill in information here about why you might want to stem.
+						<br> You can stem your dictionary ahead of time (as is the case with LIWC-style dictionaries) or you can request that the program stem your dictionary before running analyses. 
+						</td>
+					</tr>
+						
+					<tr>
+						<td class = "section">Snowball Stemming</td>
+					</tr>
+					<tr>
+						<td> snowball stemming explanation
+						</td>
 					</tr>
 					<tr>
 						<td class = "section">LIWC-style Stemming</td>
@@ -37,7 +65,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Dictionary Sources</td>
+						<td class = "subtitle">Using Multiple Dictionaries</td>
+					</tr>
+					<tr>
+						<td> TACIT allows users to analyze text using multiple dictionaries simultaneously. However, category number assignment must be consistent across all included dictionaries. Specifically, if category 2 is pronoun in Dictionary_1, the program will assume that category 2 is also pronoun for Dictionary_2. However, both dictionaries do not require that all categories be present. You may introduce additional set of categories in the second dictionary file, as long as the category numbers used are unique from those found in the first dictionary file.
+					</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">External Dictionary Sources</td>
 					</tr>
 					<tr>
 						<td>Many researchers have created validated dictionaries that assess a wide variety of topics. 
