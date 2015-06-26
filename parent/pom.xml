@@ -62,6 +62,7 @@
                     <!--  Help  -->
     <module>../nlptoolshelp</module>
     <module>../product</module>
+    <module>../updatesite</module>
     
   </modules>
   <properties>
