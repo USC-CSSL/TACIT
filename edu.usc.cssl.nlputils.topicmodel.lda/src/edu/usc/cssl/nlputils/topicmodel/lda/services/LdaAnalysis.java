@@ -86,7 +86,7 @@ public class LdaAnalysis {
 		monitor.worked(5);
 		
 		deleteFiles(outputPath);
-		TacitUtility.createReadMe(outputPath, "LDA Analysis");
+		TacitUtility.createReadMe(outputDir, "LDA Analysis");
 		monitor.worked(5);
 	}
 	

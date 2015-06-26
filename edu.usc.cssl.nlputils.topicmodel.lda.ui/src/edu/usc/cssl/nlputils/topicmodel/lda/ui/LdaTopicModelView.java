@@ -218,9 +218,10 @@ public class LdaTopicModelView extends ViewPart implements
 						monitor.beginTask("NLPUtils started analyzing...", 100);
 						List<String> inputFiles = new ArrayList<String>();
 						String topicModelDirPath = inputPath;
+						Preprocess preprocessTask = new Preprocess("ZLabel");
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
-							Preprocess preprocessTask = new Preprocess("ZLabel");
+							//preprocessTask = new Preprocess("ZLabel");
 							try {
 								File[] inputFile = new File(inputPath)
 										.listFiles();
@@ -258,7 +259,7 @@ public class LdaTopicModelView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(20);
-						ConsoleView.printlInConsoleln("LDA TOpic Modelling completed successfully in "
+						ConsoleView.printlInConsoleln("LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
 
@@ -266,6 +267,7 @@ public class LdaTopicModelView extends ViewPart implements
 							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
+						if (isPreprocess) preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
 						NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
