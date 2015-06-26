@@ -310,12 +310,12 @@ public class SupremeCrawlerView extends ViewPart implements
 
 		downloadAudio = new Button(downloadGroup, SWT.CHECK);
 		downloadAudio.setText("Download Audio");
-		downloadAudio.setBackground(outputSectionClient.getBackground());
+		//downloadAudio.setBackground(outputSectionClient.getBackground());
 
 		truncateAudio = new Button(downloadGroup, SWT.CHECK);
 		truncateAudio.setText("Truncate (1 MB) ");
 		truncateAudio.setEnabled(false);
-		truncateAudio.setBackground(outputSectionClient.getBackground());
+		//truncateAudio.setBackground(outputSectionClient.getBackground());
 
 		downloadAudio.addSelectionListener(new SelectionAdapter() {
 

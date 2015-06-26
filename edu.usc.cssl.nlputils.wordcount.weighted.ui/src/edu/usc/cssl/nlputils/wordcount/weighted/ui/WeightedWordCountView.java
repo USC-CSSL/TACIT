@@ -40,10 +40,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.nlputils.common.Preprocess;
 import edu.uc.cssl.nlputils.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
-import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
@@ -51,6 +49,7 @@ import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.nlputils.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.nlputils.wordcount.weighted.ui.internal.IWeightedWordCountViewConstants;
 import edu.usc.cssl.nlputils.wordcount.weighted.ui.internal.WeightedWordCountImageRegistry;
+import edu.usc.nlputils.common.Preprocess;
 
 public class WeightedWordCountView extends ViewPart implements
 		IWeightedWordCountViewConstants {
@@ -178,12 +177,15 @@ public class WeightedWordCountView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.nlputils.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -200,7 +202,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 		Group buttonComposite = new Group(parent, SWT.LEFT);
 		buttonComposite.setText("Word count type");
-		buttonComposite.setBackground(parent.getBackground());
+		//buttonComposite.setBackground(parent.getBackground());
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -210,7 +212,7 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcWordCountButton = new Button(buttonComposite, SWT.RADIO);
 		liwcWordCountButton.setText("LIWC Word Count");
 		liwcWordCountButton.setSelection(true);
-		liwcWordCountButton.setBackground(parent.getBackground());
+		//liwcWordCountButton.setBackground(parent.getBackground());
 		liwcWordCountButton.setForeground(parent.getForeground());
 		liwcWordCountButton.addSelectionListener(new SelectionListener() {
 
@@ -244,7 +246,7 @@ public class WeightedWordCountView extends ViewPart implements
 		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
 		weightedWordCountButton.setText("Weighted Word Count");
 		weightedWordCountButton.setSelection(false);
-		weightedWordCountButton.setBackground(parent.getBackground());
+		//weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
 
 		// standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
@@ -338,6 +340,7 @@ public class WeightedWordCountView extends ViewPart implements
 				return "Analyze";
 			}
 
+			@Override
 			public void run() {
 				NlputilsFormComposite
 				.writeConsoleHeaderBegining("Word count analysis");
@@ -461,6 +464,7 @@ public class WeightedWordCountView extends ViewPart implements
 				return "Help";
 			}
 
+			@Override
 			public void run() {
 
 			};
