@@ -87,7 +87,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
-		section.setText("Crawler Details"); //$NON-NLS-1$
+	//	section.setText("Crawler Details"); //$NON-NLS-1$
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -126,7 +126,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				"Filter Range:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(filterRangeLbl);
-		rangeCombo = new Combo(sectionClient, SWT.FLAT);
+		rangeCombo = new Combo(sectionClient, SWT.FLAT|SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(rangeCombo);
 		toolkit.adapt(rangeCombo);

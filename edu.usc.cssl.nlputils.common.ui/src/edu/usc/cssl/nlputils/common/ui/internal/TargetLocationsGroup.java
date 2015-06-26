@@ -124,7 +124,7 @@ public class TargetLocationsGroup {
 					.applyTo(fAddButton);
 		}
 		if (isFile) {
-			fAddFileButton = toolkit.createButton(buttonComp, "Add File...",
+			fAddFileButton = toolkit.createButton(buttonComp, "Add File(s)...",
 					SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddFileButton);
