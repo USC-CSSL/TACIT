@@ -185,6 +185,9 @@ public class SenateCrawler {
 
 	public void searchSenatorRecords(int congress,String senText, int progressSize, String politicalAffiliation) throws IOException, NullPointerException{
 		ConsoleView.printlInConsoleln("Current Senator - "+senText);
+		if(null != monitor && !monitor.isCanceled()) {
+			monitor.subTask("Crawling data for " + senText + "...");
+		}
 		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2")
 				.data("xss","query")		// Important. If removed, "301 Moved permanently" error
 				.data("queryr"+congress,"")	// Important. 113 - congress number. Make this auto? If removed, "Database Missing" error
@@ -238,15 +241,15 @@ public class SenateCrawler {
 			if (count++>=maxDocs)
 				break;
 			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
-			System.out.println(recordDate);
-			System.out.println("Processing "+link.text());
+			//System.out.println(recordDate);
+			//System.out.println("Processing "+link.text());
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
 			
 			String extractLink="";
 			// Find Printer Friendly Display
-			for (Element tabLink:tabLinks){
-				if (tabLink.text().equals("Printer Friendly Display")){
+			for (Element tabLink:tabLinks) {
+				if (tabLink.text().equals("Printer Friendly Display")) {
 					extractLink = tabLink.attr("href");
 					break;
 				}
@@ -257,7 +260,7 @@ public class SenateCrawler {
 
 			if (contents[1].length()==0)
 				count--;
-			else{
+			else {
 				String[] split = contents[0].split("-");
 				String title = split[0].trim();
 				title = title.replaceAll(",", "");

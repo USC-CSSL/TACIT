@@ -78,6 +78,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	
 	private int totalSenators;
 	private int progressSize = 100;
+	private Button sortByDateYes;
+	private Button sortByDateNo;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -133,7 +135,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 
 		Label congressLabel = toolkit.createLabel(sectionClient, "Congress:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(congressLabel);
-		cmbCongress = new Combo(sectionClient, SWT.FLAT);
+		cmbCongress = new Combo(sectionClient, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbCongress);
 		toolkit.adapt(cmbCongress);
 		cmbCongress.setItems(loading);
@@ -141,33 +143,28 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 
 		Label senatorLabel = toolkit.createLabel(sectionClient, "Senator:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(senatorLabel);
-		cmbSenator = new Combo(sectionClient, SWT.FLAT);
+		cmbSenator = new Combo(sectionClient, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbSenator);
 		toolkit.adapt(cmbSenator);
 		cmbSenator.setItems(loading);
 		cmbSenator.select(0);
 	
 		NlputilsFormComposite.createEmptyRow(toolkit, sectionClient);
-		
-		
-		
 		Group limitGroup = new Group(client, SWT.SHADOW_IN);
 		limitGroup.setText("Limit Records");
 		//limitGroup.setBackground(client.getBackground());
 		limitGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout limitLayout = new GridLayout();
 		limitLayout.numColumns = 1;
-		limitGroup.setLayout(limitLayout);
-	
-		limitRecords = new Button(limitGroup, SWT.CHECK);
-		limitRecords.setText("Limit Records per Senator");		
+		limitGroup.setLayout(limitLayout);	
 		
 		final Composite limitRecordsClient = new Composite(limitGroup, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitRecordsClient);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(limitRecordsClient);
-		limitRecordsClient.setEnabled(false);
-		limitRecordsClient.pack();
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(limitRecordsClient);
 	
+		limitRecords = new Button(limitRecordsClient, SWT.CHECK);
+		limitRecords.setText("Limit Records per Senator");	
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(limitRecords);
 		limitRecords.addSelectionListener(new SelectionListener() {			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -183,23 +180,26 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		});
 		
 		final Label sortLabel = new Label(limitRecordsClient, SWT.NONE);
-		sortLabel.setText("Limit Records");
+		sortLabel.setText("Sort Records by Date");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
 		sortLabel.setEnabled(false);
-		cmbSort = new Combo(limitRecordsClient, SWT.FLAT);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbSort);
-		cmbSort.setEnabled(false);
-		toolkit.adapt(cmbSort);
-		cmbSort.add("From Begining");
-		cmbSort.add("From End");
-		cmbSort.select(0);
+		
+		sortByDateYes = new Button(limitRecordsClient, SWT.RADIO);
+		sortByDateYes.setText("Yes");
+		sortByDateYes.setEnabled(false);
+		sortByDateYes.setSelection(true);
+
+		sortByDateNo = new Button(limitRecordsClient, SWT.RADIO);
+		sortByDateNo.setText("No");
+		sortByDateNo.setEnabled(false);
 
 		final Label limitLabel = new Label(limitRecordsClient, SWT.NONE);
-		limitLabel.setText("# Records");
+		limitLabel.setText("No.of.Records per Senator");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
 		limitLabel.setEnabled(false);
 		limitText = new Text(limitRecordsClient, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(limitText);
+		limitText.setText("1");
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitText);
 		limitText.setEnabled(false);
 		
 		limitText.addKeyListener(new KeyListener() {			
@@ -350,21 +350,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				congresses = tempCongress.toArray(new String[0]);
 				congressYears = tempCongressYears.toArray(new String[0]);
 				try {
-					/*int count = 0;
-					HashMap<String, String> tempSenators = AvailableRecords.getAllSenators(congresses);
-					allSenators =  new String[tempSenators.size()];
-					for(String oldSenatorDet : tempSenators.keySet()) {
-						boolean senatorFound = false;
-						for(String s : allSenators) {
-							if(tempSenators.get(oldSenatorDet) == s) {
-								senatorFound = true;
-								break;
-							}
-						}
-						if(!senatorFound)
-							allSenators[count++] = tempSenators.get(oldSenatorDet);
-					}
-					senators = tempSenators;*/
 					allSenators = AvailableRecords.getAllSenators(congresses);
 				} catch (IOException e2) {
 					e2.printStackTrace();
@@ -405,14 +390,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						cmbSenator.select(0);
 					}
 					else {
-						/*int count = 0;
-						HashMap<String, String> tempSenators = AvailableRecords.getSenators(selectedCongress);
-						String[] availableSenators = new String[tempSenators.size()];
-						for(String oldSenatorDet : tempSenators.keySet()) {
-							availableSenators[count++] = tempSenators.get(oldSenatorDet);
-						}
-						senators = tempSenators;
-						*/
 						cmbSenator.setItems(AvailableRecords.getSenators(selectedCongress));
 						cmbSenator.add("All Senators", 0);
 						cmbSenator.add("All Democrats", 1);
@@ -464,15 +441,15 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (limitRecords.getSelection()) {	
-					limitRecordsClient.setEnabled(true);
+					sortByDateYes.setEnabled(true);
+					sortByDateNo.setEnabled(true);
 					sortLabel.setEnabled(true);
-					cmbSort.setEnabled(true);
 					limitLabel.setEnabled(true);
 					limitText.setEnabled(true);
-				} else {					
-					limitRecordsClient.setEnabled(false);
+				} else {
+					sortByDateYes.setEnabled(false);
+					sortByDateNo.setEnabled(false);
 					sortLabel.setEnabled(false);
-					cmbSort.setEnabled(false);
 					limitLabel.setEnabled(false);
 					limitText.setEnabled(false);
 				}
@@ -543,11 +520,11 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								}
 								if(limitRecords.getSelection()) {
 									//sort by date : begining
-									sortType = cmbSort.getSelection().equals("From Begining") ? "Default" : "Date"; 
+									sortType = sortByDateNo.getSelection() ? "Default" : "Date"; 
 									maxDocs = Integer.parseInt(limitText.getText());
 								} else {
 									maxDocs = -1;
-									sortType = "Default";
+									sortType = "Date";
 								}
 								outputDir = outputLayout.getOutputLabel().getText();	
 							}
@@ -562,7 +539,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						}
 					
 						monitor.beginTask("Running Senate Crawler..." , progressSize);
-						
+						NlputilsFormComposite.writeConsoleHeaderBegining("Senate Crawler started ");						
 						
 						final ArrayList<Integer> allCongresses = new ArrayList<Integer>();
 						for(String s: congresses) {
@@ -573,7 +550,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						if(monitor.isCanceled()) 
 							return handledCancelRequest("Cancelled");
 						try {
-							monitor.subTask("Initializing");
+							monitor.subTask("Initializing...");
 							monitor.worked(10);
 							if(monitor.isCanceled()) 
 								return handledCancelRequest("Cancelled");
@@ -582,7 +559,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								return handledCancelRequest("Cancelled");
 							monitor.worked(10);
 														
-							monitor.subTask("Crawling");
+							monitor.subTask("Crawling...");
 							if(monitor.isCanceled()) 
 								return handledCancelRequest("Cancelled");
 							sc.crawl();
@@ -634,11 +611,13 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		System.out.println(message);
 		e.printStackTrace();
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
+		NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 		return Status.CANCEL_STATUS;
 	}
 	
 	private IStatus handledCancelRequest(String message) {
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
+		NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 		return Status.CANCEL_STATUS;
 		
 	}
