@@ -31,7 +31,6 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.composite.from.NlputilsFormComposite;
 import edu.usc.cssl.nlputils.common.ui.internal.CommonUiViewImageRegistry;
-import edu.usc.cssl.nlputils.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.nlputils.common.ui.outputdata.TableLayoutData;
 
 public class PreprocessorView extends ViewPart {
@@ -81,141 +80,141 @@ public class PreprocessorView extends ViewPart {
 		createPreprocessLink(layData.getSectionClient());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
 				.applyTo(client1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
 				.applyTo(client1);
 
-		OutputLayoutData layoutData = NlputilsFormComposite
-				.createOutputSection(toolkit, client1, form.getMessageManager());
-
-		createAdditionalOptions(layoutData.getSectionClient());
-		// we dont need stop word's as it will be taken from the preprocessor
-		// settings
+		createAdditionalOptions(client1);
+		addButtonsToToolBar();
+//		OutputLayoutData layoutData = NlputilsFormComposite
+//				.createOutputSection(toolkit, client1, form.getMessageManager());
+//
+//		createAdditionalOptions(layoutData.getSectionClient());
 
 	}
 	
 	private void createAdditionalOptions(Composite sectionClient) {
 		Label outputPathLbl = toolkit.createLabel(sectionClient,
-				"Output File Suffix:", SWT.NONE);
+				"Output Folder Name:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(outputPathLbl);
 		Text outputLocationTxt = toolkit.createText(sectionClient, "",
 				SWT.BORDER);
-		outputLocationTxt.setText("_preprocessed");
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+		outputLocationTxt.setText("preprocessed");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 	}
 	
-private void createPreprocessLink(Composite client) {
-		
-		Composite clientLink = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
-				.applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(clientLink);
+	private void createPreprocessLink(Composite client) {
+			
+			Composite clientLink = toolkit.createComposite(client);
+			GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+					.applyTo(clientLink);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(clientLink);
+	
+			Button stemEnabled = toolkit.createButton(clientLink,
+					"", SWT.CHECK);
+			stemEnabled.setEnabled(false);
+			stemEnabled.setSelection(true);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(stemEnabled);
+			final Hyperlink link = toolkit
+					.createHyperlink(clientLink, "Preprocessing Settings", SWT.NONE);
+			link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+			link.addHyperlinkListener(new IHyperlinkListener() {
+				public void linkEntered(HyperlinkEvent e) {
+				}
+	
+				public void linkExited(HyperlinkEvent e) {
+				}
+	
+				public void linkActivated(HyperlinkEvent e) {
+					String id = "edu.usc.cssl.nlputils.common.ui.prepocessorsettings";
+					PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+							new String[] { id }, null).open();
+				}
+			});
+			GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+	
+		}
 
-		Button stemEnabled = toolkit.createButton(clientLink,
-				"", SWT.CHECK);
-		stemEnabled.setEnabled(false);
-		stemEnabled.setSelection(true);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(stemEnabled);
-		final Hyperlink link = toolkit
-				.createHyperlink(clientLink, "Preprocess", SWT.NONE);
-		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		link.addHyperlinkListener(new IHyperlinkListener() {
-			public void linkEntered(HyperlinkEvent e) {
-			}
-
-			public void linkExited(HyperlinkEvent e) {
-			}
-
-			public void linkActivated(HyperlinkEvent e) {
-				String id = "edu.usc.cssl.nlputils.common.ui.prepocessorsettings";
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
-						new String[] { id }, null).open();
-			}
-		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
-
+	private FormToolkit createFormBodySection(Composite parent) {
+		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		form = toolkit.createScrolledForm(parent);
+	
+		toolkit.decorateFormHeading(form.getForm());
+		form.setText("General PreProcessor"); //$NON-NLS-1$
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
+				.applyTo(form.getBody());
+		return toolkit;
 	}
 
-private FormToolkit createFormBodySection(Composite parent) {
-	FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-	form = toolkit.createScrolledForm(parent);
-
-	toolkit.decorateFormHeading(form.getForm());
-	form.setText("General PreProcessor"); //$NON-NLS-1$
-	GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
-			.applyTo(form.getBody());
-	return toolkit;
-}
-
-private void addButtonsToToolBar() {
-	IToolBarManager mgr = form.getToolBarManager();
-	mgr.add(new Action() {
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			return (CommonUiViewImageRegistry
-					.getImageIconFactory()
-					.getImageDescriptor(ICommonUiConstants.IMAGE_LRUN_OBJ));
-		}
-
-		@Override
-		public String getToolTipText() {
-			return "Analyze";
-		}
-
-		public void run() {
-
-			Job job = new Job("PreProcessing...") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("NLPUtils started preprocessing...", 100);
-
-					int i = 0;
-					while (i < 1000000000) {
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+	private void addButtonsToToolBar() {
+		IToolBarManager mgr = form.getToolBarManager();
+		mgr.add(new Action() {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return (CommonUiViewImageRegistry
+						.getImageIconFactory()
+						.getImageDescriptor(ICommonUiConstants.IMAGE_LRUN_OBJ));
+			}
+	
+			@Override
+			public String getToolTipText() {
+				return "Analyze";
+			}
+	
+			public void run() {
+	
+				Job job = new Job("PreProcessing...") {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						monitor.beginTask("NLPUtils started preprocessing...", 100);
+	
+						int i = 0;
+						while (i < 1000000000) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							if (monitor.isCanceled()) {
+								throw new OperationCanceledException();
+	
+							}
+							i++;
+							monitor.worked(1);
 						}
-						if (monitor.isCanceled()) {
-							throw new OperationCanceledException();
-
-						}
-						i++;
-						monitor.worked(1);
+						monitor.done();
+						return Status.OK_STATUS;
 					}
-					monitor.done();
-					return Status.OK_STATUS;
-				}
+				};
+				job.setUser(true);
+				job.schedule();
+	
 			};
-			job.setUser(true);
-			job.schedule();
-
-		};
-	});
-	mgr.add(new Action() {
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			return (CommonUiViewImageRegistry
-					.getImageIconFactory()
-					.getImageDescriptor(ICommonUiConstants.IMAGE_HELP_CO));
-		}
-
-		@Override
-		public String getToolTipText() {
-			return "Help";
-		}
-
-		public void run() {
-
-		};
-	});
-	form.getToolBarManager().update(true);
-}
+		});
+		mgr.add(new Action() {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return (CommonUiViewImageRegistry
+						.getImageIconFactory()
+						.getImageDescriptor(ICommonUiConstants.IMAGE_HELP_CO));
+			}
+	
+			@Override
+			public String getToolTipText() {
+				return "Help";
+			}
+	
+			public void run() {
+	
+			};
+		});
+		form.getToolBarManager().update(true);
+	}
 
 
 	@Override
