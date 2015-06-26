@@ -18,8 +18,8 @@
             locationURI="menu:cluster">
              <command
                    commandId="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1"
-                   label="KMeans Cluster View"
-                   tooltip="KMeans Cluster View">
+                   label="KMeans Cluster"
+                   tooltip="KMeans Cluster">
             </command>
       </menuContribution>
    </extension>

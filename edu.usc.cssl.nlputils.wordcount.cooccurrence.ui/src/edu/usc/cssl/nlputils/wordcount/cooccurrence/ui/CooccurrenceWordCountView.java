@@ -95,7 +95,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		layout.numColumns = 1;
 
 		inputLayoutData = NlputilsFormComposite
-				.createTableSection(client, toolkit, layout, "Input Dtails",
+				.createTableSection(client, toolkit, layout, "Input Details",
 						"Add File(s) and Folder(s) to include in analysis.",
 						true, true);
 		Composite compInput;

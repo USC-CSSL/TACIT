@@ -79,9 +79,9 @@
           </menu>
           <menu
                 id="topicmodel"
-                label="Topic Model"
+                label="Topic Modeling"
                 mnemonic="T"
-                tooltip="Topic Model">
+                tooltip="Topic Modeling">
           </menu>
          
       </menuContribution>

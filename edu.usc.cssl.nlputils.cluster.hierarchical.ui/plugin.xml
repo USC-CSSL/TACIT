@@ -18,8 +18,8 @@
             locationURI="menu:cluster">
              <command
                    commandId="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1"
-                   label="Hierarchical Cluster View"
-                   tooltip="Hierarchical Cluster View">
+                   label="Hierarchical Cluster"
+                   tooltip="Hierarchical Cluster">
             </command>
       </menuContribution>
    </extension>

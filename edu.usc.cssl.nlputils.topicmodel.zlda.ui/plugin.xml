@@ -18,8 +18,8 @@
             locationURI="menu:topicmodel">
              <command
                    commandId="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1"
-                   label="Z-Label LDA Topic Model"
-                   tooltip="Z-Label LDA Topic Model">
+                   label="Z-Label LDA"
+                   tooltip="Z-Label LDA">
             </command>
       </menuContribution>
    </extension>

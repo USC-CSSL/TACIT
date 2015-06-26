@@ -105,7 +105,7 @@ public class LatinCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().span(3, 1).applyTo(authorSection);
 		authorSection.setExpanded(true);
 		authorSection.setText("Author Details"); //$NON-NLS-1$
-		authorSection.setDescription("Add list of author needs to be crawled");
+		authorSection.setDescription("Add list of authors that need to be crawled");
 
 		ScrolledComposite authorsc = new ScrolledComposite(authorSection,
 				SWT.H_SCROLL | SWT.V_SCROLL);
@@ -308,11 +308,13 @@ public class LatinCrawlerView extends ViewPart implements
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
+			canProceed = false;
 		}
 		if (selectedAuthors == null || selectedAuthors.size() < 1) {
 			form.getMessageManager().addMessage("author",
-					"Add atleast one author before start crawing", null,
+					"Author details cannot be empty", null,
 					IMessageProvider.ERROR);
+			canProceed = false;
 		}
 		return canProceed;
 	}

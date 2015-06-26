@@ -91,7 +91,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		layout.numColumns = 1;
 
 		layoutData = NlputilsFormComposite
-				.createTableSection(client, toolkit, layout, "Input Dtails",
+				.createTableSection(client, toolkit, layout, "Input Details",
 						"Add File(s) and Folder(s) to include in analysis.",
 						true, true);
 		Composite compInput;
@@ -166,7 +166,12 @@ public class HierarchicalClusterView extends ViewPart implements
 	}
 
 	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
-		saveImage = toolkit.createButton(output, "Save Dendogram as Image",
+		Composite clientLink = toolkit.createComposite(output);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
+		saveImage = toolkit.createButton(clientLink, "Save Dendogram as Image",
 				SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).applyTo(saveImage);
 	}
