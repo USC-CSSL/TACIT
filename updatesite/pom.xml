@@ -18,6 +18,7 @@
 
   <properties>
     <skip-signing>true</skip-signing>
+     <tycho.version>0.21.0</tycho.version>
   </properties>
 
   <build>
@@ -31,8 +32,7 @@
           <finalName>updatesite-${project.version}</finalName>
         </configuration>
       </plugin>
-
-    </plugins>
+      </plugins>
   </build>
 
 </project>

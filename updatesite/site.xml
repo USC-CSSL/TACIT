@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/edu.usc.cssl.nlputils.feature_1.0.0.qualifier.jar" id="edu.usc.cssl.nlputils.feature" version="1.0.0.qualifier" os="linux,macosx,win32" ws="win32" nl="en_US" arch="x86,x86_64"/>
-</site>
