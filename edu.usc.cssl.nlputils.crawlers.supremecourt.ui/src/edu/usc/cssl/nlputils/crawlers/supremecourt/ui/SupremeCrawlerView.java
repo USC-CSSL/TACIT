@@ -71,6 +71,7 @@ public class SupremeCrawlerView extends ViewPart implements
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
@@ -166,6 +167,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				return "Help";
 			}
 
+			@Override
 			public void run() {
 
 			};
@@ -196,6 +198,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				return "Crawl";
 			}
 
+			@Override
 			public void run() {
 				String selectedFilterValue = rangeCombo.getText();
 				if (selectedFilterValue.equals("All")) {
@@ -298,7 +301,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 		Group downloadGroup = new Group(outputSectionClient, SWT.LEFT);
 		downloadGroup.setText("Audio");
-		downloadGroup.setBackground(outputSectionClient.getBackground());
+		//downloadGroup.setBackground(outputSectionClient.getBackground());
 		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -333,6 +336,7 @@ public class SupremeCrawlerView extends ViewPart implements
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		if (form != null) {
 			form.setFocus();
