@@ -575,8 +575,10 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						}
 						monitor.worked(100);
 						monitor.done();
+						ConsoleView.printlInConsoleln("Senate crawler completed successfully.");
+						ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
 						ConsoleView.printlInConsoleln("Done");
-						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully", IStatus.OK, form);
+						NlputilsFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully.", IStatus.OK, form);
 						return Status.OK_STATUS;
 					}					
 				};	

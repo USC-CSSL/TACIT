@@ -201,7 +201,7 @@ public class WeightedWordCountView extends ViewPart implements
 			IMessageManager messageManager) {
 
 		Group buttonComposite = new Group(parent, SWT.LEFT);
-		buttonComposite.setText("Word count type");
+		buttonComposite.setText("Word Count Technique");
 		//buttonComposite.setBackground(parent.getBackground());
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();

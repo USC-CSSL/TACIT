@@ -22,6 +22,7 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 
 public class SenateCrawler {
+	public int totalFilesDownloaded = 0;
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
 	String dateFrom, dateTo;
 	int maxDocs = 10;
@@ -304,6 +305,7 @@ public class SenateCrawler {
 		bw.newLine();
 		bw.write(contents[1]);
 		bw.close();
+		totalFilesDownloaded++;
 	}
 
 	private String[] extract(String extractLink, String lastName) throws IOException {
