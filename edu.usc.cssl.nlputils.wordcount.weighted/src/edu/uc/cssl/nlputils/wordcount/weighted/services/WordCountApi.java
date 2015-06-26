@@ -108,7 +108,7 @@ public class WordCountApi {
 		if (!this.weighted) this.doLiwcStemming = true;
 		appendLog("Processing...");
 
-		if (stopWordsFile.equals(null) || stopWordsFile.equals(""))
+		if (stopWordsFile.equals(null) || stopWordsFile.equals("") || !this.weighted)
 			this.doStopWords = false;
 		else
 			this.doStopWords = true;
