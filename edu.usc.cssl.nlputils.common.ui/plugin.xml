@@ -149,6 +149,14 @@
                   label="Preprocess">
             </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:view">
+         <command
+               commandId="usc.edu.cssl.common.progressview.command1"
+               label="Progress"
+               tooltip="Progress">
+         </command>
+      </menuContribution>
    </extension>
  <extension
          id="console.view"
