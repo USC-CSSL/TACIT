@@ -45,10 +45,10 @@ public class CrawlerJob {
 	}
 
 	private void openSummaryFile() {		
-		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 		Date dateobj = new Date();
 		try {
-			fileWriter = new FileWriter(this.outputDir + "/" + "summary-"
+			fileWriter = new FileWriter(this.outputDir + "/" + "supremecourt-summary-"
 					+ df.format(dateobj) + ".csv");
 			bw = new BufferedWriter(fileWriter);
 
