@@ -60,8 +60,4 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
    </configurations>
 
-   <repositories>
-      <repository location="http://cssl.usc.edu:8080/job/TACIT%201.0/ws/product/target/repository/" enabled="true" />
-   </repositories>
-
 </product>
