@@ -206,6 +206,7 @@ public class LatinCrawlerView extends ViewPart implements
 							totalWork = selectedAuthors.size();
 							monitor.beginTask("NLPUtils started crawling...",
 									totalWork);
+							int totalFilesCreated = 0;
 							while (authorItr.hasNext()) {
 								if (monitor.isCanceled()) {
 									monitor.subTask("Crawling is cancelled...");
@@ -213,12 +214,14 @@ public class LatinCrawlerView extends ViewPart implements
 								}
 								String author = authorItr.next();
 								monitor.subTask("crawling " + author + "...");
-								latinCrawler.getBooksByAuthor(
+								ConsoleView.printlInConsoleln("Crawling "+author);
+								totalFilesCreated+= latinCrawler.getBooksByAuthor(
 										author,
 										latinCrawler.getAuthorNames().get(
 												author),monitor);
 								monitor.worked(1);
 							}
+							ConsoleView.printlInConsole("Total number of files downloaded : "+totalFilesCreated);
 							
 						} catch (final IOException exception) {
 							ConsoleView.printlInConsole(exception.toString());

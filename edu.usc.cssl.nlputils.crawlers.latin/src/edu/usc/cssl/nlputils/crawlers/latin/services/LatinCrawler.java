@@ -75,7 +75,6 @@ public class LatinCrawler {
 		Document doc = null;
 		try {
 			monitor.subTask("Retrieving content from " +url);
-			ConsoleView.printlInConsoleln("Connecting "+url);
 			doc = Jsoup.connect(url).timeout(10 * 1000).get();
 		} catch (IOException e) {
 			// Error handling->will do later
@@ -121,7 +120,8 @@ public class LatinCrawler {
 	 * @param monitor2 
 	 * @throws IOException
 	 */
-	public void getBooksByAuthor(String author, String url, IProgressMonitor monitor2) throws IOException {
+	public int getBooksByAuthor(String author, String url, IProgressMonitor monitor2) throws IOException {
+		int totalFilesCreated = 0;
 		Assert.isNotNull(author, "Parameter author can't be empty");
 		Assert.isNotNull(author, "Parameter url can't be empty");
        this.monitor = monitor2;
@@ -147,8 +147,9 @@ public class LatinCrawler {
 			String bookName = entry.getValue().getBookName();
 			String bookUrl = entry.getValue().getBookUrl();
 			String bookDir = entry.getValue().getBookDir();
-			getBookContent(bookUrl, bookName, bookDir);
+			totalFilesCreated += getBookContent(bookUrl, bookName, bookDir);
 		}
+		return totalFilesCreated;
 	}
 
 	class BookData {
@@ -551,7 +552,7 @@ public class LatinCrawler {
 		}
 	}
 
-	private void getBookContent(String bookUri, String bookName, String bookDir)
+	private int getBookContent(String bookUri, String bookName, String bookDir)
 			throws IOException {
 		BufferedWriter csvWriter = null;
 		try {
@@ -569,22 +570,23 @@ public class LatinCrawler {
 			if (content.size() == 0) {
 				if (csvWriter != null)
 					csvWriter.close();
-				getBookContent2(bookUri, bookName, bookDir);
-				return;
+				return getBookContent2(bookUri, bookName, bookDir);
+				
 			}
 			for (Element c : content) {
 				csvWriter.write(c.text() + "\n");
 			}
 			ConsoleView.printlInConsoleln("Writing Content at"+fName.getAbsolutePath());
 		} catch (Exception e) {
-			getBookContent2(bookUri, bookName, bookDir);
+			return getBookContent2(bookUri, bookName, bookDir);
 		} finally {
 			if (csvWriter != null)
 				csvWriter.close();
 		}
+		return 1;
 	}
 
-	private void getBookContent2(String bookUri, String bookDir,
+	private int getBookContent2(String bookUri, String bookDir,
 			String authorDir) throws IOException {
 		BufferedWriter csvWriter = null;
 		try {
@@ -603,6 +605,7 @@ public class LatinCrawler {
 			if (csvWriter != null)
 				csvWriter.close();
 		}
+		return 1;
 	} /* The sub libraries */
 
 	/*
