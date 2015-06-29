@@ -15,7 +15,7 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>The US Supreme Court Crawler is a program that automatically scans and collects court case transcription data from the IIT Chicago-Kent College of Law <a href = "http://www.oyez.org/cases" target="_blank">Supreme Court Case Website</a> and writes that data into text files that are readable for automated text analysis programs.
+						<td>The US Supreme Court Crawler is a program that automatically scans and collects court case transcription data from the IIT Chicago-Kent College of Law <a href = "http://www.oyez.org/cases" target="_blank">Supreme Court Case Website</a> and writes that data into text files that are readable by automated text analysis programs.
 						This crawler also saves meta data about each file (e.g., majority author, date decided; see output section below) The crawler also includes options to download the case's audio mp3 files. 
 						<br><br>
 							
@@ -44,8 +44,8 @@
 						<td class = "subtitle">Specifying Output Folder</td>
 					</tr>
 					<tr>
-						<td>Next, you will need to specify an output path folder where the downloaded .txt files should be stored. A path can be selected by clicking on the "Browse" button to the right of the Output Location box. 
-						<b> Note: </> The program does not create a new folder for the files it creates. If you would like your files saved together into a single folder, we recommend creating a new folder for the output in advance and selecting that folder as the output location.
+						<td>Next, you will need to specify an output path folder where the downloaded text files should be stored. To specify an output folder where crawled files will be saved, click on the <b> Browse </b> button to the right of the Output Location bar and select a folder. 
+						<b> Note: </b> The program does not create a new folder for the files it creates. If you would like your files saved together into a single folder, we recommend creating a new folder for the output in advance and selecting that folder as the output location.
  							<br>
 						</td>
 					</tr>
@@ -54,15 +54,17 @@
 					</tr>
 					<tr>
 						<td>To download the .mp3 audio recordings of the court cases along with the transcriptions, check the box nex to "Download Audio". As these files tend to be larger, you also have the 
-						option to check the "Truncate" box which will truncate all audio files (which does xxxxx). 
+						option to check the "Truncate" box which will compress the size of all downloaded audio files. 
 <br><br>
 						</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Understanding Senate Crawler Output</td>
+						<td class = "subtitle">Understanding Supreme Court Crawler Output</td>
 					</tr>
 					<tr>
-						<td>The court case transcription output will be in .txt text file format, with a separate .txt for each document/case. File Names xxxx. Documents will be organized by xxx. The program will also output a summary .csv file with information about all generated .txt files which includes (when available): case name, docket number, date argued, date decided, majority author, vote, file type (transcript or audio), and the file name. The summary file name will be supremecourt-[time stamp].csv.
+						<td>The <b> Console </b> panel at the bottom of the tool will provide information about the Supreme Court term/issue selected, the website url being crawled, and the names of the files being created while the crawler is running. Once complete, the data gathered will be in .txt text file format, with a separate .txt for each document. The generated text file name format is:The court case transcription output will be saved in .txt text file format, with a separate .txt for each document/case. File Names xxxx. Documents will be organized by xxx. 
+						
+						<br><br>The program will also output a file called <b> supremecourt-summary-[date-time].csv </b>. This .csv file provides a summary of all files created with additional documentation about each file including (when available): case name, docket number, date argued, date decided, majority author, vote, file type (transcript or audio), and the downloaded file name. 
 
 							<br>
 							<img class="image" src="images/temp.png" alt="Identifying yourself">

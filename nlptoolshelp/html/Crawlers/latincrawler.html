@@ -3,7 +3,7 @@
 		<link rel="stylesheet" type="text/css" href="sample.css">
 	</head>
 	<body>
-		<center><h3>NLP Utils User Guide</h3></center>
+		<center><h3>TACIT User Guide</h3></center>
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
@@ -15,9 +15,8 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>This crawler collects data from <a href = "http://wiki.eclipse.org/Platform-releng/Git_Workflows" target="_blank">Website</a> <br><br>
-							Intended use etc. 
-							
+						<td>The Latin Crawler collects text from <a href = "http://www.thelatinlibrary.com/" target="_blank">The Latin Library Website</a> and writes that data into text files that are readable by automated text analysis programs. <br><br> 
+						<br><br> 	
 						</td>
 					</tr>
 				</table>
@@ -28,31 +27,28 @@
 						<td class = "head">Basic Tutorial: Collecting data using Latin Crawler</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Specifying Output Folder</td>
+						<td class = "subtitle">Author Selection</td>
 					</tr>
 					<tr>
-						<td><td>First, you will need to specify an output path folder where the downloaded .txt files should be stored. A path can be selected by clicking on the "Browse" button to the right of the Output Location box. 
-						<b> Note: </> The program will create a new folder for each author name where it will save all files by that author. Folders will also be generated for document files from different works.
- 							<br>
+						<td><td>First you will need to specify the author(s) for which you would like to request documents by clicking on the "Add" button to the right of the Author Details box. 
+						Authors can be selected one at a time, or you can select multiple authors by clicking their names while holding down the "ctrl" button.  You can select a range of authors by holding down "ctrl" "shift".
+						You can also remove authors by selecting their name in the Author Details box and clicking the "Remove" button.
 						</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Document Selection</td>
+						<td class = "subtitle">Specifying Output Folder</td>
 					</tr>
 					<tr>
-						<td><td>Next you will need to specify the author(s) for which you would like to request documents by clicking on the "Add" button to the right of the Author Details box. 
-						Authors can be selected one at a time, or you can select multiple authors by clicking their names while holding down the "ctrl" button.  You can select a range of authors by holding down "ctrl" "shift".
-						You can also remove authors by selecting their name in the Author Details box and clicking the "Remove" button.
+						<td><td>To specify an output folder where crawled files will be saved, click on the <b> Browse </b> button to the right of the Output Location bar and select a folder. 
+						<b> Note: </> The program will create a new folder for each author requested and it will save all files by that author within that folder. Sub-folders will also be generated for document files from collected works.
+ 							<br><br>
 						</td>
 					</tr>
 					<tr>
 						<td class = "section">Understanding Latin Crawler Output</td>
 					</tr>
 					<tr>
-						<td>
-
-<br><br>
-The data output will be in .txt text file format, with a separate .txt for each document. Documents will be organized by Author, with subfolders for different works. 
+						<td> The data output will be in .txt text file format, with a separate text file for each document. Documents will be organized by Author, with subfolders for different works. 
 							
 						</td>
 					</tr>					
