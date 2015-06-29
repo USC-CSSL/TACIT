@@ -16,10 +16,8 @@
 					</tr>
 					<tr>
 						<td>The United States Senate Crawler is a program that automatically scans and collects speech transcription data from the <a href = "http://thomas.loc.gov/home/LegislativeData.php?&n=Record" target="_blank">Library of Congress THOMAS Website</a> and writes that data into text files that are readable by automated text analysis programs.
-						This crawler also saves meta data about the speeches including the name of the speaker, the date of the speech and xxx.
+						This crawler also saves additional information about the speeches in a summary csv file (e.g., the name of the speaker, the date of the speech).
 						<br><br>
-							
-							
 						</td>
 					</tr>
 				</table>
@@ -30,30 +28,19 @@
 						<td class = "head">Basic Tutorial: Collecting data using the Senate Crawler </td>
 					</tr>
 					<tr>
-						<td> What each button does and what you need to specify. 
+						<td class = "subtitle">Selecting Senate Speeches</td>
+					</tr>
+					<tr>
+						<td> You will need to determine which Senate speeches you would like the crawler to collect under the <b> Input Parameters </b> panel. First, select the <b> Congress </b> you would like to crawl from the drop down menu. This selection will then update the <b> Senator </b> drop down menu to include only the senators in that Congress. Speeches can be collected for individual Senators, all Senators, or for all Senators with a particular party affiliation (i.e., Republican, Democrat, Independent).
+							<br><br>
 						</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Requesting Data and Specifying Output Folder</td>
+						<td class = "section">Limiting Number of Files Created</td>
 					</tr>
 					<tr>
-						<td class = "section">Selecting Speeches</td>
-					</tr>
-					<tr>
-						<td>First, you will need to determine which Senate speeches you would like the crawler to collect under the <b> Input Parameters </b> panel. First, select the <b> Congress </b> you would like to crawl from the drop down menu. This selection will then update the <b> Senator </b> drop down menu to include only the senators in that Congress. Speeches can be collected for individual Senators, all Senators, or for All Senators of a particular party affiliation (i.e., Republican, Democrat, Independent).
-
-							<br>
-							<img class="image" src="images/temp.png" alt="Identifying yourself">
- 							<br>
-						</td>
-					</tr>
-					<tr>
-						<td class = "section">Limiting Records</td>
-					</tr>
-					<tr>
-						<td> Checking the box next to <b> Limit Records per Senator </b> in the Limit Records panel allows users to specify crawl a limit the number of speech transcriptions returned by the crawler by typing the number of speeches requested in the No.of.Records per Senator box. If <b> Sort Records by Date </b> is set to yes, the crawler will return the number of speeches requested in chronological order starting from the most recent.  If no is selected, the crawler will return the number of speeches requested as a random subset of that Senator's records. <br>
-
-							
+						<td> To download a subset of speeches from a selected Senator (thus decreasing the number of files created), check the box next to <b> Limit Records per Senator </b> in the Limit Records panel. Next, enter the number of speeches you would like in the <b> No.of.Records per Senator </b> box. If <b> Sort Records by Date </b> is set to <b> yes </b>, the crawler will return the number of speeches requested in chronological order starting from the most recent speech on record.  If <b>no</b> is selected, the crawler will return the number of speeches requested as a random subset of that Senator's records. 
+						<br><br>
 						</td>
 					</tr>
 					<tr>
@@ -68,13 +55,9 @@
 						<td class = "subtitle">Understanding Senate Crawler Output</td>
 					</tr>
 					<tr>
-						<td>The <b> Console </b> panel at the bottom of the tool will provide information about the congress member selected, the website url being crawled, and the names of the files being created while the crawler is running. Once complete, the data gathered will be in .txt text file format, with a separate .txt for each document. The generated text file name format is: Congress#-Senator last name-party affiliation-state affiliation-date-title (e.g., 114-Ayotte-R-NH-June 10 2015-NATIONAL DEFENS-355.txt)
+						<td>The <b> Console </b> panel at the bottom of the tool provides information about the congress member selected, the website url being crawled, and the names of the files being created while the crawler is running. Once complete, the data gathered will be in .txt text file format, with a separate .txt for each document. The generated text file name format is: Congress#-Senator last name-party affiliation-state affiliation-date-title (e.g., 114-Ayotte-R-NH-June 10 2015-NATIONAL DEFENS-355.txt)
 						<br><br>
 						The program will also create a file called <b> senate-summary-[date-time].csv </b>. This .csv file provides a summary of all files created with additional documentation about each file including (when available): Congress number, Speech Date, Senator Name, Political Affiliation, US State Affiliation, Title of Speech, and the downloaded file name. 
-
-							<br>
-							<img class="image" src="images/temp.png" alt="Identifying yourself">
- 							<br>
 						</td>
 					</tr>					
 				</table>
