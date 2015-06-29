@@ -189,7 +189,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			}
 			fw.flush();
 			fw.close();
-			TacitUtility.createReadMe(outputdir, "Z-Label LDA");
+			TacitUtility.createRunReport(outputdir, "Z-Label LDA");
 		} catch (Exception e) {
 			ConsoleView.printlInConsoleln("Error writing output to files " + e);
 		}

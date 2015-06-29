@@ -74,15 +74,15 @@ public class MainPreferencePage extends PreferencePage implements
 	
 	private void initializeDefaultValues(){
 		getPreferenceStore().setDefault(INITIAL, "true");
-		getPreferenceStore().setDefault(CREATE_README, "true");
+		getPreferenceStore().setDefault(CREATE_RUNREPORT, "true");
 	}
 	
 	private void setDefaultValues() {
-		readMe.setSelection(Boolean.valueOf(getPreferenceStore().getDefaultString(CREATE_README)));
+		readMe.setSelection(Boolean.valueOf(getPreferenceStore().getDefaultString(CREATE_RUNREPORT)));
 	}
 	
 	private void loadValues(){
-		readMe.setSelection(Boolean.valueOf(load(CREATE_README)));
+		readMe.setSelection(Boolean.valueOf(load(CREATE_RUNREPORT)));
 	}
 	
 	private String load(String name) {
@@ -105,7 +105,7 @@ public class MainPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 
 		store(INITIAL, Boolean.toString(false));
-		store(CREATE_README, Boolean.toString(readMe.getSelection()));
+		store(CREATE_RUNREPORT, Boolean.toString(readMe.getSelection()));
 		return super.performOk();
 	}
 

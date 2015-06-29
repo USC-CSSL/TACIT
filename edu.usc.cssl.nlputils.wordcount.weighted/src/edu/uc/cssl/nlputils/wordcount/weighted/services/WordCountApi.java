@@ -195,8 +195,8 @@ public class WordCountApi {
 		}
 		// No errors
 		monitor.subTask("Writing Read Me File...");
-		if(this.weighted) TacitUtility.createReadMe(outputFile, "Weighted Word Count");
-		else TacitUtility.createReadMe(outputFile, "LIWC Word Count");
+		if(this.weighted) TacitUtility.createRunReport(outputFile, "Weighted Word Count");
+		else TacitUtility.createRunReport(outputFile, "LIWC Word Count");
 		
 		monitor.worked(5);
 		if (monitor.isCanceled()) {

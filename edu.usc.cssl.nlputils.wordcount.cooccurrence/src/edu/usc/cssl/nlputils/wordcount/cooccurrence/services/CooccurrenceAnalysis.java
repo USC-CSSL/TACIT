@@ -195,7 +195,7 @@ public class CooccurrenceAnalysis {
 			}
 			monitor.worked(10);
 			ConsoleView.printlInConsoleln(String.valueOf(phrase.size()));
-			TacitUtility.createReadMe(outputPath, "Cooccurrence Analysis");
+			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis");
 			return true;
 		} catch (Exception e) {
 			ConsoleView.printlInConsoleln("Exception occurred in Cooccurrence Analysis "

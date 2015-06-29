@@ -49,9 +49,9 @@
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
                id="crawl"
-               label="Crawl"
+               label="Crawling"
                mnemonic="C"
-               tooltip="Crawl">
+               tooltip="Crawling">
          </menu>
          <menu
                id="wordcount"
@@ -73,9 +73,9 @@
           </menu>
           <menu
                 id="classify"
-                label="Classify"
+                label="Classification"
                 mnemonic="F"
-                tooltip="Classify">
+                tooltip="Classification">
           </menu>
           <menu
                 id="topicmodel"

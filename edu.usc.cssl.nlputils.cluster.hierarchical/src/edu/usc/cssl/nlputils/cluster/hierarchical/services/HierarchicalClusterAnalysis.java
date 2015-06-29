@@ -200,7 +200,7 @@ public class HierarchicalClusterAnalysis {
 		ConsoleView.printlInConsoleln("Saving the output to cluster.txt");
 		subProgressMonitor.subTask("Saving the output to cluster.txt");
 		ConsoleView.printlInConsoleln("\nDone Hierarchical Clustering...");
-		TacitUtility.createReadMe(fOutputDir, "Hierarchical Clustering");
+		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering");
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return clusters;

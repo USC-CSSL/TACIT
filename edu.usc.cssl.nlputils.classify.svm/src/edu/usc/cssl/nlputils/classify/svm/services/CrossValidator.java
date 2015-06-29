@@ -97,7 +97,7 @@ public class CrossValidator {
 		
 		clearFiles(kValue,outputPath);
 		writeToCSV(accuracies,outputPath);
-		TacitUtility.createReadMe(outputPath, "SVM Classification");
+		TacitUtility.createRunReport(outputPath, "SVM Classification");
 	}
 	
 	private void clearFiles(int kValue, String outputPath) {

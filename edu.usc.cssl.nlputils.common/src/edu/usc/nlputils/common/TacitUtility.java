@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.Platform;
 public class TacitUtility {
 
 	
-	public static void createReadMe (String location, String title) {
+	public static void createRunReport (String location, String title) {
 		
 		Boolean createReadMe;
-		String readMeStr = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CREATE_README);
+		String readMeStr = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CREATE_RUNREPORT);
 		if (readMeStr == null || readMeStr == "") createReadMe = true;
 		else createReadMe = Boolean.valueOf(readMeStr);
 		

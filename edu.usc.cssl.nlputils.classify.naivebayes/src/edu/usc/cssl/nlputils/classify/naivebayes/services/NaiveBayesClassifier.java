@@ -96,7 +96,7 @@ public class NaiveBayesClassifier {
 		ArrayList<String> result = Vectors2Classify.main(v2cArgs);
 		ConsoleView.printlInConsoleln("\nCreated classifier output file " + outputPath+ ".out");
 		System.out.println(result.get(0));
-		TacitUtility.createReadMe(outputDirectory,"Naive Bayes's");
+		TacitUtility.createRunReport(outputDirectory,"Naive Bayes's");
 		
 		return result.get(0);
 	}
@@ -155,7 +155,7 @@ public class NaiveBayesClassifier {
 		bw.close();
 
 		ConsoleView.printlInConsoleln("Created prediction CSV file " + outputPath + "_output.csv");
-		TacitUtility.createReadMe(classificationOutputDir,"Naive Bayes's");
+		TacitUtility.createRunReport(classificationOutputDir,"Naive Bayes's");
 	}
 	
 	public void purgeDirectory(File dir) {
