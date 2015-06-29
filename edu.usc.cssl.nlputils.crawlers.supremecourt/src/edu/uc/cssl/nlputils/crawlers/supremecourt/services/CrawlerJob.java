@@ -44,16 +44,17 @@ public class CrawlerJob {
 		openSummaryFile();
 	}
 
-	private void openSummaryFile() {		
+	private void openSummaryFile() {
 		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 		Date dateobj = new Date();
 		try {
-			fileWriter = new FileWriter(this.outputDir + "/" + "supremecourt-summary-"
-					+ df.format(dateobj) + ".csv");
+			fileWriter = new FileWriter(this.outputDir + "/"
+					+ "supremecourt-summary-" + df.format(dateobj) + ".csv");
 			bw = new BufferedWriter(fileWriter);
 
-			addContentsToSummary("Case", "Docket No", "Argued", "Decided",
-					"Majority Author", "Vote", "File Type","File name");
+			addContentsToSummary("Case", "Location", "Docket No", "Argued",
+					"Decided", "Majority Author", "Vote", "File Type",
+					"File name");
 		} catch (IOException e) {
 		}
 
@@ -98,7 +99,6 @@ public class CrawlerJob {
 	}
 
 	public void crawl(String url) throws IOException {
-
 		Document doc = retrieveDocumentFromUrl(url);
 		Element table = doc.select("tbody").get(0);
 		Elements rows = table.select("tr");
@@ -119,36 +119,50 @@ public class CrawlerJob {
 						+ ". Hence it will not be crawled ");
 				continue;
 			}
+			String[] casesSplit = row.select("a").get(0).attr("href")
+					.split("/");
+			ConsoleView.printlInConsole("Crawling "+
+					 "Case : "+
+					row.select("a").get(0).text()+ " year : "+ casesSplit[casesSplit.length - 2]);
 			String filename = row.select("td").get(1).text().trim() + "_"
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);
-			ConsoleView.printlInConsoleln(contenturl + ", " + filename);
+			ConsoleView.printlInConsoleln(" url :"+ contenturl);
 
 			// Fixing the unhandled exception without cascading.
 			try {
-				String fileName = getFiles(contenturl, filename);
-				if (fileName.length() > 1){
-					if(fileName.contains(",")){
-						addContentsToSummary(row.select("td").get(0).text(), row
-								.select("td").get(1).text(), row.select("td")
-								.get(2).text(), row.select("td").get(3).text(), row
-								.select("td").get(4).text(), row.select("td")
-								.get(5).text(), "Transcript",fileName.split(",")[0]);
-						addContentsToSummary(row.select("td").get(0).text(), row
-								.select("td").get(1).text(), row.select("td")
-								.get(2).text(), row.select("td").get(3).text(), row
-								.select("td").get(4).text(), row.select("td")
-								.get(5).text(), "Mp3",fileName.split(",")[1]);
-					}
-					else{
-						addContentsToSummary(row.select("td").get(0).text(), row
-								.select("td").get(1).text(), row.select("td")
-								.get(2).text(), row.select("td").get(3).text(), row
-								.select("td").get(4).text(), row.select("td")
-								.get(5).text(), "Transcript",fileName);
+				CrawlerData crawlDetails = getFiles(contenturl, filename);
+				if (crawlDetails.getFileLocation().length() > 1) {
+					if (crawlDetails.getFileLocation().contains(",")) {
+						addContentsToSummary(row.select("td").get(0).text(),
+								row.select("td").get(1).text(),
+								crawlDetails.getLocation(), row.select("td")
+										.get(2).text(), row.select("td").get(3)
+										.text(),
+								row.select("td").get(4).text(), row
+										.select("td").get(5).text(),
+								"Transcript", crawlDetails.getFileLocation()
+										.split(",")[0]);
+						addContentsToSummary(row.select("td").get(0).text(),
+								crawlDetails.getLocation(), row.select("td")
+										.get(1).text(), row.select("td").get(2)
+										.text(),
+								row.select("td").get(3).text(), row
+										.select("td").get(4).text(), row
+										.select("td").get(5).text(), "Mp3",
+								crawlDetails.getFileLocation().split(",")[1]);
+					} else {
+						addContentsToSummary(row.select("td").get(0).text(),
+								crawlDetails.getLocation(), row.select("td")
+										.get(1).text(), row.select("td").get(2)
+										.text(),
+								row.select("td").get(3).text(), row
+										.select("td").get(4).text(), row
+										.select("td").get(5).text(),
+								"Transcript", crawlDetails.getFileLocation());
 					}
 				}
-					
+
 			} catch (IOException e) {
 				ConsoleView.printlInConsoleln("Error Accessing the URL "
 						+ contenturl);
@@ -158,20 +172,21 @@ public class CrawlerJob {
 		}
 	}
 
-	private String getFiles(String contenturl, String filename)
+	private CrawlerData getFiles(String contenturl, String filename)
 			throws IOException {
 		File trans = new File(this.outputDir + "/" + filename
 				+ "-transcript.txt");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trans));
 
 		Document doc = retrieveDocumentFromUrl(contenturl);
+		CrawlerData crawlData = new CrawlerData();
 
 		Elements hidden = doc.select("div.hidden");
 		if (hidden.size() == 0) {
 			ConsoleView.printlInConsoleln("No data. Skipping page "
 					+ contenturl);
 			bw.close();
-			return "";
+			return crawlData;
 		}
 		if (monitor.isCanceled()) {
 			bw.close();
@@ -187,7 +202,7 @@ public class CrawlerJob {
 		// Element transcript = doc.select("div.hidden").get(0);
 		Element transcript = hidden.get(0);
 		Elements lines = transcript.select("p");
-		if(lines.size()<1){
+		if (lines.size() < 1) {
 			lines = doc.select("div.content").select("p");
 		}
 		for (Element line : lines) {
@@ -212,9 +227,21 @@ public class CrawlerJob {
 			dwn = downloadAudioFilesFromWebPage(filename, doc);
 		}
 		if (dwn.length() > 1) {
-			return outputDir + "/" + filename + "-transcript.txt" + "," + dwn;
+			crawlData.setFileLocation(outputDir + "/" + filename
+					+ "-transcript.txt" + "," + dwn);
+		} else {
+			crawlData.setFileLocation(outputDir + "/" + filename
+					+ "-transcript.txt");
 		}
-		return outputDir + "/" + filename + "-transcript.txt";
+		if(doc.select("div.case-location")!= null && doc.select("div.case-location").select("a")!= null && doc.select("div.case-location").select("a")
+				.size()>0 && doc.select("div.case-location").select("a")
+						.get(0).text()!= "")
+		crawlData.setLocation(doc.select("div.case-location").select("a")
+				.get(0).text());
+		else{
+			crawlData.setLocation("");
+		}
+		return crawlData;
 
 	}
 
