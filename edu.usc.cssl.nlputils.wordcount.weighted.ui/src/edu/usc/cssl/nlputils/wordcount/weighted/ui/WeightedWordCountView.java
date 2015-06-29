@@ -2,7 +2,10 @@ package edu.usc.cssl.nlputils.wordcount.weighted.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -352,11 +355,13 @@ public class WeightedWordCountView extends ViewPart implements
 
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
+				DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+				Date dateobj = new Date();
 				if (weightedWordCountButton.getSelection()) {
 					fileName = "weighted_" + fileName
-							+ System.currentTimeMillis();
+							+ df.format(dateobj);
 				} else {
-					fileName = "liwc_" + fileName + System.currentTimeMillis();
+					fileName = "liwc_" + fileName + df.format(dateobj);
 				}
 				final File oFile = new File(outputPath + File.separator
 						+ fileName + ".csv");

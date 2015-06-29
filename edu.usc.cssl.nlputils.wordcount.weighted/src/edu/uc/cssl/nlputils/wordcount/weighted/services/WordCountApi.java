@@ -9,7 +9,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -377,8 +379,10 @@ public class WordCountApi {
 				.getProperty("file.separator")));
 		String outputPath = outputDir.getAbsolutePath()+ System.getProperty("file.separator") + iFilename
 				+ "_wordDistribution";
-		if(this.weighted) outputPath = outputPath + "_LIWC"+System.currentTimeMillis()+".csv";
-		else outputPath = outputPath + "_WWC"+System.currentTimeMillis()+".csv";
+		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		Date dateobj = new Date();
+		if(this.weighted) outputPath = outputPath + "_LIWC"+df.format(dateobj)+".csv";
+		else outputPath = outputPath + "_WWC"+df.format(dateobj)+".csv";
 		File wdFile = new File(outputPath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
 		bw.write("Word,Count,");
