@@ -15,47 +15,121 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>If you're new to Git or distributed version control systems generally, then you might want to read Git for Eclipse Users first. More background and details can be found in the on-line book Pro Git. <br><br>
-							If you are coming from CVS, you can find common CVS workflows for Git <a href = "http://wiki.eclipse.org/Platform-releng/Git_Workflows" target="_blank">Platform-releng/Git Workflows</a>. 
-							
+					
+						<td>Naive Bayes methods are a family of supervised learning algorithms that are used to classify data instances according 
+						to a finite set of class types. Naive Bayes classification is accomplished by applying Bayes theorem with the strong assumption
+						that dependent features (i.e. dependent variables) are statistically independent. While this assumption
+						is often violated, it permits naive Bayes algorithms to work quickly and efficiently, which often yields benefits 
+						that outweigh the costs of the independence assumption. 
+						To implement a naive Bayes algorithm, the only definite requirement is that class labeled data instances are available for 
+						algorithm training and testing. If this condition is satisfied, implementation is executed through three steps:  <br> <br>
+			
+						<b>1.</b> Splitting labeled data into training and test data sets <br>
+						<b>2.</b> Training the algorithm on the training data <br>
+						<b>3.</b> Estimating the trained algorithm's error rate by testing it on the test data set <br> <br>
+						
+						If a project step also includes classifying unlabeled data instances, a fourth step is required: <br> <br>
+						<b>4.</b> Using the trained algorithm to probabilistically assign a class to a set of unlabeled data instances. 
+													
 						</td>
 					</tr>
 				</table>
 			</tr>
 			<tr>
 				<table class = "contents">
+					
 					<tr>
-						<td class = "head">Basic Tutorial: Adding a project to version control</td>
+						<td class = "head">Basic Tutorial: Using TACIT to implement a naive Bayes algorithm</td>
 					</tr>
+					
 					<tr>
-						<td class = "subtitle">Configuration</td>
+						<td> TACIT's naive Bayes tool can be used to learn probabilistic associations between text instances and class labels. 
+							 During the training process, the algorithm extracts features from training texts that are predictive of class association.
+							 The extraction of these features is both automatic and optimized, so it is not necessary to specify the number features 
+							 to be extracted. 
+					
+					<tr>
+						<td class = "section">Data organization and specification</td>
 					</tr>
-					<tr>
-						<td class = "section">Identifying yourself</td>
+					
+					<tr>					
+						<td> TACIT's naive Bayes tool requires that data organization satisfies two criteria. First, every text
+						instance must be contained in its own file. Second, class labels must be represented by directories. That is, a directory must be created 
+						for each class label and all text instances associated with a given label must be located in the relevant 
+						directory. <br> <br>
+						
+						Once the data is organized into single instance files contained in class directories, the class directories can be
+						added to the naive Bayes implementation by clicking the "Add Folder" button, which is located in the naive Bayes tool's
+						"Class Details" section. Using the "Add Folder" button, each class directory should be added to the implementation. Depending
+						on whether the text instances need to be preprocessed, the "Preprocess" option, also contained in the "Class Details" section
+						can be selected.  <br> <br> 
+						
+						Notably,  TACIT's naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
+						the data contained in the class directories is automatically split into training and test sets, following a 90% to 10% 
+						ratio, respectively. <br> <br> 
+						
+						In order to use a trained algorithm to classify unlabeled data, it is also necessary to organize the unlabeled data.
+						Each instance must be contained in a separate file and all files must be stored in a single directory. The "classify 
+						data" option must then be selected and the directory that contains the unlabeled data must be specified as the 
+						"Classification Input Path." Both of these fields are located in the "Classification" area of the naive Bayes window
+						in TACIT.<br><br>
+						
+						
+						<td>
+						
 					</tr>
-					<tr>
-						<td>Whenever the history of the repository is changed (technically, whenever a commit is created), Git keeps track of the user who created that commit. The identification consists of a name (typically a person's name) and an e-mail address. This information is stored in file ~/.gitconfig under dedicated keys. 
+					
 
-<br><br>
-EGit will ask you for this information when you create your first commit. By default, this dialog is shown only once until you create a new workspace or tick the checkbox "Show initial configuration dialog" on the Git Preference page:
-							<br>
-							<img class="image" src="images/temp.png" alt="Identifying yourself">
- 							<br>
+					<tr>
+						<td class = "section">Specify k-value for cross validation  </td>
+					</tr>
+					
+					<tr>
+						<td> In order to estimate the accuracy of the classifier, TACIT's naive Bayes module uses k-fold validation. K-fold validation 
+						randomly splits a data set into k equal sized subsamples. One of these subsamples is then randomly selected as the test set and
+						the algorithm is trained on the remaining k-1 samples. This process is then repeated k-times (the folds) so that each subsample 
+						is used once as the test set. The error rates obtained from each fold are then averaged to estimate the actual error rate.  
+						Any number up to the total sample size can be specified as the k-value; however, k=10 is one of the most commonly used values. 
+						<br> <br> 
+						
+						To specify the k value, enter the desired value in the "k value for cross validation" field, which is located in the "Input Parameters"
+						field within the TACIT naive Bayes module window. 
+						
+					</tr>
+					
+					<tr>
+						<td class = "section">Output and implementation  </td>
+					</tr>
+					
+					<tr>
+						<td> 
+						If unlabeled data classification is desired, an output path must be specified. After the algorithm runs, a .csv file with the classification
+						data will be generated. This file will contain a row for every unlabeled data instance and row will contain the filename of that row's instance,
+						the assigned class, and other relevant information. <br> <br>
+						
+						After specifying all requisite parameters, the algorithm can be run by clicking the green and white play button located in the top right corner
+						of the naive Bayes window. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
+						standard error will be displayed in the console window. 
 						</td>
 					</tr>
+						
 					<tr>
-						<td class = "section">Identifying yourself</td>
+						<td class = "section">Summary of steps  </td>
 					</tr>
 					<tr>
-						<td>Whenever the history of the repository is changed (technically, whenever a commit is created), Git keeps track of the user who created that commit. The identification consists of a name (typically a person's name) and an e-mail address. This information is stored in file ~/.gitconfig under dedicated keys. 
-
-<br><br>
-EGit will ask you for this information when you create your first commit. By default, this dialog is shown only once until you create a new workspace or tick the checkbox "Show initial configuration dialog" on the Git Preference page:
-							<br>
-							<img class="image" src="images/temp.png" alt="Identifying yourself">
- 							<br>
+						<td>
+						<b>1.</b> Store each text instance in its own text file<br>
+						<b>2.</b> Create a directory for each class and store each associated data instance file in the appropriate directory<br>
+						<b>3.</b> Select all relevant class directories within the naive Bayes window using the "Add Folder" button<br>
+						<b>4.</b> If preprocessing is desired, select "Preprocess" and specify the required parameters<br>
+						<b>5.</b> If unlabeled data classification is desired, store each unlabeled data instance in an individual file, place the 
+						files in a single directory, and specify this directory as the "Classifcation input path" using the "Browse" button <br>
+						<b>6.</b> Specify the desired number of folds for k-fold validation<br>
+						<b>7.</b> If unlabeled data classification is desired, specify the output path in which the classification .csv should be stored
 						</td>
-					</tr>					
+					</tr>
+					
+							
 				</table>
 			</tr>	
 		</table>
