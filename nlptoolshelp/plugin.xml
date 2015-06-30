@@ -12,5 +12,13 @@
             primary="true">
       </toc>
    </extension>
+   
+   <extension
+      point="org.eclipse.help.contexts">
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.crawlers.supremecourt.ui">
+   </contexts>
+</extension> 
 
 </plugin>

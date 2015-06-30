@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -30,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -88,7 +88,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
-	//	section.setText("Crawler Details"); //$NON-NLS-1$
+		//	section.setText("Crawler Details"); //$NON-NLS-1$
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -127,7 +127,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				"Filter Range:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(filterRangeLbl);
-		rangeCombo = new Combo(sectionClient, SWT.FLAT|SWT.READ_ONLY);
+		rangeCombo = new Combo(sectionClient, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(rangeCombo);
 		toolkit.adapt(rangeCombo);
@@ -155,7 +155,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		this.setPartName("Supreme Crawler");
 		mgr = form.getToolBarManager();
 		addCrawlButton(mmng, layoutData.getOutputLabel(), mgr);
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (SupremeCrawlerImageRegistry.getImageIconFactory()
@@ -169,9 +169,13 @@ public class SupremeCrawlerView extends ViewPart implements
 
 			@Override
 			public void run() {
-
-			};
-		});
+				PlatformUI.getWorkbench().getHelpSystem()
+						.displayHelp("edu.usc.cssl.nlputils.crawlers.supremecourt.ui.supremecourt");
+			};	
+		};
+		mgr.add(helpAction);
+		PlatformUI.getWorkbench().getHelpSystem()
+				.setHelp(helpAction, "edu.usc.cssl.nlputils.crawlers.supremecourt.ui.supremecourt");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
 	}
@@ -301,7 +305,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 		Group downloadGroup = new Group(outputSectionClient, SWT.LEFT);
 		downloadGroup.setText("Audio");
-		//downloadGroup.setBackground(outputSectionClient.getBackground());
+		// downloadGroup.setBackground(outputSectionClient.getBackground());
 		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -310,12 +314,12 @@ public class SupremeCrawlerView extends ViewPart implements
 
 		downloadAudio = new Button(downloadGroup, SWT.CHECK);
 		downloadAudio.setText("Download Audio");
-		//downloadAudio.setBackground(outputSectionClient.getBackground());
+		// downloadAudio.setBackground(outputSectionClient.getBackground());
 
 		truncateAudio = new Button(downloadGroup, SWT.CHECK);
 		truncateAudio.setText("Truncate (1 MB) ");
 		truncateAudio.setEnabled(false);
-		//truncateAudio.setBackground(outputSectionClient.getBackground());
+		// truncateAudio.setBackground(outputSectionClient.getBackground());
 
 		downloadAudio.addSelectionListener(new SelectionAdapter() {
 
