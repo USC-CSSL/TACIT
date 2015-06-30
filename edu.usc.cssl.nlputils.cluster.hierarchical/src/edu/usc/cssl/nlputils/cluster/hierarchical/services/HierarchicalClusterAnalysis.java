@@ -7,7 +7,10 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,9 +35,10 @@ import edu.usc.nlputils.common.TacitUtility;
 
 public class HierarchicalClusterAnalysis {
 	public static String doClustering(List<File> inputFiles, String outputPath,
-			boolean saveImg, SubProgressMonitor subProgressMonitor) {
+			boolean saveImg, SubProgressMonitor subProgressMonitor, Date dateObj) {
 		try {
 
+			DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
 			StringToWordVector filter = new StringToWordVector();
 			HierarchicalClusterer aggHierarchical = new HierarchicalClusterer();
 
@@ -71,7 +75,7 @@ public class HierarchicalClusterAnalysis {
 			String g = aggHierarchical.graph();
 			String output = formatGraph(g, inputFiles);
 			ConsoleView.printlInConsoleln("Network " + output);
-			subProgressMonitor.subTask("Foramting Image");
+			subProgressMonitor.subTask("Formating Image");
 			aggHierarchical.linkTypeTipText();
 			subProgressMonitor.worked(15);
 			HierarchyVisualizer tv = new HierarchyVisualizer(output);
@@ -100,10 +104,10 @@ public class HierarchicalClusterAnalysis {
 					graphics2D.dispose();
 					subProgressMonitor.subTask("Saving image @ " + outputPath
 							+ File.separator
-							+ "Hierarchical Clustering Output.jpeg");
+							+ "Hierarchical Clustering Output "+df.format(dateObj)+".jpeg");
 					ImageIO.write(image, "jpeg", new File(outputPath
 							+ File.separator
-							+ "Hierarchical Clustering Output.jpeg"));
+							+ "Hierarchical Clustering Output "+df.format(dateObj)+".jpeg"));
 					subProgressMonitor.worked(10);
 				} catch (Exception e) {
 					System.out
@@ -113,7 +117,7 @@ public class HierarchicalClusterAnalysis {
 			}
 
 			BufferedWriter buf = new BufferedWriter(new FileWriter(new File(
-					outputPath + File.separator + "cluster.txt")));
+					outputPath + File.separator + "hierarchical-cluster-"+df.format(dateObj)+".txt")));
 			buf.write("Mapping of document ID to actual names\n");
 			for (int i = 0; i < inputFiles.size(); i++) {
 				buf.write((i + 1) + " " + inputFiles.get(i).getName() + "\n");
@@ -167,8 +171,9 @@ public class HierarchicalClusterAnalysis {
 
 	public static String runClustering(List<File> listOfFiles,
 			String fOutputDir, boolean fSaveImg,
-			SubProgressMonitor subProgressMonitor) {
+			SubProgressMonitor subProgressMonitor, Date dateObj) {
 
+		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles) {
 			if (f.getAbsolutePath().contains("DS_Store"))
@@ -180,7 +185,7 @@ public class HierarchicalClusterAnalysis {
 		subProgressMonitor.subTask("Running Hierarchical Clustering...");
 		ConsoleView.printlInConsoleln("Running Hierarchical Clustering...");
 		String clusters = doClustering(inputFiles, fOutputDir, fSaveImg,
-				new SubProgressMonitor(subProgressMonitor, 45));
+				new SubProgressMonitor(subProgressMonitor, 45), dateObj);
 		if (subProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -197,10 +202,10 @@ public class HierarchicalClusterAnalysis {
 		ConsoleView.printlInConsoleln("Clusters formed: \n");
 
 		ConsoleView.printlInConsoleln(clusters);
-		ConsoleView.printlInConsoleln("Saving the output to cluster.txt");
-		subProgressMonitor.subTask("Saving the output to cluster.txt");
+		ConsoleView.printlInConsoleln("Saving the output to hierarchical-cluster-"+df.format(dateObj)+".txt");
+		subProgressMonitor.subTask("Saving the output to hierarchical-cluster-"+df.format(dateObj)+".txt");
 		ConsoleView.printlInConsoleln("\nDone Hierarchical Clustering...");
-		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering");
+		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj);
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return clusters;

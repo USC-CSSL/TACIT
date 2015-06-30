@@ -95,7 +95,7 @@ public class WordCountApi {
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
 			boolean doWordDistribution, boolean stemDictionary, File oFile,
-			File sFile) throws IOException {
+			File sFile, Date dateObj) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
 			this.delimiters = " ";
 		else
@@ -179,7 +179,7 @@ public class WordCountApi {
 			if (inputFile.getAbsolutePath().contains("DS_Store"))
 				continue;
 			monitor.subTask("Counting Words at " + inputFile );
-			countWords(inputFile, oFile, sFile);
+			countWords(inputFile, oFile, sFile,dateObj);
 			monitor.worked(1);
 		}
 		if (monitor.isCanceled()) {
@@ -195,8 +195,8 @@ public class WordCountApi {
 		}
 		// No errors
 		monitor.subTask("Writing Read Me File...");
-		if(this.weighted) TacitUtility.createRunReport(outputFile, "Weighted Word Count");
-		else TacitUtility.createRunReport(outputFile, "LIWC Word Count");
+		if(this.weighted) TacitUtility.createRunReport(outputFile, "Weighted Word Count",dateObj);
+		else TacitUtility.createRunReport(outputFile, "LIWC Word Count",dateObj);
 		
 		monitor.worked(5);
 		if (monitor.isCanceled()) {
@@ -205,7 +205,7 @@ public class WordCountApi {
 		}
 	}
 
-	public void countWords(File iFile, File oFile, File spssFile)
+	public void countWords(File iFile, File oFile, File spssFile, Date dateObj)
 			throws IOException {
 	
 		if (iFile.isDirectory()) {
@@ -353,7 +353,7 @@ public class WordCountApi {
 		if (doWordDistribution){
 			
 			calculateWordDistribution(map, catCount, wordCategories, iFile.getAbsolutePath(),
-					oFile);
+					oFile,dateObj);
 		}
 
 		// If there are no punctuation marks, minimum number of lines = 1
@@ -373,16 +373,16 @@ public class WordCountApi {
 	public void calculateWordDistribution(HashMap<String, Integer> map,
 			HashMap<String, Double> catCount,
 			HashMap<String, HashSet<String>> wordCategories, String inputFile,
-			File oFile) throws IOException {
+			File oFile, Date dateobj) throws IOException {
 		File outputDir = oFile.getParentFile();
 		String iFilename = inputFile.substring(inputFile.lastIndexOf(System
 				.getProperty("file.separator")));
 		String outputPath = outputDir.getAbsolutePath()+ System.getProperty("file.separator") + iFilename
-				+ "_wordDistribution";
+				+ "-wordDistribution";
 		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
-		Date dateobj = new Date();
-		if(this.weighted) outputPath = outputPath + "_LIWC"+df.format(dateobj)+".csv";
-		else outputPath = outputPath + "_WWC"+df.format(dateobj)+".csv";
+		//Date dateobj = new Date();
+		if(this.weighted) outputPath = outputPath + "-LIWC-"+df.format(dateobj)+".csv";
+		else outputPath = outputPath + "-weighted-"+df.format(dateobj)+".csv";
 		File wdFile = new File(outputPath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
 		bw.write("Word,Count,");

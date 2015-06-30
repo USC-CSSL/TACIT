@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -203,12 +204,11 @@ public class HierarchicalClusterView extends ViewPart implements
 			}
 
 			public void run() {
-				final DateFormat dateFormat = new SimpleDateFormat(
-						"MMM dd, yyyy, HH:mm:ss aaa");
-				final Calendar cal = Calendar.getInstance();
+				final DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+				final Date dateObj = new Date();
 				ConsoleView
 						.writeInConsoleHeader("Hierarchical clustering started "
-								+ (dateFormat.format(cal.getTime())));
+								+ (df.format(dateObj)));
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final List<String> selectedFiles = layoutData
 						.getSelectedFiles();
@@ -258,7 +258,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						long startTime = System.currentTimeMillis();
 						HierarchicalClusterAnalysis.runClustering(inputFiles,
 								outputPath, isSaveImage,
-								new SubProgressMonitor(monitor, 50));
+								new SubProgressMonitor(monitor, 50), dateObj);
 						if (monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
@@ -292,7 +292,7 @@ public class HierarchicalClusterView extends ViewPart implements
 								IStatus.OK, form);
 						ConsoleView
 								.writeInConsoleHeader("<terminated> Hierarchical clustering  "
-										+ (dateFormat.format(cal.getTime())));
+										+ (df.format(new Date())));
 						NlputilsFormComposite
 								.updateStatusMessage(getViewSite(),
 										"Hierarchical clustering completed",

@@ -3,6 +3,7 @@ package edu.usc.cssl.nlputils.classify.naivebayes.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -507,6 +508,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								getViewSite(), null, null, form);
 						monitor.beginTask(
 								"Running Naive Bayes Classification...", 100);
+						
+						Date dateObj = new Date();
 
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
@@ -593,9 +596,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								handledCancelRequest("Cancelled");
 							monitor.subTask("Cross validating...");
 							perf = (!isPreprocessEnabled) ? cv.doCross(nbc,
-									classPaths, kValue, monitor, outputDir)
+									classPaths, kValue, monitor, outputDir,dateObj)
 									: cv.doCross(nbc, tempClassPaths, kValue,
-											monitor, outputDir);
+											monitor, outputDir,dateObj);
 							monitor.worked(40);
 							if (monitor.isCanceled())
 								handledCancelRequest("Cancelled");
@@ -608,7 +611,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										.printlInConsoleln("---------- Classification Starts ------------");
 								nbc.classify(trainingDataPaths,
 										classificationInputDir, outputDir,
-										false, false);
+										false, false,dateObj);
 								ConsoleView
 										.printlInConsoleln("---------- Classification Finished ------------");
 							}

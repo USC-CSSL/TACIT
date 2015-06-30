@@ -9,6 +9,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.Platform;
@@ -16,7 +18,7 @@ import org.eclipse.core.runtime.Platform;
 public class TacitUtility {
 
 	
-	public static void createRunReport (String location, String title) {
+	public static void createRunReport (String location, String title, Date dateObj) {
 		
 		Boolean createReadMe;
 		String readMeStr = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CREATE_RUNREPORT);
@@ -25,7 +27,9 @@ public class TacitUtility {
 		
 		if (!createReadMe) return;
 		
-		File readme = new File(location + "/README.txt");
+		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		
+		File readme = new File(location + System.getProperty("file.separator")+title.replace(" ", "-")+"-run-report-"+df.format(dateObj)+".txt");
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
 			String appV = "TACIT v" + Platform
@@ -42,7 +46,7 @@ public class TacitUtility {
 			bw.write("Date: " + date.toString());
 			bw.newLine();
 			bw.close();
-			ConsoleView.printlInConsoleln("Finished creating README file");
+			ConsoleView.printlInConsoleln("Finished creating run report file");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -2,6 +2,7 @@ package edu.usc.cssl.nlputils.classifiy.svm.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -180,6 +181,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 						String ppClass2 = "";
 						File[] class1FilesL;
 						File[] class2FilesL;
+						Date dateObj = new Date();
 						if (ppValue) {
 							try {
 								ppClass1 = preprocessor.doPreprocessing(
@@ -225,7 +227,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							cv.doCross(svm, class1NameStr, class1FilesL,
 									class2NameStr, class2FilesL, kValueInt,
-									featureFile, outputPath, monitor);
+									featureFile, outputPath, monitor,dateObj);
 							// monitor.worked(5);
 							if (ppValue && preprocessor.doCleanUp()) {
 								preprocessor.clean();

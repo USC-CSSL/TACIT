@@ -3,6 +3,7 @@ package edu.usc.cssl.nlputils.cluster.kmeans.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -246,8 +247,9 @@ public class KmeansClusterView extends ViewPart implements
 						// kemans processsing
 						long startTime = System.currentTimeMillis();
 						monitor.subTask("Clustering files...");
+						Date dateObj = new Date();
 						KmeansClusterAnalysis.runClustering(noOfClusters,
-								inputFiles, outputPath);
+								inputFiles, outputPath, dateObj);
 						monitor.worked(80);
 						ConsoleView
 								.printlInConsoleln("K-Means Clustering completed successfully in "

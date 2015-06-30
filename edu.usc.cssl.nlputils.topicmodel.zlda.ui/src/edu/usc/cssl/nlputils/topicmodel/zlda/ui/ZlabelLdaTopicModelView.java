@@ -3,6 +3,7 @@ package edu.usc.cssl.nlputils.topicmodel.zlda.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -268,11 +269,12 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 
 						long startTime = System.currentTimeMillis();
 
+						Date dateObj = new Date();
 						ZlabelTopicModelAnalysis zlda = new ZlabelTopicModelAnalysis(
 								new SubProgressMonitor(monitor, 70));
 						monitor.subTask("Topic Modelling...");
 						zlda.invokeLDA(topicModelDirPath, seedFilePath,
-								noOfTopics, outputPath);
+								noOfTopics, outputPath,dateObj);
 						System.out
 								.println("ZLabel LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
@@ -282,8 +284,11 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 							return Status.CANCEL_STATUS;
 						}
-						monitor.subTask("Cleaning Preprocessed Files...");
-						if (isPreprocess) preprocessTask.clean();
+						
+						if (isPreprocess) {
+							monitor.subTask("Cleaning Preprocessed Files...");
+							preprocessTask.clean();
+						}
 						monitor.worked(10);
 						monitor.done();
 						NlputilsFormComposite.updateStatusMessage(

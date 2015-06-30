@@ -48,7 +48,7 @@ public class SenateCrawler {
 		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 		Date dateobj = new Date();
 		
-		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "senate-summary-"+df.format(dateobj)+".csv")));
+		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "senate-crawler-summary-"+df.format(dateobj)+".csv")));
 		csvWriter.write("Congress,Date,Senator,Political Affiliation,Attributes,Title,File");
 		csvWriter.newLine();
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){

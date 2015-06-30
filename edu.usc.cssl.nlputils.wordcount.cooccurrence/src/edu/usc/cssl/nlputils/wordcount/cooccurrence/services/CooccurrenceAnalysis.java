@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -195,7 +196,8 @@ public class CooccurrenceAnalysis {
 			}
 			monitor.worked(10);
 			ConsoleView.printlInConsoleln(String.valueOf(phrase.size()));
-			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis");
+			Date dateObj = new Date();
+			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis",dateObj);
 			return true;
 		} catch (Exception e) {
 			ConsoleView.printlInConsoleln("Exception occurred in Cooccurrence Analysis "

@@ -356,12 +356,12 @@ public class WeightedWordCountView extends ViewPart implements
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
 				DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
-				Date dateobj = new Date();
+				final Date dateobj = new Date();
 				if (weightedWordCountButton.getSelection()) {
-					fileName = "weighted_" + fileName
-							+ df.format(dateobj);
+					fileName = "weighted-" + fileName
+							+ "-"+df.format(dateobj);
 				} else {
-					fileName = "liwc_" + fileName + df.format(dateobj);
+					fileName = "liwc-" + fileName + "-"+df.format(dateobj);
 				}
 				final File oFile = new File(outputPath + File.separator
 						+ fileName + ".csv");
@@ -384,6 +384,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						//Date dateObj = new Date();
 						NlputilsFormComposite.setConsoleViewInFocus();
 						List<File> selectedFiles = new ArrayList<File>();
 						NlputilsFormComposite.updateStatusMessage(
@@ -434,7 +435,7 @@ public class WeightedWordCountView extends ViewPart implements
 							wordCountController.wordCount(monitor, selectedFiles,
 									dictionaryFiles, stopWordPath, outputPath,
 									"", true, isLiwcStemming, isSnowBall,
-									isSpss, isWdist, isStemDic, oFile, sFile);
+									isSpss, isWdist, isStemDic, oFile, sFile,dateobj);
 							
 						} catch (IOException ioe) {
 							

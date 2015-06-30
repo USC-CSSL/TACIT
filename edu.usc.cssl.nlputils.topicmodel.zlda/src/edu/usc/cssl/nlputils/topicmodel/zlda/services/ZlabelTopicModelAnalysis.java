@@ -5,10 +5,13 @@ package edu.usc.cssl.nlputils.topicmodel.zlda.services;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,8 +32,9 @@ public class ZlabelTopicModelAnalysis {
 
 	private void runLDA(File dir, File preSeedFile, int numTopics,
 			int noOfSamples, double alphaval, double betaval,
-			double confidenceValue, String outputdir) {
+			double confidenceValue, String outputdir, Date dateObj) {
 
+		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
 		File[] listOfFiles = dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
 		monitor.subTask("Collecting files from the directory...");
@@ -113,13 +117,13 @@ public class ZlabelTopicModelAnalysis {
 			}
 		}
 		this.monitor.worked(15);
-this.monitor.subTask("writing corresponding words and phi values in topicwords.csv");
+this.monitor.subTask("writing corresponding words and phi values in topicwords-"+df.format(dateObj)+".csv");
 		System.out
 				.println("\nTopic and its corresponding words and phi values stored in "
-						+ outputdir + File.separator + "topicwords.csv");
+						+ outputdir + File.separator + "topicwords-"+df.format(dateObj)+".csv");
 		try {
 			FileWriter fw = new FileWriter(new File(outputdir + File.separator
-					+ "topicwords.csv"));
+					+ "topicwords-"+df.format(dateObj)+".csv"));
 			for (int i = 0; i < T; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -147,11 +151,11 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			fw.flush();
 			fw.close();
 			this.monitor.worked(15);
-			this.monitor.subTask("writing Phi values for each stopic in phi.csv");
+			this.monitor.subTask("writing Phi values for each stopic in phi-"+df.format(dateObj)+".csv");
 			ConsoleView.printlInConsoleln("\nPhi values for each stopic stored in "
-					+ outputdir + File.separator + "phi.csv");
+					+ outputdir + File.separator + "phi-"+df.format(dateObj)+".csv");
 			fw = new FileWriter(
-					new File(outputdir + File.separator + "phi.csv"));
+					new File(outputdir + File.separator + "phi-"+df.format(dateObj)+".csv"));
 			for (int i = 0; i < T; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -171,11 +175,11 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			fw.flush();
 			fw.close();
 			this.monitor.worked(15);
-			this.monitor.subTask("writing Theta values for each stopic in theta.csv");
+			this.monitor.subTask("writing Theta values for each stopic in theta-"+df.format(dateObj)+".csv");
 			ConsoleView.printlInConsoleln("\nTheta values for each document stored in "
-					+ outputdir + File.separator + "theta.csv");
+					+ outputdir + File.separator + "theta-"+df.format(dateObj)+".csv");
 			fw = new FileWriter(new File(outputdir + File.separator
-					+ "theta.csv"));
+					+ "theta-"+df.format(dateObj)+".csv"));
 			for (int i = 0; i < docs.length; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -189,7 +193,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 			}
 			fw.flush();
 			fw.close();
-			TacitUtility.createRunReport(outputdir, "Z-Label LDA");
+			TacitUtility.createRunReport(outputdir, "Z-Label LDA",dateObj);
 		} catch (Exception e) {
 			ConsoleView.printlInConsoleln("Error writing output to files " + e);
 		}
@@ -199,7 +203,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 	}
 
 	public void invokeLDA(String inputDir, String seedFileName, int numTopics,
-			String outputDir) {
+			String outputDir, Date dateObj) {
 		File dir = new File(inputDir);
 
 		File seedFile = new File(seedFileName);
@@ -210,7 +214,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords.c
 		double confidenceValue = 1;
 
 		runLDA(dir, seedFile, numTopics, noOfSamples, alphaval, betaval,
-				confidenceValue, outputDir);
+				confidenceValue, outputDir, dateObj);
 
 	}
 }

@@ -48,8 +48,9 @@ public class CrawlerJob {
 		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 		Date dateobj = new Date();
 		try {
-			fileWriter = new FileWriter(this.outputDir + "/"
-					+ "supremecourt-summary-" + df.format(dateobj) + ".csv");
+
+			fileWriter = new FileWriter(this.outputDir + "/" + "supremecourt-crawler-summary-"
+					+ df.format(dateobj) + ".csv");
 			bw = new BufferedWriter(fileWriter);
 
 			addContentsToSummary("Case", "Location", "Docket No", "Argued",

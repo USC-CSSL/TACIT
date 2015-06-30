@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -111,7 +112,7 @@ public class LdaTopicModelView extends ViewPart implements
 
 		Composite output = layoutData.getSectionClient();
 
-		prefixTxt = createAdditionalOptions(output, "Output Prefix", "Lda_");
+		prefixTxt = createAdditionalOptions(output, "Output Prefix", "Lda");
 
 		wordWeights = toolkit.createButton(output, "Create Word Weight File",
 				SWT.CHECK);
@@ -246,9 +247,10 @@ public class LdaTopicModelView extends ViewPart implements
 
 						// lda processsing
 						long startTime = System.currentTimeMillis();
+						Date dateObj = new Date();
 						monitor.subTask("Topic Modelling...");
 						try {
-							lda.doLDA(monitor);
+							lda.doLDA(monitor,dateObj);
 						} catch (FileNotFoundException e) {
 							NlputilsFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							e.printStackTrace();

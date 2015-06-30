@@ -3,6 +3,7 @@ package edu.usc.cssl.nlputils.classify.naivebayes.services;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 
 public class CrossValidator {
 	
-	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue, IProgressMonitor monitor, String outputDir) throws IOException, EvalError{
+	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue, IProgressMonitor monitor, String outputDir, Date dateObj) throws IOException, EvalError{
 		
 		HashMap<Integer, String> performance = new HashMap<Integer,  String>();
 		
@@ -116,7 +117,7 @@ public class CrossValidator {
 				return null;
 			}
 			// Perform classification
-			String result = nbc.predict(trainingDataPaths, testingDataPaths, outputDir, false, false);
+			String result = nbc.predict(trainingDataPaths, testingDataPaths, outputDir, false, false,dateObj);
 			performance.put(i, result);
 			monitor.worked(7); // for each trial
 			if(monitor.isCanceled()) {
