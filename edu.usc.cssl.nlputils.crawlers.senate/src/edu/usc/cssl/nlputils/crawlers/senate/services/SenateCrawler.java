@@ -327,9 +327,9 @@ public class SenateCrawler {
 		String currentLine;
 		boolean extractFlag = false;
 		for (Element line : lines) {
-			currentLine = line.text();
+			currentLine = line.text().trim();
 			if (currentLine!=null && !currentLine.isEmpty()){
-				String[] words = currentLine.split(" ");
+				String[] words = currentLine.replaceAll("\u00A0", "").trim().split(" ");
 				if (words.length>1){
 					String currentName = words[1].trim().replace(".", "");	// Check the second word of the sentence.
 					currentName = currentName.replace(",", "");
