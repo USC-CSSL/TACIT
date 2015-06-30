@@ -266,7 +266,7 @@ public class SupremeCrawlerView extends ViewPart implements
 						NlputilsFormComposite
 								.writeConsoleHeaderBegining("<terminated> Crawling  ");
 						ConsoleView
-								.printlInConsoleln("Crawling is sucessfully completed");
+								.printlInConsoleln("Crawling is sucessfully completed.");
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), "Crawling completed",
 								IStatus.OK, form);
