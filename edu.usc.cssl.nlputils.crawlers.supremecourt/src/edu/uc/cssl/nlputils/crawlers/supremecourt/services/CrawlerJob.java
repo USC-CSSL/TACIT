@@ -87,8 +87,8 @@ public class CrawlerJob {
 		}
 	}
 
-	public void run(String url) throws IOException {
-		crawl(url);
+	public void run(String url, int noOfPages) throws IOException {
+		crawl(url, noOfPages);
 
 	}
 
@@ -98,10 +98,16 @@ public class CrawlerJob {
 		return doc;
 	}
 
-	public void crawl(String url) throws IOException {
+	public void crawl(String url, int noOfPages) throws IOException {
 		Document doc = retrieveDocumentFromUrl(url);
 		Element table = doc.select("tbody").get(0);
 		Elements rows = table.select("tr");
+		int totalDone = 0;
+		int remaining = 9900 / rows.size();
+		remaining = remaining / noOfPages;
+		if (remaining == 0) {
+			remaining = 1;
+		}
 		for (Element row : rows) {
 
 			if (monitor.isCanceled()) {
@@ -121,13 +127,16 @@ public class CrawlerJob {
 			}
 			String[] casesSplit = row.select("a").get(0).attr("href")
 					.split("/");
-			ConsoleView.printlInConsole("Crawling "+
-					 "Case : "+
-					row.select("a").get(0).text()+ " year : "+ casesSplit[casesSplit.length - 2]);
+			monitor.subTask("Crawling " + "Case : "
+					+ row.select("a").get(0).text() + " year : "
+					+ casesSplit[casesSplit.length - 2]);
+			ConsoleView.printlInConsole("Crawling " + "Case : "
+					+ row.select("a").get(0).text() + " year : "
+					+ casesSplit[casesSplit.length - 2]);
 			String filename = row.select("td").get(1).text().trim() + "_"
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);
-			ConsoleView.printlInConsoleln(" url :"+ contenturl);
+			ConsoleView.printlInConsoleln(" url :" + contenturl);
 
 			// Fixing the unhandled exception without cascading.
 			try {
@@ -162,11 +171,15 @@ public class CrawlerJob {
 								"Transcript", crawlDetails.getFileLocation());
 					}
 				}
-
+				totalDone += remaining;
+				if (totalDone <= 9900)
+					monitor.worked(remaining);
 			} catch (IOException e) {
 				ConsoleView.printlInConsoleln("Error Accessing the URL "
 						+ contenturl);
 				e.printStackTrace();
+			} finally {
+
 			}
 			// break;
 		}
@@ -233,12 +246,13 @@ public class CrawlerJob {
 			crawlData.setFileLocation(outputDir + "/" + filename
 					+ "-transcript.txt");
 		}
-		if(doc.select("div.case-location")!= null && doc.select("div.case-location").select("a")!= null && doc.select("div.case-location").select("a")
-				.size()>0 && doc.select("div.case-location").select("a")
-						.get(0).text()!= "")
-		crawlData.setLocation(doc.select("div.case-location").select("a")
-				.get(0).text());
-		else{
+		if (doc.select("div.case-location") != null
+				&& doc.select("div.case-location").select("a") != null
+				&& doc.select("div.case-location").select("a").size() > 0
+				&& doc.select("div.case-location").select("a").get(0).text() != "")
+			crawlData.setLocation(doc.select("div.case-location").select("a")
+					.get(0).text());
+		else {
 			crawlData.setLocation("");
 		}
 		return crawlData;

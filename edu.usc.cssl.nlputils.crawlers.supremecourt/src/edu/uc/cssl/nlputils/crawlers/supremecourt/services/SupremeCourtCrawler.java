@@ -51,6 +51,7 @@ public class SupremeCourtCrawler {
 		int noOfPages = 0;
 		Document doc = Jsoup.connect(url).timeout(10 * 1000).get();
 		Elements pages = doc.getElementsByClass("pager-last");
+		monitor.subTask("Finding Total number of cases...");
 		// Sometimes the pager element is absent
 		if (!pages.isEmpty()) {
 			Element pageList = pages.get(0);
@@ -60,41 +61,35 @@ public class SupremeCourtCrawler {
 				noOfPages = Integer.parseInt(matcher.group(1));
 			}
 		}
-		monitor.beginTask("started crawling..", noOfPages);
-		  if (monitor.isCanceled()){
-				 throw new OperationCanceledException(); 
-				 
-			}
+		monitor.worked(10);
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+
+		}
 		// ExecutorService executor = Executors.newFixedThreadPool(5);
-		 crawler =  new CrawlerJob(this.filter,getOutputDir(),this.baseUrl,monitor,isDownloadAudio(),isTruncate());
-		 try{
- 		 for (int i = 0; i <= noOfPages; i++) {
-			  if (monitor.isCanceled()){
-					 throw new OperationCanceledException(); 
-					 
+		crawler = new CrawlerJob(this.filter, getOutputDir(), this.baseUrl,
+				monitor, isDownloadAudio(), isTruncate());
+
+		try {
+			for (int i = 0; i <= noOfPages; i++) {
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+
 				}
-		      monitor.subTask("crawling "+url);
-		     
-		      crawler.run(url + "&page=" + i);
-		      monitor.worked(1);
-		     
-		    }
-		 }
-		 catch(IOException exc){
-			 crawler.summaryFileClose();
-             throw exc;			 
-		 }
-		 crawler.summaryFileClose();
-		    // This will make the executor accept no new threads
-		    // and finish all existing threads in the queue
-		
+			//	monitor.subTask("crawling " + url);
+
+				crawler.run(url + "&page=" + i,noOfPages);
+
+			}
+		} catch (IOException exc) {
+			crawler.summaryFileClose();
+			throw exc;
+		}
+		crawler.summaryFileClose();
+		monitor.worked(100);
+		// This will make the executor accept no new threads
+		// and finish all existing threads in the queue
 
 	}
-
-	
-
-	
-
-	
 
 }

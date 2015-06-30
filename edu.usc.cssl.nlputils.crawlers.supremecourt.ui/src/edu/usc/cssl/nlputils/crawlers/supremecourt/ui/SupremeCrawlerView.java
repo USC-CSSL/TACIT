@@ -221,7 +221,7 @@ public class SupremeCrawlerView extends ViewPart implements
 						NlputilsFormComposite.setConsoleViewInFocus();
 						NlputilsFormComposite.updateStatusMessage(
 								getViewSite(), null, null, form);
-						monitor.beginTask("NLPUtils started crawling...", 100);
+						monitor.beginTask("NLPUtils started crawling...", 10000);
 
 						if (monitor.isCanceled()) {
 							NlputilsFormComposite
@@ -231,7 +231,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 						try {
 
-							sc.looper(new SubProgressMonitor(monitor, 100));
+							sc.looper(monitor);
 						} catch (final IOException exception) {
 							ConsoleView.printlInConsole(exception.toString());
 							Display.getDefault().syncExec(new Runnable() {
