@@ -361,7 +361,7 @@ public class WeightedWordCountView extends ViewPart implements
 					fileName = "weighted-" + fileName
 							+ "-"+df.format(dateobj);
 				} else {
-					fileName = "liwc-" + fileName + "-"+df.format(dateobj);
+					fileName = "LIWC-" + fileName + "-"+df.format(dateobj);
 				}
 				final File oFile = new File(outputPath + File.separator
 						+ fileName + ".csv");

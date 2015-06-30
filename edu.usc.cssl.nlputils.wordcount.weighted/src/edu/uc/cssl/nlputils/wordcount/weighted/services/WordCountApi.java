@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,19 +25,15 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 
-import edu.usc.cssl.nlputils.common.ui.CommonUiActivator;
-import edu.usc.cssl.nlputils.common.ui.ICommonUiConstants;
 import edu.usc.cssl.nlputils.common.ui.views.ConsoleView;
 import edu.usc.nlputils.common.TacitUtility;
 import edu.usc.nlputils.common.snowballstemmer.PorterStemmer;
 
 public class WordCountApi {
 
-	private StringBuilder readMe = new StringBuilder();
 	private Trie categorizer = new Trie();
-	private Trie phrazer = new Trie();
+	//private Trie phrazer = new Trie();
 	private boolean phraseDetect = false;
 	private HashMap<String, HashMap<String, Double>> weightMap = new HashMap<String, HashMap<String, Double>>();
 	private HashMap<String, List<Integer>> phraseLookup = new HashMap<String, List<Integer>>();
@@ -47,7 +42,7 @@ public class WordCountApi {
 	private String delimiters;
 	private boolean doLower;
 	private boolean doStopWords;
-	private boolean noDictionary = false;
+	//private boolean noDictionary = false;
 	private HashSet<String> stopWordSet = new HashSet<String>();
 	private boolean doLiwcStemming = true;
 	private boolean doSpss = true;
@@ -375,14 +370,19 @@ public class WordCountApi {
 			HashMap<String, HashSet<String>> wordCategories, String inputFile,
 			File oFile, Date dateobj) throws IOException {
 		File outputDir = oFile.getParentFile();
+		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		
+		//Create output directory for word distributions
+		String wordDistributionDir = outputDir+System.getProperty("file.separator");
+		if (this.weighted) wordDistributionDir = wordDistributionDir+"weighted-word-distribution-"+df.format(dateobj);
+		else wordDistributionDir = wordDistributionDir+"LIWC-word-distribution-"+df.format(dateobj);
+		if (!(new File(wordDistributionDir).exists())) new File(wordDistributionDir).mkdir();
+		
 		String iFilename = inputFile.substring(inputFile.lastIndexOf(System
 				.getProperty("file.separator")));
-		String outputPath = outputDir.getAbsolutePath()+ System.getProperty("file.separator") + iFilename
-				+ "-wordDistribution";
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
-		//Date dateobj = new Date();
-		if(this.weighted) outputPath = outputPath + "-LIWC-"+df.format(dateobj)+".csv";
-		else outputPath = outputPath + "-weighted-"+df.format(dateobj)+".csv";
+		String outputPath = wordDistributionDir+ System.getProperty("file.separator") + iFilename
+				+ "-wordDistribution.csv";
+		
 		File wdFile = new File(outputPath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
 		bw.write("Word,Count,");
@@ -871,31 +871,17 @@ public class WordCountApi {
 						map.put(currentWord, 1);
 					}
 					String[] words = currentWord.split("-",2);
-					int hyphened = 0;
+					int hyphened = words.length;
 					// boolean allFound = true;
-					for (String s : words) {
-						// if (s==null || s.equals(""))
-						// continue;
-						// if (categorizer.query(s) == null){
-						// allFound = false;
-						// }
-						hyphened++;
-					}
+					
 
 					weirdDashCount = weirdDashCount + hyphened; // twice if two
 																// dashes
 				} else {
 					String[] words = currentWord.split("-",2);
-					int hyphened = -1;
+					int hyphened = words.length-1;
 					// boolean allFound = true;
-					for (String s : words) {
-						// if (s==null || s.equals(""))
-						// continue;
-						// if (categorizer.query(s) == null){
-						// allFound = false;
-						// }
-						hyphened++;
-					}
+					
 
 					if (categorizer.query(currentWord) != null) {
 						Object value = map.get(currentWord);
