@@ -176,6 +176,8 @@ public class SupremeCrawlerView extends ViewPart implements
 		mgr.add(helpAction);
 		PlatformUI.getWorkbench().getHelpSystem()
 				.setHelp(helpAction, "edu.usc.cssl.nlputils.crawlers.supremecourt.ui.supremecourt");
+		PlatformUI.getWorkbench().getHelpSystem()
+		.setHelp(form, "edu.usc.cssl.nlputils.crawlers.supremecourt.ui.supremecourt");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
 	}
