@@ -49,7 +49,7 @@ public class SenateCrawler {
 		Date dateobj = new Date();
 		
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "senate-crawler-summary-"+df.format(dateobj)+".csv")));
-		csvWriter.write("Congress,Date,Senator,Political Affiliation,Attributes,Title,File");
+		csvWriter.write("Congress,Date,Senator,Political Affiliation,State,Title,File");
 		csvWriter.newLine();
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
 			if (congressNum != -1) {
@@ -186,6 +186,7 @@ public class SenateCrawler {
 
 	public void searchSenatorRecords(int congress,String senText, int progressSize, String politicalAffiliation) throws IOException, NullPointerException{
 		ConsoleView.printlInConsoleln("Current Senator - "+senText);
+		if(null == senText) return;
 		String senatorDir = this.outputDir + File.separator + senText;
 		if(!new File(senatorDir).exists()) {
 			new File(senatorDir).mkdir();
@@ -233,6 +234,10 @@ public class SenateCrawler {
 		links = relevantLinks;
 		
 		String senatorAttribs = senText.split("\\(")[1].replace(")", "").trim();
+		String senatorState = senatorAttribs;
+		if(-1 != senatorAttribs.indexOf('-')) {
+			senatorState = senatorAttribs.split("-")[1];
+		}
 
 		int count = 0;
 		int tempCount = 0;
@@ -276,7 +281,7 @@ public class SenateCrawler {
 					shortTitle = title.substring(0, 15).trim().replaceAll("[^\\w\\s]", "");
 				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
 				writeToFile(senatorDir, fileName, contents);
-				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+senatorAttribs+","+title+","+fileName);
+				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+senatorState+","+title+","+fileName);
 				csvWriter.newLine();
 				csvWriter.flush();
 			}
