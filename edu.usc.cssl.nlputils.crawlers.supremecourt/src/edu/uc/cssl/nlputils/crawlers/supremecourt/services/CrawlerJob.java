@@ -130,7 +130,7 @@ public class CrawlerJob {
 					.split("/");
 			monitor.subTask("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
-					+ casesSplit[casesSplit.length - 2]);
+					+ casesSplit[casesSplit.length - 2] +" url : "+url);
 			ConsoleView.printlInConsole("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
 					+ casesSplit[casesSplit.length - 2]);
