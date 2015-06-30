@@ -308,7 +308,8 @@ public class SenateCrawler {
 		return tempCount;
 	}
 	private void writeToFile(String senatorOutputDir, String fileName, String[] contents) throws IOException {
-		ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
+		//ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
+		ConsoleView.printlInConsoleln("Writing "+ senatorOutputDir + File.separator + fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(senatorOutputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
 		bw.newLine();
