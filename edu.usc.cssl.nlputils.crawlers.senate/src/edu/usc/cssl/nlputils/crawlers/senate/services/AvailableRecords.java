@@ -101,7 +101,9 @@ public class AvailableRecords {
 		// return only unique values from here
 		ArrayList<String> uniqueSenators = new ArrayList<String>();
 		uniqueSenators.addAll(newSenMap.keySet());
-		return uniqueSenators.toArray(new String[uniqueSenators.size()]);
+		String[] tempSenators =  uniqueSenators.toArray(new String[uniqueSenators.size()]);
+		Arrays.sort(tempSenators);
+		return tempSenators;
 	}
 	
 	public static String[] getAllSenators(String[] congresses) throws IOException{
@@ -142,7 +144,9 @@ public class AvailableRecords {
 		for(String s : senators) {
 			//System.out.println(s);
 		}
-		return senators.toArray(new String[senators.size()]);
+		String[] tempSenators = senators.toArray(new String[senators.size()]);
+		Arrays.sort(tempSenators);
+		return tempSenators;
 	}
 	
 	public static String[] getActiveCongresses() throws IOException{
