@@ -186,6 +186,11 @@ public class SenateCrawler {
 
 	public void searchSenatorRecords(int congress,String senText, int progressSize, String politicalAffiliation) throws IOException, NullPointerException{
 		ConsoleView.printlInConsoleln("Current Senator - "+senText);
+		String senatorDir = this.outputDir + File.separator + senText;
+		if(!new File(senatorDir).exists()) {
+			new File(senatorDir).mkdir();
+		}
+				
 		if(null != monitor && !monitor.isCanceled()) {
 			monitor.subTask("Crawling data for " + senText + "...");
 		}
@@ -270,7 +275,7 @@ public class SenateCrawler {
 				if (title.length()>15)
 					shortTitle = title.substring(0, 15).trim().replaceAll("[^\\w\\s]", "");
 				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
-				writeToFile(fileName, contents);
+				writeToFile(senatorDir, fileName, contents);
 				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+senatorAttribs+","+title+","+fileName);
 				csvWriter.newLine();
 				csvWriter.flush();
@@ -297,9 +302,9 @@ public class SenateCrawler {
 		}
 		return tempCount;
 	}
-	private void writeToFile(String fileName, String[] contents) throws IOException {
+	private void writeToFile(String senatorOutputDir, String fileName, String[] contents) throws IOException {
 		ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDir+System.getProperty("file.separator")+fileName)));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(senatorOutputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
 		bw.newLine();
 		bw.newLine();
