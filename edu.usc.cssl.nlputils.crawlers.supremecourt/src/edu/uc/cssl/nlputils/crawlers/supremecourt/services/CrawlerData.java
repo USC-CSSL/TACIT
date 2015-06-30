@@ -3,6 +3,11 @@ package edu.uc.cssl.nlputils.crawlers.supremecourt.services;
 public class CrawlerData {
 	private String fileLocation;
 	private String location;
+	
+	public CrawlerData(){
+		this.fileLocation = "";
+		this.	location = "";
+	}
 
 	public String getLocation() {
 		return location;

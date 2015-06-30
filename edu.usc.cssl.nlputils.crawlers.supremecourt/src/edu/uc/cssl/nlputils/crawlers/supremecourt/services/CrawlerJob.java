@@ -49,8 +49,9 @@ public class CrawlerJob {
 		Date dateobj = new Date();
 		try {
 
-			fileWriter = new FileWriter(this.outputDir + "/" + "supremecourt-crawler-summary-"
-					+ df.format(dateobj) + ".csv");
+			fileWriter = new FileWriter(this.outputDir + "/"
+					+ "supremecourt-crawler-summary-" + df.format(dateobj)
+					+ ".csv");
 			bw = new BufferedWriter(fileWriter);
 
 			addContentsToSummary("Case", "Location", "Docket No", "Argued",
@@ -104,8 +105,11 @@ public class CrawlerJob {
 		Element table = doc.select("tbody").get(0);
 		Elements rows = table.select("tr");
 		int totalDone = 0;
-		int remaining = 9900 / rows.size();
-		remaining = remaining / noOfPages;
+		int remaining = 0;
+		if (rows.size() > 0)
+			remaining = 9900 / rows.size();
+		if (noOfPages > 0)
+			remaining = remaining / noOfPages;
 		if (remaining == 0) {
 			remaining = 1;
 		}
@@ -130,7 +134,7 @@ public class CrawlerJob {
 					.split("/");
 			monitor.subTask("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
-					+ casesSplit[casesSplit.length - 2] +" url : "+url);
+					+ casesSplit[casesSplit.length - 2] + " url : " + url);
 			ConsoleView.printlInConsole("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
 					+ casesSplit[casesSplit.length - 2]);
@@ -228,9 +232,10 @@ public class CrawlerJob {
 			bw.write(line.text() + "\n");
 		}
 		bw.close();
-
-		if (FileUtils.sizeOf(trans) <= 0) {
+		boolean exist = true;
+		if (FileUtils.sizeOf(trans) <= 20) {
 			trans.delete();
+			exist = false;
 		}
 		String dwn = "";
 		if (this.downloadAudio) {
@@ -244,8 +249,9 @@ public class CrawlerJob {
 			crawlData.setFileLocation(outputDir + "/" + filename
 					+ "-transcript.txt" + "," + dwn);
 		} else {
-			crawlData.setFileLocation(outputDir + "/" + filename
-					+ "-transcript.txt");
+			if (exist)
+				crawlData.setFileLocation(outputDir + "/" + filename
+						+ "-transcript.txt");
 		}
 		if (doc.select("div.case-location") != null
 				&& doc.select("div.case-location").select("a") != null
