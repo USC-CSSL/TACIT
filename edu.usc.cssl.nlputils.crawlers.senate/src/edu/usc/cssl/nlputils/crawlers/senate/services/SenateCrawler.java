@@ -30,7 +30,7 @@ public class SenateCrawler {
 	BufferedWriter csvWriter;
 	String sortType;
 	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
-	private String senText;
+	private ArrayList<String> senText;
 	private int congressNum;
 	IProgressMonitor monitor;
 	String[] senList;
@@ -51,6 +51,8 @@ public class SenateCrawler {
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "senate-crawler-summary-"+df.format(dateobj)+".csv")));
 		csvWriter.write("Congress,Date,Senator,Political Affiliation,State,Title,File");
 		csvWriter.newLine();
+		for(String senText : senText) {
+		//if (senText.contains("All Senators") || senText.contains("All Republicans") || senText.contains("All Democrats") || senText.contains("All Independents")){
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
 			if (congressNum != -1) {
 				if(null != monitor && monitor.isCanceled()) {
@@ -108,6 +110,7 @@ public class SenateCrawler {
 				return;
 			}
 		}
+		}
 		csvWriter.close();
 	}
 	public void getAll(int congressNum, String senText, int maxProgressLimit) throws IOException{
@@ -160,12 +163,12 @@ public class SenateCrawler {
 		}			
 	}
 	
-	public void initialize(String sortType, int maxDocs, int congressNum, String senText, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, ArrayList<String> senatorDetails2, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
-		this.senText = senText;
+		this.senText = senatorDetails2;
 		this.congressNum = congressNum;
 		this.sortType = sortType;
 		this.congresses = allCongresses;
@@ -173,7 +176,7 @@ public class SenateCrawler {
 		this.progressSize = progressSize;
 		
 		System.out.println("Congress num :"+ congressNum);
-		System.out.println("Senator name :"+ senText);
+		System.out.println("Senator name :"+ senatorDetails2);
 		System.out.println("Max docs :"+ maxDocs);
 		System.out.println("Sort Type : "+ sortType);		
 		System.out.println("From date :"+ dateFrom);
