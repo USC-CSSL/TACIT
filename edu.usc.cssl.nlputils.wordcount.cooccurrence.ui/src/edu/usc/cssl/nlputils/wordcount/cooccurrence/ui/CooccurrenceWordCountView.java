@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -356,7 +357,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				}
 			};
 		});
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (CooccurrenceWordCountImageRegistry
@@ -369,10 +370,26 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				return "Help";
 			}
 
+			@Override
 			public void run() {
-
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.nlputils.wordcount.cooccurrence.ui.cooccurrence");
 			};
-		});
+		};
+		mgr.add(helpAction);
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.nlputils.wordcount.cooccurrence.ui.cooccurrence");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.nlputils.wordcount.cooccurrence.ui.cooccurrence");
 		form.getToolBarManager().update(true);
 	}
 

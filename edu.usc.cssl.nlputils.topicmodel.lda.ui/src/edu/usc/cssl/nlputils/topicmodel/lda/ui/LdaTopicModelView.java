@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -294,7 +295,7 @@ public class LdaTopicModelView extends ViewPart implements
 			}
 
 		});
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (LdaTopicModelViewImageRegistry.getImageIconFactory()
@@ -306,10 +307,26 @@ public class LdaTopicModelView extends ViewPart implements
 				return "Help";
 			}
 
+			@Override
 			public void run() {
-
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.nlputils.topicmodel.lda.ui.lda");
 			};
-		});
+		};
+		mgr.add(helpAction);
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.nlputils.topicmodel.lda.ui.lda");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.nlputils.topicmodel.lda.ui.lda");
 		form.getToolBarManager().update(true);
 	}
 

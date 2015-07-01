@@ -9,6 +9,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
  edu.usc.cssl.nlputils.common.ui,
- edu.usc.cssl.nlputils.crawlers.latin
+ edu.usc.cssl.nlputils.crawlers.latin,
+ nlptoolshelp,
+ org.eclipse.help
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

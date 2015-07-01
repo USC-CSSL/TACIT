@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -269,7 +270,7 @@ public class LatinCrawlerView extends ViewPart implements
 
 			};
 		});
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (LatinCrawlerImageRegistry.getImageIconFactory()
@@ -281,10 +282,26 @@ public class LatinCrawlerView extends ViewPart implements
 				return "Help";
 			}
 
+			@Override
 			public void run() {
-
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.nlputils.crawlers.latin.ui.latin");
 			};
-		});
+		};
+		mgr.add(helpAction);
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.nlputils.crawlers.latin.ui.latin");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.nlputils.crawlers.latin.ui.latin");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
 	}

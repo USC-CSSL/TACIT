@@ -12,6 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swt,
  org.eclipse.jface,
  edu.usc.cssl.nlputils.common,
- edu.usc.cssl.nlputils.topicmodel.lda
+ edu.usc.cssl.nlputils.topicmodel.lda,
+ nlptoolshelp,
+ org.eclipse.help
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

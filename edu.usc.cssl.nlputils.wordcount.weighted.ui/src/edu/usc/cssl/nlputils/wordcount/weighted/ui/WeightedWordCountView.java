@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IMessageManager;
@@ -458,7 +459,7 @@ public class WeightedWordCountView extends ViewPart implements
 				}
 			};
 		});
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (WeightedWordCountImageRegistry.getImageIconFactory()
@@ -472,9 +473,24 @@ public class WeightedWordCountView extends ViewPart implements
 
 			@Override
 			public void run() {
-
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.nlputils.wordcount.weighted.ui.weighted");
 			};
-		});
+		};
+		mgr.add(helpAction);
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.nlputils.wordcount.weighted.ui.weighted");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.nlputils.wordcount.weighted.ui.weighted");
 		form.getToolBarManager().update(true);
 	}
 

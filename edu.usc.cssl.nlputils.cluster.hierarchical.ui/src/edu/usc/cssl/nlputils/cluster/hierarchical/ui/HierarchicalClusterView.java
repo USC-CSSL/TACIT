@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -316,7 +317,7 @@ public class HierarchicalClusterView extends ViewPart implements
 
 		});
 
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (HeirarchicalClusterViewImageRegistry
@@ -329,10 +330,26 @@ public class HierarchicalClusterView extends ViewPart implements
 				return "Help";
 			}
 
+			@Override
 			public void run() {
-
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.nlputils.cluster.hierarchical.ui.hierarchical");
 			};
-		});
+		};
+		mgr.add(helpAction);
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.nlputils.cluster.hierarchical.ui.hierarchical");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.nlputils.cluster.hierarchical.ui.hierarchical");
 
 		form.getToolBarManager().update(true);
 	}

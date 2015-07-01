@@ -13,6 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface,
  edu.usc.cssl.nlputils.wordcount.standard,
  edu.usc.cssl.nlputils.common,
- edu.usc.cssl.nlputils.wordcount.cooccurrence
+ edu.usc.cssl.nlputils.wordcount.cooccurrence,
+ nlptoolshelp,
+ org.eclipse.help
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

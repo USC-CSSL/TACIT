@@ -17,7 +17,51 @@
       point="org.eclipse.help.contexts">
    <contexts
          file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.classify.svm.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
          plugin="edu.usc.cssl.nlputils.crawlers.supremecourt.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.classify.naivebayes.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.cluster.hierarchical.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.cluster.kmeans.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.crawlers.latin.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.crawlers.senate.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.topicmodel.lda.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.topicmodel.zlda.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.wordcount.cooccurrence.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.wordcount.standard.ui">
+   </contexts>
+   <contexts
+         file="contextDefinitionFile.xml"
+         plugin="edu.usc.cssl.nlputils.wordcount.weighted.ui">
    </contexts>
 </extension> 
 

@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -331,19 +332,18 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		Group group = new Group(client, SWT.SHADOW_IN);
 		group.setText("Classification");
 
-		//group.setBackground(client.getBackground());
+		// group.setBackground(client.getBackground());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		group.setLayout(layout);
 
-		classificationEnabled = new Button(group,
-				SWT.CHECK);
+		classificationEnabled = new Button(group, SWT.CHECK);
 		classificationEnabled.setText("Classify Data");
 		classificationEnabled.setBounds(10, 10, 10, 10);
 		classificationEnabled.pack();
 
-		//NlputilsFormComposite.createEmptyRow(toolkit, group);
+		// NlputilsFormComposite.createEmptyRow(toolkit, group);
 
 		final Composite sectionClient = new Composite(group, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
@@ -374,8 +374,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						"Classification input path must be a valid diretory location");
 			}
 		});
-		final Button browseBtn1 = new Button(sectionClient,
-				SWT.PUSH);
+		final Button browseBtn1 = new Button(sectionClient, SWT.PUSH);
 		browseBtn1.setText("Browse");
 		browseBtn1.addSelectionListener(new SelectionListener() {
 			@Override
@@ -418,7 +417,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 
-		//NlputilsFormComposite.createEmptyRow(sectionClient, group);
+		// NlputilsFormComposite.createEmptyRow(sectionClient, group);
 	}
 
 	/**
@@ -508,7 +507,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								getViewSite(), null, null, form);
 						monitor.beginTask(
 								"Running Naive Bayes Classification...", 100);
-						
+
 						Date dateObj = new Date();
 
 						Display.getDefault().syncExec(new Runnable() {
@@ -596,9 +595,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								handledCancelRequest("Cancelled");
 							monitor.subTask("Cross validating...");
 							perf = (!isPreprocessEnabled) ? cv.doCross(nbc,
-									classPaths, kValue, monitor, outputDir,dateObj)
-									: cv.doCross(nbc, tempClassPaths, kValue,
-											monitor, outputDir,dateObj);
+									classPaths, kValue, monitor, outputDir,
+									dateObj) : cv.doCross(nbc, tempClassPaths,
+									kValue, monitor, outputDir, dateObj);
 							monitor.worked(40);
 							if (monitor.isCanceled())
 								handledCancelRequest("Cancelled");
@@ -611,7 +610,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										.printlInConsoleln("---------- Classification Starts ------------");
 								nbc.classify(trainingDataPaths,
 										classificationInputDir, outputDir,
-										false, false,dateObj);
+										false, false, dateObj);
 								ConsoleView
 										.printlInConsoleln("---------- Classification Finished ------------");
 							}
@@ -683,7 +682,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							NlputilsFormComposite
 									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 						}
-						if(isPreprocessEnabled){
+						if (isPreprocessEnabled) {
 							preprocessTask.clean();
 						}
 						monitor.worked(100);
@@ -712,7 +711,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 		});
 
-		mgr.add(new Action() {
+		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (NaiveBayesClassifierViewImageRegistry
@@ -727,15 +726,31 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 			@Override
 			public void run() {
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayes");
 			};
-		});
+		};
+		mgr.add(helpAction);
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayes");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayes");
 		form.getToolBarManager().update(true);
 	}
 
 	private IStatus handledCancelRequest(String message) {
 		NlputilsFormComposite.updateStatusMessage(getViewSite(), message,
 				IStatus.ERROR, form);
-		if(isPreprocessEnabled){
+		if (isPreprocessEnabled) {
 			preprocessTask.clean();
 		}
 		return Status.CANCEL_STATUS;

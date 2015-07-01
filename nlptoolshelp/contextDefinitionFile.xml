@@ -1,7 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contexts>
   <context id="supremecourt">
-    <description> This is a sample F1 help string.</description>
-    <topic href="html/Crawlers/supremecourtcrawler.html" label="Supreme court crawler" />
+    <description> Check here for help with Supreme Court Crawler.</description>
+    <topic href="html/Crawlers/supremecourtcrawler.html" label="Supreme Court Crawler" />
+  </context>
+  <context id="latin">
+     <description>Check here for help with Latin Crawler.</description>
+     <topic href="html/Crawlers/latincrawler.html" label="Latin Crawler"/>
+  </context>
+  <context id="naivebayes">
+     <description>Check here for help with Naive Bayes.</description>
+     <topic href="html/Classify/naivebayes.html" label="Naive Bayes Classification"/>
+  </context>
+  <context id="svm">
+     <description>Check here for help with SVM Classification.</description>
+     <topic href="html/Classify/svm.html" label="SVM Classification"/>
+  </context>
+  <context id="hierarchical">
+     <description>Check here for help with Hierarchical Clustering.</description>
+     <topic href="html/clustering/hierarchicalcluster.html" label="Hierarchical Clustering"/>
+  </context>
+  <context id="kmeans">
+     <description>Check here for help with K-means clustering.</description>
+     <topic href="html/clustering/kmeanscluster.html" label="K Means Clustering"/>
+  </context>
+  <context id="senate">
+     <description>Check here for help with Senate Crawler.</description>
+     <topic href="html/Crawlers/senatecrawler.html" label="Senate Crawler"/>
+  </context>
+  <context id="lda">
+     <description>Check here for help with LDA.</description>
+     <topic href="html/topicmodel/lda.html" label="LDA"/>
+  </context>
+  <context id="zlda">
+     <description>Check here for help with Z Label LDA.</description>
+     <topic href="html/topicmodel/zlabellda.html" label="Z Label LDA"/>
+  </context>
+  <context id="cooccurrence">
+     <description>Check here for help with Word Cooccurence.</description>
+     <topic href="html/wordcount/cooccurence.html" label="Word Cooccurence"/>
+  </context>
+  <context id="standard">
+     <description>Check here for help with Standard Word Count.</description>
+     <topic href="html/wordcount/wordcount.html" label="Standard Word Count"/>
+  </context>
+  <context id="weighted">
+     <description>Check here for help with Liwc style and Weighted word count.</description>
+     <topic href="html/wordcount/wordcount.html" label="Liwc/Weighted Word Count"/>
   </context>
 </contexts> 
