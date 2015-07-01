@@ -6,8 +6,8 @@
  
       <view
             name="Hierarchical Cluster"
-            class="edu.usc.cssl.nlputils.cluster.hierarchical.ui.HierarchicalClusterView"
-            id="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1">
+            class="edu.usc.cssl.tacit.cluster.hierarchical.ui.HierarchicalClusterView"
+            id="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1">
       </view>
       
    </extension>
@@ -17,7 +17,7 @@
       <menuContribution
             locationURI="menu:cluster">
              <command
-                   commandId="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1"
+                   commandId="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1"
                    label="Hierarchical Cluster"
                    tooltip="Hierarchical Cluster">
             </command>
@@ -27,15 +27,15 @@
          id="cluster.heirarchial"
          point="org.eclipse.ui.commands">
       <command
-            id="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1"
+            id="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1"
             name="Hierarchical Cluster View">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.usc.cssl.nlputils.cluster.hierarchical.ui.handlers.OpenHierarchicalClusterViewHandler"
-            commandId="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1">
+            class="edu.usc.cssl.tacit.cluster.hierarchical.ui.handlers.OpenHierarchicalClusterViewHandler"
+            commandId="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1">
       </handler>
    </extension>
    

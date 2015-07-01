@@ -6,8 +6,8 @@
  
       <view
             name="KMeans Cluster"
-            class="edu.usc.cssl.nlputils.cluster.kmeans.ui.KmeansClusterView"
-            id="edu.usc.cssl.nlputils.cluster.kmeansui.view1">
+            class="edu.usc.cssl.tacit.cluster.kmeans.ui.KmeansClusterView"
+            id="edu.usc.cssl.tacit.cluster.kmeansui.view1">
       </view>
       
    </extension>
@@ -17,7 +17,7 @@
       <menuContribution
             locationURI="menu:cluster">
              <command
-                   commandId="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1"
+                   commandId="edu.usc.cssl.tacit.cluster.kmeans.ui.view1"
                    label="KMeans Cluster"
                    tooltip="KMeans Cluster">
             </command>
@@ -27,15 +27,15 @@
          id="wordcount.weighted"
          point="org.eclipse.ui.commands">
       <command
-            id="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1"
+            id="edu.usc.cssl.tacit.cluster.kmeans.ui.view1"
             name="KMeansCluster View">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.usc.cssl.nlputils.cluster.kmeans.ui.handlers.OpenKmeansClusterViewHandler"
-            commandId="edu.usc.cssl.nlputils.cluster.kmeans.ui.view1">
+            class="edu.usc.cssl.tacit.cluster.kmeans.ui.handlers.OpenKmeansClusterViewHandler"
+            commandId="edu.usc.cssl.tacit.cluster.kmeans.ui.view1">
       </handler>
    </extension>
    

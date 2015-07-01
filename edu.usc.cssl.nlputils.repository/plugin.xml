@@ -4,20 +4,20 @@
 <extension
           point="org.eclipse.ui.perspectives">
        <perspective
-             class="edu.usc.cssl.nlputils.repository.Perspective"
-             id="edu.usc.cssl.nlputils.repository.perspective"
-             name="NLPUtils">
+             class="edu.usc.cssl.tacit.repository.Perspective"
+             id="edu.usc.cssl.tacit.repository.perspective"
+             name="TACIT">
        </perspective>
     </extension>
      <extension
           id="product"
           point="org.eclipse.core.runtime.products">
        <product
-             application="edu.usc.cssl.nlputils.repository.application"
-             name="NLPUtils">
+             application="edu.usc.cssl.tacit.repository.application"
+             name="TACIT">
           <property
                 name="appName"
-                value="NLPUtils">
+                value="TACIT">
           </property>
           <property
                 name="preferenceCustomization"
@@ -54,86 +54,86 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="edu.usc.cssl.nlputils.repository.Application">
+               class="edu.usc.cssl.tacit.repository.Application">
          </run>
       </application>
    </extension>
  <extension
        point="org.eclipse.ui.perspectiveExtensions">
     <perspectiveExtension
-          targetID="edu.usc.cssl.nlputils.repository.perspective">
+          targetID="edu.usc.cssl.tacit.repository.perspective">
        <view
-             id="edu.usc.cssl.nlputils.crawlers.supremecourt.ui.view1"
+             id="edu.usc.cssl.tacit.crawlers.supremecourt.ui.view1"
              minimized="true"
              relationship="stack"
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
        <view
-             id="edu.usc.cssl.nlputils.crawlers.latin.ui.view1"
+             id="edu.usc.cssl.tacit.crawlers.latin.ui.view1"
              minimized="true"
              relationship="stack"
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
        <view
-             id="edu.usc.cssl.nlputils.wordcount.weighted.ui.view1"
+             id="edu.usc.cssl.tacit.wordcount.weighted.ui.view1"
              minimized="true"
              relationship="stack"
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
        <view
-             id="edu.usc.cssl.nlputils.cluster.hierarchical.ui.view1"
+             id="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1"
              minimized="true"
              relationship="stack"
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
        <view
-             id="edu.usc.cssl.nlputils.common.ui.preprocess.view"
+             id="edu.usc.cssl.tacit.common.ui.preprocess.view"
              minimized="false"
              relationship="stack"
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
         <view
-             id="edu.usc.cssl.nlputils.cluster.kmeansui.view1"
+             id="edu.usc.cssl.tacit.cluster.kmeansui.view1"
              minimized="true"
              relationship="stack"
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
         <view
-              id="edu.usc.cssl.nlputils.classify.naivebayes.ui.naivebayesview"
+              id="edu.usc.cssl.tacit.classify.naivebayes.ui.naivebayesview"
               minimized="true"
               relationship="stack"
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
         <view
-              id="edu.usc.cssl.nlputils.classify.svm.ui.view1"
+              id="edu.usc.cssl.tacit.classify.svm.ui.view1"
               minimized="true"
               relationship="stack"
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
         <view
-              id="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1"
+              id="edu.usc.cssl.tacit.topicmodel.zlda.ui.view1"
               minimized="true"
               relationship="stack"
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
         <view
-              id="edu.usc.cssl.nlputils.topicmodel.lda.ui.view1"
+              id="edu.usc.cssl.tacit.topicmodel.lda.ui.view1"
               minimized="true"
               relationship="stack"
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
         <view
-              id="edu.usc.cssl.nlputils.wordcount.standard.ui.view1"
+              id="edu.usc.cssl.tacit.wordcount.standard.ui.view1"
               minimized="true"
               relationship="stack"
               relative="org.eclipse.ui.editorss"
@@ -141,13 +141,13 @@
         </view>
         
          <view
-              id="edu.usc.cssl.nlputils.wordcount.cooccurrence.ui.view1" minimized="true"
+              id="edu.usc.cssl.tacit.wordcount.cooccurrence.ui.view1" minimized="true"
               relationship="stack"
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
          <view
-               id="edu.usc.cssl.nlputils.crawlers.senate.ui.senatecrawlerview"
+               id="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
                minimized="true"
                relationship="stack"
                relative="org.eclipse.ui.editorss"

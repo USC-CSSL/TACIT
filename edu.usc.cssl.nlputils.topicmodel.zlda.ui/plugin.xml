@@ -6,8 +6,8 @@
  
       <view
             name="Z-Label LDA Topic Model"
-            class="edu.usc.cssl.nlputils.topicmodel.zlda.ui.ZlabelLdaTopicModelView"
-            id="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1">
+            class="edu.usc.cssl.tacit.topicmodel.zlda.ui.ZlabelLdaTopicModelView"
+            id="edu.usc.cssl.tacit.topicmodel.zlda.ui.view1">
       </view>
       
    </extension>
@@ -17,7 +17,7 @@
       <menuContribution
             locationURI="menu:topicmodel">
              <command
-                   commandId="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1"
+                   commandId="edu.usc.cssl.tacit.topicmodel.zlda.ui.view1"
                    label="Z-Label LDA"
                    tooltip="Z-Label LDA">
             </command>
@@ -27,15 +27,15 @@
          id="wordcount.weighted"
          point="org.eclipse.ui.commands">
       <command
-            id="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1"
+            id="edu.usc.cssl.tacit.topicmodel.zlda.ui.view1"
             name="Z-Label LDA Topic Model View">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.usc.cssl.nlputils.topicmodel.zlda.ui.handlers.OpenZlabelLdaTopicModelViewHandler"
-            commandId="edu.usc.cssl.nlputils.topicmodel.zlda.ui.view1">
+            class="edu.usc.cssl.tacit.topicmodel.zlda.ui.handlers.OpenZlabelLdaTopicModelViewHandler"
+            commandId="edu.usc.cssl.tacit.topicmodel.zlda.ui.view1">
       </handler>
    </extension>
    

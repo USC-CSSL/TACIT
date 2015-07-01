@@ -6,8 +6,8 @@
  
       <view
             name="Standard Word Count"
-            class="edu.usc.cssl.nlputils.wordcount.standard.ui.StandardWordCountView"
-            id="edu.usc.cssl.nlputils.wordcount.standard.ui.view1">
+            class="edu.usc.cssl.tacit.wordcount.standard.ui.StandardWordCountView"
+            id="edu.usc.cssl.tacit.wordcount.standard.ui.view1">
       </view>
       
    </extension>
@@ -34,7 +34,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.usc.cssl.nlputils.wordcount.standard.ui.handlers.OpenStandardWordCountViewHandler"
+            class="edu.usc.cssl.tacit.wordcount.standard.ui.handlers.OpenStandardWordCountViewHandler"
             commandId="usc.edu.cssl.wordcount.standard.view.command1">
       </handler>
    </extension>

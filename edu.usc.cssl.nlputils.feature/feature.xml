@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.usc.cssl.nlputils.feature"
+      id="edu.usc.cssl.tacit.feature"
       label="Feature"
       version="1.0.0.qualifier"
       provider-name="USC">
@@ -39,13 +39,13 @@
       <import plugin="org.eclipse.help.base" version="4.0.0" match="compatible"/>
       <import plugin="org.eclipse.equinox.jsp.jasper.registry" version="1.0.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.http.registry" version="1.0.200" match="greaterOrEqual"/>
-      <import plugin="edu.usc.cssl.nlputils.repository" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="edu.usc.cssl.tacit.repository" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.jsoup" version="1.7.2" match="greaterOrEqual"/>
-      <import plugin="edu.usc.cssl.nlputils.common.ui" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="edu.usc.cssl.tacit.common.ui" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui.forms" version="3.6.100" match="greaterOrEqual"/>
-      <import plugin="edu.usc.cssl.nlputils.common" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="edu.usc.cssl.nlputils.common.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="edu.usc.cssl.tacit.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="edu.usc.cssl.tacit.common.ui" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.common"/>
       <import plugin="org.eclipse.ecf.identity"/>
    </requires>
@@ -58,7 +58,7 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.repository"
+         id="edu.usc.cssl.tacit.repository"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -99,14 +99,14 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.common.ui"
+         id="edu.usc.cssl.tacit.common.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.common"
+         id="edu.usc.cssl.tacit.common"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -127,166 +127,166 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.weighted"
+         id="edu.usc.cssl.tacit.wordcount.weighted"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.cluster.kmeans.ui"
+         id="edu.usc.cssl.tacit.cluster.kmeans.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.latin"
+         id="edu.usc.cssl.tacit.crawlers.latin"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.latin.ui"
+         id="edu.usc.cssl.tacit.crawlers.latin.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.supremecourt"
+         id="edu.usc.cssl.tacit.crawlers.supremecourt"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.supremecourt.ui"
+         id="edu.usc.cssl.tacit.crawlers.supremecourt.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.weighted.ui"
+         id="edu.usc.cssl.tacit.wordcount.weighted.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.classify.naivebayes.ui"
+         id="edu.usc.cssl.tacit.classify.naivebayes.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.classify.naivebayes"
+         id="edu.usc.cssl.tacit.classify.naivebayes"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.classify.svm"
+         id="edu.usc.cssl.tacit.classify.svm"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.classify.svm.ui"
+         id="edu.usc.cssl.tacit.classify.svm.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.cluster.kmeans"
+         id="edu.usc.cssl.tacit.cluster.kmeans"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.cluster.hierarchical"
+         id="edu.usc.cssl.tacit.cluster.hierarchical"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.cluster.hierarchical.ui"
+         id="edu.usc.cssl.tacit.cluster.hierarchical.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.topicmodel.lda.ui"
+         id="edu.usc.cssl.tacit.topicmodel.lda.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.topicmodel.lda"
+         id="edu.usc.cssl.tacit.topicmodel.lda"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.topicmodel.zlda.ui"
+         id="edu.usc.cssl.tacit.topicmodel.zlda.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.topicmodel.zlda"
+         id="edu.usc.cssl.tacit.topicmodel.zlda"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.standard.ui"
+         id="edu.usc.cssl.tacit.wordcount.standard.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.standard"
+         id="edu.usc.cssl.tacit.wordcount.standard"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.cooccurrence"
+         id="edu.usc.cssl.tacit.wordcount.cooccurrence"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.wordcount.cooccurrence.ui"
+         id="edu.usc.cssl.tacit.wordcount.cooccurrence.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.senate.ui"
+         id="edu.usc.cssl.tacit.crawlers.senate.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.nlputils.crawlers.senate"
+         id="edu.usc.cssl.tacit.crawlers.senate"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -307,7 +307,7 @@
          unpack="false"/>
 
    <plugin
-         id="nlptoolshelp"
+         id="edu.usc.cssl.tacit.help"
          download-size="0"
          install-size="0"
          version="0.0.0"

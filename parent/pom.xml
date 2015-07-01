@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.usc.nlputils.tools</groupId>
-  <artifactId>edu.usc.nlputils.tools.parent</artifactId>
+  <groupId>edu.usc.tacit.tools</groupId>
+  <artifactId>edu.usc.tacit.tools.parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 <modules>
-    <module>../edu.usc.cssl.nlputils.feature</module>
-    <module>../edu.usc.cssl.nlputils.repository</module>
+    <module>../edu.usc.cssl.tacit.feature</module>
+    <module>../edu.usc.cssl.tacit.repository</module>
     
             <!--  Common Framework plugins -->
-    <module>../edu.usc.cssl.nlputils.common</module>
-    <module>../edu.usc.cssl.nlputils.common.ui</module>
+    <module>../edu.usc.cssl.tacit.common</module>
+    <module>../edu.usc.cssl.tacit.common.ui</module>
     
                 <!-- Crawlers  -->
-    <module>../edu.usc.cssl.nlputils.crawlers.supremecourt.ui</module>
-    <module>../edu.usc.cssl.nlputils.crawlers.supremecourt</module>
+    <module>../edu.usc.cssl.tacit.crawlers.supremecourt.ui</module>
+    <module>../edu.usc.cssl.tacit.crawlers.supremecourt</module>
     
-    <module>../edu.usc.cssl.nlputils.crawlers.latin.ui</module>
-    <module>../edu.usc.cssl.nlputils.crawlers.latin</module>
+    <module>../edu.usc.cssl.tacit.crawlers.latin.ui</module>
+    <module>../edu.usc.cssl.tacit.crawlers.latin</module>
     
-     <module>../edu.usc.cssl.nlputils.crawlers.senate.ui</module>
-    <module>../edu.usc.cssl.nlputils.crawlers.senate</module>
+     <module>../edu.usc.cssl.tacit.crawlers.senate.ui</module>
+    <module>../edu.usc.cssl.tacit.crawlers.senate</module>
     
                <!-- Cluster  -->
     
-    <module>../edu.usc.cssl.nlputils.cluster.kmeans.ui</module>
-    <module>../edu.usc.cssl.nlputils.cluster.kmeans</module>
+    <module>../edu.usc.cssl.tacit.cluster.kmeans.ui</module>
+    <module>../edu.usc.cssl.tacit.cluster.kmeans</module>
     
-    <module>../edu.usc.cssl.nlputils.cluster.hierarchical.ui</module>
-    <module>../edu.usc.cssl.nlputils.cluster.hierarchical</module>
+    <module>../edu.usc.cssl.tacit.cluster.hierarchical.ui</module>
+    <module>../edu.usc.cssl.tacit.cluster.hierarchical</module>
 
     			
     			<!--  Word Count -->
     			
-    <module>../edu.usc.cssl.nlputils.wordcount.weighted.ui</module>
-    <module>../edu.usc.cssl.nlputils.wordcount.weighted</module>
+    <module>../edu.usc.cssl.tacit.wordcount.weighted.ui</module>
+    <module>../edu.usc.cssl.tacit.wordcount.weighted</module>
     
-    <module>../edu.usc.cssl.nlputils.wordcount.standard.ui</module>
-    <module>../edu.usc.cssl.nlputils.wordcount.standard</module>
+    <module>../edu.usc.cssl.tacit.wordcount.standard.ui</module>
+    <module>../edu.usc.cssl.tacit.wordcount.standard</module>
     
-    <module>../edu.usc.cssl.nlputils.wordcount.cooccurrence.ui</module>
-    <module>../edu.usc.cssl.nlputils.wordcount.cooccurrence</module>
+    <module>../edu.usc.cssl.tacit.wordcount.cooccurrence.ui</module>
+    <module>../edu.usc.cssl.tacit.wordcount.cooccurrence</module>
     
    				 <!--  Classify  -->
    				 
-    <module>../edu.usc.cssl.nlputils.classify.svm.ui</module>
-    <module>../edu.usc.cssl.nlputils.classify.svm</module>
+    <module>../edu.usc.cssl.tacit.classify.svm.ui</module>
+    <module>../edu.usc.cssl.tacit.classify.svm</module>
     
-    <module>../edu.usc.cssl.nlputils.classify.naivebayes.ui</module>
-    <module>../edu.usc.cssl.nlputils.classify.naivebayes</module>
+    <module>../edu.usc.cssl.tacit.classify.naivebayes.ui</module>
+    <module>../edu.usc.cssl.tacit.classify.naivebayes</module>
     
      				<!--  Topic Model  -->
-    <module>../edu.usc.cssl.nlputils.topicmodel.lda.ui</module>
-   <module>../edu.usc.cssl.nlputils.topicmodel.lda</module>
+    <module>../edu.usc.cssl.tacit.topicmodel.lda.ui</module>
+   <module>../edu.usc.cssl.tacit.topicmodel.lda</module>
    
-   <module>../edu.usc.cssl.nlputils.topicmodel.zlda.ui</module>
-   <module>../edu.usc.cssl.nlputils.topicmodel.zlda</module>
+   <module>../edu.usc.cssl.tacit.topicmodel.zlda.ui</module>
+   <module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
    
                     <!--  Help  -->
     <module>../nlptoolshelp</module>

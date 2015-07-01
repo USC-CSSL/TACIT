@@ -17,51 +17,51 @@
       point="org.eclipse.help.contexts">
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.classify.svm.ui">
+         plugin="edu.usc.cssl.tacit.classify.svm.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.crawlers.supremecourt.ui">
+         plugin="edu.usc.cssl.tacit.crawlers.supremecourt.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.classify.naivebayes.ui">
+         plugin="edu.usc.cssl.tacit.classify.naivebayes.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.cluster.hierarchical.ui">
+         plugin="edu.usc.cssl.tacit.cluster.hierarchical.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.cluster.kmeans.ui">
+         plugin="edu.usc.cssl.tacit.cluster.kmeans.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.crawlers.latin.ui">
+         plugin="edu.usc.cssl.tacit.crawlers.latin.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.crawlers.senate.ui">
+         plugin="edu.usc.cssl.tacit.crawlers.senate.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.topicmodel.lda.ui">
+         plugin="edu.usc.cssl.tacit.topicmodel.lda.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.topicmodel.zlda.ui">
+         plugin="edu.usc.cssl.tacit.topicmodel.zlda.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.wordcount.cooccurrence.ui">
+         plugin="edu.usc.cssl.tacit.wordcount.cooccurrence.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.wordcount.standard.ui">
+         plugin="edu.usc.cssl.tacit.wordcount.standard.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.nlputils.wordcount.weighted.ui">
+         plugin="edu.usc.cssl.tacit.wordcount.weighted.ui">
    </contexts>
 </extension> 
 

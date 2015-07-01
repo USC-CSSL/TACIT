@@ -6,8 +6,8 @@
  
       <view
             name="Weighted Word Count"
-            class="edu.usc.cssl.nlputils.wordcount.weighted.ui.WeightedWordCountView"
-            id="edu.usc.cssl.nlputils.wordcount.weighted.ui.view1">
+            class="edu.usc.cssl.tacit.wordcount.weighted.ui.WeightedWordCountView"
+            id="edu.usc.cssl.tacit.wordcount.weighted.ui.view1">
       </view>
       
    </extension>
@@ -34,7 +34,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.usc.cssl.nlputils.wordcount.weighted.ui.handlers.OpenWeightedWordCountViewHandler"
+            class="edu.usc.cssl.tacit.wordcount.weighted.ui.handlers.OpenWeightedWordCountViewHandler"
             commandId="usc.edu.cssl.wordcount.weighted.view.command1">
       </handler>
    </extension>

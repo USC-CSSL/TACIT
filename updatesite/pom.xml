@@ -10,8 +10,8 @@
   <name>TACIT UpdateSite</name>
 
   <parent>
-    <artifactId>edu.usc.nlputils.tools.parent</artifactId>
-    <groupId>edu.usc.nlputils.tools</groupId>
+    <artifactId>edu.usc.tacit.tools.parent</artifactId>
+    <groupId>edu.usc.tacit.tools</groupId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/edu.usc.cssl.nlputils.feature_1.0.0.qualifier.jar" id="edu.usc.cssl.nlputils.feature" version="0.0.0"/>
+   <feature url="features/edu.usc.cssl.tacit.feature_1.0.0.qualifier.jar" id="edu.usc.cssl.tacit.feature" version="0.0.0"/>
 </site>

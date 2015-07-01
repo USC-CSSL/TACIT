@@ -1,22 +1,22 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Standard Word Count
-Bundle-SymbolicName: edu.usc.cssl.nlputils.wordcount.standard
+Bundle-SymbolicName: edu.usc.cssl.tacit.wordcount.standard
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.usc.cssl.nlputils.wordcount.standard.Activator
+Bundle-Activator: edu.usc.cssl.tacit.wordcount.standard.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- edu.usc.cssl.nlputils.common,
+ edu.usc.cssl.tacit.common,
  org.jsoup;bundle-version="1.7.2",
- edu.usc.cssl.nlputils.common.ui
+ edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.usc.cssl.nlputils.wordcount.standard.services;
+Export-Package: edu.usc.cssl.tacit.wordcount.standard.services;
   uses:="org.jsoup.nodes,
    org.eclipse.core.runtime,
    org.jsoup,
-   edu.usc.nlputils.common.crawlers,
+   edu.usc.tacit.common.crawlers,
    snowballstemmer"
 Bundle-ClassPath: .,
  stanford-corenlp-3.2.0.jar

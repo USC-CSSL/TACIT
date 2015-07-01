@@ -1,18 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Svm
-Bundle-SymbolicName: edu.usc.cssl.nlputils.classify.svm
+Bundle-SymbolicName: edu.usc.cssl.tacit.classify.svm
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.usc.cssl.nlputils.classify.svm.Activator
+Bundle-Activator: edu.usc.cssl.tacit.classify.svm.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- edu.usc.cssl.nlputils.common,
+ edu.usc.cssl.tacit.common,
  org.jsoup,
- edu.usc.cssl.nlputils.common.ui
+ edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.usc.cssl.nlputils.classify.svm.services
+Export-Package: edu.usc.cssl.tacit.classify.svm.services
 Bundle-ClassPath: commons-math3-3.3.jar,
  .,
  libsvm.jar

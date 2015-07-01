@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Supremecourt
-Bundle-SymbolicName: edu.usc.cssl.nlputils.crawlers.supremecourt
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.supremecourt
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.uc.cssl.nlputils.crawlers.supremecourt.Activator
+Bundle-Activator: edu.uc.cssl.tacit.crawlers.supremecourt.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- edu.usc.cssl.nlputils.common,
+ edu.usc.cssl.tacit.common,
  org.jsoup;bundle-version="1.7.2",
- edu.usc.cssl.nlputils.common.ui
+ edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.uc.cssl.nlputils.crawlers.supremecourt.services
+Export-Package: edu.uc.cssl.tacit.crawlers.supremecourt.services

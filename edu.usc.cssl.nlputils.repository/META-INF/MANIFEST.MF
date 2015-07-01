@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: NLPUtils
-Bundle-SymbolicName: edu.usc.cssl.nlputils.repository;singleton:=true
+Bundle-Name: TACIT
+Bundle-SymbolicName: edu.usc.cssl.tacit.repository;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.usc.cssl.nlputils.repository.Activator
+Bundle-Activator: edu.usc.cssl.tacit.repository.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
@@ -13,4 +13,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ecf;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.usc.cssl.nlputils.repository
+Export-Package: edu.usc.cssl.tacit.repository
