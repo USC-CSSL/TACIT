@@ -1,11 +1,1 @@
-Library,Developer,License
-Weka 3,University of Waikato,GNU General Public License
-Stanford CoreNLP,Stanford University,GNU General Public License
-LibSVM,National Taiwan University,BSD License
-jSoup,Massachusetts Institute of Technology,MIT License
-Z-Label LDA,"David Andrzejewski, University of Wisconsin-Madison",GNU General Public License
-LangDetect,Nakatani Shuyo,Apache License v2
-SnowballStemmer,"Martin Porter, Richard Boulton",BSD License
-Commons Lang,Apache,Apache License v2
-Mallet,Andrew McCallum,Common Public License
-Eclipse RCP,Eclipse Foundation,Eclipse Public License
+Library,Developer,License,Usage,Weka 3,University of Waikato,GNU General Public License,Statically,http://www.cs.waikato.ac.nz/ml/weka/downloading.htmlStanford CoreNLP,Stanford University,GNU General Public License,Statically,http://nlp.stanford.edu/software/corenlp.shtmlLibSVM,National Taiwan University,BSD License,Statically,https://weka.wikispaces.com/LibSVMjSoup,Massachusetts Institute of Technology,MIT License,Statically,http://jsoup.org/downloadZ-Label LDA,"David Andrzejewski, University of Wisconsin-Madison",GNU General Public License,Concepts,LangDetect,Nakatani Shuyo,Apache License v2,Statically,https://github.com/shuyo/language-detection/blob/wiki/Downloads.mdSnowballStemmer,"Martin Porter, Richard Boulton",BSD License,Statically,http://snowball.tartarus.org/download.phpCommons Lang,Apache,Apache License v2,Statically,https://commons.apache.org/proper/commons-lang/Mallet,Andrew McCallum,Common Public License,Statically,http://mallet.cs.umass.edu/download.phpEclipse RCP,Eclipse Foundation,Eclipse Public License,Statically,https://www.eclipse.org/downloads/Apache OpenNLP,Apache,"Apache License, Version 2.0",Statically,https://opennlp.apache.org/cgi-bin/download.cgigson,Google,"Apache License, Version 2.0",Staticaly,https://code.google.com/p/google-gson/downloads/list?can=1twitter4j,yusuke,"Apache License, Version 2.0",Statically,http://twitter4j.org/en/index.html#downloadopen jpa,Apache,Apache License v2,Statically,http://openjpa.apache.org/downloads.htmlHamcrest,http://hamcrest.org/JavaHamcrest/,BSD,Statically,http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.hamcrest
