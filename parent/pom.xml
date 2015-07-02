@@ -60,7 +60,7 @@
    <module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
    
                     <!--  Help  -->
-    <module>../nlptoolshelp</module>
+    <module>../edu.usc.cssl.tacit.help</module>
     <module>../product</module>
     <module>../updatesite</module>
     
