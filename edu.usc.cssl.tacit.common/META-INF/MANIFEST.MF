@@ -24,7 +24,6 @@ Export-Package: com.google.gson,
  edu.usc.cssl.tacit.common.snowballstemmer
 Bundle-ClassPath: gson-2.3.1.jar,
  jsoup-1.7.3.jar,
+ commons-io-2.4.jar,
  .,
- langdetect.jar,
- commons-io-2.4.jar
-Import-Package: com.cybozu.labs.langdetect
+ langdetect.jar
