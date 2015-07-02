@@ -40,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.uc.cssl.tacit.cluster.kmeans.services.KmeansClusterAnalysis;
 import edu.usc.cssl.tacit.cluster.kmeans.ui.internal.IKmeansClusterViewConstants;
 import edu.usc.cssl.tacit.cluster.kmeans.ui.internal.KmeansClusterViewImageRegistry;
+import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;

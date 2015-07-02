@@ -10,6 +10,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class CrossValidator {

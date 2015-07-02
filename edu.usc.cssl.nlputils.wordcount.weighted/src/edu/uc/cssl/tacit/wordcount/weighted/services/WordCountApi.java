@@ -26,6 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
+import edu.usc.cssl.tacit.common.TacitUtility;
+import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class WordCountApi {

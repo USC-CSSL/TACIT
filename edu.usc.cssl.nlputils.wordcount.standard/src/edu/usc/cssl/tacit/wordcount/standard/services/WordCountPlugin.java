@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class WordCountPlugin {

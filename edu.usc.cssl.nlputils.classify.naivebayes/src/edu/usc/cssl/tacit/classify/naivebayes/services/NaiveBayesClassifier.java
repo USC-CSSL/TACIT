@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import bsh.EvalError;
+import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class NaiveBayesClassifier {

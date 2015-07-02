@@ -45,6 +45,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.uc.cssl.tacit.wordcount.weighted.services.WordCountApi;
+import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;

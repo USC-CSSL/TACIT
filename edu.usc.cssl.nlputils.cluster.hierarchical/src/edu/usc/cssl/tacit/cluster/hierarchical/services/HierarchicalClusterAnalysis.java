@@ -30,6 +30,7 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
+import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class HierarchicalClusterAnalysis {

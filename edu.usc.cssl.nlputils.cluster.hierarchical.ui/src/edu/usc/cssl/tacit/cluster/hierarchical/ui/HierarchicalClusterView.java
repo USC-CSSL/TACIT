@@ -42,6 +42,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.tacit.cluster.hierarchical.services.HierarchicalClusterAnalysis;
 import edu.usc.cssl.tacit.cluster.hierarchical.ui.internal.HeirarchicalClusterViewImageRegistry;
 import edu.usc.cssl.tacit.cluster.hierarchical.ui.internal.IHeirarchicalClusterViewConstants;
+import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;

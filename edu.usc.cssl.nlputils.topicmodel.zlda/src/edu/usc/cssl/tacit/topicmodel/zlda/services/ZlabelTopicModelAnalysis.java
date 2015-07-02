@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class ZlabelTopicModelAnalysis {
