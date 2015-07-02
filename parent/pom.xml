@@ -4,6 +4,7 @@
   <groupId>edu.usc.tacit.tools</groupId>
   <artifactId>edu.usc.tacit.tools.parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+  <relativePath></relativePath>
   <packaging>pom</packaging>
 
 <modules>
