@@ -130,7 +130,7 @@ public class Preprocess {
 			if (stemLang.equals("AUTODETECT")) {
 				doLangDetect = true;
 				Bundle bundle = Platform
-						.getBundle("edu.usc.cssl.nlputils.common");
+						.getBundle("edu.usc.cssl.tacit.common");
 				URL url = FileLocator.find(bundle, new Path("profiles"), null);
 				URL fileURL = FileLocator.toFileURL(url);
 				//ConsoleView.printlInConsoleln(fileURL.getPath());

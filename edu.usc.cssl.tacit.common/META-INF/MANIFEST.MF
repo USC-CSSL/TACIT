@@ -3,15 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: edu.usc.cssl.tacit.common;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.usc.nlputils.common.Activator
+Bundle-Activator: edu.usc.cssl.tacit.common.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.jsoup,
  edu.usc.cssl.tacit.common.ui,
  edu.usc.cssl.tacit.repository;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: com.google.gson,
  com.google.gson.annotations,
