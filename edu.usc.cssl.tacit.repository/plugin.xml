@@ -25,7 +25,7 @@
           </property>
           <property
                 name="windowImages"
-                value="/product/icon16.png,/product/icon32.png,/product/icon48.png,/product/icon64.png,/product/icon128.png,/product/icon256.png">
+                value="icons/icon16.png,icons/icon32.png,icons/icon48.png,icons/icon64.png,icons/icon128.png,icons/icon256.png">
           </property>
           <property
                 name="startupForegroundColor"
@@ -41,7 +41,7 @@
           </property>
           <property
                 name="aboutImage"
-                value="/product/icon128.jpg">
+                value="icons/icon128.png">
           </property>
           <property
                 name="aboutText"
