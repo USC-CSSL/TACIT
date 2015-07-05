@@ -31,12 +31,14 @@ This software may be reproduced and used for non-commercial purposes only, so lo
       startupForegroundColor="000000" />
    <launcher name="tacit">
       <linux icon="/product/icon256.xpm"/>
+      <macosx icon="/product/tacit.icns"/>
       <solaris/>
       <win useIco="true">
          <bmp
             winExtraLargeHigh="/product/icon256.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
