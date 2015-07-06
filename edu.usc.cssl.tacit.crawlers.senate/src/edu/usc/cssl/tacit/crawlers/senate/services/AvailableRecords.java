@@ -45,7 +45,7 @@ public class AvailableRecords {
 		
 		int minYear = 0;
 		int maxYear = 0;
-		for(int index = 0; index<temp.length; index=index+2) {				
+		for(int index = temp.length-2; index>=0; index=index-2) {				
 			temp[index] = temp[index].trim();
 			temp[index+1] = temp[index+1].trim();
 			Matcher keyMatcher = keyPatternObj.matcher(temp[index+1]);
