@@ -1,4 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/edu.usc.cssl.tacit.feature_1.0.0.qualifier.jar" id="edu.usc.cssl.tacit.feature" version="0.0.0"/>
+   <feature url="features/edu.usc.cssl.tacit.feature_1.0.0.qualifier.jar" id="edu.usc.cssl.tacit.feature" version="0.0.0">
+      <category name="TACIT"/>
+   </feature>
+   <category-def name="TACIT" label="Test Analysis , collection and Interpretation Tool">
+      <description>
+         Text analysis has become increasingly important for psychological research, and 
+
+measuring psychological and demographic properties using computational text 
+
+analysis is slowly becoming a field norm. Though several limited-method tools for 
+
+text analysis are already available (e.g. LIWC), and some have become part of 
+
+standard statistical packages (e.g., SPSS Text Analytics), a unified, open-source 
+
+architecture for gathering, managing and analyzing text does not exist. We 
+
+introduce TACIT: An Open-Source Text Analysis, Crawling and Interpretation 
+
+Tool. TACIT’s plugin architecture has three main components: 1. Crawling 
+
+plugins, for automated text collection from online sources (e.g., US Senate and 
+
+Supreme Court speech transcriptions, Twitter, Reddit) 2. Corpus management, 
+
+for applying standard text preprocessing to prepare and store corpora. 3. 
+
+Analysis plugins: including LIWC-type word count, topic modeling, sentiment 
+
+analysis, clustering and classification. TACIT’s open-source plugin platform 
+
+allows the architecture to easily adapt with the rapid developments in automated 
+
+text analysis.
+      </description>
+   </category-def>
 </site>
