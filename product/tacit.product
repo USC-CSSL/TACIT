@@ -19,6 +19,12 @@ This software may be reproduced and used for non-commercial purposes only, so lo
 
    <launcherArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+-Xdock:icon=/product/tacit.icns
+-XstartOnFirstThread
+-Xms40m
+-Xmx256m
+-Dorg.eclipse.swt.internal.carbon.smallFonts
+-Dorg.eclipse.swt.internal.carbon.noFocusRing
       </vmArgsMac>
    </launcherArgs>
 
