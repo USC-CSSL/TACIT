@@ -10,8 +10,9 @@
        </perspective>
     </extension>
      <extension
-          id="product"
-          point="org.eclipse.core.runtime.products">
+           id="product"
+           name="TACIT"
+           point="org.eclipse.core.runtime.products">
        <product
              application="edu.usc.cssl.tacit.repository.application"
              name="TACIT">
