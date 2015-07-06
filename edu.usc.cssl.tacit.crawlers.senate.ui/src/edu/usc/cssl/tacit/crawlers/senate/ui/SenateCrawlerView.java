@@ -723,24 +723,34 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								allCongresses.add(Integer.parseInt(s));
 						}
 							
-						if(monitor.isCanceled()) 
+						if(monitor.isCanceled()) {
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 							return handledCancelRequest("Cancelled");
+						}
 						try {
 							monitor.subTask("Initializing...");
 							monitor.worked(10);
-							if(monitor.isCanceled()) 
+							if(monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 								return handledCancelRequest("Cancelled");
+							}
 							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30);
-							if(monitor.isCanceled()) 
+							if(monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 								return handledCancelRequest("Cancelled");
+							}
 							monitor.worked(10);
 														
 							monitor.subTask("Crawling...");
-							if(monitor.isCanceled()) 
+							if(monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 								return handledCancelRequest("Cancelled");
+							}
 							sc.crawl();
-							if(monitor.isCanceled()) 
+							if(monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 								return handledCancelRequest("Cancelled");
+							}
 							monitor.worked(10);
 						} catch (NumberFormatException e) {						
 							return handleException(monitor, e, "Crawling failed. Provide valid data");

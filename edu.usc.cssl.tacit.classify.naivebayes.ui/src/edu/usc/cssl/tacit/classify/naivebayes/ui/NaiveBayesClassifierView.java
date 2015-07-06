@@ -521,8 +521,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						});
 
 						HashMap<Integer, String> perf;
-						if (monitor.isCanceled())
-							handledCancelRequest("Cancelled");
+						if (monitor.isCanceled()) {
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+							return handledCancelRequest("Cancelled");
+						}
 
 						int kValue = Integer.parseInt(tempkValue);
 						monitor.worked(1); // done with the validation
@@ -532,7 +534,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								preprocessTask = new Preprocess("NB_Classifier");
 								for (String dirPath : classPaths.keySet()) {
 									if (monitor.isCanceled()) {
-										handledCancelRequest("Cancelled");
+										TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+										return handledCancelRequest("Cancelled");
 									}
 
 									List<String> selectedFiles = classPaths
@@ -550,12 +553,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 											temp);
 									monitor.worked(1); // for the pre-processing
 														// of each directory
-									if (monitor.isCanceled())
-										handledCancelRequest("Cancelled");
+									if (monitor.isCanceled()) {
+										TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+										return handledCancelRequest("Cancelled");
+									}
 								}
 
-								if (monitor.isCanceled())
-									handledCancelRequest("Cancelled");
+								if (monitor.isCanceled()) {
+									TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+									return handledCancelRequest("Cancelled");
+								}
 								// preprocess the inputDir if required
 								if (isClassificationEnabled) {
 									ArrayList<String> files = new ArrayList<String>();
@@ -567,8 +574,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 													.getName());
 									monitor.worked(1);
 								}
-								if (monitor.isCanceled())
-									handledCancelRequest("Cancelled");
+								if (monitor.isCanceled()) {
+									TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+									return handledCancelRequest("Cancelled");
+								}
 							} catch (Exception e) {
 								return handleException(monitor, e,
 										"Preprocessing failed. Provide valid data");
@@ -576,8 +585,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							monitor.worked(10);
 						} else { // consolidate the files into respective
 									// classes
-							if (monitor.isCanceled())
-								handledCancelRequest("Cancelled");
+							if (monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
+							}
 							try {
 								nbc.createTempDirectories(classPaths,
 										trainingDataPaths, monitor);
@@ -587,20 +598,26 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							}
 							monitor.worked(10); // after creating temp
 												// directories
-							if (monitor.isCanceled())
-								handledCancelRequest("Cancelled");
+							if (monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
+							}
 						}
 						try {
-							if (monitor.isCanceled())
-								handledCancelRequest("Cancelled");
+							if (monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
+							}
 							monitor.subTask("Cross validating...");
 							perf = (!isPreprocessEnabled) ? cv.doCross(nbc,
 									classPaths, kValue, monitor, outputDir,
 									dateObj) : cv.doCross(nbc, tempClassPaths,
 									kValue, monitor, outputDir, dateObj);
 							monitor.worked(40);
-							if (monitor.isCanceled())
-								handledCancelRequest("Cancelled");
+							if (monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
+							}
 							// nbc.doCross(trainingDataPaths,
 							// classificationOutputDir, false, false, kValue);
 							// // perform cross validation
@@ -615,8 +632,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										.printlInConsoleln("---------- Classification Finished ------------");
 							}
 							monitor.worked(15);
-							if (monitor.isCanceled())
-								handledCancelRequest("Cancelled");
+							if (monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
+							}
 							double avgAccuracy = 0.0;
 							double accuracies[] = new double[kValue];
 							ConsoleView
@@ -655,15 +674,16 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							ConsoleView.printlInConsoleln("Standard Error = "
 									+ MatrixOps.stderr(accuracies));
 
-							if (monitor.isCanceled())
-								handledCancelRequest("Cancelled");
+							if (monitor.isCanceled()) {
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
+							}
 							if (!isPreprocessEnabled)
 								nbc.deleteTempDirectories(trainingDataPaths);
 							monitor.worked(10);
 							if (monitor.isCanceled()) {
-								handledCancelRequest("Cancelled");
-								TacitFormComposite
-										.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+								return handledCancelRequest("Cancelled");
 							}
 						} catch (IOException e) {
 							TacitFormComposite
@@ -678,9 +698,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 						}
 						if (monitor.isCanceled()) {
-							handledCancelRequest("Cancelled");
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+							return handledCancelRequest("Cancelled");
 						}
 						if (isPreprocessEnabled) {
 							preprocessTask.clean();
