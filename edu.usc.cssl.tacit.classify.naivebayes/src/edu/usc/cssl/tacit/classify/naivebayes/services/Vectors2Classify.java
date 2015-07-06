@@ -798,11 +798,19 @@ public abstract class Vectors2Classify {
 			classification = instance.getName() + "," + instance.getTarget()
 					+ " ";
 			Labeling labeling = c.getLabeling();
+			boolean foundPredictedClass =  false;
 			for (int j = 0; j < labeling.numLocations(); j++) {
 				if(!labeling.getLabelAtRank(j).toString().isEmpty()) {
-				classification = classification
+					if(!foundPredictedClass) {
+						classification = classification
 						+ labeling.getLabelAtRank(j).toString() + ","
 						+ labeling.getValueAtRank(j) + ",";
+						foundPredictedClass = true;
+					} else {
+						classification = classification
+						+ labeling.getLabelAtRank(j).toString() + "("
+						+ labeling.getValueAtRank(j) + ")" + ";";
+					}
 				System.out.print(labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + " ");
 				}
