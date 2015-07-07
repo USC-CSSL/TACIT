@@ -32,8 +32,8 @@ This software may be reproduced and used for non-commercial purposes only, so lo
 
    <splash
       location="edu.usc.cssl.tacit.repository"
-      startupProgressRect="5,275,445,15"
-      startupMessageRect="7,252,445,20"
+      startupProgressRect="5,480,445,15"
+      startupMessageRect="7,500,445,20"
       startupForegroundColor="000000" />
    <launcher name="tacit">
       <linux icon="icon256.xpm"/>
@@ -44,7 +44,6 @@ This software may be reproduced and used for non-commercial purposes only, so lo
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
