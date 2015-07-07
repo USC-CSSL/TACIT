@@ -200,7 +200,7 @@ public class NaiveBayesClassifier {
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
 				outputPath + "-output.csv")));
-		bw.write("File,Predicted Class,Predicted Class Probability,Other Classes\n");
+		bw.write("File,Predicted Class,Predicted Class Probability,Other Class Probabilities\n");
 		for (String s : result)
 			bw.write(s + "\n");
 		bw.close();

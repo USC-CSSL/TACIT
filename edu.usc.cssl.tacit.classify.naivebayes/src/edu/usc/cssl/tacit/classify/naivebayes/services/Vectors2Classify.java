@@ -809,7 +809,7 @@ public abstract class Vectors2Classify {
 					} else {
 						classification = classification
 						+ labeling.getLabelAtRank(j).toString() + "("
-						+ labeling.getValueAtRank(j) + ")" + ";";
+						+ labeling.getValueAtRank(j) + ")" + "; ";
 					}
 				System.out.print(labeling.getLabelAtRank(j).toString() + ":"
 						+ labeling.getValueAtRank(j) + " ");
