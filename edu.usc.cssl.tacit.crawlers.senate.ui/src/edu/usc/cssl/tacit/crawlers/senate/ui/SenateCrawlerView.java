@@ -5,10 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.LinkedHashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -91,7 +90,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	private Table senatorTable;
 	private Button removeSenatorButton;
 	private SenatorListDialog senatorListDialog;
-	private TreeSet<String> senatorList;
+	private LinkedHashSet<String> senatorList;
 	private ArrayList<String> selectedSenators;
 	private Button addSenatorBtn;
 	
@@ -154,24 +153,18 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		toolkit.adapt(cmbCongress);
 		cmbCongress.setItems(loading);
 		cmbCongress.select(0);
-
-		Composite senatorSectionClient = new Composite(sectionClient, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(senatorSectionClient);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
-		.applyTo(senatorSectionClient); 
 		
-		Label dummy1 = new Label(senatorSectionClient, SWT.NONE);
+		Label dummy1 = new Label(sectionClient, SWT.NONE);
 		dummy1.setText("Senator:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(dummy1);
 
-		senatorTable = new Table(senatorSectionClient, SWT.BORDER
+		senatorTable = new Table(sectionClient, SWT.BORDER
 				| SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 3)
-				.hint(90, 100).applyTo(senatorTable);
+				.hint(90, 50).applyTo(senatorTable);
 
-		Composite buttonComp = new Composite(senatorSectionClient, SWT.NONE);
+		Composite buttonComp = new Composite(sectionClient, SWT.NONE);
 		GridLayout btnLayout = new GridLayout();
 		btnLayout.marginWidth = btnLayout.marginHeight = 0;
 		btnLayout.makeColumnsEqualWidth = false;
@@ -189,7 +182,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				handleAdd(addSenatorBtn.getShell());
 			}
 		});
-		//addSenatorBtn.setEnabled(false);
+		addSenatorBtn.setEnabled(false);
 
 		removeSenatorButton = new Button(buttonComp,
 				SWT.PUSH);
@@ -203,22 +196,14 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				for (TableItem item : senatorTable.getSelection()) {
 					selectedSenators.remove(item.getText());
 					item.dispose();
-
+				}
+				if(selectedSenators.size() == 0) {
+					removeSenatorButton.setEnabled(false);
 				}
 			}
 		});
-		//removeSenatorButton.setEnabled(false);
-		
-		/*Label senatorLabel = toolkit.createLabel(sectionClient, "Senator:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(senatorLabel);
-		cmbSenator = new List(sectionClient, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.Collapse);
-		GridDataFactory.fillDefaults().grab(true, true).span(2, 6).applyTo(cmbSenator);
-		Rectangle clientArea = sectionClient.getClientArea();
-		cmbSenator.setBounds (clientArea.x, clientArea.y, 100, 100);
-	  //s toolkit.adapt(cmbSenator);
-		cmbSenator.setItems(loading);
-		cmbSenator.select(0);
-	*/
+		removeSenatorButton.setEnabled(false);
+
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 		Group limitGroup = new Group(client, SWT.SHADOW_IN);
 		limitGroup.setText("Limit Records");
@@ -250,7 +235,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		});
 		
 		final Label sortLabel = new Label(limitRecordsClient, SWT.NONE);
-		sortLabel.setText("Sort Records by Date");
+		sortLabel.setText("Sort Records by Date:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
 		sortLabel.setEnabled(false);
 		
@@ -264,7 +249,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		sortByDateNo.setEnabled(false);
 
 		final Label limitLabel = new Label(limitRecordsClient, SWT.NONE);
-		limitLabel.setText("No.of.Records per Senator");
+		limitLabel.setText("No.of.Records per Senator:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
 		limitLabel.setEnabled(false);
 		limitText = new Text(limitRecordsClient, SWT.BORDER);
@@ -422,6 +407,13 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				try {
 					allSenators = AvailableRecords.getAllSenators(congresses);
 					totalSenators = allSenators.length + 5;
+					Display.getDefault().syncExec(new Runnable() {						
+						@Override
+						public void run() {
+							addSenatorBtn.setEnabled(true);
+							
+						}
+					});
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
@@ -544,7 +536,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 
 		processElementSelectionDialog(shell);
 
-		senatorList = new TreeSet<String>();
+		senatorList = new LinkedHashSet<String>();
 		Job listSenators = new Job("Retrieving senator list ...") {
 
 			
@@ -552,7 +544,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				senatorList.clear();
-				
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -562,7 +553,11 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				
 				try { 
 					ArrayList<String> temp = new ArrayList<String>();
-					if(selectedCongress.equals("All") && null != allSenators) {
+					temp.add(0, "All Senators");
+			    	temp.add(1, "All Democrats");
+			    	temp.add(2, "All Republicans");
+			    	temp.add(3, "All Independents");
+					if(selectedCongress.equals("All")) {
 						for(String s : allSenators) 
 							temp.add(s);					
 					} else {
@@ -573,11 +568,11 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 					senatorList.addAll(temp);
 					if (selectedSenators != null)
 						senatorList.removeAll(selectedSenators);
+
 					Display.getDefault().asyncExec(new Runnable() {
 						@Override
 						public void run() {
 							senatorListDialog.refresh(senatorList.toArray());
-
 						}
 					});
 				} catch (final IOException exception) {
@@ -604,7 +599,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		senatorList.add("Loading...");
 		senatorListDialog.setElements(senatorList.toArray());
 		senatorListDialog.setMultipleSelection(true);
-
 		if (senatorListDialog.open() == Window.OK) {
 			updateSenatorTable(senatorListDialog.getResult());
 		}
@@ -619,11 +613,14 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		for (Object object : result) {
 			selectedSenators.add((String) object);
 		}
-		Collections.sort(selectedSenators);
+		//Collections.sort(selectedSenators);
 		senatorTable.removeAll();
 		for (String itemName : selectedSenators) {
 			TableItem item = new TableItem(senatorTable, 0);
 			item.setText(itemName);
+			if(!removeSenatorButton.isEnabled()) {
+				removeSenatorButton.setEnabled(true);
+			}
 		}
 
 	}
@@ -671,21 +668,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								} else {
 									congressNum = congresses[cmbCongress.getSelectionIndex()];	
 								}
-								/*if(!cmbSenator.getText().contains("All")) {
-									for(String senator : senators.keySet()) {
-										if(senators.get(senator) == cmbSenator.getText()) {
-											senatorDetails = senator;
-											break;
-										}
-									}
-								} else {
-									senatorDetails = cmbSenator.getText();
-								}*/
-								/*
-								int[] tempSenatorSelectedIndices = senatorTable.getSelectionIndices();
-								for(int index :tempSenatorSelectedIndices) {
-									senatorDetails.add(senatorTable.getItem(index).getData().toString());
-								}*/
 								senatorDetails = selectedSenators;
 								if (dateRange.getSelection()) {
 									dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
