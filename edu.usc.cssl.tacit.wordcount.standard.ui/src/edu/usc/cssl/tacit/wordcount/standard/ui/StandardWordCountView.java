@@ -214,6 +214,7 @@ public class StandardWordCountView extends ViewPart implements
 				
 				try {
 						//Niki Change here
+					rc = wc.countWords();
 					//rc=wc.invokeWordCount(inputFiles, dictionaryFiles, stopWordPath, outputPath, isStemDic);
 				} catch (Exception ioe) {
 					ioe.printStackTrace();
@@ -226,7 +227,7 @@ public class StandardWordCountView extends ViewPart implements
 					}
 				};
 				wordCountJob.setUser(true);
-				 if (canProceed()) {
+				 if (true) {
 				 wordCountJob.schedule();
 				 }
 			};
