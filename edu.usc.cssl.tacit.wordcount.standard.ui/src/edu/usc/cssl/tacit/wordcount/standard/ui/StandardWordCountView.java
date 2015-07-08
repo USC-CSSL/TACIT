@@ -1,6 +1,7 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -202,7 +203,8 @@ public class StandardWordCountView extends ViewPart implements
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles();
 				final boolean isStemDic = stemEnabled.getSelection();
-				final WordCountPlugin wc = new WordCountPlugin();
+				Date dateObj = new Date();
+				final WordCountPlugin wc = new WordCountPlugin(false,dateObj);
 				
 				// Creating a new Job to do Word Count so that the UI will not freeze
 				 wordCountJob = new Job("Word Count Plugin Job"){
@@ -214,7 +216,7 @@ public class StandardWordCountView extends ViewPart implements
 				
 				try {
 						//Niki Change here
-					rc = wc.countWords();
+						wc.countWords(inputFiles,dictionaryFiles,outputPath);
 					//rc=wc.invokeWordCount(inputFiles, dictionaryFiles, stopWordPath, outputPath, isStemDic);
 				} catch (Exception ioe) {
 					ioe.printStackTrace();
