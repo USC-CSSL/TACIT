@@ -3,21 +3,21 @@
 		<link rel="stylesheet" type="text/css" href="sample.css">
 	</head>
 	<body>
-		<center><h3>NLP Utils User Guide</h3></center>
+		<center><h3>TACIT User Guide</h3></center>
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">Naive Bayes Classifier</td>
+				<td class = "header">TACIT Naive Bayes Classifier Tool</td>
 			</tr>
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Overview</td>
+						<td class = "head">Method Overview</td>
 					</tr>
 					<tr>
 					
-						<td>Naive Bayes methods are a family of supervised learning algorithms that are used to classify data instances according 
-						to a finite set of class types. Naive Bayes classification is accomplished by applying Bayes theorem with the strong assumption
+						<td>Naive Bayes methods are a family of supervised learning algorithms that are used to classify text files according 
+						to a user-determined set of class types. Naive Bayes classification is accomplished by applying Bayes theorem with the strong assumption
 						that dependent features (i.e. dependent variables) are statistically independent. While this assumption
 						is often violated, it permits naive Bayes algorithms to work quickly and efficiently, which often yields benefits 
 						that outweigh the costs of the independence assumption. 
@@ -39,29 +39,29 @@
 				<table class = "contents">
 					
 					<tr>
-						<td class = "head">Basic Tutorial: Using TACIT to implement a naive Bayes algorithm</td>
+						<td class = "head">Basic Tutorial: Using TACIT Naive Bayes Tool</td>
 					</tr>
 					
 					<tr>
-						<td> TACIT's naive Bayes tool can be used to learn probabilistic associations between text instances and class labels. 
+						<td> TACIT's Naive Bayes tool can be used to learn probabilistic associations between text instances and class labels. 
 							 During the training process, the algorithm extracts features from training texts that are predictive of class association.
 							 The extraction of these features is both automatic and optimized, so it is not necessary to specify the number features 
 							 to be extracted. 
 					
 					<tr>
-						<td class = "section">Data organization and specification</td>
+						<td class = "section">Specifying Input Text for Analysis</td>
 					</tr>
 					
 					<tr>					
-						<td> TACIT's naive Bayes tool requires that data organization satisfies two criteria. First, every text
+						<td> TACIT's Naive Bayes tool requires that data organization satisfies two criteria. First, every text
 						instance must be contained in its own file. Second, class labels must be represented by directories. That is, a directory must be created 
-						for each class label and all text instances associated with a given label must be located in the relevant 
+						for each class label and all text files associated with a given label must be located in the relevant 
 						directory. <br> <br>
 						
-						Once the data is organized into single instance files contained in class directories, the class directories can be
-						added to the naive Bayes implementation by clicking the "Add Folder" button, which is located in the naive Bayes tool's
-						"Class Details" section. Using the "Add Folder" button, each class directory should be added to the implementation. Depending
-						on whether the text instances need to be preprocessed, the "Preprocess" option, also contained in the "Class Details" section
+						Once the data is organized into separate text files contained in class directories, the class directories can be
+						added to the program by clicking the <b>Add Folder</b> button, which is located in the
+						<b>Class Details</b> panel. AFter selecting the desired folder, all subfiles within that folder will be added and automatically selected for inclusion. Depending
+						on whether the text files need to be preprocessed, the <b>Preprocess</b> option, also contained in the <b>Class Details</b> panel
 						can be selected.  <br> <br> 
 						
 						Notably,  TACIT's naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
@@ -107,9 +107,8 @@
 						data will be generated. This file will contain a row for every unlabeled data instance and row will contain the filename of that row's instance,
 						the assigned class, and other relevant information. <br> <br>
 						
-						After specifying all requisite parameters, the algorithm can be run by clicking the green and white play button located in the top right corner
-						of the naive Bayes window. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
-						standard error will be displayed in the console window. 
+						After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
+						standard error will be displayed in the console panel at the bottom of the tool. 
 						</td>
 					</tr>
 						
@@ -128,8 +127,13 @@
 						<b>7.</b> If unlabeled data classification is desired, specify the output path in which the classification .csv should be stored
 						</td>
 					</tr>
-					
-							
+					<tr>
+						<td class = "subtitle">Understanding Naive Bayes Output</td>
+					</tr>
+					<tr>
+					<td> Add section here about output files that will be generated and what they mean.
+					</td>
+					</tr>		
 				</table>
 			</tr>	
 		</table>
