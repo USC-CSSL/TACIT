@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.jsoup.Jsoup;
@@ -30,20 +31,61 @@ public class SenateCrawler {
 	BufferedWriter csvWriter;
 	String sortType;
 	HashSet<String> irrelevantLinks = new HashSet<String>(Arrays.asList("Next Document","New CR Search","Prev Document","HomePage","Help","GPO's PDF"));
-	private ArrayList<String> senText;
+	private ArrayList<String> selectedSenators;
 	private int congressNum;
 	IProgressMonitor monitor;
-	String[] senList;
 	int progressSize;
 	
 	HashMap<String, HashMap<String, String>> congressSenatorMap = AvailableRecords.getCongressSenatorMap(); 
 	HashMap<String, String> senatorDetails = SenatorDetails.getSenatorDetails(); // to populate all senator details
 	
-	public void crawl() throws IOException{
+	private void formatSenatorList() {
+		ArrayList<String> tempSenators =  new ArrayList<String>();
+		for(String senator : this.selectedSenators) {
+			tempSenators.add(senator);
+		}
+		
+		if(tempSenators.contains("All Senators")) {
+			selectedSenators.removeAll(selectedSenators);
+			selectedSenators.add("All Senators");
+		} else  {
+			if(tempSenators.contains("All Democrats")) {
+				// remove all the remaining democrats
+				for (Iterator<String> it = tempSenators.iterator(); it.hasNext(); ) {
+				    String s = it.next();
+					if(s.contains("(D-") || s.contains("D/")) {
+						it.remove();
+					}
+				}
+			} 
+			if(tempSenators.contains("All Republicans")) {
+				for (Iterator<String> it = tempSenators.iterator(); it.hasNext(); ) {
+				    String s = it.next();
+					if(s.contains("(R-") || s.contains("R/")) {
+						it.remove();
+					}
+				}
+			}
+			if(tempSenators.contains("All Independents")) {
+				for (Iterator<String> it = tempSenators.iterator(); it.hasNext(); ) {
+				    String s = it.next();
+					if(s.contains("(I-") || s.contains("I/")) {
+						it.remove();
+					}
+				}
+			}
+		}
+		this.selectedSenators = tempSenators;
+		//System.out.println("Senator details after formatting :" + selectedSenators);
+	}
+	
+	public void crawl() throws IOException {
 		if(null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
 			return;
 		}
+		
+		formatSenatorList();
 		
 		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 		Date dateobj = new Date();
@@ -51,7 +93,8 @@ public class SenateCrawler {
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "senate-crawler-summary-"+df.format(dateobj)+".csv")));
 		csvWriter.write("Congress,Date,Senator,Political Affiliation,State,Title,File");
 		csvWriter.newLine();
-		for(String senText : senText) {
+		for(String senText : selectedSenators) {
+			int tempProgressSize = progressSize/selectedSenators.size();
 		//if (senText.contains("All Senators") || senText.contains("All Republicans") || senText.contains("All Democrats") || senText.contains("All Independents")){
 		if (senText.equals("All Senators") || senText.equals("All Republicans") || senText.equals("All Democrats") || senText.equals("All Independents")){
 			if (congressNum != -1) {
@@ -59,14 +102,14 @@ public class SenateCrawler {
 					monitor.subTask("Cancelling.. ");
 					return;
 				}
-				getAll(congressNum, senText, this.progressSize);
+				getAll(congressNum, senText, tempProgressSize);
 		    }else {
 				for (int congress : congresses) {
 					if(null != monitor && monitor.isCanceled()) {
 						monitor.subTask("Cancelling.. ");
 						return;
 					}
-					getAll(congress, senText, this.progressSize/congresses.size());
+					getAll(congress, senText, tempProgressSize/congresses.size());
 				}
 			}
 			if(null != monitor && monitor.isCanceled()) {
@@ -90,11 +133,14 @@ public class SenateCrawler {
 						monitor.subTask("Cancelling.. ");
 						return;
 					}
-					if(monitor!=null) 
+					/*if(monitor!=null) 
 						monitor.worked(80/congresses.size());
+						*/
 					System.out.println("Extracting Records from Congress "+congress+"...");
 					String senatorName = congressSenatorMap.get(String.valueOf(congress)).get(senText);
-					searchSenatorRecords(congress, senatorName, this.progressSize/congresses.size(), politicalAffiliation);
+					if(null != senatorName) {
+						searchSenatorRecords(congress, senatorName, tempProgressSize/congresses.size(), politicalAffiliation);
+					}
 				}
 			} else {
 				if(null != monitor && monitor.isCanceled()) {
@@ -103,7 +149,9 @@ public class SenateCrawler {
 				}
 				System.out.println("Extracting Records from Congress "+congressNum+"...");
 				String senatorName = congressSenatorMap.get(String.valueOf(congressNum)).get(senText);
-				searchSenatorRecords(congressNum, senatorName, this.progressSize, politicalAffiliation);
+				if(null != senatorName) {
+					searchSenatorRecords(congressNum, senatorName, tempProgressSize, politicalAffiliation);
+				}
 			}
 			if(null != monitor && monitor.isCanceled()) {
 				monitor.subTask("Cancelling.. ");
@@ -126,15 +174,15 @@ public class SenateCrawler {
 			if (senator.contains("Any Senator"))		// We just need the senator names
 				continue;
 			if (senText.contains("All Republicans")){
-				if (!senatorName.contains("(R-"))
+				if (!senatorName.contains("(R-") && !senatorName.contains("R/"))
 					continue;
 			}
 			if (senText.contains("All Democrats")){
-				if (!senatorName.contains("(D-"))
+				if (!senatorName.contains("(D-") && !senatorName.contains("D/"))
 					continue;
 			}
 			if (senText.contains("All Independents")){
-				if (!senatorName.contains("(I-"))
+				if (!senatorName.contains("(I-") && !senatorName.contains("I/"))
 					continue;
 			}
 			String politicalAffiliation =  "";
@@ -145,8 +193,10 @@ public class SenateCrawler {
 				else 
 					politicalAffiliation = senatorDetails.get(senatorName).split("-")[0];
 			}
-			searchSenatorRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), maxProgressLimit/congressSenatorMap.get(String.valueOf(congressNum)).keySet().size(), politicalAffiliation);
-			foundSenator = true;
+			if(null != congressSenatorMap.get(String.valueOf(congressNum)).get(senator)) {
+				searchSenatorRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), maxProgressLimit/congressSenatorMap.get(String.valueOf(congressNum)).keySet().size(), politicalAffiliation);
+				foundSenator = true;
+			}
 		}
 		if(!foundSenator){
 			if(senText.contains("All Republicans")) {
@@ -163,24 +213,26 @@ public class SenateCrawler {
 		}			
 	}
 	
-	public void initialize(String sortType, int maxDocs, int congressNum, ArrayList<String> senatorDetails2, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, ArrayList<String> senatorDetails, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
-		this.senText = senatorDetails2;
+		this.selectedSenators = senatorDetails;
 		this.congressNum = congressNum;
 		this.sortType = sortType;
 		this.congresses = allCongresses;
 		this.monitor = monitor;
 		this.progressSize = progressSize;
 		
-		System.out.println("Congress num :"+ congressNum);
-		System.out.println("Senator name :"+ senatorDetails2);
+		/*System.out.println("Congress num :"+ congressNum);
+		System.out.println("Senator name :"+ senatorDetails);
 		System.out.println("Max docs :"+ maxDocs);
 		System.out.println("Sort Type : "+ sortType);		
 		System.out.println("From date :"+ dateFrom);
-		System.out.println("To Date: "+ dateTo);		
+		System.out.println("To Date: "+ dateTo);
+		System.out.println("Progress Size :"+ progressSize);*/
+		
 		if(null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
 			return;
@@ -255,8 +307,6 @@ public class SenateCrawler {
 			if (count++>=maxDocs)
 				break;
 			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
-			//System.out.println(recordDate);
-			//System.out.println("Processing "+link.text());
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
 			
@@ -297,15 +347,14 @@ public class SenateCrawler {
 	private int updateWork(int maxDocs, int totalLinks, int progressSize, int tempCount) {
 		int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;				
 		int numDocs2Download = tempMaxDocs > totalLinks ? totalLinks : tempMaxDocs;	
-		if(numDocs2Download>progressSize) { // worked should be 1 
+		if(numDocs2Download>progressSize && 0!= progressSize) { // worked should be 1 
 			int totalCount = numDocs2Download/progressSize;
 			totalCount++;
 			if(tempCount % totalCount == 0) {
 				tempCount = 0;
 				monitor.worked(1);
 			}
-		} else {
-			
+		} else {			
 			monitor.worked((progressSize/numDocs2Download)-1);
 		}
 		return tempCount;
@@ -359,7 +408,6 @@ public class SenateCrawler {
 				}
 			}
 		}
-
 		String[] contents = new String[2];
 		contents[0] = title;
 		contents[1] = content.toString();

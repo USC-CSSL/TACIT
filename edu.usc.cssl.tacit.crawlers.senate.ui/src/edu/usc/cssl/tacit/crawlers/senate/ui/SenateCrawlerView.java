@@ -94,6 +94,9 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	private ArrayList<String> selectedSenators;
 	private Button addSenatorBtn;
 	
+	String previousSelectedCongress = "";
+	String[] availabileSenators;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
@@ -417,21 +420,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
-				/*
-				// Async callback to access UI elements 
-				Display.getDefault().asyncExec(new Runnable() {
-
-					@Override
-				      public void run() {
-				    	  totalSenators = allSenators.length + 5;
-				    	  cmbSenator.setItems(allSenators);
-				    	  cmbSenator.add("All Senators", 0);
-				    	  cmbSenator.add("All Democrats", 1);
-				    	  cmbSenator.add("All Republicans", 2);
-				    	  cmbSenator.add("All Independents", 3);
-				    	  cmbSenator.select(0);
-				      }
-				});	*/
 				return Status.OK_STATUS;
 			}
 		};
@@ -441,25 +429,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		cmbCongress.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//String selectedCongress = cmbCongress.getText().trim();
-				//String selectedCongress = congresses[cmbCongress.getSelectionIndex()];
-				/*
-				if (selectedCongress.equals("All")){
-					cmbSenator.setItems(allSenators);
-					cmbSenator.add("All Senators", 0);
-					cmbSenator.add("All Democrats", 1);
-					cmbSenator.add("All Republicans", 2);
-					cmbSenator.add("All Independents", 3);
-					cmbSenator.select(0);
-				}
-				else {
-					cmbSenator.setItems(AvailableRecords.getSenators(selectedCongress));
-					cmbSenator.add("All Senators", 0);
-					cmbSenator.add("All Democrats", 1);
-					cmbSenator.add("All Republicans", 2);
-					cmbSenator.add("All Independents", 3);
-					cmbSenator.select(0);
-				}*/
 				// set dates
 				String tempYears[] = congressYears[cmbCongress.getSelectionIndex()].split("-");
 				Calendar cal = Calendar.getInstance();
@@ -475,6 +444,10 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				toDate.setYear(cal.get(Calendar.YEAR));
 				maxDate = cal.getTime();
 				//cmbSenator.select(0);
+				
+				//Empty the senatorTable
+				senatorTable.removeAll();
+				selectedSenators = new ArrayList<String>();
 			}
 		});	
 		
@@ -533,7 +506,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	
 	
 	private void handleAdd(Shell shell) {
-
+		
 		processElementSelectionDialog(shell);
 
 		senatorList = new LinkedHashSet<String>();
@@ -561,9 +534,12 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						for(String s : allSenators) 
 							temp.add(s);					
 					} else {
-						String[] availabileSenators = AvailableRecords.getSenators(selectedCongress);
+						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress)) {
+							availabileSenators = AvailableRecords.getSenators(selectedCongress);
+						}
 						for(String s : availabileSenators) 
 							temp.add(s);	
+						
 					}
 					senatorList.addAll(temp);
 					if (selectedSenators != null)
@@ -575,6 +551,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 							senatorListDialog.refresh(senatorList.toArray());
 						}
 					});
+					previousSelectedCongress = selectedCongress;
 				} catch (final IOException exception) {
 					ConsoleView.printlInConsole(exception.toString());
 					Display.getDefault().syncExec(new Runnable() {
@@ -688,14 +665,40 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 							}
 						});
 						
-						if(senatorDetails.contains("All") && congressNum.equals("-1")) { // all senators and all congresses
-							progressSize = (totalSenators * congresses.length)+50;
-						} else if(congressNum.equals("-1")) {
-							progressSize = (30 * congresses.length) + 50;
+						if(senatorDetails.contains("All Senators") && congressNum.equals("-1")) { // all senators and all congresses
+							progressSize = (totalSenators * congresses.length) + 50;
 						} else {
-							progressSize +=50;
+							int count = 1;
+							if(congressNum.equals("-1")) {
+								if(senatorDetails.contains("All Democrats")) {
+									progressSize = (20 * congresses.length) + 50; // on an average of 20 democrats
+									count++;
+								}
+								if(senatorDetails.contains("All Republicans")) {
+									progressSize+= (20 * congresses.length) + 50;
+									count++;
+								}
+								if(senatorDetails.contains("All Independents")) {
+									progressSize+= (20 * congresses.length) + 50;
+									count++;
+								}
+								progressSize+= ((senatorDetails.size() - count)+1 * congresses.length) + 50; // considering none of "All" selected
+							} else {
+								if(senatorDetails.contains("All Democrats")) {
+									progressSize = 100 + 50; // on an average of 20 democrats
+									count++;
+								}
+								if(senatorDetails.contains("All Republicans")) {
+									progressSize+= 100 + 50;
+									count++;
+								}
+								if(senatorDetails.contains("All Independents")) {
+									progressSize+=  100 + 50;
+									count++;
+								}
+								progressSize+= ((senatorDetails.size() - count)+1 * 10) + 50; // considering none of "All" selected								
+							}
 						}
-					
 						monitor.beginTask("Running Senate Crawler..." , progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("Senate Crawler started ");						
 						

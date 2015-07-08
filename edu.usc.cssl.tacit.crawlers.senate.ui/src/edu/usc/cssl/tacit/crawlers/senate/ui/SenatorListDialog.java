@@ -2,7 +2,8 @@ package edu.usc.cssl.tacit.crawlers.senate.ui;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+
+import edu.usc.cssl.tacit.crawlers.senate.ui.internal.ElementListSelectionDialog;
 
 public class SenatorListDialog extends ElementListSelectionDialog {
 
@@ -13,5 +14,4 @@ public class SenatorListDialog extends ElementListSelectionDialog {
 	public void refresh(Object[] elements){
 		setListElements(elements);
 	}
-
 }
