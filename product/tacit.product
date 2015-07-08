@@ -87,4 +87,8 @@ This software may be reproduced and used for non-commercial purposes only, so lo
       <plugin id="tacit" autoStart="false" startLevel="5" />
    </configurations>
 
+   <repositories>
+      <repository location="http://cssl.usc.edu:8080/job/TACIT/ws/updatesite/target/repository/" enabled="true" />
+   </repositories>
+
 </product>
