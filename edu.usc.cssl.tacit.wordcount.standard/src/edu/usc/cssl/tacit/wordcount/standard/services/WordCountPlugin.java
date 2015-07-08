@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
@@ -70,9 +71,30 @@ public class WordCountPlugin {
 		System.out.println(wordDictionary.toString());
 		System.out.println(userFileCount.toString());
 		
+		for (String iFile : inputFiles) {
+			do_countWords(iFile,outputPath);
+			refreshFileCounts();
+		}
+		
 		if(weighted) TacitUtility.createRunReport(outputPath, "Weighted Word Count",dateObj);
 		else TacitUtility.createRunReport(outputPath, "Standard Word Count",dateObj);
 		return;
+	}
+	
+	private void do_countWords(String inputFile, String outputPath){
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(new File(inputFile)));
+			String currentLine;
+			double numWords = 0;
+			double wps = 0;
+			double numDictWords = 0;
+			int numSentences = 0;
+			while ((currentLine = br.readLine()) != null){
+				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -133,6 +155,31 @@ public class WordCountPlugin {
 			}
 			
 			br.close();
+		}
+	}
+	
+	/**
+	 * Call this function after completing the counts 
+	 * for individual files to set the file counts back
+	 * to 0.
+	 */
+	private void refreshFileCounts() {
+		Set<String> keySet = userFileCount.keySet();
+		for (String key : keySet) {
+			Set<Integer> subKeySet = userFileCount.get(key).keySet();
+			
+			for (Integer subKey : subKeySet) {
+				userFileCount.get(key).put(subKey, 0.0);
+			}
+		}
+		
+		keySet = pennFileCount.keySet();
+		for (String key : keySet) {
+			Set<String> subKeySet = pennFileCount.get(key).keySet();
+			
+			for (String subKey : subKeySet) {
+				pennFileCount.get(key).put(subKey, 0.0);
+			}
 		}
 	}
 	
