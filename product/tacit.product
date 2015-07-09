@@ -32,9 +32,9 @@ This software may be reproduced and used for non-commercial purposes only, so lo
 
    <splash
       location="edu.usc.cssl.tacit.repository"
-      startupProgressRect="5,480,445,15"
-      startupMessageRect="7,500,445,20"
-      startupForegroundColor="000000" />
+      startupProgressRect="5,325,502,15"
+      startupMessageRect="5,305,502,20"
+      startupForegroundColor="FBFFFE" />
    <launcher name="tacit">
       <linux icon="icon256.xpm"/>
       <macosx icon="tacit.icns"/>
