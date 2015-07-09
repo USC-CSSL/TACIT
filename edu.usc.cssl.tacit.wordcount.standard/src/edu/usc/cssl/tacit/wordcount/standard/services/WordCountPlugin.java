@@ -1,12 +1,18 @@
 package edu.usc.cssl.tacit.wordcount.standard.services;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +57,8 @@ public class WordCountPlugin {
 	private HashMap<String, HashMap<String, Double>> pennFileCount = new HashMap<String, HashMap<String, Double>>();
 	private HashMap<String, HashMap<String, Double>> pennOverallCount = new HashMap<String, HashMap<String, Double>>();
 	private HashMap<Integer, String> categoryID = new HashMap<Integer, String>();
+
+	private BufferedWriter resultCSVbw = null;
 
 	public WordCountPlugin(boolean weighted, Date dateObj) {
 		this.weighted = weighted;
@@ -162,10 +170,56 @@ public class WordCountPlugin {
 		}
 	}
 
-	private void addToCSV(String inputFile, String outputPaht, int numWords,
+	private void addToCSV(String inputFile, String outputPath, int numWords,
 			int numSentences, int numDictWords, double totalWeight,
 			boolean isOverall) {
-		
+		try {
+			
+			//Set up result CSV file when calling this function the first time
+			if (resultCSVbw == null) {
+				String type = "";
+				DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+				if (weighted)
+					type = "TACIT-Weighted-Wordcount-";
+				else
+					type = "TACIT-Standard-Wordcount-";
+
+				resultCSVbw = new BufferedWriter(new FileWriter(outputPath
+						+ System.getProperty("file.separator") + type
+						+ df.format(dateObj) + ".csv"));
+
+				resultCSVbw.write("Filename,WC,WPS,Dic,");
+				
+				List<Integer> keyList = new ArrayList<Integer>(); 
+				keyList.addAll(categoryID.keySet()); 
+				Collections.sort(keyList);
+				
+				//
+				StringBuilder toWrite = new StringBuilder();
+				for (int i=0; i<keyList.size(); i++) {
+					toWrite.append(keyList.get(i) + ",");
+				}
+				resultCSVbw.write(toWrite.toString());
+				resultCSVbw.newLine();
+			}
+
+			// Initialize map that will store the category count for the current
+			// file
+			HashMap<Integer, Double> categoryCount = new HashMap<Integer, Double>();
+			List<Integer> keyList = new ArrayList<Integer>();
+			keyList.addAll(categoryID.keySet()); 
+			Collections.sort(keyList);
+			for (Integer keyVal : keyList) {
+				categoryCount.put(keyVal, 0.0);
+			}
+			
+			
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+
 	}
 
 	/**
