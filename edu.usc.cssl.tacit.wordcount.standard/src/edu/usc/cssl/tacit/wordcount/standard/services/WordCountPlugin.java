@@ -35,31 +35,33 @@ public class WordCountPlugin {
 	private SentenceDetectorME sentDetector;
 	private TokenizerME tokenize;
 	private POSTaggerME posTagger;
-	
+
 	private boolean weighted;
 	private Date dateObj;
 
-	//wordDictionary<word,<category,weight>>
-	private HashMap<String, HashMap<Integer,Double>> wordDictionary = new HashMap<String, HashMap<Integer,Double>>();
-	//counts<words,<category,current weight>>
-	//File count to maintain word counts for an individual file
-	//Overall count to maintain word counts for all the files
-	//User maps have integer keys because we read them from dictionary
-	//Penn maps use the Penn treebank POS tags as keys
-	private HashMap<String, HashMap<Integer,Double>> userFileCount = new HashMap<String, HashMap<Integer,Double>>();
-	private HashMap<String, HashMap<Integer,Double>> userOverallCount = new HashMap<String, HashMap<Integer,Double>>();
-	private HashMap<String, HashMap<String,Double>> pennFileCount = new HashMap<String, HashMap<String,Double>>();
-	private HashMap<String, HashMap<String,Double>> pennOverallCount = new HashMap<String, HashMap<String,Double>>();
-	private HashMap<Integer,String> categoryID = new HashMap<Integer, String>();
-	
-	public WordCountPlugin(boolean weighted, Date dateObj){
+	// wordDictionary<word,<category,weight>>
+	private HashMap<String, HashMap<Integer, Double>> wordDictionary = new HashMap<String, HashMap<Integer, Double>>();
+	// counts<words,<category,current weight>>
+	// File count to maintain word counts for an individual file
+	// Overall count to maintain word counts for all the files
+	// User maps have integer keys because we read them from dictionary
+	// Penn maps use the Penn treebank POS tags as keys
+	private HashMap<String, HashMap<Integer, Double>> userFileCount = new HashMap<String, HashMap<Integer, Double>>();
+	private HashMap<String, HashMap<Integer, Double>> userOverallCount = new HashMap<String, HashMap<Integer, Double>>();
+	private HashMap<String, HashMap<String, Double>> pennFileCount = new HashMap<String, HashMap<String, Double>>();
+	private HashMap<String, HashMap<String, Double>> pennOverallCount = new HashMap<String, HashMap<String, Double>>();
+	private HashMap<Integer, String> categoryID = new HashMap<Integer, String>();
+
+	public WordCountPlugin(boolean weighted, Date dateObj) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 	}
-	
-	public void countWords(List<String> inputFiles, List<String> dictionaryFiles, String outputPath){
-		if(!setModels()) return;
-		
+
+	public void countWords(List<String> inputFiles,
+			List<String> dictionaryFiles, String outputPath) {
+		if (!setModels())
+			return;
+
 		try {
 			buildMaps(dictionaryFiles);
 		} catch (IOException e) {
@@ -67,53 +69,124 @@ public class WordCountPlugin {
 			e.printStackTrace();
 			return;
 		}
-		
+
 		System.out.println(wordDictionary.toString());
 		System.out.println(userFileCount.toString());
-		
+
 		for (String iFile : inputFiles) {
-			do_countWords(iFile,outputPath);
+			do_countWords(iFile, outputPath);
 			refreshFileCounts();
 		}
-		
-		if(weighted) TacitUtility.createRunReport(outputPath, "Weighted Word Count",dateObj);
-		else TacitUtility.createRunReport(outputPath, "Standard Word Count",dateObj);
+
+		if (weighted)
+			TacitUtility.createRunReport(outputPath, "Weighted Word Count",
+					dateObj);
+		else
+			TacitUtility.createRunReport(outputPath, "Standard Word Count",
+					dateObj);
 		return;
 	}
-	
-	private void do_countWords(String inputFile, String outputPath){
+
+	private void do_countWords(String inputFile, String outputPath) {
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(new File(inputFile)));
+			BufferedReader br = new BufferedReader(new FileReader(new File(
+					inputFile)));
 			String currentLine;
-			double numWords = 0;
-			double wps = 0;
-			double numDictWords = 0;
+			int numWords = 0;
+			int numDictWords = 0;
+			double totalWeight = 0;
 			int numSentences = 0;
-			while ((currentLine = br.readLine()) != null){
-				
+
+			while ((currentLine = br.readLine()) != null) {
+				String[] sentences = sentDetector.sentDetect(currentLine);
+				numSentences = numSentences + sentences.length;
+
+				for (int i = 0; i < sentences.length; i++) {
+					String[] words = tokenize.tokenize(sentences[i]);
+					String[] posTags = posTagger.tag(words);
+					numWords = numWords + words.length;
+
+					for (int j = 0; j < words.length; j++) {
+						if (wordDictionary.containsKey(words[j])) {
+							numDictWords++;
+
+							// Increment count for all user defined categories
+							Set<Integer> wordCategories = wordDictionary.get(
+									words[j]).keySet();
+							for (Integer cat : wordCategories) {
+								double wordWeight = wordDictionary
+										.get(words[j]).get(cat);
+								totalWeight = totalWeight + wordWeight;
+
+								userFileCount.get(words[j]).put(
+										cat,
+										userFileCount.get(words[j]).get(cat)
+												+ wordWeight);
+								userOverallCount.get(words[j]).put(
+										cat,
+										userOverallCount.get(words[j]).get(cat)
+												+ wordWeight);
+							}
+
+							// Increment count of Penn Treebank POS tags
+							if (pennFileCount.get(words[j]).containsKey(
+									posTags[j])) {
+								pennFileCount.get(words[j]).put(
+										posTags[j],
+										pennFileCount.get(words[j]).get(
+												posTags[j]) + 1);
+							} else {
+								pennFileCount.get(words[j])
+										.put(posTags[j], 1.0);
+							}
+							if (pennOverallCount.get(words[j]).containsKey(
+									posTags[j])) {
+								pennOverallCount.get(words[j]).put(
+										posTags[j],
+										pennOverallCount.get(words[j]).get(
+												posTags[j]) + 1);
+							} else {
+								pennOverallCount.get(words[j]).put(posTags[j],
+										1.0);
+							}
+						}
+					}
+
+				}
 			}
+			br.close();
+			addToCSV(inputFile, outputPath, numWords, numSentences,
+					numDictWords, totalWeight, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void addToCSV(String inputFile, String outputPaht, int numWords,
+			int numSentences, int numDictWords, double totalWeight,
+			boolean isOverall) {
+		
+	}
+
 	/**
-	 * Function to initialize all the HashMap's used to maintain
-	 * word counts.
+	 * Function to initialize all the HashMap's used to maintain word counts.
+	 * 
 	 * @param dictionaryFiles
-	 * List of dictionary Files
+	 *            List of dictionary Files
 	 * @throws IOException
-	 * Catch error in caller. The errors might be due to 
-	 * bad dictionary format.
+	 *             Catch error in caller. The errors might be due to bad
+	 *             dictionary format.
 	 */
 	private void buildMaps(List<String> dictionaryFiles) throws IOException {
-		
+
 		for (String dFile : dictionaryFiles) {
-			BufferedReader br = new BufferedReader(new FileReader(new File(dFile)));
-			
+			BufferedReader br = new BufferedReader(new FileReader(new File(
+					dFile)));
+
 			String currentLine = br.readLine().trim();
 			if (currentLine == null) {
-				ConsoleView.printlInConsoleln("The dictionary file "+ dFile + " is empty.");
+				ConsoleView.printlInConsoleln("The dictionary file " + dFile
+						+ " is empty.");
 			}
 
 			if (currentLine.equals("%"))
@@ -123,69 +196,82 @@ public class WordCountPlugin {
 							Integer.parseInt(currentLine.split("\\s+")[0]
 									.trim()), currentLine.split("\\s+")[1]
 									.trim());
-			
+
 			if (currentLine == null) {
-				ConsoleView.printlInConsoleln("The dictionary file "+ dFile + " does not have any categorized words.");
+				ConsoleView.printlInConsoleln("The dictionary file " + dFile
+						+ " does not have any categorized words.");
 			} else {
 				while ((currentLine = br.readLine()) != null) {
 					String[] words = currentLine.split("\\s+");
-					
-					//If word not in the maps, add it
+
+					// If word not in the maps, add it
 					if (!wordDictionary.containsKey(words[0])) {
-						wordDictionary.put(words[0], new HashMap<Integer, Double>());
-						userFileCount.put(words[0], new HashMap<Integer, Double>());
-						userOverallCount.put(words[0], new HashMap<Integer, Double>());
-						pennFileCount.put(words[0], new HashMap<String, Double>());
-						pennOverallCount.put(words[0], new HashMap<String, Double>());
+						wordDictionary.put(words[0],
+								new HashMap<Integer, Double>());
+						userFileCount.put(words[0],
+								new HashMap<Integer, Double>());
+						userOverallCount.put(words[0],
+								new HashMap<Integer, Double>());
+						pennFileCount.put(words[0],
+								new HashMap<String, Double>());
+						pennOverallCount.put(words[0],
+								new HashMap<String, Double>());
 					}
-					
-					for (int i=1;i<words.length;i=increment(i)){
-						//Add a category to the maps if it was not added earlier
-						if (!wordDictionary.get(words[0]).containsKey(Integer.parseInt(words[i]))) {
-							if(weighted) {
-								wordDictionary.get(words[0]).put(Integer.parseInt(words[i]), Double.parseDouble(words[i+1]));
+
+					for (int i = 1; i < words.length; i = increment(i)) {
+						// Add a category to the maps if it was not added
+						// earlier
+						if (!wordDictionary.get(words[0]).containsKey(
+								Integer.parseInt(words[i]))) {
+							if (weighted) {
+								wordDictionary.get(words[0]).put(
+										Integer.parseInt(words[i]),
+										Double.parseDouble(words[i + 1]));
 							} else {
-								wordDictionary.get(words[0]).put(Integer.parseInt(words[i]), 1.0);
+								wordDictionary.get(words[0]).put(
+										Integer.parseInt(words[i]), 1.0);
 							}
-							userFileCount.get(words[0]).put(Integer.parseInt(words[i]), 0.0);
-							userOverallCount.get(words[0]).put(Integer.parseInt(words[i]), 0.0);
+							userFileCount.get(words[0]).put(
+									Integer.parseInt(words[i]), 0.0);
+							userOverallCount.get(words[0]).put(
+									Integer.parseInt(words[i]), 0.0);
 						}
 					}
 				}
 			}
-			
+
 			br.close();
 		}
 	}
-	
+
 	/**
-	 * Call this function after completing the counts 
-	 * for individual files to set the file counts back
-	 * to 0.
+	 * Call this function after completing the counts for individual files to
+	 * set the file counts back to 0.
 	 */
 	private void refreshFileCounts() {
 		Set<String> keySet = userFileCount.keySet();
 		for (String key : keySet) {
 			Set<Integer> subKeySet = userFileCount.get(key).keySet();
-			
+
 			for (Integer subKey : subKeySet) {
 				userFileCount.get(key).put(subKey, 0.0);
 			}
 		}
-		
+
 		keySet = pennFileCount.keySet();
 		for (String key : keySet) {
 			Set<String> subKeySet = pennFileCount.get(key).keySet();
-			
+
 			for (String subKey : subKeySet) {
 				pennFileCount.get(key).put(subKey, 0.0);
 			}
 		}
 	}
-	
+
 	/**
-	 * Utility function to increment loops while handling
-	 * weighted and non weighted dictionaries.
+	 * Utility function to increment loops while handling weighted and non
+	 * weighted dictionaries.
+	 * 
 	 * @param val
 	 * @return
 	 */
@@ -195,20 +281,26 @@ public class WordCountPlugin {
 		} else
 			return val + 1;
 	}
-	
+
 	/**
 	 * Sets all the models for OpenNLP
-	 * @return
-	 * Returns true if no errors while loading models
+	 * 
+	 * @return Returns true if no errors while loading models
 	 */
 	private boolean setModels() {
-		InputStream sentenceIs = null,tokenIs = null,posIs = null;
+		InputStream sentenceIs = null, tokenIs = null, posIs = null;
 		try {
-			File setupFile = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("en-sent.bin")).getPath());
+			File setupFile = new File(FileLocator.toFileURL(
+					Platform.getBundle(Activator.PLUGIN_ID).getEntry(
+							"en-sent.bin")).getPath());
 			sentenceIs = new FileInputStream(setupFile.toString());
-			setupFile = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("en-token.bin")).getPath());
+			setupFile = new File(FileLocator.toFileURL(
+					Platform.getBundle(Activator.PLUGIN_ID).getEntry(
+							"en-token.bin")).getPath());
 			tokenIs = new FileInputStream(setupFile.toString());
-			setupFile = new File(FileLocator.toFileURL(Platform.getBundle(Activator.PLUGIN_ID).getEntry("en-pos-maxent.bin")).getPath());
+			setupFile = new File(FileLocator.toFileURL(
+					Platform.getBundle(Activator.PLUGIN_ID).getEntry(
+							"en-pos-maxent.bin")).getPath());
 			posIs = new FileInputStream(setupFile.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -218,7 +310,7 @@ public class WordCountPlugin {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		try {
 			sentenceModel = new SentenceModel(sentenceIs);
 			tokenizerModel = new TokenizerModel(tokenIs);
@@ -230,27 +322,11 @@ public class WordCountPlugin {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		sentDetector = new SentenceDetectorME(sentenceModel);
 		tokenize = new TokenizerME(tokenizerModel);
 		posTagger = new POSTaggerME(posModel);
-		
+
 		return true;
-	}
-	
-	private void UtilityFunc(){
-		String testString = "Hi! My name is Anurag (Singh). This is a test string to check sentence breaking. Will it work? Let's see!";
-		
-		String[] results = sentDetector.sentDetect(testString);
-		
-		for (int i=0;i<results.length;i++){
-			String[] tokens = tokenize.tokenize(results[i]);
-			String[]  posTags = posTagger.tag(tokens);
-			System.out.println("Tokens - POSTags: ");
-			
-			for (int j=0;j<tokens.length;j++){
-				System.out.println(tokens[j]+" - "+posTags[j]);
-			}
-		}
 	}
 }
