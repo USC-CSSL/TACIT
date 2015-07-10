@@ -59,6 +59,7 @@ public class WordCountPlugin {
 	private HashMap<Integer, String> categoryID = new HashMap<Integer, String>();
 
 	private BufferedWriter resultCSVbw = null;
+	private BufferedWriter pennCSVbw = null;
 
 	public WordCountPlugin(boolean weighted, Date dateObj) {
 		this.weighted = weighted;
@@ -68,10 +69,13 @@ public class WordCountPlugin {
 	public void countWords(List<String> inputFiles,
 			List<String> dictionaryFiles, String outputPath,
 			Boolean doPennCounts) {
+
+		ConsoleView.printlInConsoleln("Loading models.");
 		if (!setModels())
 			return;
 
 		try {
+			ConsoleView.printlInConsoleln("Bulding dictionary.");
 			buildMaps(dictionaryFiles);
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error parsing dictionary.");
@@ -79,20 +83,14 @@ public class WordCountPlugin {
 			return;
 		}
 
-		System.out.println(wordDictionary.toString());
-		System.out.println(userFileCount.toString());
-
+		ConsoleView.printlInConsoleln("Counting Words.");
 		for (String iFile : inputFiles) {
 			do_countWords(iFile, outputPath, doPennCounts);
 			refreshFileCounts();
 		}
 
-		if (resultCSVbw != null)
-			try {
-				resultCSVbw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		ConsoleView.printlInConsoleln("Writing Results.");
+		closeWriters();
 
 		if (weighted)
 			TacitUtility.createRunReport(outputPath,
@@ -101,6 +99,25 @@ public class WordCountPlugin {
 			TacitUtility.createRunReport(outputPath,
 					"TACIT Standard Word Count", dateObj);
 		return;
+	}
+
+	/**
+	 * Close the BufferedWriters for result files
+	 */
+	private void closeWriters() {
+		if (resultCSVbw != null)
+			try {
+				resultCSVbw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		if (pennCSVbw != null)
+			try {
+				pennCSVbw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	private void do_countWords(String inputFile, String outputPath,
@@ -189,10 +206,14 @@ public class WordCountPlugin {
 				String type = "";
 				DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				if (weighted)
-					type = "TACIT-Weighted-Wordcount-";
+					type = "TACIT-Weighted-Wordcount-UserTags-";
 				else
-					type = "TACIT-Standard-Wordcount-";
+					type = "TACIT-Standard-Wordcount-UserTags-";
 
+				ConsoleView.printlInConsoleln("Created file " + outputPath
+						+ System.getProperty("file.separator") + type
+						+ df.format(dateObj)
+						+ ".csv for storing counts for user tags.");
 				resultCSVbw = new BufferedWriter(new FileWriter(outputPath
 						+ System.getProperty("file.separator") + type
 						+ df.format(dateObj) + ".csv"));
@@ -203,7 +224,7 @@ public class WordCountPlugin {
 				keyList.addAll(categoryID.keySet());
 				Collections.sort(keyList);
 
-				//
+				// Add category headers
 				StringBuilder toWrite = new StringBuilder();
 				for (int i = 0; i < keyList.size(); i++) {
 					toWrite.append(categoryID.get(keyList.get(i)) + ",");
@@ -237,7 +258,8 @@ public class WordCountPlugin {
 			}
 
 			// Write counts to output csv file
-			// Note: The counts are the percentage contribution to the overall weight
+			// Note: The counts are the percentage contribution to the overall
+			// weight
 			// This is to keep it consistent with the LIWC results
 			StringBuilder toWrite = new StringBuilder();
 			toWrite.append(inputFile + "," + numWords + ","
@@ -245,16 +267,94 @@ public class WordCountPlugin {
 					+ Double.toString((double) 100 * numDictWords / numWords)
 					+ ",");
 			for (int i = 0; i < keyList.size(); i++) {
-				toWrite.append(Double.toString(100*categoryCount.get(keyList.get(i))/totalWeight) + ",");
+				toWrite.append(Double.toString(100
+						* categoryCount.get(keyList.get(i)) / totalWeight)
+						+ ",");
 			}
 			resultCSVbw.write(toWrite.toString());
 			resultCSVbw.newLine();
 
-			// TODO: Write to Penn Treebank CSV
+			if (doPennCounts)
+				printPennToCSV(inputFile, outputPath, numWords, isOverall);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
+
+	}
+
+	private void printPennToCSV(String inputFile, String outputPath,
+			int numWords, boolean isOverall) throws IOException {
+
+		String pennPosTags = "CC,CD,DT,EX,FW,IN,JJ,JJR,JJS,LS,MD,NN,"
+				+ "NNS,NNP,NNPS,PDT,POS,PRP,PRP$,RB,RBR,RBS,RP,SYM,TO,"
+				+ "UH,VB,VBD,VBG,VBN,VBP,VBZ,WDT,WP,WP$,WRB,-LRB-,-RRB-,"
+				+ "-RSB-,-RSB-,-LCB-,-RCB-";
+
+		String[] posTags;
+		posTags = pennPosTags.split(",");
+
+		if (pennCSVbw == null) {
+			String type = "";
+			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+			if (weighted)
+				type = "TACIT-Weighted-Wordcount-DefaultTags-";
+			else
+				type = "TACIT-Standard-Wordcount-DefaultTags-";
+
+			pennCSVbw = new BufferedWriter(new FileWriter(outputPath
+					+ System.getProperty("file.separator") + type
+					+ df.format(dateObj) + ".csv"));
+
+			ConsoleView.printlInConsoleln("Created file " + outputPath
+					+ System.getProperty("file.separator") + type
+					+ df.format(dateObj)
+					+ ".csv for storing counts for default TACIT tags.");
+
+			pennCSVbw.write("Filename,WC,");
+
+			StringBuilder toWrite = new StringBuilder();
+			for (int i = 0; i < posTags.length; i++) {
+				toWrite.append(posTags[i] + ",");
+			}
+			resultCSVbw.write(toWrite.toString());
+			resultCSVbw.newLine();
+		}
+
+		// Initialize map that will store the category count for the current
+		// file
+		HashMap<String, Double> categoryCount = new HashMap<String, Double>();
+		for (String key : posTags) {
+			categoryCount.put(key, 0.0);
+		}
+
+		List<String> dictWords = new ArrayList<String>();
+		dictWords.addAll(pennFileCount.keySet());
+
+		// Find sum of all categories
+		for (String word : dictWords) {
+			List<String> wordCats = new ArrayList<String>();
+			wordCats.addAll(pennFileCount.get(word).keySet());
+
+			for (String cat : wordCats) {
+				categoryCount.put(cat, categoryCount.get(cat)
+						+ pennFileCount.get(word).get(cat));
+			}
+		}
+
+		// Write counts to output csv file
+		// Note: The counts are the percentage contribution to the overall
+		// weight
+		// This is to keep it consistent with the LIWC results
+		StringBuilder toWrite = new StringBuilder();
+		toWrite.append(inputFile + "," + numWords + ",");
+		for (int i = 0; i < posTags.length; i++) {
+			toWrite.append(Double.toString(100 * categoryCount.get(posTags[i])
+					/ numWords)
+					+ ",");
+		}
+		resultCSVbw.write(toWrite.toString());
+		resultCSVbw.newLine();
 
 	}
 
