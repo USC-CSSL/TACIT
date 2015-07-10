@@ -204,7 +204,7 @@ public class HierarchicalClusterView extends ViewPart implements
 			}
 
 			public void run() {
-				final DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+				final DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				final Date dateObj = new Date();
 				ConsoleView
 						.writeInConsoleHeader("Hierarchical clustering started "

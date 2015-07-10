@@ -60,7 +60,7 @@ public class NaiveBayesClassifier {
 				: outputDirectory;
 
 		String tempoutputPath = this.tempoutputDir + System.getProperty("file.separator")+ currTime;
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		String tempOutputPath = "";
 		String tempTrainDirs = "";
 		// Create a output filename and comma separated source directories
@@ -136,7 +136,7 @@ public class NaiveBayesClassifier {
 			String classificationInputDir, String classificationOutputDir,
 			boolean removeStopwords, boolean doLowercase, Date dateObj)
 			throws FileNotFoundException, IOException, EvalError {
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		ConsoleView.printlInConsoleln("Classification starts ..");
 		String tempoutputPath = this.tempoutputDir + System.getProperty("file.separator")+ currTime;
 		

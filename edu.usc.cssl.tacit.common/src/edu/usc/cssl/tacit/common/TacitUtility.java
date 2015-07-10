@@ -27,7 +27,7 @@ public class TacitUtility {
 		
 		if (!createReadMe) return;
 		
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		
 		File readme = new File(location + System.getProperty("file.separator")+title.replace(" ", "-")+"-run-report-"+df.format(dateObj)+".txt");
 		try {

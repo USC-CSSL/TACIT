@@ -114,7 +114,7 @@ public class LdaAnalysis {
 	}
 
 	private void convertWeights2csv(String fileName, Date dateObj) {
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
 		BufferedReader br;
 		BufferedWriter bw;
@@ -147,7 +147,7 @@ public class LdaAnalysis {
 	}
 
 	private void convertKeys2csv(String fileName, Date dateObj) {
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
 		BufferedReader br;
 		BufferedWriter bw;
@@ -178,7 +178,7 @@ public class LdaAnalysis {
 	}
 
 	private void convertComposition2csv(String fileName, Date dateObj) {
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
 		BufferedReader br;
 		BufferedWriter bw;

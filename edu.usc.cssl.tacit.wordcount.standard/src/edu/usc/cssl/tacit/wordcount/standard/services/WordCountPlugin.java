@@ -66,7 +66,8 @@ public class WordCountPlugin {
 	}
 
 	public void countWords(List<String> inputFiles,
-			List<String> dictionaryFiles, String outputPath) {
+			List<String> dictionaryFiles, String outputPath,
+			Boolean doPennCounts) {
 		if (!setModels())
 			return;
 
@@ -82,7 +83,7 @@ public class WordCountPlugin {
 		System.out.println(userFileCount.toString());
 
 		for (String iFile : inputFiles) {
-			do_countWords(iFile, outputPath);
+			do_countWords(iFile, outputPath, doPennCounts);
 			refreshFileCounts();
 		}
 
@@ -92,17 +93,18 @@ public class WordCountPlugin {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		
+
 		if (weighted)
-			TacitUtility.createRunReport(outputPath, "Weighted Word Count",
-					dateObj);
+			TacitUtility.createRunReport(outputPath,
+					"TACIT Weighted Word Count", dateObj);
 		else
-			TacitUtility.createRunReport(outputPath, "Standard Word Count",
-					dateObj);
+			TacitUtility.createRunReport(outputPath,
+					"TACIT Standard Word Count", dateObj);
 		return;
 	}
 
-	private void do_countWords(String inputFile, String outputPath) {
+	private void do_countWords(String inputFile, String outputPath,
+			boolean doPennCounts) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					inputFile)));
@@ -171,7 +173,7 @@ public class WordCountPlugin {
 			}
 			br.close();
 			addToCSV(inputFile, outputPath, numWords, numSentences,
-					numDictWords, totalWeight, false);
+					numDictWords, totalWeight, false, doPennCounts);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -179,13 +181,13 @@ public class WordCountPlugin {
 
 	private void addToCSV(String inputFile, String outputPath, int numWords,
 			int numSentences, int numDictWords, double totalWeight,
-			boolean isOverall) {
+			boolean isOverall, boolean doPennCounts) {
 		try {
-			
-			//Set up result CSV file when calling this function the first time
+
+			// Set up result CSV file when calling this function the first time
 			if (resultCSVbw == null) {
 				String type = "";
-				DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+				DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				if (weighted)
 					type = "TACIT-Weighted-Wordcount-";
 				else
@@ -196,14 +198,14 @@ public class WordCountPlugin {
 						+ df.format(dateObj) + ".csv"));
 
 				resultCSVbw.write("Filename,WC,WPS,Dic,");
-				
-				List<Integer> keyList = new ArrayList<Integer>(); 
-				keyList.addAll(categoryID.keySet()); 
+
+				List<Integer> keyList = new ArrayList<Integer>();
+				keyList.addAll(categoryID.keySet());
 				Collections.sort(keyList);
-				
+
 				//
 				StringBuilder toWrite = new StringBuilder();
-				for (int i=0; i<keyList.size(); i++) {
+				for (int i = 0; i < keyList.size(); i++) {
 					toWrite.append(categoryID.get(keyList.get(i)) + ",");
 				}
 				resultCSVbw.write(toWrite.toString());
@@ -214,34 +216,41 @@ public class WordCountPlugin {
 			// file
 			HashMap<Integer, Double> categoryCount = new HashMap<Integer, Double>();
 			List<Integer> keyList = new ArrayList<Integer>();
-			keyList.addAll(categoryID.keySet()); 
+			keyList.addAll(categoryID.keySet());
 			Collections.sort(keyList);
 			for (Integer keyVal : keyList) {
 				categoryCount.put(keyVal, 0.0);
 			}
-			
+
 			List<String> dictWords = new ArrayList<String>();
 			dictWords.addAll(userFileCount.keySet());
-			
-			//Find sum of all categories
+
+			// Find sum of all categories
 			for (String word : dictWords) {
 				List<Integer> wordCats = new ArrayList<Integer>();
 				wordCats.addAll(userFileCount.get(word).keySet());
-				
+
 				for (Integer cat : wordCats) {
-					categoryCount.put(cat, categoryCount.get(cat) + userFileCount.get(word).get(cat));
+					categoryCount.put(cat, categoryCount.get(cat)
+							+ userFileCount.get(word).get(cat));
 				}
 			}
-			
-			//Write counts to output csv file
+
+			// Write counts to output csv file
+			// Note: The counts are the percentage contribution to the overall weight
+			// This is to keep it consistent with the LIWC results
 			StringBuilder toWrite = new StringBuilder();
-			for (int i=0; i<keyList.size(); i++) {
-				toWrite.append(categoryCount.get(keyList.get(i)) + ",");
+			toWrite.append(inputFile + "," + numWords + ","
+					+ Double.toString((double) numWords / numSentences) + ","
+					+ Double.toString((double) 100 * numDictWords / numWords)
+					+ ",");
+			for (int i = 0; i < keyList.size(); i++) {
+				toWrite.append(Double.toString(100*categoryCount.get(keyList.get(i))/totalWeight) + ",");
 			}
 			resultCSVbw.write(toWrite.toString());
 			resultCSVbw.newLine();
 
-			//TODO: Write to Penn Treebank CSV
+			// TODO: Write to Penn Treebank CSV
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;

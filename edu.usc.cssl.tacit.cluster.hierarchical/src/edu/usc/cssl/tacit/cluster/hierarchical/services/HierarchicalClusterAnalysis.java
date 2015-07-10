@@ -38,7 +38,7 @@ public class HierarchicalClusterAnalysis {
 			boolean saveImg, SubProgressMonitor subProgressMonitor, Date dateObj) {
 		try {
 
-			DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 			StringToWordVector filter = new StringToWordVector();
 			HierarchicalClusterer aggHierarchical = new HierarchicalClusterer();
 
@@ -173,7 +173,7 @@ public class HierarchicalClusterAnalysis {
 			String fOutputDir, boolean fSaveImg,
 			SubProgressMonitor subProgressMonitor, Date dateObj) {
 
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles) {
 			if (f.getAbsolutePath().contains("DS_Store"))

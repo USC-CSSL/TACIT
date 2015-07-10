@@ -143,7 +143,7 @@ public class CrossValidator {
 			averageAccuracy = averageAccuracy + accuracies[j];
 		}
 
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
 		String outputPath = output + System.getProperty("file.separator")
 				+ "SVM-Classification-" + df.format(dateObj) + ".csv";

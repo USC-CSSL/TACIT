@@ -356,7 +356,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 				final String outputPath = layoutData.getOutputLabel().getText();
 				String fileName = "wordcount";
-				DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+				DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				final Date dateobj = new Date();
 				if (weightedWordCountButton.getSelection()) {
 					fileName = "weighted-" + fileName

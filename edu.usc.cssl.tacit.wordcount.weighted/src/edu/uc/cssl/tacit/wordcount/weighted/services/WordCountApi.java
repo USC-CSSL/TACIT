@@ -370,7 +370,7 @@ public class WordCountApi {
 			HashMap<String, HashSet<String>> wordCategories, String inputFile,
 			File oFile, Date dateobj) throws IOException {
 		File outputDir = oFile.getParentFile();
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		
 		//Create output directory for word distributions
 		String wordDistributionDir = outputDir+System.getProperty("file.separator");

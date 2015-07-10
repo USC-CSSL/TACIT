@@ -241,7 +241,7 @@ public class SVMClassify {
 		train_arguments[2] = trainFile.getAbsolutePath();
 		train_arguments[3] = modelFile.getAbsolutePath();
 
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		ConsoleView.printlInConsoleln("Training the classifier...");
 		double[] result = SVMTrain.main(train_arguments);
 		double crossValResult = result[0];

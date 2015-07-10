@@ -34,7 +34,7 @@ public class ZlabelTopicModelAnalysis {
 			int noOfSamples, double alphaval, double betaval,
 			double confidenceValue, String outputdir, Date dateObj) {
 
-		DateFormat df = new SimpleDateFormat("dd-MM-yy-HH-mm-ss");
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		File[] listOfFiles = dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
 		monitor.subTask("Collecting files from the directory...");
