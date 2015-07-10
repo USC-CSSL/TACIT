@@ -86,6 +86,13 @@ public class WordCountPlugin {
 			refreshFileCounts();
 		}
 
+		if (resultCSVbw != null)
+			try {
+				resultCSVbw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
 		if (weighted)
 			TacitUtility.createRunReport(outputPath, "Weighted Word Count",
 					dateObj);
@@ -197,7 +204,7 @@ public class WordCountPlugin {
 				//
 				StringBuilder toWrite = new StringBuilder();
 				for (int i=0; i<keyList.size(); i++) {
-					toWrite.append(keyList.get(i) + ",");
+					toWrite.append(categoryID.get(keyList.get(i)) + ",");
 				}
 				resultCSVbw.write(toWrite.toString());
 				resultCSVbw.newLine();
@@ -213,8 +220,28 @@ public class WordCountPlugin {
 				categoryCount.put(keyVal, 0.0);
 			}
 			
+			List<String> dictWords = new ArrayList<String>();
+			dictWords.addAll(userFileCount.keySet());
 			
+			//Find sum of all categories
+			for (String word : dictWords) {
+				List<Integer> wordCats = new ArrayList<Integer>();
+				wordCats.addAll(userFileCount.get(word).keySet());
+				
+				for (Integer cat : wordCats) {
+					categoryCount.put(cat, categoryCount.get(cat) + userFileCount.get(word).get(cat));
+				}
+			}
+			
+			//Write counts to output csv file
+			StringBuilder toWrite = new StringBuilder();
+			for (int i=0; i<keyList.size(); i++) {
+				toWrite.append(categoryCount.get(keyList.get(i)) + ",");
+			}
+			resultCSVbw.write(toWrite.toString());
+			resultCSVbw.newLine();
 
+			//TODO: Write to Penn Treebank CSV
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
