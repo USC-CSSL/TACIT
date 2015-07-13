@@ -2,196 +2,73 @@ package edu.usc.cssl.tacit.crawlers.reddit.services;
 
 import static com.github.jreddit.utils.restclient.JsonUtils.safeJsonToString;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.github.jreddit.entity.Kind;
-import com.github.jreddit.entity.User;
 import com.github.jreddit.utils.restclient.RestClient;
 
 
-public class Retrieve {
+public class RedditPlugin {
 	private RestClient restClient;
-    
+	private String outputPath;
+	private int limit; // link the number of records to be saved
+	private String sortType;
+    private ArrayList<String> subReddits;
+    HashMap<String, String> redditCategories;
     /**
      * Constructor.
      * @param restClient REST Client instance
      * @param actor User instance
      */
-    public Retrieve(RestClient restClient, User actor) {
+    public RedditPlugin(RestClient restClient) {
     	this.restClient = restClient;
+    	this.outputPath = "F:\\NLP\\TEMP_OUTPUT\\Reddit";
+    	this.limit = 100;
+    	this.sortType = "new";
+    	this.subReddits = new ArrayList<String>();
+    	subReddits.add("television");
     }
-    
-    //Params must be added for more specific retrieval and also for many listing responses
-    
-    public JSONObject GetListingPageObject(String url) throws IllegalArgumentException  {
-    	Object response = restClient.get(url.concat("/.json?&sort=new"), null).getResponseObject();
-	    if (response instanceof JSONObject) {
-	    	JSONObject object =  (JSONObject) response;
-	       	return object;
-	    } else {
-	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
-        }
-    }
-    
-    public JSONObject GetSearchPageObject(String query) throws IllegalArgumentException  {
-    	Object response = restClient.get("/search.json?sort=new&q=".concat(query), null).getResponseObject();
-	    if (response instanceof JSONObject) {
-	        JSONObject object =  (JSONObject) response;
-	       	return object;
-	    } else {
-	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
-        }
-    }
-    
-    public JSONObject GetCommentPageObject(String url) throws IllegalArgumentException  {
-    	Object response = restClient.get(url.concat("/.json"), null).getResponseObject();
-	    if (response instanceof JSONArray) {
-	    	JSONObject object =  (JSONObject)((JSONArray) response).get(1);
-	       	return object;
-	    } else {
-	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-	public void SaveLink(JSONObject obj, String filePath) throws IOException {
-    	assert obj != null : "JSON Object must be instantiated.";
-    	JSONArray objArr = (JSONArray)((JSONObject)obj.get("data")).get("children");
-    	JSONArray objArrSave = new JSONArray();
-    	JSONObject data;
-    	for (Object anArray : objArr) {
-            data = (JSONObject) anArray;
-            // Make sure it is of the correct kind
-            String kind = safeJsonToString(data.get("kind"));
-			if (kind != null) {
-				if (kind.equals(Kind.LINK.value())) {
-                    // Contents of the link
-                    data = ((JSONObject) data.get("data"));
-                    JSONObject simplifiedData = new JSONObject();
-                    simplifiedData.put("gilded", data.get("gilded"));
-                    simplifiedData.put("title", data.get("title"));
-                    simplifiedData.put("score", data.get("score"));
-                    simplifiedData.put("num_comments", data.get("num_comments"));
-                    simplifiedData.put("created_utc", data.get("created_utc"));
-                    simplifiedData.put("selftext", data.get("selftext"));
-                    simplifiedData.put("thumbnail", data.get("thumbnail"));
-                    simplifiedData.put("author", data.get("author"));
-                    simplifiedData.put("url", data.get("url"));
-                    objArrSave.add(simplifiedData);
-                } else if (kind.equals(Kind.MORE.value())) {
-                	// These are not being saved!!! (to be edited)
-                    data = (JSONObject) data.get("data");
-                    JSONArray children = (JSONArray) data.get("children");
-                    System.out.println("\t+ More children: " + children);
-                }
-			}	
-		}
-    	FileWriter file = new FileWriter(filePath);
-		file.write(objArrSave.toJSONString());
-		file.flush();
-        file.close();
-    }
-    
-    public void SaveComment(JSONObject obj, String filePath) throws IOException {
-    	assert obj != null : "JSON Object must be instantiated.";
-    	JSONArray objArr = RecursiveSimplification(obj);
-    	FileWriter file = new FileWriter(filePath);
-		file.write(objArr.toJSONString());
-		file.flush();
-        file.close();    	
-    }
-    
-    @SuppressWarnings("unchecked")
-	protected JSONArray RecursiveSimplification(JSONObject obj){
-    	JSONArray objArr = (JSONArray)((JSONObject)obj.get("data")).get("children");
-    	JSONArray objArrSave = new JSONArray();
-    	
-    	JSONObject data;
-    	for (Object anArray : objArr) {
-            data = (JSONObject) anArray;
-            
-            // Make sure it is of the correct kind
-            String kind = safeJsonToString(data.get("kind"));
-			if (kind != null) {
-				if (kind.equals(Kind.COMMENT.value())) {
-
-                    // Contents of the link
-                    data = ((JSONObject) data.get("data"));
-                    
-                    JSONObject simplifiedData = new JSONObject();
-                    
-                    simplifiedData.put("body", data.get("body"));
-                    simplifiedData.put("gilded", data.get("gilded"));
-                    simplifiedData.put("subreddit", data.get("subreddit"));
-                    simplifiedData.put("score", data.get("score"));
-                    simplifiedData.put("created_utc", data.get("created_utc"));
-                    simplifiedData.put("downs", data.get("downs"));
-                    simplifiedData.put("author", data.get("author"));
-                    Object o = data.get("replies");
-                    if (o instanceof JSONObject) {
-                    	// Dig towards the replies
-                        JSONObject replies = (JSONObject) o;
-                        simplifiedData.put("replies", RecursiveSimplification(replies));                     
-                    }
-                    objArrSave.add(simplifiedData);
-                    
-                } else if (kind.equals(Kind.MORE.value())) {
-
-                	// These are not being saved!!! (to be edited)
-                    data = (JSONObject) data.get("data");
-                    JSONArray children = (JSONArray) data.get("children");
-                    System.out.println("\t+ More children: " + children);
-                    
-                }
-			}
-			
-		}
-
-    	return objArrSave;
-    }
-    
+        
     protected HashMap<String, String> fetchRedditCategories(int limit) {
-    	HashMap<String, String> redditCategories = new HashMap<String, String>();    	
-    	Object response = restClient.get("/subreddits/.json?limit=1000", null).getResponseObject();
+    	redditCategories = new HashMap<String, String>();    	
+    	Object response = restClient.get("/subreddits/.json?limit=1000&sort=".concat(sortType), null).getResponseObject();
     	int count = 0;
+    	
+    	breakEverything:
 	    while(true) {
-    	if (response instanceof JSONObject) {
-	    	JSONObject subReddits =  (JSONObject)(response);
-	    	int doBreak = 0;
-	    	if(subReddits.containsKey("data")) {
-	    		JSONObject subRedditDetails = (JSONObject) subReddits.get("data");
-	    		JSONArray subscriptions = (JSONArray) subRedditDetails.get("children");
-	    		for (Object subscription : subscriptions) {
-	    			JSONObject data = (JSONObject)((JSONObject) subscription).get("data");
-	    			String subscriptionUrl = (String) data.get("url");
-	    			String subscriptionName = (String) data.get("display_name");
-	    			redditCategories.put(subscriptionName, subscriptionUrl);
-	    			count++;
-		    		if(limit!=-1 && count == limit) {
-		    			doBreak = 1;
-		    			break;
+	    	if (response instanceof JSONObject) {
+		    	JSONObject subReddits =  (JSONObject)(response);
+		    	if(subReddits.containsKey("data")) {
+		    		JSONObject subRedditDetails = (JSONObject) subReddits.get("data");
+		    		JSONArray subscriptions = (JSONArray) subRedditDetails.get("children");
+		    		for (Object subscription : subscriptions) {
+		    			JSONObject data = (JSONObject)((JSONObject) subscription).get("data");
+		    			String subscriptionUrl = (String) data.get("url");
+		    			String subscriptionName = (String) data.get("display_name");
+		    			redditCategories.put(subscriptionName, subscriptionUrl);
+		    			count++;
+			    		if(count == limit) 
+			    			break breakEverything;
 		    		}
-	    		}
-	    		if(1 == doBreak)
-	    			break;
-	    		
-
-	    		//crawl consequetive pages 
-		    	if(subRedditDetails.containsKey("after")) {
-		    		if(null == subRedditDetails.get("after")) 
-		    			break;
-		    		System.out.println("After :" + (String)subRedditDetails.get("after") );
-		    		response = restClient.get("/subreddits/.json?limit=1000&after=".concat((String)subRedditDetails.get("after")), null).getResponseObject();
-		    	} else
+		    		//crawl consequetive pages 
+			    	if(subRedditDetails.containsKey("after")) {
+			    		if(null == subRedditDetails.get("after")) 
+			    			break;
+			    		response = restClient.get("/subreddits/.json?limit=1000&after=".concat((String)subRedditDetails.get("after")), null).getResponseObject();
+			    	} else
+			    		break;
+		    	} else 
 		    		break;
-	    	} else 
-	    		break;
-	    }	
+		    }	
 	    }
 	    
 	    System.out.println(redditCategories.keySet().size());
@@ -201,49 +78,149 @@ public class Retrieve {
     	return redditCategories;
     }
 
-	@SuppressWarnings("unchecked")
-	public void getAllUsersPosts(String username) { // As of now fetches only links
-    	Object response = restClient.get("/user/".concat(username).concat("/.json?sort=new"), null).getResponseObject();
-    	System.out.println(response);
-    	while(true) {
-		    if (response instanceof JSONObject) {
-		        JSONObject object =  (JSONObject) response;
-		    	JSONArray objArr = (JSONArray)((JSONObject)object.get("data")).get("children");
-		    	JSONArray objArrSave = new JSONArray();
-		    	JSONObject data;
-		    	for (Object anArray : objArr) {
-		            data = (JSONObject) anArray;
-		            // Make sure it is of the correct kind
+	public void getAllUsersPosts(String username) throws IOException, URISyntaxException { // As of now fetches only links
+	    String filePath = this.outputPath + File.separator + "UserPosts.txt";
+		JSONArray resultData = new JSONArray(); // to store the results
+		
+		getSimplifiedLinkData(resultData, "/user/".concat(username).concat("/.json?sort=").concat(sortType));
+		
+    	FileWriter file = new FileWriter(filePath);
+		file.write(resultData.toJSONString());
+		file.flush();
+        file.close();
+	}
+
+	public void getQueryResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
+	    for(String subreddit : subReddits) {
+			String filePath = this.outputPath + File.separator + query + "_" + subreddit + ".txt";
+			JSONArray resultData = new JSONArray(); // to store the results
+			
+			getSimplifiedLinkData(resultData, redditCategories.get(subreddit).concat("/.json?sort=").concat(sortType).concat("&q=").concat(query));
+			
+	    	FileWriter file = new FileWriter(filePath);
+			file.write(resultData.toJSONString());
+			file.flush();
+	        file.close();
+	    }
+	}
+	
+    @SuppressWarnings("unchecked")
+	private void getSimplifiedLinkData(JSONArray resultData, String url) throws IOException, URISyntaxException {
+    	Object response = restClient.get(url, null).getResponseObject();
+        int count = 0;
+        
+        breakEverything:
+        while(true) {
+        	if (response instanceof JSONObject) {
+        		JSONObject respObject = (JSONObject) response;
+	        	JSONObject dataObject = (JSONObject) respObject.get("data");
+	            JSONArray userPosts = (JSONArray) dataObject.get("children");
+		    	for (Object post : userPosts) {
+		    		JSONObject data = (JSONObject) post;
 		            String kind = safeJsonToString(data.get("kind"));
 					if (kind != null) {
-						if (kind.equals(Kind.LINK.value())) { // only links are save, not comments, etc.
-		                    // Contents of the link
-		                    data = ((JSONObject) data.get("data"));
-		                    JSONObject simplifiedData = new JSONObject();
-		                    simplifiedData.put("gilded", data.get("gilded"));
-		                    simplifiedData.put("title", data.get("title"));
-		                    simplifiedData.put("score", data.get("score"));
-		                    simplifiedData.put("num_comments", data.get("num_comments"));
-		                    simplifiedData.put("created_utc", data.get("created_utc"));
-		                    simplifiedData.put("selftext", data.get("selftext"));
-		                    simplifiedData.put("thumbnail", data.get("thumbnail"));
-		                    simplifiedData.put("author", data.get("author"));
-		                    simplifiedData.put("url", data.get("url"));
-		                    objArrSave.add(simplifiedData);
-		                    
-		                    // look thru the URL and find the comments 
-		                    /*
-		                     * 1. get link id, to look up the comments
-		                     * 2. get the subreddit to fetch the comments from
-		                     */		                    
+						if (kind.equals(Kind.LINK.value())) { // only links are saved, not comments, etc.
+		                    data = ((JSONObject) data.get("data"));		                    
+		                    resultData.add(getSimplifiedLinkData(data)); // add the simplified link data to resultant object array
+		                    saveLinkComments(data); // save the link comments
+		                    count++;
+		                    if(this.limit == count)  break breakEverything;
 		                }
-					}	
+					}
 		    	}
-		        
-		    } else {
-		       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
-	        }
-    	}
+				if(dataObject.containsKey("after") && null != dataObject.get("after")) 
+					response = restClient.get(url.concat("&after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
+        	} else {
+    	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
+            }
+        	
+        }
+        	
 	}
+
+    /* To Look thru the link and find the related comments
+     * 1. Get permalink which is a direct link to comments
+     * 2. As of now, stores only first page of comments
+     * 3. There are comments for comments, crawl only the top level comments
+     */
+	@SuppressWarnings("unchecked")
+	private void saveLinkComments(JSONObject obj) throws IOException, URISyntaxException {
+		String permalink = String.valueOf(obj.get("permalink")); // direct link to comments
+		System.out.println("Crawling comments :" + permalink);
+	    String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) +".txt";
+	    
+		JSONArray linkComments = new JSONArray();
+		
+		Object response = restClient.get(permalink.concat("/.json?sort=").concat(sortType), null).getResponseObject();
+	    if (response instanceof JSONArray) {
+	    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
+	    	JSONObject dataObject = (JSONObject) respObject.get("data");
+	        JSONArray userComments = (JSONArray) dataObject.get("children");	
+	    	for (Object post : userComments) {
+	    		JSONObject data = (JSONObject) post;
+	            String kind = safeJsonToString(data.get("kind"));
+				if (kind != null) {
+					if (kind.equals(Kind.COMMENT.value())) { // only links are save, not comments, etc.
+	                    data = ((JSONObject) data.get("data"));
+	                    linkComments.add(getSimplifiedCommentData(data));
+	                } else if (kind.equals(Kind.MORE.value())) {
+	                	// handle more comments
+	                }
+				}	
+	    	}	        
+	    } else {
+	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
+        }
+	    
+    	FileWriter file = new FileWriter(filePath);
+		file.write(linkComments.toJSONString());
+		file.flush();
+        file.close();
+	}
+
+	/*
+	 * Returns the last component of the given URL
+	 */
+	private String getLastURLComponent(String permalink) throws URISyntaxException {
+		URI uri = new URI(permalink);
+		String[] segments = uri.getPath().split("/");	
+		return segments[segments.length-1];
+	}
+
+	/*
+	 * Returns the newly constructued JSONObject 
+	 */
+	@SuppressWarnings("unchecked")
+	private JSONObject getSimplifiedLinkData(JSONObject data) {
+        JSONObject simplifiedData = new JSONObject();
+        simplifiedData.put("gilded", data.get("gilded"));
+        simplifiedData.put("title", data.get("title"));
+        simplifiedData.put("score", data.get("score"));
+        simplifiedData.put("num_comments", data.get("num_comments"));
+        simplifiedData.put("created_utc", data.get("created_utc"));
+        simplifiedData.put("selftext", data.get("selftext"));
+        simplifiedData.put("thumbnail", data.get("thumbnail"));
+        simplifiedData.put("author", data.get("author"));
+        simplifiedData.put("url", data.get("url"));
+        return simplifiedData;		
+	}
+	
+	/*
+	 * Returns the newly constructued JSONObject 
+	 */
+	@SuppressWarnings("unchecked")
+	private JSONObject getSimplifiedCommentData(JSONObject data) {
+        JSONObject simplifiedData = new JSONObject();
+        simplifiedData.put("gilded", data.get("gilded"));
+        simplifiedData.put("score", data.get("score"));
+        simplifiedData.put("created_utc", data.get("created_utc"));
+        simplifiedData.put("author", data.get("author"));
+        simplifiedData.put("body", data.get("body"));
+        simplifiedData.put("replies", data.get("replies"));
+        simplifiedData.put("ups", data.get("ups"));
+        simplifiedData.put("downs", data.get("downs"));
+        return simplifiedData;		
+	}
+	
     
 }
