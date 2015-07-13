@@ -16,7 +16,7 @@
 					</tr>
 					<tr>
 						<td>The US Supreme Court Crawler is a program that automatically scans and collects court case transcription data from the IIT Chicago-Kent College of Law <a href = "http://www.oyez.org/cases" target="_blank">Supreme Court Case Website</a> and writes that data into text files that are readable by automated text analysis programs.
-						This crawler also saves meta data about each file (e.g., majority author, date decided; see output section below) This crawler also includes options to download case audio mp3 files. 
+						This crawler also saves meta data about each file (e.g., majority author, date decided; see output section below) and includes options to download case audio mp3 files. 
 						<br><br>
 						</td>
 					</tr>
@@ -52,7 +52,7 @@
 					</tr>
 					<tr>
 						<td>To download the .mp3 audio recordings of the court cases along with the transcriptions, check the box nex to "Download Audio". As these files tend to be larger, you also have the 
-						option to check the "Truncate" box which will compress the size of all downloaded audio files. 
+						option to check the "Truncate" box which will only download the first mb of each audio file. Note that this does not compress the original full audio file and selecting this option will only provide the beginning of the full file. 
 <br><br>
 						</td>
 					</tr>
@@ -63,7 +63,6 @@
 						<td>The <b> Console </b> panel at the bottom of the tool will provide information about the Supreme Court term/issue selected, the website url being crawled, and the names of the files being created while the crawler is running. Once complete, the data gathered will be in .txt text file format, with a separate .txt for each document. The generated text file name format is:The court case transcription output will be saved in .txt text file format, with a separate .txt for each document/case. File Names xxxx. Documents will be organized by xxx. 
 						
 						<br><br>The program will also output a file called <b> supremecourt-summary-[date-time].csv </b>. This .csv file provides a summary of all files created with additional documentation about each file including (when available): case name, docket number, date argued, date decided, majority author, vote, file type (transcript or audio), and the downloaded file name. 
-
 							<br>
 							<img class="image" src="images/temp.png" alt="Identifying yourself">
  							<br>

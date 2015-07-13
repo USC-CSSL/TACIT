@@ -31,7 +31,7 @@
 						<td class = "subtitle">Selecting Senate Speeches</td>
 					</tr>
 					<tr>
-						<td> You will need to determine which Senate speeches you would like the crawler to collect under the <b> Input Parameters </b> panel. First, select the <b> Congress </b> you would like to crawl from the drop down menu. This selection will then update the <b> Senator </b> drop down menu to include only the senators in that Congress. Speeches can be collected for individual Senators, all Senators, or for all Senators with a particular party affiliation (i.e., Republican, Democrat, Independent).
+						<td> You will need to determine which Senate speeches you would like the crawler to collect under the <b> Input Parameters </b> panel. First, select the <b> Congress </b> you would like to crawl from the drop down menu. Next, click the <b> Add </b> button to the right of the Senator box to select the senator(s) in that Congress for which you wish to collect data. Speeches can be collected for individual Senators, all Senators, or for all Senators with a particular party affiliation (i.e., Republican, Democrat, Independent).
 							<br><br>
 						</td>
 					</tr>
@@ -55,9 +55,9 @@
 						<td class = "subtitle">Understanding Senate Crawler Output</td>
 					</tr>
 					<tr>
-						<td>The <b> Console </b> panel at the bottom of the tool provides information about the congress member selected, the website url being crawled, and the names of the files being created while the crawler is running. Once complete, the data gathered will be in .txt text file format, with a separate .txt for each document. The generated text file name format is: Congress#-Senator last name-party affiliation-state affiliation-date-title (e.g., 114-Ayotte-R-NH-June 10 2015-NATIONAL DEFENS-355.txt)
+						<td>The <b> Console </b> panel at the bottom of the tool provides information about the congress member selected, the website url being crawled, and the names of the files being created while the crawler is running. Once complete, the console will print the total number of files created.  The data gathered for each speech will be saved in .txt text file format, with a separate file for each speech and separate folders for each senator. The generated text file name format is: Congress#-Senator last name-party affiliation-state affiliation-date-title (e.g., 114-Ayotte-R-NH-June 10 2015-NATIONAL DEFENS-355.txt)
 						<br><br>
-						The program will also create a file called <b> senate-summary-[date-time].csv </b>. This .csv file provides a summary of all files created with additional documentation about each file including (when available): Congress number, Speech Date, Senator Name, Political Affiliation, US State Affiliation, Title of Speech, and the downloaded file name. 
+						The program will also create a overview file called <b> senate-summary-[date-time].csv </b>. This .csv file provides a summary of all files created with additional documentation about each file including (when available): Congress number, Speech Date, Senator Name, Political Affiliation, US State Affiliation, Title of Speech, and the downloaded file name. 
 						</td>
 					</tr>					
 				</table>
