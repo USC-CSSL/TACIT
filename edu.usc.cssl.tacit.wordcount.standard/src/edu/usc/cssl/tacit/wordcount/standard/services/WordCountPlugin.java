@@ -275,7 +275,7 @@ public class WordCountPlugin {
 			resultCSVbw.newLine();
 
 			if (doPennCounts)
-				printPennToCSV(inputFile, outputPath, numWords, isOverall);
+				printPennToCSV(inputFile, outputPath, numDictWords, isOverall);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -311,14 +311,14 @@ public class WordCountPlugin {
 					+ df.format(dateObj)
 					+ ".csv for storing counts for default TACIT tags.");
 
-			pennCSVbw.write("Filename,WC,");
+			pennCSVbw.write("Filename,Dic,");
 
 			StringBuilder toWrite = new StringBuilder();
 			for (int i = 0; i < posTags.length; i++) {
 				toWrite.append(posTags[i] + ",");
 			}
-			resultCSVbw.write(toWrite.toString());
-			resultCSVbw.newLine();
+			pennCSVbw.write(toWrite.toString());
+			pennCSVbw.newLine();
 		}
 
 		// Initialize map that will store the category count for the current
@@ -353,8 +353,8 @@ public class WordCountPlugin {
 					/ numWords)
 					+ ",");
 		}
-		resultCSVbw.write(toWrite.toString());
-		resultCSVbw.newLine();
+		pennCSVbw.write(toWrite.toString());
+		pennCSVbw.newLine();
 
 	}
 
