@@ -133,7 +133,6 @@ public class WordCountPlugin {
 			String currentLine;
 			int numWords = 0;
 			int numDictWords = 0;
-			double totalWeight = 0;
 			int numSentences = 0;
 
 			while ((currentLine = br.readLine()) != null) {
@@ -155,7 +154,6 @@ public class WordCountPlugin {
 							for (Integer cat : wordCategories) {
 								double wordWeight = wordDictionary
 										.get(words[j]).get(cat);
-								totalWeight = totalWeight + wordWeight;
 
 								userFileCount.get(words[j]).put(
 										cat,
@@ -195,14 +193,14 @@ public class WordCountPlugin {
 			}
 			br.close();
 			addToCSV(inputFile, outputPath, numWords, numSentences,
-					numDictWords, totalWeight, false, doPennCounts);
+					numDictWords, false, doPennCounts);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void addToCSV(String inputFile, String outputPath, int numWords,
-			int numSentences, int numDictWords, double totalWeight,
+			int numSentences, int numDictWords,
 			boolean isOverall, boolean doPennCounts) {
 		try {
 
@@ -238,6 +236,8 @@ public class WordCountPlugin {
 				resultCSVbw.newLine();
 			}
 
+			double totalWeight = 0;
+			
 			// Initialize map that will store the category count for the current
 			// file
 			HashMap<Integer, Double> categoryCount = new HashMap<Integer, Double>();
@@ -259,6 +259,8 @@ public class WordCountPlugin {
 				for (Integer cat : wordCats) {
 					categoryCount.put(cat, categoryCount.get(cat)
 							+ userFileCount.get(word).get(cat));
+					
+					totalWeight = totalWeight + userFileCount.get(word).get(cat);
 				}
 			}
 
@@ -283,7 +285,7 @@ public class WordCountPlugin {
 			// Note: We are not considering words that are not part of the 
 			// dictionary even while counting Penn Treebank POS tags.
 			if (doPennCounts)
-				addPennToCSV(inputFile, outputPath, numDictWords, isOverall);
+				addPennToCSV(inputFile, outputPath, isOverall);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -292,7 +294,7 @@ public class WordCountPlugin {
 	}
 
 	private void addPennToCSV(String inputFile, String outputPath,
-			int numWords, boolean isOverall) throws IOException {
+			boolean isOverall) throws IOException {
 
 		String pennPosTags = "CC,CD,DT,EX,FW,IN,JJ,JJR,JJS,LS,MD,NN,"
 				+ "NNS,NNP,NNPS,PDT,POS,PRP,PRP$,RB,RBR,RBS,RP,SYM,TO,"
@@ -338,6 +340,8 @@ public class WordCountPlugin {
 
 		List<String> dictWords = new ArrayList<String>();
 		dictWords.addAll(pennFileCount.keySet());
+		
+		double totalWeight = 0;
 
 		// Find sum of all categories
 		for (String word : dictWords) {
@@ -348,8 +352,10 @@ public class WordCountPlugin {
 				try {
 				categoryCount.put(cat, categoryCount.get(cat)
 						+ pennFileCount.get(word).get(cat));
+				
+				totalWeight = totalWeight + pennFileCount.get(word).get(cat);
 				} catch(NullPointerException e) {
-					System.out.println("This category does not exist: "+cat);
+					System.out.println("Invalid Category: "+cat);
 				}
 			}
 		}
@@ -359,10 +365,10 @@ public class WordCountPlugin {
 		// weight
 		// This is to keep it consistent with the LIWC results
 		StringBuilder toWrite = new StringBuilder();
-		toWrite.append(inputFile + "," + numWords + ",");
+		toWrite.append(inputFile + "," + totalWeight + ",");
 		for (int i = 0; i < posTags.length; i++) {
 			toWrite.append(Double.toString(100 * categoryCount.get(posTags[i])
-					/ (double)numWords)
+					/ totalWeight)
 					+ ",");
 		}
 		pennCSVbw.write(toWrite.toString());
