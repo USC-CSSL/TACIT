@@ -204,7 +204,7 @@ public class StandardWordCountView extends ViewPart implements
 						.getSelectedFiles();
 				final boolean isStemDic = stemEnabled.getSelection();
 				Date dateObj = new Date();
-				final WordCountPlugin wc = new WordCountPlugin(false,dateObj);
+				final WordCountPlugin wc = new WordCountPlugin(false,dateObj,false);
 				
 				// Creating a new Job to do Word Count so that the UI will not freeze
 				 wordCountJob = new Job("Word Count Plugin Job"){

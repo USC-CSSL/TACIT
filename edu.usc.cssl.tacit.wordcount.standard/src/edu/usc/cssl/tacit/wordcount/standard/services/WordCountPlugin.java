@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 
 import edu.usc.cssl.tacit.common.TacitUtility;
+import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.wordcount.standard.Activator;
 
@@ -43,7 +44,10 @@ public class WordCountPlugin {
 	private POSTaggerME posTagger;
 
 	private boolean weighted;
+	private boolean stemDictionary;
 	private Date dateObj;
+	
+	PorterStemmer stemmer = new PorterStemmer();
 
 	// wordDictionary<word,<category,weight>>
 	private HashMap<String, HashMap<Integer, Double>> wordDictionary = new HashMap<String, HashMap<Integer, Double>>();
@@ -61,9 +65,10 @@ public class WordCountPlugin {
 	private BufferedWriter resultCSVbw = null;
 	private BufferedWriter pennCSVbw = null;
 
-	public WordCountPlugin(boolean weighted, Date dateObj) {
+	public WordCountPlugin(boolean weighted, Date dateObj, boolean stemDictionary) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
+		this.stemDictionary = stemDictionary;
 	}
 
 	public void countWords(List<String> inputFiles,
@@ -403,6 +408,17 @@ public class WordCountPlugin {
 
 					// If word not in the maps, add it
 					if (!wordDictionary.containsKey(words[0])) {
+						
+						//Handle stemming
+						if (stemDictionary) {
+							stemmer.setCurrent(words[0]);
+							String stemmedWord = "";
+							if (stemmer.stem())
+								stemmedWord = stemmer.getCurrent();
+							if (!stemmedWord.equals(""))
+								words[0] = stemmedWord;
+						}
+						
 						wordDictionary.put(words[0],
 								new HashMap<Integer, Double>());
 						userFileCount.put(words[0],
