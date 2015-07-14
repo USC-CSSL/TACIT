@@ -8,7 +8,6 @@ import com.github.jreddit.utils.restclient.HttpRestClient;
 import com.github.jreddit.utils.restclient.RestClient;
 
 public class RedditCrawler {
-
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		// Initialize REST Client
 	    RestClient restClient = new HttpRestClient();
@@ -26,7 +25,9 @@ public class RedditCrawler {
 	        	*/
 	        	//ret.getAllUsersPosts("yknjsnow");
 	        	//ret.getQueryResults("apple");
-	        	ret.getSearchResults("author:yknjsnow");
+	        	//ret.crawlQueryResults("author:yknjsnow");
+	        	//ret.crawlTrendingPosts("hot");
+	        	ret.crawlLabeledPosts("top");
 	       /*
 	        	object = ret.GetSearchPageObject("apple");
 	        	ret.SaveLink(object, "pageobject.txt");

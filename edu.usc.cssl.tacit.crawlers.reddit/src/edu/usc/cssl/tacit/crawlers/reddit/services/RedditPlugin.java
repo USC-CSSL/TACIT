@@ -22,8 +22,11 @@ public class RedditPlugin {
 	private int limit; // link the number of records to be saved
 	private String sortType;
     private ArrayList<String> subReddits;
-    HashMap<String, String> redditCategories;
     private boolean limitToBestComments;
+    private String timeFrame;
+
+    HashMap<String, String> redditCategories;
+
     /**
      * Constructor.
      * @param restClient REST Client instance
@@ -36,7 +39,8 @@ public class RedditPlugin {
     	this.sortType = "relevance";
     	this.subReddits = new ArrayList<String>();
     	subReddits.add("television");
-    	this.limitToBestComments = false;
+    	this.limitToBestComments = true; // limited to best comments
+    	this.timeFrame = "all";
     }
         
     protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -60,7 +64,7 @@ public class RedditPlugin {
 			    		if(count == limit) 
 			    			break breakEverything;
 		    		}
-		    		//crawl consequetive pages 
+		    		//crawl consecutive pages 
 			    	if(subRedditDetails.containsKey("after")) {
 			    		if(null == subRedditDetails.get("after")) 
 			    			break;
@@ -79,24 +83,53 @@ public class RedditPlugin {
     	return redditCategories;
     }
 
-	public void getAllUsersPosts(String username) throws IOException, URISyntaxException { // As of now fetches only links
+    /*
+     * To crawl trending posts (hot, new, rising)
+     */
+	public void crawlTrendingPosts(String trendType) throws IOException, URISyntaxException {
+	    String filePath = this.outputPath + File.separator + trendType + ".txt";
+		JSONArray resultData = new JSONArray(); // to store the results
+		getSimplifiedLinkData(resultData, "/".concat(trendType).concat("/").concat(".json"));
+    	FileWriter file = new FileWriter(filePath);
+		file.write(resultData.toJSONString());
+		file.flush();
+        file.close();		
+	}
+	
+	/*
+	 * To crawl all the user posts
+	 */
+	public void crawlUsersPosts(String username) throws IOException, URISyntaxException { // As of now fetches only links
 	    String filePath = this.outputPath + File.separator + "UserPosts.txt";
 		JSONArray resultData = new JSONArray(); // to store the results
-		
 		getSimplifiedLinkData(resultData, "/user/".concat(username).concat("/.json?sort=").concat(sortType));
-		
     	FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
         file.close();
 	}
 	
-	public void getSearchResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
+	/*
+	 * To crawl all labeled posts (controversial, top)
+	 */
+	public void crawlLabeledPosts(String label) throws IOException, URISyntaxException { // As of now fetches only links
+	    String filePath = this.outputPath + File.separator + label + ".txt";
+		JSONArray resultData = new JSONArray(); // to store the results
+		getSimplifiedLinkData(resultData, "/".concat(label).concat("/").concat(".json?t=").concat(timeFrame));
+    	FileWriter file = new FileWriter(filePath);
+		file.write(resultData.toJSONString());
+		file.flush();
+        file.close();
+	}
+	
+	
+	/*
+	 * To crawl the given query results (title:cats subreddit:movies)
+	 */
+	public void crawlQueryResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
 		String filePath = this.outputPath + File.separator + query + ".txt";
 		JSONArray resultData = new JSONArray(); // to store the results
-		
 		getSimplifiedLinkData(resultData, "/search/.json?sort=".concat(sortType).concat("&q=").concat(query));
-		
     	FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
@@ -127,14 +160,17 @@ public class RedditPlugin {
 		                }
 					}
 		    	}
-				if(dataObject.containsKey("after") && null != dataObject.get("after")) 
-					response = restClient.get(url.concat("&after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
+				if(dataObject.containsKey("after") && null != dataObject.get("after")) {
+					if(url.contains("?")) {
+						response = restClient.get(url.concat("&after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
+					} else {
+						response = restClient.get(url.concat("?after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
+					}
+				}
         	} else {
     	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
             }
-        	
         }
-        	
 	}
 
     /* To Look thru the link and find the related comments
@@ -215,7 +251,7 @@ public class RedditPlugin {
 	}
 
 	/*
-	 * Returns the newly constructued JSONObject 
+	 * Returns the newly constructed JSONObject 
 	 */
 	@SuppressWarnings("unchecked")
 	private JSONObject getSimplifiedLinkData(JSONObject data) {
