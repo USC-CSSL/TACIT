@@ -46,7 +46,7 @@ public class WordCountPlugin {
 	private boolean weighted;
 	private boolean stemDictionary;
 	private Date dateObj;
-	
+
 	PorterStemmer stemmer = new PorterStemmer();
 
 	// wordDictionary<word,<category,weight>>
@@ -65,7 +65,8 @@ public class WordCountPlugin {
 	private BufferedWriter resultCSVbw = null;
 	private BufferedWriter pennCSVbw = null;
 
-	public WordCountPlugin(boolean weighted, Date dateObj, boolean stemDictionary) {
+	public WordCountPlugin(boolean weighted, Date dateObj,
+			boolean stemDictionary) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 		this.stemDictionary = stemDictionary;
@@ -200,8 +201,8 @@ public class WordCountPlugin {
 	}
 
 	private void addToCSV(String inputFile, String outputPath, int numWords,
-			int numSentences, int numDictWords,
-			boolean isOverall, boolean doPennCounts) {
+			int numSentences, int numDictWords, boolean isOverall,
+			boolean doPennCounts) {
 		try {
 
 			// Set up result CSV file when calling this function the first time
@@ -237,7 +238,7 @@ public class WordCountPlugin {
 			}
 
 			double totalWeight = 0;
-			
+
 			// Initialize map that will store the category count for the current
 			// file
 			HashMap<Integer, Double> categoryCount = new HashMap<Integer, Double>();
@@ -259,8 +260,9 @@ public class WordCountPlugin {
 				for (Integer cat : wordCats) {
 					categoryCount.put(cat, categoryCount.get(cat)
 							+ userFileCount.get(word).get(cat));
-					
-					totalWeight = totalWeight + userFileCount.get(word).get(cat);
+
+					totalWeight = totalWeight
+							+ userFileCount.get(word).get(cat);
 				}
 			}
 
@@ -282,7 +284,7 @@ public class WordCountPlugin {
 			resultCSVbw.newLine();
 
 			// Pass numDictWords so that percentages of POS tags add up to 100.
-			// Note: We are not considering words that are not part of the 
+			// Note: We are not considering words that are not part of the
 			// dictionary even while counting Penn Treebank POS tags.
 			if (doPennCounts)
 				addPennToCSV(inputFile, outputPath, isOverall);
@@ -321,7 +323,7 @@ public class WordCountPlugin {
 					+ df.format(dateObj)
 					+ ".csv for storing counts for default TACIT tags.");
 
-			pennCSVbw.write("Filename,Dic,");
+			pennCSVbw.write("Filename,");
 
 			StringBuilder toWrite = new StringBuilder();
 			for (int i = 0; i < posTags.length; i++) {
@@ -340,7 +342,7 @@ public class WordCountPlugin {
 
 		List<String> dictWords = new ArrayList<String>();
 		dictWords.addAll(pennFileCount.keySet());
-		
+
 		double totalWeight = 0;
 
 		// Find sum of all categories
@@ -349,13 +351,16 @@ public class WordCountPlugin {
 			wordCats.addAll(pennFileCount.get(word).keySet());
 
 			for (String cat : wordCats) {
+				// Use the try-catch block to catch any POS tag that was not
+				// mentioned in the master list.
 				try {
-				categoryCount.put(cat, categoryCount.get(cat)
-						+ pennFileCount.get(word).get(cat));
-				
-				totalWeight = totalWeight + pennFileCount.get(word).get(cat);
-				} catch(NullPointerException e) {
-					System.out.println("Invalid Category: "+cat);
+					categoryCount.put(cat, categoryCount.get(cat)
+							+ pennFileCount.get(word).get(cat));
+
+					totalWeight = totalWeight
+							+ pennFileCount.get(word).get(cat);
+				} catch (NullPointerException e) {
+					ConsoleView.printlInConsoleln("Invalid Category: " + cat);
 				}
 			}
 		}
@@ -365,7 +370,7 @@ public class WordCountPlugin {
 		// weight
 		// This is to keep it consistent with the LIWC results
 		StringBuilder toWrite = new StringBuilder();
-		toWrite.append(inputFile + "," + totalWeight + ",");
+		toWrite.append(inputFile + ",");
 		for (int i = 0; i < posTags.length; i++) {
 			toWrite.append(Double.toString(100 * categoryCount.get(posTags[i])
 					/ totalWeight)
@@ -414,8 +419,8 @@ public class WordCountPlugin {
 
 					// If word not in the maps, add it
 					if (!wordDictionary.containsKey(words[0])) {
-						
-						//Handle stemming
+
+						// Handle stemming
 						if (stemDictionary) {
 							stemmer.setCurrent(words[0]);
 							String stemmedWord = "";
@@ -424,7 +429,7 @@ public class WordCountPlugin {
 							if (!stemmedWord.equals(""))
 								words[0] = stemmedWord;
 						}
-						
+
 						wordDictionary.put(words[0],
 								new HashMap<Integer, Double>());
 						userFileCount.put(words[0],
