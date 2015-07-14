@@ -1,137 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.usc.tacit.tools</groupId>
-  <artifactId>edu.usc.tacit.tools.parent</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.usc.tacit.tools</groupId>
+	<artifactId>edu.usc.tacit.tools.parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-<modules>
-    <module>../edu.usc.cssl.tacit.feature</module>
-    <module>../edu.usc.cssl.tacit.repository</module>
-    
-            <!--  Common Framework plugins -->
-    <module>../edu.usc.cssl.tacit.common</module>
-    <module>../edu.usc.cssl.tacit.common.ui</module>
-    
-                <!-- Crawlers  -->
-    <module>../edu.usc.cssl.tacit.crawlers.supremecourt.ui</module>
-    <module>../edu.usc.cssl.tacit.crawlers.supremecourt</module>
-    
-    <module>../edu.usc.cssl.tacit.crawlers.latin.ui</module>
-    <module>../edu.usc.cssl.tacit.crawlers.latin</module>
-    
-     <module>../edu.usc.cssl.tacit.crawlers.senate.ui</module>
-    <module>../edu.usc.cssl.tacit.crawlers.senate</module>
-    
-    <module>../edu.usc.cssl.tacit.crawlers.reddit.ui</module>
-    <module>../edu.usc.cssl.tacit.crawlers.reddit</module>
-    
-               <!-- Cluster  -->
-    
-    <module>../edu.usc.cssl.tacit.cluster.kmeans.ui</module>
-    <module>../edu.usc.cssl.tacit.cluster.kmeans</module>
-    
-    <module>../edu.usc.cssl.tacit.cluster.hierarchical.ui</module>
-    <module>../edu.usc.cssl.tacit.cluster.hierarchical</module>
+	<modules>
+		<module>../edu.usc.cssl.tacit.feature</module>
+		<module>../edu.usc.cssl.tacit.repository</module>
 
-    			
-    			<!--  Word Count -->
-    			
-    <module>../edu.usc.cssl.tacit.wordcount.weighted.ui</module>
-    <module>../edu.usc.cssl.tacit.wordcount.weighted</module>
-    
-    <module>../edu.usc.cssl.tacit.wordcount.standard.ui</module>
-    <module>../edu.usc.cssl.tacit.wordcount.standard</module>
-    
-    <module>../edu.usc.cssl.tacit.wordcount.cooccurrence.ui</module>
-    <module>../edu.usc.cssl.tacit.wordcount.cooccurrence</module>
-    
-   				 <!--  Classify  -->
-   				 
-    <module>../edu.usc.cssl.tacit.classify.svm.ui</module>
-    <module>../edu.usc.cssl.tacit.classify.svm</module>
-    
-    <module>../edu.usc.cssl.tacit.classify.naivebayes.ui</module>
-    <module>../edu.usc.cssl.tacit.classify.naivebayes</module>
-    
-     				<!--  Topic Model  -->
-    <module>../edu.usc.cssl.tacit.topicmodel.lda.ui</module>
-   <module>../edu.usc.cssl.tacit.topicmodel.lda</module>
-   
-   <module>../edu.usc.cssl.tacit.topicmodel.zlda.ui</module>
-   <module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
-   
-                    <!--  Help  -->
-    <module>../edu.usc.cssl.tacit.help</module>
-    <module>../product</module>
-    <module>../updatesite</module>
-    
-  </modules>
-  <properties>
-    <tycho.version>0.21.0</tycho.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
-    <luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
-    	
-  </properties>
+		<!-- Common Framework plugins -->
+		<module>../edu.usc.cssl.tacit.common</module>
+		<module>../edu.usc.cssl.tacit.common.ui</module>
 
-  <repositories>
-    <repository>
-      <id>luna</id>
-      <url>${luna-repo.url}</url>
-      <layout>p2</layout>
-    </repository>
+		<!-- Crawlers -->
+		<module>../edu.usc.cssl.tacit.crawlers.supremecourt.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.supremecourt</module>
 
-  </repositories>
+		<module>../edu.usc.cssl.tacit.crawlers.latin.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.latin</module>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <extensions>true</extensions>
-      </plugin>
+		<module>../edu.usc.cssl.tacit.crawlers.senate.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.senate</module>
 
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-          <environments>
-            <environment>
-              <os>linux</os>
-              <ws>gtk</ws>
-              <arch>x86</arch>
-            </environment>
-            <environment>
-              <os>linux</os>
-              <ws>gtk</ws>
-              <arch>x86_64</arch>
-            </environment>
-            <environment>
-              <os>win32</os>
-              <ws>win32</ws>
-              <arch>x86</arch>
-            </environment>
-            <environment>
-              <os>win32</os>
-              <ws>win32</ws>
-              <arch>x86_64</arch>
-            </environment>
-            <environment>
-              <os>macosx</os>
-              <ws>cocoa</ws>
-              <arch>x86_64</arch>
-            </environment>
-            <environment>
-              <os>macosx</os>
-              <ws>cocoa</ws>
-              <arch>x86</arch>
-            </environment>
-          </environments>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+		<module>../edu.usc.cssl.tacit.crawlers.reddit.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.reddit</module>
+
+		<module>../edu.usc.cssl.tacit.crawlers.twitter.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.twitter</module>
+
+		<!-- Cluster -->
+
+		<module>../edu.usc.cssl.tacit.cluster.kmeans.ui</module>
+		<module>../edu.usc.cssl.tacit.cluster.kmeans</module>
+
+		<module>../edu.usc.cssl.tacit.cluster.hierarchical.ui</module>
+		<module>../edu.usc.cssl.tacit.cluster.hierarchical</module>
+
+
+		<!-- Word Count -->
+
+		<module>../edu.usc.cssl.tacit.wordcount.weighted.ui</module>
+		<module>../edu.usc.cssl.tacit.wordcount.weighted</module>
+
+		<module>../edu.usc.cssl.tacit.wordcount.standard.ui</module>
+		<module>../edu.usc.cssl.tacit.wordcount.standard</module>
+
+		<module>../edu.usc.cssl.tacit.wordcount.cooccurrence.ui</module>
+		<module>../edu.usc.cssl.tacit.wordcount.cooccurrence</module>
+
+		<!-- Classify -->
+
+		<module>../edu.usc.cssl.tacit.classify.svm.ui</module>
+		<module>../edu.usc.cssl.tacit.classify.svm</module>
+
+		<module>../edu.usc.cssl.tacit.classify.naivebayes.ui</module>
+		<module>../edu.usc.cssl.tacit.classify.naivebayes</module>
+
+		<!-- Topic Model -->
+		<module>../edu.usc.cssl.tacit.topicmodel.lda.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.lda</module>
+
+		<module>../edu.usc.cssl.tacit.topicmodel.zlda.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
+
+		<!-- Help -->
+		<module>../edu.usc.cssl.tacit.help</module>
+		<module>../product</module>
+		<module>../updatesite</module>
+
+	</modules>
+	<properties>
+		<tycho.version>0.21.0</tycho.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
+
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>luna</id>
+			<url>${luna-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

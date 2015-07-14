@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+ 
+      <view
+            name="Twitter"
+            class="edu.usc.cssl.tacit.crawlers.twitter.ui.TwitterCrawlerView"
+            id="edu.usc.cssl.tacit.crawlers.twitter.ui.view1">
+      </view>
+      
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:crawl">
+             <command
+                  commandId="usc.edu.cssl.crawlers.twitter.view.command1"
+                  label="Twitter Crawler">
+            </command>
+      </menuContribution>
+   </extension>
+ <extension
+         id="crawler.twitter"
+         point="org.eclipse.ui.commands">
+      <command
+            id="usc.edu.cssl.crawlers.twitter.view.command1"
+            name="Twitter Crawler">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.twitter.ui.handlers.OpenTwitterCrawlerViewHandler"
+            commandId="usc.edu.cssl.crawlers.twitter.view.command1">
+      </handler>
+   </extension>
+    <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
+             class="edu.usc.cssl.tacit.crawlers.twitter.ui.preferencepage.TwitterUserConfiguration"
+             id="edu.usc.cssl.tacit.crawlers.twitter.ui.userconfig"
+             name="Twitter User Configuration">
+       </page>
+    </extension>
+   
+   
+   
+   
+   <!-- try -->
+   
+
+
+</plugin>

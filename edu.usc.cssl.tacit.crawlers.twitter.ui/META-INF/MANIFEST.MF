@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Twitter Crawler
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.twitter.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.twitter.ui.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ edu.usc.cssl.tacit.common.ui,
+ edu.usc.cssl.tacit.help,
+ org.eclipse.help,
+ edu.usc.cssl.tacit.crawlers.twitter
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: twitter4j-core-4.0.2.jar,
+ twitter4j-stream-4.0.2.jar,
+ .

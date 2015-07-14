@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Twitter Crawler
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.twitter
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.twitter.Activator
+Bundle-Vendor: USC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common,
+ org.jsoup,
+ edu.usc.cssl.tacit.common.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ twitter4j-core-4.0.2.jar,
+ twitter4j-stream-4.0.2.jar,
+ jackson-core-2.5.0.jar,
+ json-path-2.0.0.jar,
+ json-path-assert-2.0.0.jar,
+ json-smart-2.1.1.jar
+Export-Package: edu.usc.cssl.tacit.crawlers.twitter.services

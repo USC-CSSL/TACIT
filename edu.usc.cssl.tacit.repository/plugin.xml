@@ -38,7 +38,7 @@
           </property>
           <property
                 name="startupProgressRect"
-                value="5,325,502,15">
+                value="5,500,445,15">
           </property>
           <property
                 name="aboutImage"
@@ -156,6 +156,14 @@
          </view>
          <view
                id="edu.usc.cssl.tacit.crawlers.reddit.ui.redditview"
+               minimized="true"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss"
+               visible="false">
+         </view>
+         
+          <view
+               id="edu.usc.cssl.tacit.crawlers.twitter.ui.view1"
                minimized="true"
                relationship="stack"
                relative="org.eclipse.ui.editorss"
