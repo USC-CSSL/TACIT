@@ -16,7 +16,6 @@ import org.json.simple.JSONObject;
 import com.github.jreddit.entity.Kind;
 import com.github.jreddit.utils.restclient.RestClient;
 
-
 public class RedditPlugin {
 	private RestClient restClient;
 	private String outputPath;
@@ -24,6 +23,7 @@ public class RedditPlugin {
 	private String sortType;
     private ArrayList<String> subReddits;
     HashMap<String, String> redditCategories;
+    private boolean limitToBestComments;
     /**
      * Constructor.
      * @param restClient REST Client instance
@@ -33,9 +33,10 @@ public class RedditPlugin {
     	this.restClient = restClient;
     	this.outputPath = "F:\\NLP\\TEMP_OUTPUT\\Reddit";
     	this.limit = 100;
-    	this.sortType = "new";
+    	this.sortType = "relevance";
     	this.subReddits = new ArrayList<String>();
     	subReddits.add("television");
+    	this.limitToBestComments = false;
     }
         
     protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -89,19 +90,17 @@ public class RedditPlugin {
 		file.flush();
         file.close();
 	}
-
-	public void getQueryResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
-	    for(String subreddit : subReddits) {
-			String filePath = this.outputPath + File.separator + query + "_" + subreddit + ".txt";
-			JSONArray resultData = new JSONArray(); // to store the results
-			
-			getSimplifiedLinkData(resultData, redditCategories.get(subreddit).concat("/.json?sort=").concat(sortType).concat("&q=").concat(query));
-			
-	    	FileWriter file = new FileWriter(filePath);
-			file.write(resultData.toJSONString());
-			file.flush();
-	        file.close();
-	    }
+	
+	public void getSearchResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
+		String filePath = this.outputPath + File.separator + query + ".txt";
+		JSONArray resultData = new JSONArray(); // to store the results
+		
+		getSimplifiedLinkData(resultData, "/search/.json?sort=".concat(sortType).concat("&q=").concat(query));
+		
+    	FileWriter file = new FileWriter(filePath);
+		file.write(resultData.toJSONString());
+		file.flush();
+        file.close();
 	}
 	
     @SuppressWarnings("unchecked")
@@ -146,36 +145,64 @@ public class RedditPlugin {
 	@SuppressWarnings("unchecked")
 	private void saveLinkComments(JSONObject obj) throws IOException, URISyntaxException {
 		String permalink = String.valueOf(obj.get("permalink")); // direct link to comments
+		if(-1 != permalink.indexOf("?")) {
+			String temp[] = permalink.split("\\?");
+			permalink = temp[0];
+		}
 		System.out.println("Crawling comments :" + permalink);
 	    String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) +".txt";
 	    
 		JSONArray linkComments = new JSONArray();
 		
-		Object response = restClient.get(permalink.concat("/.json?sort=").concat(sortType), null).getResponseObject();
-	    if (response instanceof JSONArray) {
-	    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
-	    	JSONObject dataObject = (JSONObject) respObject.get("data");
-	        JSONArray userComments = (JSONArray) dataObject.get("children");	
-	    	for (Object post : userComments) {
-	    		JSONObject data = (JSONObject) post;
-	            String kind = safeJsonToString(data.get("kind"));
-				if (kind != null) {
-					if (kind.equals(Kind.COMMENT.value())) { // only links are save, not comments, etc.
-	                    data = ((JSONObject) data.get("data"));
-	                    linkComments.add(getSimplifiedCommentData(data));
-	                } else if (kind.equals(Kind.MORE.value())) {
-	                	// handle more comments
-	                }
-				}	
-	    	}	        
-	    } else {
-	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
-        }
-	    
+		Object response = restClient.get(permalink.concat("/.json?sort=best"), null).getResponseObject(); // sorts by best
+		
+		if (response instanceof JSONArray) {	    	
+		    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
+		    	JSONObject dataObject = (JSONObject) respObject.get("data");
+		        JSONArray userComments = (JSONArray) dataObject.get("children");	
+		    	for (Object post : userComments) {
+		    		JSONObject data = (JSONObject) post;
+		            String kind = safeJsonToString(data.get("kind"));
+					if (kind != null) {
+						if (kind.equals(Kind.COMMENT.value())) { // only links are save, not comments, etc.
+		                    data = ((JSONObject) data.get("data"));
+		                    linkComments.add(getSimplifiedCommentData(data));
+		                } else if (kind.equals(Kind.MORE.value()) && !limitToBestComments) {
+		                	// handle more comments
+		        	    	dataObject = (JSONObject) data.get("data");
+		        	        userComments = (JSONArray) dataObject.get("children");
+		        	        for (Object morePost : userComments) {
+		        	        	JSONObject result = fetchThisComment(morePost, permalink);
+		        	        	if(null != result)
+		        	        		linkComments.add(result);
+		        	        }
+		                }
+					}	
+		    	}
+		    } 
+		else {
+		       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
+	    }
+		   
     	FileWriter file = new FileWriter(filePath);
 		file.write(linkComments.toJSONString());
 		file.flush();
         file.close();
+	}
+
+	private JSONObject fetchThisComment(Object morePost, String permalink) {
+    	Object response = restClient.get((permalink + morePost).concat("/.json?sort=best"), null).getResponseObject();
+    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
+    	JSONObject dataObject = (JSONObject) respObject.get("data");
+    	if(0 == ((JSONArray) dataObject.get("children")).size()) 
+    		return null;
+        JSONObject comment = (JSONObject) ((JSONArray) dataObject.get("children")).get(0);
+        String JSONKind = safeJsonToString(comment.get("kind"));
+        if (JSONKind != null && JSONKind.equals(Kind.COMMENT.value())) { // only links are save, not comments, etc.
+        	comment = ((JSONObject) comment.get("data"));
+            return getSimplifiedCommentData(comment);	
+		}
+        return null;
 	}
 
 	/*
@@ -222,5 +249,4 @@ public class RedditPlugin {
         return simplifiedData;		
 	}
 	
-    
 }

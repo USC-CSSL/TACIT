@@ -18,14 +18,15 @@ public class RedditCrawler {
 			// Send request to reddit server via REST client
 	        RedditPlugin ret = new RedditPlugin(restClient);
 	        //ret.fetchRedditCategories("/subreddits/mine");
-	        ret.fetchRedditCategories(99); // returns all the available reddit groups
-	        try{
+	        //ret.fetchRedditCategories(99); // returns all the available reddit groups
+	        try {
 	        	/*JSONObject object = ret.GetListingPageObject("/user/yknjsnow"); // gives all the user posts
 	        	ret.SaveLink(object, "pagelisting.txt");
 	        	System.out.println(object.toString());
 	        	*/
 	        	//ret.getAllUsersPosts("yknjsnow");
-	        	ret.getQueryResults("apple");
+	        	//ret.getQueryResults("apple");
+	        	ret.getSearchResults("author:yknjsnow");
 	       /*
 	        	object = ret.GetSearchPageObject("apple");
 	        	ret.SaveLink(object, "pageobject.txt");
@@ -35,7 +36,6 @@ public class RedditCrawler {
 	        	ret.SaveComment(object, "pagecomments.txt");
 	        	System.out.println(object.toString());
 	        	*/
-	        	
 	        }
 	        catch (IllegalArgumentException e1){
 	        	e1.printStackTrace();;
