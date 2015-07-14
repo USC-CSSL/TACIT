@@ -274,8 +274,11 @@ public class WordCountPlugin {
 			resultCSVbw.write(toWrite.toString());
 			resultCSVbw.newLine();
 
+			// Pass numDictWords so that percentages of POS tags add up to 100.
+			// Note: We are not considering words that are not part of the 
+			// dictionary even while counting Penn Treebank POS tags.
 			if (doPennCounts)
-				printPennToCSV(inputFile, outputPath, numDictWords, isOverall);
+				addPennToCSV(inputFile, outputPath, numDictWords, isOverall);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -283,12 +286,12 @@ public class WordCountPlugin {
 
 	}
 
-	private void printPennToCSV(String inputFile, String outputPath,
+	private void addPennToCSV(String inputFile, String outputPath,
 			int numWords, boolean isOverall) throws IOException {
 
 		String pennPosTags = "CC,CD,DT,EX,FW,IN,JJ,JJR,JJS,LS,MD,NN,"
 				+ "NNS,NNP,NNPS,PDT,POS,PRP,PRP$,RB,RBR,RBS,RP,SYM,TO,"
-				+ "UH,VB,VBD,VBG,VBN,VBP,VBZ,WDT,WP,WP$,WRB,-LRB-,-RRB-,"
+				+ "UH,VB,VBD,VBG,VBN,VBP,VBZ,WDT,WP,WP$,WRB,.,-LRB-,-RRB-,"
 				+ "-RSB-,-RSB-,-LCB-,-RCB-";
 
 		String[] posTags;
@@ -337,8 +340,12 @@ public class WordCountPlugin {
 			wordCats.addAll(pennFileCount.get(word).keySet());
 
 			for (String cat : wordCats) {
+				try {
 				categoryCount.put(cat, categoryCount.get(cat)
 						+ pennFileCount.get(word).get(cat));
+				} catch(NullPointerException e) {
+					System.out.println("This category does not exist: "+cat);
+				}
 			}
 		}
 
@@ -350,7 +357,7 @@ public class WordCountPlugin {
 		toWrite.append(inputFile + "," + numWords + ",");
 		for (int i = 0; i < posTags.length; i++) {
 			toWrite.append(Double.toString(100 * categoryCount.get(posTags[i])
-					/ numWords)
+					/ (double)numWords)
 					+ ",");
 		}
 		pennCSVbw.write(toWrite.toString());
