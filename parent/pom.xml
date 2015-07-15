@@ -24,6 +24,9 @@
      <module>../edu.usc.cssl.tacit.crawlers.senate.ui</module>
     <module>../edu.usc.cssl.tacit.crawlers.senate</module>
     
+    <module>../edu.usc.cssl.tacit.crawlers.reddit.ui</module>
+    <module>../edu.usc.cssl.tacit.crawlers.reddit</module>
+    
                <!-- Cluster  -->
     
     <module>../edu.usc.cssl.tacit.cluster.kmeans.ui</module>
