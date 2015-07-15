@@ -118,8 +118,6 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client); // Align the composite section to one column
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);		
-		GridLayout layout = new GridLayout();// Layout creation
-		layout.numColumns = 2;
 		
 		createSenateInputParameters(client);
 		TacitFormComposite.createEmptyRow(toolkit, client);
