@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -57,6 +59,32 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Composite labeledDataComposite;
 
 	private Composite trendingDataComposite;
+
+	private Label timeFrame;
+
+	private Composite searchComposite;
+
+	private Text titleText;
+
+	private Text authorText;
+
+	private Text urlText;
+
+	private Composite searchComposite1;
+
+	private Composite searchComposite2;
+
+	private Text linkText;
+
+	private Text queryText;
+
+	private Composite commonsearchComposite;
+
+	private Table subredditTable;
+
+	private Button addSubredditBtn;
+
+	private Button removeSubredditBtn;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -94,22 +122,56 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		layout.numColumns = 3;
 		buttonComposite.setLayout(layout);
 
+		crawlSearchResultsButton = new Button(buttonComposite, SWT.RADIO);
+		crawlSearchResultsButton.setText("Search");
+		crawlSearchResultsButton.setSelection(true);
+		crawlSearchResultsButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(crawlSearchResultsButton.getSelection()) {
+					//hide - trend
+					trendingDataComposite.setVisible(false);
+					((GridData) trendingDataComposite.getLayoutData()).exclude = true;
+					trendingDataComposite.getParent().layout(true);
+					// hide - label
+					labeledDataComposite.setVisible(false);
+					((GridData) labeledDataComposite.getLayoutData()).exclude = true;
+					labeledDataComposite.getParent().layout(true);
+					// show - search
+					searchComposite.setVisible(true);
+					((GridData) searchComposite.getLayoutData()).exclude = false;
+					searchComposite.getParent().layout(true);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+		
 		crawlTrendingDataButton = new Button(buttonComposite, SWT.RADIO);
 		crawlTrendingDataButton.setText("Trending Data");
-		crawlTrendingDataButton.setSelection(true);
+		crawlTrendingDataButton.setSelection(false);
 		crawlTrendingDataButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if(crawlTrendingDataButton.getSelection()) {
-					// Hide labeled
+					// hide - label
 					labeledDataComposite.setVisible(false);
 					((GridData) labeledDataComposite.getLayoutData()).exclude = true;
 					labeledDataComposite.getParent().layout(true);
-					
-					// show trending
+					// hide - search
+					searchComposite.setVisible(false);
+					((GridData) searchComposite.getLayoutData()).exclude = true;
+					searchComposite.getParent().layout(true);					
+					// show - trend
 					trendingDataComposite.setVisible(true);
 					((GridData) trendingDataComposite.getLayoutData()).exclude = false;
-					trendingDataComposite.getParent().layout(true);					
+					trendingDataComposite.getParent().layout(true);		
+					timeFrame.setEnabled(false);
+					cmbTimeFrames.setEnabled(false);
 				}
 			}
 
@@ -130,11 +192,16 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 					trendingDataComposite.setVisible(false);
 					((GridData) trendingDataComposite.getLayoutData()).exclude = true;
 					trendingDataComposite.getParent().layout(true);
-					
+					// hide - search
+					searchComposite.setVisible(false);
+					((GridData) searchComposite.getLayoutData()).exclude = true;
+					searchComposite.getParent().layout(true);					
 					// show - label
 					labeledDataComposite.setVisible(true);
 					((GridData) labeledDataComposite.getLayoutData()).exclude = false;
 					labeledDataComposite.getParent().layout(true);	
+					timeFrame.setEnabled(true);
+					cmbTimeFrames.setEnabled(true);
 				}
 			}
 
@@ -144,93 +211,171 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			}
 		});
 		
-		crawlSearchResultsButton = new Button(buttonComposite, SWT.RADIO);
-		crawlSearchResultsButton.setText("Search");
-		crawlSearchResultsButton.setSelection(false);
-		crawlSearchResultsButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
-
 		// create input parameters section
 		// main section
 		Section inputParamsSection = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(inputParamsSection);
-		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(inputParamsSection);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(inputParamsSection);
 		inputParamsSection.setText("Input Parameters");
 		
-		ScrolledComposite sc = new ScrolledComposite(inputParamsSection, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(inputParamsSection, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sc);
 			
 		Composite mainComposite = toolkit.createComposite(inputParamsSection);
 		sc.setContent(mainComposite);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(mainComposite);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(mainComposite);
 		inputParamsSection.setClient(mainComposite);
 		
 		trendingDataComposite = toolkit.createComposite(mainComposite);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(trendingDataComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(trendingDataComposite);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(trendingDataComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(trendingDataComposite);
 		
 		Label trendType = new Label(trendingDataComposite, SWT.NONE);
 		trendType.setText("Trend Type:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(trendType);
 		cmbTrendType = new Combo(trendingDataComposite, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbTrendType);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbTrendType);
 		String trendTypes[] = {"Hot", "New", "Rising"};
 		cmbTrendType.setItems(trendTypes);
 		cmbTrendType.select(0);	
 	
+		((GridData) trendingDataComposite.getLayoutData()).exclude = true; // hide this
+		
 		labeledDataComposite = toolkit.createComposite(mainComposite);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(labeledDataComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(labeledDataComposite);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(labeledDataComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(labeledDataComposite);
 		
 		Label labelType = new Label(labeledDataComposite, SWT.NONE);
 		labelType.setText("Label Data:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(labelType);
 		cmbLabelType = new Combo(labeledDataComposite, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbLabelType);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbLabelType);
 		String labelDataTypes[] = {"Top", "Controversial"};
 		cmbLabelType.setItems(labelDataTypes);
 		cmbLabelType.select(0);	
 		((GridData) labeledDataComposite.getLayoutData()).exclude = true; // hide this
 		
+		//Gerneal search parameters
+		searchComposite = toolkit.createComposite(mainComposite);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(searchComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchComposite);
+		
+		commonsearchComposite = toolkit.createComposite(searchComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(commonsearchComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(commonsearchComposite);
+		
+		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
+		
+		// split it into 2		
+		Group filterResultsGroup = new Group(searchComposite, SWT.LEFT);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(filterResultsGroup);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(filterResultsGroup);
+		filterResultsGroup.setText("Filter Results");
+		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
+		
+		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
+		
+		searchComposite1 = toolkit.createComposite(filterResultsGroup);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(searchComposite1);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(searchComposite1);
+		
+		searchComposite2 = toolkit.createComposite(filterResultsGroup);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(searchComposite2);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(searchComposite2);
+		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
+		
+		Label textLabel = new Label(commonsearchComposite, SWT.NONE);
+		textLabel.setText("Text:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(textLabel);
+		queryText = new Text(commonsearchComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(queryText);	
+
+		Label subredditLabel = new Label(commonsearchComposite, SWT.NONE);
+		subredditLabel.setText("Subreddit:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(subredditLabel);
+		subredditTable = new Table(commonsearchComposite, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(subredditTable);
+
+		Composite buttonComp = new Composite(commonsearchComposite, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).applyTo(buttonComp);
+		GridLayout btnLayout = new GridLayout();
+		btnLayout.marginWidth = btnLayout.marginHeight = 0;
+		btnLayout.makeColumnsEqualWidth = false;
+		buttonComp.setLayout(btnLayout);
+		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
+		addSubredditBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
+		addSubredditBtn.setText("Add...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSubredditBtn);
+		addSubredditBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				//handleAdd(addSubredditBtn.getShell());
+			}
+		});
+
+		removeSubredditBtn = new Button(buttonComp, SWT.PUSH);
+		removeSubredditBtn.setText("Remove...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSubredditBtn);
+		removeSubredditBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		
+		Label titleLabel = new Label(searchComposite1, SWT.NONE);
+		titleLabel.setText("Title:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(titleLabel);
+		titleText = new Text(searchComposite1, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleText);
+		Label authorLabel = new Label(searchComposite1, SWT.NONE);
+		authorLabel.setText("Author:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(authorLabel);
+		authorText = new Text(searchComposite1, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(authorText);
+
+		Label urlLabel = new Label(searchComposite2, SWT.NONE);
+		urlLabel.setText("URL:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(urlLabel);
+		urlText = new Text(searchComposite2, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(urlText);	
+		Label linkLabel = new Label(searchComposite2, SWT.NONE);
+		linkLabel.setText("Link ID:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(linkLabel);
+		linkText = new Text(searchComposite2, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(linkText);			
+		
 		//common parameters
 		Composite commomParamsComposite = toolkit.createComposite(mainComposite);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(commomParamsComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(commomParamsComposite);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(commomParamsComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(commomParamsComposite);
 		
 		Group commonParamsGroup = new Group(commomParamsComposite, SWT.LEFT);
 		commonParamsGroup.setText("Limit Records");
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(commonParamsGroup);
 		commonParamsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout commonParamsLayput = new GridLayout();
-		commonParamsLayput.numColumns = 3;
-		commonParamsGroup.setLayout(commonParamsLayput);
-		
-		Label timeFrame = new Label(commonParamsGroup, SWT.NONE);
-		timeFrame.setText("Time Frame:");
+		TacitFormComposite.createEmptyRow(toolkit, commonParamsGroup);
+
+		timeFrame = new Label(commonParamsGroup, SWT.NONE);
+		timeFrame.setText("Time Frame:");		
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(timeFrame);
 		cmbTimeFrames = new Combo(commonParamsGroup, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbTimeFrames);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbTimeFrames);
 		String timeFrames[] = {"All time", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
 		cmbTimeFrames.setItems(timeFrames);
-		cmbTimeFrames.select(0);	
+		cmbTimeFrames.select(0);
+		timeFrame.setEnabled(false);
+		cmbTimeFrames.setEnabled(false);
 
 		Label numLinksLabel = new Label(commonParamsGroup, SWT.None);
 		numLinksLabel.setText("No.of.Links to Crawl:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(numLinksLabel);
 		numLinksText = new Text(commonParamsGroup, SWT.BORDER);
 		numLinksText.setText("10");
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(numLinksText);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(numLinksText);
 		numLinksText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -251,7 +396,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		limitComments = new Button(commonParamsGroup, SWT.CHECK);
 		limitComments.setText("Limit comments per link to 200");
 		limitComments.setSelection(true);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(limitComments);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitComments);
+		TacitFormComposite.createEmptyRow(toolkit, commonParamsGroup);
 		TacitFormComposite.createEmptyRow(toolkit, parent);
 	}
 		
