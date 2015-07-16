@@ -8,6 +8,7 @@
       <view
             name="Twitter"
             class="edu.usc.cssl.tacit.crawlers.twitter.ui.TwitterCrawlerView"
+             icon="icons/twitter.gif"
             id="edu.usc.cssl.tacit.crawlers.twitter.ui.view1">
       </view>
       
@@ -19,6 +20,7 @@
             locationURI="menu:crawl">
              <command
                   commandId="usc.edu.cssl.crawlers.twitter.view.command1"
+                    icon="icons/twitter.gif"
                   label="Twitter Crawler">
             </command>
       </menuContribution>

@@ -72,9 +72,7 @@ public class TwitterCrawlerView extends ViewPart implements
 	private boolean noLocationFilter;
 	private boolean[] storedAtts;
 
-	private boolean validGeoFilter = true;
-	private boolean validLimitParse = true;
-	private boolean validLimitState = false;
+
 	private String keyWords[];
 	private double[][] geoLocations;
 
@@ -155,44 +153,6 @@ public class TwitterCrawlerView extends ViewPart implements
 
 				noWordFilter = false;
 				noLocationFilter = false;
-
-				long dayLimit;
-				long hourLimit;
-				long minLimit;
-
-				// check limit tab attributes validity
-				if (limitRecords.getSelection()) {
-					try {
-						dayLimit = Long.parseLong(dayText.getText().toString());
-						hourLimit = Long.parseLong(hourText.getText()
-								.toString());
-						minLimit = Long.parseLong(minText.getText().toString());
-						// Is streaming time positive interger?
-						if (dayLimit < 0
-								|| hourLimit < 0
-								|| minLimit < 0
-								|| (dayLimit == 0 && hourLimit == 0 && minLimit == 0))
-							validLimitParse = false;
-						finishTime = (minLimit + (hourLimit + dayLimit * 24) * 60) * 1000 * 60;
-					} catch (NumberFormatException e1) {
-						validLimitParse = false;
-					}
-				}
-				// Is there valid max tweet number?
-				if (maxLimit.getSelection()) {
-					try {
-						maxTweetLimit = Long.parseLong(maxText.getText()
-								.toString());
-						if (maxTweetLimit <= 0)
-							validLimitParse = false;
-					} catch (NumberFormatException e1) {
-						validLimitParse = false;
-					}
-				}
-				// either maxTweet or maxTime must be activated
-				if (limitRecords.getSelection() || maxLimit.getSelection()) {
-					validLimitState = true;
-				}
 
 				// check if the output address is correct and writable
 				final String outputFile = layoutData.getOutputLabel().getText()
@@ -341,6 +301,41 @@ public class TwitterCrawlerView extends ViewPart implements
 
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canProceed = true;
+		long dayLimit;
+		long hourLimit;
+		long minLimit;
+		boolean validGeoFilter = true;
+		 boolean validLimitParse = true;
+		 boolean validLimitState = false;
+		// check limit tab attributes validity
+		if (limitRecords.getSelection()) {
+			try {
+				dayLimit = Long.parseLong(dayText.getText().toString());
+				hourLimit = Long.parseLong(hourText.getText().toString());
+				minLimit = Long.parseLong(minText.getText().toString());
+				// Is streaming time positive interger?
+				if (dayLimit < 0 || hourLimit < 0 || minLimit < 0
+						|| (dayLimit == 0 && hourLimit == 0 && minLimit == 0))
+					validLimitParse = false;
+				finishTime = (minLimit + (hourLimit + dayLimit * 24) * 60) * 1000 * 60;
+			} catch (NumberFormatException e1) {
+				validLimitParse = false;
+			}
+		}
+		// Is there valid max tweet number?
+		if (maxLimit.getSelection()) {
+			try {
+				maxTweetLimit = Long.parseLong(maxText.getText().toString());
+				if (maxTweetLimit <= 0)
+					validLimitParse = false;
+			} catch (NumberFormatException e1) {
+				validLimitParse = false;
+			}
+		}
+		// either maxTweet or maxTime must be activated
+		if (limitRecords.getSelection() || maxLimit.getSelection()) {
+			validLimitState = true;
+		}
 
 		keyWords = wordFilterText.getText().split(";");
 		if (keyWords.length == 0 || wordFilterText.getText().isEmpty())
@@ -385,6 +380,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		form.getMessageManager().removeMessage("geolocation");
 		form.getMessageManager().removeMessage("limit");
 		form.getMessageManager().removeMessage("state");
+		form.getMessageManager().removeMessage("stored-attribute");
 
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
@@ -429,10 +425,20 @@ public class TwitterCrawlerView extends ViewPart implements
 
 		} else if (!validLimitState) {
 			form.getMessageManager().addMessage("state",
-					"Error: Select atleaset Maximum limit or Time limit",
-					null, IMessageProvider.ERROR);
+					"Error: Select atleaset Maximum limit or Time limit", null,
+					IMessageProvider.ERROR);
 			canProceed = false;
-		} 
+		}
+
+		else if (!(userNameBtn.getSelection() || createdBtn.getSelection()
+				|| geoLocBtn.getSelection() || langBtn.getSelection()
+				|| statusIdBtn.getSelection() || reTweetBtn.getSelection()
+				|| textBtn.getSelection() || favBtn.getSelection())) {
+			form.getMessageManager().addMessage("stored-attribute",
+					"Error: Select atleaset one Stored attribute", null,
+					IMessageProvider.ERROR);
+			canProceed = false;
+		}
 		return canProceed;
 	}
 
@@ -675,5 +681,7 @@ public class TwitterCrawlerView extends ViewPart implements
 				.applyTo(favBtn);
 
 	}
+	
+	
 
 }
