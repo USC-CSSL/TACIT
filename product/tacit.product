@@ -45,6 +45,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
       </win>
    </launcher>
 
+
    <vm>
    </vm>
 
@@ -88,7 +89,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configurations>
 
    <repositories>
-      <repository location="http://cssl.usc.edu:8080/job/TACIT/ws/updatesite/target/repository/" enabled="true" />
+      <repository location="http://cssl.usc.edu:8081/tacit/updates/repository/" enabled="true" />
    </repositories>
 
 </product>
