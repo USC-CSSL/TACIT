@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -107,13 +109,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client); // Align the composite section to one column
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);		
 
-		createCrawlGrop(toolkit, client);
+		createCrawlInputParameters(toolkit, client);
 		outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
 	
-	private void createCrawlGrop(final FormToolkit toolkit, final Composite parent) {
+	private void createCrawlInputParameters(final FormToolkit toolkit, final Composite parent) {
 				
 		Group buttonComposite = new Group(parent, SWT.LEFT);
 		buttonComposite.setText("Crawl");
@@ -278,11 +280,11 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		
 		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
 		
-		searchComposite1 = toolkit.createComposite(filterResultsGroup);
+		searchComposite1 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(searchComposite1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(searchComposite1);
 		
-		searchComposite2 = toolkit.createComposite(filterResultsGroup);
+		searchComposite2 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(searchComposite2);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(searchComposite2);
 		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
@@ -296,8 +298,17 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		Label subredditLabel = new Label(commonsearchComposite, SWT.NONE);
 		subredditLabel.setText("Subreddit:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(subredditLabel);
-		subredditTable = new Table(commonsearchComposite, SWT.BORDER | SWT.MULTI);
-		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(subredditTable);
+		
+		final Tree subreddits = new Tree(commonsearchComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(subreddits);
+		//GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 0);
+		//subreddits.setLayoutData(gd_tree);
+		TreeItem trainingItem = new TreeItem(subreddits, SWT.NONE);
+		trainingItem.setText("Train");
+		trainingItem.setData("Train");
+		trainingItem.setImage(RedditCrawlerViewImageRegistry.getImageIconFactory().getImage(IMAGE_REDDIT_OBJ));
+		TreeItem dummy= new TreeItem(trainingItem, SWT.NONE);
+		dummy.setText("Test");
 
 		Composite buttonComp = new Composite(commonsearchComposite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).applyTo(buttonComp);
@@ -398,7 +409,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		limitComments.setSelection(true);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitComments);
 		TacitFormComposite.createEmptyRow(toolkit, commonParamsGroup);
-		TacitFormComposite.createEmptyRow(toolkit, parent);
+		//TacitFormComposite.createEmptyRow(toolkit, parent);
 	}
 		
 	/**

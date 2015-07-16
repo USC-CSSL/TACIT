@@ -25,6 +25,11 @@ public class RedditCrawlerViewImageRegistry {
 				ImageDescriptor.createFromFile(
 						RedditCrawlerViewImageRegistry.class,
 						"/icons/help_contents.gif"));
+		
+		imgReg.put(IRedditCrawlerViewConstants.IMAGE_REDDIT_OBJ,
+				ImageDescriptor.createFromFile(
+						RedditCrawlerViewImageRegistry.class,
+						"/icons/reddit.gif"));
 	}
 
 	public static RedditCrawlerViewImageRegistry getImageIconFactory() {

@@ -61,7 +61,7 @@ public class TacitFormComposite {
 
 	public static void createEmptyRow(FormToolkit toolkit,
 			Composite sectionClient) {
-		Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
+		Label dummy =  new Label(sectionClient, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
 	}
