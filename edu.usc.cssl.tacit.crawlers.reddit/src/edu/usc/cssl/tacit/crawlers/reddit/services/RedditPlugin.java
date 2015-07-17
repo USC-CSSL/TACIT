@@ -32,15 +32,12 @@ public class RedditPlugin {
      * @param restClient REST Client instance
      * @param actor User instance
      */
-    public RedditPlugin(RestClient restClient) {
+    public RedditPlugin(RestClient restClient, String outputDir, int limit, boolean limitComments, ArrayList<String> subReddits) {
     	this.restClient = restClient;
-    	this.outputPath = "F:\\NLP\\TEMP_OUTPUT\\Reddit";
-    	this.limit = 100;
-    	this.sortType = "relevance";
-    	this.subReddits = new ArrayList<String>();
-    	subReddits.add("television");
-    	this.limitToBestComments = true; // limited to best comments
-    	this.timeFrame = "all";
+    	this.outputPath = outputDir;
+    	this.limit = limit;
+    	this.limitToBestComments = limitComments; // limited to best comments
+    	this.subReddits = subReddits;    	
     }
         
     protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -112,10 +109,10 @@ public class RedditPlugin {
 	/*
 	 * To crawl all labeled posts (controversial, top)
 	 */
-	public void crawlLabeledPosts(String label) throws IOException, URISyntaxException { // As of now fetches only links
+	public void crawlLabeledPosts(String url, String label) throws IOException, URISyntaxException { // As of now fetches only links
 	    String filePath = this.outputPath + File.separator + label + ".txt";
 		JSONArray resultData = new JSONArray(); // to store the results
-		getSimplifiedLinkData(resultData, "/".concat(label).concat("/").concat(".json?t=").concat(timeFrame));
+		getSimplifiedLinkData(resultData, url);
     	FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
@@ -127,9 +124,9 @@ public class RedditPlugin {
 	 * To crawl the given query results (title:cats subreddit:movies)
 	 */
 	public void crawlQueryResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
-		String filePath = this.outputPath + File.separator + query + ".txt";
+		String filePath = this.outputPath + File.separator + "SearchResults.txt";
 		JSONArray resultData = new JSONArray(); // to store the results
-		getSimplifiedLinkData(resultData, "/search/.json?sort=".concat(sortType).concat("&q=").concat(query));
+		getSimplifiedLinkData(resultData, "/search/.json?".concat(query));
     	FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
