@@ -3,6 +3,10 @@ package edu.usc.cssl.tacit.crawlers.reddit.ui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -28,6 +32,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -41,6 +46,9 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
+import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+import edu.usc.cssl.tacit.crawlers.reddit.services.RedditCrawler;
 import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.IRedditCrawlerViewConstants;
 import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.RedditCrawlerViewImageRegistry;
 
@@ -72,13 +80,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Text linkText;
 	private Text queryText;
 	private Composite commonsearchComposite;
-	private Table subredditTable;
 	private Button addSubredditBtn;
 	private Button removeSubredditBtn;
 	
 	String subredditText;
 	int redditCount = 1;
 	String oldSubredditText;
+
+	private Combo cmbSortType;
+	ArrayList<String> content;
+	String sortTypes[] = {"Relevance", "Top", "Hot", "New", "Comments"};
+	String trendTypes[] = {"Hot", "New", "Rising"};
+	String timeFrames[] = {"All", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
+	String labelDataTypes[] = {"Top", "Controversial"};
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -126,15 +140,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 					//hide - trend
 					trendingDataComposite.setVisible(false);
 					((GridData) trendingDataComposite.getLayoutData()).exclude = true;
-					trendingDataComposite.getParent().layout(true);
+					//trendingDataComposite.getParent().layout(true);
 					// hide - label
 					labeledDataComposite.setVisible(false);
 					((GridData) labeledDataComposite.getLayoutData()).exclude = true;
-					labeledDataComposite.getParent().layout(true);
+					//labeledDataComposite.getParent().layout(true);
 					// show - search
 					searchComposite.setVisible(true);
 					((GridData) searchComposite.getLayoutData()).exclude = false;
 					searchComposite.getParent().layout(true);
+					parent.layout(true);
+					timeFrame.setEnabled(true);
+					cmbTimeFrames.setEnabled(true);	
+					form.reflow(true);
 				}
 			}
 
@@ -155,17 +173,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 					// hide - label
 					labeledDataComposite.setVisible(false);
 					((GridData) labeledDataComposite.getLayoutData()).exclude = true;
-					labeledDataComposite.getParent().layout(true);
+					//labeledDataComposite.getParent().layout(true);
 					// hide - search
 					searchComposite.setVisible(false);
 					((GridData) searchComposite.getLayoutData()).exclude = true;
-					searchComposite.getParent().layout(true);					
+					//searchComposite.getParent().layout(true);					
 					// show - trend
 					trendingDataComposite.setVisible(true);
 					((GridData) trendingDataComposite.getLayoutData()).exclude = false;
 					trendingDataComposite.getParent().layout(true);		
+					parent.layout(true);
 					timeFrame.setEnabled(false);
 					cmbTimeFrames.setEnabled(false);
+					toolkit.paintBordersFor(form.getBody());
 				}
 			}
 
@@ -185,17 +205,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 					// hide - trend
 					trendingDataComposite.setVisible(false);
 					((GridData) trendingDataComposite.getLayoutData()).exclude = true;
-					trendingDataComposite.getParent().layout(true);
+					//trendingDataComposite.getParent().layout(true);
 					// hide - search
 					searchComposite.setVisible(false);
 					((GridData) searchComposite.getLayoutData()).exclude = true;
-					searchComposite.getParent().layout(true);					
+					//searchComposite.getParent().layout(true);					
 					// show - label
 					labeledDataComposite.setVisible(true);
 					((GridData) labeledDataComposite.getLayoutData()).exclude = false;
 					labeledDataComposite.getParent().layout(true);	
+					parent.layout(true);
 					timeFrame.setEnabled(true);
 					cmbTimeFrames.setEnabled(true);
+					toolkit.paintBordersFor(form.getBody());
 				}
 			}
 
@@ -232,7 +254,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(trendType);
 		cmbTrendType = new Combo(trendingDataComposite, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbTrendType);
-		String trendTypes[] = {"Hot", "New", "Rising"};
 		cmbTrendType.setItems(trendTypes);
 		cmbTrendType.select(0);	
 	
@@ -247,7 +268,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(labelType);
 		cmbLabelType = new Combo(labeledDataComposite, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbLabelType);
-		String labelDataTypes[] = {"Top", "Controversial"};
 		cmbLabelType.setItems(labelDataTypes);
 		cmbLabelType.select(0);	
 		((GridData) labeledDataComposite.getLayoutData()).exclude = true; // hide this
@@ -286,7 +306,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(textLabel);
 		queryText = new Text(commonsearchComposite, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(queryText);	
-
+		queryText.setMessage("Search for \"text\" in url");
 		Label subredditLabel = new Label(commonsearchComposite, SWT.NONE);
 		subredditLabel.setText("Subreddit:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(subredditLabel);
@@ -294,30 +314,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		final TableViewer viewer = new TableViewer(commonsearchComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		final Table table = viewer.getTable();
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(table);
-		final ArrayList<String> content = new ArrayList<String>();
+		content = new ArrayList<String>();
 		viewer.setContentProvider(ArrayContentProvider.getInstance()); 
 		viewer.setInput(content);
 		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd_tree);
-		
-		/*TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(viewer, new DefaultCellFocusHighlighter(viewer));
-        ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(viewer) {
-            @Override
-			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-                return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
-                        || event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
-                        || (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR)
-                        || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
-            }
-        };
-
-        TableViewerEditor.create(viewer, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
-                | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-                | ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-        */
-		
+				
 		final TableEditor editor = new TableEditor(table);
-		
 		final int EDITABLECOLUMN = 0;
 		
 		table.addSelectionListener(new SelectionAdapter() {
@@ -370,6 +373,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			public void widgetSelected(SelectionEvent e) {
 				content.add("Enter subreddit name");
 				viewer.refresh();
+				table.setFocus();
+				viewer.getControl().setFocus();
 			}
 		});
 		
@@ -380,7 +385,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				Iterator it = selection.iterator();
+				Iterator<Object> it = selection.iterator();
 				while(it.hasNext()) {
 					 Object element = it.next();
 					 content.remove(element);
@@ -389,27 +394,39 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			}
 		});
 		
+		Label sortType = new Label(commonsearchComposite, SWT.NONE);
+		sortType.setText("Sort Links By:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(trendType);
+		cmbSortType = new Combo(commonsearchComposite, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbSortType);
+		cmbSortType.setItems(sortTypes);
+		cmbSortType.select(0);	
+	
 		Label titleLabel = new Label(searchComposite1, SWT.NONE);
 		titleLabel.setText("Title:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(titleLabel);
 		titleText = new Text(searchComposite1, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleText);
+		titleText.setMessage("Submission title e.g. cats");
 		Label authorLabel = new Label(searchComposite1, SWT.NONE);
 		authorLabel.setText("Author:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(authorLabel);
 		authorText = new Text(searchComposite1, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(authorText);
-
+		authorText.setMessage("User who submitted the post e.g. PresidentObama");
+		
 		Label urlLabel = new Label(searchComposite2, SWT.NONE);
 		urlLabel.setText("URL:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(urlLabel);
 		urlText = new Text(searchComposite2, SWT.BORDER);
+		urlText.setMessage("Submission's URL (the website's address) e.g. cats");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(urlText);	
 		Label linkLabel = new Label(searchComposite2, SWT.NONE);
 		linkLabel.setText("Link ID:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(linkLabel);
 		linkText = new Text(searchComposite2, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(linkText);			
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(linkText);	
+		linkText.setMessage("Link ID of the post e.g. 26kbuh");
 		
 		//common parameters
 		Composite commomParamsComposite = toolkit.createComposite(mainComposite);
@@ -427,11 +444,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(timeFrame);
 		cmbTimeFrames = new Combo(commonParamsGroup, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbTimeFrames);
-		String timeFrames[] = {"All time", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
 		cmbTimeFrames.setItems(timeFrames);
 		cmbTimeFrames.select(0);
-		timeFrame.setEnabled(false);
-		cmbTimeFrames.setEnabled(false);
+		//timeFrame.setEnabled(false);
+		//cmbTimeFrames.setEnabled(false);
 
 		Label numLinksLabel = new Label(commonParamsGroup, SWT.None);
 		numLinksLabel.setText("No.of.Links to Crawl:");
@@ -461,7 +477,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		limitComments.setSelection(true);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitComments);
 		TacitFormComposite.createEmptyRow(toolkit, commonParamsGroup);
-		//TacitFormComposite.createEmptyRow(toolkit, parent);
 	}
 		
 	/**
@@ -487,6 +502,35 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		
 	}
 
+	private boolean canItProceed() {
+		if(crawlSearchResultsButton.getSelection()) { // perform all validations
+			// check if any if the filter is set
+			String title = titleText.getText();
+			String author = authorText.getText();
+			String url = urlText.getText();
+			String linkId = linkText.getText();
+			String text = queryText.getText();
+			
+			if(title.isEmpty() && author.isEmpty() && url.isEmpty() && linkId.isEmpty() && content.size() == 0) {
+				if(text.isEmpty()) {
+					form.getMessageManager().addMessage("queryText", "Provide valid text to crawl", null, IMessageProvider.ERROR);
+					return false;
+				}
+			} 
+			form.getMessageManager().removeMessage("queryText");
+		}
+		
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
+		if (message != null) {
+			message = outputLayout.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("output", message, null,IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("output");
+		}
+		
+		return true;
+	}
 	
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
@@ -499,9 +543,79 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			public String getToolTipText() {
 				return "Crawl";
 			}
+			
+			String outputDir; String query; String title; String author; String url;
+			String linkId; String sortType; String trendType; String labelType; String timeFrame;			
+			int limit;
+			boolean search; boolean trendingData; boolean labeledData; boolean canProceed; boolean limitCmmts;
+			
 			@Override
 			public void run() {
-
+				final Job job = new Job("Reddit Crawler") {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						TacitFormComposite.setConsoleViewInFocus();
+						TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								search = crawlSearchResultsButton.getSelection();
+								trendingData = crawlTrendingDataButton.getSelection();
+								labeledData = crawlLabeledButton.getSelection();
+								if(search) {
+									query = queryText.getText();
+									title = titleText.getText();
+									author = authorText.getText();
+									url = urlText.getText();
+									linkId = linkText.getText();
+									sortType = sortTypes[cmbSortType.getSelectionIndex()].toLowerCase();
+									timeFrame = timeFrames[cmbTimeFrames.getSelectionIndex()].toLowerCase();
+								} else if(trendingData) {
+									trendType = trendTypes[cmbTrendType.getSelectionIndex()].toLowerCase();								
+								} else if(labeledData) {
+									labelType = labelDataTypes[cmbLabelType.getSelectionIndex()].toLowerCase();
+									timeFrame = timeFrames[cmbTimeFrames.getSelectionIndex()].toLowerCase();
+								}
+								limit = Integer.parseInt(numLinksText.getText());
+								limitCmmts = limitComments.getSelection();								
+								outputDir = outputLayout.getOutputLabel().getText();	
+							}
+						});
+						
+						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts, content); // initialize all the common parameters
+						if(search) {
+							try {
+								rc.search(query, title, author, url, linkId, timeFrame, sortType);
+							} catch (Exception e) {
+								return handleException(monitor, e, "Crawling failed. Provide valid data");
+							} 
+						} else if(trendingData) {
+							try {
+								rc.crawlTrendingData(trendType);
+							} catch (Exception e) {
+								return handleException(monitor, e, "Crawling failed. Provide valid data");
+							}
+						} else if(labeledData) {
+							try {
+								rc.crawlLabeledData(labelType, timeFrame);
+							} catch (Exception e) {
+								return handleException(monitor, e, "Crawling failed. Provide valid data");
+							}
+						}
+						
+						monitor.worked(100);
+						monitor.done();
+						ConsoleView.printlInConsoleln("Reddit crawler completed successfully.");
+						ConsoleView.printlInConsoleln("Done");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Reddit crawler completed successfully.", IStatus.OK, form);
+						return Status.OK_STATUS;
+					}
+				};
+				job.setUser(true);
+				canProceed = canItProceed();
+				if(canProceed) {
+					job.schedule(); // schedule the job
+				}				
 			}
 		});
 
@@ -533,4 +647,15 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 						"edu.usc.cssl.tacit.crawlers.senate.ui.senate");
 		form.getToolBarManager().update(true);
 	}
+
+	private IStatus handleException(IProgressMonitor monitor, Exception e, String message) {
+		monitor.done();
+		System.out.println(message);
+		e.printStackTrace();
+		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
+		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
+		return Status.CANCEL_STATUS;
+	}	
 }
+
+
