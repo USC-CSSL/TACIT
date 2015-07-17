@@ -146,7 +146,8 @@ public class TwitterCrawlerView extends ViewPart implements
 			public void run() {
 				TacitFormComposite.updateStatusMessage(getViewSite(), null,
 						null, form);
-
+				TacitFormComposite
+				.writeConsoleHeaderBegining("Crawling Twitter started ");
 				// Make sure input values are in valid state then launch
 				// streamer
 
@@ -194,6 +195,11 @@ public class TwitterCrawlerView extends ViewPart implements
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						TacitFormComposite
+						.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
+						TacitFormComposite.updateStatusMessage(
+								getViewSite(), "Crawling completed",
+								IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -492,7 +498,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		geoFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(geoFilterText);
-		geoFilterText.setMessage("For example: 5,4,3;6,4.2");
+		geoFilterText.setMessage("For example(Los Angeles): -118.442,33.72,-117.86,34.12");
 
 	}
 
