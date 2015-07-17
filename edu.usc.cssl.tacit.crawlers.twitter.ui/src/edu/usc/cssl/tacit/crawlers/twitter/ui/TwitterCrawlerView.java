@@ -84,6 +84,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("Twitter Crawler"); //$NON-NLS-1$
+		form.setImage(TwitterCrawlerImageRegistry.getImageIconFactory().getImage(ITwitterCrawlerUIConstants.IMAGE_CRAWL_TWITTER));
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 
 		Section section = toolkit.createSection(form.getBody(),
