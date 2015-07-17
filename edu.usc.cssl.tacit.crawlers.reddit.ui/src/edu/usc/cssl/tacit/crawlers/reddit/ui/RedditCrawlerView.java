@@ -1,15 +1,24 @@
 package edu.usc.cssl.tacit.crawlers.reddit.ui;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -18,12 +27,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -35,7 +44,7 @@ import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.IRedditCrawlerViewConstants;
 import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.RedditCrawlerViewImageRegistry;
 
-public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewConstants{
+public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewConstants {
 
 	public static String ID = "edu.usc.cssl.tacit.crawlers.reddit.ui.redditview";
 	
@@ -44,49 +53,32 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private FormToolkit toolkit;
 
 	private Button crawlLabeledButton;
-
 	private Button crawlSearchResultsButton;
 	private OutputLayoutData outputLayout;
-
 	private Combo cmbTrendType;
-
 	private Combo cmbLabelType;
-
 	private Combo cmbTimeFrames;
-
 	private Text numLinksText;
-
 	private Button limitComments;
-
 	private Composite labeledDataComposite;
-
 	private Composite trendingDataComposite;
-
 	private Label timeFrame;
-
 	private Composite searchComposite;
-
 	private Text titleText;
-
 	private Text authorText;
-
 	private Text urlText;
-
 	private Composite searchComposite1;
-
 	private Composite searchComposite2;
-
 	private Text linkText;
-
 	private Text queryText;
-
 	private Composite commonsearchComposite;
-
 	private Table subredditTable;
-
 	private Button addSubredditBtn;
-
 	private Button removeSubredditBtn;
+	
+	String subredditText;
+	int redditCount = 1;
+	String oldSubredditText;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -116,7 +108,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	}
 	
 	private void createCrawlInputParameters(final FormToolkit toolkit, final Composite parent) {
-				
+		
 		Group buttonComposite = new Group(parent, SWT.LEFT);
 		buttonComposite.setText("Crawl");
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -299,17 +291,69 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		subredditLabel.setText("Subreddit:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(subredditLabel);
 		
-		final Tree subreddits = new Tree(commonsearchComposite, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(subreddits);
-		//GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 0);
-		//subreddits.setLayoutData(gd_tree);
-		TreeItem trainingItem = new TreeItem(subreddits, SWT.NONE);
-		trainingItem.setText("Train");
-		trainingItem.setData("Train");
-		trainingItem.setImage(RedditCrawlerViewImageRegistry.getImageIconFactory().getImage(IMAGE_REDDIT_OBJ));
-		TreeItem dummy= new TreeItem(trainingItem, SWT.NONE);
-		dummy.setText("Test");
+		final TableViewer viewer = new TableViewer(commonsearchComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		final Table table = viewer.getTable();
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(table);
+		final ArrayList<String> content = new ArrayList<String>();
+		viewer.setContentProvider(ArrayContentProvider.getInstance()); 
+		viewer.setInput(content);
+		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		viewer.getControl().setLayoutData(gd_tree);
+		
+		/*TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(viewer, new DefaultCellFocusHighlighter(viewer));
+        ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(viewer) {
+            @Override
+			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+                return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
+                        || event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
+                        || (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR)
+                        || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
+            }
+        };
 
+        TableViewerEditor.create(viewer, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
+                | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+                | ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
+        */
+		
+		final TableEditor editor = new TableEditor(table);
+		
+		final int EDITABLECOLUMN = 0;
+		
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// Clean up any previous editor control
+				Control oldEditor = editor.getEditor();
+				if (oldEditor != null) oldEditor.dispose();
+		
+				// Identify the selected row
+				TableItem item = (TableItem) e.item;
+				if (item == null) return;
+				
+				// The control that will be the editor must be a child of the Table
+				Text newEditor = new Text(table, SWT.NONE);
+				newEditor.setText(item.getText(EDITABLECOLUMN));
+				oldSubredditText = item.getText(EDITABLECOLUMN);				
+				subredditText = oldSubredditText;
+				
+				newEditor.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent me) {
+						Text text = (Text)editor.getEditor();
+						subredditText = text.getText();
+						content.remove(oldSubredditText);
+						content.add(subredditText);	
+						oldSubredditText = subredditText;
+						editor.getItem().setText(EDITABLECOLUMN, text.getText());
+					}
+				});
+				newEditor.selectAll();
+				newEditor.setFocus();
+				editor.setEditor(newEditor, item, EDITABLECOLUMN);
+			}
+		});
+		
 		Composite buttonComp = new Composite(commonsearchComposite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).applyTo(buttonComp);
 		GridLayout btnLayout = new GridLayout();
@@ -317,23 +361,31 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		btnLayout.makeColumnsEqualWidth = false;
 		buttonComp.setLayout(btnLayout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
+					
 		addSubredditBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
 		addSubredditBtn.setText("Add...");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSubredditBtn);
 		addSubredditBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//handleAdd(addSubredditBtn.getShell());
+				content.add("Enter subreddit name");
+				viewer.refresh();
 			}
 		});
-
+		
 		removeSubredditBtn = new Button(buttonComp, SWT.PUSH);
 		removeSubredditBtn.setText("Remove...");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSubredditBtn);
 		removeSubredditBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				Iterator it = selection.iterator();
+				while(it.hasNext()) {
+					 Object element = it.next();
+					 content.remove(element);
+				}
+				viewer.refresh();
 			}
 		});
 		

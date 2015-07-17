@@ -29,7 +29,7 @@ public class RedditCrawlerViewImageRegistry {
 		imgReg.put(IRedditCrawlerViewConstants.IMAGE_REDDIT_OBJ,
 				ImageDescriptor.createFromFile(
 						RedditCrawlerViewImageRegistry.class,
-						"/icons/reddit.gif"));
+						"/icons/reddit.png"));
 	}
 
 	public static RedditCrawlerViewImageRegistry getImageIconFactory() {
