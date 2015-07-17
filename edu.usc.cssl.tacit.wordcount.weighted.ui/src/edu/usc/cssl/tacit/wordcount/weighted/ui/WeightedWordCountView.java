@@ -313,7 +313,7 @@ public class WeightedWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(spssRawFile);
 		wordDistributionFile = toolkit.createButton(output,
-				"Create Category-wise Word Distribution Files", SWT.CHECK);
+				"Create category-wise word distribution files", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(wordDistributionFile);
 	}

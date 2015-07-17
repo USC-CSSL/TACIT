@@ -365,7 +365,7 @@ public class StandardWordCountView extends ViewPart implements
 	@Override
 	public String getPartName() {
 		// TODO Auto-generated method stub
-		return "Standard Word Count";
+		return "TACIT Word Count";
 	}
 
 	@Override

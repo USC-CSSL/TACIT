@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Standard Word Count
+Bundle-Name: TACIT Word Count
 Bundle-SymbolicName: edu.usc.cssl.tacit.wordcount.standard
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.wordcount.standard.Activator

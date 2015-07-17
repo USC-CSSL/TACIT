@@ -87,10 +87,9 @@ public class WordCountPlugin {
 		// Create folder for word distribution files
 		if (doWordDistribution) {
 			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
-			String wordDistributionDir = outputPath
+			wordDistributionDir = outputPath
 					+ System.getProperty("file.separator")
 					+ "TACIT-word-distribution-" + df.format(dateObj);
-			this.wordDistributionDir = wordDistributionDir;
 		}
 	}
 

@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Standard Word Count"
+            name="TACIT Word Count"
             class="edu.usc.cssl.tacit.wordcount.standard.ui.StandardWordCountView"
             id="edu.usc.cssl.tacit.wordcount.standard.ui.view1">
       </view>
@@ -18,8 +18,8 @@
             locationURI="menu:wordcount">
              <command
                    commandId="usc.edu.cssl.wordcount.standard.view.command1"
-                   label="Standard  Word Count"
-                   tooltip="Standard Word Count">
+                   label="TACIT Word Count"
+                   tooltip="TACIT Word Count">
             </command>
       </menuContribution>
    </extension>
