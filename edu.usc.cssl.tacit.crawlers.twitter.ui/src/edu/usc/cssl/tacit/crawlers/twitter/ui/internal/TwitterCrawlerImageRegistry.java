@@ -18,7 +18,7 @@ public class TwitterCrawlerImageRegistry {
 				.createFromFile(TwitterCrawlerImageRegistry.class, "/icons/lrun_obj.gif"));
 		ir.put(ITwitterCrawlerUIConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(TwitterCrawlerImageRegistry.class, "/icons/help_contents.gif"));
-		ir.put(ITwitterCrawlerUIConstants.IMAGE_HELP_CO, ImageDescriptor
+		ir.put(ITwitterCrawlerUIConstants.IMAGE_CRAWL_TWITTER, ImageDescriptor
 				.createFromFile(TwitterCrawlerImageRegistry.class, "/icons/twitter.gif"));
 	}
 

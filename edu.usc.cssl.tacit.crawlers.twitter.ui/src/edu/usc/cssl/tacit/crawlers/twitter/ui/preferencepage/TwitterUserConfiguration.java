@@ -59,7 +59,8 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
 		userName = createTextFields(sectionClient, false, "User Name :");
-
+		userName.setEnabled(false);
+		userName.setEditable(false);
 		consumerKey = createTextFields(sectionClient, true, "Consumer Key :");
 
 		consumerSecret = createTextFields(sectionClient, true,

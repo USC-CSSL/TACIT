@@ -72,7 +72,6 @@ public class TwitterCrawlerView extends ViewPart implements
 	private boolean noLocationFilter;
 	private boolean[] storedAtts;
 
-
 	private String keyWords[];
 	private double[][] geoLocations;
 
@@ -198,7 +197,6 @@ public class TwitterCrawlerView extends ViewPart implements
 						return Status.OK_STATUS;
 					}
 				};
-				job.setUser(true);
 				if (canProceedCrawl())
 					job.schedule();
 			}
@@ -305,8 +303,8 @@ public class TwitterCrawlerView extends ViewPart implements
 		long hourLimit;
 		long minLimit;
 		boolean validGeoFilter = true;
-		 boolean validLimitParse = true;
-		 boolean validLimitState = false;
+		boolean validLimitParse = true;
+		boolean validLimitState = false;
 		// check limit tab attributes validity
 		if (limitRecords.getSelection()) {
 			try {
@@ -551,7 +549,6 @@ public class TwitterCrawlerView extends ViewPart implements
 		hourText = toolkit.createText(maxClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(hourText);
-
 		final Label minLbl = new Label(maxClient, SWT.NONE);
 		minLbl.setText("Minutes :");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
@@ -561,6 +558,12 @@ public class TwitterCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(minText);
 
+		dayText.setEnabled(false);
+		dayText.setEditable(false);
+		hourText.setEnabled(false);
+		hourText.setEditable(false);
+		minText.setEnabled(false);
+		minText.setEditable(false);
 		// MAX Tweet area
 
 		maxLimit = new Button(maxClient, SWT.CHECK);
@@ -571,10 +574,11 @@ public class TwitterCrawlerView extends ViewPart implements
 		maxText = toolkit.createText(maxClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(5, 0)
 				.applyTo(maxText);
-
+		maxLimit.setSelection(true);
+		maxText.setText("10");
 		limitRecords.addSelectionListener(new SelectionAdapter() {
 
-			@Override
+			@Override	
 			public void widgetSelected(SelectionEvent e) {
 				if (limitRecords.getSelection()) {
 					dayText.setEnabled(true);
@@ -644,6 +648,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		userNameBtn.setText("User Name");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(userNameBtn);
+		userNameBtn.setSelection(true);
 
 		geoLocBtn = new Button(sectionClient, SWT.CHECK);
 		geoLocBtn.setText("Geo Location");
@@ -659,6 +664,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		textBtn.setText("Text");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(textBtn);
+		textBtn.setSelection(true);
 
 		createdBtn = new Button(sectionClient, SWT.CHECK);
 		createdBtn.setText("Created at");
@@ -681,7 +687,5 @@ public class TwitterCrawlerView extends ViewPart implements
 				.applyTo(favBtn);
 
 	}
-	
-	
 
 }
