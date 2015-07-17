@@ -46,7 +46,10 @@ public class WordCountPlugin {
 	private boolean weighted;
 	private boolean stemDictionary;
 	private boolean doPennCounts;
+	private boolean doWordDistribution;
 	private Date dateObj;
+	private String outputPath;
+	private String wordDistributionDir;
 
 	PorterStemmer stemmer = new PorterStemmer();
 
@@ -72,15 +75,28 @@ public class WordCountPlugin {
 	private int numSentences = 0;
 
 	public WordCountPlugin(boolean weighted, Date dateObj,
-			boolean stemDictionary, boolean doPennCounts) {
+			boolean stemDictionary, boolean doPennCounts,
+			boolean doWordDistribution, String outputPath) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 		this.stemDictionary = stemDictionary;
 		this.doPennCounts = doPennCounts;
+		this.doWordDistribution = doWordDistribution;
+		this.outputPath = outputPath;
+
+		// Create folder for word distribution files
+		if (doWordDistribution) {
+			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+			String wordDistributionDir = outputPath
+					+ System.getProperty("file.separator")
+					+ "TACIT-word-distribution-" + df.format(dateObj);
+			this.wordDistributionDir = wordDistributionDir;
+			if (!(new File(wordDistributionDir).exists()))
+				new File(wordDistributionDir).mkdir();
+		}
 	}
 
-	public void countWords(List<String> inputFiles,
-			List<String> dictionaryFiles, String outputPath) {
+	public void countWords(List<String> inputFiles, List<String> dictionaryFiles) {
 
 		ConsoleView.printlInConsoleln("Loading models.");
 		if (!setModels())
@@ -97,14 +113,16 @@ public class WordCountPlugin {
 
 		ConsoleView.printlInConsoleln("Counting Words.");
 		for (String iFile : inputFiles) {
-			do_countWords(iFile, outputPath);
+			do_countWords(iFile);
+			if (doWordDistribution)
+				createWordDistribution(iFile);
 			refreshFileCounts();
 		}
 
 		ConsoleView.printlInConsoleln("Writing Results.");
 		// Add overall counts to csv output
-		addToCSV("Overall Counts", outputPath, this.numWords,
-				this.numSentences, this.numDictWords, true);
+		addToCSV("Overall Counts", this.numWords, this.numSentences,
+				this.numDictWords, true);
 		closeWriters();
 
 		if (weighted)
@@ -114,6 +132,94 @@ public class WordCountPlugin {
 			TacitUtility.createRunReport(outputPath,
 					"TACIT Standard Word Count", dateObj);
 		return;
+	}
+
+	private void createWordDistribution(String inputFile) {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+					wordDistributionDir
+							+ System.getProperty("file.separator")
+							+ inputFile.substring(inputFile.lastIndexOf(System
+									.getProperty("file.separator")) + 1)
+							+ "_word_distribution.csv")));
+
+			List<Integer> keyList = new ArrayList<Integer>();
+			keyList.addAll(categoryID.keySet());
+			Collections.sort(keyList);
+
+			HashMap<Integer, Double> categoryCount = new HashMap<Integer, Double>();
+
+			for (Integer category : keyList) {
+				categoryCount.put(category, 0.0);
+			}
+
+			// Add category headers
+			StringBuilder toWrite = new StringBuilder();
+			toWrite.append("Word,Count,");
+			for (int i = 0; i < keyList.size(); i++) {
+				toWrite.append(categoryID.get(keyList.get(i)) + ",");
+			}
+			bw.write(toWrite.toString());
+			bw.newLine();
+
+			List<String> dictWords = new ArrayList<String>();
+			dictWords.addAll(userFileCount.keySet());
+
+			// Find the overall weight of all the categories
+			for (String word : dictWords) {
+				List<Integer> wordCats = new ArrayList<Integer>();
+				wordCats.addAll(userFileCount.get(word).keySet());
+
+				for (Integer cat : wordCats) {
+					categoryCount.put(cat, categoryCount.get(cat)
+							+ userFileCount.get(word).get(cat));
+				}
+			}
+
+			for (String word : dictWords) {
+				toWrite = new StringBuilder();
+				toWrite.append(word + ",");
+
+				List<Integer> wordCats = new ArrayList<Integer>();
+				wordCats.addAll(userFileCount.get(word).keySet());
+
+				// All the complex logic below is to find the count of individual word.
+				// Accept it that the code works unless you change the data structures
+				// for storing the counts - Anurag Singh (7/17/2015)
+				if (wordCats.isEmpty())
+					toWrite.append("0,");
+				else {
+					int wordCount = 0;
+					for (int category : wordCats) {
+						if (userFileCount.get(word).get(category) != 0.0) {
+							wordCount = (int) (userFileCount.get(word).get(
+									wordCats.get(0)) / wordDictionary.get(word)
+									.get(wordCats.get(0)));
+							break;
+						}
+					}
+					toWrite.append(wordCount+",");
+				}
+				
+				for (Integer cat : keyList){
+					if (userFileCount.get(word).containsKey(cat)) {
+						double catContribution = 100*userFileCount.get(word).get(cat)/categoryCount.get(cat);
+						if(catContribution != 0.0) toWrite.append(catContribution+",");
+						else toWrite.append("0,");
+					} else {
+						toWrite.append("0,");
+					}
+				}
+				
+				bw.write(toWrite.toString());
+				bw.newLine();
+			}
+
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -141,10 +247,8 @@ public class WordCountPlugin {
 	 * 
 	 * @param inputFile
 	 *            Path of input text file
-	 * @param outputPath
-	 *            Output directory path
 	 */
-	private void do_countWords(String inputFile, String outputPath) {
+	private void do_countWords(String inputFile) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					inputFile)));
@@ -213,8 +317,7 @@ public class WordCountPlugin {
 				}
 			}
 			br.close();
-			addToCSV(inputFile, outputPath, numWords, numSentences,
-					numDictWords, false);
+			addToCSV(inputFile, numWords, numSentences, numDictWords, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -225,8 +328,6 @@ public class WordCountPlugin {
 	 * 
 	 * @param inputFile
 	 *            File foe word counts
-	 * @param outputPath
-	 *            Output directory path
 	 * @param numWords
 	 *            Total number of words in input file
 	 * @param numSentences
@@ -236,8 +337,8 @@ public class WordCountPlugin {
 	 * @param isOverall
 	 *            Flag to tell if the counts are for file or Overall
 	 */
-	private void addToCSV(String inputFile, String outputPath, int numWords,
-			int numSentences, int numDictWords, boolean isOverall) {
+	private void addToCSV(String inputFile, int numWords, int numSentences,
+			int numDictWords, boolean isOverall) {
 		try {
 
 			// Set up result CSV file when calling this function the first time
@@ -340,7 +441,7 @@ public class WordCountPlugin {
 			// Note: We are not considering words that are not part of the
 			// dictionary even while counting Penn Treebank POS tags.
 			if (doPennCounts)
-				addPennToCSV(inputFile, outputPath, isOverall);
+				addPennToCSV(inputFile, isOverall);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -354,15 +455,13 @@ public class WordCountPlugin {
 	 * 
 	 * @param inputFile
 	 *            File for counting words
-	 * @param outputPath
-	 *            Output directory of path
 	 * @param isOverall
 	 *            Flag to tell if the counts are for file or Overall
 	 * @throws IOException
 	 *             addToCSV handles the IOException so no need to handle here
 	 */
-	private void addPennToCSV(String inputFile, String outputPath,
-			boolean isOverall) throws IOException {
+	private void addPennToCSV(String inputFile, boolean isOverall)
+			throws IOException {
 
 		String pennPosTags = "CC,CD,DT,EX,FW,IN,JJ,JJR,JJS,LS,MD,NN,"
 				+ "NNS,NNP,NNPS,PDT,POS,PRP,PRP$,RB,RBR,RBS,RP,SYM,TO,"

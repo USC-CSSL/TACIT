@@ -1,6 +1,5 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -16,9 +15,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,8 +34,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
-import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -61,6 +55,7 @@ public class StandardWordCountView extends ViewPart implements
 	private Button standardWordCountButton;
 	private Button weightedWordCountButton;
 	private Button defaultTags;
+	private Button wordDistribution;
 	protected Job wordCountJob;
 
 	@Override
@@ -142,6 +137,10 @@ public class StandardWordCountView extends ViewPart implements
 				"Create output for default tags", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(defaultTags);
+		wordDistribution = toolkit.createButton(output,
+				"Create category-wise word distribution files", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(wordDistribution);
 	}
 
 	private void createPreprocessLink(Composite client) {
@@ -263,9 +262,11 @@ public class StandardWordCountView extends ViewPart implements
 						.getSelectedFiles();
 				final boolean isStemDic = stemEnabled.getSelection();
 				final boolean doPennCounts = defaultTags.getSelection();
+				final boolean doWordDistribution = wordDistribution
+						.getSelection();
 				Date dateObj = new Date();
 				final WordCountPlugin wc = new WordCountPlugin(false, dateObj,
-						isStemDic, doPennCounts);
+						isStemDic, doPennCounts, doWordDistribution, outputPath);
 
 				// Creating a new Job to do Word Count so that the UI will not
 				// freeze
@@ -276,8 +277,7 @@ public class StandardWordCountView extends ViewPart implements
 								"", null, form);
 
 						try {
-							wc.countWords(inputFiles, dictionaryFiles,
-									outputPath);
+							wc.countWords(inputFiles, dictionaryFiles);
 						} catch (Exception ioe) {
 							ioe.printStackTrace();
 							return Status.CANCEL_STATUS;
