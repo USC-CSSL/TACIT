@@ -341,7 +341,7 @@ public class TwitterCrawlerView extends ViewPart implements
 
 		// check geofilter string validity
 		String geoWords[] = geoFilterText.getText().split(";");
-		geoLocations = new double[geoWords.length][2];
+		geoLocations = new double[geoWords.length * 2][2];
 		if ((geoWords.length % 2 == 1) && (geoWords.length != 1)) // check
 																	// valid
 																	// number
@@ -350,19 +350,21 @@ public class TwitterCrawlerView extends ViewPart implements
 			validGeoFilter = false;
 		else {
 			for (int i = 0; i < geoWords.length
-					&& !geoFilterText.getText().isEmpty(); i++) {
+					&& !geoFilterText.getText().isEmpty(); i+=2) {
 				String geoTemp[] = geoWords[i].split(",");
-				if (geoTemp.length != 2) // check if there are only two
+				if (geoTemp.length != 4) // check if there are only two
 											// values in the pair
 					validGeoFilter = false;
 				else {
-					if (geoTemp[0].isEmpty() || geoTemp[1].isEmpty())
+					if (geoTemp[0].isEmpty() || geoTemp[1].isEmpty() || geoTemp[2].isEmpty() || geoTemp[3].isEmpty())
 						validGeoFilter = false; // check if there is
 												// something to be read
 					else {
 						try { // check if there is a valid number
 							geoLocations[i][0] = Double.parseDouble(geoTemp[0]);
 							geoLocations[i][1] = Double.parseDouble(geoTemp[1]);
+							geoLocations[i+1][0] = Double.parseDouble(geoTemp[2]);
+							geoLocations[i+1][1] = Double.parseDouble(geoTemp[3]);
 						} catch (NumberFormatException e2) {
 							validGeoFilter = false;
 						}
@@ -456,7 +458,7 @@ public class TwitterCrawlerView extends ViewPart implements
 				.applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
 		section.setText("Filter Settings "); //$NON-NLS-1$
-		section.setDescription("Choose values for Filter");
+		section.setDescription("Choose values for Filter; Use Semicolon as delimeter to give more than one filter value in field");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -482,6 +484,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		wordFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(wordFilterText);
+		wordFilterText.setMessage("For example: NLP;#USC");
 		final Label geoFilterLbl = toolkit.createLabel(sectionClient,
 				"Geo Filter", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
@@ -489,6 +492,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		geoFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(geoFilterText);
+		geoFilterText.setMessage("For example: 5,4,3;6,4.2");
 
 	}
 
