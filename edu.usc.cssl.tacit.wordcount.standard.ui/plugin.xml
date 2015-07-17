@@ -28,7 +28,7 @@
          point="org.eclipse.ui.commands">
       <command
             id="usc.edu.cssl.wordcount.standard.view.command1"
-            name="Standard Word Count">
+            name="TACIT Word Count">
       </command>
    </extension>
    <extension

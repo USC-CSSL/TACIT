@@ -16,12 +16,19 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -51,6 +58,9 @@ public class StandardWordCountView extends ViewPart implements
 	private TableLayoutData dictLayoutData;
 	private Button stemEnabled;
 	private Button stopWordPathEnabled;
+	private Button standardWordCountButton;
+	private Button weightedWordCountButton;
+	private Button defaultTags;
 	protected Job wordCountJob;
 
 	@Override
@@ -73,6 +83,14 @@ public class StandardWordCountView extends ViewPart implements
 
 		TacitFormComposite.createEmptyRow(toolkit, sc);
 
+		Composite wcTypeComposite = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(wcTypeComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+				.applyTo(wcTypeComposite);
+		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
+		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
+
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
 				.applyTo(client);
@@ -80,12 +98,29 @@ public class StandardWordCountView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		inputLayoutData = TacitFormComposite.createTableSection(client,
-				toolkit, layout, "Input",
-				"Add File(s) and Folder(s) to include in analysis.", true, true);
-		dictLayoutData = TacitFormComposite.createTableSection(client,
-				toolkit, layout, "Dictionary", "Add location of Dictionary",
-				false, true);
+		inputLayoutData = TacitFormComposite
+				.createTableSection(client, toolkit, layout, "Input",
+						"Add File(s) and Folder(s) to include in analysis.",
+						true, true);
+		dictLayoutData = TacitFormComposite
+				.createTableSection(client, toolkit, layout, "Dictionary",
+						"Add location of Dictionary", false, true);
+
+		Composite compInput = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
+				.applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(compInput);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+
+		createPreprocessLink(compInput);
+
+		createStemmingOptions(compInput);
+
+		createAdditionalOptions(toolkit, form.getBody());
+
+		TacitFormComposite.createEmptyRow(toolkit, form.getBody());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -93,15 +128,8 @@ public class StandardWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		// we dont need stop word's as it will be taken from the preprocessor
-		// settings
-
-		createStemmingOptions(form.getBody());
-
-		createStopWordPathLink(form.getBody());
-
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				client1, form.getMessageManager());
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
@@ -109,25 +137,14 @@ public class StandardWordCountView extends ViewPart implements
 
 	}
 
-	private void createStemmingOptions(Composite body) {
-
-		stemEnabled = toolkit.createButton(body, "Stem Dictionary", SWT.CHECK);
-
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
-				.applyTo(stemEnabled);
-
-	}
-	
-	@Override
-	public Object getAdapter(Class adapter) {
-		if (adapter == Job.class) {
-			return wordCountJob;
-		}
-		return super.getAdapter(adapter);
+	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
+		defaultTags = toolkit.createButton(output,
+				"Create output for default tags", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(defaultTags);
 	}
 
-
-	private void createStopWordPathLink(Composite client) {
+	private void createPreprocessLink(Composite client) {
 
 		Composite clientLink = toolkit.createComposite(client);
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
@@ -136,18 +153,23 @@ public class StandardWordCountView extends ViewPart implements
 				.applyTo(clientLink);
 
 		stopWordPathEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
+		stopWordPathEnabled.setEnabled(false);
+		stopWordPathEnabled.setSelection(false);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(stopWordPathEnabled);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
-				"Stop Words Location", SWT.NONE);
+				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -159,12 +181,60 @@ public class StandardWordCountView extends ViewPart implements
 
 	}
 
+	private void createWordCountType(FormToolkit toolkit2, Composite parent,
+			IMessageManager messageManager) {
+
+		Group buttonComposite = new Group(parent, SWT.LEFT);
+		buttonComposite.setText("Word Count Technique");
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		buttonComposite.setLayout(layout);
+		buttonComposite.setForeground(parent.getForeground());
+
+		standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		standardWordCountButton.setText("Standard Word Count");
+		standardWordCountButton.setSelection(true);
+		standardWordCountButton.setForeground(parent.getForeground());
+
+		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		weightedWordCountButton.setText("Weighted Word Count");
+		weightedWordCountButton.setSelection(false);
+		weightedWordCountButton.setForeground(parent.getForeground());
+
+		Label lblEmpty = new Label(buttonComposite, SWT.None);
+		TacitFormComposite.createEmptyRow(toolkit, parent);
+
+	}
+
+	private void createStemmingOptions(Composite body) {
+		Composite downloadGroup = toolkit.createComposite(body, SWT.NONE);
+		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		downloadGroup.setLayout(layout);
+
+		stemEnabled = toolkit.createButton(downloadGroup, "Stem Dictionary",
+				SWT.CHECK);
+		stemEnabled.pack();
+		stemEnabled.setEnabled(true);
+
+	}
+
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter == Job.class) {
+			return wordCountJob;
+		}
+		return super.getAdapter(adapter);
+	}
+
 	private FormToolkit createFormBodySection(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("Standard Word Count"); //$NON-NLS-1$
+		form.setText("TACIT Word Count"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
 				.applyTo(form.getBody());
 		return toolkit;
@@ -185,53 +255,45 @@ public class StandardWordCountView extends ViewPart implements
 			}
 
 			public void run() {
-				final String stopWordPath = CommonUiActivator.getDefault()
-						.getPreferenceStore()
-						.getString(IPreprocessorSettingsConstant.STOP_PATH);
-				TacitFormComposite
-				.writeConsoleHeaderBegining("Word Count ");
+				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
-				String fileName = "standard_wordcount";
-				
-				final File oFile = new File(outputPath + File.separator
-						+ fileName + ".csv");
-				final File sFile = new File(outputPath + File.separator
-						+ fileName + ".dat");
-
 				final List<String> inputFiles = inputLayoutData
 						.getSelectedFiles();
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles();
 				final boolean isStemDic = stemEnabled.getSelection();
+				final boolean doPennCounts = defaultTags.getSelection();
 				Date dateObj = new Date();
-				final WordCountPlugin wc = new WordCountPlugin(false,dateObj,false);
-				
-				// Creating a new Job to do Word Count so that the UI will not freeze
-				 wordCountJob = new Job("Word Count Plugin Job"){
-					protected IStatus run(IProgressMonitor monitor){ 
+				final WordCountPlugin wc = new WordCountPlugin(false, dateObj,
+						isStemDic, doPennCounts);
+
+				// Creating a new Job to do Word Count so that the UI will not
+				// freeze
+				wordCountJob = new Job("Word Count Plugin Job") {
+					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), "", null, form);
-						
-						int rc = -1;
-				
-				try {
-						//Niki Change here
-						wc.countWords(inputFiles,dictionaryFiles,outputPath,true);
-					//rc=wc.invokeWordCount(inputFiles, dictionaryFiles, stopWordPath, outputPath, isStemDic);
-				} catch (Exception ioe) {
-					ioe.printStackTrace();
-					return Status.CANCEL_STATUS;
-				}
-				TacitFormComposite.updateStatusMessage(getViewSite(), "Word count analysis completed", IStatus.OK, form);
-				TacitFormComposite
-				.writeConsoleHeaderBegining("<terminated> Word count analysis");
-				return Status.OK_STATUS;
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								"", null, form);
+
+						try {
+							wc.countWords(inputFiles, dictionaryFiles,
+									outputPath);
+						} catch (Exception ioe) {
+							ioe.printStackTrace();
+							return Status.CANCEL_STATUS;
+						}
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								"Word count analysis completed", IStatus.OK,
+								form);
+						TacitFormComposite
+								.writeConsoleHeaderBegining("<terminated> Word count analysis");
+						return Status.OK_STATUS;
 					}
 				};
 				wordCountJob.setUser(true);
-				 if (true) {
-				 wordCountJob.schedule();
-				 }
+				if (canProceed()) {
+					wordCountJob.schedule();
+				}
 			};
 		});
 		Action helpAction = new Action() {
@@ -270,7 +332,7 @@ public class StandardWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
-		TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");

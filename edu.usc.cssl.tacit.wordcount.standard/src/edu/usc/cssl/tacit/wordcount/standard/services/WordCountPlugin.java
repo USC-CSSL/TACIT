@@ -45,6 +45,7 @@ public class WordCountPlugin {
 
 	private boolean weighted;
 	private boolean stemDictionary;
+	private boolean doPennCounts;
 	private Date dateObj;
 
 	PorterStemmer stemmer = new PorterStemmer();
@@ -65,16 +66,21 @@ public class WordCountPlugin {
 	private BufferedWriter resultCSVbw = null;
 	private BufferedWriter pennCSVbw = null;
 
+	// Variables to compute the overall counts
+	private int numWords = 0;
+	private int numDictWords = 0;
+	private int numSentences = 0;
+
 	public WordCountPlugin(boolean weighted, Date dateObj,
-			boolean stemDictionary) {
+			boolean stemDictionary, boolean doPennCounts) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 		this.stemDictionary = stemDictionary;
+		this.doPennCounts = doPennCounts;
 	}
 
 	public void countWords(List<String> inputFiles,
-			List<String> dictionaryFiles, String outputPath,
-			Boolean doPennCounts) {
+			List<String> dictionaryFiles, String outputPath) {
 
 		ConsoleView.printlInConsoleln("Loading models.");
 		if (!setModels())
@@ -91,11 +97,14 @@ public class WordCountPlugin {
 
 		ConsoleView.printlInConsoleln("Counting Words.");
 		for (String iFile : inputFiles) {
-			do_countWords(iFile, outputPath, doPennCounts);
+			do_countWords(iFile, outputPath);
 			refreshFileCounts();
 		}
 
 		ConsoleView.printlInConsoleln("Writing Results.");
+		// Add overall counts to csv output
+		addToCSV("Overall Counts", outputPath, this.numWords,
+				this.numSentences, this.numDictWords, true);
 		closeWriters();
 
 		if (weighted)
@@ -126,8 +135,16 @@ public class WordCountPlugin {
 			}
 	}
 
-	private void do_countWords(String inputFile, String outputPath,
-			boolean doPennCounts) {
+	/**
+	 * Count the words for the given file and adds a line in the result CSV
+	 * corresponding to the file
+	 * 
+	 * @param inputFile
+	 *            Path of input text file
+	 * @param outputPath
+	 *            Output directory path
+	 */
+	private void do_countWords(String inputFile, String outputPath) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					inputFile)));
@@ -139,15 +156,18 @@ public class WordCountPlugin {
 			while ((currentLine = br.readLine()) != null) {
 				String[] sentences = sentDetector.sentDetect(currentLine);
 				numSentences = numSentences + sentences.length;
+				this.numSentences = this.numSentences + sentences.length;
 
 				for (int i = 0; i < sentences.length; i++) {
 					String[] words = tokenize.tokenize(sentences[i]);
 					String[] posTags = posTagger.tag(words);
 					numWords = numWords + words.length;
+					this.numWords = this.numWords + words.length;
 
 					for (int j = 0; j < words.length; j++) {
 						if (wordDictionary.containsKey(words[j])) {
 							numDictWords++;
+							this.numDictWords++;
 
 							// Increment count for all user defined categories
 							Set<Integer> wordCategories = wordDictionary.get(
@@ -194,15 +214,30 @@ public class WordCountPlugin {
 			}
 			br.close();
 			addToCSV(inputFile, outputPath, numWords, numSentences,
-					numDictWords, false, doPennCounts);
+					numDictWords, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Add a line to CSV with the counts for the given input file
+	 * 
+	 * @param inputFile
+	 *            File foe word counts
+	 * @param outputPath
+	 *            Output directory path
+	 * @param numWords
+	 *            Total number of words in input file
+	 * @param numSentences
+	 *            Total number of sentences in input file
+	 * @param numDictWords
+	 *            Total number of dictionary words in input file
+	 * @param isOverall
+	 *            Flag to tell if the counts are for file or Overall
+	 */
 	private void addToCSV(String inputFile, String outputPath, int numWords,
-			int numSentences, int numDictWords, boolean isOverall,
-			boolean doPennCounts) {
+			int numSentences, int numDictWords, boolean isOverall) {
 		try {
 
 			// Set up result CSV file when calling this function the first time
@@ -250,19 +285,37 @@ public class WordCountPlugin {
 			}
 
 			List<String> dictWords = new ArrayList<String>();
-			dictWords.addAll(userFileCount.keySet());
+			if (isOverall)
+				dictWords.addAll(userOverallCount.keySet());
+			else
+				dictWords.addAll(userFileCount.keySet());
 
 			// Find sum of all categories
-			for (String word : dictWords) {
-				List<Integer> wordCats = new ArrayList<Integer>();
-				wordCats.addAll(userFileCount.get(word).keySet());
+			if (isOverall) {
+				for (String word : dictWords) {
+					List<Integer> wordCats = new ArrayList<Integer>();
+					wordCats.addAll(userOverallCount.get(word).keySet());
 
-				for (Integer cat : wordCats) {
-					categoryCount.put(cat, categoryCount.get(cat)
-							+ userFileCount.get(word).get(cat));
+					for (Integer cat : wordCats) {
+						categoryCount.put(cat, categoryCount.get(cat)
+								+ userOverallCount.get(word).get(cat));
 
-					totalWeight = totalWeight
-							+ userFileCount.get(word).get(cat);
+						totalWeight = totalWeight
+								+ userOverallCount.get(word).get(cat);
+					}
+				}
+			} else {
+				for (String word : dictWords) {
+					List<Integer> wordCats = new ArrayList<Integer>();
+					wordCats.addAll(userFileCount.get(word).keySet());
+
+					for (Integer cat : wordCats) {
+						categoryCount.put(cat, categoryCount.get(cat)
+								+ userFileCount.get(word).get(cat));
+
+						totalWeight = totalWeight
+								+ userFileCount.get(word).get(cat);
+					}
 				}
 			}
 
@@ -295,6 +348,19 @@ public class WordCountPlugin {
 
 	}
 
+	/**
+	 * Add counts for Penn Treebank POS tags. This function should be called
+	 * from addToCSV only
+	 * 
+	 * @param inputFile
+	 *            File for counting words
+	 * @param outputPath
+	 *            Output directory of path
+	 * @param isOverall
+	 *            Flag to tell if the counts are for file or Overall
+	 * @throws IOException
+	 *             addToCSV handles the IOException so no need to handle here
+	 */
 	private void addPennToCSV(String inputFile, String outputPath,
 			boolean isOverall) throws IOException {
 
@@ -341,26 +407,52 @@ public class WordCountPlugin {
 		}
 
 		List<String> dictWords = new ArrayList<String>();
-		dictWords.addAll(pennFileCount.keySet());
+		if (isOverall)
+			dictWords.addAll(pennOverallCount.keySet());
+		else
+			dictWords.addAll(pennFileCount.keySet());
 
 		double totalWeight = 0;
 
 		// Find sum of all categories
-		for (String word : dictWords) {
-			List<String> wordCats = new ArrayList<String>();
-			wordCats.addAll(pennFileCount.get(word).keySet());
+		if (isOverall) {
+			for (String word : dictWords) {
+				List<String> wordCats = new ArrayList<String>();
+				wordCats.addAll(pennOverallCount.get(word).keySet());
 
-			for (String cat : wordCats) {
-				// Use the try-catch block to catch any POS tag that was not
-				// mentioned in the master list.
-				try {
-					categoryCount.put(cat, categoryCount.get(cat)
-							+ pennFileCount.get(word).get(cat));
+				for (String cat : wordCats) {
+					// Use the try-catch block to catch any POS tag that was not
+					// mentioned in the master list.
+					try {
+						categoryCount.put(cat, categoryCount.get(cat)
+								+ pennOverallCount.get(word).get(cat));
 
-					totalWeight = totalWeight
-							+ pennFileCount.get(word).get(cat);
-				} catch (NullPointerException e) {
-					ConsoleView.printlInConsoleln("Invalid Category: " + cat);
+						totalWeight = totalWeight
+								+ pennOverallCount.get(word).get(cat);
+					} catch (NullPointerException e) {
+						ConsoleView.printlInConsoleln("Invalid Category: "
+								+ cat);
+					}
+				}
+			}
+		} else {
+			for (String word : dictWords) {
+				List<String> wordCats = new ArrayList<String>();
+				wordCats.addAll(pennFileCount.get(word).keySet());
+
+				for (String cat : wordCats) {
+					// Use the try-catch block to catch any POS tag that was not
+					// mentioned in the master list.
+					try {
+						categoryCount.put(cat, categoryCount.get(cat)
+								+ pennFileCount.get(word).get(cat));
+
+						totalWeight = totalWeight
+								+ pennFileCount.get(word).get(cat);
+					} catch (NullPointerException e) {
+						ConsoleView.printlInConsoleln("Invalid Category: "
+								+ cat);
+					}
 				}
 			}
 		}
