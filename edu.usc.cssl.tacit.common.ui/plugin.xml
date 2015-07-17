@@ -138,8 +138,10 @@
       <menuContribution
             locationURI="menu:view">
              <command
-                  commandId="usc.edu.cssl.common.console.command"
-                  label="Console">
+                   commandId="usc.edu.cssl.common.console.command"
+                   icon="icons/console_view.gif"
+                   label="Console"
+                   tooltip="Console">
             </command>
       </menuContribution>
       <menuContribution
@@ -154,6 +156,7 @@
          <command
                commandId="usc.edu.cssl.common.progressview.command1"
                label="Progress"
+               icon="icons/pview.gif"
                tooltip="Progress">
          </command>
       </menuContribution>
