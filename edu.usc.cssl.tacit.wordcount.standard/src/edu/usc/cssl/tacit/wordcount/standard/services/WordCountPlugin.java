@@ -91,8 +91,6 @@ public class WordCountPlugin {
 					+ System.getProperty("file.separator")
 					+ "TACIT-word-distribution-" + df.format(dateObj);
 			this.wordDistributionDir = wordDistributionDir;
-			if (!(new File(wordDistributionDir).exists()))
-				new File(wordDistributionDir).mkdir();
 		}
 	}
 
@@ -134,9 +132,20 @@ public class WordCountPlugin {
 		return;
 	}
 
+	/**
+	 * Generate word distribution file for the given input file. Make sure to
+	 * call this before refreshing the file counts.
+	 * 
+	 * @param inputFile
+	 */
 	private void createWordDistribution(String inputFile) {
 
 		try {
+			
+			if (!(new File(wordDistributionDir).exists())){
+				new File(wordDistributionDir).mkdir();
+			}
+			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
 					wordDistributionDir
 							+ System.getProperty("file.separator")
@@ -184,8 +193,10 @@ public class WordCountPlugin {
 				List<Integer> wordCats = new ArrayList<Integer>();
 				wordCats.addAll(userFileCount.get(word).keySet());
 
-				// All the complex logic below is to find the count of individual word.
-				// Accept it that the code works unless you change the data structures
+				// All the complex logic below is to find the count of
+				// individual word.
+				// Accept it that the code works unless you change the data
+				// structures
 				// for storing the counts - Anurag Singh (7/17/2015)
 				if (wordCats.isEmpty())
 					toWrite.append("0,");
@@ -199,19 +210,23 @@ public class WordCountPlugin {
 							break;
 						}
 					}
-					toWrite.append(wordCount+",");
+					toWrite.append(wordCount + ",");
 				}
-				
-				for (Integer cat : keyList){
+
+				for (Integer cat : keyList) {
 					if (userFileCount.get(word).containsKey(cat)) {
-						double catContribution = 100*userFileCount.get(word).get(cat)/categoryCount.get(cat);
-						if(catContribution != 0.0) toWrite.append(catContribution+",");
-						else toWrite.append("0,");
+						double catContribution = 100
+								* userFileCount.get(word).get(cat)
+								/ categoryCount.get(cat);
+						if (catContribution != 0.0)
+							toWrite.append(catContribution + ",");
+						else
+							toWrite.append("0,");
 					} else {
 						toWrite.append("0,");
 					}
 				}
-				
+
 				bw.write(toWrite.toString());
 				bw.newLine();
 			}
