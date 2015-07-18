@@ -1,5 +1,8 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +37,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -51,7 +55,7 @@ public class StandardWordCountView extends ViewPart implements
 	private TableLayoutData inputLayoutData;
 	private TableLayoutData dictLayoutData;
 	private Button stemEnabled;
-	private Button stopWordPathEnabled;
+	private Button preprocessButton;
 	private Button standardWordCountButton;
 	private Button weightedWordCountButton;
 	private Button defaultTags;
@@ -151,11 +155,11 @@ public class StandardWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(clientLink);
 
-		stopWordPathEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
-		stopWordPathEnabled.setEnabled(false);
-		stopWordPathEnabled.setSelection(false);
+		preprocessButton = toolkit.createButton(clientLink, "", SWT.CHECK);
+		preprocessButton.setEnabled(true);
+		preprocessButton.setSelection(false);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(stopWordPathEnabled);
+				.applyTo(preprocessButton);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -264,24 +268,58 @@ public class StandardWordCountView extends ViewPart implements
 				final boolean doPennCounts = defaultTags.getSelection();
 				final boolean doWordDistribution = wordDistribution
 						.getSelection();
-				Date dateObj = new Date();
-				final WordCountPlugin wc = new WordCountPlugin(false, dateObj,
-						isStemDic, doPennCounts, doWordDistribution, outputPath);
+				final boolean ppValue = preprocessButton.getSelection();
+				final boolean wcType = weightedWordCountButton.getSelection(); 
+				final Preprocess preprocessor = new Preprocess(
+						"TACIT_Word_Count");
+				final Date dateObj = new Date();
+				//final WordCountPlugin wc = new WordCountPlugin(false, dateObj,
+						//isStemDic, doPennCounts, doWordDistribution, outputPath);
 
 				// Creating a new Job to do Word Count so that the UI will not
 				// freeze
 				wordCountJob = new Job("Word Count Plugin Job") {
 					protected IStatus run(IProgressMonitor monitor) {
+						monitor.beginTask("TACIT Word Count", (inputFiles.size()*15)+15);
+						WordCountPlugin wc = new WordCountPlugin(wcType, dateObj,
+								isStemDic, doPennCounts, doWordDistribution, outputPath, monitor);
+						
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								"", null, form);
 
-						try {
+						String inputDir = "";
+
+						if (ppValue) {
+							try {
+								monitor.subTask("Preprocessing Input");
+								inputDir = preprocessor.doPreprocessing(
+										inputFiles, "");
+
+								File[] inputFilesL = (new File(inputDir))
+										.listFiles();
+								List<String> processedFiles = new ArrayList<String>();
+								for (File file : inputFilesL) {
+									if (file.getAbsolutePath().contains(
+											".DS_Store"))
+										continue;
+									processedFiles.add(file.getAbsolutePath());
+								}
+								monitor.worked(5);
+								wc.countWords(processedFiles, dictionaryFiles);
+
+								if (ppValue && preprocessor.doCleanUp())
+									preprocessor.clean();
+								monitor.worked(1);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							monitor.worked(5);
 							wc.countWords(inputFiles, dictionaryFiles);
-						} catch (Exception ioe) {
-							ioe.printStackTrace();
-							return Status.CANCEL_STATUS;
+							monitor.worked(1);
 						}
+
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								"Word count analysis completed", IStatus.OK,
 								form);

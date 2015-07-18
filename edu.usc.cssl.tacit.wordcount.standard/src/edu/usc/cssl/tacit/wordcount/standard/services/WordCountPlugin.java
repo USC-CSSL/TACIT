@@ -27,6 +27,7 @@ import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.InvalidFormatException;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 import edu.usc.cssl.tacit.common.TacitUtility;
@@ -73,16 +74,18 @@ public class WordCountPlugin {
 	private int numWords = 0;
 	private int numDictWords = 0;
 	private int numSentences = 0;
+	private IProgressMonitor monitor;
 
 	public WordCountPlugin(boolean weighted, Date dateObj,
 			boolean stemDictionary, boolean doPennCounts,
-			boolean doWordDistribution, String outputPath) {
+			boolean doWordDistribution, String outputPath, IProgressMonitor monitor) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 		this.stemDictionary = stemDictionary;
 		this.doPennCounts = doPennCounts;
 		this.doWordDistribution = doWordDistribution;
 		this.outputPath = outputPath;
+		this.monitor = monitor;
 
 		// Create folder for word distribution files
 		if (doWordDistribution) {
@@ -109,17 +112,24 @@ public class WordCountPlugin {
 		}
 
 		ConsoleView.printlInConsoleln("Counting Words.");
+		monitor.subTask("Counting Words");
+		if (monitor.isCanceled()) return;
+		
 		for (String iFile : inputFiles) {
+			if (monitor.isCanceled()) return;
 			do_countWords(iFile);
 			if (doWordDistribution)
 				createWordDistribution(iFile);
+			monitor.worked(2);
 			refreshFileCounts();
 		}
 
 		ConsoleView.printlInConsoleln("Writing Results.");
+		monitor.subTask("Computing Overall Results");
 		// Add overall counts to csv output
 		addToCSV("Overall Counts", this.numWords, this.numSentences,
 				this.numDictWords, true);
+		monitor.worked(5);
 		closeWriters();
 
 		if (weighted)
@@ -128,6 +138,7 @@ public class WordCountPlugin {
 		else
 			TacitUtility.createRunReport(outputPath,
 					"TACIT Standard Word Count", dateObj);
+		monitor.worked(1);
 		return;
 	}
 
@@ -140,11 +151,11 @@ public class WordCountPlugin {
 	private void createWordDistribution(String inputFile) {
 
 		try {
-			
-			if (!(new File(wordDistributionDir).exists())){
+
+			if (!(new File(wordDistributionDir).exists())) {
 				new File(wordDistributionDir).mkdir();
 			}
-			
+
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
 					wordDistributionDir
 							+ System.getProperty("file.separator")
@@ -253,6 +264,8 @@ public class WordCountPlugin {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		
+		monitor.worked(1);
 	}
 
 	/**
@@ -331,6 +344,7 @@ public class WordCountPlugin {
 				}
 			}
 			br.close();
+			monitor.worked(4);
 			addToCSV(inputFile, numWords, numSentences, numDictWords, false);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -451,11 +465,14 @@ public class WordCountPlugin {
 			resultCSVbw.write(toWrite.toString());
 			resultCSVbw.newLine();
 
+			monitor.worked(4);
+			
 			// Pass numDictWords so that percentages of POS tags add up to 100.
 			// Note: We are not considering words that are not part of the
 			// dictionary even while counting Penn Treebank POS tags.
 			if (doPennCounts)
 				addPennToCSV(inputFile, isOverall);
+			monitor.worked(4);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -477,13 +494,13 @@ public class WordCountPlugin {
 	private void addPennToCSV(String inputFile, boolean isOverall)
 			throws IOException {
 
-		String pennPosTags = "CC,CD,DT,EX,FW,IN,JJ,JJR,JJS,LS,MD,NN,"
-				+ "NNS,NNP,NNPS,PDT,POS,PRP,PRP$,RB,RBR,RBS,RP,SYM,TO,"
-				+ "UH,VB,VBD,VBG,VBN,VBP,VBZ,WDT,WP,WP$,WRB,.,-LRB-,-RRB-,"
-				+ "-RSB-,-RSB-,-LCB-,-RCB-";
+		String pennPosTags = "CC<>CD<>DT<>EX<>FW<>IN<>JJ<>JJR<>JJS<>LS<>MD<>NN<>"
+				+ "NNS<>NNP<>NNPS<>PDT<>POS<>PRP<>PRP$<>RB<>RBR<>RBS<>RP<>SYM<>TO<>"
+				+ "UH<>VB<>VBD<>VBG<>VBN<>VBP<>VBZ<>WDT<>WP<>WP$<>WRB<>.<>,<>-LRB-<>-RRB-<>"
+				+ "-RSB-<>-RSB-<>-LCB-<>-RCB-";
 
 		String[] posTags;
-		posTags = pennPosTags.split(",");
+		posTags = pennPosTags.split("<>");
 
 		if (pennCSVbw == null) {
 			String type = "";
@@ -506,7 +523,10 @@ public class WordCountPlugin {
 
 			StringBuilder toWrite = new StringBuilder();
 			for (int i = 0; i < posTags.length; i++) {
-				toWrite.append(posTags[i] + ",");
+				if (posTags[i].compareTo(",") == 0)
+					toWrite.append("\",\",");
+				else
+					toWrite.append(posTags[i] + ",");
 			}
 			pennCSVbw.write(toWrite.toString());
 			pennCSVbw.newLine();
@@ -596,6 +616,8 @@ public class WordCountPlugin {
 	 *             dictionary format.
 	 */
 	private void buildMaps(List<String> dictionaryFiles) throws IOException {
+		
+		monitor.subTask("Building Dictionary Maps");
 
 		for (String dFile : dictionaryFiles) {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
@@ -671,6 +693,8 @@ public class WordCountPlugin {
 
 			br.close();
 		}
+		
+		monitor.worked(2);
 	}
 
 	/**
@@ -695,6 +719,7 @@ public class WordCountPlugin {
 				pennFileCount.get(key).put(subKey, 0.0);
 			}
 		}
+		monitor.worked(1);
 	}
 
 	/**
@@ -717,6 +742,7 @@ public class WordCountPlugin {
 	 * @return Returns true if no errors while loading models
 	 */
 	private boolean setModels() {
+		monitor.subTask("Setting Models");
 		InputStream sentenceIs = null, tokenIs = null, posIs = null;
 		try {
 			File setupFile = new File(FileLocator.toFileURL(
@@ -755,6 +781,8 @@ public class WordCountPlugin {
 		sentDetector = new SentenceDetectorME(sentenceModel);
 		tokenize = new TokenizerME(tokenizerModel);
 		posTagger = new POSTaggerME(posModel);
+		
+		monitor.worked(1);
 
 		return true;
 	}
