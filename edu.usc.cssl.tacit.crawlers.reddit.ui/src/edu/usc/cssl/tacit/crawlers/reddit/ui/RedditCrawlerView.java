@@ -582,10 +582,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 							}
 						});
 						
-						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts, content); // initialize all the common parameters
+						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts); // initialize all the common parameters
 						if(search) {
 							try {
-								rc.search(query, title, author, url, linkId, timeFrame, sortType);
+								rc.search(query, title, author, url, linkId, timeFrame, sortType, content);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							} 

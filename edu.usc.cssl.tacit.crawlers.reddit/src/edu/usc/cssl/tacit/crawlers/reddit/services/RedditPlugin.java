@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
@@ -21,7 +20,6 @@ public class RedditPlugin {
 	private String outputPath;
 	private int limit; // link the number of records to be saved
 	private String sortType;
-    private ArrayList<String> subReddits;
     private boolean limitToBestComments;
     private String timeFrame;
 
@@ -32,12 +30,11 @@ public class RedditPlugin {
      * @param restClient REST Client instance
      * @param actor User instance
      */
-    public RedditPlugin(RestClient restClient, String outputDir, int limit, boolean limitComments, ArrayList<String> subReddits) {
+    public RedditPlugin(RestClient restClient, String outputDir, int limit, boolean limitComments) {
     	this.restClient = restClient;
     	this.outputPath = outputDir;
     	this.limit = limit;
     	this.limitToBestComments = limitComments; // limited to best comments
-    	this.subReddits = subReddits;    	
     }
         
     protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -123,8 +120,13 @@ public class RedditPlugin {
 	/*
 	 * To crawl the given query results (title:cats subreddit:movies)
 	 */
-	public void crawlQueryResults(String query) throws IOException, URISyntaxException { // As of now fetches only links
-		String filePath = this.outputPath + File.separator + "SearchResults.txt";
+	public void crawlQueryResults(String query, String subreddit) throws IOException, URISyntaxException { // As of now fetches only links
+		String filePath = this.outputPath + File.separator;
+		if(!subreddit.isEmpty())
+			filePath+= "SearchResults_" + subreddit + ".txt";
+		else
+			filePath+= "SearchResults.txt";
+		
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/search/.json?".concat(query));
     	FileWriter file = new FileWriter(filePath);
@@ -144,6 +146,7 @@ public class RedditPlugin {
         		JSONObject respObject = (JSONObject) response;
 	        	JSONObject dataObject = (JSONObject) respObject.get("data");
 	            JSONArray userPosts = (JSONArray) dataObject.get("children");
+	            int postsCount = 0;
 		    	for (Object post : userPosts) {
 		    		JSONObject data = (JSONObject) post;
 		            String kind = safeJsonToString(data.get("kind"));
@@ -152,8 +155,8 @@ public class RedditPlugin {
 		                    data = ((JSONObject) data.get("data"));		                    
 		                    resultData.add(getSimplifiedLinkData(data)); // add the simplified link data to resultant object array
 		                    saveLinkComments(data); // save the link comments
-		                    count++;
-		                    if(this.limit == count)  break breakEverything;
+		                    count++; postsCount++;
+		                    if(this.limit == count || postsCount == userPosts.size())  break breakEverything;
 		                }
 					}
 		    	}
