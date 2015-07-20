@@ -371,7 +371,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		addSubredditBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				content.add("Enter subreddit name");
+				content.add("Enter subreddit name e.g news");
 				viewer.refresh();
 				table.setFocus();
 				viewer.getControl().setFocus();
