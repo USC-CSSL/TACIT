@@ -5,32 +5,41 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import com.github.jreddit.utils.restclient.HttpRestClient;
 import com.github.jreddit.utils.restclient.RestClient;
 
 public class RedditCrawler {
 	RestClient restClient;
 	RedditPlugin rp;
+	IProgressMonitor monitor;
 	
-	public RedditCrawler(String outputDir, int limitLinks, boolean limitComments) {
+	public RedditCrawler(String outputDir, int limitLinks, boolean limitComments, IProgressMonitor monitor) {
 	    restClient = new HttpRestClient();
 	    restClient.setUserAgent("bot/1.0 by name");	
-	    rp = new RedditPlugin(restClient, outputDir, limitLinks, limitComments);
+	    this.monitor = monitor;
+	    rp = new RedditPlugin(restClient, outputDir, limitLinks, limitComments, monitor);
 	}
 	
 	public void crawlTrendingData(String trendType) throws IOException, URISyntaxException {
+		monitor.worked(5);
 		rp.crawlTrendingPosts(trendType);
 	}
 	
 	public void search(String query, String title, String author, String url, String linkId, String timeFrame, String sortType, ArrayList<String> content) throws IOException, URISyntaxException {
-		for(String subreddit : content) {
+		for(String subreddit : content) {			
 			String queryString = constructSearchQueryString(query, title, author, url, linkId, subreddit);
+			monitor.worked(1);
 			String searchUrl = contructUrl(timeFrame, sortType, queryString);
+			monitor.worked(1);
 			rp.crawlQueryResults(searchUrl, subreddit);
+			monitor.worked(10);
 		}
 	}
 
 	public void crawlLabeledData(String label, String timeFrame) throws IOException, URISyntaxException {
+		monitor.worked(5);
 		String url = "/".concat(label).concat("/.json?t=").concat(timeFrame);
 		rp.crawlLabeledPosts(url, label);		
 	}

@@ -457,19 +457,27 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(numLinksText);
 		numLinksText.addKeyListener(new KeyListener() {
 			@Override
-			public void keyReleased(KeyEvent e) {
-				if (!(e.character >= '0' && e.character <= '9')) {
-					form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
-					numLinksText.setText("10");
-				} else {
-					form.getMessageManager().removeMessage("numlinks");
+			public void keyReleased(KeyEvent e) {				
+				if(e.keyCode <16777217 || e.keyCode>16777220) {
+					if (!(e.character >= '0' && e.character <= '9')) {
+						form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
+						numLinksText.setText("10");
+					} else {					
+						form.getMessageManager().removeMessage("numlinks");
+					}
 				}
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
+				/*if (!(e.character >= '0' && e.character <= '9')) {
+					form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
+					numLinksText.setText(numLinksText.getText());
+				} else {					
+					form.getMessageManager().removeMessage("numlinks");
+				}	*/			
 			}
+		    
 		});
 		
 		limitComments = new Button(commonParamsGroup, SWT.CHECK);
@@ -519,6 +527,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			} 
 			form.getMessageManager().removeMessage("queryText");
 		}
+		
+		int limit = Integer.parseInt(numLinksText.getText());
+		if(limit<0) {
+			form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
+			return false;
+		} else
+			form.getMessageManager().removeMessage("numlinks");
 		
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
 		if (message != null) {
@@ -581,27 +596,52 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 								outputDir = outputLayout.getOutputLabel().getText();	
 							}
 						});
+						int progressSize = limit+30;
+						if(content.size()>0)
+							progressSize = (content.size()*limit)+30;
+						monitor.beginTask("Running Reddit Crawler..." , limit+30);
+						TacitFormComposite.writeConsoleHeaderBegining("Reddit Crawler started");						
+						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts, monitor); // initialize all the common parameters	
 						
-						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts); // initialize all the common parameters
+						monitor.subTask("Initializing...");
+						monitor.worked(10);
+						if(monitor.isCanceled())
+							handledCancelRequest("Cancelled");						
 						if(search) {
 							try {
+								monitor.subTask("Crawling...");
+								if(monitor.isCanceled()) 
+									handledCancelRequest("Cancelled");								
 								rc.search(query, title, author, url, linkId, timeFrame, sortType, content);
+								if(monitor.isCanceled())
+									handledCancelRequest("Cancelled");
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							} 
 						} else if(trendingData) {
 							try {
-								rc.crawlTrendingData(trendType);
+								monitor.subTask("Crawling...");
+								if(monitor.isCanceled())
+									handledCancelRequest("Cancelled");								
+								if(monitor.isCanceled())
+									handledCancelRequest("Cancelled");rc.crawlTrendingData(trendType);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
 						} else if(labeledData) {
 							try {
+								monitor.subTask("Crawling...");
+								if(monitor.isCanceled())
+									handledCancelRequest("Cancelled");																
+								if(monitor.isCanceled())
+									handledCancelRequest("Cancelled");								
 								rc.crawlLabeledData(labelType, timeFrame);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
 						}
+						if(monitor.isCanceled())
+							handledCancelRequest("Cancelled");
 						
 						monitor.worked(100);
 						monitor.done();
@@ -648,6 +688,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		form.getToolBarManager().update(true);
 	}
 
+	private IStatus handledCancelRequest(String message) {
+		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
+		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
+		return Status.CANCEL_STATUS;
+	}
+
+	
 	private IStatus handleException(IProgressMonitor monitor, Exception e, String message) {
 		monitor.done();
 		System.out.println(message);

@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -23,18 +24,21 @@ public class RedditPlugin {
     private boolean limitToBestComments;
     private String timeFrame;
 
+    IProgressMonitor monitor;
     HashMap<String, String> redditCategories;
 
     /**
      * Constructor.
      * @param restClient REST Client instance
+     * @param monitor 
      * @param actor User instance
      */
-    public RedditPlugin(RestClient restClient, String outputDir, int limit, boolean limitComments) {
+    public RedditPlugin(RestClient restClient, String outputDir, int limit, boolean limitComments, IProgressMonitor monitor) {
     	this.restClient = restClient;
     	this.outputPath = outputDir;
     	this.limit = limit;
     	this.limitToBestComments = limitComments; // limited to best comments
+    	this.monitor = monitor;
     }
         
     protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -87,7 +91,8 @@ public class RedditPlugin {
     	FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
-        file.close();		
+        file.close();
+        monitor.worked(5);
 	}
 	
 	/*
@@ -114,6 +119,7 @@ public class RedditPlugin {
 		file.write(resultData.toJSONString());
 		file.flush();
         file.close();
+        monitor.worked(5);
 	}
 	
 	
@@ -133,6 +139,7 @@ public class RedditPlugin {
 		file.write(resultData.toJSONString());
 		file.flush();
         file.close();
+        monitor.worked(5);
 	}
 	
     @SuppressWarnings("unchecked")
@@ -156,6 +163,7 @@ public class RedditPlugin {
 		                    resultData.add(getSimplifiedLinkData(data)); // add the simplified link data to resultant object array
 		                    saveLinkComments(data); // save the link comments
 		                    count++; postsCount++;
+		                    monitor.worked(1);
 		                    if(this.limit == count || postsCount == userPosts.size())  break breakEverything;
 		                }
 					}
