@@ -748,6 +748,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
 						ConsoleView.printlInConsoleln("Done");
 						TacitFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully.", IStatus.OK, form);
+						TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
 						return Status.OK_STATUS;
 					}					
 				};	
