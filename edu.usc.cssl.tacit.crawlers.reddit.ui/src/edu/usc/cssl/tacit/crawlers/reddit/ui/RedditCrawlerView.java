@@ -651,6 +651,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 						ConsoleView.printlInConsoleln("Reddit crawler completed successfully.");
 						ConsoleView.printlInConsoleln("Done");
 						TacitFormComposite.updateStatusMessage(getViewSite(), "Reddit crawler completed successfully.", IStatus.OK, form);
+						TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
 						return Status.OK_STATUS;
 					}
 				};
