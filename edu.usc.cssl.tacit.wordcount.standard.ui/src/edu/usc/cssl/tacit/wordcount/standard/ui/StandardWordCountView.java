@@ -60,6 +60,7 @@ public class StandardWordCountView extends ViewPart implements
 	private Button weightedWordCountButton;
 	private Button defaultTags;
 	private Button wordDistribution;
+	private Button createDATFile;
 	protected Job wordCountJob;
 
 	@Override
@@ -141,10 +142,15 @@ public class StandardWordCountView extends ViewPart implements
 				"Create output for default tags", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(defaultTags);
+		createDATFile = toolkit.createButton(output, "Create .DAT File",
+				SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(createDATFile);
 		wordDistribution = toolkit.createButton(output,
 				"Create category-wise word distribution files", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(wordDistribution);
+
 	}
 
 	private void createPreprocessLink(Composite client) {
@@ -269,21 +275,26 @@ public class StandardWordCountView extends ViewPart implements
 				final boolean doWordDistribution = wordDistribution
 						.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
-				final boolean wcType = weightedWordCountButton.getSelection(); 
+				final boolean wcType = weightedWordCountButton.getSelection();
+				final boolean datFile = createDATFile.getSelection();
 				final Preprocess preprocessor = new Preprocess(
 						"TACIT_Word_Count");
 				final Date dateObj = new Date();
-				//final WordCountPlugin wc = new WordCountPlugin(false, dateObj,
-						//isStemDic, doPennCounts, doWordDistribution, outputPath);
+				// final WordCountPlugin wc = new WordCountPlugin(false,
+				// dateObj,
+				// isStemDic, doPennCounts, doWordDistribution, outputPath);
 
 				// Creating a new Job to do Word Count so that the UI will not
 				// freeze
 				wordCountJob = new Job("Word Count Plugin Job") {
 					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("TACIT Word Count", (inputFiles.size()*15)+15);
-						WordCountPlugin wc = new WordCountPlugin(wcType, dateObj,
-								isStemDic, doPennCounts, doWordDistribution, outputPath, monitor);
-						
+						monitor.beginTask("TACIT Word Count",
+								(inputFiles.size() * 15) + 15);
+						WordCountPlugin wc = new WordCountPlugin(wcType,
+								dateObj, isStemDic, doPennCounts,
+								doWordDistribution, datFile, outputPath,
+								monitor);
+
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								"", null, form);
