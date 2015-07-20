@@ -48,6 +48,7 @@ public class WordCountPlugin {
 	private boolean stemDictionary;
 	private boolean doPennCounts;
 	private boolean doWordDistribution;
+	private boolean createDATFile;
 	private Date dateObj;
 	private String outputPath;
 	private String wordDistributionDir;
@@ -69,6 +70,7 @@ public class WordCountPlugin {
 
 	private BufferedWriter resultCSVbw = null;
 	private BufferedWriter pennCSVbw = null;
+	private BufferedWriter datbw = null;
 
 	// Variables to compute the overall counts
 	private int numWords = 0;
@@ -78,12 +80,14 @@ public class WordCountPlugin {
 
 	public WordCountPlugin(boolean weighted, Date dateObj,
 			boolean stemDictionary, boolean doPennCounts,
-			boolean doWordDistribution, String outputPath, IProgressMonitor monitor) {
+			boolean doWordDistribution, boolean createDATFile,
+			String outputPath, IProgressMonitor monitor) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 		this.stemDictionary = stemDictionary;
 		this.doPennCounts = doPennCounts;
 		this.doWordDistribution = doWordDistribution;
+		this.createDATFile = createDATFile;
 		this.outputPath = outputPath;
 		this.monitor = monitor;
 
@@ -113,10 +117,12 @@ public class WordCountPlugin {
 
 		ConsoleView.printlInConsoleln("Counting Words.");
 		monitor.subTask("Counting Words");
-		if (monitor.isCanceled()) return;
-		
+		if (monitor.isCanceled())
+			return;
+
 		for (String iFile : inputFiles) {
-			if (monitor.isCanceled()) return;
+			if (monitor.isCanceled())
+				return;
 			do_countWords(iFile);
 			if (doWordDistribution)
 				createWordDistribution(iFile);
@@ -251,20 +257,19 @@ public class WordCountPlugin {
 	 * Close the BufferedWriters for result files
 	 */
 	private void closeWriters() {
-		if (resultCSVbw != null)
-			try {
+		try {
+			if (resultCSVbw != null)
 				resultCSVbw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
-		if (pennCSVbw != null)
-			try {
+			if (pennCSVbw != null)
 				pennCSVbw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		
+
+			if (datbw != null)
+				datbw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		monitor.worked(1);
 	}
 
@@ -386,6 +391,15 @@ public class WordCountPlugin {
 						+ System.getProperty("file.separator") + type
 						+ df.format(dateObj) + ".csv"));
 
+				if (createDATFile) {
+					ConsoleView.printlInConsoleln("Created file " + outputPath
+							+ System.getProperty("file.separator") + type
+							+ df.format(dateObj) + ".dat.");
+					datbw = new BufferedWriter(new FileWriter(outputPath
+							+ System.getProperty("file.separator") + type
+							+ df.format(dateObj) + ".dat"));
+				}
+
 				resultCSVbw.write("Filename,WC,WPS,Dic,");
 
 				List<Integer> keyList = new ArrayList<Integer>();
@@ -399,6 +413,12 @@ public class WordCountPlugin {
 				}
 				resultCSVbw.write(toWrite.toString());
 				resultCSVbw.newLine();
+
+				if (createDATFile) {
+					datbw.write("Filename WC WPS Dic ");
+					datbw.write(toWrite.toString().replaceAll(",", " "));
+					datbw.newLine();
+				}
 			}
 
 			double totalWeight = 0;
@@ -453,7 +473,7 @@ public class WordCountPlugin {
 			// weight
 			// This is to keep it consistent with the LIWC results
 			StringBuilder toWrite = new StringBuilder();
-			toWrite.append(inputFile + "," + numWords + ","
+			toWrite.append("\"" + inputFile + "\"" + "," + numWords + ","
 					+ Double.toString((double) numWords / numSentences) + ","
 					+ Double.toString((double) 100 * numDictWords / numWords)
 					+ ",");
@@ -465,8 +485,13 @@ public class WordCountPlugin {
 			resultCSVbw.write(toWrite.toString());
 			resultCSVbw.newLine();
 
+			if (createDATFile) {
+				datbw.write(toWrite.toString().replaceAll(",", " "));
+				datbw.newLine();
+			}
+
 			monitor.worked(4);
-			
+
 			// Pass numDictWords so that percentages of POS tags add up to 100.
 			// Note: We are not considering words that are not part of the
 			// dictionary even while counting Penn Treebank POS tags.
@@ -616,7 +641,7 @@ public class WordCountPlugin {
 	 *             dictionary format.
 	 */
 	private void buildMaps(List<String> dictionaryFiles) throws IOException {
-		
+
 		monitor.subTask("Building Dictionary Maps");
 
 		for (String dFile : dictionaryFiles) {
@@ -693,7 +718,7 @@ public class WordCountPlugin {
 
 			br.close();
 		}
-		
+
 		monitor.worked(2);
 	}
 
@@ -781,7 +806,7 @@ public class WordCountPlugin {
 		sentDetector = new SentenceDetectorME(sentenceModel);
 		tokenize = new TokenizerME(tokenizerModel);
 		posTagger = new POSTaggerME(posModel);
-		
+
 		monitor.worked(1);
 
 		return true;
