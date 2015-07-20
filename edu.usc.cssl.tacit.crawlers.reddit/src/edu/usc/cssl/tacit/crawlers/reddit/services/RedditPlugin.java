@@ -22,7 +22,6 @@ public class RedditPlugin {
 	private int limit; // link the number of records to be saved
 	private String sortType;
     private boolean limitToBestComments;
-    private String timeFrame;
 
     IProgressMonitor monitor;
     HashMap<String, String> redditCategories;
@@ -128,7 +127,7 @@ public class RedditPlugin {
 	 */
 	public void crawlQueryResults(String query, String subreddit) throws IOException, URISyntaxException { // As of now fetches only links
 		String filePath = this.outputPath + File.separator;
-		if(!subreddit.isEmpty())
+		if(null != subreddit && !subreddit.isEmpty())
 			filePath+= "SearchResults_" + subreddit + ".txt";
 		else
 			filePath+= "SearchResults.txt";
@@ -162,9 +161,9 @@ public class RedditPlugin {
 		                    data = ((JSONObject) data.get("data"));		                    
 		                    resultData.add(getSimplifiedLinkData(data)); // add the simplified link data to resultant object array
 		                    saveLinkComments(data); // save the link comments
-		                    count++; postsCount++;
+		                    count++;
 		                    monitor.worked(1);
-		                    if(this.limit == count || postsCount == userPosts.size())  break breakEverything;
+		                    if(this.limit == count)  break breakEverything;
 		                }
 					}
 		    	}
@@ -174,6 +173,8 @@ public class RedditPlugin {
 					} else {
 						response = restClient.get(url.concat("?after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
 					}
+				} else { // doesnt contain any further data					
+					break breakEverything;
 				}
         	} else {
     	       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");

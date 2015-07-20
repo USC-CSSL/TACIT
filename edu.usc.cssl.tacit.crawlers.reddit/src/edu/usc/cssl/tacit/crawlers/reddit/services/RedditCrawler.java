@@ -36,6 +36,15 @@ public class RedditCrawler {
 			rp.crawlQueryResults(searchUrl, subreddit);
 			monitor.worked(10);
 		}
+		
+		if(content.size() == 0) { // no subreddit specified
+			String queryString = constructSearchQueryString(query, title, author, url, linkId, null);
+			monitor.worked(1);
+			String searchUrl = contructUrl(timeFrame, sortType, queryString);
+			monitor.worked(1);
+			rp.crawlQueryResults(searchUrl, null);
+			monitor.worked(10);			
+		}
 	}
 
 	public void crawlLabeledData(String label, String timeFrame) throws IOException, URISyntaxException {
@@ -64,33 +73,33 @@ public class RedditCrawler {
 
 	private String constructSearchQueryString(String query, String title, String author, String url, String linkId, String subreddit) throws UnsupportedEncodingException {
 		String queryString = "";		
-		if(!query.isEmpty())
+		if(null != query && !query.isEmpty())
 			queryString="text:"+query;
-		if(!title.isEmpty()) {
+		if(null != title && !title.isEmpty()) {
 			if(queryString.isEmpty())
 				queryString+="title:"+title;
 			else
 				queryString+=" title:"+title;
 		}			
-		if(!author.isEmpty()) {
+		if(null != author && !author.isEmpty()) {
 			if(queryString.isEmpty())
 				queryString+="author:"+author;
 			else
 				queryString+=" author:"+author;
 		}
-		if(!url.isEmpty()) {
+		if(null != url && !url.isEmpty()) {
 			if(queryString.isEmpty())
 				queryString+="url:"+url;
 			else
 				queryString+=" url:"+url;
 		}
-		if(!linkId.isEmpty()) {
+		if(null != linkId && !linkId.isEmpty()) {
 			if(queryString.isEmpty())
 				queryString+="fullname:"+linkId;
 			else
 				queryString+=" fullname:"+linkId;
 		}
-		if(!subreddit.isEmpty()) {
+		if(null != subreddit && !subreddit.isEmpty()) {
 			if(queryString.isEmpty()) 
 				queryString+="subreddit:"+subreddit;
 			else

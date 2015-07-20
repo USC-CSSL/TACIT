@@ -458,14 +458,14 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		numLinksText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {				
-				if(e.keyCode <16777217 || e.keyCode>16777220) {
+				/*if(e.keyCode <16777217 || e.keyCode>16777220) {
 					if (!(e.character >= '0' && e.character <= '9')) {
 						form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
 						numLinksText.setText("10");
 					} else {					
 						form.getMessageManager().removeMessage("numlinks");
 					}
-				}
+				}*/
 			}
 
 			@Override
@@ -527,14 +527,17 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			} 
 			form.getMessageManager().removeMessage("queryText");
 		}
-		
-		int limit = Integer.parseInt(numLinksText.getText());
-		if(limit<0) {
+		try {
+			int limit = Integer.parseInt(numLinksText.getText());
+			if(limit<0) {
+				form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
+				return false;
+			} else
+				form.getMessageManager().removeMessage("numlinks");
+		} catch(Exception e) {
 			form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
 			return false;
-		} else
-			form.getMessageManager().removeMessage("numlinks");
-		
+		}
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
 		if (message != null) {
 			message = outputLayout.getOutputLabel().getText() + " " + message;
@@ -599,7 +602,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 						int progressSize = limit+30;
 						if(content.size()>0)
 							progressSize = (content.size()*limit)+30;
-						monitor.beginTask("Running Reddit Crawler..." , limit+30);
+						monitor.beginTask("Running Reddit Crawler..." , progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("Reddit Crawler started");						
 						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts, monitor); // initialize all the common parameters	
 						
