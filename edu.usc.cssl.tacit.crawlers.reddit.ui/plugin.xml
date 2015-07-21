@@ -17,6 +17,7 @@
             locationURI="menu:crawl">
          <command
                commandId="edu.usc.cssl.tacit.crawlers.reddit.ui.redditview"
+               icon="icons/reddit.png"
                label="Reddit Crawler"
                style="push"
                tooltip="Reddit Crawler">
