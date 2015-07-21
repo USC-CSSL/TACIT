@@ -27,33 +27,81 @@ public class RedditCrawler {
 	
 	public void crawlTrendingData(String trendType) throws IOException, URISyntaxException {
 		monitor.worked(5);
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
 		rp.crawlTrendingPosts(trendType);
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
 	}
 	
 	public void search(String query, String title, String author, String url, String linkId, String timeFrame, String sortType, ArrayList<String> content) throws IOException, URISyntaxException {
-		for(String subreddit : content) {			
-			String queryString = constructSearchQueryString(query, title, author, url, linkId, subreddit);
+		for(String subreddit : content) {	
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
+			String queryString = constructSearchQueryString(query, title, author, url, linkId, subreddit);			
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
 			monitor.worked(1);
 			String searchUrl = contructUrl(timeFrame, sortType, queryString);
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
 			monitor.worked(1);
 			rp.crawlQueryResults(searchUrl, subreddit);
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}			
 			monitor.worked(10);
 		}
 		
 		if(content.size() == 0) { // no subreddit specified
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
 			String queryString = constructSearchQueryString(query, title, author, url, linkId, null);
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
 			monitor.worked(1);
 			String searchUrl = contructUrl(timeFrame, sortType, queryString);
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
 			monitor.worked(1);
 			rp.crawlQueryResults(searchUrl, null);
+			if(monitor.isCanceled()) {
+				monitor.subTask("Cancelling...");
+				return;
+			}
 			monitor.worked(10);			
 		}
 	}
 
 	public void crawlLabeledData(String label, String timeFrame) throws IOException, URISyntaxException {
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
 		monitor.worked(5);
 		String url = "/".concat(label).concat("/.json?t=").concat(timeFrame);
-		rp.crawlLabeledPosts(url, label);		
+		rp.crawlLabeledPosts(url, label);
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
 	}
 	
 

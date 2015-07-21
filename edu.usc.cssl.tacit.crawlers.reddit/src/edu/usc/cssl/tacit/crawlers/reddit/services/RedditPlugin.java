@@ -16,12 +16,15 @@ import org.json.simple.JSONObject;
 import com.github.jreddit.entity.Kind;
 import com.github.jreddit.utils.restclient.RestClient;
 
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
 public class RedditPlugin {
 	private RestClient restClient;
 	private String outputPath;
 	private int limit; // link the number of records to be saved
 	private String sortType;
     private boolean limitToBestComments;
+    int filesDownloaded;
 
     IProgressMonitor monitor;
     HashMap<String, String> redditCategories;
@@ -37,7 +40,8 @@ public class RedditPlugin {
     	this.outputPath = outputDir;
     	this.limit = limitLinks;
     	this.limitToBestComments = limitComments; // limited to best comments
-    	this.monitor = monitor;    	
+    	this.monitor = monitor; 
+    	this.filesDownloaded = 0;
 	}
 
 	protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -84,6 +88,11 @@ public class RedditPlugin {
      * To crawl trending posts (hot, new, rising)
      */
 	public void crawlTrendingPosts(String trendType) throws IOException, URISyntaxException {
+		filesDownloaded = 0;
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}		
 	    String filePath = this.outputPath + File.separator + trendType + ".txt";
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/".concat(trendType).concat("/").concat(".json"));
@@ -91,6 +100,12 @@ public class RedditPlugin {
 		file.write(resultData.toJSONString());
 		file.flush();
         file.close();
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		} 
+		filesDownloaded++;
+		ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
         monitor.worked(5);
 	}
 	
@@ -111,13 +126,24 @@ public class RedditPlugin {
 	 * To crawl all labeled posts (controversial, top)
 	 */
 	public void crawlLabeledPosts(String url, String label) throws IOException, URISyntaxException { // As of now fetches only links
-	    String filePath = this.outputPath + File.separator + label + ".txt";
+		filesDownloaded = 0;
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
+		String filePath = this.outputPath + File.separator + label + ".txt";
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, url);
     	FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
         file.close();
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
+		filesDownloaded++;
+		ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);		
         monitor.worked(5);
 	}
 	
@@ -126,6 +152,11 @@ public class RedditPlugin {
 	 * To crawl the given query results (title:cats subreddit:movies)
 	 */
 	public void crawlQueryResults(String query, String subreddit) throws IOException, URISyntaxException { // As of now fetches only links
+		filesDownloaded = 0;
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}		
 		String filePath = this.outputPath + File.separator;
 		if(null != subreddit && !subreddit.isEmpty())
 			filePath+= "SearchResults_" + subreddit + ".txt";
@@ -134,10 +165,17 @@ public class RedditPlugin {
 		
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/search/.json?".concat(query));
-    	FileWriter file = new FileWriter(filePath);
+		ConsoleView.printlInConsoleln("Writing "+ filePath);		
+		FileWriter file = new FileWriter(filePath);
 		file.write(resultData.toJSONString());
 		file.flush();
         file.close();
+		if(monitor.isCanceled()) {
+			monitor.subTask("Cancelling...");
+			return;
+		}
+		filesDownloaded++;
+		ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);			
         monitor.worked(5);
 	}
 	
@@ -154,6 +192,10 @@ public class RedditPlugin {
 	            JSONArray userPosts = (JSONArray) dataObject.get("children");
 	            int postsCount = 0;
 		    	for (Object post : userPosts) {
+					if(monitor.isCanceled()) {
+						monitor.subTask("Cancelling...");
+						return;
+					}
 		    		JSONObject data = (JSONObject) post;
 		            String kind = safeJsonToString(data.get("kind"));
 					if (kind != null) {
@@ -228,11 +270,13 @@ public class RedditPlugin {
 		else {
 		       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
 	    }
-		   
+		 
+		ConsoleView.printlInConsoleln("Writing "+ filePath);
     	FileWriter file = new FileWriter(filePath);
 		file.write(linkComments.toJSONString());
 		file.flush();
         file.close();
+        filesDownloaded++;
 	}
 
 	private JSONObject fetchThisComment(Object morePost, String permalink) {

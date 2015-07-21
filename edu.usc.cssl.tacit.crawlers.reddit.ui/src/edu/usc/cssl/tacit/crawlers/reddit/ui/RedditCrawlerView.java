@@ -102,7 +102,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		section.setExpanded(true);
 
 		// Create a composite to hold the other widgets
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
@@ -114,7 +114,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client); // Align the composite section to one column
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);		
-
+		
 		createCrawlInputParameters(toolkit, client);
 		outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
@@ -614,10 +614,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
-									handledCancelRequest("Cancelled");								
+									return handledCancelRequest("Cancelled");								
 								rc.search(query, title, author, url, linkId, timeFrame, sortType, content);
 								if(monitor.isCanceled())
-									handledCancelRequest("Cancelled");
+									return handledCancelRequest("Cancelled");
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							} 
@@ -625,9 +625,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled())
-									handledCancelRequest("Cancelled");								
+									return handledCancelRequest("Cancelled");								
 								if(monitor.isCanceled())
-									handledCancelRequest("Cancelled");rc.crawlTrendingData(trendType);
+									return handledCancelRequest("Cancelled");
+								rc.crawlTrendingData(trendType);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
@@ -635,16 +636,16 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled())
-									handledCancelRequest("Cancelled");																
+									return handledCancelRequest("Cancelled");																
 								if(monitor.isCanceled())
-									handledCancelRequest("Cancelled");								
+									return handledCancelRequest("Cancelled");								
 								rc.crawlLabeledData(labelType, timeFrame);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
 						}
 						if(monitor.isCanceled())
-							handledCancelRequest("Cancelled");
+							return handledCancelRequest("Cancelled");
 						
 						monitor.worked(100);
 						monitor.done();
