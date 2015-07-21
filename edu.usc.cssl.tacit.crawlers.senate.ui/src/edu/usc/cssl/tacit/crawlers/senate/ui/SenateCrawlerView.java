@@ -106,7 +106,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		section.setExpanded(true);
 
 		// Create a composite to hold the other widgets
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
