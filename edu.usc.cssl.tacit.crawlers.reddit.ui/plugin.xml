@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.crawlers.reddit.ui.RedditCrawlerView"
+            icon="icons/reddit.png"
             id="edu.usc.cssl.tacit.crawlers.reddit.ui.redditview"
             name="Reddit Crawler"
             restorable="true">

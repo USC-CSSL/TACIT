@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.crawlers.senate.ui.SenateCrawlerView"
+            icon="icons/senate.png"
             id="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
             name="Senate Crawler"
             restorable="true">
