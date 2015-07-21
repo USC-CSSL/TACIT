@@ -17,6 +17,7 @@
             locationURI="menu:crawl">
          <command
                commandId="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
+               icon="icons/senate.png"
                label="Senate Crawler"
                style="push"
                tooltip="Senate Crawler">
