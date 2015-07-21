@@ -31,16 +31,16 @@ public class RedditPlugin {
      * @param restClient REST Client instance
      * @param monitor 
      * @param actor User instance
-     */
-    public RedditPlugin(RestClient restClient, String outputDir, int limit, boolean limitComments, IProgressMonitor monitor) {
+     */        
+    public RedditPlugin(RestClient restClient, String outputDir, int limitLinks, boolean limitComments, IProgressMonitor monitor) {
     	this.restClient = restClient;
     	this.outputPath = outputDir;
-    	this.limit = limit;
+    	this.limit = limitLinks;
     	this.limitToBestComments = limitComments; // limited to best comments
-    	this.monitor = monitor;
-    }
-        
-    protected HashMap<String, String> fetchRedditCategories(int limit) {
+    	this.monitor = monitor;    	
+	}
+
+	protected HashMap<String, String> fetchRedditCategories(int limit) {
     	redditCategories = new HashMap<String, String>();    	
     	Object response = restClient.get("/subreddits/.json?limit=1000&sort=".concat(sortType), null).getResponseObject();
     	int count = 0;
