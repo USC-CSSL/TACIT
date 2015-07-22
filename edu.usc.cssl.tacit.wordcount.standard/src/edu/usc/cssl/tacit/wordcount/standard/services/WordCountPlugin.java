@@ -478,9 +478,13 @@ public class WordCountPlugin {
 					+ Double.toString((double) 100 * numDictWords / numWords)
 					+ ",");
 			for (int i = 0; i < keyList.size(); i++) {
-				toWrite.append(Double.toString(100
-						* categoryCount.get(keyList.get(i)) / totalWeight)
-						+ ",");
+				// Avoid NaN values if totalWeight is 0
+				if (totalWeight != 0)
+					toWrite.append(Double.toString(100
+							* categoryCount.get(keyList.get(i)) / totalWeight)
+							+ ",");
+				else
+					toWrite.append(Double.toString(0) + ",");
 			}
 			resultCSVbw.write(toWrite.toString());
 			resultCSVbw.newLine();
@@ -622,9 +626,12 @@ public class WordCountPlugin {
 		StringBuilder toWrite = new StringBuilder();
 		toWrite.append(inputFile + ",");
 		for (int i = 0; i < posTags.length; i++) {
-			toWrite.append(Double.toString(100 * categoryCount.get(posTags[i])
-					/ totalWeight)
-					+ ",");
+			if (totalWeight != 0)
+				toWrite.append(Double.toString(100
+						* categoryCount.get(posTags[i]) / totalWeight)
+						+ ",");
+			else
+				toWrite.append(Double.toString(0) + ",");
 		}
 		pennCSVbw.write(toWrite.toString());
 		pennCSVbw.newLine();
