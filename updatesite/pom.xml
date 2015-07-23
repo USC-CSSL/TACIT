@@ -4,10 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>updatesite</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-repository</packaging>
 
-  <name>TACIT UpdateSite</name>
+  <name>TACIT</name>
 
   <parent>
     <artifactId>edu.usc.tacit.tools.parent</artifactId>
@@ -35,4 +34,19 @@
       </plugins>
   </build>
 
+  <groupId>edu.usc.tacit.tools</groupId>
+  <url>http://cssl.usc.edu:8081/tacit/updates/</url>
+  <organization>
+  	<name>USC</name>
+  	<url>http://cssl.usc.edu</url>
+  </organization>
+  <scm>
+  	<url>https://github.com/USC-CSSL/TACIT</url>
+  </scm>
+  <issueManagement>
+  	<url>https://github.com/USC-CSSL/TACIT/issues</url>
+  </issueManagement>
+  <ciManagement>
+  	<url>http://cssl.usc.edu:8080/job/TACIT/</url>
+  </ciManagement>
 </project>

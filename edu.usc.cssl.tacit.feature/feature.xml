@@ -19,7 +19,8 @@
 
    <includes
          id="org.eclipse.equinox.p2.user.ui"
-         version="0.0.0"/>
+         version="0.0.0"
+         search-location="both"/>
 
    <includes
          id="org.eclipse.help"
@@ -319,8 +320,8 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-            <plugin
+
+   <plugin
          id="edu.usc.cssl.tacit.crawlers.twitter.ui"
          download-size="0"
          install-size="0"
@@ -335,4 +336,3 @@
          unpack="false"/>
 
 </feature>
-

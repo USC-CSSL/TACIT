@@ -375,6 +375,23 @@ public class SupremeCrawlerView extends ViewPart implements
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
+		boolean validLimitParse = true;
+		try {
+			long limitCaseRecord = Long.parseLong(limitRecordTxt.getText().toString());
+			if (limitCaseRecord <= 0)
+				validLimitParse = false;
+		} catch (NumberFormatException e1) {
+			validLimitParse = false;
+		}
+		
+		if (!validLimitParse) {
+			form.getMessageManager()
+					.addMessage(
+							"limit",
+							"Error: Limit Records per case is not a positive number",
+							null, IMessageProvider.ERROR);
+			canProceed = false;
+		}
 		return canProceed;
 	}
 
