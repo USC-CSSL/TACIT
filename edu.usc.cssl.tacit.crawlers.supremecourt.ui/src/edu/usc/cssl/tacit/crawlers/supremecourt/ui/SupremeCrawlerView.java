@@ -2,6 +2,7 @@ package edu.usc.cssl.tacit.crawlers.supremecourt.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,6 +16,9 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +32,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
@@ -45,6 +52,7 @@ import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.supremecourt.ui.internal.ISupremeCrawlerUIConstants;
+import edu.usc.cssl.tacit.crawlers.supremecourt.ui.internal.SupremeCourtCaseListDialog;
 import edu.usc.cssl.tacit.crawlers.supremecourt.ui.internal.SupremeCrawlerImageRegistry;
 
 public class SupremeCrawlerView extends ViewPart implements
@@ -55,10 +63,16 @@ public class SupremeCrawlerView extends ViewPart implements
 	private Button downloadAudio;
 	private Button truncateAudio;
 	private Button termBtn;
-	private Combo rangeCombo;
 	private OutputLayoutData layoutData;
 	private IToolBarManager mgr;
 	protected Job job;
+	private Table filterListTable;
+	private List<String> selectedFilterList;
+	private SupremeCourtCaseListDialog dialog;
+	private String segment;
+	private List<String> items;
+	private List<String> issueList;
+	private List<String> caseList;
 
 	@Override
 	public Image getTitleImage() {
@@ -107,41 +121,40 @@ public class SupremeCrawlerView extends ViewPart implements
 		Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
-		Label lblFilterType = toolkit.createLabel(sectionClient,
+		Composite selectionType = toolkit.createComposite(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true)
+				.applyTo(selectionType);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0)
+				.applyTo(selectionType);
+		Label lblFilterType = toolkit.createLabel(selectionType,
 				"Filter Type:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(lblFilterType);
-
-		termBtn = toolkit.createButton(sectionClient, "Term", SWT.RADIO);
+		termBtn = toolkit.createButton(selectionType, "Term", SWT.RADIO);
 		termBtn.setSelection(true);
 		termBtn.setData("cases");
-
+		segment = (String) termBtn.getData();
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(termBtn);
-		final Button issuesBtn = toolkit.createButton(sectionClient, "Issues",
+		final Button issuesBtn = toolkit.createButton(selectionType, "Issues",
 				SWT.RADIO);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(issuesBtn);
 		issuesBtn.setData("issues");
 		Label filterRangeLbl = toolkit.createLabel(sectionClient,
 				"Filter Range:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(filterRangeLbl);
-		rangeCombo = new Combo(sectionClient, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
-				.applyTo(rangeCombo);
-		toolkit.adapt(rangeCombo);
-
-		fireFilterEvent((String) termBtn.getData(), rangeCombo);
-
+		createMultiSelectRange(sectionClient);
 		termBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (termBtn.getSelection())
-					fireFilterEvent((String) termBtn.getData(), rangeCombo);
-				else
-					fireFilterEvent((String) issuesBtn.getData(), rangeCombo);
-				rangeCombo.select(0);
+				if (termBtn.getSelection()) {
+					segment = (String) termBtn.getData();
+				} else {
+					segment = (String) issuesBtn.getData();
+				}
+				refreshFilterRangeTable();
 			}
 		});
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
@@ -169,17 +182,81 @@ public class SupremeCrawlerView extends ViewPart implements
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem()
-						.displayHelp("edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
-			};	
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
+			};
 		};
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
-		PlatformUI.getWorkbench().getHelpSystem()
-		.setHelp(form, "edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
+	}
+
+	private void createMultiSelectRange(Composite sectionClient) {
+
+		filterListTable = toolkit.createTable(sectionClient, SWT.BORDER
+				| SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3)
+				.hint(100, 200).applyTo(filterListTable);
+		filterListTable.setBounds(100, 100, 100, 500);
+
+		Composite buttonComp = new Composite(sectionClient, SWT.NONE);
+		GridLayout btnLayout = new GridLayout();
+		btnLayout.marginWidth = btnLayout.marginHeight = 0;
+		btnLayout.makeColumnsEqualWidth = true;
+		buttonComp.setLayout(btnLayout);
+		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+		final Button addfilterBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
+		addfilterBtn.setText("Add...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(addfilterBtn);
+
+		addfilterBtn.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleAdd(addfilterBtn.getShell(), segment);
+			}
+		});
+
+		final Button removeFileButton = new Button(buttonComp, SWT.PUSH);
+		removeFileButton.setText("Remove...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(removeFileButton);
+
+		removeFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				for (TableItem item : filterListTable.getSelection()) {
+
+					selectedFilterList.remove(item.getText());
+					if(termBtn.getSelection()){
+						caseList.remove(item.getText());
+					}
+					else{
+						issueList.remove(item.getText());
+					}
+					item.dispose();
+
+				}
+
+			}
+		});
+		selectedFilterList = new ArrayList<String>();
 	}
 
 	@Override
@@ -206,13 +283,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 			@Override
 			public void run() {
-				String selectedFilterValue = rangeCombo.getText();
-				if (selectedFilterValue.equals("All")) {
-					if (termBtn.getSelection())
-						selectedFilterValue = "/cases";
-					else
-						selectedFilterValue = "/issues";
-				}
+				List<String> selectedFilterValue = selectedFilterList;
 				final SupremeCourtCrawler sc = new SupremeCourtCrawler(
 						selectedFilterValue, outputPath.getText(),
 						ISupremeCrawlerUIConstants.CRAWLER_URL);
@@ -225,8 +296,8 @@ public class SupremeCrawlerView extends ViewPart implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask("TACIT started crawling...", 10000);
 
 						if (monitor.isCanceled()) {
@@ -269,9 +340,8 @@ public class SupremeCrawlerView extends ViewPart implements
 								.writeConsoleHeaderBegining("<terminated> Crawling  ");
 						ConsoleView
 								.printlInConsoleln("Crawling is sucessfully completed.");
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), "Crawling completed",
-								IStatus.OK, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								"Crawling completed", IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -287,8 +357,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 	protected boolean canProceedCrawl() {
 		boolean canProceed = true;
-		TacitFormComposite.updateStatusMessage(getViewSite(), null, null,
-				form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
@@ -349,42 +418,129 @@ public class SupremeCrawlerView extends ViewPart implements
 		}
 	}
 
-	private void fireFilterEvent(final String segment, final Combo combo) {
-		Job loadFilters = new Job("Load Filter values") {
+	private void handleAdd(Shell shell, final String segment) {
 
-			private String[] comboLists;
+		processElementSelectionDialog(shell, segment);
+
+		Job listAuthors = new Job("Load Filter values...") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				SupremCrawlerFilter sFilter = new SupremCrawlerFilter(
 						ISupremeCrawlerUIConstants.CRAWLER_URL);
-				List<String> items;
 				try {
 					items = sFilter.filters(segment);
-				} catch (IOException e) {
+					if (selectedFilterList != null)
+						items.removeAll(selectedFilterList);
+
+				} catch (IOException exception) {
 					items = new ArrayList<String>();
 					items.add("Not able to retrieve list !!");
+					ConsoleView.printlInConsole(exception.toString());
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							ErrorDialog.openError(Display.getDefault()
+									.getActiveShell(), "Problem Occurred",
+									"Please Check your connectivity to server",
+									new Status(IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID,
+											"Network is not reachable"));
+
+						}
+					});
 				}
-				comboLists = new String[items.size()];
-				comboLists = items.toArray(comboLists);
+
 				Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						combo.setItems(comboLists);
-						combo.select(0);
+						dialog.refresh(items.toArray());
 
 					}
 				});
 				return Status.OK_STATUS;
-
 			}
+
 		};
-		loadFilters.schedule();
+
+		listAuthors.schedule();
+		dialog.setElements(new String[]{"Loading..."});
+		dialog.setMultipleSelection(true);
+
+		if (dialog.open() == Window.OK) {
+			updateFilterRangeTable(dialog.getResult());
+		}
+
 	}
 
-	/*
-	 
-	 */
+	private void refreshFilterRangeTable() {
+		if (caseList == null) { // term
+			caseList = new ArrayList<String>();
+		}
+		if (issueList == null) {
+			issueList = new ArrayList<String>();
+		}
+		selectedFilterList.clear();
+		if (termBtn.getSelection()) {
+			selectedFilterList.addAll(caseList);
+		} else {
+			selectedFilterList.addAll(issueList);
+		}
+		Collections.sort(selectedFilterList);
+		filterListTable.removeAll();
+		for (String itemName : selectedFilterList) {
+			TableItem item = new TableItem(filterListTable, 0);
+			item.setText(itemName);
+		}
+
+	}
+
+	private void updateFilterRangeTable(Object[] result) {
+		if (caseList == null) { // term
+			caseList = new ArrayList<String>();
+		}
+		if (issueList == null) {
+			issueList = new ArrayList<String>();
+		}
+		selectedFilterList.clear();
+		if (termBtn.getSelection()) {
+			selectedFilterList.addAll(caseList);
+		} else {
+			selectedFilterList.addAll(issueList);
+		}
+
+		for (Object object : result) {
+			selectedFilterList.add((String) object);
+			if (termBtn.getSelection()) {
+				caseList.add((String) object);
+			} else {
+				issueList.add((String) object);
+			}
+		}
+		Collections.sort(selectedFilterList, Collections.reverseOrder());
+		filterListTable.removeAll();
+		for (String itemName : selectedFilterList) {
+			TableItem item = new TableItem(filterListTable, 0);
+			item.setText(itemName);
+		}
+
+	}
+
+	static class ArrayLabelProvider extends LabelProvider {
+		public String getText(Object element) {
+			return (String) element;
+		}
+	}
+
+	public void processElementSelectionDialog(Shell shell, String title) {
+
+		ILabelProvider lp = new ArrayLabelProvider();
+		dialog = new SupremeCourtCaseListDialog(shell, lp);
+		dialog.setTitle("Select the " + title + " from the list");
+		dialog.setMessage("Enter " + title + " to search");
+
+	}
 
 }

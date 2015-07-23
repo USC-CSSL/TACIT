@@ -2,6 +2,8 @@ package edu.usc.cssl.tacit.crawlers.twitter.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -16,7 +18,10 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -201,5 +206,62 @@ public class TwitterStreamApi {
 		jsonGenerator.writeEndArray();
 		monitor.worked(2);
 		jsonGenerator.close();
+		splitJsonFactory(streamFile);
+
+	}
+
+	private void splitJsonFactory(File streamFile) {
+		try {
+
+			JsonFactory jfactory = new JsonFactory();
+
+			/*** read from file ***/
+			JsonParser jParser = jfactory.createParser(streamFile);
+
+			List<String> tokens = new ArrayList<String>();
+			// loop until token equal to "}"
+			while (jParser.nextToken() != JsonToken.END_ARRAY) {
+
+				// display msg1, msg2, msg3
+				String token = null;
+				while (jParser.nextToken() != JsonToken.END_OBJECT) {
+					token = new String();
+					if (jParser.getCurrentToken() == JsonToken.START_OBJECT) {
+						token = " [ { ";
+						continue;
+					}
+					String fieldname = jParser.getCurrentName();
+					if (!("".equals(fieldname))) {
+
+						// current token is "name",
+						// move to next, which is "name"'s value
+						token = token + "\"" + fieldname + "\" : \"" + jParser.getText() +"\" ,";
+						continue;
+
+					}
+
+				}
+				token = token + " } ]";
+				if (token != null)
+					tokens.add(token);
+
+			}
+			jParser.close();
+			for (int i = 0; i < tokens.size(); i++) {
+				System.out.println(tokens.get(i));
+			}
+			
+		
+
+		} catch (JsonGenerationException e) {
+
+			e.printStackTrace();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
+
 	}
 }

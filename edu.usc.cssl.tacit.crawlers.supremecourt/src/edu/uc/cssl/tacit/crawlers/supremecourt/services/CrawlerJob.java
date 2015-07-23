@@ -22,7 +22,6 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class CrawlerJob {
 
-	private String filter;
 	private String outputDir;
 	private boolean truncate;
 	private boolean downloadAudio;
@@ -32,10 +31,9 @@ public class CrawlerJob {
 	private FileWriter fileWriter;
 	private BufferedWriter bw;
 
-	public CrawlerJob(String filter, String outputDir, String crawlUrl,
+	public CrawlerJob( String outputDir, String crawlUrl,
 			IProgressMonitor monitor, boolean downloadAudio, boolean truncate) {
 
-		this.filter = filter;
 		this.outputDir = outputDir;
 		this.truncate = truncate;
 		this.downloadAudio = downloadAudio;
@@ -52,7 +50,7 @@ public class CrawlerJob {
 			fileWriter = new FileWriter(this.outputDir + "/"
 					+ "supremecourt-crawler-summary-" + df.format(dateobj)
 					+ ".csv");
-			bw = new BufferedWriter(fileWriter);
+			this.bw = new BufferedWriter(fileWriter);
 
 			addContentsToSummary("Case", "Location", "Docket No", "Argued",
 					"Decided", "Majority Author", "Vote", "File Type",

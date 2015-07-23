@@ -13,26 +13,33 @@ import org.jsoup.select.Elements;
 public class SupremCrawlerFilter {
 
 	private String crawlerUrl;
-	
+
 	public SupremCrawlerFilter(String crawlUrl) {
 		this.crawlerUrl = crawlUrl;
 	}
-	
+
 	protected Document parseContentFromUrl(String crawlUrl) throws IOException {
-		
+
 		return Jsoup.connect(crawlUrl.toString()).get();
 
 	}
-	public List<String> filters(String segment) throws IOException{
+
+	public List<String> filters(String segment) throws IOException {
 		List<String> filterContents = new ArrayList<String>();
-			URI crawlUrl = URI.create(this.crawlerUrl+"/"+segment);
-			Document doc = parseContentFromUrl(crawlUrl.toString());
-			Element itemList = doc.select(".exmenu").get(0);
-			Elements items = itemList.select("a");
-			filterContents.add("All");
-			for (Element element : items) {
-				filterContents.add(element.attr("href").trim());
+		URI crawlUrl = URI.create(this.crawlerUrl + "/" + segment);
+		Document doc = parseContentFromUrl(crawlUrl.toString());
+		Element itemList = doc.select(".exmenu").get(0);
+		Elements items = itemList.select("a");
+		String value = "";
+		String excludeString = "-";
+		for (Element element : items) {
+			value = element.attr("href").trim();
+			if (segment.equals("cases")) {
+				if (value.contains(excludeString))
+					continue;
 			}
+			filterContents.add(value);
+		}
 		return filterContents;
 	}
 }
