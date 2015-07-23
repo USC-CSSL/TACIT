@@ -8,8 +8,7 @@ Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  edu.usc.cssl.tacit.common,
- org.jsoup;bundle-version="1.7.2",
- edu.usc.cssl.tacit.wordcount.weighted,
+ org.jsoup,
  edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

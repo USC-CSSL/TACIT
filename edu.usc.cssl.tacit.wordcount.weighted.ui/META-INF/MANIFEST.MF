@@ -11,9 +11,9 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.common.ui,
  org.eclipse.swt,
  org.eclipse.jface,
- edu.usc.cssl.tacit.wordcount.weighted,
  edu.usc.cssl.tacit.common,
  edu.usc.cssl.tacit.help,
- org.eclipse.help
+ org.eclipse.help,
+ edu.usc.cssl.tacit.wordcount.weighted
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
