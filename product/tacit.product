@@ -89,7 +89,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configurations>
 
    <repositories>
-      <repository location="http://cssl.usc.edu:8081/tacit/updates/repository/" enabled="true" />
+      <repository location="http://cssl.usc.edu:8081/tacit/updates/" name ="TACIT" enabled="true" />
    </repositories>
 
 </product>
