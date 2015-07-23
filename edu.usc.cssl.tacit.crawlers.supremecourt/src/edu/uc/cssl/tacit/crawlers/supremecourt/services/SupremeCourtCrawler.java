@@ -22,15 +22,17 @@ public class SupremeCourtCrawler {
 	private boolean truncate, downloadAudio;
 	private String baseUrl;
 	private CrawlerJob crawler;
+	private Integer limit;
 
 	public SupremeCourtCrawler(List<String> selectedFilterValue,
-			String outputDir, String crawlUrl) {
+			String outputDir, String crawlUrl, Integer limit) {
 		this.filter = selectedFilterValue;
 		this.outputDir = outputDir;
 		this.truncate = false;
 		this.downloadAudio = false;
 		this.baseUrl = crawlUrl;
 		this.filterValues = selectedFilterValue;
+		this.limit = limit;
 		// url = new ArrayList<String>();
 		// for (String string : selectedFilterValue) {
 		// url.add(crawlUrl + string + "?order=title&sort=asc");
@@ -86,7 +88,7 @@ public class SupremeCourtCrawler {
 			}
 			// ExecutorService executor = Executors.newFixedThreadPool(5);
 			crawler = new CrawlerJob(getOutputDir() + File.separator + folders,
-					this.baseUrl, monitor, isDownloadAudio(), isTruncate());
+					this.baseUrl, monitor, isDownloadAudio(), isTruncate(),limit);
 
 			try {
 				for (int i = 0; i <= noOfPages; i++) {

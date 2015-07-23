@@ -21,6 +21,9 @@ public class SupremeCrawlerImageRegistry {
 		ir.put(ISupremeCrawlerUIConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(SupremeCrawlerImageRegistry.class, "/icons/help_contents.gif"));
 
+		ir.put(ISupremeCrawlerUIConstants.IMAGE_TITLE, ImageDescriptor
+				.createFromFile(SupremeCrawlerImageRegistry.class, "/icons/scourt.gif"));
+
 
 	}
 

@@ -7,6 +7,7 @@
       <view
             name="Supreme Court Crawler"
             class="edu.usc.cssl.tacit.crawlers.supremecourt.ui.SupremeCrawlerView"
+              icon="icons/scourt.gif"
             id="edu.usc.cssl.tacit.crawlers.supremecourt.ui.view1">
       </view>
    </extension>
@@ -16,6 +17,7 @@
             locationURI="menu:crawl">
             <command
                   commandId="usc.edu.cssl.crawlers.supreme.crawler.command1"
+                    icon="icons/scourt.gif"
                   label="Supreme Court Crawler">
             </command>
       </menuContribution>

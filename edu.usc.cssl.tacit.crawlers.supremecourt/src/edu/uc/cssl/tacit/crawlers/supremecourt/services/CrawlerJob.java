@@ -30,15 +30,20 @@ public class CrawlerJob {
 	private IProgressMonitor monitor;
 	private FileWriter fileWriter;
 	private BufferedWriter bw;
+	private int limit;
+	private int case_id;
 
-	public CrawlerJob( String outputDir, String crawlUrl,
-			IProgressMonitor monitor, boolean downloadAudio, boolean truncate) {
+	public CrawlerJob(String outputDir, String crawlUrl,
+			IProgressMonitor monitor, boolean downloadAudio, boolean truncate,
+			int limit) {
 
 		this.outputDir = outputDir;
 		this.truncate = truncate;
 		this.downloadAudio = downloadAudio;
 		this.baseUrl = crawlUrl;
 		this.monitor = monitor;
+		this.limit = limit;
+		this.case_id = 0;
 		openSummaryFile();
 	}
 
@@ -111,8 +116,8 @@ public class CrawlerJob {
 		if (remaining == 0) {
 			remaining = 1;
 		}
+		
 		for (Element row : rows) {
-
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 
@@ -136,6 +141,9 @@ public class CrawlerJob {
 			ConsoleView.printlInConsole("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
 					+ casesSplit[casesSplit.length - 2]);
+			if (limit == case_id)
+				break;
+			case_id++;
 			String filename = row.select("td").get(1).text().trim() + "_"
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);

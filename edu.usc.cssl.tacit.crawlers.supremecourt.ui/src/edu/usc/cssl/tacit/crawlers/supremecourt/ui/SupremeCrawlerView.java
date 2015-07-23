@@ -73,13 +73,7 @@ public class SupremeCrawlerView extends ViewPart implements
 	private List<String> items;
 	private List<String> issueList;
 	private List<String> caseList;
-
-	@Override
-	public Image getTitleImage() {
-
-		return SupremeCrawlerImageRegistry.getImageIconFactory().getImage(
-				IMAGE_CRAWL_TITLE);
-	}
+	private Text limitRecordTxt;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -93,11 +87,14 @@ public class SupremeCrawlerView extends ViewPart implements
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
 				HyperlinkSettings.UNDERLINE_HOVER);
 		form.setText("Supreme Court Crawler"); //$NON-NLS-1$
+		form.setImage(SupremeCrawlerImageRegistry.getImageIconFactory().getImage(
+				IMAGE_TITLE));
 		final IMessageManager mmng = form.getMessageManager();
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED);
+		
 
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
@@ -145,7 +142,17 @@ public class SupremeCrawlerView extends ViewPart implements
 				"Filter Range:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(filterRangeLbl);
+		
 		createMultiSelectRange(sectionClient);
+		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
+		Label limitRecords = toolkit.createLabel(sectionClient,
+				"Limit Records per Case:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(limitRecords);
+		limitRecordTxt = toolkit.createText(sectionClient, "10");
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+		.applyTo(limitRecordTxt);
+		
 		termBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -162,8 +169,7 @@ public class SupremeCrawlerView extends ViewPart implements
 				form.getBody(), form.getMessageManager());
 		Composite outputSectionClient = layoutData.getSectionClient();
 		createDownloadGroupSection(form.getBody());
-		form.setImage(SupremeCrawlerImageRegistry.getImageIconFactory()
-				.getImage(IMAGE_CRAWL));
+		
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Supreme Crawler");
 		mgr = form.getToolBarManager();
@@ -285,8 +291,8 @@ public class SupremeCrawlerView extends ViewPart implements
 			public void run() {
 				List<String> selectedFilterValue = selectedFilterList;
 				final SupremeCourtCrawler sc = new SupremeCourtCrawler(
-						selectedFilterValue, outputPath.getText(),
-						ISupremeCrawlerUIConstants.CRAWLER_URL);
+						selectedFilterValue,  outputPath.getText(),
+						ISupremeCrawlerUIConstants.CRAWLER_URL,Integer.valueOf(limitRecordTxt.getText()));
 				sc.setDownloadAudio(downloadAudio.getSelection());
 				sc.setTruncate(truncateAudio.getSelection());
 				TacitFormComposite
