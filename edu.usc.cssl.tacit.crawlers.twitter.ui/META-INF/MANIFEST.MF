@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.common.ui,
  edu.usc.cssl.tacit.help,
  org.eclipse.help,
- edu.usc.cssl.tacit.crawlers.twitter
+ edu.usc.cssl.tacit.crawlers.twitter,
+ org.eclipse.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

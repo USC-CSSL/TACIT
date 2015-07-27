@@ -54,6 +54,7 @@ public class TwitterStreamApi {
 		String consumerSecret;
 		String accessToken;
 		String accessTokenSecret;
+		terminate = false;
 		monitor.subTask("Accessing User key");
 		consumerKey = CommonUiActivator.getDefault().getPreferenceStore()
 				.getString("ckey");
@@ -113,30 +114,22 @@ public class TwitterStreamApi {
 					if (att[0]) {
 						jsonGenerator.writeStringField("Name", status.getUser()
 								.getScreenName());
-						if (monitor.isCanceled()) {
-							job.cancel();
-						}
+						
 					}
 					if (att[1]) {
 						jsonGenerator
 								.writeStringField("Text", status.getText());
-						if (monitor.isCanceled()) {
-							job.cancel();
-						}
+						
 					}
 					if (att[2]) {
 						jsonGenerator.writeStringField("Retweet",
 								Integer.toString(status.getRetweetCount()));
-						if (monitor.isCanceled()) {
-							job.cancel();
-						}
+						
 					}
 					if (att[3]) {
 						jsonGenerator.writeStringField("Latitude", sLatitude);
 						jsonGenerator.writeStringField("Longitude", sLongitude);
-						if (monitor.isCanceled()) {
-							job.cancel();
-						}
+						
 					}
 					if (att[4]) {
 						jsonGenerator.writeStringField("CreatedAt", status
@@ -148,9 +141,7 @@ public class TwitterStreamApi {
 					if (att[5]) {
 						jsonGenerator.writeStringField("FavCount",
 								Integer.toString(status.getFavoriteCount()));
-						if (monitor.isCanceled()) {
-							job.cancel();
-						}
+						
 					}
 					if (att[6])
 						jsonGenerator.writeStringField("Id",
@@ -229,9 +220,7 @@ public class TwitterStreamApi {
 		else
 			twitterStream.sample(); // in case there is no filter just sample
 									// from all tweets
-		TacitFormComposite
-				.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
-		terminate = true;
+		
 
 		try {
 			synchronized (lock) {

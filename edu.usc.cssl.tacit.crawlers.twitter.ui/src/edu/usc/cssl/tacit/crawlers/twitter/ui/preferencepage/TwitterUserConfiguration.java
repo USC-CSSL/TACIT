@@ -8,6 +8,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -15,6 +16,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -58,7 +63,8 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		Label dummy = new Label(sectionClient, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
-		userName = createTextFields(sectionClient, false, "User Name :");
+		
+		userName = createHyperLink(sectionClient,  "User Name :");
 		userName.setEnabled(false);
 		userName.setEditable(false);
 		consumerKey = createTextFields(sectionClient, true, "Consumer Key :");
@@ -109,6 +115,32 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		outputLocationTxt.setEditable(editable);
 		return outputLocationTxt;
 	}
+	
+	private Text createHyperLink(Composite sectionClient,
+			String lbl) {
+		FormToolkit toolkit = new FormToolkit(sectionClient.getDisplay());
+		Hyperlink link = toolkit.createHyperlink(sectionClient, "Click here.",
+				SWT.WRAP);
+		link.setBackground(sectionClient.getBackground());
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				Program.launch("https://blog.twitter.com/developer"); // replace with url
+			}
+		});
+		link.setText("User Name");
+	
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(link);
+
+		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+				.applyTo(outputLocationTxt);
+		outputLocationTxt.setEditable(false);
+		outputLocationTxt.setEnabled(false);
+		outputLocationTxt.setMessage("Click User Name to view how to fill the Consumer key, values, tokens ...");
+		return outputLocationTxt;
+	}
+
 
 	@Override
 	public boolean performOk() {
