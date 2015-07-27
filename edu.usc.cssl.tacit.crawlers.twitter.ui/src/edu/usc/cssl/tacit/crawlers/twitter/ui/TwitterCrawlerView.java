@@ -104,7 +104,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		sc.setExpandVertical(true);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
+	//	TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
 
 		// Output Data
 		Composite client1 = toolkit.createComposite(form.getBody());
@@ -222,9 +222,10 @@ public class TwitterCrawlerView extends ViewPart implements
 						return Status.OK_STATUS;
 					}
 				};
-				if (canProceedCrawl())
+				if (canProceedCrawl()){
 					job.setUser(true);
 					job.schedule();
+				}
 			}
 
 		});
