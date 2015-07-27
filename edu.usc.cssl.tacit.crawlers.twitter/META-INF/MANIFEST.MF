@@ -13,10 +13,10 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- twitter4j-core-4.0.2.jar,
- twitter4j-stream-4.0.2.jar,
  jackson-core-2.5.0.jar,
  json-path-2.0.0.jar,
  json-path-assert-2.0.0.jar,
- json-smart-2.1.1.jar
+ json-smart-2.1.1.jar,
+ twitter4j-core-4.0.4.jar,
+ twitter4j-stream-4.0.4.jar
 Export-Package: edu.usc.cssl.tacit.crawlers.twitter.services

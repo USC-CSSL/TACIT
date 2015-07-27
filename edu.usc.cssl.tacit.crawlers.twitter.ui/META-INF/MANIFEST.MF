@@ -14,6 +14,6 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.crawlers.twitter
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: twitter4j-core-4.0.2.jar,
- twitter4j-stream-4.0.2.jar,
- .
+Bundle-ClassPath: .,
+ twitter4j-core-4.0.4.jar,
+ twitter4j-stream-4.0.4.jar

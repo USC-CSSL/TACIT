@@ -2,9 +2,13 @@ package edu.usc.cssl.tacit.crawlers.twitter.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -133,6 +137,8 @@ public class TwitterCrawlerView extends ViewPart implements
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
 
+			private Job job;
+
 			@Override
 			public ImageDescriptor getImageDescriptor() {
 				return (TwitterCrawlerImageRegistry.getImageIconFactory()
@@ -156,8 +162,10 @@ public class TwitterCrawlerView extends ViewPart implements
 				noLocationFilter = false;
 
 				// check if the output address is correct and writable
+				DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
+				Date dateobj = new Date();
 				final String outputFile = layoutData.getOutputLabel().getText()
-						+ File.separator + "Twitter_Strem.txt";
+						+ File.separator + "Twitter_Strem_"+df.format(dateobj)+".json";
 				storedAtts = new boolean[8];
 
 				// Get stored attribute values
@@ -174,7 +182,7 @@ public class TwitterCrawlerView extends ViewPart implements
 
 				final boolean maxLimitEnabled = maxLimit.getSelection();
 				final boolean timeLimit = limitRecords.getSelection();
-				Job job = new Job("Twitter Stream Job") {
+				 job = new Job("Twitter Stream Job") {
 					protected IStatus run(IProgressMonitor monitor) {
 
 						try {
@@ -187,14 +195,24 @@ public class TwitterCrawlerView extends ViewPart implements
 							}
 							monitor.beginTask("Crawling Twitter ...",
 									(int) totalJobWork);
+							TacitFormComposite
+							.writeConsoleHeaderBegining("Twitter Crawling Started... ");
 							ttStream.stream(outputFile, maxLimitEnabled,
 									maxTweetLimit, timeLimit, finishTime,
 									noWordFilter, keyWords, noLocationFilter,
-									geoLocations, storedAtts, monitor);
+									geoLocations, storedAtts, monitor,job);
 							monitor.done();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
+						}
+						catch (OperationCanceledException e){
+							TacitFormComposite
+							.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
+							TacitFormComposite.updateStatusMessage(
+									getViewSite(), "Crawling is stopped",
+									IStatus.INFO, form);
+							return Status.CANCEL_STATUS;
 						}
 						TacitFormComposite
 						.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
@@ -205,6 +223,7 @@ public class TwitterCrawlerView extends ViewPart implements
 					}
 				};
 				if (canProceedCrawl())
+					job.setUser(true);
 					job.schedule();
 			}
 
