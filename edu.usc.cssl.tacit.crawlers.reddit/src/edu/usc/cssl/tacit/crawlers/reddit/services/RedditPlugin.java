@@ -5,8 +5,12 @@ import static com.github.jreddit.utils.restclient.JsonUtils.safeJsonToString;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,9 +29,9 @@ public class RedditPlugin {
 	private String sortType;
     private boolean limitToBestComments;
     int filesDownloaded;
-
     IProgressMonitor monitor;
     HashMap<String, String> redditCategories;
+    Date dateObj;
 
     /**
      * Constructor.
@@ -42,6 +46,7 @@ public class RedditPlugin {
     	this.limitToBestComments = limitComments; // limited to best comments
     	this.monitor = monitor; 
     	this.filesDownloaded = 0;
+    	dateObj = new Date();
 	}
 
 	protected HashMap<String, String> fetchRedditCategories(int limit) {
@@ -92,12 +97,15 @@ public class RedditPlugin {
 		if(monitor.isCanceled()) {
 			monitor.subTask("Cancelling...");
 			return;
-		}		
-	    String filePath = this.outputPath + File.separator + trendType + ".txt";
+		}	
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+	    String filePath = this.outputPath + File.separator + trendType + "-" + df.format(dateObj) + ".json";
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/".concat(trendType).concat("/").concat(".json"));
     	FileWriter file = new FileWriter(filePath);
-		file.write(resultData.toJSONString());
+    	Writer writer = new JSONWriter(); 
+    	resultData.writeJSONString(writer);
+		file.write(writer.toString());
 		file.flush();
         file.close();
 		if(monitor.isCanceled()) {
@@ -113,11 +121,14 @@ public class RedditPlugin {
 	 * To crawl all the user posts
 	 */
 	public void crawlUsersPosts(String username) throws IOException, URISyntaxException { // As of now fetches only links
-	    String filePath = this.outputPath + File.separator + "UserPosts.txt";
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+	    String filePath = this.outputPath + File.separator + "UserPosts-" + df.format(dateObj) + ".json";
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/user/".concat(username).concat("/.json?sort=").concat(sortType));
     	FileWriter file = new FileWriter(filePath);
-		file.write(resultData.toJSONString());
+    	Writer writer = new JSONWriter(); 
+    	resultData.writeJSONString(writer);
+		file.write(writer.toString());
 		file.flush();
         file.close();
 	}
@@ -131,11 +142,14 @@ public class RedditPlugin {
 			monitor.subTask("Cancelling...");
 			return;
 		}
-		String filePath = this.outputPath + File.separator + label + ".txt";
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		String filePath = this.outputPath + File.separator + label + "-" + df.format(dateObj) + ".json";
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, url);
     	FileWriter file = new FileWriter(filePath);
-		file.write(resultData.toJSONString());
+    	Writer writer = new JSONWriter(); 
+    	resultData.writeJSONString(writer);
+		file.write(writer.toString());
 		file.flush();
         file.close();
 		if(monitor.isCanceled()) {
@@ -157,17 +171,20 @@ public class RedditPlugin {
 			monitor.subTask("Cancelling...");
 			return;
 		}		
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		String filePath = this.outputPath + File.separator;
 		if(null != subreddit && !subreddit.isEmpty())
-			filePath+= "SearchResults_" + subreddit + ".txt";
+			filePath+= "SearchResults-" + subreddit + "-" + df.format(dateObj) +".json";
 		else
-			filePath+= "SearchResults.txt";
+			filePath+= "SearchResults-" + df.format(dateObj) + ".json";
 		
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/search/.json?".concat(query));
 		ConsoleView.printlInConsoleln("Writing "+ filePath);		
 		FileWriter file = new FileWriter(filePath);
-		file.write(resultData.toJSONString());
+    	Writer writer = new JSONWriter(); // for pretty-printing 
+    	resultData.writeJSONString(writer);
+		file.write(writer.toString());
 		file.flush();
         file.close();
 		if(monitor.isCanceled()) {
@@ -190,7 +207,6 @@ public class RedditPlugin {
         		JSONObject respObject = (JSONObject) response;
 	        	JSONObject dataObject = (JSONObject) respObject.get("data");
 	            JSONArray userPosts = (JSONArray) dataObject.get("children");
-	            int postsCount = 0;
 		    	for (Object post : userPosts) {
 					if(monitor.isCanceled()) {
 						monitor.subTask("Cancelling...");
@@ -237,10 +253,9 @@ public class RedditPlugin {
 			permalink = temp[0];
 		}
 		System.out.println("Crawling comments :" + permalink);
-	    String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) +".txt";
-	    
-		JSONArray linkComments = new JSONArray();
-		
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) + "-" + df.format(dateObj) + ".json";	    
+		JSONArray linkComments = new JSONArray();		
 		Object response = restClient.get(permalink.concat("/.json?sort=best"), null).getResponseObject(); // sorts by best
 		
 		if (response instanceof JSONArray) {	    	
@@ -273,7 +288,9 @@ public class RedditPlugin {
 		 
 		ConsoleView.printlInConsoleln("Writing "+ filePath);
     	FileWriter file = new FileWriter(filePath);
-		file.write(linkComments.toJSONString());
+    	Writer writer = new JSONWriter(); 
+    	linkComments.writeJSONString(writer);
+		file.write(writer.toString());
 		file.flush();
         file.close();
         filesDownloaded++;
@@ -336,6 +353,10 @@ public class RedditPlugin {
         simplifiedData.put("ups", data.get("ups"));
         simplifiedData.put("downs", data.get("downs"));
         return simplifiedData;		
+	}
+
+	public void updateOutputDirectory(String subRedditPath) {
+		this.outputPath = subRedditPath;		
 	}
 	
 }

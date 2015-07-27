@@ -1,4 +1,5 @@
 package edu.usc.cssl.tacit.crawlers.reddit.services;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -14,6 +15,7 @@ public class RedditCrawler {
 	RestClient restClient;
 	RedditPlugin rp;
 	IProgressMonitor monitor;
+	String outputDir;
 	
 	/*
 	 * create object for reddit plugin
@@ -23,6 +25,7 @@ public class RedditCrawler {
 	    restClient.setUserAgent("bot/1.0 by name");	
 	    this.monitor = monitor;
 	    rp = new RedditPlugin(restClient, outputDir, limitLinks, limitComments, monitor);
+	    this.outputDir = outputDir;
 	}
 	
 	public void crawlTrendingData(String trendType) throws IOException, URISyntaxException {
@@ -39,7 +42,13 @@ public class RedditCrawler {
 	}
 	
 	public void search(String query, String title, String author, String url, String linkId, String timeFrame, String sortType, ArrayList<String> content) throws IOException, URISyntaxException {
-		for(String subreddit : content) {	
+		for(String subreddit : content) {
+			String subRedditPath = this.outputDir + File.separator + subreddit;
+			if(!new File(subRedditPath).exists()) {
+				new File(subRedditPath).mkdir(); 
+			}
+			rp.updateOutputDirectory(subRedditPath);
+			
 			if(monitor.isCanceled()) {
 				monitor.subTask("Cancelling...");
 				return;
