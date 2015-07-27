@@ -196,7 +196,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		});
 		
 		crawlLabeledButton = new Button(buttonComposite, SWT.RADIO);
-		crawlLabeledButton.setText("Labeled Data");
+		crawlLabeledButton.setText("Top/Controversial Data");
 		crawlLabeledButton.setSelection(false);
 		crawlLabeledButton.addSelectionListener(new SelectionListener() {
 			@Override
@@ -264,7 +264,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(labeledDataComposite);
 		
 		Label labelType = new Label(labeledDataComposite, SWT.NONE);
-		labelType.setText("Label Data:");
+		labelType.setText("Select Type:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(labelType);
 		cmbLabelType = new Combo(labeledDataComposite, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbLabelType);
@@ -403,7 +403,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		cmbSortType.select(0);	
 	
 		Label titleLabel = new Label(searchComposite1, SWT.NONE);
-		titleLabel.setText("Title:");
+		titleLabel.setText("Title keyword(s):");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(titleLabel);
 		titleText = new Text(searchComposite1, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleText);
@@ -413,7 +413,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(authorLabel);
 		authorText = new Text(searchComposite1, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(authorText);
-		authorText.setMessage("User who submitted the post e.g. PresidentObama");
+		authorText.setMessage("User who submitted the post e.g. yknjsnow");
 		
 		Label urlLabel = new Label(searchComposite2, SWT.NONE);
 		urlLabel.setText("URL:");
