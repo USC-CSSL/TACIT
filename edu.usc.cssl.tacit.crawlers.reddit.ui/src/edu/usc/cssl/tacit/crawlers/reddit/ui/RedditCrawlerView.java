@@ -450,7 +450,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		//cmbTimeFrames.setEnabled(false);
 
 		Label numLinksLabel = new Label(commonParamsGroup, SWT.None);
-		numLinksLabel.setText("No.of.Links to Crawl:");
+		numLinksLabel.setText("Limit Links per Request:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(numLinksLabel);
 		numLinksText = new Text(commonParamsGroup, SWT.BORDER);
 		numLinksText.setText("10");
