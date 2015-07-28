@@ -45,7 +45,7 @@ public class RedditCrawler {
 		for(String subreddit : content) {
 			String subRedditPath = this.outputDir + File.separator + subreddit;
 			if(!new File(subRedditPath).exists()) {
-				new File(subRedditPath).mkdir();  // creates a folder with subreddit name
+				new File(subRedditPath).mkdir(); 
 			}
 			rp.updateOutputDirectory(subRedditPath);
 			
