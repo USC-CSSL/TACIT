@@ -70,8 +70,7 @@ public class TwitterStreamApi {
 				.setOAuthAccessToken(accessToken)
 				.setOAuthAccessTokenSecret(accessTokenSecret);
 		monitor.worked(2);
-		twitterStream = new TwitterStreamFactory(cb.build())
-				.getInstance();
+		twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 
 		// Create File
 		File streamFile = new File(fileName);
@@ -84,7 +83,7 @@ public class TwitterStreamApi {
 		jsonGenerator.writeStartArray();
 
 		// Setup Listener
-		 listener = new StatusListener() {
+		listener = new StatusListener() {
 			@Override
 			public void onStatus(Status status) {
 
@@ -114,22 +113,22 @@ public class TwitterStreamApi {
 					if (att[0]) {
 						jsonGenerator.writeStringField("Name", status.getUser()
 								.getScreenName());
-						
+
 					}
 					if (att[1]) {
 						jsonGenerator
 								.writeStringField("Text", status.getText());
-						
+
 					}
 					if (att[2]) {
 						jsonGenerator.writeStringField("Retweet",
 								Integer.toString(status.getRetweetCount()));
-						
+
 					}
 					if (att[3]) {
 						jsonGenerator.writeStringField("Latitude", sLatitude);
 						jsonGenerator.writeStringField("Longitude", sLongitude);
-						
+
 					}
 					if (att[4]) {
 						jsonGenerator.writeStringField("CreatedAt", status
@@ -141,7 +140,7 @@ public class TwitterStreamApi {
 					if (att[5]) {
 						jsonGenerator.writeStringField("FavCount",
 								Integer.toString(status.getFavoriteCount()));
-						
+
 					}
 					if (att[6])
 						jsonGenerator.writeStringField("Id",
@@ -205,7 +204,7 @@ public class TwitterStreamApi {
 				terminateTwitterCrawler(monitor);
 				ConsoleView.printlInConsoleln(exception.toString());
 				stopStream();
-				
+
 			}
 		};
 
@@ -220,7 +219,6 @@ public class TwitterStreamApi {
 		else
 			twitterStream.sample(); // in case there is no filter just sample
 									// from all tweets
-		
 
 		try {
 			synchronized (lock) {
@@ -233,8 +231,8 @@ public class TwitterStreamApi {
 			TacitFormComposite
 					.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
 		}
-		if(twitterStream!= null)
-		twitterStream.shutdown();
+		if (twitterStream != null)
+			twitterStream.shutdown();
 		monitor.worked(2);
 		if (!terminate)
 			ConsoleView.printlInConsoleln("Crawling is completed");
@@ -243,17 +241,17 @@ public class TwitterStreamApi {
 		}
 		monitor.subTask("Writing Contents at " + fileName);
 		jsonGenerator.writeEndArray();
-		if(new File(fileName).length() > 0)
-		ConsoleView.printlInConsoleln("Saving Crawled information at "
-				+ streamFile);
-		else if(new File(fileName).exists())
+
+		jsonGenerator.close();
+		if (new File(fileName).length() > 0)
+			ConsoleView.printlInConsoleln("Saving Crawled information at "
+					+ streamFile);
+		else if (new File(fileName).exists())
 			new File(fileName).delete();
 		monitor.worked(2);
-		jsonGenerator.close();
 		if (terminate) {
 			throw new OperationCanceledException();
 		}
-		// splitJsonFactory(streamFile);
 
 	}
 
@@ -310,17 +308,17 @@ public class TwitterStreamApi {
 		}
 
 	}
-	
-	public void stopStream(){
 
-        this.twitterStream.shutdown();
+	public void stopStream() {
 
-        this.twitterStream = null;
-        this.listener = null;
-        synchronized (lock) {
+		this.twitterStream.shutdown();
+
+		this.twitterStream = null;
+		this.listener = null;
+		synchronized (lock) {
 			lock.notify();
 		}
-    }
+	}
 
 	private void terminateTwitterCrawler(final IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {

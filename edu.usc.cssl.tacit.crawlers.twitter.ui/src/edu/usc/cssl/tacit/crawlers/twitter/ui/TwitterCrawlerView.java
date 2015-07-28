@@ -78,6 +78,8 @@ public class TwitterCrawlerView extends ViewPart implements
 
 	private String keyWords[];
 	private double[][] geoLocations;
+	private static Button wordFilterLbl;
+	private static Button geoFilterLbl;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -88,7 +90,8 @@ public class TwitterCrawlerView extends ViewPart implements
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("Twitter Crawler"); //$NON-NLS-1$
-		form.setImage(TwitterCrawlerImageRegistry.getImageIconFactory().getImage(ITwitterCrawlerUIConstants.IMAGE_CRAWL_TWITTER));
+		form.setImage(TwitterCrawlerImageRegistry.getImageIconFactory()
+				.getImage(ITwitterCrawlerUIConstants.IMAGE_CRAWL_TWITTER));
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 
 		Section section = toolkit.createSection(form.getBody(),
@@ -104,7 +107,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		sc.setExpandVertical(true);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sc);
-	//	TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
+		// TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
 
 		// Output Data
 		Composite client1 = toolkit.createComposite(form.getBody());
@@ -154,7 +157,7 @@ public class TwitterCrawlerView extends ViewPart implements
 				TacitFormComposite.updateStatusMessage(getViewSite(), null,
 						null, form);
 				TacitFormComposite
-				.writeConsoleHeaderBegining("Crawling Twitter started ");
+						.writeConsoleHeaderBegining("Crawling Twitter started ");
 				// Make sure input values are in valid state then launch
 				// streamer
 
@@ -165,7 +168,8 @@ public class TwitterCrawlerView extends ViewPart implements
 				DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 				Date dateobj = new Date();
 				final String outputFile = layoutData.getOutputLabel().getText()
-						+ File.separator + "Twitter_Strem_"+df.format(dateobj)+".json";
+						+ File.separator + "Twitter_Strem_"
+						+ df.format(dateobj) + ".json";
 				storedAtts = new boolean[8];
 
 				// Get stored attribute values
@@ -182,7 +186,7 @@ public class TwitterCrawlerView extends ViewPart implements
 
 				final boolean maxLimitEnabled = maxLimit.getSelection();
 				final boolean timeLimit = limitRecords.getSelection();
-				 job = new Job("Twitter Stream Job") {
+				job = new Job("Twitter Stream Job") {
 					protected IStatus run(IProgressMonitor monitor) {
 
 						try {
@@ -196,33 +200,37 @@ public class TwitterCrawlerView extends ViewPart implements
 							monitor.beginTask("Crawling Twitter ...",
 									(int) totalJobWork);
 							TacitFormComposite
-							.writeConsoleHeaderBegining("Twitter Crawling Started... ");
+									.writeConsoleHeaderBegining("Twitter Crawling Started... ");
 							ttStream.stream(outputFile, maxLimitEnabled,
 									maxTweetLimit, timeLimit, finishTime,
 									noWordFilter, keyWords, noLocationFilter,
-									geoLocations, storedAtts, monitor,job);
+									geoLocations, storedAtts, monitor, job);
 							monitor.done();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						catch (OperationCanceledException e){
 							TacitFormComposite
-							.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
+									.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
+							TacitFormComposite.updateStatusMessage(
+									getViewSite(), "Crawling completed",
+									IStatus.OK, form);
+							return Status.OK_STATUS;
+						} catch (IOException e1) {
+							TacitFormComposite
+									.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
+							TacitFormComposite.updateStatusMessage(
+									getViewSite(), "Crawling is stopped",
+									IStatus.INFO, form);
+							return Status.CANCEL_STATUS;
+						} catch (OperationCanceledException e) {
+							TacitFormComposite
+									.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
 							TacitFormComposite.updateStatusMessage(
 									getViewSite(), "Crawling is stopped",
 									IStatus.INFO, form);
 							return Status.CANCEL_STATUS;
 						}
-						TacitFormComposite
-						.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), "Crawling completed",
-								IStatus.OK, form);
-						return Status.OK_STATUS;
+
 					}
 				};
-				if (canProceedCrawl()){
+				if (canProceedCrawl()) {
 					job.setUser(true);
 					job.schedule();
 				}
@@ -333,6 +341,58 @@ public class TwitterCrawlerView extends ViewPart implements
 		boolean validLimitParse = true;
 		boolean validLimitState = false;
 		// check limit tab attributes validity
+
+		// check geofilter string validity
+
+		if (geoFilterLbl.getSelection()) {
+			String geoWords[] = geoFilterText.getText().split(";");
+			geoLocations = new double[geoWords.length * 2][2];
+			if ((geoWords.length % 2 == 1) && (geoWords.length != 1)) // check
+																		// valid
+																		// number
+																		// of
+																		// pairs
+				validGeoFilter = false;
+			else {
+				for (int i = 0; i < geoWords.length
+						&& !geoFilterText.getText().isEmpty(); i += 2) {
+					String geoTemp[] = geoWords[i].split(",");
+					if (geoTemp.length != 4) // check if there are only two
+												// values in the pair
+						validGeoFilter = false;
+					else {
+						if (geoTemp[0].isEmpty() || geoTemp[1].isEmpty()
+								|| geoTemp[2].isEmpty() || geoTemp[3].isEmpty())
+							validGeoFilter = false; // check if there is
+													// something to be read
+						else {
+							try { // check if there is a valid number
+								geoLocations[i][0] = Double
+										.parseDouble(geoTemp[0]);
+								geoLocations[i][1] = Double
+										.parseDouble(geoTemp[1]);
+								geoLocations[i + 1][0] = Double
+										.parseDouble(geoTemp[2]);
+								geoLocations[i + 1][1] = Double
+										.parseDouble(geoTemp[3]);
+							} catch (NumberFormatException e2) {
+								validGeoFilter = false;
+							}
+						}
+
+					}
+				}
+			}
+		}
+		// is there any geofilter?
+		if (geoFilterLbl.getSelection()) {
+			if (geoLocations.length == 0 || geoFilterText.getText().isEmpty()){
+				noLocationFilter = true;
+				validGeoFilter = false;
+			}
+			
+		}
+
 		if (limitRecords.getSelection()) {
 			try {
 				dayLimit = Long.parseLong(dayText.getText().toString());
@@ -361,48 +421,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		if (limitRecords.getSelection() || maxLimit.getSelection()) {
 			validLimitState = true;
 		}
-
-		keyWords = wordFilterText.getText().split(";");
-		if (keyWords.length == 0 || wordFilterText.getText().isEmpty())
-			noWordFilter = true;
-
-		// check geofilter string validity
-		String geoWords[] = geoFilterText.getText().split(";");
-		geoLocations = new double[geoWords.length * 2][2];
-		if ((geoWords.length % 2 == 1) && (geoWords.length != 1)) // check
-																	// valid
-																	// number
-																	// of
-																	// pairs
-			validGeoFilter = false;
-		else {
-			for (int i = 0; i < geoWords.length
-					&& !geoFilterText.getText().isEmpty(); i+=2) {
-				String geoTemp[] = geoWords[i].split(",");
-				if (geoTemp.length != 4) // check if there are only two
-											// values in the pair
-					validGeoFilter = false;
-				else {
-					if (geoTemp[0].isEmpty() || geoTemp[1].isEmpty() || geoTemp[2].isEmpty() || geoTemp[3].isEmpty())
-						validGeoFilter = false; // check if there is
-												// something to be read
-					else {
-						try { // check if there is a valid number
-							geoLocations[i][0] = Double.parseDouble(geoTemp[0]);
-							geoLocations[i][1] = Double.parseDouble(geoTemp[1]);
-							geoLocations[i+1][0] = Double.parseDouble(geoTemp[2]);
-							geoLocations[i+1][1] = Double.parseDouble(geoTemp[3]);
-						} catch (NumberFormatException e2) {
-							validGeoFilter = false;
-						}
-					}
-
-				}
-			}
-		}
-		// is there any geofilter?
-		if (geoLocations.length == 0 || geoFilterText.getText().isEmpty())
-			noLocationFilter = true;
+		form.getMessageManager().removeMessage("word");
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("geolocation");
 		form.getMessageManager().removeMessage("limit");
@@ -435,13 +454,29 @@ public class TwitterCrawlerView extends ViewPart implements
 					new String[] { id }, null).open();
 			canProceed = false;
 
-		} else if (!validGeoFilter) {
-			form.getMessageManager()
-					.addMessage(
-							"geolocation",
-							"Error: Invalid gelocation query. Please compare with example.",
-							null, IMessageProvider.ERROR);
-			canProceed = false;
+		} else if (wordFilterLbl.getSelection()) {
+			noLocationFilter = true;
+			noWordFilter = false;
+			keyWords = wordFilterText.getText().split(";");
+			if (keyWords.length == 0 || wordFilterText.getText().isEmpty()) {
+				form.getMessageManager().addMessage("word",
+						"Word Filter cannot be empty", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+		}
+
+		else if (geoFilterLbl.getSelection()) {
+			noLocationFilter = false;
+			noWordFilter = true;
+			if (!validGeoFilter) {
+				form.getMessageManager()
+						.addMessage(
+								"geolocation",
+								"Error: Invalid gelocation query. Please compare with example.",
+								null, IMessageProvider.ERROR);
+				canProceed = false;
+			}
 		} else if (!validLimitParse) {
 			form.getMessageManager()
 					.addMessage(
@@ -504,22 +539,42 @@ public class TwitterCrawlerView extends ViewPart implements
 
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 
-		final Label wordFilterLbl = toolkit.createLabel(sectionClient,
-				"Word Filter", SWT.NONE);
+		wordFilterLbl = toolkit.createButton(sectionClient, "Word Filter",
+				SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(wordFilterLbl);
+		wordFilterLbl.setSelection(true);
 		wordFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(wordFilterText);
 		wordFilterText.setMessage("For example: NLP;#USC");
-		final Label geoFilterLbl = toolkit.createLabel(sectionClient,
-				"Geo Filter", SWT.NONE);
+		geoFilterLbl = toolkit.createButton(sectionClient, "Geo Filter",
+				SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(geoFilterLbl);
 		geoFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(geoFilterText);
-		geoFilterText.setMessage("For example(Los Angeles): -118.442,33.72,-117.86,34.12");
+		geoFilterText
+				.setMessage("For example(Los Angeles): -118.442,33.72,-117.86,34.12");
+		geoFilterText.setEditable(false);
+		geoFilterText.setEnabled(false);
+		wordFilterLbl.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (wordFilterLbl.getSelection()) {
+					wordFilterText.setEditable(true);
+					wordFilterText.setEnabled(true);
+					geoFilterText.setEditable(false);
+					geoFilterText.setEnabled(false);
+				} else {
+					wordFilterText.setEditable(false);
+					wordFilterText.setEnabled(false);
+					geoFilterText.setEditable(true);
+					geoFilterText.setEnabled(true);
+				}
+			}
+		});
 
 	}
 
@@ -609,7 +664,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		maxText.setText("10");
 		limitRecords.addSelectionListener(new SelectionAdapter() {
 
-			@Override	
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (limitRecords.getSelection()) {
 					dayText.setEnabled(true);
@@ -711,11 +766,13 @@ public class TwitterCrawlerView extends ViewPart implements
 		reTweetBtn.setText("Re-tweet Number ");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(reTweetBtn);
+		reTweetBtn.setSelection(true);
 
 		favBtn = new Button(sectionClient, SWT.CHECK);
 		favBtn.setText("Favorite Count");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(favBtn);
+		favBtn.setSelection(true);
 
 	}
 

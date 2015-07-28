@@ -345,7 +345,7 @@ public class TacitFormComposite {
 									CommonUiViewImageRegistry
 											.getImageIconFactory()
 											.getImage(
-													ICommonUiConstants.IMAGE_ERROR_SB),
+													ICommonUiConstants.IMAGE_INFO_SB),
 									message);
 
 				} else if (error == IStatus.OK) {
