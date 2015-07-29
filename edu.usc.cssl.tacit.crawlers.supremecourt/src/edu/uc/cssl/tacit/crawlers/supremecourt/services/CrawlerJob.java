@@ -138,7 +138,7 @@ public class CrawlerJob {
 			monitor.subTask("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
 					+ casesSplit[casesSplit.length - 2] + " url : " + url);
-			ConsoleView.printlInConsole("Crawling " + "Case : "
+			ConsoleView.printlInConsoleln("Crawling " + "Case : "
 					+ row.select("a").get(0).text() + " year : "
 					+ casesSplit[casesSplit.length - 2]);
 			if (limit == case_id)
@@ -147,7 +147,8 @@ public class CrawlerJob {
 			String filename = row.select("td").get(1).text().trim() + "_"
 					+ date.substring(6) + date.substring(0, 2)
 					+ date.substring(3, 5);
-			ConsoleView.printlInConsoleln(" url :" + contenturl);
+			ConsoleView.printlInConsole(" url :" + contenturl);
+			
 
 			// Fixing the unhandled exception without cascading.
 			try {

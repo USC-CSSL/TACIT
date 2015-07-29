@@ -338,14 +338,18 @@ public class SupremeCrawlerView extends ViewPart implements
 							TacitFormComposite
 									.writeConsoleHeaderBegining("<terminated> Crawling  ");
 							TacitFormComposite.updateStatusMessage(
-									getViewSite(), "Crawling is stopped ",
+									getViewSite(), "Crawling is Stopped ",
 									IStatus.INFO, form);
+							ConsoleView.printlInConsoleln();
+							ConsoleView
+									.printlInConsoleln("Crawling is Stopped.");
 							return Status.CANCEL_STATUS;
 						}
 						TacitFormComposite
 								.writeConsoleHeaderBegining("<terminated> Crawling  ");
+						ConsoleView.printlInConsoleln();
 						ConsoleView
-								.printlInConsoleln("Crawling is sucessfully completed.");
+								.printlInConsoleln("Crawling is sucessfully Completed.");
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								"Crawling completed", IStatus.OK, form);
 						return Status.OK_STATUS;
