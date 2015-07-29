@@ -104,7 +104,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
 		section.setExpanded(true);
-		form.setImage(UsCongressCrawlerViewImageRegistry.getImageIconFactory().getImage(IUsCongressCrawlerViewConstants.IMAGE_TITLE));
+		form.setImage(UsCongressCrawlerViewImageRegistry.getImageIconFactory().getImage(IUsCongressCrawlerViewConstants.IMAGE_US_CONGRESS_OBJ));
 
 		// Create a composite to hold the other widgets
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);

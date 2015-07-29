@@ -25,7 +25,7 @@ public class UsCongressCrawlerViewImageRegistry {
 						UsCongressCrawlerViewImageRegistry.class,
 						"/icons/help_contents.gif"));
 		
-		imgReg.put(IUsCongressCrawlerViewConstants.IMAGE_TITLE,
+		imgReg.put(IUsCongressCrawlerViewConstants.IMAGE_US_CONGRESS_OBJ,
 				ImageDescriptor.createFromFile(
 						UsCongressCrawlerViewImageRegistry.class,
 						"/icons/uscongress.png"));
