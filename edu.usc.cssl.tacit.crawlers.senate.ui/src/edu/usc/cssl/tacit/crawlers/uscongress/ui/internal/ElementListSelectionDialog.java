@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.senate.ui.internal;
+package edu.usc.cssl.tacit.crawlers.uscongress.ui.internal;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2006 IBM Corporation and others.

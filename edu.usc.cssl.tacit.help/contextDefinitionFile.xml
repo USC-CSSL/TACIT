@@ -24,9 +24,9 @@
      <description>Check here for help with K-means clustering.</description>
      <topic href="html/clustering/kmeanscluster.html" label="K Means Clustering"/>
   </context>
-  <context id="senate">
-     <description>Check here for help with Senate Crawler.</description>
-     <topic href="html/Crawlers/senatecrawler.html" label="Senate Crawler"/>
+  <context id="uscongress">
+     <description>Check here for help with US Congress Crawler.</description>
+     <topic href="html/Crawlers/senatecrawler.html" label="US Congress Crawler"/>
   </context>
   <context id="lda">
      <description>Check here for help with LDA.</description>

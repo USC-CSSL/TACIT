@@ -1,9 +1,9 @@
-package edu.usc.cssl.tacit.crawlers.senate.ui;
+package edu.usc.cssl.tacit.crawlers.uscongress.ui;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Shell;
 
-import edu.usc.cssl.tacit.crawlers.senate.ui.internal.ElementListSelectionDialog;
+import edu.usc.cssl.tacit.crawlers.uscongress.ui.internal.ElementListSelectionDialog;
 
 public class SenatorListDialog extends ElementListSelectionDialog {
 

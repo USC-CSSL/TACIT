@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Senate
-Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.senate;singleton:=true
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.uscongress;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.usc.cssl.tacit.crawlers.senate.Activator
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.uscongress.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.jsoup,
@@ -11,4 +11,4 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.usc.cssl.tacit.crawlers.senate.services
+Export-Package: edu.usc.cssl.tacit.crawlers.uscongress.services

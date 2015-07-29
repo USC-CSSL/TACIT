@@ -4,10 +4,10 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="edu.usc.cssl.tacit.crawlers.senate.ui.SenateCrawlerView"
-            icon="icons/senate.png"
-            id="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
-            name="Senate Crawler"
+            class="edu.usc.cssl.tacit.crawlers.uscongress.ui.UsCongressCrawlerView"
+            icon="icons/uscongress.png"
+            id="edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongresscrawlerview"
+            name="US Congress Crawler"
             restorable="true">
       </view>
    </extension>
@@ -17,26 +17,26 @@
             allPopups="false"
             locationURI="menu:crawl">
          <command
-               commandId="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
-               icon="icons/senate.png"
-               label="Senate Crawler"
+               commandId="edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongresscrawlerview"
+               icon="icons/uscongress.png"
+               label="US Congress Crawler"
                style="push"
-               tooltip="Senate Crawler">
+               tooltip="US Congress Crawler">
          </command>
       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
-            id="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
-            name="Senate Crawler">
+            id="edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongresscrawlerview"
+            name="US Congress Crawler">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.usc.cssl.tacit.crawlers.senate.ui.handlers.SenateCrawlerViewHandler"
-            commandId="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview">
+            class="edu.usc.cssl.tacit.crawlers.uscongress.ui.handlers.UsCongressCrawlerViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongresscrawlerview">
       </handler>
    </extension>
 

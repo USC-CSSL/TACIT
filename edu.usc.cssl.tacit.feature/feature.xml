@@ -250,20 +250,6 @@
          unpack="false"/>
 
    <plugin
-         id="edu.usc.cssl.tacit.crawlers.senate.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.usc.cssl.tacit.crawlers.senate"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.ecf"
          download-size="0"
          install-size="0"
@@ -335,6 +321,20 @@
 
    <plugin
          id="edu.usc.cssl.tacit.topicmodel.lda.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.tacit.crawlers.uscongress"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.tacit.crawlers.uscongress.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

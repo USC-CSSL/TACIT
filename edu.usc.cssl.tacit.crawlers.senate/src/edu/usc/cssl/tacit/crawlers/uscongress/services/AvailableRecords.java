@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.senate.services;
+package edu.usc.cssl.tacit.crawlers.uscongress.services;
 
 import java.io.BufferedWriter;
 import java.io.File;

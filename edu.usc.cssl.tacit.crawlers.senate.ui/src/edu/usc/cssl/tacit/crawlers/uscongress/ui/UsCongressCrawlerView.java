@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.senate.ui;
+package edu.usc.cssl.tacit.crawlers.uscongress.ui;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -56,13 +56,13 @@ import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
-import edu.usc.cssl.tacit.crawlers.senate.services.AvailableRecords;
-import edu.usc.cssl.tacit.crawlers.senate.services.SenateCrawler;
-import edu.usc.cssl.tacit.crawlers.senate.ui.internal.ISenateCrawlerViewConstants;
-import edu.usc.cssl.tacit.crawlers.senate.ui.internal.SenateCrawlerViewImageRegistry;
+import edu.usc.cssl.tacit.crawlers.uscongress.services.AvailableRecords;
+import edu.usc.cssl.tacit.crawlers.uscongress.services.UsCongressCrawler;
+import edu.usc.cssl.tacit.crawlers.uscongress.ui.internal.IUsCongressCrawlerViewConstants;
+import edu.usc.cssl.tacit.crawlers.uscongress.ui.internal.UsCongressCrawlerViewImageRegistry;
 
-public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewConstants {
-	public static String ID = "edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview";
+public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawlerViewConstants {
+	public static String ID = "edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongresscrawlerview";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	
@@ -100,10 +100,11 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
-		toolkit = createFormBodySection(parent, "Senate Crawler");
+		toolkit = createFormBodySection(parent, "US Congress Crawler");
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
 		section.setExpanded(true);
+		form.setImage(UsCongressCrawlerViewImageRegistry.getImageIconFactory().getImage(IUsCongressCrawlerViewConstants.IMAGE_TITLE));
 
 		// Create a composite to hold the other widgets
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -609,7 +610,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (SenateCrawlerViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
+				return (UsCongressCrawlerViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
 			@Override
@@ -627,9 +628,9 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 			private boolean canProceed;
 			@Override
 			public void run() {
-				final SenateCrawler sc = new SenateCrawler();
+				final UsCongressCrawler sc = new UsCongressCrawler();
 
-				final Job job = new Job("Senate Crawler") {					
+				final Job job = new Job("US Congress Crawler") {					
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
@@ -697,8 +698,8 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 								progressSize+= ((senatorDetails.size() - count)+1 * 10) + 50; // considering none of "All" selected								
 							}
 						}
-						monitor.beginTask("Running Senate Crawler..." , progressSize);
-						TacitFormComposite.writeConsoleHeaderBegining("Senate Crawler started ");						
+						monitor.beginTask("Running US Congress Crawler..." , progressSize);
+						TacitFormComposite.writeConsoleHeaderBegining("US Congress Crawler started ");						
 						
 						final ArrayList<Integer> allCongresses = new ArrayList<Integer>();
 						for(String s: congresses) {
@@ -707,31 +708,31 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						}
 							
 						if(monitor.isCanceled()) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 							return handledCancelRequest("Cancelled");
 						}
 						try {
 							monitor.subTask("Initializing...");
 							monitor.worked(10);
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30);
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							monitor.worked(10);
 														
 							monitor.subTask("Crawling...");
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							sc.crawl();
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							monitor.worked(10);
@@ -744,11 +745,11 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						}
 						monitor.worked(100);
 						monitor.done();
-						ConsoleView.printlInConsoleln("Senate crawler completed successfully.");
+						ConsoleView.printlInConsoleln("US Congress crawler completed successfully.");
 						ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
 						ConsoleView.printlInConsoleln("Done");
-						TacitFormComposite.updateStatusMessage(getViewSite(), "Senate crawler completed successfully.", IStatus.OK, form);
-						TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "US Congress crawler completed successfully.", IStatus.OK, form);
+						TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 						return Status.OK_STATUS;
 					}					
 				};	
@@ -763,7 +764,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (SenateCrawlerViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
+				return (UsCongressCrawlerViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
 			}
 
 			@Override
@@ -777,7 +778,7 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 						.getWorkbench()
 						.getHelpSystem()
 						.displayHelp(
-								"edu.usc.cssl.tacit.crawlers.senate.ui.senate");
+								"edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
 			};
 		};
 		mgr.add(helpAction);
@@ -785,12 +786,12 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 				.getWorkbench()
 				.getHelpSystem()
 				.setHelp(helpAction,
-						"edu.usc.cssl.tacit.crawlers.senate.ui.senate");
+						"edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
 		PlatformUI
 				.getWorkbench()
 				.getHelpSystem()
 				.setHelp(form,
-						"edu.usc.cssl.tacit.crawlers.senate.ui.senate");
+						"edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
 		form.getToolBarManager().update(true);
 	}
 	
@@ -799,13 +800,14 @@ public class SenateCrawlerView extends ViewPart implements ISenateCrawlerViewCon
 		System.out.println(message);
 		e.printStackTrace();
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
-		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+		TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 		return Status.CANCEL_STATUS;
 	}
 	
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
-		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Senate Crawler");
+		ConsoleView.printlInConsoleln("US Congress crawler cancelled.");
+		TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 		return Status.CANCEL_STATUS;
 		
 	}

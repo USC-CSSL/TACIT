@@ -148,7 +148,7 @@
               visible="false">
         </view>
          <view
-               id="edu.usc.cssl.tacit.crawlers.senate.ui.senatecrawlerview"
+               id="edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongresscrawlerview"
                minimized="true"
                relationship="stack"
                relative="org.eclipse.ui.editorss"

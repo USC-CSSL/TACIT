@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.senate.services;
+package edu.usc.cssl.tacit.crawlers.uscongress.services;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,7 +22,7 @@ import org.jsoup.select.Elements;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 
-public class SenateCrawler {
+public class UsCongressCrawler {
 	public int totalFilesDownloaded = 0;
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
 	String dateFrom, dateTo;
@@ -332,6 +332,7 @@ public class SenateCrawler {
 				String shortTitle = title;
 				if (title.length()>15)
 					shortTitle = title.substring(0, 15).trim().replaceAll("[^\\w\\s]", "");
+				shortTitle.replaceAll("[.,;\"!-(){}:?'/\\`~$%#@&*_=+<>]", ""); // replaces all special characters
 				String fileName = congress+"-"+lastName+"-"+senatorAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
 				writeToFile(senatorDir, fileName, contents);
 				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+senatorState+","+title+","+fileName);
