@@ -52,4 +52,9 @@
      <description>Check here for help with Reddit Crawler.</description>
      <topic href="html/Crawlers/redditcrawl.html" label="Reddit"/>
   </context>
+  
+  <context id="twitter">
+     <description>Check here for help with Twitter Crawler.</description>
+     <topic href="html/Crawlers/twittercrawl.html" label="Twitter Crawler"/>
+      </context>
 </contexts> 

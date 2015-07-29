@@ -67,6 +67,10 @@
          file="contextDefinitionFile.xml"
          plugin="edu.usc.cssl.tacit.crawlers.reddit.ui">
    </contexts>
+     <contexts
+         file="contextDefinitionFile.xml"
+          plugin="edu.usc.cssl.tacit.crawlers.twitter.ui">
+   </contexts>
 </extension> 
 
 </plugin>
