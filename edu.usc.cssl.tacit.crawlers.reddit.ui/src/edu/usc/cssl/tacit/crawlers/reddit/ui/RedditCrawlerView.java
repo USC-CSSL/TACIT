@@ -675,7 +675,11 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			}
 			@Override
 			public void run() {
-
+				PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.displayHelp(
+						"edu.usc.cssl.tacit.crawlers.reddit.ui.reddit");				
 			};
 		};
 		
@@ -684,12 +688,12 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 				.getWorkbench()
 				.getHelpSystem()
 				.setHelp(helpAction,
-						"edu.usc.cssl.tacit.crawlers.senate.ui.senate");
+						"edu.usc.cssl.tacit.crawlers.reddit.ui.reddit");
 		PlatformUI
 				.getWorkbench()
 				.getHelpSystem()
 				.setHelp(form,
-						"edu.usc.cssl.tacit.crawlers.senate.ui.senate");
+						"edu.usc.cssl.tacit.crawlers.reddit.ui.reddit");
 		form.getToolBarManager().update(true);
 	}
 

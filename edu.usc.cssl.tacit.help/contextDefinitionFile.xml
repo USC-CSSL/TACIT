@@ -48,4 +48,8 @@
      <description>Check here for help with Liwc style and Weighted word count.</description>
      <topic href="html/wordcount/wordcount.html" label="Liwc/Weighted Word Count"/>
   </context>
+  <context id="reddit" title="Reddit">
+     <description>Check here for help with Reddit Crawler.</description>
+     <topic href="html/Crawlers/redditcrawl.html" label="Reddit"/>
+  </context>
 </contexts> 
