@@ -146,7 +146,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		createMultiSelectRange(sectionClient);
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 		Label limitRecords = toolkit.createLabel(sectionClient,
-				"Limit Records per Case:", SWT.NONE);
+				"Limit Cases per Issue/Term:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(limitRecords);
 		limitRecordTxt = toolkit.createText(sectionClient, "10");
