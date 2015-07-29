@@ -164,12 +164,11 @@ public class SupremeCrawlerView extends ViewPart implements
 				refreshFilterRangeTable();
 			}
 		});
+		
+		createDownloadGroupSection(form.getBody());
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 		layoutData = TacitFormComposite.createOutputSection(toolkit,
 				form.getBody(), form.getMessageManager());
-		Composite outputSectionClient = layoutData.getSectionClient();
-		createDownloadGroupSection(form.getBody());
-		
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Supreme Crawler");
 		mgr = form.getToolBarManager();
