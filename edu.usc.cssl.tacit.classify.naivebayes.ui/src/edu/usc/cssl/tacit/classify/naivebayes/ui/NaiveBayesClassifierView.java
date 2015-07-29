@@ -706,6 +706,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						}
 						monitor.worked(100);
 						monitor.done();
+						ConsoleView.printlInConsoleln("Naive Bayes classifier completed successfully.");
 						TacitFormComposite.updateStatusMessage(
 								getViewSite(),
 								"Naive Bayes analysis completed", IStatus.OK,
@@ -769,6 +770,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message,
 				IStatus.ERROR, form);
+		ConsoleView.printlInConsoleln("Naive Bayes classifier cancelled.");
 		if (isPreprocessEnabled) {
 			preprocessTask.clean();
 		}

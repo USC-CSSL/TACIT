@@ -700,6 +700,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
+		ConsoleView.printlInConsoleln("Reddit crawler cancelled.");
 		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
 		return Status.CANCEL_STATUS;
 	}
