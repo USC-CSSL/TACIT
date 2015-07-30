@@ -67,9 +67,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private FormToolkit toolkit;
 	
 	private OutputLayoutData outputLayout;
-	private Combo cmbCongress;
+	private Combo sCmbComgress;
 	
 	private String[] allSenators;
+	private String[] allRepresentatives;
 	private String[] congresses;
 	private String[] congressYears;
 	
@@ -84,18 +85,36 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Text limitText;
 	
 	private int totalSenators;
+	private int totalRepresentatives;
 	private int progressSize = 100;
 	private Button sortByDateYes;
 	private Button sortByDateNo;
 	private Table senatorTable;
 	private Button removeSenatorButton;
-	private SenatorListDialog senatorListDialog;
+	private ListDialog listDialog;
 	private LinkedHashSet<String> senatorList;
+	private LinkedHashSet<String> representativeList;
 	private ArrayList<String> selectedSenators;
+	private ArrayList<String> selectedRepresentatives;
 	private Button addSenatorBtn;
 	
 	String previousSelectedCongress = "";
 	String[] availabileSenators;
+	String[] availableRepresentatives;
+	private Button senatorButton;
+	private Button representativeButton;
+	private Composite senatorComposite;
+	private Composite filterResultsComposite;
+	private Composite representativeComposite;
+	private Table representativeTable;
+	private Button addRepresentativeBtn;
+	private Button removeRepresentativeButton;
+	private Combo rCmbCongress;
+	private Button houseBtn;
+	private Button senateBtn;
+	private Button extensionBtn;
+	private Button dailyDigestBtn;
+	private Composite limitRecordsClient;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -121,14 +140,71 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);		
 		
 		createSenateInputParameters(client);
-		TacitFormComposite.createEmptyRow(toolkit, client);
+		//TacitFormComposite.createEmptyRow(toolkit, client);
 		outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
 	
 
-	private void createSenateInputParameters(Composite client) {
+	private void createSenateInputParameters(final Composite client) {
+		Group buttonComposite = new Group(client, SWT.LEFT);
+		buttonComposite.setText("Member of Congress");
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout blayout = new GridLayout();
+		blayout.numColumns = 2;
+		buttonComposite.setLayout(blayout);
+		senatorButton = new Button(buttonComposite, SWT.RADIO);
+		senatorButton.setText("Senator");
+		senatorButton.setSelection(true);
+		
+		senatorButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(senatorButton.getSelection()) {
+					representativeComposite.setVisible(false);
+					((GridData) representativeComposite.getLayoutData()).exclude = true;					
+					senatorComposite.setVisible(true);
+					((GridData) senatorComposite.getLayoutData()).exclude = false;
+					senatorComposite.getParent().layout(true);
+					client.layout(true);
+					form.reflow(true);
+					houseBtn.setEnabled(false);
+					senateBtn.setEnabled(true);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+		
+		representativeButton = new Button(buttonComposite, SWT.RADIO);
+		representativeButton.setText("Representative");
+		representativeButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(representativeButton.getSelection()) {
+					senatorComposite.setVisible(false);
+					((GridData) senatorComposite.getLayoutData()).exclude = true;					
+					representativeComposite.setVisible(true);
+					((GridData) representativeComposite.getLayoutData()).exclude = false;
+					representativeComposite.getParent().layout(true);
+					client.layout(true);
+					form.reflow(true);
+					houseBtn.setEnabled(true);
+					senateBtn.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+		
 		Section inputParamsSection = toolkit.createSection(client, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(inputParamsSection);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(inputParamsSection);
@@ -137,36 +213,52 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		ScrolledComposite sc = new ScrolledComposite(inputParamsSection, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
-		
-		Composite sectionClient = toolkit.createComposite(inputParamsSection);
-		sc.setContent(sectionClient);
+
+		Composite mainComposite = toolkit.createComposite(inputParamsSection);
+		sc.setContent(mainComposite);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
-		inputParamsSection.setClient(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(mainComposite);
+		inputParamsSection.setClient(mainComposite);
 		
-		String[] loading = {"Loading..."};
+		senatorComposite = toolkit.createComposite(mainComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(senatorComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(senatorComposite);
+		
+		String[] sLoading = {"Loading..."};
+		Label sCongressLabel = toolkit.createLabel(senatorComposite, "Congress:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sCongressLabel);
+		sCmbComgress = new Combo(senatorComposite, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(sCmbComgress);
+		toolkit.adapt(sCmbComgress);
+		sCmbComgress.setItems(sLoading);
+		sCmbComgress.select(0);
+		
+		representativeComposite = toolkit.createComposite(mainComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(representativeComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(representativeComposite);
 
-		Label congressLabel = toolkit.createLabel(sectionClient, "Congress:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(congressLabel);
-		cmbCongress = new Combo(sectionClient, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbCongress);
-		toolkit.adapt(cmbCongress);
-		cmbCongress.setItems(loading);
-		cmbCongress.select(0);
+		String[] rLoading = {"Loading..."};
+		Label rCongressLabel = toolkit.createLabel(representativeComposite, "Congress:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(rCongressLabel);
+		rCmbCongress = new Combo(representativeComposite, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(rCmbCongress);
+		toolkit.adapt(rCmbCongress);
+		rCmbCongress.setItems(rLoading);
+		rCmbCongress.select(0);
 		
-		Label dummy1 = new Label(sectionClient, SWT.NONE);
+		filterResultsComposite = toolkit.createComposite(mainComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(filterResultsComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(filterResultsComposite);
+		
+		Label dummy1 = new Label(senatorComposite, SWT.NONE);
 		dummy1.setText("Senator:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(dummy1);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy1);
 
-		senatorTable = new Table(sectionClient, SWT.BORDER
-				| SWT.MULTI);
-		GridDataFactory.fillDefaults().grab(true, true).span(1, 3)
-				.hint(90, 50).applyTo(senatorTable);
+		senatorTable = new Table(senatorComposite, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).hint(90, 50).applyTo(senatorTable);
 
-		Composite buttonComp = new Composite(sectionClient, SWT.NONE);
+		Composite buttonComp = new Composite(senatorComposite, SWT.NONE);
 		GridLayout btnLayout = new GridLayout();
 		btnLayout.marginWidth = btnLayout.marginHeight = 0;
 		btnLayout.makeColumnsEqualWidth = false;
@@ -175,22 +267,19 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		
 		addSenatorBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
 		addSenatorBtn.setText("Add...");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(addSenatorBtn);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSenatorBtn);
 
 		addSenatorBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				handleAdd(addSenatorBtn.getShell());
+				sHandleAdd(addSenatorBtn.getShell());
 			}
 		});
 		addSenatorBtn.setEnabled(false);
 
-		removeSenatorButton = new Button(buttonComp,
-				SWT.PUSH);
+		removeSenatorButton = new Button(buttonComp,SWT.PUSH);
 		removeSenatorButton.setText("Remove...");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(removeSenatorButton);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSenatorButton);
 		removeSenatorButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -206,22 +295,88 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		});
 		removeSenatorButton.setEnabled(false);
 
-		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
-		Group limitGroup = new Group(client, SWT.SHADOW_IN);
-		limitGroup.setText("Limit Records");
-		//limitGroup.setBackground(client.getBackground());
-		limitGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout limitLayout = new GridLayout();
-		limitLayout.numColumns = 1;
-		limitGroup.setLayout(limitLayout);	
+		Label dummy2 = new Label(representativeComposite, SWT.NONE);
+		dummy2.setText("Representative:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy2);
+
+		representativeTable = new Table(representativeComposite, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).hint(90, 50).applyTo(representativeTable);
+
+		Composite rButtonComp = new Composite(representativeComposite, SWT.NONE);
+		GridLayout rBtnLayout = new GridLayout();
+		rBtnLayout.marginWidth = btnLayout.marginHeight = 0;
+		rBtnLayout.makeColumnsEqualWidth = false;
+		rButtonComp.setLayout(rBtnLayout);
+		rButtonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
-		final Composite limitRecordsClient = new Composite(limitGroup, SWT.None);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(limitRecordsClient);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(limitRecordsClient);
+		addRepresentativeBtn = new Button(rButtonComp, SWT.PUSH); //$NON-NLS-1$
+		addRepresentativeBtn.setText("Add...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addRepresentativeBtn);
+
+		addRepresentativeBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				rHandleAdd(addRepresentativeBtn.getShell());
+			}
+		});
+		addRepresentativeBtn.setEnabled(false);
+
+		removeRepresentativeButton = new Button(rButtonComp,SWT.PUSH);
+		removeRepresentativeButton.setText("Remove...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeRepresentativeButton);
+		removeRepresentativeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				for (TableItem item : representativeTable.getSelection()) {
+					selectedRepresentatives.remove(item.getText());
+					item.dispose();
+				}
+				if(selectedRepresentatives.size() == 0) {
+					removeRepresentativeButton.setEnabled(false);
+				}
+			}
+		});
+		removeRepresentativeButton.setEnabled(false);
+		((GridData) representativeComposite.getLayoutData()).exclude = true; // hide this 
+		
+		Group limitGroup = new Group(filterResultsComposite, SWT.SHADOW_IN);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(limitGroup);
+		limitGroup.setText("Limit Records");
+		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(limitGroup);		
+		
+		limitRecordsClient = new Composite(limitGroup, SWT.None);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).indent(10, 10).applyTo(limitRecordsClient);
+		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(limitRecordsClient);
 	
+		final Label sectionLabel = new Label(limitRecordsClient, SWT.NONE);
+		sectionLabel.setText("Section of Congressional Record:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sectionLabel);
+
+		senateBtn = new Button(limitRecordsClient, SWT.CHECK);
+		senateBtn.setText("Senate");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(senateBtn);		
+		senateBtn.setSelection(true);
+		
+		houseBtn = new Button(limitRecordsClient, SWT.CHECK);
+		houseBtn.setText("House");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(houseBtn);
+		houseBtn.setSelection(true);
+		houseBtn.setEnabled(false);
+		
+		extensionBtn = new Button(limitRecordsClient, SWT.CHECK);
+		extensionBtn.setText("Extension of Remarks");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(extensionBtn);		
+		extensionBtn.setSelection(true);
+
+		dailyDigestBtn = new Button(limitRecordsClient, SWT.CHECK);
+		dailyDigestBtn.setText("Daily Digest ");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dailyDigestBtn);		
+		dailyDigestBtn.setSelection(true);
+			
 		limitRecords = new Button(limitRecordsClient, SWT.CHECK);
 		limitRecords.setText("Limit Records per Senator");	
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(limitRecords);
+		GridDataFactory.fillDefaults().grab(false, false).span(5, 0).applyTo(limitRecords);
 		limitRecords.addSelectionListener(new SelectionListener() {			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -247,6 +402,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		sortByDateYes.setSelection(true);
 
 		sortByDateNo = new Button(limitRecordsClient, SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(sortByDateNo);
 		sortByDateNo.setText("No");
 		sortByDateNo.setEnabled(false);
 
@@ -256,7 +412,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		limitLabel.setEnabled(false);
 		limitText = new Text(limitRecordsClient, SWT.BORDER);
 		limitText.setText("1");
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitText);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).applyTo(limitText);
 		limitText.setEnabled(false);
 		
 		limitText.addKeyListener(new KeyListener() {			
@@ -273,23 +429,20 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub			
 			}
-		});
+		});		
+		TacitFormComposite.createEmptyRow(toolkit, limitGroup);
 		
-		TacitFormComposite.createEmptyRow(toolkit, client);
-		
-		Group dateGroup = new Group(client, SWT.SHADOW_IN);
+		Group dateGroup = new Group(filterResultsComposite, SWT.SHADOW_IN);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).applyTo(dateGroup);
 		dateGroup.setText("Date");
-		dateGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		dateGroup.setLayout(layout);
-
+		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(dateGroup);
+		
 		dateRange = new Button(dateGroup, SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(10,10).applyTo(dateRange);
 		dateRange.setText("Specify Date Range");
 		
-		//TacitFormComposite.createEmptyRow(toolkit, group);
 		final Composite dateRangeClient = new Composite(dateGroup, SWT.None);
-		GridDataFactory.fillDefaults().grab(true, false).span(1,1).applyTo(dateRangeClient);
+		GridDataFactory.fillDefaults().grab(true, false).span(1,1).indent(10,10).applyTo(dateRangeClient);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateRangeClient);
 		dateRangeClient.setEnabled(false);
 		dateRangeClient.pack();
@@ -361,6 +514,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	            }
 			}
 		});
+		TacitFormComposite.createEmptyRow(toolkit, dateGroup);
 
 		
 		Job loadFieldValuesJob = new Job("Loading form field values") {			
@@ -377,13 +531,15 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				Display.getDefault().syncExec(new Runnable() {
 				      @Override
 				      public void run() {
-				    	  cmbCongress.removeAll();
+				    	  sCmbComgress.removeAll();
+				    	  rCmbCongress.removeAll();
 				    	  for(String key : congressDetails.keySet()) {
 				    		  tempCongress.add(key);
 				    		  String value = congressDetails.get(key);
 				    		  tempCongressYears.add(value);
 				    		 
-				    		  cmbCongress.add(key+" ("+ value+ ")");
+				    		  sCmbComgress.add(key+" ("+ value+ ")");
+				    		  rCmbCongress.add(key+" ("+ value+ ")");
 				    		  
 				    		  if(key.equalsIgnoreCase("All")) {
 				    			  String[] tempYears = value.split("-");
@@ -401,19 +557,21 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				    			  maxDate = cal.getTime();
 				    		  }
 				    	  }
-				    	  //cmbCongress.setItems(congresses);
-				    	  cmbCongress.select(0);
+				    	  sCmbComgress.select(0);
+				    	  rCmbCongress.select(0);
 				      }});		
 				congresses = tempCongress.toArray(new String[0]);
 				congressYears = tempCongressYears.toArray(new String[0]);
 				try {
 					allSenators = AvailableRecords.getAllSenators(congresses);
 					totalSenators = allSenators.length + 5;
+					allRepresentatives = AvailableRecords.getAllRepresentatives(congresses);
+					totalRepresentatives = allRepresentatives.length + 5;
 					Display.getDefault().syncExec(new Runnable() {						
 						@Override
 						public void run() {
 							addSenatorBtn.setEnabled(true);
-							
+							addRepresentativeBtn.setEnabled(true);
 						}
 					});
 				} catch (IOException e2) {
@@ -422,14 +580,13 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				return Status.OK_STATUS;
 			}
 		};
-		//loadFieldValuesJob.setUser(true);
 		loadFieldValuesJob.schedule();
 		
-		cmbCongress.addSelectionListener(new SelectionAdapter() {
+		sCmbComgress.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// set dates
-				String tempYears[] = congressYears[cmbCongress.getSelectionIndex()].split("-");
+				String tempYears[] = congressYears[sCmbComgress.getSelectionIndex()].split("-");
 				Calendar cal = Calendar.getInstance();
 				cal.set(Integer.parseInt(tempYears[0]), 0, 1);
 				minDate = cal.getTime();
@@ -498,20 +655,106 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	
 	public void processElementSelectionDialog(Shell shell) {
 		ILabelProvider lp = new ArrayLabelProvider();
-		senatorListDialog = new SenatorListDialog(shell, lp);
-		senatorListDialog.setTitle("Select the Authors from the list");
-		senatorListDialog.setMessage("Enter Author name to search");
+		listDialog = new ListDialog(shell, lp);
+		listDialog.setTitle("Select the Authors from the list");
+		listDialog.setMessage("Enter Author name to search");
 	}
 	
+
+	private void rHandleAdd(Shell shell) {
+		
+		processElementSelectionDialog(shell);
+
+		representativeList = new LinkedHashSet<String>();
+		Job listRepresentatives = new Job("Retrieving representative list ...") {
+			String selectedCongress = "";
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				representativeList.clear();
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						selectedCongress = congresses[rCmbCongress.getSelectionIndex()];
+					}
+				});
+				
+				try { 
+					ArrayList<String> temp = new ArrayList<String>();
+					temp.add(0, "All Representatives");
+			    	temp.add(1, "All Democrats");
+			    	temp.add(2, "All Republicans");
+			    	temp.add(3, "All Independents");
+					if(selectedCongress.equals("All")) {
+						for(String s : allRepresentatives) 
+							temp.add(s);					
+					} else {
+						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress)) {
+							availableRepresentatives = AvailableRecords.getRepresentatives(selectedCongress);
+						}
+						for(String s : availableRepresentatives) 
+							temp.add(s);	
+						
+					}
+					representativeList.addAll(temp);
+					if (selectedRepresentatives != null)
+						senatorList.removeAll(selectedRepresentatives);
+
+					Display.getDefault().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							listDialog.refresh(representativeList.toArray());
+						}
+					});
+					previousSelectedCongress = selectedCongress;
+				} catch (final IOException exception) {
+					ConsoleView.printlInConsole(exception.toString());
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred", "Please Check your connectivity to server", new Status(IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID,"Network is not reachable"));
+						}
+					});
+				}
+				return Status.OK_STATUS;
+			}
+		};
+
+		listRepresentatives.schedule();
+		representativeList.add("Loading...");
+		listDialog.setElements(representativeList.toArray());
+		listDialog.setMultipleSelection(true);
+		if (listDialog.open() == Window.OK) {
+			updateRepresentativeTable(listDialog.getResult());
+		}
+	}
+	private void updateRepresentativeTable(Object[] result) {
+		if (selectedRepresentatives == null) {
+			selectedRepresentatives = new ArrayList<String>();
+		}
+
+		for (Object object : result) {
+			selectedRepresentatives.add((String) object);
+		}
+		//Collections.sort(selectedSenators);
+		representativeTable.removeAll();
+		for (String itemName : selectedRepresentatives) {
+			TableItem item = new TableItem(representativeTable, 0);
+			item.setText(itemName);
+			if(!removeRepresentativeButton.isEnabled()) {
+				removeRepresentativeButton.setEnabled(true);
+			}
+		}
+
+	}	
 	
-	private void handleAdd(Shell shell) {
+	private void sHandleAdd(Shell shell) {
 		
 		processElementSelectionDialog(shell);
 
 		senatorList = new LinkedHashSet<String>();
 		Job listSenators = new Job("Retrieving senator list ...") {
 
-			
 			String selectedCongress = "";
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -519,7 +762,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						selectedCongress = congresses[cmbCongress.getSelectionIndex()];
+						selectedCongress = congresses[sCmbComgress.getSelectionIndex()];
 					}
 				});
 				
@@ -547,7 +790,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					Display.getDefault().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							senatorListDialog.refresh(senatorList.toArray());
+							listDialog.refresh(senatorList.toArray());
 						}
 					});
 					previousSelectedCongress = selectedCongress;
@@ -573,10 +816,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 
 		listSenators.schedule();
 		senatorList.add("Loading...");
-		senatorListDialog.setElements(senatorList.toArray());
-		senatorListDialog.setMultipleSelection(true);
-		if (senatorListDialog.open() == Window.OK) {
-			updateSenatorTable(senatorListDialog.getResult());
+		listDialog.setElements(senatorList.toArray());
+		listDialog.setMultipleSelection(true);
+		if (listDialog.open() == Window.OK) {
+			updateSenatorTable(listDialog.getResult());
 		}
 
 	}
@@ -639,10 +882,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							
 							@Override
 							public void run() {
-								if(congresses[cmbCongress.getSelectionIndex()].indexOf("All")!=-1) {
+								if(congresses[sCmbComgress.getSelectionIndex()].indexOf("All")!=-1) {
 									congressNum = "-1";
 								} else {
-									congressNum = congresses[cmbCongress.getSelectionIndex()];	
+									congressNum = congresses[sCmbComgress.getSelectionIndex()];	
 								}
 								senatorDetails = selectedSenators;
 								if (dateRange.getSelection()) {

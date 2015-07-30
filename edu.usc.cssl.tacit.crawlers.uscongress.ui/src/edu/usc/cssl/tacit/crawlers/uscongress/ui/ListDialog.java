@@ -5,9 +5,9 @@ import org.eclipse.swt.widgets.Shell;
 
 import edu.usc.cssl.tacit.crawlers.uscongress.ui.internal.ElementListSelectionDialog;
 
-public class SenatorListDialog extends ElementListSelectionDialog {
+public class ListDialog extends ElementListSelectionDialog {
 
-	public SenatorListDialog(Shell parent, ILabelProvider renderer) {
+	public ListDialog(Shell parent, ILabelProvider renderer) {
 		super(parent, renderer);
 	}
 	
