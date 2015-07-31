@@ -41,7 +41,7 @@
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
-         plugin="edu.usc.cssl.tacit.crawlers.senate.ui">
+         plugin="edu.usc.cssl.tacit.crawlers.uscongress.ui">
    </contexts>
    <contexts
          file="contextDefinitionFile.xml"
