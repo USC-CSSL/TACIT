@@ -67,7 +67,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private FormToolkit toolkit;
 	
 	private OutputLayoutData outputLayout;
-	private Combo sCmbComgress;
+	private Combo sCmbCongress;
 	
 	private String[] allSenators;
 	private String[] allRepresentatives;
@@ -228,11 +228,11 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		String[] sLoading = {"Loading..."};
 		Label sCongressLabel = toolkit.createLabel(senatorComposite, "Congress:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sCongressLabel);
-		sCmbComgress = new Combo(senatorComposite, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(sCmbComgress);
-		toolkit.adapt(sCmbComgress);
-		sCmbComgress.setItems(sLoading);
-		sCmbComgress.select(0);
+		sCmbCongress = new Combo(senatorComposite, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(sCmbCongress);
+		toolkit.adapt(sCmbCongress);
+		sCmbCongress.setItems(sLoading);
+		sCmbCongress.select(0);
 		
 		representativeComposite = toolkit.createComposite(mainComposite);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(representativeComposite);
@@ -531,14 +531,14 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				Display.getDefault().syncExec(new Runnable() {
 				      @Override
 				      public void run() {
-				    	  sCmbComgress.removeAll();
+				    	  sCmbCongress.removeAll();
 				    	  rCmbCongress.removeAll();
 				    	  for(String key : congressDetails.keySet()) {
 				    		  tempCongress.add(key);
 				    		  String value = congressDetails.get(key);
 				    		  tempCongressYears.add(value);
 				    		 
-				    		  sCmbComgress.add(key+" ("+ value+ ")");
+				    		  sCmbCongress.add(key+" ("+ value+ ")");
 				    		  rCmbCongress.add(key+" ("+ value+ ")");
 				    		  
 				    		  if(key.equalsIgnoreCase("All")) {
@@ -557,7 +557,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				    			  maxDate = cal.getTime();
 				    		  }
 				    	  }
-				    	  sCmbComgress.select(0);
+				    	  sCmbCongress.select(0);
 				    	  rCmbCongress.select(0);
 				      }});		
 				congresses = tempCongress.toArray(new String[0]);
@@ -582,11 +582,11 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		};
 		loadFieldValuesJob.schedule();
 		
-		sCmbComgress.addSelectionListener(new SelectionAdapter() {
+		sCmbCongress.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// set dates
-				String tempYears[] = congressYears[sCmbComgress.getSelectionIndex()].split("-");
+				String tempYears[] = congressYears[sCmbCongress.getSelectionIndex()].split("-");
 				Calendar cal = Calendar.getInstance();
 				cal.set(Integer.parseInt(tempYears[0]), 0, 1);
 				minDate = cal.getTime();
@@ -697,7 +697,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					}
 					representativeList.addAll(temp);
 					if (selectedRepresentatives != null)
-						senatorList.removeAll(selectedRepresentatives);
+						representativeList.removeAll(selectedRepresentatives);
 
 					Display.getDefault().asyncExec(new Runnable() {
 						@Override
@@ -762,7 +762,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						selectedCongress = congresses[sCmbComgress.getSelectionIndex()];
+						selectedCongress = congresses[sCmbCongress.getSelectionIndex()];
 					}
 				});
 				
@@ -866,9 +866,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			int maxDocs = -1;
 			String sortType = "Default";
 			String congressNum = "-1";
-			ArrayList<String> senatorDetails = new ArrayList<String>();
+			ArrayList<String> congressMemberDetails = new ArrayList<String>();
 			String outputDir = "";
 			private boolean canProceed;
+			boolean isSenate = false;
 			@Override
 			public void run() {
 				final UsCongressCrawler sc = new UsCongressCrawler();
@@ -882,12 +883,23 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							
 							@Override
 							public void run() {
-								if(congresses[sCmbComgress.getSelectionIndex()].indexOf("All")!=-1) {
-									congressNum = "-1";
-								} else {
-									congressNum = congresses[sCmbComgress.getSelectionIndex()];	
+								if(senatorButton.getSelection()) {
+									if(congresses[sCmbCongress.getSelectionIndex()].indexOf("All")!=-1) {
+										congressNum = "-1";
+									} else {
+										congressNum = congresses[sCmbCongress.getSelectionIndex()];	
+									}									
+									congressMemberDetails = selectedSenators;
+									isSenate = true;
 								}
-								senatorDetails = selectedSenators;
+								else if(representativeButton.getSelection()) {
+									if(congresses[rCmbCongress.getSelectionIndex()].indexOf("All")!=-1) {
+										congressNum = "-1";
+									} else {
+										congressNum = congresses[rCmbCongress.getSelectionIndex()];	
+									}									
+									congressMemberDetails = selectedRepresentatives;								
+								}
 								if (dateRange.getSelection()) {
 									dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
 									dateTo = (toDate.getMonth()+1)+"/"+toDate.getDay()+"/"+toDate.getYear();
@@ -896,7 +908,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 									dateTo = "";
 								}
 								if(limitRecords.getSelection()) {
-									//sort by date : begining
 									sortType = sortByDateNo.getSelection() ? "Default" : "Date"; 
 									maxDocs = Integer.parseInt(limitText.getText());
 								} else {
@@ -907,38 +918,38 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							}
 						});
 						
-						if(senatorDetails.contains("All Senators") && congressNum.equals("-1")) { // all senators and all congresses
+						if(congressMemberDetails.contains("All Senators") && congressNum.equals("-1")) { // all senators and all congresses
 							progressSize = (totalSenators * congresses.length) + 50;
 						} else {
 							int count = 1;
 							if(congressNum.equals("-1")) {
-								if(senatorDetails.contains("All Democrats")) {
+								if(congressMemberDetails.contains("All Democrats")) {
 									progressSize = (20 * congresses.length) + 50; // on an average of 20 democrats
 									count++;
 								}
-								if(senatorDetails.contains("All Republicans")) {
+								if(congressMemberDetails.contains("All Republicans")) {
 									progressSize+= (20 * congresses.length) + 50;
 									count++;
 								}
-								if(senatorDetails.contains("All Independents")) {
+								if(congressMemberDetails.contains("All Independents")) {
 									progressSize+= (20 * congresses.length) + 50;
 									count++;
 								}
-								progressSize+= ((senatorDetails.size() - count)+1 * congresses.length) + 50; // considering none of "All" selected
+								progressSize+= ((congressMemberDetails.size() - count)+1 * congresses.length) + 50; // considering none of "All" selected
 							} else {
-								if(senatorDetails.contains("All Democrats")) {
+								if(congressMemberDetails.contains("All Democrats")) {
 									progressSize = 100 + 50; // on an average of 20 democrats
 									count++;
 								}
-								if(senatorDetails.contains("All Republicans")) {
+								if(congressMemberDetails.contains("All Republicans")) {
 									progressSize+= 100 + 50;
 									count++;
 								}
-								if(senatorDetails.contains("All Independents")) {
+								if(congressMemberDetails.contains("All Independents")) {
 									progressSize+=  100 + 50;
 									count++;
 								}
-								progressSize+= ((senatorDetails.size() - count)+1 * 10) + 50; // considering none of "All" selected								
+								progressSize+= ((congressMemberDetails.size() - count)+1 * 10) + 50; // considering none of "All" selected								
 							}
 						}
 						monitor.beginTask("Running US Congress Crawler..." , progressSize);
@@ -961,7 +972,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
-							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), senatorDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30);
+							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), congressMemberDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30, isSenate);
 							if(monitor.isCanceled()) {
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
@@ -1014,7 +1025,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			public String getToolTipText() {
 				return "Help";
 			}
-
 			@Override
 			public void run() {
 				PlatformUI
@@ -1022,7 +1032,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						.getHelpSystem()
 						.displayHelp(
 								"edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
-			};
+			}			
 		};
 		mgr.add(helpAction);
 		PlatformUI
@@ -1056,6 +1066,20 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	}
 
 	private boolean canItProceed() {
+		if(senatorButton.getSelection()) {
+			if(!senateBtn.getSelection() && !extensionBtn.getSelection() && !dailyDigestBtn.getSelection()) {
+				form.getMessageManager() .addMessage( "section", "Provide select atleast one congressional section", null, IMessageProvider.ERROR);
+				return false;
+			} else
+				form.getMessageManager().removeMessage("section");
+		}
+		if(representativeButton.getSelection()) {
+			if(!senateBtn.getSelection() && !extensionBtn.getSelection() && !dailyDigestBtn.getSelection()) {
+				form.getMessageManager() .addMessage( "section", "Provide select atleast one congressional section", null, IMessageProvider.ERROR);
+				return false;
+			} else
+				form.getMessageManager().removeMessage("section");
+		}
 		if(limitRecords.getSelection()) {
 			if(limitText.getText().isEmpty()) {
 				form.getMessageManager() .addMessage( "limitText", "Provide valid no.of.records per senator", null, IMessageProvider.ERROR);

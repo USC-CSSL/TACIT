@@ -163,7 +163,7 @@ public class AvailableRecords {
 			repArray[index++] = repText;
 		}
 		
-		representativeDet = RepresentativeDetails.getRepersentativeDetails(); // to populate all senator details
+		representativeDet = RepresentativeDetails.getRepersentativeDetails(); // to populate all representative details
 		HashMap<String, String> newRepMap = new HashMap<String, String>();
 		for(String s : repArray) {
 			String temp = new String();
@@ -192,5 +192,4 @@ public class AvailableRecords {
 		String congString = congList.text().split(":")[1];
 		return congString.split("\\|");
 	}
-	
 }
