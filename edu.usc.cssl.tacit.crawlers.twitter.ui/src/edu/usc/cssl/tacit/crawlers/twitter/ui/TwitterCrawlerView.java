@@ -59,7 +59,7 @@ public class TwitterCrawlerView extends ViewPart implements
 	private static Button limitRecords;
 	private static Text dayText;
 	private static Text hourText;
-	private static Button maxLimit;
+	private static Label maxLimit;
 	private static Text maxText;
 	private static Text minText;
 	private static Button userNameBtn;
@@ -184,7 +184,7 @@ public class TwitterCrawlerView extends ViewPart implements
 
 				final TwitterStreamApi ttStream = new TwitterStreamApi();
 
-				final boolean maxLimitEnabled = maxLimit.getSelection();
+				final boolean maxLimitEnabled = true;
 				final boolean timeLimit = limitRecords.getSelection();
 				job = new Job("Twitter Stream Job") {
 					protected IStatus run(IProgressMonitor monitor) {
@@ -339,7 +339,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		long minLimit;
 		boolean validGeoFilter = true;
 		boolean validLimitParse = true;
-		boolean validLimitState = false;
+		boolean validLimitState = true;
 		// check limit tab attributes validity
 
 		// check geofilter string validity
@@ -408,24 +408,21 @@ public class TwitterCrawlerView extends ViewPart implements
 			}
 		}
 		// Is there valid max tweet number?
-		if (maxLimit.getSelection()) {
 			try {
 				maxTweetLimit = Long.parseLong(maxText.getText().toString());
 				if (maxTweetLimit <= 0)
-					validLimitParse = false;
+					validLimitState = false;
 			} catch (NumberFormatException e1) {
-				validLimitParse = false;
+				validLimitState = false;
 			}
-		}
-		// either maxTweet or maxTime must be activated
-		if (limitRecords.getSelection() || maxLimit.getSelection()) {
-			validLimitState = true;
-		}
+		
+		
 		form.getMessageManager().removeMessage("word");
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("geolocation");
 		form.getMessageManager().removeMessage("limit");
 		form.getMessageManager().removeMessage("state");
+		form.getMessageManager().removeMessage("maxlimit");
 		form.getMessageManager().removeMessage("stored-attribute");
 
 		String message = OutputPathValidation.getInstance()
@@ -454,7 +451,7 @@ public class TwitterCrawlerView extends ViewPart implements
 					new String[] { id }, null).open();
 			canProceed = false;
 
-		} else if (wordFilterLbl.getSelection()) {
+		}  if (wordFilterLbl.getSelection()) {
 			noLocationFilter = true;
 			noWordFilter = false;
 			keyWords = wordFilterText.getText().split(";");
@@ -466,7 +463,7 @@ public class TwitterCrawlerView extends ViewPart implements
 			}
 		}
 
-		else if (geoFilterLbl.getSelection()) {
+	     if (geoFilterLbl.getSelection()) {
 			noLocationFilter = false;
 			noWordFilter = true;
 			if (!validGeoFilter) {
@@ -477,7 +474,7 @@ public class TwitterCrawlerView extends ViewPart implements
 								null, IMessageProvider.ERROR);
 				canProceed = false;
 			}
-		} else if (!validLimitParse) {
+		}  if (!validLimitParse) {
 			form.getMessageManager()
 					.addMessage(
 							"limit",
@@ -485,14 +482,18 @@ public class TwitterCrawlerView extends ViewPart implements
 							null, IMessageProvider.ERROR);
 			canProceed = false;
 
-		} else if (!validLimitState) {
-			form.getMessageManager().addMessage("state",
-					"Error: Select atleaset Maximum limit or Time limit", null,
-					IMessageProvider.ERROR);
-			canProceed = false;
-		}
+		} 
+		 if (!validLimitState) {
+				form.getMessageManager()
+						.addMessage(
+								"maxlimit",
+								"Error: Invalid Limit tweets per Crawl is entered. Please enter valid positive number",
+								null, IMessageProvider.ERROR);
+				canProceed = false;
 
-		else if (!(userNameBtn.getSelection() || createdBtn.getSelection()
+			} 
+
+		if (!(userNameBtn.getSelection() || createdBtn.getSelection()
 				|| geoLocBtn.getSelection() || langBtn.getSelection()
 				|| statusIdBtn.getSelection() || reTweetBtn.getSelection()
 				|| textBtn.getSelection() || favBtn.getSelection())) {
@@ -588,7 +589,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false)
 				.applyTo(section);
 		section.setText("Limit Tweets"); //$NON-NLS-1$
-		section.setDescription("Limit number of tweets crawled based on following settings");
+		section.setDescription("Limit tweets crawled based on the following settings");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -652,15 +653,13 @@ public class TwitterCrawlerView extends ViewPart implements
 		minText.setEditable(false);
 		// MAX Tweet area
 
-		maxLimit = new Button(maxClient, SWT.CHECK);
-		maxLimit.setText("Maximum Limit");
+		maxLimit = toolkit.createLabel(maxClient, "Limit Tweets per Crawl");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(maxLimit);
 
 		maxText = toolkit.createText(maxClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(5, 0)
 				.applyTo(maxText);
-		maxLimit.setSelection(true);
 		maxText.setText("10");
 		limitRecords.addSelectionListener(new SelectionAdapter() {
 
@@ -684,19 +683,7 @@ public class TwitterCrawlerView extends ViewPart implements
 			}
 		});
 
-		maxLimit.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (maxLimit.getSelection()) {
-					maxText.setEnabled(true);
-					maxText.setEditable(true);
-				} else {
-					maxText.setEnabled(false);
-					maxText.setEditable(false);
-				}
-			}
-		});
 
 	}
 
