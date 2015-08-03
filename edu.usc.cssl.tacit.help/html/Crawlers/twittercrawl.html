@@ -15,8 +15,7 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>The Twitter Crawler tool collects text from <a href = "http://www.twitter.com/" target="_blank">the Twitter website</a> and writes that data into text files that are readable by automated text analysis programs. <br><br> 
-						<br><br> 	
+						<td>The Twitter Crawler tool collects text from <a href = "http://www.twitter.com/" target="_blank">the Twitter website</a> and writes that data into text files that are readable by automated text analysis programs. This crawler collects tweets from the "live stream" which may include tweets up to a couple days old, but Twitter does not allow crawlers to collect older tweets. <br><br> 
 						</td>
 					</tr>
 				</table>
@@ -30,17 +29,19 @@
 						<td class = "subtitle">Setting Up Account Authorization</td>
 					</tr>
 					<tr>
-						<td>Before you can crawl data, Twitter requires specific account-tied authorization information to crawl their website. To acquire this authentication information from Twitter:	
-						<br>1. Go to  http://twitter.com/apps and log into your twitter account (or create an account if you don't already have one).
-						<br>2. The creation Application page will open. Click on Create Application.
-						<br>3. Fill in the TACIT crawler specifications 
+						<td>Before you can start using the TACIT crawler, Twitter requires that you set up an API which provides specific account-tied authorization information to grant the tool permission to crawl their website. 
+						<br>To acquire this authentication information from Twitter:	
+						<br><b>1.</b> Go to  http://twitter.com/apps and log into your twitter account (or create an account if you don't already have one).
+						<br><b>2.</b>  The creation Application page will open. Click on Create Application.
+						<br><b>3.</b>  Fill in the TACIT crawler specifications 
 								<br>	application name: [name that will help you keep track of your data]
 								<br>	app description: [description that will help you keep track of your data]
 								<br>	website: http://cssl.usc.edu
 								<br>	callback url: [leave blank]
-						<br>4. You will then be provided an overview page with details about the application you just set up for crawling. Click on the  Keys and Access Tokens Tab. Here, you  will find the information needed for the TACIT Twitter User Configuration form. Copy the Consumer key and Consumer secret into the TACIT preferences page.
-						<br>5. At the bottom of the page under Token Actions, click Generate My Access Token. Copy the Access Token and Access Token Secret into the TACIT preferences page and click apply. Your name should appear in the grey User Name box if the information was entered successfully. Click OK to close the preferences page.
-						<br> Step-by-step instructions with pictures can be found <a href = "https://code.google.com/p/socialauth-android/wiki/Twitter" target="_blank">here</a>.
+						<br><b>4.</b>  You will then be provided an overview page with details about the application you just set up for crawling. Click on the  Keys and Access Tokens Tab. Here, you  will find the information needed for the TACIT Twitter User Configuration form. Copy the Consumer key and Consumer secret into the TACIT preferences page.
+						<br><b>5.</b>  At the bottom of the page under Token Actions, click Generate My Access Token. Copy the <b>Access Token</b> and <b>Access Token Secret</b> into the spaces provided on the <b>TACIT Preferences </b> page and click apply. 
+						<br><b>6.</b>  Your name should now appear in the grey User Name box if the information was entered successfully. Click OK to close the preferences page.
+						<br> Step-by-step instructions with pictures for setting up the Twitter API/retrieving access tokens can be found <a href = "https://code.google.com/p/socialauth-android/wiki/Twitter" target="_blank">here</a>.
 						</td>
 					</tr>
 					<tr>
@@ -78,9 +79,25 @@
 						</td>
 					</tr>
 					<tr>
-						<td>	
-						</td>
 					<tr>
+						<td class = "subtitle">Specifying Tweet Attributes for Collection</td>
+					</tr>
+					<tr>
+						<td> Users can select which types of information they would like the crawler to collect about each tweet by checking the box next to the following attributes:
+						<b> User Name: </b> The name of the user who wrote the tweet.
+						<br><b> Geo Location: </b> The geological latitude and longitude coordinates of the tweet's origin (when available).
+						<br><b> Status ID: </b>
+						<br><b> Text: </b> The text of the tweet.
+						<br><b> Created At:</b> The time and date when the tweet was created.
+						<br><b> Language:</b> The language used in the tweet text.
+						<br><b> Re-tweet Number:</b> The number of times the tweet has been retweeted by other Twitter users.
+						<br><b> Favorite Count:</b>	The number of times the tweet has been favorited by other Twitter users.
+						</td>
+					</tr>
+					<tr>
+						<td>For events that are infrequent or that you expect to unfold over a certain time frame, you can specify a length of time that the tool should continue to run and crawl data. TACIT will  collect tweets as long as the program remains running on your computer and you continue to be connected to the Internet.	
+						</td>
+					</tr>
 						<td class = "subtitle">Specifying Output Folder</td>
 					</tr>
 					<tr>
