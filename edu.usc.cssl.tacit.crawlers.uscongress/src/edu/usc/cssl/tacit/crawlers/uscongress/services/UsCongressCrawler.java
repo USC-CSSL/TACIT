@@ -36,6 +36,10 @@ public class UsCongressCrawler {
 	IProgressMonitor monitor;
 	int progressSize;
 	boolean isSenate;
+	String crawlSenateRecords;
+	String crawlHouseRepRecords;
+	String crawlDailyDigest;
+	String crawlExtension;	
 	
 	HashMap<String, HashMap<String, String>> congressSenatorMap = AvailableRecords.getCongressSenatorMap(); 
 	HashMap<String, String> senatorDetails = SenatorDetails.getSenatorDetails(); // to populate all senator details
@@ -97,7 +101,8 @@ public class UsCongressCrawler {
 		Date dateobj = new Date();
 		
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "senate-crawler-summary-"+df.format(dateobj)+".csv")));
-		csvWriter.write("Congress,Date,Senator,Political Affiliation,State,Title,File");
+		if(isSenate) csvWriter.write("Congress,Date,Senator,Political Affiliation,Congressional Section,State,Title,File");
+		else csvWriter.write("Congress,Date,Representative,Political Affiliation,Congressional Section,State,Title,File");
 		csvWriter.newLine();
 		for(String memberText : congressMembers) {
 			int tempProgressSize = progressSize/congressMembers.size();
@@ -261,7 +266,7 @@ public class UsCongressCrawler {
 		}			
 	}	
 	
-	public void initialize(String sortType, int maxDocs, int congressNum, ArrayList<String> congressMemberDetails, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize, boolean isSenate) throws IOException {
+	public void initialize(String sortType, int maxDocs, int congressNum, ArrayList<String> congressMemberDetails, String dateFrom, String dateTo, String outputDir, ArrayList<Integer> allCongresses, IProgressMonitor monitor, int progressSize, boolean isSenate, boolean crawlSenateRecords, boolean crawlHouseRepRecords, boolean crawlDailyDigest, boolean crawlExtension) throws IOException {
 		this.outputDir = outputDir;
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
@@ -273,6 +278,10 @@ public class UsCongressCrawler {
 		this.monitor = monitor;
 		this.progressSize = progressSize;
 		this.isSenate = isSenate;
+		this.crawlSenateRecords = (crawlSenateRecords)? "1" : "0";
+		this.crawlHouseRepRecords = (crawlHouseRepRecords) ? "2" : "0";
+		this.crawlExtension = (crawlExtension) ? "4" : "0";
+		this.crawlDailyDigest = (crawlDailyDigest) ? "8" : "0";
 		
 		if(null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
@@ -301,10 +310,10 @@ public class UsCongressCrawler {
 				.data("SSpeaker", senText)
 				.data("member", "speaking")	// speaking | all  -- all occurrences
 				.data("relation", "or")		// or | and  -- when there are multiple speakers in the query
-				//.data("SenateSection", "1")
-				.data("HouseSection","2")
-				//.data("ExSection","4")
-				//.data("DigestSection","8")
+				.data("SenateSection", crawlSenateRecords)
+				.data("HouseSection", crawlHouseRepRecords)
+				.data("ExSection", crawlExtension)
+				.data("DigestSection",crawlDailyDigest)
 				.data("LBDateSel", "Thru")		// "" | 1st | 2nd | Thru -- all sessions, 1st session, 2nd session, range
 				.data("DateFrom", dateFrom)
 				.data("DateTo", dateTo)
@@ -320,9 +329,7 @@ public class UsCongressCrawler {
 		Elements relevantLinks = new Elements();
 		for (Element link:links) {
 			if (!irrelevantLinks.contains(link.text()))
-				if (link.text().contains("Senate") && isSenate)
-					relevantLinks.add(link);
-				else if(link.text().contains("House of Representatives"))
+				if (link.text().contains("Senate") || link.text().contains("House of Representatives") || link.text().contains("Extensions of Remarks") || link.text().contains("Daily Digest"))
 					relevantLinks.add(link);
 		}
 		
@@ -351,7 +358,25 @@ public class UsCongressCrawler {
 				count=-2000;
 			if (count++>=maxDocs)
 				break;
-			String recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
+			String recordDate = "";
+			String recordType = "";
+			if (link.text().contains("Senate")) {
+				recordDate = link.text().replace("(Senate - ", "").replace(",", "").replace(")", "").trim();
+				recordType = "Senate";
+			}
+			else if(link.text().contains("House of Representatives")) {
+				recordDate = link.text().replace("(House of Representatives - ", "").replace(",", "").replace(")", "").trim();
+				recordType = "House";
+			}
+			else if(link.text().contains("Extensions of Remarks")) {
+				recordDate = link.text().replace("(Extensions of Remarks - ", "").replace(",", "").replace(")", "").trim();
+				recordType = "Extension of Remarks";
+			}
+			else if(link.text().contains("Daily Digest")) {
+				recordDate = link.text().replace("(Daily Digest - ", "").replace(",", "").replace(")", "").trim();
+				recordType = "Daily Digest";
+			}
+			
 			Document record = Jsoup.connect("http://thomas.loc.gov"+link.attr("href")).timeout(10*1000).get();
 			Elements tabLinks = record.getElementById("content").select("a[href]");
 			
@@ -379,7 +404,7 @@ public class UsCongressCrawler {
 				shortTitle.replaceAll("[.,;\"!-(){}:?'/\\`~$%#@&*_=+<>]", ""); // replaces all special characters
 				String fileName = congress+"-"+lastName+"-"+memberAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
 				writeToFile(memberDir, fileName, contents);
-				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+memberState+","+title+","+fileName);
+				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+recordType+","+memberState+","+title+","+fileName);
 				csvWriter.newLine();
 				csvWriter.flush();
 			}
@@ -420,7 +445,7 @@ public class UsCongressCrawler {
 		Document page = Jsoup.connect("http://thomas.loc.gov"+extractLink).timeout(10*1000).get();
 		String title = page.getElementById("container").select("b").text();
 		StringBuilder content = new StringBuilder();
-		Elements lines = page.getElementById("container").select("p");
+		/* Elements lines = page.getElementById("container").select("p");
 		String currentLine;
 		boolean extractFlag = false;
 		for (Element line : lines) {
@@ -452,10 +477,10 @@ public class UsCongressCrawler {
 					}
 				}
 			}
-		}
+		} */	
 		String[] contents = new String[2];
 		contents[0] = title;
-		contents[1] = content.toString();
+		contents[1] = page.getElementById("container").text();
 		
 		return contents;
 	}

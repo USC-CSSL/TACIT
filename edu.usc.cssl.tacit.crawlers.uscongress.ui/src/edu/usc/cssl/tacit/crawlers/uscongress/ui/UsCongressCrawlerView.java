@@ -392,18 +392,18 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		});
 		
 		final Label sortLabel = new Label(limitRecordsClient, SWT.NONE);
-		sortLabel.setText("Sort Records by Date:");
+		sortLabel.setText("Record Crawl Order:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortLabel);
 		sortLabel.setEnabled(false);
 		
 		sortByDateYes = new Button(limitRecordsClient, SWT.RADIO);
-		sortByDateYes.setText("Yes");
+		sortByDateYes.setText("Date");
 		sortByDateYes.setEnabled(false);
 		sortByDateYes.setSelection(true);
 
 		sortByDateNo = new Button(limitRecordsClient, SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(sortByDateNo);
-		sortByDateNo.setText("No");
+		sortByDateNo.setText("Random");
 		sortByDateNo.setEnabled(false);
 
 		final Label limitLabel = new Label(limitRecordsClient, SWT.NONE);
@@ -870,6 +870,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			String outputDir = "";
 			private boolean canProceed;
 			boolean isSenate = false;
+			boolean crawlSenateRecords = false;
+			boolean crawlHouseRepRecords = false;
+			boolean crawlDailyDigest = false;
+			boolean crawlExtension = false;
 			@Override
 			public void run() {
 				final UsCongressCrawler sc = new UsCongressCrawler();
@@ -891,6 +895,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 									}									
 									congressMemberDetails = selectedSenators;
 									isSenate = true;
+									
+									crawlSenateRecords = senateBtn.getSelection();
 								}
 								else if(representativeButton.getSelection()) {
 									if(congresses[rCmbCongress.getSelectionIndex()].indexOf("All")!=-1) {
@@ -898,8 +904,11 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 									} else {
 										congressNum = congresses[rCmbCongress.getSelectionIndex()];	
 									}									
-									congressMemberDetails = selectedRepresentatives;								
+									congressMemberDetails = selectedRepresentatives;
+									crawlHouseRepRecords = houseBtn.getSelection();
 								}
+								crawlDailyDigest = dailyDigestBtn.getSelection();
+								crawlExtension = extensionBtn.getSelection();								
 								if (dateRange.getSelection()) {
 									dateFrom = (fromDate.getMonth()+1)+"/"+fromDate.getDay()+"/"+fromDate.getYear();
 									dateTo = (toDate.getMonth()+1)+"/"+toDate.getDay()+"/"+toDate.getYear();
@@ -972,7 +981,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
-							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), congressMemberDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30, isSenate);
+							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), congressMemberDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30, isSenate, crawlSenateRecords, crawlHouseRepRecords, crawlDailyDigest, crawlExtension);
 							if(monitor.isCanceled()) {
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
