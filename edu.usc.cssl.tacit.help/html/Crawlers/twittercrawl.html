@@ -27,10 +27,37 @@
 						<td class = "head">Basic Tutorial: Collecting data using Twitter Crawler</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Selecting Parameters</td>
+						<td class = "subtitle">Setting Up Account Authorization</td>
 					</tr>
 					<tr>
-						<td>Description
+						<td>Before you can crawl data, Twitter requires specific account-tied authorization information to crawl their website. To acquire this authentication information from Twitter:	
+						<br>1. Go to  http://twitter.com/apps and log into your twitter account (or create an account if you don't already have one).
+						<br>2. The creation Application page will open. Click on Create Application.
+						<br>3. Fill in the TACIT crawler specifications 
+								<br>	application name: [name that will help you keep track of your data]
+								<br>	app description: [description that will help you keep track of your data]
+								<br>	website: http://cssl.usc.edu
+								<br>	callback url: [leave blank]
+						<br>4. You will then be provided an overview page with details about the application you just set up for crawling. Click on the  Keys and Access Tokens Tab. Here, you  will find the information needed for the TACIT Twitter User Configuration form. Copy the Consumer key and Consumer secret into the TACIT preferences page.
+						<br>5. At the bottom of the page under Token Actions, click Generate My Access Token. Copy the Access Token and Access Token Secret into the TACIT preferences page and click apply. Your name should appear in the grey User Name box if the information was entered successfully. Click OK to close the preferences page.
+						<br> Step-by-step instructions with pictures can be found <a href = "https://code.google.com/p/socialauth-android/wiki/Twitter" target="_blank">here</a>.
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Crawler Filters</td>
+					</tr>
+					<tr>
+						<td>Twitter data can be crawled based on keywords (Word Filter) or locations (Geo Filter) of interest.
+						</td>
+					</tr>
+					<tr>
+						<td class = "section">Word Filter</td>
+					</tr>
+					<tr>
+						<td class = "section">Geo Filter</td>
+					</tr>
+					<tr>
+						<td>To determine the bounding box needed for your area of interest, you can use the tool available at http://boundingbox.klokantech.com/. Change the <b>Copy & Paste</b> option in the bottom panel drop down menu to CSV. You can then enter in the name of the city, state, or country you want to crawl or click and drag the selection box on the map to the desired location. The geo-coordiate box for that area will appear at the bottom of the page. Copy paste these numbers into the Geo Filter box in the TACIT tool. If you would like to crawl from multiple distinct locations, simply add the geo-coordiate box for each location into the tool separated by semi-colons.
 						</td>
 					</tr>
 					<tr>
