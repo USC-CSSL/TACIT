@@ -169,9 +169,15 @@ public class AvailableRecords {
 			String temp = new String();
 			String tempRepName = (s.lastIndexOf('(')!=-1) ? s.substring(0, s.lastIndexOf('(')-1) : s;	
 			if(null == newRepMap.get(tempRepName)) {
-				if(null != representativeDet.get(tempRepName)) {				
+				if(null != representativeDet.get(tempRepName)) {
 					temp =  tempRepName + " (" + representativeDet.get(tempRepName) + ")";
 				} else {
+					int start = s.lastIndexOf('(')+1;
+					int end = s.lastIndexOf(')');
+					if(end>start) {
+						//representativeDet.put("Young, Todd", "R-IN");
+						System.out.println("representativeDet.put(\""+tempRepName + "\", \"" + s.substring(start, end) +"\");");
+					}
 					temp = s;
 				}
 				newRepMap.put(temp, s); // new value, old value
