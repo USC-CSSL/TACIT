@@ -353,6 +353,11 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		sectionLabel.setText("Section of Congressional Record:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sectionLabel);
 
+		extensionBtn = new Button(limitRecordsClient, SWT.CHECK);
+		extensionBtn.setText("Extension of Remarks");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(extensionBtn);		
+		extensionBtn.setSelection(true);
+		
 		senateBtn = new Button(limitRecordsClient, SWT.CHECK);
 		senateBtn.setText("Senate");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(senateBtn);		
@@ -363,11 +368,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(houseBtn);
 		houseBtn.setSelection(true);
 		houseBtn.setEnabled(false);
-		
-		extensionBtn = new Button(limitRecordsClient, SWT.CHECK);
-		extensionBtn.setText("Extension of Remarks");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(extensionBtn);		
-		extensionBtn.setSelection(true);
 
 		dailyDigestBtn = new Button(limitRecordsClient, SWT.CHECK);
 		dailyDigestBtn.setText("Daily Digest ");
@@ -397,7 +397,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		sortLabel.setEnabled(false);
 		
 		sortByDateYes = new Button(limitRecordsClient, SWT.RADIO);
-		sortByDateYes.setText("Date");
+		sortByDateYes.setText("Date (Newest First)");
 		sortByDateYes.setEnabled(false);
 		sortByDateYes.setSelection(true);
 
