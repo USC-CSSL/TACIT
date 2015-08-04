@@ -55,8 +55,6 @@ public class CorpusManagementView extends ViewPart {
 
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(formDatasc);
 		
-		//layoutData = TacitFormComposite.createOutputSection(toolkit,client1, form.getMessageManager());
-		//Composite output = layoutData.getSectionClient();
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -70,87 +68,6 @@ public class CorpusManagementView extends ViewPart {
 		return toolkit;
 	}
 	
-//	public static OutputLayoutData createInputSection(FormToolkit toolkit,
-//			Composite parent, final IMessageManager mmng) {
-//		Section section = toolkit.createSection(parent, Section.TITLE_BAR
-//				| Section.EXPANDED | Section.DESCRIPTION);
-//
-//		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-//				.applyTo(section);
-//		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
-//		section.setText("Input Path "); //$NON-NLS-1$
-//		section.setDescription("Choose input path for storing the results");
-//
-//		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
-//				| SWT.V_SCROLL);
-//		sc.setExpandHorizontal(true);
-//		sc.setExpandVertical(true);
-//
-//		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-//				.applyTo(sc);
-//
-//		Composite sectionClient = toolkit.createComposite(section);
-//		sc.setContent(sectionClient);
-//		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-//		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-//				.applyTo(sectionClient);
-//		section.setClient(sectionClient);
-//
-//		createEmptyRow(toolkit, sectionClient);
-//
-//		final Label outputPathLbl = toolkit.createLabel(sectionClient,
-//				"Input Location:", SWT.NONE);
-//		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-//				.applyTo(outputPathLbl);
-//		final Text outputLocationTxt = toolkit.createText(sectionClient, "",
-//				SWT.BORDER);
-//		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
-//				.applyTo(outputLocationTxt);
-//
-//		final Button browseBtn = toolkit.createButton(sectionClient, "Browse...",
-//				SWT.PUSH);
-//		browseBtn.addSelectionListener(new SelectionListener() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
-//						SWT.OPEN);
-//				dlg.setText("Open");
-//				String path = dlg.open();
-//				if (path == null)
-//					return;
-//				outputLocationTxt.setText(path);
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent e) {
-//			}
-//		});
-//
-//		outputLocationTxt.addFocusListener(new FocusAdapter() {
-//
-//			@Override
-//			public void focusLost(FocusEvent e) {
-//				super.focusLost(e);
-//				String message = OutputPathValidation.getInstance()
-//						.validateOutputDirectory(outputLocationTxt.getText(),"Input");
-//				if (message != null) {
-//
-//					message = outputPathLbl.getText() + " " + message;
-//					mmng.addMessage("inputlocation", message, null,
-//							IMessageProvider.ERROR);
-//				} else {
-//					mmng.removeMessage("inputlocation");
-//				}
-//			}
-//		});
-//
-//		OutputLayoutData layoutData = new OutputLayoutData();
-//		layoutData.setOutputLabel(outputLocationTxt);
-//		layoutData.setSectionClient(sectionClient);
-//
-//		return layoutData;
-//	}
 
 	
 	@Override
