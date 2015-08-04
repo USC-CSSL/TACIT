@@ -41,7 +41,7 @@ public class RedditCrawler {
 		}
 	}
 	
-	public void search(String query, String title, String author, String url, String linkId, String timeFrame, String sortType, ArrayList<String> content) throws IOException, URISyntaxException {
+	public void search(String query, String title, String author, String site, String linkId, String timeFrame, String sortType, ArrayList<String> content) throws IOException, URISyntaxException {
 		for(String subreddit : content) {
 			String subRedditPath = this.outputDir + File.separator + subreddit;
 			if(!new File(subRedditPath).exists()) {
@@ -53,7 +53,7 @@ public class RedditCrawler {
 				monitor.subTask("Cancelling...");
 				return;
 			}
-			String queryString = constructSearchQueryString(query, title, author, url, linkId, subreddit);			
+			String queryString = constructSearchQueryString(query, title, author, site, linkId, subreddit);			
 			if(monitor.isCanceled()) {
 				monitor.subTask("Cancelling...");
 				return;
@@ -78,7 +78,7 @@ public class RedditCrawler {
 				monitor.subTask("Cancelling...");
 				return;
 			}
-			String queryString = constructSearchQueryString(query, title, author, url, linkId, null);
+			String queryString = constructSearchQueryString(query, title, author, site, linkId, null);
 			if(monitor.isCanceled()) {
 				monitor.subTask("Cancelling...");
 				return;
@@ -131,7 +131,7 @@ public class RedditCrawler {
 		return url;
 	}
 
-	private String constructSearchQueryString(String query, String title, String author, String url, String linkId, String subreddit) throws UnsupportedEncodingException {
+	private String constructSearchQueryString(String query, String title, String author, String site, String linkId, String subreddit) throws UnsupportedEncodingException {
 		String queryString = "";		
 		if(null != query && !query.isEmpty())
 			queryString="text:"+query;
@@ -147,11 +147,11 @@ public class RedditCrawler {
 			else
 				queryString+=" author:"+author;
 		}
-		if(null != url && !url.isEmpty()) {
+		if(null != site && !site.isEmpty()) {
 			if(queryString.isEmpty())
-				queryString+="url:"+url;
+				queryString+="site:"+site;
 			else
-				queryString+=" url:"+url;
+				queryString+=" site:"+site;
 		}
 		if(null != linkId && !linkId.isEmpty()) {
 			if(queryString.isEmpty())

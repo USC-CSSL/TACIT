@@ -74,7 +74,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Composite searchComposite;
 	private Text titleText;
 	private Text authorText;
-	private Text urlText;
+	private Text siteText;
 	private Composite searchComposite1;
 	private Composite searchComposite2;
 	private Text linkText;
@@ -416,12 +416,12 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(authorText);
 		authorText.setMessage("User who submitted the post e.g. yknjsnow");
 		
-		Label urlLabel = new Label(searchComposite2, SWT.NONE);
-		urlLabel.setText("URL:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(urlLabel);
-		urlText = new Text(searchComposite2, SWT.BORDER);
-		urlText.setMessage("Submission's URL (the website's address) e.g. cats");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(urlText);	
+		Label siteLabel = new Label(searchComposite2, SWT.NONE);
+		siteLabel.setText("Site:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(siteLabel);
+		siteText = new Text(searchComposite2, SWT.BORDER);
+		siteText.setMessage("e.g. example.com");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(siteText);	
 		Label linkLabel = new Label(searchComposite2, SWT.NONE);
 		linkLabel.setText("Link ID:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(linkLabel);
@@ -516,7 +516,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			// check if any if the filter is set
 			String title = titleText.getText();
 			String author = authorText.getText();
-			String url = urlText.getText();
+			String url = siteText.getText();
 			String linkId = linkText.getText();
 			String text = queryText.getText();
 			
@@ -563,7 +563,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 				return "Crawl";
 			}
 			
-			String outputDir; String query; String title; String author; String url;
+			String outputDir; String query; String title; String author; String site;
 			String linkId; String sortType; String trendType; String labelType; String timeFrame;			
 			int limit;
 			boolean search; boolean trendingData; boolean labeledData; boolean canProceed; boolean limitCmmts;
@@ -585,7 +585,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 									query = queryText.getText();
 									title = titleText.getText();
 									author = authorText.getText();
-									url = urlText.getText();
+									site = siteText.getText();
 									linkId = linkText.getText();
 									sortType = sortTypes[cmbSortType.getSelectionIndex()].toLowerCase();
 									timeFrame = timeFrames[cmbTimeFrames.getSelectionIndex()].toLowerCase();
@@ -616,7 +616,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
 									return handledCancelRequest("Cancelled");								
-								rc.search(query, title, author, url, linkId, timeFrame, sortType, content);
+								rc.search(query, title, author, site, linkId, timeFrame, sortType, content);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch (Exception e) {

@@ -53,7 +53,6 @@ public class RedditPlugin {
     	redditCategories = new HashMap<String, String>();    	
     	Object response = restClient.get("/subreddits/.json?limit=1000&sort=".concat(sortType), null).getResponseObject();
     	int count = 0;
-    	
     	breakEverything:
 	    while(true) {
 	    	if (response instanceof JSONObject) {
