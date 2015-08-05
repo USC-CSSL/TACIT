@@ -252,7 +252,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(filterResultsComposite);
 		
 		Label dummy1 = new Label(senatorComposite, SWT.NONE);
-		dummy1.setText("Senator:");
+		dummy1.setText("Senators:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy1);
 
 		senatorTable = new Table(senatorComposite, SWT.BORDER | SWT.MULTI);
@@ -296,7 +296,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		removeSenatorButton.setEnabled(false);
 
 		Label dummy2 = new Label(representativeComposite, SWT.NONE);
-		dummy2.setText("Representative:");
+		dummy2.setText("Representatives:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy2);
 
 		representativeTable = new Table(representativeComposite, SWT.BORDER | SWT.MULTI);
