@@ -155,7 +155,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		blayout.numColumns = 2;
 		buttonComposite.setLayout(blayout);
 		senatorButton = new Button(buttonComposite, SWT.RADIO);
-		senatorButton.setText("Senator");
+		senatorButton.setText("Senators");
 		senatorButton.setSelection(true);
 		
 		senatorButton.addSelectionListener(new SelectionListener() {
@@ -182,7 +182,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 
 		
 		representativeButton = new Button(buttonComposite, SWT.RADIO);
-		representativeButton.setText("Representative");
+		representativeButton.setText("Representatives");
 		representativeButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -375,7 +375,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		dailyDigestBtn.setSelection(true);
 			
 		limitRecords = new Button(limitRecordsClient, SWT.CHECK);
-		limitRecords.setText("Limit Records per Senator");	
+		limitRecords.setText("Limit records per congress member");	
 		GridDataFactory.fillDefaults().grab(false, false).span(5, 0).applyTo(limitRecords);
 		limitRecords.addSelectionListener(new SelectionListener() {			
 			@Override
@@ -407,7 +407,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		sortByDateNo.setEnabled(false);
 
 		final Label limitLabel = new Label(limitRecordsClient, SWT.NONE);
-		limitLabel.setText("No.of.Records per Senator:");
+		limitLabel.setText("No of records per congress member:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
 		limitLabel.setEnabled(false);
 		limitText = new Text(limitRecordsClient, SWT.BORDER);
