@@ -834,8 +834,10 @@ public class WordCountApi {
 
 			// If stop word, ignore
 			if (doStopWords)
-				if (stopWordSet.contains(currentWord))
+				if (stopWordSet.contains(currentWord)) {
+					currentWord = nextWord;
 					continue;
+				}
 
 			Matcher word = regularPattern.matcher(currentWord);
 			if (word.find()) {

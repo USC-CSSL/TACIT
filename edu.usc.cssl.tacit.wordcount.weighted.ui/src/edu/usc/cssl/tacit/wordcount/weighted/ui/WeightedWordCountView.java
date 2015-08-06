@@ -434,7 +434,7 @@ public class WeightedWordCountView extends ViewPart implements
 							}
 
 							wordCountController.wordCount(monitor, selectedFiles,
-									dictionaryFiles, stopWordPath, outputPath,
+									dictionaryFiles, isPreprocess?stopWordPath:"", outputPath,
 									"", true, isLiwcStemming, isSnowBall,
 									isSpss, isWdist, isStemDic, oFile, sFile,dateobj);
 							
