@@ -18,6 +18,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -63,6 +64,12 @@ public class StandardWordCountView extends ViewPart implements
 	private Button createDATFile;
 	protected Job wordCountJob;
 
+	
+	@Override
+	public Image getTitleImage() {
+		return StandardWordCountImageRegistry.getImageIconFactory()
+				.getImage(IMAGE_WORD_TITLE);
+	}
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);

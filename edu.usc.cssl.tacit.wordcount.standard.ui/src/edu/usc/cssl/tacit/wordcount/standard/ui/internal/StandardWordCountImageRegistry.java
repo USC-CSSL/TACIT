@@ -21,7 +21,8 @@ public class StandardWordCountImageRegistry {
 		ir.put(IStandardWordCountViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(StandardWordCountImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(IStandardWordCountViewConstants.IMAGE_WORD_TITLE, ImageDescriptor
+				.createFromFile(IStandardWordCountViewConstants.class, "/icons/wc.png"));
 
 	}
 

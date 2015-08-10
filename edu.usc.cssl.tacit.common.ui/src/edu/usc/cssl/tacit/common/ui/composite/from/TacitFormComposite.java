@@ -369,36 +369,36 @@ public class TacitFormComposite {
 	}
 
 	public static void addErrorPopup(final Form form, final FormToolkit toolkit) {
-		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				String title = e.getLabel();
-				Object href = e.getHref();
-				if (href instanceof IMessage[]) {
-					// details =
-					// managedForm.getMessageManager().createSummary((IMessage[])href);
-				}
-
-				Point hl = ((Control) e.widget).toDisplay(0, 0);
-				hl.x += 10;
-				hl.y += 10;
-				Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
-				shell.setImage(getImage(form.getMessageType()));
-				shell.setText(title);
-				shell.setLayout(new FillLayout());
-				// ScrolledFormText stext = new ScrolledFormText(shell, false);
-				// stext.setBackground(toolkit.getColors().getBackground());
-				FormText text = toolkit.createFormText(shell, true);
-				configureFormText(form, text);
-				// stext.setFormText(text);
-				if (href instanceof IMessage[])
-					text.setText(createFormTextContent((IMessage[]) href),
-							true, false);
-				shell.setLocation(hl);
-				shell.pack();
-				shell.open();
-			}
-		});
+//		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
+//			@Override
+//			public void linkActivated(HyperlinkEvent e) {
+//				String title = e.getLabel();
+//				Object href = e.getHref();
+//				if (href instanceof IMessage[]) {
+//					// details =
+//					// managedForm.getMessageManager().createSummary((IMessage[])href);
+//				}
+//
+//				Point hl = ((Control) e.widget).toDisplay(0, 0);
+//				hl.x += 10;
+//				hl.y += 10;
+//				Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
+//				shell.setImage(getImage(form.getMessageType()));
+//				shell.setText(title);
+//				shell.setLayout(new FillLayout());
+//				// ScrolledFormText stext = new ScrolledFormText(shell, false);
+//				// stext.setBackground(toolkit.getColors().getBackground());
+//				FormText text = toolkit.createFormText(shell, true);
+//				configureFormText(form, text);
+//				// stext.setFormText(text);
+//				if (href instanceof IMessage[])
+//					text.setText(createFormTextContent((IMessage[]) href),
+//							true, false);
+//				shell.setLocation(hl);
+//				shell.pack();
+//				shell.open();
+//			}
+//		});
 	}
 
 	private static Image getImage(int type) {
