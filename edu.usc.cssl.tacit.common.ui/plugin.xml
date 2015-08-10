@@ -216,7 +216,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="edu.usc.cssl.tacit.common.ui.views.CorpusManagementView"
+            class="edu.usc.cssl.tacit.common.ui.corpusmanagement.CorpusManagementView"
             id="edu.usc.cssl.tacit.common.ui.corpusmanagement.view1"
             name="Corpus Management"
             restorable="true">

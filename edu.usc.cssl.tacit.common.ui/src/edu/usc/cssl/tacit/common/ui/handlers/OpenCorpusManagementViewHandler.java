@@ -6,7 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import edu.usc.cssl.tacit.common.ui.views.CorpusManagementView;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.CorpusManagementView;
 
 public class OpenCorpusManagementViewHandler extends AbstractHandler {
 
