@@ -53,13 +53,11 @@ import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.IRedditCrawlerViewConstant
 import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.RedditCrawlerViewImageRegistry;
 
 public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewConstants {
-
 	public static String ID = "edu.usc.cssl.tacit.crawlers.reddit.ui.redditview";
 	
 	private Button crawlTrendingDataButton;
 	private ScrolledForm form;
 	private FormToolkit toolkit;
-
 	private Button crawlLabeledButton;
 	private Button crawlSearchResultsButton;
 	private OutputLayoutData outputLayout;
@@ -82,13 +80,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Composite commonsearchComposite;
 	private Button addSubredditBtn;
 	private Button removeSubredditBtn;
+	private Combo cmbSortType;
 	
 	String subredditText;
 	int redditCount = 1;
 	String oldSubredditText;
-
-	private Combo cmbSortType;
 	ArrayList<String> content;
+	
 	String sortTypes[] = {"Relevance", "Top", "Hot", "New", "Comments"};
 	String trendTypes[] = {"Hot", "New", "Rising"};
 	String timeFrames[] = {"All", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
