@@ -27,17 +27,21 @@
 						<center><td class = "head">Overview of Word Count Tools</td>
 					</tr>
 					<tr>
-						<td>Word count techniques measure the amount that a certain document reflects a predetermined topic of interest using researcher created dictionaries. To use this method, the researcher manually or through crowdsourcing first creates a list of words they believe are related to a topic of interest called a dictionary. For example, if they are interested in the use of moral words, they might create a dictionary of words including ethic, moral, right, etc. Then, the program uses this dictionary and counts the number of times the words occur in each document of interest. These programs provide information about the total number of words in a document as well as the percentage of words in each document from each topic.  
+						<td>Word count techniques measure the amount that a certain document reflects a predetermined topic of interest using researcher created dictionaries. To use this method, the researcher manually or through crowdsourcing first creates a list of words they believe are related to a topic of interest called a dictionary. For example, if they are interested in the use of moral words, they might create a dictionary of words including ethic, moral, right, etc. Then, the program uses this dictionary and counts the number of times the words occur in each document of interest. These programs provide information about the total number of words in a document as well as the percentage of words in each document from each topic.
+						<br><br> Word count is arguably the most popular natural language platform in social psychology is the Linguistic Inquiry Word Count (LIWC) developed by James Pennebaker and his collaborators (James W Pennebaker, Booth, & Francis, 2007; Tausczik & Pennebaker, 2010). Word Count techniques have been used in a variety of different tasks including: demonstrating the relationship between use of first person singular pronouns and negative experiences and depression (Rude, Gortner, & Pennebaker, 2004; Stirman & Pennebaker, 2001),  extraversion and use of shorter words, less complex language, but longer written passages (Mehl, Gosling, & Pennebaker, 2006) and others.   
 						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Description of Word count techniques</td>
 					</tr>
 					<tr>
-						<td class = "section">Standard Word Count, Weighted Word Count, and LIWC-Style Word Count</td>
+						<td class = "section">Standard Word Count, LIWC-Style Word Count, and Weighted Word Count</td>
 					</tr>
 					<tr>
-						<td>Description of basic word count tool 
+						<td>TACIT provides two plugins which perform word count: <b>LIWC-style Word Count</b> and <b>Standard Word Count</b>. 
+						<br><br>The <b>LIWC-style word count plugin</b> was developed using LIWC documentation (J W Pennebaker, Francis, & Booth, 2001) and reverse engineering of the program to understand and implement the algorithm.  We compared the results of our implementation and the original LIWC software on a variety of test texts, including files from Project Gutenberg. Except for very rare cases (e.g. some occurrences of double hyphens, documented <a href = "./liwcstylewc.html" target="_blank">here</a>), the result of our plugin provide an exact match with that of LIWC up to the hundredth decimal point. While TACIT provide the word count capability of LIWC, users must import their own dictionaries as it does not provide any of the LIWC dictionary categories. 
+						<br><br>The <b>Standard Word Count plugin </b>was developed exclusively for the TACIT tool as a more comprehensive approach to word count techniques. Rather than only relying on static categories, the Standard Word Count tool uses Apache OpenNLP (http://opennlp.apache.org/) to automatically segment sentences, tokenize words and find the part of speech tags of all words in the text. Analyses using this tool report the counts for the part of speech tags as well as the categories in the user’s dictionaries. We believe that this is a more modern and comprehensive approach to segmenting sentences and counting parts of speech compared to LIWC’s approach (e.g. locating “.” as marker for sentences). 
+						
 						</td>
 					</tr>
 					<tr>
