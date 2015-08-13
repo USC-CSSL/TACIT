@@ -15,8 +15,8 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>Co-Occurrence details
-							
+						<td>Co-occurrence analysis gives insights into the interconnection between terms or entities within any given text. Two words are said to “co-occur” with each other if both words appear in a defined window size, or within a certain number of words of each other (e.g. in “Fiji apples are red”, “Fiji” and “red” co-occur in a window size of 4). TACIT’s Co-occurrence plugin calculates both word level and phrase level co-occurrences. At the word level, the Co-occurrence plugin computes the frequency that each pair of words co-occur in a text or corpus. At the phrase level, the Co-occurrence tool locates “neighborhoods”  defined as multiple terms (“neighbors”) that co-occur with each other (e.g. “Fiji” and “red” are neighbors within the neighborhood of “Fiji apples are red”). To use this method, users need to specify a set of words that they are interested to see if they co-occur (e.g. “fiji”, “red”, “island”), a threshold for the maximum number of words allowed in a neighborhood (e.g. 4) and a threshold for the minimum number of words to occur in the group from the specified set of words (e.g. 2 for “fiji” & “red”, “fiji” & “island”, “red” & “island” or “fiji”, “red” & “island”). The output of this process are the groups of text satisfying the constraints mentioned above along with their actual location information (i.e. filename and line number).
+							Inferences can be drawn easily through the output of the co-occurrence analysis to locate and verify relationships between given entities. The overall matrix of word pairs frequency can be used to locate clusters, synonyms and learn the overall connections between entities.
 						</td>
 					</tr>
 				</table>

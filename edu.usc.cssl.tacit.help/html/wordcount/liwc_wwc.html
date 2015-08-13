@@ -15,7 +15,9 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>Word count programs (or dictionary methods) are text analysis tools that quantify the frequency of topics of interest across a document or set of documents that reflects . To accomplish this task, word count programs require a user-defined dictionary of topics, with pre-identified words for each topic. Using this dictionary, the word count program then counts the number of times words in each topic domains occur and calculates the percentage of each document that reflects each topic. <br><br>
+						<td>The LIWC-style word count plugin was developed using LIWC documentation (J W Pennebaker, Francis, & Booth, 2001) and reverse engineering of the program to understand and implement the algorithm.  We compared the results of our implementation and the original LIWC software on a variety of test texts, including files from Project Gutenberg. Except for very rare cases (e.g. some occurrences of double hyphens), the result of our plugin provide an exact match with that of LIWC up to the hundredth decimal point. While TACIT provide the word count capability of LIWC, users must import their own dictionaries as it does not provide any of the LIWC dictionary categories.
+						
+						Word count programs (or dictionary methods) are text analysis tools that quantify the frequency of topics of interest across a document or set of documents that reflects . To accomplish this task, word count programs require a user-defined dictionary of topics, with pre-identified words for each topic. Using this dictionary, the word count program then counts the number of times words in each topic domains occur and calculates the percentage of each document that reflects each topic. <br><br>
 							The TACIT plugin includes three different word count techniques:  Standard Word Count, LIWC-style Word Count, and Weighted Word Count. For detailed descriptions of each of these
 							options, see "Selecting a Word Count Technique" below.   <br><br>
 					
@@ -26,16 +28,12 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Basic Tutorial: Using TACIT Word Count</td>
+						<td class = "head">Basic Tutorial: Using TACIT LIWC Word Count</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Selecting a Word Count Technique</td>
 					</tr>
-					<tr>
-						<td class = "section">Standard Word Count</td>
-					</tr>
-					<tr> <td> To conduct standard word count, use the <a href = "./liwcstylewc.html" target="_blank">Standard Word Count Tool</a>
-					<tr>
+					
 						<td class = "section">LIWC-Style Word Count</td>
 					</tr>
 					<tr>
@@ -47,6 +45,8 @@
 					</tr>
 					<tr>
 						<td>Required components, weights etc <a href = "http://meh.ryanb.cc/" target="_blank">Program that can make dictionary with word count weights</a>. 
+						
+						<br><br> To conduct standard word count, use the <a href = "./liwcstylewc.html" target="_blank">Standard Word Count Tool</a>
 						</td>
 					</tr>
 					<tr>
