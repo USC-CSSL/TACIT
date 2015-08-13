@@ -167,7 +167,9 @@ public class AvailableRecords {
 		HashMap<String, String> newRepMap = new HashMap<String, String>();
 		for(String s : repArray) {
 			String temp = new String();
-			String tempRepName = (s.lastIndexOf('(')!=-1) ? s.substring(0, s.lastIndexOf('(')-1) : s;	
+			String tempRepName = (s.lastIndexOf('(')!=-1) ? s.substring(0, s.lastIndexOf('(')) : s;
+			if(tempRepName.charAt(tempRepName.length()-1) == ' ')
+				tempRepName = tempRepName.substring(0, tempRepName.length()-1);
 			if(null == newRepMap.get(tempRepName)) {
 				if(null != representativeDet.get(tempRepName)) {
 					temp =  tempRepName + " (" + representativeDet.get(tempRepName) + ")";
@@ -176,7 +178,7 @@ public class AvailableRecords {
 					int end = s.lastIndexOf(')');
 					if(end>start) {
 						//representativeDet.put("Young, Todd", "R-IN");
-						System.out.println("representativeDet.put(\""+tempRepName + "\", \"" + s.substring(start, end) +"\");");
+						System.out.println(s+" representativeDet.put(\""+tempRepName + "\", \"" + s.substring(start, end) +"\");");
 					}
 					temp = s;
 				}
