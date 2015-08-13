@@ -523,6 +523,14 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			final ArrayList<String> tempCongressYears = new ArrayList<String>();
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						sCmbCongress.setEnabled(false);
+						rCmbCongress.setEnabled(false);
+					}
+				});
+
 				try {
 					congressDetails = AvailableRecords.getAllCongresses();
 				} catch (IOException e) {
@@ -531,8 +539,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				Display.getDefault().syncExec(new Runnable() {
 				      @Override
 				      public void run() {
-				    	  sCmbCongress.removeAll();
-				    	  rCmbCongress.removeAll();
+				    	  //sCmbCongress.removeAll();
+				    	  //rCmbCongress.removeAll();
 				    	  for(String key : congressDetails.keySet()) {
 				    		  tempCongress.add(key);
 				    		  String value = congressDetails.get(key);
@@ -557,8 +565,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				    			  maxDate = cal.getTime();
 				    		  }
 				    	  }
-				    	  sCmbCongress.select(0);
-				    	  rCmbCongress.select(0);
 				      }});		
 				congresses = tempCongress.toArray(new String[0]);
 				congressYears = tempCongressYears.toArray(new String[0]);
@@ -577,6 +583,18 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
+				
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						sCmbCongress.remove(0);
+						rCmbCongress.remove(0);
+						sCmbCongress.select(0);
+						rCmbCongress.select(0);
+						sCmbCongress.setEnabled(true);
+						rCmbCongress.setEnabled(true);
+					}
+				});
 				return Status.OK_STATUS;
 			}
 		};
@@ -690,10 +708,17 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					} else {
 						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress)) {
 							availableRepresentatives = AvailableRecords.getRepresentatives(selectedCongress);
+							
+							Display.getDefault().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									if(selectedRepresentatives!=null) selectedRepresentatives.clear();
+									representativeTable.removeAll();
+								};
+							});
 						}
 						for(String s : availableRepresentatives) 
-							temp.add(s);	
-						
+							temp.add(s);							
 					}
 					representativeList.addAll(temp);
 					if (selectedRepresentatives != null)
@@ -778,6 +803,13 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					} else {
 						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress)) {
 							availabileSenators = AvailableRecords.getSenators(selectedCongress);
+							Display.getDefault().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									if(selectedSenators!=null) selectedSenators.clear();
+									senatorTable.removeAll();
+								};
+							});							
 						}
 						for(String s : availabileSenators) 
 							temp.add(s);	

@@ -6,9 +6,10 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Latin Crawler"
             class="edu.usc.cssl.tacit.crawlers.latin.ui.LatinCrawlerView"
-            id="edu.usc.cssl.tacit.crawlers.latin.ui.view1">
+            icon="icons/latin.ico"
+            id="edu.usc.cssl.tacit.crawlers.latin.ui.view1"
+            name="Latin Crawler">
       </view>
       
    </extension>
@@ -18,8 +19,9 @@
       <menuContribution
             locationURI="menu:crawl">
              <command
-                  commandId="usc.edu.cssl.crawlers.latin.view.command1"
-                  label="Latin Crawler">
+                   commandId="usc.edu.cssl.crawlers.latin.view.command1"
+                   icon="icons/latin.ico"
+                   label="Latin Crawler">
             </command>
       </menuContribution>
    </extension>
