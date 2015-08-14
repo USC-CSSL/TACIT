@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="edu.usc.cssl.tacit.classifiy.svm.ui.SVMView"
+            class="edu.usc.cssl.tacit.classify.svm.ui.SVMView"
             id="edu.usc.cssl.tacit.classify.svm.ui.view1"
             name="SVM Classifier">
       </view>

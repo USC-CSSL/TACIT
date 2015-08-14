@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.classifiy.svm.ui;
+package edu.usc.cssl.tacit.classify.svm.ui;
 
 import java.io.File;
 import java.io.IOException;

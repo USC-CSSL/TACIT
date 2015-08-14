@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.classifiy.svm.ui;
+package edu.usc.cssl.tacit.classify.svm.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

@@ -6,7 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import edu.usc.cssl.tacit.classifiy.svm.ui.SVMView;
+import edu.usc.cssl.tacit.classify.svm.ui.SVMView;
 
 public class OpenSVMViewHandler extends AbstractHandler{
 

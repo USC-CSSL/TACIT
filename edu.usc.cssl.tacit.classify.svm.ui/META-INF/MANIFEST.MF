@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: svm
 Bundle-SymbolicName: edu.usc.cssl.tacit.classify.svm.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.usc.cssl.tacit.classifiy.svm.ui.Activator
+Bundle-Activator: edu.usc.cssl.tacit.classify.svm.ui.Activator
 Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
