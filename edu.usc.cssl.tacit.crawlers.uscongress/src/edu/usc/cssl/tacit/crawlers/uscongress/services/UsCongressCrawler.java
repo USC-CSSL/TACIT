@@ -102,7 +102,7 @@ public class UsCongressCrawler {
 		
 		csvWriter  = new BufferedWriter(new FileWriter(new File(outputDir + System.getProperty("file.separator") + "congress-crawler-summary-"+df.format(dateobj)+".csv")));
 		if(isSenate) csvWriter.write("Congress,Date,Senator,Political Affiliation,Congressional Section,State,Title,File");
-		else csvWriter.write("Congress,Date,Representative,Political Affiliation,Congressional Section,State,Title,File");
+		else csvWriter.write("Congress,Date,Representative,Political Affiliation,Congressional Section,State,District,Title,File");
 		csvWriter.newLine();
 		for(String memberText : congressMembers) {
 			int tempProgressSize = progressSize/congressMembers.size();
@@ -333,18 +333,28 @@ public class UsCongressCrawler {
 					relevantLinks.add(link);
 		}
 		
-		if (relevantLinks.size() == 0){
+		String memberAttribs = memText.substring(memText.lastIndexOf('(')+1, memText.length()-1).trim();
+		//String memberAttribs = memText.split("\\(")[1].replace(")", "").trim();
+		String memberState = memberAttribs;
+		String district = memberAttribs;
+		if(-1 != memberAttribs.indexOf('-')) {
+			String[] temp =  memberAttribs.split("-");
+			memberState = temp[1];
+			if(temp.length>=3) district = temp[2]; 			
+		}	
+		String lastName = memText.split(",")[0];
+		String[] tempName = (memText.lastIndexOf('(')!=-1) ? memText.substring(0, memText.lastIndexOf('(')).split(",") : lastName.split(",");
+		//String tempRepName = StringUtil.join(Arrays.asList(tempName),";");
+		String tempRepName = tempName[1] + " " + tempName[0];
+		
+		if (relevantLinks.size() == 0) {
 			ConsoleView.printlInConsoleln("No Records Found.");
+			if(isSenate) csvWriter.write(congress+","+"NA"+","+tempRepName+","+politicalAffiliation+","+"NA"+","+memberState+","+"NA"+","+"No records found");
+			else csvWriter.write(congress+","+"NA"+","+tempRepName+","+politicalAffiliation+","+"NA"+","+memberState+","+ district +","+"NA"+","+"No records found");			
 			return;
 		}
 		
 		links = relevantLinks;
-		
-		String memberAttribs = memText.split("\\(")[1].replace(")", "").trim();
-		String memberState = memberAttribs;
-		if(-1 != memberAttribs.indexOf('-')) {
-			memberState = memberAttribs.split("-")[1];
-		}
 
 		int count = 0;
 		int tempCount = 0;
@@ -387,8 +397,7 @@ public class UsCongressCrawler {
 					break;
 				}
 			}
-			
-			String lastName = memText.split(",")[0];
+		
 			String[] contents = extract(extractLink,lastName);
 
 			if (contents[1].length()==0)
@@ -402,9 +411,10 @@ public class UsCongressCrawler {
 				if (title.length()>15)
 					shortTitle = title.substring(0, 15).trim().replaceAll("[^\\w\\s]", "");
 				shortTitle.replaceAll("[.,;\"!-(){}:?'/\\`~$%#@&*_=+<>]", ""); // replaces all special characters
-				String fileName = congress+"-"+lastName+"-"+memberAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
+				String fileName = congress+"-"+tempRepName+"-"+memberAttribs+"-"+recordDate+"-"+shortTitle+"-"+(System.currentTimeMillis()%1000)+".txt";
 				writeToFile(memberDir, fileName, contents);
-				csvWriter.write(congress+","+recordDate+","+lastName+","+politicalAffiliation+","+recordType+","+memberState+","+title+","+fileName);
+				if(isSenate) csvWriter.write(congress+","+recordDate+","+tempRepName+","+politicalAffiliation+","+recordType+","+memberState+","+title+","+fileName);
+				else csvWriter.write(congress+","+recordDate+","+tempRepName+","+politicalAffiliation+","+recordType+","+memberState+","+ district +","+title+","+fileName);
 				csvWriter.newLine();
 				csvWriter.flush();
 			}
