@@ -336,11 +336,11 @@ public class UsCongressCrawler {
 		String memberAttribs = memText.substring(memText.lastIndexOf('(')+1, memText.length()-1).trim();
 		//String memberAttribs = memText.split("\\(")[1].replace(")", "").trim();
 		String memberState = memberAttribs;
-		String district = memberAttribs;
+		String district = "NA";
 		if(-1 != memberAttribs.indexOf('-')) {
 			String[] temp =  memberAttribs.split("-");
 			memberState = temp[1];
-			if(temp.length>=3) district = temp[2]; 			
+			if(temp.length>=3) district = temp[2]; 	
 		}	
 		String lastName = memText.split(",")[0];
 		String[] tempName = (memText.lastIndexOf('(')!=-1) ? memText.substring(0, memText.lastIndexOf('(')).split(",") : lastName.split(",");
@@ -350,7 +350,9 @@ public class UsCongressCrawler {
 		if (relevantLinks.size() == 0) {
 			ConsoleView.printlInConsoleln("No Records Found.");
 			if(isSenate) csvWriter.write(congress+","+"NA"+","+tempRepName+","+politicalAffiliation+","+"NA"+","+memberState+","+"NA"+","+"No records found");
-			else csvWriter.write(congress+","+"NA"+","+tempRepName+","+politicalAffiliation+","+"NA"+","+memberState+","+ district +","+"NA"+","+"No records found");			
+			else csvWriter.write(congress+","+"NA"+","+tempRepName+","+politicalAffiliation+","+"NA"+","+memberState+","+ district +","+"NA"+","+"No records found");
+			csvWriter.newLine();
+			csvWriter.flush();
 			return;
 		}
 		

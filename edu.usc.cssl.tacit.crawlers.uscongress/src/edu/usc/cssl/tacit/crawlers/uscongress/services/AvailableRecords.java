@@ -156,7 +156,7 @@ public class AvailableRecords {
 		Elements repList = doc.getElementsByAttributeValue("name", "HSpeaker").select("option");
 		String[] repArray = new String[repList.size()-1];
 		int index = 0;
-		for (Element repItem : repList){
+		for (Element repItem : repList) {
 			String repText = repItem.text().replace("\u00A0", " ");
 			if (repText.equals("Any Representative"))
 				continue;
@@ -174,12 +174,12 @@ public class AvailableRecords {
 				if(null != representativeDet.get(tempRepName)) {
 					temp =  tempRepName + " (" + representativeDet.get(tempRepName) + ")";
 				} else {
-					int start = s.lastIndexOf('(')+1;
+					/*int start = s.lastIndexOf('(')+1;
 					int end = s.lastIndexOf(')');
 					if(end>start) {
 						//representativeDet.put("Young, Todd", "R-IN");
 						System.out.println(s+" representativeDet.put(\""+tempRepName + "\", \"" + s.substring(start, end) +"\");");
-					}
+					}*/
 					temp = s;
 				}
 				newRepMap.put(temp, s); // new value, old value

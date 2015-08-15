@@ -706,7 +706,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						for(String s : allRepresentatives) 
 							temp.add(s);					
 					} else {
-						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress)) {
+						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress) || null == availableRepresentatives || availableRepresentatives.length == 0) {
 							availableRepresentatives = AvailableRecords.getRepresentatives(selectedCongress);
 							
 							Display.getDefault().asyncExec(new Runnable() {
@@ -801,7 +801,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						for(String s : allSenators) 
 							temp.add(s);					
 					} else {
-						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress)) {
+						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress) || null == availabileSenators || availabileSenators.length == 0) {
 							availabileSenators = AvailableRecords.getSenators(selectedCongress);
 							Display.getDefault().asyncExec(new Runnable() {
 								@Override
