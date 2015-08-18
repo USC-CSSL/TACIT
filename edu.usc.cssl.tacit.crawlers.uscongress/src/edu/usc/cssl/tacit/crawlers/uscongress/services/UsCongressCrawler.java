@@ -294,6 +294,7 @@ public class UsCongressCrawler {
 		String memText = (null == senText || senText.isEmpty()) ? repText : senText;
 		ConsoleView.printlInConsoleln("Current Congress Member - "+ memText);
 		String memberDir = this.outputDir + File.separator + memText;
+		memberDir = memberDir.replaceAll("\"", "");
 		if(!new File(memberDir).exists()) {
 			new File(memberDir).mkdir();
 		}
@@ -443,6 +444,7 @@ public class UsCongressCrawler {
 	}
 	private void writeToFile(String senatorOutputDir, String fileName, String[] contents) throws IOException {
 		//ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
+		fileName = fileName.replaceAll("\"", "");
 		ConsoleView.printlInConsoleln("Writing "+ senatorOutputDir + File.separator + fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(senatorOutputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
