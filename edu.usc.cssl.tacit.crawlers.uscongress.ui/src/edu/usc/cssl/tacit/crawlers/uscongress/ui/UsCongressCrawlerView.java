@@ -927,7 +927,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 									}									
 									congressMemberDetails = selectedSenators;
 									isSenate = true;
-									
 									crawlSenateRecords = senateBtn.getSelection();
 								}
 								else if(representativeButton.getSelection()) {
@@ -935,7 +934,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 										congressNum = "-1";
 									} else {
 										congressNum = congresses[rCmbCongress.getSelectionIndex()];	
-									}									
+									}
+									isSenate = false;
 									congressMemberDetails = selectedRepresentatives;
 									crawlHouseRepRecords = houseBtn.getSelection();
 								}
@@ -959,38 +959,32 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							}
 						});
 						
-						if(congressMemberDetails.contains("All Senators") && congressNum.equals("-1")) { // all senators and all congresses
-							progressSize = (totalSenators * congresses.length) + 50;
+						if((congressMemberDetails.contains("All Senators") || congressMemberDetails.contains("All Representatives")) && congressNum.equals("-1")) { // all senators and all congresses
+							progressSize = congressMemberDetails.contains("All Senators") ? (totalSenators * congresses.length) + 50 : (totalRepresentatives * congresses.length) + 50;
 						} else {
-							int count = 1;
-							if(congressNum.equals("-1")) {
-								if(congressMemberDetails.contains("All Democrats")) {
-									progressSize = (20 * congresses.length) + 50; // on an average of 20 democrats
-									count++;
+							if(congressNum.equals("-1")) { // All congresses
+								if(congressMemberDetails.contains("All Democrats") || congressMemberDetails.contains("All Republicans") || congressMemberDetails.contains("All Independents")) {
+									if(congressMemberDetails.contains("All Democrats")) 
+										progressSize= (20 * congresses.length) + 50; // on an average of 20 democrats
+									if(congressMemberDetails.contains("All Republicans")) 
+										progressSize+= (20 * congresses.length) + 50; // on an average of 20 democrats
+									if(congressMemberDetails.contains("All Independents")) 
+										progressSize+= (20 * congresses.length) + 50; // on an average of 20 democrats
+								} else
+									progressSize = ((congressMemberDetails.size()+1) * congresses.length) + 50; // considering none of "All" selected
+							} else { // some congress selected
+								if(congressMemberDetails.contains("All Senators") || congressMemberDetails.contains("All Representatives")) {
+									progressSize = congressMemberDetails.contains("All Senators") ? (totalSenators * 20) + 50 : (totalRepresentatives * 20) + 50;
+								} else if(congressMemberDetails.contains("All Democrats") || congressMemberDetails.contains("All Republicans") || congressMemberDetails.contains("All Independents")) {
+									if(congressMemberDetails.contains("All Democrats"))
+										progressSize = 100 + 50; // on an average of 20 democrats
+									if(congressMemberDetails.contains("All Republicans"))
+										progressSize+= 100 + 50;
+									if(congressMemberDetails.contains("All Independents"))
+										progressSize+= 100 + 50;								
+								} else {
+									progressSize = ((congressMemberDetails.size()+1) * 10) + 50; // considering none of "All" selected
 								}
-								if(congressMemberDetails.contains("All Republicans")) {
-									progressSize+= (20 * congresses.length) + 50;
-									count++;
-								}
-								if(congressMemberDetails.contains("All Independents")) {
-									progressSize+= (20 * congresses.length) + 50;
-									count++;
-								}
-								progressSize+= ((congressMemberDetails.size() - count)+1 * congresses.length) + 50; // considering none of "All" selected
-							} else {
-								if(congressMemberDetails.contains("All Democrats")) {
-									progressSize = 100 + 50; // on an average of 20 democrats
-									count++;
-								}
-								if(congressMemberDetails.contains("All Republicans")) {
-									progressSize+= 100 + 50;
-									count++;
-								}
-								if(congressMemberDetails.contains("All Independents")) {
-									progressSize+=  100 + 50;
-									count++;
-								}
-								progressSize+= ((congressMemberDetails.size() - count)+1 * 10) + 50; // considering none of "All" selected								
 							}
 						}
 						monitor.beginTask("Running US Congress Crawler..." , progressSize);
