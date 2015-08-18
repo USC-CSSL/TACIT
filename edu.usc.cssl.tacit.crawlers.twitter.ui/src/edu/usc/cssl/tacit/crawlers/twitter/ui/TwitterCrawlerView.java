@@ -85,6 +85,7 @@ public class TwitterCrawlerView extends ViewPart implements
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
@@ -153,6 +154,7 @@ public class TwitterCrawlerView extends ViewPart implements
 				return "Crawl";
 			}
 
+			@Override
 			public void run() {
 				TacitFormComposite.updateStatusMessage(getViewSite(), null,
 						null, form);
@@ -187,6 +189,7 @@ public class TwitterCrawlerView extends ViewPart implements
 				final boolean maxLimitEnabled = true;
 				final boolean timeLimit = limitRecords.getSelection();
 				job = new Job("Twitter Stream Job") {
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 
 						try {
@@ -508,6 +511,7 @@ public class TwitterCrawlerView extends ViewPart implements
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		form.setFocus();
 	}
@@ -589,7 +593,7 @@ public class TwitterCrawlerView extends ViewPart implements
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false)
 				.applyTo(section);
 		section.setText("Limit Tweets"); //$NON-NLS-1$
-		section.setDescription("Limit tweets crawled based on the following settings");
+		section.setDescription("Limit crawling based on the following settings");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
