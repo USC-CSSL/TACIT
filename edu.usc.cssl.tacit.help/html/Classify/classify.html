@@ -1,4 +1,4 @@
-<html>
+	<html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="sample.css">
 	</head>
@@ -17,7 +17,6 @@
 					<tr>
 						<td> <a href = "./naivebayes.html" target="_blank">Naive Bayes Classifier</a>
 						<br>  <a href = "./svm.html" target="_blank">Support Vector Machine (SVM)</a>
-							
 						</td>
 					</tr>
 				</table>
@@ -28,21 +27,10 @@
 						<center><td class = "head">Overview of Classifier Techniques</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Description of Classifiers</td>
-					</tr>
-					<tr>
-						<td class = "section">Naive Bayes Classifier</td>
-					</tr>
-					<tr>
-						<td>Description of Naive Bayes Classifier. 
-						</td>
-					</tr>
-					<tr>
-						<td class = "section">Support Vector Machine (SVM)</td>
-					</tr>
-					<tr>
-						<td>SVM Description.
-						</td>
+					<td>Machine learning tasks are often aimed at automatically sorting texts into pre-determined groups of interest. For example, researchers might wish to identify whether blog authors are male or female based on the content of their blog posts (Mukherjee & Liu, 2010). For this kind of problem, a popular solution is to use a supervised classification algorithm or “classifier”, such as naive Bayes (Lewis, 1998), Random Forests (Breiman, 2001), or Support Vector Machines (SVMs; (Cortes & Vapnik, 1995). While the algorithms employed by classifiers vary widely, they all share a basic three step framework. First, the researcher pre-sorts documents into the groups they are interested in assessing, which the classifier then splits into a training subset and testing subset. The classifier uses the training subset of data to determine features (e.g., words, xxx) that distinguish the groups from each other. The classifier then uses this information to test how accurately the trained algorithm can predict group membership for the remaining pre-sorted documents. Finally, if the trained classifier is sufficiently accurate, the algorithm predicts which group (or class) any remaining unsorted documents belong in. 
+					<br><br>Researchers have been able to develop classifiers with impressive degrees of accuracy for a range of different classes such the political affiliation of blog authors (Dehghani, Sagae, Sachdeva, & Gratch, 2014) and the religion of Twitter users (Nguyen & Lim, 2014). Once classification has been performed with reliable accuracy, researchers can use the classification tool’s feature analysis to investigate words that are most indicative of the groups (i.e. words that one group uses very frequently and the other group does not). 
+					<br><br>TACIT provides two classification plugins which interface with the MALLET classification library to accomplish these tasks: naive Bayes and Support Vector Machine (SVM). TACIT’s classification plugins can be used to investigate the degree to which classes can be separated based on the provided data, as well as to classify unlabeled data points for later analyses. Both plugins require that the researcher pre-organizes their texts by class into separate directories/corpora. Once the data is organized by group, TACIT’s classification plugins automatically conduct training and test runs on the data, determine predictive accuracy, and calculate relevant classification statistics. Further, the naive Bayes and SVM plugins both support k-fold cross validation of accuracy rates and TACIT’s naive Bayes plugin also supports classification of unsorted documents. 
+					</td>
 					</tr>					
 				</table>
 			</tr>	
