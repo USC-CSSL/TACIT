@@ -7,7 +7,7 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">TACIT Classifier Tools</td>
+				<td class = "header">TACIT Topic Modeling Tools</td>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -28,22 +28,10 @@
 						<center><td class = "head">Overview of Topic Modeling Techniques</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Description of Topic Modeling Tools</td>
-					</tr>
-					<tr>
-						<td class = "section">LDA</td>
-					</tr>
-					<tr>
-						<td>Description of LDA. 
+						<td>While reading a document, we have an intuitive understanding that it focuses on particular topics. For example, at various levels of generality, by reading a news article we might find that the document is primarily about economics, sports, entertainment, the Trans-Pacific Partnership, or Wimbledon. Topic modeling techniques (Blei, Ng, & Jordan, 2003; Griffiths & Steyvers, 2004; Papadimitriou, Tamaki, Raghavan, & Vempala, 1998) are used to discover and describe underlying topics within documents and changes in topics over time. These techniques also help researchers explore how frequently different topics occur together and how words within a topic are associated. Psychological researchers have also used these techniques to identify how underlying topics within text associate with other external measures. For example, Eichstaedt and colleagues (2015) analyzed Twitter tweets using the LDA algorithm and found that higher use of words belonging to topics of hostility, interpersonal tension, and boredom/fatigue predicted county level heart disease mortality with the same accuracy as all typical demographic (e.g., race, socioeconomic status) and physical (e.g., diabetes, smoking) predictors combined. 
+						<br><br>TACIT’s LDA and Z-label LDA topic modeling plugins were developed to accomplish this goal. LDA (Blei et al., 2003) starts from the assumption that documents are mixtures of multiple topics and looks to discover both the structure of the topics and the mix of topics for each document.  TACIT’s LDA plugin allows you to explore the structure of topics within a set of documents and the relations between them. Researchers can adjusting the number of topics generated to focus the level of granularity, with smaller numbers of topics generating a few overarching themes to larger numbers of topics providing many tightly focused topics. Each topic is described by a distribution over the words in the vocabulary, allowing you to see which words are most associated with that topic and explore connections between them across the entire corpus. Additionally, each document is described by the mixture of topics which underlie it, providing a way to compare topic use across documents. TACIT’s seeded LDA plugin expands upon the capabilities of LDA by implementing the z-label LDA (Andrzejewski & Zhu, 2009) algorithm. Z-label LDA allows the researcher to provide a word or list of words they are interested in exploring called seed words.The algorithm then uses these seed words as the core of the topics that it generates, building the rest of the words around those key concepts.
 						</td>
-					</tr>
-					<tr>
-						<td class = "section">Z-Label LDA</td>
-					</tr>
-					<tr>
-						<td>SVM Description.
-						</td>
-					</tr>					
+					</tr>		
 				</table>
 			</tr>	
 		</table>
