@@ -31,7 +31,7 @@ import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 public class TwitterUserConfiguration extends PreferencePage implements
 		IWorkbenchPreferencePage, ITwitterConstant {
 
-	private Text userName;
+	private Label userName;
 	private Text consumerKey;
 	private Text consumerSecret;
 	private Text accessToken;
@@ -65,8 +65,8 @@ public class TwitterUserConfiguration extends PreferencePage implements
 				.applyTo(dummy);
 		
 		userName = createHyperLink(sectionClient,  "User Name :");
-		userName.setEnabled(false);
-		userName.setEditable(false);
+		//userName.setEnabled(false);
+		//userName.setEditable(false);
 		consumerKey = createTextFields(sectionClient, true, "Consumer Key :");
 
 		consumerSecret = createTextFields(sectionClient, true,
@@ -75,7 +75,7 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		accessTokenSecret = createTextFields(sectionClient, true,
 				"Access Token Secret :");
 
-		loadValues();
+		//loadValues();
 
 		return sectionClient;
 
@@ -116,13 +116,14 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		return outputLocationTxt;
 	}
 	
-	private Text createHyperLink(Composite sectionClient,
+	private Label createHyperLink(Composite sectionClient,
 			String lbl) {
 		FormToolkit toolkit = new FormToolkit(sectionClient.getDisplay());
 		Hyperlink link = toolkit.createHyperlink(sectionClient, "Click here.",
 				SWT.WRAP);
 		link.setBackground(sectionClient.getBackground());
 		link.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				Program.launch("https://blog.twitter.com/developer"); // replace with url
 			}
@@ -132,12 +133,12 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(link);
 
-		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
+		//final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
+		final Label outputLocationTxt = new Label(sectionClient, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(outputLocationTxt);
-		outputLocationTxt.setEditable(false);
-		outputLocationTxt.setEnabled(false);
-		outputLocationTxt.setMessage("Click User Name to view how to fill the Consumer key, values, tokens ...");
+		//outputLocationTxt.setEnabled(false);
+		outputLocationTxt.setText("Click User Name to view how to fill the Consumer key, values, tokens ...");
 		return outputLocationTxt;
 	}
 
