@@ -1,24 +1,27 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.IDetailsPage;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * @author dejan
- *
- *         To change the template for this generated type comment go to Window -
- *         Preferences - Java - Code Generation - Code and Comments
- */
+import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+
 public class TypeTwoDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
-	private TypeTwo input;
-	private Button flag1;
-	private Button flag2;
 
 	public TypeTwoDetailsPage() {
 	}
@@ -28,67 +31,113 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	}
 
 	public void createContents(Composite parent) {
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.topMargin = 5;
-		layout.leftMargin = 5;
-		layout.rightMargin = 2;
-		layout.bottomMargin = 2;
-		parent.setLayout(layout);
+
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false)
+				.applyTo(parent);
 
 		FormToolkit toolkit = mform.getToolkit();
-		Section s1 = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR);
-		s1.marginWidth = 10;
-		TableWrapData td = new TableWrapData(TableWrapData.FILL,
-				TableWrapData.TOP);
-		td.grabHorizontal = true;
-		s1.setLayoutData(td);
-		Composite client = toolkit.createComposite(s1);
-		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 0;
-		client.setLayout(glayout);
 
-		flag1 = toolkit.createButton(client, "tete", SWT.CHECK); //$NON-NLS-1$
+		Section section = toolkit.createSection(parent, Section.DESCRIPTION
+				| Section.TITLE_BAR | Section.EXPANDED);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
+		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
+		section.setText("Class Details");
+		section.setDescription("Enter the details of class.");
+		
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
 
-		s1.setClient(client);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sc);
+
+		Composite sectionClient = toolkit.createComposite(section);
+		sc.setContent(sectionClient);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sectionClient);
+		section.setClient(sectionClient);
+
+		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
+
+		final Label classPathLbl = toolkit.createLabel(sectionClient,
+				"Class Path:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(classPathLbl);
+		final Text classPathTxt = toolkit.createText(sectionClient, "",
+				SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(classPathTxt);
+		final Button browseBtn = toolkit.createButton(sectionClient,
+				"Browse...", SWT.PUSH);
+		browseBtn.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
+						SWT.OPEN);
+				dlg.setText("Open");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				classPathTxt.setText(path);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		final Label classLbl = toolkit.createLabel(sectionClient,
+				"Class Name:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(classLbl);
+		final Text classNameTxt = toolkit.createText(sectionClient, "",
+				SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+				.applyTo(classNameTxt);
+
 	}
 
-	private void update() {
-
-	}
-
-	public void selectionChanged(IFormPart part, ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection) selection;
-		if (ssel.size() == 1) {
-			input = (TypeTwo) ssel.getFirstElement();
-		} else
-			input = null;
-		update();
-	}
-
-	public void commit(boolean onSave) {
-	}
-
-	public void setFocus() {
-		flag1.setFocus();
-	}
-
+	@Override
 	public void dispose() {
+		
 	}
 
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
+	@Override
+	public void commit(boolean onSave) {
+		
+	}
+
+	@Override
+	public boolean setFormInput(Object input) {
+		return false;
+	}
+
+	@Override
+	public void setFocus() {
+		
+	}
+
+	@Override
 	public boolean isStale() {
 		return false;
 	}
 
+	@Override
 	public void refresh() {
-		update();
+		
 	}
 
-	public boolean setFormInput(Object input) {
-		return false;
+	@Override
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		
 	}
+
 }

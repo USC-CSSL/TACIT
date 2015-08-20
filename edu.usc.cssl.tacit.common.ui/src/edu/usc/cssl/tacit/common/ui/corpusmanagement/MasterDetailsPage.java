@@ -92,7 +92,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		});
 		viewer.setContentProvider(new MasterContentProvider());
 		viewer.setLabelProvider(new MasterLabelProvider());
-		//viewer.setInput(new Object[] { new TypeOne(), new TypeTwo() });
+		viewer.setInput(new Object[] { new TypeOne(), new TypeTwo() });
 
 	}
 
