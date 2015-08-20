@@ -512,7 +512,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
 		if(content.contains("Enter subreddit name e.g news")) {
-			form.getMessageManager().addMessage("subredditName", "Provide valid subreddit name or remove the uncessary subreddit", null, IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("subredditName", "Provide rename default (Enter subreddit name e.g news) subreddit(s)", null, IMessageProvider.ERROR);
 			return false;			
 		} else 
 			form.getMessageManager().removeMessage("subredditName");
