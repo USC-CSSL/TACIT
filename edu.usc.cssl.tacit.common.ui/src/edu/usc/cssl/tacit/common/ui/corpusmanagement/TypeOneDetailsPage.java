@@ -5,7 +5,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -13,28 +12,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 
 public class TypeOneDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
-	private TypeOne input;
-	private Button[] choices;
-	private Button flag;
-	private Text text;
-	private static final String RTEXT_DATA = "<form><p>An example of a free-form text that should be " + //$NON-NLS-1$
-			"wrapped below the section with widgets.</p>" + //$NON-NLS-1$
-			"<p>It can contain simple tags like <a>links</a> and <b>bold text</b>.</p></form>"; //$NON-NLS-1$
 
 	public void initialize(IManagedForm mform) {
 		this.mform = mform;
@@ -80,7 +70,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 				SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(corpusIDTxt);
-		
+
 		final Label rootPathLbl = toolkit.createLabel(sectionClient,
 				"Root Path:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
@@ -108,6 +98,53 @@ public class TypeOneDetailsPage implements IDetailsPage {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+
+		final Label dataTypeLbl = toolkit.createLabel(sectionClient,
+				"Data Type:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(dataTypeLbl);
+		Composite dataType = toolkit.createComposite(parent);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(dataType);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+				.applyTo(dataType);
+		createDataTypeOptions(toolkit,dataType);
+
+	}
+
+	private void createDataTypeOptions(FormToolkit toolkit, Composite parent) {
+		Group buttonComposite = new Group(parent, SWT.LEFT);
+		//buttonComposite.setText("Data Type");
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		buttonComposite.setLayout(layout);
+		buttonComposite.setForeground(parent.getForeground());
+
+		Button plainText = new Button(buttonComposite, SWT.RADIO);
+		plainText.setText("Plain Text");
+		plainText.setSelection(true);
+		plainText.setForeground(parent.getForeground());
+
+		Button jsonData = new Button(buttonComposite, SWT.RADIO);
+		jsonData.setText("JSON");
+		jsonData.setSelection(false);
+		jsonData.setForeground(parent.getForeground());
+
+		Button xmlData = new Button(buttonComposite, SWT.RADIO);
+		xmlData.setText("XML");
+		xmlData.setSelection(false);
+		xmlData.setForeground(parent.getForeground());
+		xmlData.setEnabled(false);
+
+		Button wordData = new Button(buttonComposite, SWT.RADIO);
+		wordData.setText("Microsoft Word");
+		wordData.setSelection(false);
+		wordData.setForeground(parent.getForeground());
+		wordData.setEnabled(false);
+		
+		Label lblEmpty = new Label(buttonComposite, SWT.None);
+		TacitFormComposite.createEmptyRow(toolkit, parent);
 	}
 
 	@Override

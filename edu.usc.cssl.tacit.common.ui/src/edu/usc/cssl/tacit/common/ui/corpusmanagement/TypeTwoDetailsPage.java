@@ -39,11 +39,12 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION
 				| Section.TITLE_BAR | Section.EXPANDED);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
 		section.setText("Class Details");
 		section.setDescription("Enter the details of class.");
-		
+
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -88,7 +89,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		final Label classLbl = toolkit.createLabel(sectionClient,
 				"Class Name:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
@@ -102,7 +103,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 
 	@Override
 	public void dispose() {
-		
+
 	}
 
 	@Override
@@ -112,7 +113,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 
 	@Override
 	public void commit(boolean onSave) {
-		
+
 	}
 
 	@Override
@@ -122,7 +123,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 
 	@Override
 	public void setFocus() {
-		
+
 	}
 
 	@Override
@@ -132,12 +133,12 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 
 	@Override
 	public void refresh() {
-		
+
 	}
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		
+
 	}
 
 }
