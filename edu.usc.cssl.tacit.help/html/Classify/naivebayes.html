@@ -12,7 +12,7 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Method Overview</td>
+						<td class = "head">Overview</td>
 					</tr>
 					<tr>
 					
@@ -69,9 +69,9 @@
 						ratio, respectively. <br> <br> 
 						
 						In order to use a trained algorithm to classify unlabeled data, it is also necessary to organize the unlabeled data.
-						Each instance must be contained in a separate file and all files must be stored in a single directory. The "classify 
-						data" option must then be selected and the directory that contains the unlabeled data must be specified as the 
-						"Classification Input Path." Both of these fields are located in the "Classification" area of the naive Bayes window
+						Each instance must be contained in a separate file and all files must be stored in a single directory. The <b>classify 
+						data</b> option must then be selected and the directory that contains the unlabeled data must be specified as the 
+						<b>Classification Input Path</b>. Both of these fields are located in the <b>Classification</b> area of the naive Bayes window
 						in TACIT.<br><br>
 						
 						
@@ -92,7 +92,7 @@
 						Any number up to the total sample size can be specified as the k-value; however, k=10 is one of the most commonly used values. 
 						<br> <br> 
 						
-						To specify the k value, enter the desired value in the "k value for cross validation" field, which is located in the "Input Parameters"
+						To specify the k value, enter the desired value in the <b>k value for cross validation</b> field, which is located in the <b>Input Parameters</b>
 						field within the TACIT naive Bayes module window. 
 						
 					</tr>
@@ -118,11 +118,11 @@
 					<tr>
 						<td>
 						<b>1.</b> Store each text instance in its own text file<br>
-						<b>2.</b> Create a directory for each class and store each associated data instance file in the appropriate directory<br>
-						<b>3.</b> Select all relevant class directories within the naive Bayes window using the "Add Folder" button<br>
-						<b>4.</b> If preprocessing is desired, select "Preprocess" and specify the required parameters<br>
+						<b>2.</b> Create a directory for each class and store the data instance files created in step one in the appropriate directory<br>
+						<b>3.</b> Select all relevant class directories within the naive Bayes window using the <b>Add Folder</b> button<br>
+						<b>4.</b> If preprocessing is desired, select <b>Preprocess</b> and specify the required parameters<br>
 						<b>5.</b> If unlabeled data classification is desired, store each unlabeled data instance in an individual file, place the 
-						files in a single directory, and specify this directory as the "Classifcation input path" using the "Browse" button <br>
+						files in a single directory, and specify this directory as the <b>Classifcation input path</b> using the <b>Browse</b> button <br>
 						<b>6.</b> Specify the desired number of folds for k-fold validation<br>
 						<b>7.</b> If unlabeled data classification is desired, specify the output path in which the classification .csv should be stored
 						</td>
@@ -130,10 +130,42 @@
 					<tr>
 						<td class = "subtitle">Understanding Naive Bayes Output</td>
 					</tr>
+					
+						<tr>
+						<td class = "section">Training and test output </td>
+					</tr>
 					<tr>
-					<td> Add section here about output files that will be generated and what they mean.
+					<td> 
+						When TACIT's naive Bayes module is implemented performance statistics for each k-fold validation will be output in the Console window. 
+						The average test accuracy (averaged across k-folds), as well as its standard deviation and standard error, will also be output in the Console window.
+						These statistics should be used to evaluate the performance of the algorithm on the data provided. <br><br>
+						
+						Each time the module is implemented a log file will be created in the directory that contains the class directories. 
+						This file will be titled "Naive_Baye's-run-report-Date-Time.txt" and it will contain the TACIT version number and the date 
+						and time. 
+						
+						Naive-Bayes's-run-report-07-29-15-10-44-46.txt
 					</td>
 					</tr>		
+					
+					<tr>
+						<td class = "section">Classification output</td>
+					</tr>
+					
+					<tr>
+					<td>
+					
+					If unlabeled data is classified during the naive Bayes implementation a classification file will be created in the directory that contains 
+					the class directories. The title of this file will be the names of the classes followed by the date and time (e.g. "class1-class2-Date-Time.csv"). 
+					Classification files created by TACIT's naive Bayes module  contain N rows for each of the N instances that were classified and four columns. 
+					The columns are: "File," which contains the file name of each instance; "Predicted Class," which contains the class predicted for instance N;
+					"Predicted Class Probability," which contains the estimated probability that instance N belongs to the predicted class; and "Other Class Probabilities,"
+					which contains the estimated probabilities of instance N belonging to the classes that were not predicted. <br><br>
+					
+				
+						
+					</td>
+					</tr>
 				</table>
 			</tr>	
 		</table>
