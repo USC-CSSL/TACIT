@@ -108,13 +108,27 @@ public class TypeOneDetailsPage implements IDetailsPage {
 				.applyTo(dataType);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
 				.applyTo(dataType);
-		createDataTypeOptions(toolkit,dataType);
+		createDataTypeOptions(toolkit, dataType);
+
+		Composite specialInput = toolkit.createComposite(parent);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
+				.applyTo(specialInput);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(specialInput);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+
+		createSpecialOptions(toolkit, specialInput);
+
+	}
+
+	private void createSpecialOptions(FormToolkit toolkit, Composite parent) {
 
 	}
 
 	private void createDataTypeOptions(FormToolkit toolkit, Composite parent) {
 		Group buttonComposite = new Group(parent, SWT.LEFT);
-		//buttonComposite.setText("Data Type");
+		// buttonComposite.setText("Data Type");
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -142,7 +156,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		wordData.setSelection(false);
 		wordData.setForeground(parent.getForeground());
 		wordData.setEnabled(false);
-		
+
 		Label lblEmpty = new Label(buttonComposite, SWT.None);
 		TacitFormComposite.createEmptyRow(toolkit, parent);
 	}
