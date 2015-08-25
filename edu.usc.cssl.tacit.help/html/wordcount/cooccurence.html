@@ -30,10 +30,11 @@
 						<td class = "subtitle">Specifying Input Files for Analysis</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Additional Options</td>
-					</tr>
-					<tr>
-						<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> Word file, Window Size, Threshold
+						<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> 
+						<br><br><b>Word file:</b> This file specifies the words you are interested in including for the co-occurence analysis. Words of interest should be saved in a .txt file on separate lines. 
+						<br><b>Window Size:</b> Specify the number of words that can exist between the words from the word file list for the program to count it as co-occurring. If two words are immediately next to each other,
+						this number would be 1. Larger window sizes allow words to coexist further from each other and still be counted as occurring together (e.g., window size of 4 would mark "apple" and "Fiji" as co-occurring in the sentence "The apple is from Fiji.")
+						<br><b>Threshold:</b> Threshold indicates the smallest number of word combinations from the word list you would like to assess together.  For example, a threshold of 2 would take the combination of each pair of words in the list. A threshold of 3 would take all combinations of 3 words from the list, but not word pairs. 
 						</td>
 					</tr>		
 					<tr>
@@ -49,8 +50,7 @@
 						<td class = "subtitle">Understanding Co-Occurrence Output</td>
 					</tr>
 					<tr>
-						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
-
+						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. The output file contains the frequencies for each word combination and their location within the files (i.e., filename and line number). 
 						</td>
 					</tr>			
 					<tr>
