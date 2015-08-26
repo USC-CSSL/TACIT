@@ -30,20 +30,43 @@
 						<td class = "subtitle">Specifying Input Files for Analysis</td>
 					</tr>
 					<tr>
-						<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> 
-						<br><br><b>Word file:</b> This file specifies the words you are interested in including for the co-occurence analysis. Words of interest should be saved in a .txt file on separate lines. 
-						<br><b>Window Size:</b> Specify the number of words that can exist between the words from the word file list for the program to count it as co-occurring. If two words are immediately next to each other,
-						this number would be 1. Larger window sizes allow words to coexist further from each other and still be counted as occurring together (e.g., window size of 4 would mark "apple" and "Fiji" as co-occurring in the sentence "The apple is from Fiji.")
-						<br><b>Threshold:</b> Threshold indicates the smallest number of word combinations from the word list you would like to assess together.  For example, a threshold of 2 would take the combination of each pair of words in the list. A threshold of 3 would take all combinations of 3 words from the list, but not word pairs. 
+						<td> All input data files must be in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						 	<br><br>
+						 	To specify which files you would like to analyze, select <b>Add Folder</b> or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders cannot be removed without removing the entire folder.
+							<br><br> 
+							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
+							<br>
+							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
+ 							<br>
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Additional Analysis Specifications</td>
+					</tr>
+					<tr>
+						<td> 
+							<b><a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a></b>: The Preprocess check box allows users to apply a variety of data cleaning techniques to the input data before analysis. Click on the hyperlink in order to specify which cleaning processes you would like to apply (i.e., stopwords, delimiters, stemming, capitalization).
+							<br><br>
+							<b>Word file:</b> This file specifies the words you are interested in including for the co-occurence analysis. Words of interest should be saved in a .txt file on separate lines. 
+							<br><br>
+							<b> Window Size:</b> Specify the number of words that can exist between the words from the word file list for the program to count it as co-occurring. If two words are immediately next to each other,
+							this number would be 1. Larger window sizes allow words to coexist further from each other and still be counted as occurring together (e.g., window size of 4 would mark "apple" and "Fiji" as co-occurring in the sentence "The apple is from Fiji.")
+							<br><br>
+							<b>Threshold:</b> Threshold indicates the smallest number of word combinations from the word list you would like to assess together.  For example, a threshold of 2 would take the combination of each pair of words in the list. A threshold of 3 would take all combinations of 3 words from the list, but not word pairs. 
+							<br><br>
 						</td>
 					</tr>		
 					<tr>
 						<td class = "subtitle">Specifying Output Path</td>
 					</tr>
 					<tr>
-						<td>Select output files save folder. 
-						<br><br> <b> Build co-occurrence matrices </b>
-						<br><br>Select output files save folder. After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool. 
+						<td>To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool.
+						<br><br>
+						Selecting the <b> Build co-occurrence matrices </b> check box will create an additional output file.
+						</td>
+					</tr>
+					
+						
 						</td>
 					</tr>		
 					<tr>
