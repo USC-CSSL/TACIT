@@ -92,7 +92,7 @@ public class LdaTopicModelView extends ViewPart implements
 		// Create pre process link
 		compInput = inputLayoutData.getSectionClient();
 
-		numberOfTopics = createAdditionalOptions(compInput, "No of Topics :",
+		numberOfTopics = createAdditionalOptions(compInput, "No. of Topics :",
 				"1");
 
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
