@@ -153,7 +153,7 @@ public class TargetLocationsGroup {
 	private void updateSelectionText() {
 		int totalFiles = calculateFiles(fTreeViewer.getCheckedElements());
 		if (locationPaths.size() > 0)
-			dummy.setText("No of files selected : "
+			dummy.setText("No. of files selected : "
 					+ String.valueOf(totalFiles));
 		else {
 			dummy.setText("");

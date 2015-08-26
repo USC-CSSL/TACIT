@@ -407,7 +407,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		sortByDateNo.setEnabled(false);
 
 		final Label limitLabel = new Label(limitRecordsClient, SWT.NONE);
-		limitLabel.setText("No of records per congress member:");
+		limitLabel.setText("No. of records per congress member:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitLabel);
 		limitLabel.setEnabled(false);
 		limitText = new Text(limitRecordsClient, SWT.BORDER);
