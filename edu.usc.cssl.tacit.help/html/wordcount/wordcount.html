@@ -37,12 +37,20 @@
 					<td class = "head">Basic Tutorial: Using TACIT Word Count</td>
 				</tr>
 				<tr>
-					<td class = "subtitle">Selecting a Word Count Technique</td>
+					<td class = "subtitle">TACIT Standard Word Count vs. TACIT Weighted Word Count</td>
 				</tr>
 				<tr>
-					<td> Standard word count vs weighted word count. Required components, weights etc <a href = "http://meh.ryanb.cc/" target="_blank">Program that can make dictionary with word count weights</a>. 
-					</td>
-				</tr>
+						<td> <b>Standard word count</b> techniques are ideal when one is interested in assessing the content features of text because they are binary by nature; 
+							these techniques count dictionary words by presence (by adding a 1 to that word's score each time it occurs in the document) or absence (score of 0 if the word never appears) and treat all words within the dictionary as being equally important.
+							<br><br>
+							By comparison, <b>Weighted word count</b> techniques are often preferred when assessing stylistic variables that capture various degrees of a concept so that dictionary words that are a weaker reflection of the topic count for less than dictionary words that stronger reflect that topic. 
+							<br><br>
+							For example, if you are interested in assessing negative affect, you may assign a weight of 0.5 to the word "sad" so that it only counts for half of a point during the word count process as "sad" usually reflects relatively low levels of negative affect. By comparison, you may assign
+							a weight of 2 to the word "devastated" so that each time the word occurs it counts for 2 points as this word represents much stronger negative affect and thus may be more indicative of the topic.
+							<br><br>
+							The method you select (standard or weighted) will determine the necessary format of your dictionary files (see the dictionary section below for details). 
+						</td>
+					</tr>
 				<tr>
 					<td class = "subtitle">Specifying Input Text for Analysis</td>
 				</tr>
@@ -61,14 +69,14 @@
 					<td class = "section">Additional Input Options</td>
 				</tr>
 				<tr>
-					<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> 
+					<td><b><a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a></b>: The Preprocess check box allows users to apply a variety of data cleaning techniques to the input data before analysis. Click on the hyperlink in order to specify which cleaning processes you would like to apply (i.e., Stop Word Removal, Delimiters, Porter Stemming, Capitalization).
 						<br><br>
 						Selecting the <b>Create output for default tags</b> will create additional count columns in the output file for typical, default parts of speech based on <a href = "https://www.cis.upenn.edu/~treebank/" target="_blank">The Penn Treebank Project</a>.
-						 In the current implementation, the weights associated with default tags are not customizable, though this feature may be added at a later date.
+						In the current implementation, the weights associated with default tags are not customizable, though this feature may be added at a later date.
 						<br><br>
 						Selecting the <b>Create .DAT File</b> checkbox will generate an output data file in .dat format compatible for use with outside data analysis programs.
 						<br><br>
-						Selecting the <b>Create Category-wise Word Distribution Files</b> checkbox will
+						Selecting the <b>Create Category-wise Word Distribution Files</b> 
 						<br><br>
 					</td>
 				</tr>
@@ -76,7 +84,7 @@
 					<td class = "subtitle">Selecting a Dictionary</td>
 				</tr>
 				<tr>
-					<td> All dictionary files must be in .txt format to be compatible with TACIT. For dictionary specifications, see the <a href = "./dictionary.html" target="_blank">Dictionary Help Page</a>.  It is important to note that TACIT dictionaries do not support phrases.
+					<td> All dictionary files must be in .txt format to be compatible with TACIT. Standard word count requires that the dictionary specify the words for each topic. Weighted word count requires that you also provide the weights assigned to each word of interest. For dictionary specifications, see the <a href = "./dictionary.html" target="_blank">Dictionary Help Page</a>.  It is important to note that TACIT dictionaries do not support phrases.
 						<br><br>
 						To add a dictionary to be used for word count analysis, click the <b>Add Files</b> button on the right side of the Dictionary panel. All files added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the dictionary file name. The number of files selected for analysis is indicated at the bottom of the dictionary panel. To de-select an unwanted file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.
 						<br><br>
@@ -93,8 +101,8 @@
 					<td class = "section">Additional Dictionary Options</td>
 				</tr>
 				<tr>
-					<td> <b>Stem Dictionary:</b> We do not support <b>*'s</b> for TACIT word count dictionaries. Selecting the <b>Stem Dictionary</b> option will apply a Porter Stemmer to the words in the dictionary before conducting the word count analysis. 
-					<br><br>
+					<td><b>Stem Dictionary:</b> We do not support <b>*'s</b> for TACIT word count dictionaries. Selecting the <b>Stem Dictionary</b> option will apply a <a href = "http://tartarus.org/martin/PorterStemmer/" target="_blank">Porter Stemmer</a> to the words in the dictionary before conducting the word count analysis. Porter stemming reduces words to their root form (e.g., “running”, “runs” and “ran” would all reduce to “run”) so that they are counted as the same word during analysis. 
+						<br><br>
 					</td>
 				</tr>
 				<tr>
@@ -112,7 +120,7 @@
 					<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
 						WordCount-UserTags indicates word counts for categories in the user dictionary. The last line in the .csv file indicates the overall counts for all input documents. The word count output values are the percentage of each document that is captured by each category.
 						<br><br>
-					 	If "Create output for default tags" is selected, the program will create an additional output file called WordCount-DefaultTags which includes word counts for POS tags using OpenNLP.
+					 	If <b>Create output for default tags</b> is selected, the program will create an additional output file called WordCount-DefaultTags which includes word counts for POS tags using OpenNLP.
 					</td>
 				</tr>									
 				</table>

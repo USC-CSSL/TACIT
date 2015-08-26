@@ -15,12 +15,14 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>The LIWC-style word count plugin was developed using LIWC documentation (J W Pennebaker, Francis, & Booth, 2001) and reverse engineering of the program to understand and implement the algorithm.  We compared the results of our implementation and the original LIWC software on a variety of test texts, including files from Project Gutenberg. Except for very rare cases (e.g. some occurrences of double hyphens), the result of our plugin provide an exact match with that of LIWC up to the hundredth decimal point. While TACIT provide the word count capability of LIWC, users must import their own dictionaries as it does not provide any of the LIWC dictionary categories.
-						
-						Word count programs (or dictionary methods) are text analysis tools that quantify the frequency of topics of interest across a document or set of documents that reflects . To accomplish this task, word count programs require a user-defined dictionary of topics, with pre-identified words for each topic. Using this dictionary, the word count program then counts the number of times words in each topic domains occur and calculates the percentage of each document that reflects each topic. <br><br>
-							The TACIT plugin includes three different word count techniques:  Standard Word Count, LIWC-style Word Count, and Weighted Word Count. For detailed descriptions of each of these
-							options, see "Selecting a Word Count Technique" below.   <br><br>
-					
+						<td>Word count programs (or dictionary methods) are text analysis tools that quantify the frequency of topics of interest across a document or set of documents that reflects . To accomplish this task, word count programs require a user-defined dictionary of topics, with pre-identified words for each topic. Using this dictionary, the word count program then counts the number of times words in each topic domains occur and calculates the percentage of each document that reflects each topic. 
+							<br><br>
+							The <b>LIWC-style word count plugin</b> was developed using LIWC documentation (J W Pennebaker, Francis, & Booth, 2001) and reverse engineering of the program to understand and implement the algorithm.  We compared the results of our implementation and the original LIWC software on a variety of test texts, including files from Project Gutenberg. Except for very rare cases (e.g. some occurrences of double hyphens), the result of our plugin provide an exact match with that of LIWC up to the hundredth decimal point. While TACIT provide the word count capability of LIWC, users must import their own dictionaries as it does not provide any of the LIWC dictionary categories.
+							<br><br>
+							For documentation on differences between TACIT's LIWC-style plugin and LIWC analysis output, refer to the <a href = "./liwcstylewc.html" target="_blank">LIWC/TACIT Differences Documentation</a> page. 						
+							<br><br>
+							For information about TACIT's standard word count plugin, refer to the <a href = "./wordcount.html" target="_blank">TACIT Word Count</a> help page.
+							<br><br>
 						</td>
 					</tr>
 				</table>
@@ -28,25 +30,21 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Basic Tutorial: Using TACIT LIWC Word Count</td>
+						<td class = "head">Basic Tutorial: Using TACIT LIWC-style Word Count</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Selecting a Word Count Technique</td>
-					</tr>
-					
-						<td class = "section">LIWC-Style Word Count</td>
+						<td class = "subtitle">LIWC-Style Standard Word Count vs. LIWC Weighted Word Count</td>
 					</tr>
 					<tr>
-						<td> For documentation on differences see  <a href = "./liwcstylewc.html" target="_blank">LIWC/TACIT Differences Documentation</a>. 
-						</td>
-					</tr>
-					<tr>
-						<td class = "section">Weighted Word Count</td>
-					</tr>
-					<tr>
-						<td>Required components, weights etc <a href = "http://meh.ryanb.cc/" target="_blank">Program that can make dictionary with word count weights</a>. 
-						
-						<br><br> To conduct standard word count, use the <a href = "./liwcstylewc.html" target="_blank">Standard Word Count Tool</a>
+						<td> <b>Standard word count</b> techniques are ideal when one is interested in assessing the content features of text because they are binary by nature; 
+							these techniques count dictionary words by presence (by adding a 1 to that word's score each time it occurs in the document) or absence (score of 0 if the word never appears) and treat all words within the dictionary as being equally important.
+							<br><br>
+							By comparison, <b>Weighted word count</b> techniques are often preferred when assessing stylistic variables that capture various degrees of a concept so that dictionary words that are a weaker reflection of the topic count for less than dictionary words that stronger reflect that topic. 
+							<br><br>
+							For example, if you are interested in assessing negative affect, you may assign a weight of 0.5 to the word "sad" so that it only counts for half of a point during the word count process as "sad" usually reflects relatively low levels of negative affect. By comparison, you may assign
+							a weight of 2 to the word "devastated" so that each time the word occurs it counts for 2 points as this word represents much stronger negative affect and thus may be more indicative of the topic.
+							<br><br>
+							The method you select (standard or weighted) will determine the necessary format of your dictionary files (see the dictionary section below for details). 
 						</td>
 					</tr>
 					<tr>
@@ -54,22 +52,31 @@
 					</tr>
 					<tr>
 						<td> All input data files must be in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
-						 <br><br>To specify which files you would like to analyze, select <b>Add Folder</b> or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders cannot be removed without removing the entire folder.
-						<br><br> <b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
-						<br><b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
+						 	<br><br>
+						 	To specify which files you would like to analyze, select <b>Add Folder</b> or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders cannot be removed without removing the entire folder.
+							<br><br> 
+							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
+							<br>
+							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
  							<br>
 						</td>
-						</tr>
-						<tr>
+					</tr>
+					<tr>
 						<td class = "section">Additional Input Options</td>
 					</tr>
 					<tr>
-					<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> <b>Create .DAT file</b>, <b>Category-wise Word Distribution Files</b>
+						<td><b><a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a></b>: The Preprocess check box allows users to apply a variety of data cleaning techniques to the input data before analysis. Click on the hyperlink in order to specify which cleaning processes you would like to apply (i.e., stopwords, delimiters, stemming, capitalization).
+							<br><br>
+							Selecting the <b>Create .DAT File</b> checkbox will generate an output data file in .dat format compatible for use with outside data analysis programs.
+							<br><br>
+							Selecting the <b>Create Category-wise Word Distribution Files</b> checkbox
+						</td>
+					</tr>
 					<tr>
 						<td class = "subtitle">Selecting a Dictionary</td>
 					</tr>
 					<tr>
-						<td> All dictionary files must be in .txt format to be compatible with TACIT. For dictionary specifications, see the <a href = "./dictionary.html" target="_blank">Dictionary Help Page</a>.  
+						<td> All dictionary files must be in .txt format to be compatible with TACIT. Standard word count requires that the dictionary specify the words for each topic. Weighted word count requires that you also provide the weights assigned to each word of interest.  For dictionary specifications, see the <a href = "./dictionary.html" target="_blank">Dictionary Help Page</a>.  
 						
 						<br><br>To add a dictionary to be used for word count analysis, click the <b>Add Files</b> button on the right side of the Dictionary panel. All files added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the dictionary file name. The number of files selected for analysis is indicated at the bottom of the dictionary panel. To de-select an unwanted file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.
 							<br>
@@ -86,8 +93,8 @@
 						<td class = "section">Additional Dictionary Options</td>
 					</tr>
 					<tr>
-						<td> Stemming: LIWC/Snowball
-						</td>
+						<td> Selecting the <b>Stem Dictionary</b> checkbox will allow you to apply either <a href = "http://tartarus.org/martin/PorterStemmer/" target="_blank">Porter Stemming</a> or LIWC-Style Stemming to the words in the dictionary before conducting the word count analysis. Porter stemming reduces words to their root form (e.g., “running”, “runs” and “ran” would all reduce to “run”) so that they are counted as the same word during analysis. Porter Stemming places an * at the end of each word so that variations of that word are also included in the word count (e.g., "run" becomes "run*" so that "runs" and "running" would also be counted). 
+						<br><br>						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Specifying Output Path</td>
