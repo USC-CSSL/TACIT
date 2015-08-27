@@ -18,8 +18,8 @@
             locationURI="menu:wordcount">
              <command
                    commandId="usc.edu.cssl.wordcount.weighted.view.command1"
-                   label="LIWC / Weighted Word Count"
-                   tooltip="Weighted/LIWC  Weighted Word Count">
+                   label="LIWC-Style Word Count"
+                   tooltip="LIWC-Style Word Count - Standard/Weighted ">
             </command>
       </menuContribution>
    </extension>

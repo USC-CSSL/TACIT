@@ -214,7 +214,7 @@ public class WeightedWordCountView extends ViewPart implements
 		buttonComposite.setForeground(parent.getForeground());
 
 		liwcWordCountButton = new Button(buttonComposite, SWT.RADIO);
-		liwcWordCountButton.setText("LIWC Word Count");
+		liwcWordCountButton.setText("LIWC-Style Standard Word Count");
 		liwcWordCountButton.setSelection(true);
 		//liwcWordCountButton.setBackground(parent.getBackground());
 		liwcWordCountButton.setForeground(parent.getForeground());
@@ -248,7 +248,7 @@ public class WeightedWordCountView extends ViewPart implements
 		});
 
 		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
-		weightedWordCountButton.setText("Weighted Word Count");
+		weightedWordCountButton.setText("LIWC-Style Weighted Word Count");
 		weightedWordCountButton.setSelection(false);
 		//weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
@@ -323,7 +323,7 @@ public class WeightedWordCountView extends ViewPart implements
 		form = toolkit.createScrolledForm(parent);
 
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("LIWC / Weighted Word Count"); //$NON-NLS-1$
+		form.setText("LIWC-Style Word Count"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
 				.applyTo(form.getBody());
 		return toolkit;
