@@ -282,7 +282,7 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcStemming.setSelection(false);
 		liwcStemming.pack();
 
-		snowballStemming = toolkit.createButton(downloadGroup, "Snowball",
+		snowballStemming = toolkit.createButton(downloadGroup, "Porter",
 				SWT.RADIO);
 		snowballStemming.setEnabled(false);
 		snowballStemming.pack();

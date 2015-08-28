@@ -230,7 +230,7 @@ public class StandardWordCountView extends ViewPart implements
 		layout.numColumns = 1;
 		downloadGroup.setLayout(layout);
 
-		stemEnabled = toolkit.createButton(downloadGroup, "Stem Dictionary",
+		stemEnabled = toolkit.createButton(downloadGroup, "Stem Dictionary (Porter)",
 				SWT.CHECK);
 		stemEnabled.pack();
 		stemEnabled.setEnabled(true);
