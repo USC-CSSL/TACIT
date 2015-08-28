@@ -529,7 +529,7 @@ public class WeightedWordCountView extends ViewPart implements
 	@Override
 	public String getPartName() {
 		// TODO Auto-generated method stub
-		return "LIWC/Weighted Word Count";
+		return "LIWC-Style Word Count";
 	}
 
 	@Override
