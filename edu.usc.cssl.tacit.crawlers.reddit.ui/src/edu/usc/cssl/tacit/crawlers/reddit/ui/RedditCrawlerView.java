@@ -65,7 +65,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Combo cmbLabelType;
 	private Combo cmbTimeFrames;
 	private Text numLinksText;
-	private Button limitComments;
+	private Text numCommentsText;
 	private Composite labeledDataComposite;
 	private Composite trendingDataComposite;
 	private Label timeFrame;
@@ -449,7 +449,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		//cmbTimeFrames.setEnabled(false);
 
 		Label numLinksLabel = new Label(commonParamsGroup, SWT.None);
-		numLinksLabel.setText("Limit Links per Request:");
+		numLinksLabel.setText("Limit Links Per Request:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(numLinksLabel);
 		numLinksText = new Text(commonParamsGroup, SWT.BORDER);
 		numLinksText.setText("10");
@@ -479,10 +479,12 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		    
 		});
 		
-		limitComments = new Button(commonParamsGroup, SWT.CHECK);
-		limitComments.setText("Limit comments per link to 200");
-		limitComments.setSelection(true);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitComments);
+		Label numCommentsLabel = new Label(commonParamsGroup, SWT.None);
+		numCommentsLabel.setText("Limit Comments Per Link:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(numCommentsLabel);
+		numCommentsText = new Text(commonParamsGroup, SWT.BORDER);
+		numCommentsText.setText("200");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(numCommentsText);
 		TacitFormComposite.createEmptyRow(toolkit, commonParamsGroup);
 	}
 		
@@ -570,8 +572,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			
 			String outputDir; String query; String title; String author; String site;
 			String linkId; String sortType; String trendType; String labelType; String timeFrame;			
-			int limit;
-			boolean search; boolean trendingData; boolean labeledData; boolean canProceed; boolean limitCmmts;
+			int limitLinks, limitComments;
+			boolean search; boolean trendingData; boolean labeledData; boolean canProceed; 
 			
 			@Override
 			public void run() {
@@ -600,17 +602,17 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 									labelType = labelDataTypes[cmbLabelType.getSelectionIndex()].toLowerCase();
 									timeFrame = timeFrames[cmbTimeFrames.getSelectionIndex()].toLowerCase();
 								}
-								limit = Integer.parseInt(numLinksText.getText());
-								limitCmmts = limitComments.getSelection();								
+								limitLinks = Integer.parseInt(numLinksText.getText());
+								limitComments = Integer.parseInt(numCommentsText.getText());						
 								outputDir = outputLayout.getOutputLabel().getText();	
 							}
 						});
-						int progressSize = limit+30;
+						int progressSize = limitLinks+30;
 						if(content.size()>0)
-							progressSize = (content.size()*limit)+30;
+							progressSize = (content.size()*limitLinks)+30;
 						monitor.beginTask("Running Reddit Crawler..." , progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("Reddit Crawler started");						
-						final RedditCrawler rc = new RedditCrawler(outputDir, limit, limitCmmts, monitor); // initialize all the common parameters	
+						final RedditCrawler rc = new RedditCrawler(outputDir, limitLinks, limitComments, monitor); // initialize all the common parameters	
 						
 						monitor.subTask("Initializing...");
 						monitor.worked(10);

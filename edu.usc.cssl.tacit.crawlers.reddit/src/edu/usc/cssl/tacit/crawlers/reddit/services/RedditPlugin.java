@@ -25,9 +25,9 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class RedditPlugin {
 	private RestClient restClient;
 	private String outputPath;
-	private int limit; // link the number of records to be saved
+	private int limitLinks; // link the number of records to be saved
+	private int limitComments;
 	private String sortType;
-    private boolean limitToBestComments;
     int filesDownloaded;
     IProgressMonitor monitor;
     HashMap<String, String> redditCategories;
@@ -39,11 +39,11 @@ public class RedditPlugin {
      * @param monitor 
      * @param actor User instance
      */        
-    public RedditPlugin(RestClient restClient, String outputDir, int limitLinks, boolean limitComments, IProgressMonitor monitor) {
+    public RedditPlugin(RestClient restClient, String outputDir, int limitLinks, int limitComments, IProgressMonitor monitor) {
     	this.restClient = restClient;
     	this.outputPath = outputDir;
-    	this.limit = limitLinks;
-    	this.limitToBestComments = limitComments; // limited to best comments
+    	this.limitLinks = limitLinks;
+    	this.limitComments = limitComments; 
     	this.monitor = monitor; 
     	this.filesDownloaded = 0;
     	dateObj = new Date();    	
@@ -220,7 +220,7 @@ public class RedditPlugin {
 		                    saveLinkComments(data); // save the link comments
 		                    count++;
 		                    monitor.worked(1);
-		                    if(this.limit == count)  break breakEverything;
+		                    if(this.limitLinks == count)  break breakEverything;
 		                }
 					}
 		    	}
@@ -256,34 +256,42 @@ public class RedditPlugin {
 		String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) + "-" + df.format(dateObj) + ".json";	    
 		JSONArray linkComments = new JSONArray();		
 		Object response = restClient.get(permalink.concat("/.json?sort=best"), null).getResponseObject(); // sorts by best
+		int count = 0;
 		
-		if (response instanceof JSONArray) {	    	
-		    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
-		    	JSONObject dataObject = (JSONObject) respObject.get("data");
-		        JSONArray userComments = (JSONArray) dataObject.get("children");	
-		    	for (Object post : userComments) {
-		    		JSONObject data = (JSONObject) post;
-		            String kind = safeJsonToString(data.get("kind"));
-					if (kind != null) {
-						if (kind.equals(Kind.COMMENT.value())) { // only links are save, not comments, etc.
-		                    data = ((JSONObject) data.get("data"));
-		                    linkComments.add(getSimplifiedCommentData(data));
-		                } else if (kind.equals(Kind.MORE.value()) && !limitToBestComments) {
-		                	// handle more comments
-		        	    	dataObject = (JSONObject) data.get("data");
-		        	        userComments = (JSONArray) dataObject.get("children");
-		        	        for (Object morePost : userComments) {
-		        	        	JSONObject result = fetchThisComment(morePost, permalink);
-		        	        	if(null != result)
-		        	        		linkComments.add(result);
-		        	        }
-		                }
-					}	
-		    	}
-		    } 
-		else {
-		       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
-	    }
+		breakCommentFetch:
+		while(true) {
+			if (response instanceof JSONArray) {	    	
+			    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
+			    	JSONObject dataObject = (JSONObject) respObject.get("data");
+			        JSONArray userComments = (JSONArray) dataObject.get("children");	
+			    	for (Object post : userComments) {
+			    		JSONObject data = (JSONObject) post;
+			            String kind = safeJsonToString(data.get("kind"));
+						if (kind != null) {
+							if (kind.equals(Kind.COMMENT.value())) { 
+			                    data = ((JSONObject) data.get("data"));
+			                    linkComments.add(getSimplifiedCommentData(data));
+			                    count++;
+			                    if(count == limitComments) break breakCommentFetch;
+			                } else if (kind.equals(Kind.MORE.value())) {
+			                	// handle more comments
+			        	    	dataObject = (JSONObject) data.get("data");
+			        	        userComments = (JSONArray) dataObject.get("children");
+			        	        for (Object morePost : userComments) {
+			        	        	JSONObject result = fetchThisComment(morePost, permalink);
+			        	        	if(null != result)
+			        	        		linkComments.add(result);
+			        	        	count++;
+			        	        	if(count == limitComments) break breakCommentFetch;
+			        	        }
+			                }
+						}	
+			    	}
+			    } 
+			else {
+			       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
+		    }
+		}
 		 
 		ConsoleView.printlInConsoleln("Writing "+ filePath);
     	FileWriter file = new FileWriter(filePath);

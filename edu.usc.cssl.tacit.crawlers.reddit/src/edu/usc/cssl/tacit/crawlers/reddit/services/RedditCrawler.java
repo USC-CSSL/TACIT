@@ -20,7 +20,7 @@ public class RedditCrawler {
 	/*
 	 * create object for reddit plugin
 	 */
-	public RedditCrawler(String outputDir, int limitLinks, boolean limitComments, IProgressMonitor monitor) {
+	public RedditCrawler(String outputDir, int limitLinks, int limitComments, IProgressMonitor monitor) {
 	    restClient = new HttpRestClient();
 	    restClient.setUserAgent("bot/1.0 by name");	
 	    this.monitor = monitor;
