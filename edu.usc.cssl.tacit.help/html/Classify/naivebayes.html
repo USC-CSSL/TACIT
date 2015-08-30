@@ -39,11 +39,11 @@
 				<table class = "contents">
 					
 					<tr>
-						<td class = "head">Basic Tutorial: Using the TACIT Naive Bayes Tool</td>
+						<td class = "head">Basic Tutorial: Using the Naive Bayes Tool</td>
 					</tr>
 					
 					<tr>
-						<td> TACIT's Naive Bayes tool can be used to learn probabilistic associations between text instances and class labels. 
+						<td> The Naive Bayes tool can be used to learn probabilistic associations between text instances and class labels. 
 							 During the training process, the algorithm extracts features from training texts that are predictive of class association.
 							 The extraction of these features is both automatic and optimized, so it is not necessary to specify the number features 
 							 to be extracted. 
@@ -53,7 +53,7 @@
 					</tr>
 					
 					<tr>					
-						<td> TACIT's Naive Bayes tool requires that data organization satisfies two criteria. First, every text
+						<td> The Naive Bayes tool requires that data organization satisfies two criteria. First, every text
 						instance must be contained in its own file. Second, class labels must be represented by directories. That is, a directory must be created 
 						for each class label and all text files associated with a given label must be located in the relevant 
 						directory. <br> <br>
@@ -64,7 +64,7 @@
 						on whether the text files need to be preprocessed, the <b>Preprocess</b> option, also contained in the <b>Class Details</b> panel
 						can be selected.  <br> <br> 
 						
-						Notably,  TACIT's naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
+						Notably, the naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
 						the data contained in the class directories is automatically split into training and test sets, following a 90% to 10% 
 						ratio, respectively. <br> <br> 
 						
@@ -73,7 +73,6 @@
 						data</b> option must then be selected and the directory that contains the unlabeled data must be specified as the 
 						<b>Classification Input Path</b>. Both of these fields are located in the <b>Classification</b> area of the naive Bayes window
 						in TACIT.<br><br>
-						
 						
 						<td>
 						
@@ -85,7 +84,7 @@
 					</tr>
 					
 					<tr>
-						<td> In order to estimate the accuracy of the classifier, TACIT's naive Bayes module uses k-fold validation. K-fold validation 
+						<td> In order to estimate the accuracy of the classifier, thes naive Bayes module uses k-fold validation. K-fold validation 
 						randomly splits a data set into k equal sized subsamples. One of these subsamples is then randomly selected as the test set and
 						the algorithm is trained on the remaining k-1 samples. This process is then repeated k-times (the folds) so that each subsample 
 						is used once as the test set. The error rates obtained from each fold are then averaged to estimate the actual error rate.  
