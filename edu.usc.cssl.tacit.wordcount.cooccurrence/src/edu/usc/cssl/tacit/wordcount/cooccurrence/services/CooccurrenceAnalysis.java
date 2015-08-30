@@ -87,13 +87,13 @@ public class CooccurrenceAnalysis {
 				doPhrases = true;
 			}
 
-			File[] listOfFiles = (File[]) selectedFiles
-					.toArray(new File[selectedFiles.size()]);
+			String[] listOfFiles = (String[]) selectedFiles.toArray(new String[selectedFiles.size()]);
 			int seedWordCount = seedWords.size();
 			int count;
-			for (File f : listOfFiles) {
-				monitor.subTask("Processing inout file "+f.getName());
-				appendLog("Processing inout file "+f.getName());
+			for (String fname : listOfFiles) {
+				File f = new File(fname);
+				monitor.subTask("Processing input file "+f.getName());
+				appendLog("Processing input file "+f.getName());
 				count = 0;
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;

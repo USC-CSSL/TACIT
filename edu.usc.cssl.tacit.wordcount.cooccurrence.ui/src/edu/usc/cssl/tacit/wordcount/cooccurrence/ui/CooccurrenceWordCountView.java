@@ -22,6 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -55,7 +56,6 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private FormToolkit toolkit;
 	private OutputLayoutData layoutData;
 	private Button buildMAtrix;
-	private Button wordFile;
 	private Button fAddFileButton;
 	private TableLayoutData inputLayoutData;
 	private Button preprocessEnabled;
@@ -261,7 +261,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 					private Preprocess preprocessTask;
 					private String dirPath;
-					private String seedFilePath;
+					private String seedFilePath = seedFile.getText();
 					private String seedFileLocation;
 
 					protected IStatus run(IProgressMonitor monitor) {
@@ -272,8 +272,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 								selectedFiles.size() + 40);
 						preprocessTask = null;
 						dirPath = "";
-						seedFilePath = seedFile.getText();
 						List<File> inputFiles = new ArrayList<File>();
+						seedFileLocation = seedFilePath;
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing Input Files...");
 							preprocessTask = new Preprocess(
@@ -326,7 +326,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 									.printlInConsoleln("Co-occurrence Analysis completed in "
 											+ (System.currentTimeMillis() - startTime)
 											+ " milliseconds.");
-							if (preprocessEnabled.getSelection()) {
+							if (isPreprocess) {
 								monitor.subTask("Cleaning up Pre-processed Files");
 								preprocessTask.clean();
 							}
@@ -340,7 +340,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 											getViewSite(),
 											"Co-occurrence Analysis is not Completed. Please check the log in the console",
 											IStatus.ERROR, form);
-							if (preprocessEnabled.getSelection()) {
+							if (isPreprocess) {
 								monitor.subTask("Cleaning up Pre-processed Files");
 								preprocessTask.clean();
 							}
