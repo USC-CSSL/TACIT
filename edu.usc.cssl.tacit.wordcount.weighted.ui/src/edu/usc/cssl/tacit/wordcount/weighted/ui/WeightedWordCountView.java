@@ -214,7 +214,7 @@ public class WeightedWordCountView extends ViewPart implements
 		buttonComposite.setForeground(parent.getForeground());
 
 		liwcWordCountButton = new Button(buttonComposite, SWT.RADIO);
-		liwcWordCountButton.setText("LIWC-Style Standard Word Count");
+		liwcWordCountButton.setText("Standard Word Count");
 		liwcWordCountButton.setSelection(true);
 		//liwcWordCountButton.setBackground(parent.getBackground());
 		liwcWordCountButton.setForeground(parent.getForeground());
@@ -229,11 +229,17 @@ public class WeightedWordCountView extends ViewPart implements
 					liwcStemming.setSelection(false);
 					snowballStemming.setSelection(false);
 					snowballStemming.setEnabled(false);
+					liwcStemming.setVisible(false);
+					stemEnabled.setVisible(false);
+					snowballStemming.setVisible(false);
 					stopWordPathEnabled.setSelection(false);
 				} else {
+					stemEnabled.setVisible(true);
 					stemEnabled.setEnabled(true);
 					stemEnabled.setSelection(false);
+					liwcStemming.setVisible(true);
 					liwcStemming.setSelection(false);
+					snowballStemming.setVisible(true);
 					snowballStemming.setSelection(false);
 					stopWordPathEnabled.setEnabled(true);
 				}
@@ -248,7 +254,7 @@ public class WeightedWordCountView extends ViewPart implements
 		});
 
 		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
-		weightedWordCountButton.setText("LIWC-Style Weighted Word Count");
+		weightedWordCountButton.setText("Weighted Word Count");
 		weightedWordCountButton.setSelection(false);
 		//weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
@@ -281,12 +287,14 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcStemming.setEnabled(false);
 		liwcStemming.setSelection(false);
 		liwcStemming.pack();
-
+		liwcStemming.setVisible(false);
+		
 		snowballStemming = toolkit.createButton(downloadGroup, "Porter",
 				SWT.RADIO);
 		snowballStemming.setEnabled(false);
 		snowballStemming.pack();
-
+		snowballStemming.setVisible(false);
+		
 		stemEnabled.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -304,7 +312,7 @@ public class WeightedWordCountView extends ViewPart implements
 			}
 		});
 		stemEnabled.setEnabled(false);
-
+		stemEnabled.setVisible(false);
 	}
 
 	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
