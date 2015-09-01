@@ -190,7 +190,7 @@ public class TacitFormComposite {
 				.applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
 		section.setText("Input Path "); //$NON-NLS-1$
-		section.setDescription("Choose input path for storing the results");
+		section.setDescription("Choose input folder for analysis.");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
