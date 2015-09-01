@@ -178,6 +178,7 @@ public class TargetLocationsGroup {
 
 		fTreeViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						updateButtons();
 						updateSelectionText();
@@ -186,6 +187,7 @@ public class TargetLocationsGroup {
 				});
 
 		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fTreeViewer.setSubtreeChecked(event.getElement(),
 						event.getChecked());
@@ -306,6 +308,12 @@ public class TargetLocationsGroup {
 				return "The selected File is already added to the location";
 			} 
 			for (String file : path) {
+				File fileHandler = new File(file); // length returns the size in 
+				Long availalbeJVMSpace = Runtime.getRuntime().freeMemory();
+				
+				if(fileHandler.exists() && fileHandler.length()>availalbeJVMSpace) 
+					return "No memory available to upload the file/folder";
+				
 				if (file.contains(".DS_Store")) continue;
 				final TreeParent node = new TreeParent(file);
 				if (new File(file).isDirectory()) {
@@ -371,13 +379,14 @@ public class TargetLocationsGroup {
 	}
 
 	private void processSubFiles(TreeParent node) {
-
-		for (File input : new File(node.getName()).listFiles()) {
-
-			if (input.getAbsolutePath().contains(".DS_Store")) continue;
+		File[] files = new File(node.getName()).listFiles();
+		if(null == files || files.length == 0) return;
+		
+		for (File input : files) {
+			if (input.getAbsolutePath().contains(".DS_Store") || input.getAbsolutePath().contains("$RECYCLE.BIN")) continue;
 			if (input.isFile() && FileUtils.sizeOf(input)>0) {
 				node.addChildren(input.getAbsolutePath());
-			} else if(input.isDirectory()) {
+			} else if(input.isDirectory() && null != input.listFiles() && input.listFiles().length>0) {
 				TreeParent subFolder = new TreeParent(input.getAbsolutePath());
 				processSubFiles(subFolder);
 				node.addChildren(subFolder);
