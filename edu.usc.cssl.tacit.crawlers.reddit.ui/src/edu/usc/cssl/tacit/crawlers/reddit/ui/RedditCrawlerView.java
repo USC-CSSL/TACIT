@@ -417,9 +417,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			} 
 			form.getMessageManager().removeMessage("queryText");
 		}
+		// validation for num links
 		try {
-			int limit = Integer.parseInt(numLinksText.getText());
-			if(limit<0) {
+			int linksLimit = Integer.parseInt(numLinksText.getText());
+			if(linksLimit<0) {
 				form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
 				return false;
 			} else
@@ -428,6 +429,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
 			return false;
 		}
+		// validation for num comments
+		try {
+			int commentsLimit = Integer.parseInt(numCommentsText.getText());
+			if(commentsLimit<0) {
+				form.getMessageManager().addMessage("numcomments", "Provide valid no.of.comments to crawl", null, IMessageProvider.ERROR);
+				return false;
+			} else
+				form.getMessageManager().removeMessage("numcomments");
+		} catch(Exception e) {
+			form.getMessageManager().addMessage("numcomments", "Provide valid no.of.comments to crawl", null, IMessageProvider.ERROR);
+			return false;
+		}	
+		
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
 		if (message != null) {
 			message = outputLayout.getOutputLabel().getText() + " " + message;
