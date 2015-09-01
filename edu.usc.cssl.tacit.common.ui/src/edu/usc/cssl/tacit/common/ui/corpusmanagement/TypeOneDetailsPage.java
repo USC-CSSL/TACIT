@@ -110,19 +110,6 @@ public class TypeOneDetailsPage implements IDetailsPage {
 				.applyTo(dataType);
 		createDataTypeOptions(toolkit, dataType);
 
-		Composite specialInput = toolkit.createComposite(parent);
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
-				.applyTo(specialInput);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(specialInput);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-
-		createSpecialOptions(toolkit, specialInput);
-
-	}
-
-	private void createSpecialOptions(FormToolkit toolkit, Composite parent) {
 
 	}
 
@@ -140,11 +127,16 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		plainText.setSelection(true);
 		plainText.setForeground(parent.getForeground());
 
-		Button jsonData = new Button(buttonComposite, SWT.RADIO);
-		jsonData.setText("JSON");
-		jsonData.setSelection(false);
-		jsonData.setForeground(parent.getForeground());
+		Button twitterData = new Button(buttonComposite, SWT.RADIO);
+		twitterData.setText("Twitter JSON");
+		twitterData.setSelection(false);
+		twitterData.setForeground(parent.getForeground());
 
+		Button redditData = new Button(buttonComposite, SWT.RADIO);
+		redditData.setText("Reddit JSON");
+		redditData.setSelection(false);
+		redditData.setForeground(parent.getForeground());
+		
 		Button xmlData = new Button(buttonComposite, SWT.RADIO);
 		xmlData.setText("XML");
 		xmlData.setSelection(false);
