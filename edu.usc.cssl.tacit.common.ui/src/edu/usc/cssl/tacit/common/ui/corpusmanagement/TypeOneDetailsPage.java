@@ -144,9 +144,6 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		wordData.setSelection(false);
 		wordData.setForeground(parent.getForeground());
 		wordData.setEnabled(false);
-
-		Label lblEmpty = new Label(buttonComposite, SWT.None);
-		TacitFormComposite.createEmptyRow(toolkit, parent);
 	}
 
 	@Override
