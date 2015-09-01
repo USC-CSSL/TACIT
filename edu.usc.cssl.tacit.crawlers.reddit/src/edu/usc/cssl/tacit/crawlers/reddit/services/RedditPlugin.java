@@ -262,8 +262,12 @@ public class RedditPlugin {
 		while(true) {
 			if (response instanceof JSONArray) {	    	
 			    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
+			    	if(null == respObject || respObject.isEmpty()) return;
 			    	JSONObject dataObject = (JSONObject) respObject.get("data");
-			        JSONArray userComments = (JSONArray) dataObject.get("children");	
+			    	if(null == dataObject || dataObject.isEmpty()) return;
+			        JSONArray userComments = (JSONArray) dataObject.get("children");
+			        if(null == userComments || userComments.isEmpty()) return;
+			        
 			    	for (Object post : userComments) {
 			    		JSONObject data = (JSONObject) post;
 			            String kind = safeJsonToString(data.get("kind"));
@@ -305,11 +309,15 @@ public class RedditPlugin {
 
 	private JSONObject fetchThisComment(Object morePost, String permalink) {
     	Object response = restClient.get((permalink + morePost).concat("/.json?sort=best"), null).getResponseObject();
-    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1); 
+    	if(null == response) return null;
+    	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1);
+    	if(null == respObject || respObject.isEmpty()) return null;
     	JSONObject dataObject = (JSONObject) respObject.get("data");
+    	if(null == dataObject || dataObject.isEmpty()) return null;
     	if(0 == ((JSONArray) dataObject.get("children")).size()) 
     		return null;
         JSONObject comment = (JSONObject) ((JSONArray) dataObject.get("children")).get(0);
+        if(null == comment) return null;
         String JSONKind = safeJsonToString(comment.get("kind"));
         if (JSONKind != null && JSONKind.equals(Kind.COMMENT.value())) { // only links are save, not comments, etc.
         	comment = ((JSONObject) comment.get("data"));

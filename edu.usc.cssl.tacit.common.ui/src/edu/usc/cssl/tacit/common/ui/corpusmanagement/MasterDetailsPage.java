@@ -1,6 +1,8 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -56,13 +58,19 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false)
+				.applyTo(parent);
+
 		FormToolkit toolkit = managedForm.getToolkit();
+
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION
-				| Section.TITLE_BAR);
-		section.setText("Directories"); //$NON-NLS-1$
-		section.setDescription("Enter the root directory for corpus data"); //$NON-NLS-1$
-		section.marginWidth = 10;
-		section.marginHeight = 5;
+				| Section.TITLE_BAR | Section.EXPANDED);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(section);
+		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
+		section.setText("Corpora");
+		section.setDescription("Choose corpora to edit details.");
+		
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -76,11 +84,11 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		t.setLayoutData(gd);
 		toolkit.paintBordersFor(client);
 		Button addDir = toolkit.createButton(client, "Add Directory", SWT.PUSH);
-		//Button removeDir = toolkit.createButton(client, "Remove", SWT.PUSH);
-		
+		// Button removeDir = toolkit.createButton(client, "Remove", SWT.PUSH);
+
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		addDir.setLayoutData(gd);
-		//removeDir.setLayoutData(gd);
+		// removeDir.setLayoutData(gd);
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);

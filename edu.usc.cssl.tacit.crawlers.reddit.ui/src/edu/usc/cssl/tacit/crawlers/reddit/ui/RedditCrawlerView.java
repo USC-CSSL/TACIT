@@ -1,7 +1,6 @@
 package edu.usc.cssl.tacit.crawlers.reddit.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -13,17 +12,8 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -31,12 +21,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -78,8 +65,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Text linkText;
 	private Text queryText;
 	private Composite commonsearchComposite;
-	private Button addSubredditBtn;
-	private Button removeSubredditBtn;
 	private Combo cmbSortType;
 	
 	String subredditText;
@@ -91,6 +76,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	String trendTypes[] = {"Hot", "New", "Rising"};
 	String timeFrames[] = {"All", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
 	String labelDataTypes[] = {"Top", "Controversial"};
+
+	private Text subreddits;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -309,89 +296,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		Label subredditLabel = new Label(commonsearchComposite, SWT.NONE);
 		subredditLabel.setText("Subreddit:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(subredditLabel);
-		
-		final TableViewer viewer = new TableViewer(commonsearchComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		final Table table = viewer.getTable();
-		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).hint(90, 50).applyTo(table);
 		content = new ArrayList<String>();
-		viewer.setContentProvider(ArrayContentProvider.getInstance()); 
-		viewer.setInput(content);
-		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		viewer.getControl().setLayoutData(gd_tree);
-				
-		final TableEditor editor = new TableEditor(table);
-		final int EDITABLECOLUMN = 0;
-		
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Clean up any previous editor control
-				Control oldEditor = editor.getEditor();
-				if (oldEditor != null) oldEditor.dispose();
-		
-				// Identify the selected row
-				TableItem item = (TableItem) e.item;
-				if (item == null) return;
-				
-				// The control that will be the editor must be a child of the Table
-				Text newEditor = new Text(table, SWT.NONE);
-				newEditor.setText(item.getText(EDITABLECOLUMN));
-				oldSubredditText = item.getText(EDITABLECOLUMN);				
-				subredditText = oldSubredditText;
-				
-				newEditor.addModifyListener(new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent me) {
-						Text text = (Text)editor.getEditor();
-						subredditText = text.getText();
-						content.remove(oldSubredditText);
-						content.add(subredditText);	
-						oldSubredditText = subredditText;
-						editor.getItem().setText(EDITABLECOLUMN, text.getText());
-					}
-				});
-				newEditor.selectAll();
-				newEditor.setFocus();
-				editor.setEditor(newEditor, item, EDITABLECOLUMN);
-			}
-		});
-		
-		Composite buttonComp = new Composite(commonsearchComposite, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).span(1, 0).applyTo(buttonComp);
-		GridLayout btnLayout = new GridLayout();
-		btnLayout.marginWidth = btnLayout.marginHeight = 0;
-		btnLayout.makeColumnsEqualWidth = false;
-		buttonComp.setLayout(btnLayout);
-		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-					
-		addSubredditBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
-		addSubredditBtn.setText("Add...");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSubredditBtn);
-		addSubredditBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				content.add("Enter subreddit name e.g news");
-				viewer.refresh();
-				table.setFocus();
-				viewer.getControl().setFocus();
-			}
-		});
-		
-		removeSubredditBtn = new Button(buttonComp, SWT.PUSH);
-		removeSubredditBtn.setText("Remove...");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSubredditBtn);
-		removeSubredditBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				Iterator<Object> it = selection.iterator();
-				while(it.hasNext()) {
-					 Object element = it.next();
-					 content.remove(element);
-				}
-				viewer.refresh();
-			}
-		});
+		subreddits = new Text(commonsearchComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(subreddits);	
+		subreddits.setMessage("Provide subreddit names seperated by \",\"");		
 		
 		Label sortType = new Label(commonsearchComposite, SWT.NONE);
 		sortType.setText("Sort Links By:");
@@ -454,30 +362,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		numLinksText = new Text(commonParamsGroup, SWT.BORDER);
 		numLinksText.setText("10");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(numLinksText);
-		numLinksText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyReleased(KeyEvent e) {				
-				/*if(e.keyCode <16777217 || e.keyCode>16777220) {
-					if (!(e.character >= '0' && e.character <= '9')) {
-						form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
-						numLinksText.setText("10");
-					} else {					
-						form.getMessageManager().removeMessage("numlinks");
-					}
-				}*/
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				/*if (!(e.character >= '0' && e.character <= '9')) {
-					form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
-					numLinksText.setText(numLinksText.getText());
-				} else {					
-					form.getMessageManager().removeMessage("numlinks");
-				}	*/			
-			}
-		    
-		});
 		
 		Label numCommentsLabel = new Label(commonParamsGroup, SWT.None);
 		numCommentsLabel.setText("Limit Comments Per Link:");
@@ -513,11 +397,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
-		if(content.contains("Enter subreddit name e.g news")) {
-			form.getMessageManager().addMessage("subredditName", "Provide rename default (Enter subreddit name e.g news) subreddit(s)", null, IMessageProvider.ERROR);
-			return false;			
-		} else 
-			form.getMessageManager().removeMessage("subredditName");
 		
 		if(crawlSearchResultsButton.getSelection()) { // perform all validations
 			// check if any if the filter is set
@@ -526,6 +405,9 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			String url = siteText.getText();
 			String linkId = linkText.getText();
 			String text = queryText.getText();
+			String[] temp = subreddits.getText().split(",");
+			for(String s : temp)
+				content.add(s);
 			
 			if(title.isEmpty() && author.isEmpty() && url.isEmpty() && linkId.isEmpty() && content.size() == 0) {
 				if(text.isEmpty()) {
@@ -535,9 +417,10 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			} 
 			form.getMessageManager().removeMessage("queryText");
 		}
+		// validation for num links
 		try {
-			int limit = Integer.parseInt(numLinksText.getText());
-			if(limit<0) {
+			int linksLimit = Integer.parseInt(numLinksText.getText());
+			if(linksLimit<0) {
 				form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
 				return false;
 			} else
@@ -546,6 +429,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			form.getMessageManager().addMessage("numlinks", "Provide valid no.of.links to crawl", null, IMessageProvider.ERROR);
 			return false;
 		}
+		// validation for num comments
+		try {
+			int commentsLimit = Integer.parseInt(numCommentsText.getText());
+			if(commentsLimit<0) {
+				form.getMessageManager().addMessage("numcomments", "Provide valid no.of.comments to crawl", null, IMessageProvider.ERROR);
+				return false;
+			} else
+				form.getMessageManager().removeMessage("numcomments");
+		} catch(Exception e) {
+			form.getMessageManager().addMessage("numcomments", "Provide valid no.of.comments to crawl", null, IMessageProvider.ERROR);
+			return false;
+		}	
+		
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
 		if (message != null) {
 			message = outputLayout.getOutputLabel().getText() + " " + message;

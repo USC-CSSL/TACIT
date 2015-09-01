@@ -26,6 +26,7 @@ public class RedditCrawler {
 	    this.monitor = monitor;
 	    rp = new RedditPlugin(restClient, outputDir, limitLinks, limitComments, monitor);
 	    this.outputDir = outputDir;
+	    
 	}
 	
 	public void crawlTrendingData(String trendType) throws IOException, URISyntaxException {
