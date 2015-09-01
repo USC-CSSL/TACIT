@@ -71,34 +71,6 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(corpusIDTxt);
 
-		final Label rootPathLbl = toolkit.createLabel(sectionClient,
-				"Root Path:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(rootPathLbl);
-		final Text rootLocationTxt = toolkit.createText(sectionClient, "",
-				SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
-				.applyTo(rootLocationTxt);
-		final Button browseBtn = toolkit.createButton(sectionClient,
-				"Browse...", SWT.PUSH);
-		browseBtn.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
-						SWT.OPEN);
-				dlg.setText("Open");
-				String path = dlg.open();
-				if (path == null)
-					return;
-				rootLocationTxt.setText(path);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
 		final Label dataTypeLbl = toolkit.createLabel(sectionClient,
 				"Data Type:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
