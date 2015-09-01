@@ -7,7 +7,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -24,66 +23,52 @@ public class CorpusManagementView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		toolkit = createFormBodySection(parent);
-		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.EXPANDED);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
-				.applyTo(section);
+		toolkit = createFormBodySection(parent, "Corpus Management");
+		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(section);
 		section.setExpanded(true);
-
-		String description = "This sections lets you manage existing corpora and create new ones";
-		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
-				false);
-		section.setDescriptionControl(descriptionFrm);
-
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		//set image for the corpus management plugin using form.setImage
+		
+		// Create a composite to hold the other widgets
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sc);
-
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sc);
+	
+		// Creates an empty to create a empty space
 		TacitFormComposite.createEmptyRow(toolkit, sc);
 
-		Composite client1 = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(4)
-				.applyTo(client1);
-		GridDataFactory.fillDefaults().grab(true, false).span(4, 1)
-				.applyTo(client1);
+		Composite corpusClient = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2).applyTo(corpusClient);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(corpusClient);
 
-		Section formData = toolkit.createSection(client1, Section.TITLE_BAR
-				| Section.EXPANDED | Section.DESCRIPTION);
-		GridDataFactory.fillDefaults().grab(true, false).span(4, 1)
-				.applyTo(formData);
-		GridLayoutFactory.fillDefaults().numColumns(4).applyTo(formData);
+		Section formData = toolkit.createSection(corpusClient, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(formData);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(formData);
 		formData.setText("Corpus Information");
-		formData.setDescription("Enter the relevant information for the corpus");
+		//formData.setDescriptionControl(descriptionControl);;
 
 		ScrolledForm blocksc = toolkit.createScrolledForm(formData);
 		blocksc.setExpandHorizontal(true);
 		blocksc.setExpandVertical(true);
-		IManagedForm form1 = new ManagedForm(toolkit, blocksc);
+		IManagedForm managedForm = new ManagedForm(toolkit, blocksc);
 		block = new MasterDetailsPage();
-		block.createContent(form1, client1);
-
+		block.createContent(managedForm, corpusClient);
 	}
 
-	private FormToolkit createFormBodySection(Composite parent) {
+
+	private FormToolkit createFormBodySection(Composite parent, String title) {
+		// Every interface requires a toolkit(Display) and form to store the components
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
-
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("Corpus Management");
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
-				.applyTo(form.getBody());
+		form.setText(title);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
 		return toolkit;
 	}
 
 	@Override
 	public void setFocus() {
-
+		form.setFocus();
 	}
-
 }
