@@ -24,6 +24,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowStatusLine(true);
 		configurer.setShowProgressIndicator(true);
 		configurer.setTitle("TACIT");
+		
+		String tempDir = System.getProperty("user.dir")+System.getProperty("file.separator")+"tacit_corpora";
+		
+		if (!(new File(tempDir).exists())){
+			new File(tempDir).mkdir();
+		}
 	}
 	
 	@Override
