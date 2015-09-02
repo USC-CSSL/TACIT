@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="edu.usc.cssl.tacit.domain.web">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <property name="context-root" value="edu.usc.cssl.tacit.domain.web"/>
+        <property name="java-output-path" value="/edu.usc.cssl.tacit.domain.web/build/classes"/>
+    </wb-module>
+</project-modules>
