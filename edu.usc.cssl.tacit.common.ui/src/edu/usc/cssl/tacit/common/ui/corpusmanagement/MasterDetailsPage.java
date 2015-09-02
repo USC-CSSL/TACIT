@@ -1,12 +1,14 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -124,6 +126,9 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
 		
+		Button removeItem = toolkit.createButton(buttonComposite, "Remove", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeItem);
+		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
@@ -153,7 +158,17 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				String s = corpuses.getSelection().toString();
 			}
 		});
-		
+		removeItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)corpuses.getSelection();
+				 for (Iterator<Object> it = selection.iterator(); it.hasNext();) {
+		               Object element =  it.next();
+		               corpusList.remove(element);
+		         }
+				 corpuses.refresh();
+			}
+		});			
 	}
 
 	protected Object[] expandNewCorpus(TreeViewer corpuses, Corpus c) {
