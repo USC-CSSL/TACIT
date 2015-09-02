@@ -5,13 +5,10 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -73,34 +70,6 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(corpusIDTxt);
 
-		final Label rootPathLbl = toolkit.createLabel(sectionClient,
-				"Root Path:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(rootPathLbl);
-		final Text rootLocationTxt = toolkit.createText(sectionClient, "",
-				SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
-				.applyTo(rootLocationTxt);
-		final Button browseBtn = toolkit.createButton(sectionClient,
-				"Browse...", SWT.PUSH);
-		browseBtn.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
-						SWT.OPEN);
-				dlg.setText("Open");
-				String path = dlg.open();
-				if (path == null)
-					return;
-				rootLocationTxt.setText(path);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
 		final Label dataTypeLbl = toolkit.createLabel(sectionClient,
 				"Data Type:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
@@ -128,10 +97,15 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		plainText.setSelection(true);
 		plainText.setForeground(parent.getForeground());
 
-		Button jsonData = new Button(buttonComposite, SWT.RADIO);
-		jsonData.setText("JSON");
-		jsonData.setSelection(false);
-		jsonData.setForeground(parent.getForeground());
+		Button twitterJSON = new Button(buttonComposite, SWT.RADIO);
+		twitterJSON.setText("Twitter JSON");
+		twitterJSON.setSelection(false);
+		twitterJSON.setForeground(parent.getForeground());
+		
+		Button redditJson = new Button(buttonComposite, SWT.RADIO);
+		redditJson.setText("Reddit JSON");
+		redditJson.setSelection(false);
+		redditJson.setForeground(parent.getForeground());
 
 		Button xmlData = new Button(buttonComposite, SWT.RADIO);
 		xmlData.setText("XML");

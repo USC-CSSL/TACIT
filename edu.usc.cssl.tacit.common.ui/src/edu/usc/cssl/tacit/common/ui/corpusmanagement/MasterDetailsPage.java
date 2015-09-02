@@ -94,7 +94,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION | Section.TITLE_BAR);
-		section.setText("Corpuses"); //$NON-NLS-1$
+		section.setText("Corpora"); //$NON-NLS-1$
  		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
