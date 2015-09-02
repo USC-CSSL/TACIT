@@ -124,7 +124,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		Button addDir = toolkit.createButton(buttonComposite, "Add Corpora", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addDir);
 
-		Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
+		final Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
 		
 		Button removeItem = toolkit.createButton(buttonComposite, "Remove", SWT.PUSH);
@@ -138,6 +138,12 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
+				try{
+					ICorpus corpusSelected = (ICorpus)((IStructuredSelection)event.getSelection()).getFirstElement();
+					addClass.setEnabled(true);
+				}catch(ClassCastException e) {
+					addClass.setEnabled(false);
+				}
 			}
 		});
 		corpuses.setContentProvider(new MasterContentProvider());
