@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -155,18 +156,30 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		addClass.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String s = corpuses.getSelection().toString();
+				IStructuredSelection selection = (IStructuredSelection)corpuses.getSelection();
+				 try {
+					 	ICorpus corpusSelected = (ICorpus)selection.getFirstElement();
+					 	int corpusIndex = corpusList.indexOf(corpusSelected);
+		            	((Corpus)corpusSelected).addClass(new CorpusClass("Class2", ""));
+					 	corpusList.set(corpusIndex,corpusSelected);
+		             }catch(ClassCastException except) { }
+				corpuses.refresh();   				 
 			}
 		});
 		removeItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)corpuses.getSelection();
-				 for (Iterator<Object> it = selection.iterator(); it.hasNext();) {
-		               Object element =  it.next();
-		               corpusList.remove(element);
-		         }
-				 corpuses.refresh();
+				 try {
+					 	ICorpus corpusSelected = (ICorpus)selection.getFirstElement(); 
+		            	corpusList.remove(corpusSelected);
+		             }catch(ClassCastException except){ //exception means item selected is not a corpus but a class.
+		            	ITreeSelection classSelection = (ITreeSelection)selection;
+		            	ICorpusClass classObj = (ICorpusClass)selection.getFirstElement();
+		     			Corpus parentCorpus = (Corpus)classSelection.getPaths()[0].getParentPath().getLastSegment();
+		            	parentCorpus.removeClass(classObj);
+		        }
+				corpuses.refresh();   				 
 			}
 		});			
 	}
