@@ -33,6 +33,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
 
@@ -164,7 +165,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			public void widgetSelected(SelectionEvent e) {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");
 				corpusTempName.append(corpusList.size()+1);
-				Corpus c = new Corpus(new String(corpusTempName), "JSON", corpuses);
+				Corpus c = new Corpus(new String(corpusTempName), DataType.PLAIN_TEXT, corpuses);
 				c.addClass(new CorpusClass("Class 1", "", corpuses));;
 				corpusList.add(c);
 				Object[] expandedItems = corpuses.getExpandedElements();

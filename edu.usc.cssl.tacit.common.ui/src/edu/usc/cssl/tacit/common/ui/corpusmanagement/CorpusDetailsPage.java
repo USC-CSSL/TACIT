@@ -11,7 +11,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -70,12 +69,14 @@ public class CorpusDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusIDTxt);
 		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
 
-		final Label dataTypeLbl = toolkit.createLabel(sectionClient, "Data Type:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dataTypeLbl);
-		Composite dataType = toolkit.createComposite(sectionClient);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3).applyTo(dataType);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(dataType);
-		createDataTypeOptions(toolkit, dataType);
+		Group dataTypes = new Group(sectionClient, SWT.LEFT);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dataTypes);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(dataTypes);
+		dataTypes.setText("Data Type");
+		
+		//TacitFormComposite.createEmptyRow(toolkit, dataTypes);
+		createDataTypeOptions(dataTypes);
+		//TacitFormComposite.createEmptyRow(toolkit, dataTypes);
 		
 		//Add save button
 		Composite buttonComposite = new Composite(sectionClient, SWT.NONE);
@@ -130,40 +131,27 @@ public class CorpusDetailsPage implements IDetailsPage {
 		return true;
 	}
 	
-	private void createDataTypeOptions(FormToolkit toolkit, Composite parent) {
-		Group buttonComposite = new Group(parent, SWT.LEFT);
-		// buttonComposite.setText("Data Type");
-		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		buttonComposite.setLayout(layout);
-		buttonComposite.setForeground(parent.getForeground());
-
-		Button plainText = new Button(buttonComposite, SWT.RADIO);
+	private void createDataTypeOptions(Composite dataTypeGroup) {
+		Button plainText = new Button(dataTypeGroup, SWT.RADIO);
 		plainText.setText("Plain Text");
 		plainText.setSelection(true);
-		plainText.setForeground(parent.getForeground());
 
-		Button twitterJSON = new Button(buttonComposite, SWT.RADIO);
+		Button twitterJSON = new Button(dataTypeGroup, SWT.RADIO);
 		twitterJSON.setText("Twitter JSON");
 		twitterJSON.setSelection(false);
-		twitterJSON.setForeground(parent.getForeground());
 		
-		Button redditJson = new Button(buttonComposite, SWT.RADIO);
+		Button redditJson = new Button(dataTypeGroup, SWT.RADIO);
 		redditJson.setText("Reddit JSON");
 		redditJson.setSelection(false);
-		redditJson.setForeground(parent.getForeground());
 
-		Button xmlData = new Button(buttonComposite, SWT.RADIO);
+		Button xmlData = new Button(dataTypeGroup, SWT.RADIO);
 		xmlData.setText("XML");
 		xmlData.setSelection(false);
-		xmlData.setForeground(parent.getForeground());
 		xmlData.setEnabled(false);
 
-		Button wordData = new Button(buttonComposite, SWT.RADIO);
+		Button wordData = new Button(dataTypeGroup, SWT.RADIO);
 		wordData.setText("Microsoft Word");
 		wordData.setSelection(false);
-		wordData.setForeground(parent.getForeground());
 		wordData.setEnabled(false);
 	}
 

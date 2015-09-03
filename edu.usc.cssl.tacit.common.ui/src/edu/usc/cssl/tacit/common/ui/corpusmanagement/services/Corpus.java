@@ -10,17 +10,17 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 
 public class Corpus implements ICorpus {
 	String corpusId;
-	String dataType;
+	DataType dataType;
 	List<ICorpusClass> classes;
 	TreeViewer viewer;
 	
-	public Corpus(String corpusId, String dataType) {
+	public Corpus(String corpusId, DataType dataType) {
 		this.corpusId = corpusId;
 		this.dataType = dataType;
 		this.classes = new ArrayList<ICorpusClass>();
 	}
 	
-	public Corpus(String corpusId, String dataType, TreeViewer viewer) {
+	public Corpus(String corpusId, DataType dataType, TreeViewer viewer) {
 		this.corpusId = corpusId;
 		this.dataType = dataType;
 		this.classes = new ArrayList<ICorpusClass>();
@@ -34,7 +34,7 @@ public class Corpus implements ICorpus {
 
 	@Override
 	public String getDatatype() {
-		return this.dataType;
+		return this.dataType.toString();
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class Corpus implements ICorpus {
 		this.corpusId = corpusId;
 	}
 	
-	public void setDataType(String dataType) {
+	public void setDataType(DataType dataType) {
 		this.dataType = dataType;
 	}
 
