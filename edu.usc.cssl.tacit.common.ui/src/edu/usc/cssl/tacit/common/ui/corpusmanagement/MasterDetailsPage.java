@@ -164,8 +164,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			public void widgetSelected(SelectionEvent e) {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");
 				corpusTempName.append(corpusList.size()+1);
-				Corpus c = new Corpus(new String(corpusTempName), "JSON");
-				c.addClass(new CorpusClass("Class 1", ""));;
+				Corpus c = new Corpus(new String(corpusTempName), "JSON", corpuses);
+				c.addClass(new CorpusClass("Class 1", "", corpuses));;
 				corpusList.add(c);
 				Object[] expandedItems = corpuses.getExpandedElements();
 				corpuses.setInput(corpusList);
@@ -182,7 +182,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	int corpusIndex = corpusList.indexOf(corpusSelected);					 	
 					 	StringBuilder classTempName = new StringBuilder("Class ");
 					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);					 	
-		            	((Corpus)corpusSelected).addClass(new CorpusClass(new String(classTempName), ""));
+		            	((Corpus)corpusSelected).addClass(new CorpusClass(new String(classTempName), "", corpuses));
 					 	corpusList.set(corpusIndex, corpusSelected);
 					 	corpuses.refresh(); 
 						corpuses.setExpandedElements(expandNewCorpus(corpuses.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));

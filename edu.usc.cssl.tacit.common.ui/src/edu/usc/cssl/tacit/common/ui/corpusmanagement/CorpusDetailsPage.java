@@ -68,6 +68,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusIDLbl);
 		corpusIDTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusIDTxt);
+		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
 
 		final Label dataTypeLbl = toolkit.createLabel(sectionClient, "Data Type:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dataTypeLbl);
@@ -99,13 +100,15 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				selectedCorpus.setCorpusId(corpusIDTxt.getText());
-				printCorpusDetails();
+				selectedCorpus.getViewer().refresh();
+				//printCorpusDetails();
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				selectedCorpus.setCorpusId(corpusIDTxt.getText());
-				printCorpusDetails();
+				selectedCorpus.getViewer().refresh();
+				//printCorpusDetails();
 			}
 		});
 		
@@ -114,7 +117,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 	public void printCorpusDetails() {
 		System.out.println("Corupus ID :" + selectedCorpus.getCorpusId());
 		for(ICorpusClass cc : selectedCorpus.getClasses()) {
-			System.out.println(cc.getClassName() + "," + cc.getClassPath());
+			System.out.println("Classes " + cc.getClassName() + "," + cc.getClassPath());
 		}
 	}
 	
@@ -202,6 +205,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();	
+		corpusIDTxt.setText(selectedCorpus.getCorpusId());
 	}
 
 }

@@ -3,6 +3,8 @@ package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.TreeViewer;
+
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 
@@ -10,12 +12,20 @@ public class Corpus implements ICorpus {
 	String corpusId;
 	String dataType;
 	List<ICorpusClass> classes;
+	TreeViewer viewer;
 	
 	public Corpus(String corpusId, String dataType) {
 		this.corpusId = corpusId;
 		this.dataType = dataType;
 		this.classes = new ArrayList<ICorpusClass>();
 	}
+	
+	public Corpus(String corpusId, String dataType, TreeViewer viewer) {
+		this.corpusId = corpusId;
+		this.dataType = dataType;
+		this.classes = new ArrayList<ICorpusClass>();
+		this.viewer = viewer;
+	}	
 	
 	@Override
 	public String getCorpusId() {
@@ -54,4 +64,12 @@ public class Corpus implements ICorpus {
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
+
+	public void setViewer(TreeViewer viewer) {
+		this.viewer = viewer;
+	}
+	
+	public TreeViewer getViewer() {
+		return this.viewer;
+	}	
 }
