@@ -20,5 +20,12 @@ public class CorpusClass implements ICorpusClass{
 	public String getClassPath() {
 		return this.classPath;
 	}
-
+	
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	
+	public void setClassPath(String classPath) {
+		this.classPath = classPath;
+	}	
 }

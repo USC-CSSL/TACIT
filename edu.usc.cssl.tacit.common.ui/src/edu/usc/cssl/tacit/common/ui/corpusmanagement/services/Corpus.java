@@ -46,4 +46,12 @@ public class Corpus implements ICorpus {
 		if(this.classes.contains(c)) 
 			this.classes.remove(c);
 	}
+	
+	public void setCorpusId(String corpusId) {
+		this.corpusId = corpusId;
+	}
+	
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
 }
