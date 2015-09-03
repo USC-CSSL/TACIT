@@ -21,6 +21,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
@@ -31,7 +32,9 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
 	private Text corpusIDTxt;
 	private Corpus selectedCorpus;
-
+	private ScrolledForm form;
+	FormToolkit toolkit;
+	
 	@Override
 	public void initialize(IManagedForm mform) {
 		this.mform = mform;
@@ -39,10 +42,13 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 	@Override
 	public void createContents(Composite parent) {
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).applyTo(parent);
-		FormToolkit toolkit = mform.getToolkit();
-		toolkit.decorateFormHeading(mform.getForm().getForm());
-
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(parent);
+		toolkit = mform.getToolkit();
+		//form = toolkit.createScrolledForm(parent);
+		//toolkit.decorateFormHeading(form.getForm());
+		//GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
+		//GridDataFactory.fillDefaults().grab(true, true).span(1, 1).applyTo(form.getBody());
+		
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
@@ -93,6 +99,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateData();
+				selectedCorpus.getViewer().refresh();
 			}
 		});	
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
@@ -101,14 +108,14 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				selectedCorpus.setCorpusId(corpusIDTxt.getText());
-				selectedCorpus.getViewer().refresh();
+				//selectedCorpus.getViewer().refresh();
 				//printCorpusDetails();
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				selectedCorpus.setCorpusId(corpusIDTxt.getText());
-				selectedCorpus.getViewer().refresh();
+				//selectedCorpus.getViewer().refresh();
 				//printCorpusDetails();
 			}
 		});

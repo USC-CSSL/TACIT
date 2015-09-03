@@ -96,13 +96,13 @@ public class ClassDetailsPage implements IDetailsPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				selectedCorpusClass.setClassPath(classPathTxt.getText());
-				selectedCorpusClass.getViewer().refresh();
+				//selectedCorpusClass.getViewer().refresh();
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				selectedCorpusClass.setClassPath(classPathTxt.getText());
-				selectedCorpusClass.getViewer().refresh();
+				//selectedCorpusClass.getViewer().refresh();
 			}
 		});	
 		
@@ -110,13 +110,13 @@ public class ClassDetailsPage implements IDetailsPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				selectedCorpusClass.setClassName(classNameTxt.getText());
-				selectedCorpusClass.getViewer().refresh();
+				//selectedCorpusClass.getViewer().refresh();
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				selectedCorpusClass.setClassName(classNameTxt.getText());
-				selectedCorpusClass.getViewer().refresh();
+				//selectedCorpusClass.getViewer().refresh();
 			}
 		});		
 	}
