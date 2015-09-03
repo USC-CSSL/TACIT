@@ -26,4 +26,5 @@ Bundle-ClassPath: gson-2.3.1.jar,
  jsoup-1.7.3.jar,
  commons-io-2.4.jar,
  .,
- langdetect.jar
+ langdetect.jar,
+ json-simple-1.1.1.jar
