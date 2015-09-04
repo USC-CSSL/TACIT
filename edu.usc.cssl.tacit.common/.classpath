@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="jackson-core-2.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="json-path-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="json-path-assert-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="json-smart-2.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="json-simple-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="langdetect.jar"/>
 	<classpathentry exported="true" kind="lib" path="gson-2.3.1.jar"/>

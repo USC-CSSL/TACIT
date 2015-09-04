@@ -14,12 +14,25 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
+
 public class TableLayoutData {
 	private Composite sectionClient;
 	private CheckboxTreeViewer treeViewer;
-	
+	private TargetLocationsGroup lgroup;
 	public Tree getTree(){
 		return this.treeViewer.getTree();
+	}
+	
+	public void setTargetLocationGroups(TargetLocationsGroup tgroup){
+		this.lgroup = tgroup;
+	}
+	
+	public void refreshInternalTree(List<String> files){
+		if(this.lgroup!= null){
+			this.lgroup.updateLocationTree((String[]) files.toArray(new String[files.size()]));
+		
+		}
 	}
 	
 	public List<String> getSelectedItems(TreeItem tree) {		

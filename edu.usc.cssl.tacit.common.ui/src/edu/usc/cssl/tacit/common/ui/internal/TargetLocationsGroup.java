@@ -299,7 +299,7 @@ public class TargetLocationsGroup {
 		updateButtons();
 	}
 
-	private String updateLocationTree(String[] path) {
+	public String updateLocationTree(String[] path) {
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}

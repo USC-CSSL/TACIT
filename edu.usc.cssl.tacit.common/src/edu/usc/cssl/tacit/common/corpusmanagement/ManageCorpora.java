@@ -5,16 +5,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 
-public class manageCorpora {
+public class ManageCorpora {
 
 	static String rootDir = System.getProperty("user.dir")
 			+ System.getProperty("file.separator") + "tacit_corpora"
@@ -26,7 +29,7 @@ public class manageCorpora {
 			saveCorpus(corpus);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static void saveCorpus(Corpus corpus) {
 		String corpusID = corpus.getCorpusId();
@@ -60,10 +63,8 @@ public class manageCorpora {
 				String[] dirParts = currClass.getClassName().split(
 						System.getProperty("file.separator"));
 				String dirName = dirParts[dirParts.length - 1];
-				classObj.put(
-						"tacit_loc",
-						corpusLocation
-								+ System.getProperty("file.separator")
+				classObj.put("tacit_loc",
+						corpusLocation + System.getProperty("file.separator")
 								+ dirName);
 
 				classArray.add(classObj);
@@ -75,8 +76,7 @@ public class manageCorpora {
 			jsonObj.put("prev_analysis", analysisArray);
 
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(
-						metaFp));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(metaFp));
 				bw.write(jsonObj.toString());
 				bw.close();
 			} catch (IOException e) {
@@ -105,7 +105,7 @@ public class manageCorpora {
 
 			JSONArray classArray = new JSONArray();
 		}
-	
+
 	}
 
 	private static void copyCorpus(JSONObject jsonObj) {
@@ -128,4 +128,33 @@ public class manageCorpora {
 			}
 		}
 	}
+
+	public static String[] getNames() {
+		List<ICorpus> readCorpusList = readCorpusList();
+		List<String> names = new ArrayList<String>();
+		for (ICorpus iCorpus : readCorpusList) {
+			names.add(iCorpus.getCorpusId());
+		}
+		return (String[]) names.toArray(new String[names.size()]);
+	}
+
+	public static List<ICorpus> readCorpusList() {
+
+		// TO-DO
+		// Complete the implementation
+		return Collections.EMPTY_LIST;
+
+	}
+
+	public static ICorpus readCorpusById(String id) {  // why? - to get updated corpus instead of stale data at tool
+
+		List<ICorpus> readCorpusList = readCorpusList();
+		for (ICorpus iCorpus : readCorpusList) {
+			if (iCorpus.getCorpusId().equals(id)) {
+				return iCorpus;
+			}
+		}
+		return null;
+	}
+
 }

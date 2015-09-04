@@ -17,23 +17,17 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
@@ -70,69 +64,7 @@ public class TacitFormComposite {
 	}
 	
 	
-	public static void createCorpusSection(Composite client){
-
-		Group group = new Group(client, SWT.SHADOW_IN);
-		group.setText("Input Type");
-
-		// group.setBackground(client.getBackground());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		group.setLayout(layout);
-
-		final Button corpusEnabled = new Button(group, SWT.CHECK);
-		corpusEnabled.setText("Use Corpus");
-		corpusEnabled.setBounds(10, 10, 10, 10);
-		corpusEnabled.pack();
-
-		// TacitFormComposite.createEmptyRow(toolkit, group);
-
-		final Composite sectionClient = new Composite(group, SWT.None);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(sectionClient);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sectionClient);
-		sectionClient.setEnabled(false);
-		sectionClient.pack();
-
-		// Create a row that holds the textbox and browse button
-		final Label inputPathLabel = new Label(sectionClient, SWT.NONE);
-		inputPathLabel.setText("Select Corpus:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(inputPathLabel);
-		final Text corpusNameText = new Text(sectionClient, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
-				.applyTo(corpusNameText);
-
-		inputPathLabel.setEnabled(false);
-		corpusNameText.setEnabled(false);
-		Combo cmbSortType = new Combo(client, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbSortType);
-		cmbSortType.setItems(new String[]{"one","two"});
-		cmbSortType.select(0);	
-
-		corpusEnabled.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (corpusEnabled.getSelection()) {
-					sectionClient.setEnabled(true);
-
-					inputPathLabel.setEnabled(true);
-					corpusNameText.setEnabled(true);
-
-				} else {
-					sectionClient.setEnabled(false);
-					inputPathLabel.setEnabled(false);
-					corpusNameText.setEnabled(false);
-				}
-			}
-		});
-
-		// TacitFormComposite.createEmptyRow(sectionClient, group);
 	
-	}
-
 	public static OutputLayoutData createOutputSection(FormToolkit toolkit,
 			Composite parent, final IMessageManager mmng) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
@@ -382,6 +314,7 @@ public class TacitFormComposite {
 		TableLayoutData layoutData = new TableLayoutData();
 		layoutData.setSectionClient(client);
 		layoutData.setTreeViewer(targetLocationContent.getTreeViewer());
+		layoutData.setTargetLocationGroups(targetLocationContent);
 		return layoutData;
 	}
 

@@ -26,6 +26,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -46,9 +47,13 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.uc.cssl.tacit.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.corpusmanagement.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
@@ -74,6 +79,8 @@ public class WeightedWordCountView extends ViewPart implements
 	private Button stopWordPathEnabled;
 	private Job wordCountJob;
 	private Button standardWordCountButton;
+	private List<String> inputList;
+	private String[] corpuraList;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -108,6 +115,8 @@ public class WeightedWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
 				.applyTo(wcTypeComposite);
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
+		createCorpusSection(wcTypeComposite);
+
 		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		Composite client = toolkit.createComposite(form.getBody());
@@ -121,9 +130,9 @@ public class WeightedWordCountView extends ViewPart implements
 				.createTableSection(client, toolkit, layout, "Input",
 						"Add File(s) and Folder(s) to include in analysis.",
 						true, true);
-		dictLayoutData = TacitFormComposite.createTableSection(client,
-				toolkit, layout, "Dictionary", "Add location of Dictionary",
-				false, true);
+		dictLayoutData = TacitFormComposite
+				.createTableSection(client, toolkit, layout, "Dictionary",
+						"Add location of Dictionary", false, true);
 
 		Composite compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
@@ -147,8 +156,8 @@ public class WeightedWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				client1, form.getMessageManager());
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
@@ -206,7 +215,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 		Group buttonComposite = new Group(parent, SWT.LEFT);
 		buttonComposite.setText("Word Count Technique");
-		//buttonComposite.setBackground(parent.getBackground());
+		// buttonComposite.setBackground(parent.getBackground());
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -216,7 +225,7 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcWordCountButton = new Button(buttonComposite, SWT.RADIO);
 		liwcWordCountButton.setText("Standard Word Count");
 		liwcWordCountButton.setSelection(true);
-		//liwcWordCountButton.setBackground(parent.getBackground());
+		// liwcWordCountButton.setBackground(parent.getBackground());
 		liwcWordCountButton.setForeground(parent.getForeground());
 		liwcWordCountButton.addSelectionListener(new SelectionListener() {
 
@@ -256,7 +265,7 @@ public class WeightedWordCountView extends ViewPart implements
 		weightedWordCountButton = new Button(buttonComposite, SWT.RADIO);
 		weightedWordCountButton.setText("Weighted Word Count");
 		weightedWordCountButton.setSelection(false);
-		//weightedWordCountButton.setBackground(parent.getBackground());
+		// weightedWordCountButton.setBackground(parent.getBackground());
 		weightedWordCountButton.setForeground(parent.getForeground());
 
 		// standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
@@ -288,13 +297,13 @@ public class WeightedWordCountView extends ViewPart implements
 		liwcStemming.setSelection(false);
 		liwcStemming.pack();
 		liwcStemming.setVisible(false);
-		
+
 		snowballStemming = toolkit.createButton(downloadGroup, "Porter",
 				SWT.RADIO);
 		snowballStemming.setEnabled(false);
 		snowballStemming.pack();
 		snowballStemming.setVisible(false);
-		
+
 		stemEnabled.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -355,7 +364,7 @@ public class WeightedWordCountView extends ViewPart implements
 			@Override
 			public void run() {
 				TacitFormComposite
-				.writeConsoleHeaderBegining("Word count analysis");
+						.writeConsoleHeaderBegining("Word count analysis");
 				final String stopWordPath = CommonUiActivator.getDefault()
 						.getPreferenceStore()
 						.getString(IPreprocessorSettingsConstant.STOP_PATH);
@@ -367,10 +376,10 @@ public class WeightedWordCountView extends ViewPart implements
 				DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				final Date dateobj = new Date();
 				if (weightedWordCountButton.getSelection()) {
-					fileName = "weighted-" + fileName
-							+ "-"+df.format(dateobj);
+					fileName = "weighted-" + fileName + "-"
+							+ df.format(dateobj);
 				} else {
-					fileName = "LIWC-" + fileName + "-"+df.format(dateobj);
+					fileName = "LIWC-" + fileName + "-" + df.format(dateobj);
 				}
 				final File oFile = new File(outputPath + File.separator
 						+ fileName + ".csv");
@@ -386,18 +395,18 @@ public class WeightedWordCountView extends ViewPart implements
 				final boolean isSpss = spssRawFile.getSelection();
 				final boolean isWdist = wordDistributionFile.getSelection();
 				final boolean isStemDic = stemEnabled.getSelection();
-                final boolean isPreprocess = stopWordPathEnabled.getSelection();
+				final boolean isPreprocess = stopWordPathEnabled.getSelection();
 				wordCountJob = new Job("Analyzing...") {
 					private Preprocess preprocessTask;
 					private String dirPath;
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						//Date dateObj = new Date();
+						// Date dateObj = new Date();
 						TacitFormComposite.setConsoleViewInFocus();
 						List<File> selectedFiles = new ArrayList<File>();
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask(
 								"TACIT started Analyzing WordCount...",
 								inputFiles.size() + 20);
@@ -421,8 +430,8 @@ public class WeightedWordCountView extends ViewPart implements
 								preprocessTask = new Preprocess(
 										"WeightedWordCount");
 								try {
-									dirPath = preprocessTask
-											.doPreprocessing(inputFiles, "");
+									dirPath = preprocessTask.doPreprocessing(
+											inputFiles, "");
 									File[] inputFile = new File(dirPath)
 											.listFiles();
 									for (File iFile : inputFile) {
@@ -441,22 +450,25 @@ public class WeightedWordCountView extends ViewPart implements
 								}
 							}
 
-							wordCountController.wordCount(monitor, selectedFiles,
-									dictionaryFiles, isPreprocess?stopWordPath:"", outputPath,
-									"", true, isLiwcStemming, isSnowBall,
-									isSpss, isWdist, isStemDic, oFile, sFile,dateobj);
-							
+							wordCountController.wordCount(monitor,
+									selectedFiles, dictionaryFiles,
+									isPreprocess ? stopWordPath : "",
+									outputPath, "", true, isLiwcStemming,
+									isSnowBall, isSpss, isWdist, isStemDic,
+									oFile, sFile, dateobj);
+
 						} catch (IOException ioe) {
-							
+
 							ioe.printStackTrace();
 						}
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), "Word count analysis completed",
-								IStatus.OK, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								"Word count analysis completed", IStatus.OK,
+								form);
 						monitor.subTask("Cleaning Preprocessed Files...");
-						if (isPreprocess) preprocessTask.clean();
+						if (isPreprocess)
+							preprocessTask.clean();
 						TacitFormComposite
-						.writeConsoleHeaderBegining("<terminated> Word count analysis");
+								.writeConsoleHeaderBegining("<terminated> Word count analysis");
 						monitor.done();
 						return Status.OK_STATUS;
 					}
@@ -504,8 +516,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 	private boolean canProceed() {
 		boolean canPerform = true;
-		TacitFormComposite.updateStatusMessage(getViewSite(), null, null,
-				form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");
@@ -543,5 +554,79 @@ public class WeightedWordCountView extends ViewPart implements
 	@Override
 	public void setFocus() {
 		form.setFocus();
+	}
+
+	private void createCorpusSection(Composite client) {
+
+		Group group = new Group(client, SWT.SHADOW_IN);
+		group.setText("Input Type");
+
+		// group.setBackground(client.getBackground());
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
+
+		final Button corpusEnabled = new Button(group, SWT.CHECK);
+		corpusEnabled.setText("Use Corpus");
+		corpusEnabled.setBounds(10, 10, 10, 10);
+		corpusEnabled.pack();
+
+		// TacitFormComposite.createEmptyRow(toolkit, group);
+
+		final Composite sectionClient = new Composite(group, SWT.None);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sectionClient);
+		sectionClient.pack();
+
+		// Create a row that holds the textbox and browse button
+		final Label inputPathLabel = new Label(sectionClient, SWT.NONE);
+		inputPathLabel.setText("Select Corpus:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(inputPathLabel);
+
+		final Combo cmbSortType = new Combo(sectionClient, SWT.FLAT
+				| SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+				.applyTo(cmbSortType);
+		corpuraList = ManageCorpora.getNames();
+		cmbSortType.setItems(corpuraList);
+		cmbSortType.setEnabled(false);
+
+		corpusEnabled.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (corpusEnabled.getSelection()) {
+					cmbSortType.setEnabled(true);
+
+				} else {
+					cmbSortType.setEnabled(false);
+				}
+			}
+		});
+
+		cmbSortType.addSelectionListener(new SelectionAdapter() {
+
+			TwitterReadJsonData twitterReadJsonData = new TwitterReadJsonData();
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				ICorpus selectedCorpus = ManageCorpora
+						.readCorpusById(corpuraList[cmbSortType
+								.getSelectionIndex()]);
+				if (inputList == null) {
+					inputList = new ArrayList<String>();
+				}
+				for (ICorpusClass cls : selectedCorpus.getClasses()) {
+					inputList.addAll(twitterReadJsonData
+							.retrieveTwitterData(cls.getClassPath()));
+				}
+				inputLayoutData.refreshInternalTree(inputList);
+			}
+		});
+		TacitFormComposite.createEmptyRow(null, sectionClient);
 	}
 }
