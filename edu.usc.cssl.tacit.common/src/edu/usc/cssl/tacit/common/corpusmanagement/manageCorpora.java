@@ -41,7 +41,7 @@ public class manageCorpora {
 
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("corpus_name", corpus.getCorpusId());
-			jsonObj.put("data_type", corpus.getDatatype());
+			jsonObj.put("data_type", corpus.getDatatype().toString());
 			jsonObj.put("num_classes",
 					Integer.toString(corpus.getClasses().size()));
 

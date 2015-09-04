@@ -33,8 +33,8 @@ public class Corpus implements ICorpus {
 	}
 
 	@Override
-	public String getDatatype() {
-		return this.dataType.toString();
+	public DataType getDatatype() {
+		return this.dataType;
 	}
 
 	@Override
