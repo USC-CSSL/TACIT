@@ -17,6 +17,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.common.ui,
  edu.usc.cssl.tacit.common.ui.composite.from,
  edu.usc.cssl.tacit.common.ui.corpusmanagement.internal,
+ edu.usc.cssl.tacit.common.ui.corpusmanagement.services,
  edu.usc.cssl.tacit.common.ui.outputdata,
  edu.usc.cssl.tacit.common.ui.validation,
  edu.usc.cssl.tacit.common.ui.views,
