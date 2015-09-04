@@ -29,6 +29,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 
 public class CorpusDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
@@ -36,6 +37,11 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private Corpus selectedCorpus;
 	private ScrolledForm form;
 	FormToolkit toolkit;
+	private Button plainText = null;
+	private Button twitterJSON = null;
+	private Button redditJSON = null;
+	private Button xmlData = null;
+	private Button wordData = null;
 	
 	@Override
 	public void initialize(IManagedForm mform) {
@@ -84,6 +90,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 		
 		//TacitFormComposite.createEmptyRow(toolkit, dataTypes);
 		createDataTypeOptions(dataTypes);
+		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
+
 		//TacitFormComposite.createEmptyRow(toolkit, dataTypes);
 		
 		//Add save button
@@ -142,29 +150,84 @@ public class CorpusDetailsPage implements IDetailsPage {
 	}
 	
 	private void createDataTypeOptions(Composite dataTypeGroup) {
-		Button plainText = new Button(dataTypeGroup, SWT.RADIO);
-		plainText.setText("Plain Text");
+		plainText = toolkit.createButton(dataTypeGroup, "Plain Text", SWT.RADIO);
+		plainText.addSelectionListener(new SelectionAdapter(){
+		    public void widgetSelected(final SelectionEvent e){
+		        super.widgetSelected(e);
+		        if(plainText.getSelection()){
+		            selectedCorpus.setDataType(DataType.PLAIN_TEXT);
+		        }
+		    }
+		});
 		plainText.setSelection(true);
 
-		Button twitterJSON = new Button(dataTypeGroup, SWT.RADIO);
-		twitterJSON.setText("Twitter JSON");
+		twitterJSON = toolkit.createButton(dataTypeGroup, "Twitter JSON", SWT.RADIO);
+		twitterJSON.addSelectionListener(new SelectionAdapter(){
+		    public void widgetSelected(final SelectionEvent e){
+		        super.widgetSelected(e);
+		        if(twitterJSON.getSelection()){
+		            selectedCorpus.setDataType(DataType.TWITTER_JSON);
+		        }
+		    }
+		});
 		twitterJSON.setSelection(false);
 		
-		Button redditJson = new Button(dataTypeGroup, SWT.RADIO);
-		redditJson.setText("Reddit JSON");
-		redditJson.setSelection(false);
-
-		Button xmlData = new Button(dataTypeGroup, SWT.RADIO);
-		xmlData.setText("XML");
+		redditJSON = toolkit.createButton(dataTypeGroup, "Reddit JSON", SWT.RADIO);
+		redditJSON.setSelection(false);
+		redditJSON.addSelectionListener(new SelectionAdapter(){
+		    public void widgetSelected(final SelectionEvent e){
+		        super.widgetSelected(e);
+		        if(redditJSON.getSelection()){
+		            selectedCorpus.setDataType(DataType.REDDIT_JSON);
+		        }
+		    }
+		});
+		
+		xmlData = toolkit.createButton(dataTypeGroup, "XML", SWT.RADIO);
 		xmlData.setSelection(false);
+		xmlData.addSelectionListener(new SelectionAdapter(){
+		    public void widgetSelected(final SelectionEvent e){
+		        super.widgetSelected(e);
+		        if(xmlData.getSelection()){
+		            selectedCorpus.setDataType(DataType.XML);
+		        }
+		    }
+		});
 		xmlData.setEnabled(false);
-
-		Button wordData = new Button(dataTypeGroup, SWT.RADIO);
-		wordData.setText("Microsoft Word");
+		
+		wordData = toolkit.createButton(dataTypeGroup, "Microsoft Word", SWT.RADIO);
 		wordData.setSelection(false);
+		wordData.addSelectionListener(new SelectionAdapter(){
+		    public void widgetSelected(final SelectionEvent e){
+		        super.widgetSelected(e);
+		        if(wordData.getSelection()){
+		            selectedCorpus.setDataType(DataType.MICROSOFT_WORD);
+		        }
+		    }
+		});
 		wordData.setEnabled(false);
+		
 	}
-
+	
+	private void setDataTypeOption(DataType type) {
+		plainText.setSelection(false);
+		twitterJSON.setSelection(false);
+		redditJSON.setSelection(false);
+		xmlData.setSelection(false);
+		wordData.setSelection(false);
+		switch(type){
+				case PLAIN_TEXT: plainText.setSelection(true);
+								 break;
+				case TWITTER_JSON: twitterJSON.setSelection(true);
+								 break;
+				case REDDIT_JSON: redditJSON.setSelection(true);
+								 break;
+				case XML: xmlData.setSelection(true);
+								 break;
+				case MICROSOFT_WORD: wordData.setSelection(true);
+								 break;
+		}
+	}
 	@Override
 	public void dispose() {
 
@@ -204,6 +267,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();	
 		corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		setDataTypeOption(selectedCorpus.getDatatype());
 	}
 
 }
