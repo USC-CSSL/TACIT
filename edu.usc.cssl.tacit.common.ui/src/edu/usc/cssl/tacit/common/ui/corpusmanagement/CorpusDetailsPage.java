@@ -24,6 +24,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+//import edu.usc.cssl.tacit.common.corpusmanagement;
+
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
@@ -99,7 +101,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateData();
-				selectedCorpus.getViewer().refresh();
+				selectedCorpus.getViewer().refresh(); //code has a circular dependancy issue. need to fix the design.
+				//ManageCorpora.saveCorpus(selectedCorpus); 
 			}
 		});	
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
