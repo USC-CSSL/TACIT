@@ -37,9 +37,12 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
 
-	List<ICorpus> corpusList; 
+	List<ICorpus> corpusList;
+	//manageCorpora corpusManagement;
 	MasterDetailsPage() {
 		corpusList = new ArrayList<ICorpus>();
+		//corpusManagement = new manageCorpora();
+		//corpusList = corpusManagement.getAllCorpusDetails();
 	}
 	
 	class MasterContentProvider implements ITreeContentProvider {

@@ -21,6 +21,9 @@ public class CorpusClass implements ICorpusClass{
 		this.viewer = viewer;
 	}
 	
+	public CorpusClass() {
+	}
+
 	@Override
 	public String getClassName() {
 		return this.className;

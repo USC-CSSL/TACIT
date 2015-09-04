@@ -27,6 +27,9 @@ public class Corpus implements ICorpus {
 		this.viewer = viewer;
 	}	
 	
+	public Corpus() {
+	}
+
 	@Override
 	public String getCorpusId() {
 		return this.corpusId;
@@ -71,5 +74,5 @@ public class Corpus implements ICorpus {
 	
 	public TreeViewer getViewer() {
 		return this.viewer;
-	}	
+	}
 }
