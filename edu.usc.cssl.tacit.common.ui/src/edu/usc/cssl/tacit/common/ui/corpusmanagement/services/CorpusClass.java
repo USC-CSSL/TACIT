@@ -8,6 +8,7 @@ public class CorpusClass implements ICorpusClass{
 	String className;
 	String classPath;
 	TreeViewer viewer;
+	String tacitLocation;
 	
 	public CorpusClass(String className, String classPath) {
 		this.className = className;
@@ -45,4 +46,15 @@ public class CorpusClass implements ICorpusClass{
 	public TreeViewer getViewer() {
 		return this.viewer;
 	}
+	
+	public void setTacitLocation(String location) {
+		this.tacitLocation = location;
+	}
+
+	@Override
+	public String getTacitLocation() {
+		return this.tacitLocation;
+	}
+	
+	
 }
