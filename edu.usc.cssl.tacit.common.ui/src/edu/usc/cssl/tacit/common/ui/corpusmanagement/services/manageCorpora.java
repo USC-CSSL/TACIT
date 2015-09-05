@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.common.corpusmanagement;
+package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 
 import java.io.BufferedWriter;
 import java.io.File;
