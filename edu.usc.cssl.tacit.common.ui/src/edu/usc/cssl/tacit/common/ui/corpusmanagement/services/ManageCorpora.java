@@ -7,17 +7,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 
-public class manageCorpora {
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+
+public class ManageCorpora {
 
 	static String rootDir = System.getProperty("user.dir")
 			+ System.getProperty("file.separator") + "tacit_corpora"
@@ -176,4 +178,50 @@ public class manageCorpora {
 			}
 		}
 	}
-}
+	
+	public List<ICorpus> getAllCorpusDetails() throws IOException, ParseException {
+		File[] classses = new File(rootDir).listFiles();
+		List<ICorpus> corpuses = new ArrayList<ICorpus>();
+		if(null == classses) return corpuses;
+		
+		for(File corpusClass : classses) {			
+			if(corpusClass.isDirectory()) { // class
+				Corpus corpora = new Corpus();
+				FileReader metaDataFile = new FileReader(corpusClass.getAbsolutePath() + File.separator + "meta.txt"); // get the meta data file				
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(metaDataFile);
+				if(null == jsonObject) continue;
+				corpora.setCorpusId((String) jsonObject.get("corpus_name"));
+				corpora.setDataType((DataType) jsonObject.get("data_type"));
+				
+				if(Integer.parseInt((String) jsonObject.get("num_classes"))>0) 
+					parseClassDetails(corpora, (JSONArray) jsonObject.get("class_details"));
+				corpuses.add(corpora);
+			} 
+		}		
+		return corpuses;
+	}
+ 
+	private void parseClassDetails(Corpus corpora, JSONArray classes) {
+		if(null == corpora || null  == classes) return;
+		Iterator<JSONObject> classItr = classes.iterator();
+		while (classItr.hasNext()) {
+			JSONObject corpusClassObj = classItr.next();
+			if(null == corpusClassObj) continue;
+			
+			CorpusClass cc = new CorpusClass();
+			cc.setClassName((String) corpusClassObj.get("class_name"));
+			cc.setClassPath((String) corpusClassObj.get("original_loc"));
+			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
+			corpora.getClasses().add(cc);
+		}		
+	}	
+	
+	public static String[] getNames() {
+		return new String[1];
+	}
+	
+	public static ICorpus readCorpusById(String corpuraList) {
+		return null;
+	}
+ }

@@ -47,13 +47,13 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.uc.cssl.tacit.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.tacit.common.Preprocess;
-import edu.usc.cssl.tacit.common.corpusmanagement.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;

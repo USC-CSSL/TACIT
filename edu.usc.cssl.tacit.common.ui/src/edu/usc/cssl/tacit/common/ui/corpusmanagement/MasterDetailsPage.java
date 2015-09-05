@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,21 +29,23 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.json.simple.parser.ParseException;
 
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
 
 	List<ICorpus> corpusList;
-	//manageCorpora corpusManagement;
-	MasterDetailsPage() {
+	ManageCorpora corpusManagement;
+	MasterDetailsPage() throws IOException, ParseException {
 		corpusList = new ArrayList<ICorpus>();
-		//corpusManagement = new manageCorpora();
-		//corpusList = corpusManagement.getAllCorpusDetails();
+		corpusManagement = new ManageCorpora();
+		corpusList = corpusManagement.getAllCorpusDetails();
 	}
 	
 	class MasterContentProvider implements ITreeContentProvider {
