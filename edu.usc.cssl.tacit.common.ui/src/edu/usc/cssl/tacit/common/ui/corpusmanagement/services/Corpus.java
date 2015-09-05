@@ -28,6 +28,7 @@ public class Corpus implements ICorpus {
 	}	
 	
 	public Corpus() {
+		this.classes = new ArrayList<ICorpusClass>();
 	}
 
 	@Override

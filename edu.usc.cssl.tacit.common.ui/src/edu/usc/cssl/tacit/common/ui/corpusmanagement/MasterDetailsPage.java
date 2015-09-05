@@ -164,7 +164,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		});
 		corpuses.setContentProvider(new MasterContentProvider());
 		corpuses.setLabelProvider(new MasterLabelProvider());
-		corpuses.setInput(corpusList.toArray());
+		corpuses.setInput(corpusList);
 		
 		addCorpora.addSelectionListener(new SelectionAdapter() {
 			@Override

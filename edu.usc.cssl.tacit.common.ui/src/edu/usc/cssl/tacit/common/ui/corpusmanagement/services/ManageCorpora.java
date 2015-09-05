@@ -181,6 +181,7 @@ public class ManageCorpora {
 	
 	public List<ICorpus> getAllCorpusDetails() throws IOException, ParseException {
 		File[] classses = new File(rootDir).listFiles();
+		System.out.println("RootDir:" + rootDir);
 		List<ICorpus> corpuses = new ArrayList<ICorpus>();
 		if(null == classses) return corpuses;
 		
@@ -192,7 +193,7 @@ public class ManageCorpora {
 				JSONObject jsonObject = (JSONObject) jsonParser.parse(metaDataFile);
 				if(null == jsonObject) continue;
 				corpora.setCorpusId((String) jsonObject.get("corpus_name"));
-				corpora.setDataType((DataType) jsonObject.get("data_type"));
+				//corpora.setDataType((DataType) jsonObject.get("data_type"));
 				
 				if(Integer.parseInt((String) jsonObject.get("num_classes"))>0) 
 					parseClassDetails(corpora, (JSONArray) jsonObject.get("class_details"));
@@ -214,6 +215,7 @@ public class ManageCorpora {
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
 			corpora.getClasses().add(cc);
+				
 		}		
 	}	
 	

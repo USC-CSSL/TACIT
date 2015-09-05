@@ -25,7 +25,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 //import edu.usc.cssl.tacit.common.corpusmanagement;
-
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
@@ -152,7 +151,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private void createDataTypeOptions(Composite dataTypeGroup) {
 		plainText = toolkit.createButton(dataTypeGroup, "Plain Text", SWT.RADIO);
 		plainText.addSelectionListener(new SelectionAdapter(){
-		    public void widgetSelected(final SelectionEvent e){
+		    @Override
+			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(plainText.getSelection()){
 		            selectedCorpus.setDataType(DataType.PLAIN_TEXT);
@@ -163,7 +163,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 		twitterJSON = toolkit.createButton(dataTypeGroup, "Twitter JSON", SWT.RADIO);
 		twitterJSON.addSelectionListener(new SelectionAdapter(){
-		    public void widgetSelected(final SelectionEvent e){
+		    @Override
+			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(twitterJSON.getSelection()){
 		            selectedCorpus.setDataType(DataType.TWITTER_JSON);
@@ -175,7 +176,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 		redditJSON = toolkit.createButton(dataTypeGroup, "Reddit JSON", SWT.RADIO);
 		redditJSON.setSelection(false);
 		redditJSON.addSelectionListener(new SelectionAdapter(){
-		    public void widgetSelected(final SelectionEvent e){
+		    @Override
+			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(redditJSON.getSelection()){
 		            selectedCorpus.setDataType(DataType.REDDIT_JSON);
@@ -186,7 +188,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 		xmlData = toolkit.createButton(dataTypeGroup, "XML", SWT.RADIO);
 		xmlData.setSelection(false);
 		xmlData.addSelectionListener(new SelectionAdapter(){
-		    public void widgetSelected(final SelectionEvent e){
+		    @Override
+			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(xmlData.getSelection()){
 		            selectedCorpus.setDataType(DataType.XML);
@@ -198,7 +201,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 		wordData = toolkit.createButton(dataTypeGroup, "Microsoft Word", SWT.RADIO);
 		wordData.setSelection(false);
 		wordData.addSelectionListener(new SelectionAdapter(){
-		    public void widgetSelected(final SelectionEvent e){
+		    @Override
+			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(wordData.getSelection()){
 		            selectedCorpus.setDataType(DataType.MICROSOFT_WORD);
@@ -215,6 +219,10 @@ public class CorpusDetailsPage implements IDetailsPage {
 		redditJSON.setSelection(false);
 		xmlData.setSelection(false);
 		wordData.setSelection(false);
+		if(null == type) {
+			plainText.setSelection(true);
+			return;
+		}
 		switch(type){
 				case PLAIN_TEXT: plainText.setSelection(true);
 								 break;
@@ -226,6 +234,9 @@ public class CorpusDetailsPage implements IDetailsPage {
 								 break;
 				case MICROSOFT_WORD: wordData.setSelection(true);
 								 break;
+				default:
+					plainText.setSelection(true);
+					break;
 		}
 	}
 	@Override
