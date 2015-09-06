@@ -219,11 +219,41 @@ public class ManageCorpora {
 		}		
 	}	
 	
-	public static String[] getNames() {
-		return new String[1];
+	public String[] getNames() {
+		List<ICorpus> readCorpusList = readCorpusList();
+		List<String> names = new ArrayList<String>();
+		for (ICorpus iCorpus : readCorpusList) {
+			names.add(iCorpus.getCorpusId());
+		}
+		return (String[]) names.toArray(new String[names.size()]);
 	}
+
+	public List<ICorpus> readCorpusList() {
+
 	
-	public static ICorpus readCorpusById(String corpuraList) {
+		try {
+			return getAllCorpusDetails();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public ICorpus readCorpusById(String id) {  // why? - to get updated corpus instead of stale data at tool
+
+		List<ICorpus> readCorpusList = readCorpusList();
+		for (ICorpus iCorpus : readCorpusList) {
+			if (iCorpus.getCorpusId().equals(id)) {
+				return iCorpus;
+			}
+		}
 		return null;
 	}
+
+	
  }

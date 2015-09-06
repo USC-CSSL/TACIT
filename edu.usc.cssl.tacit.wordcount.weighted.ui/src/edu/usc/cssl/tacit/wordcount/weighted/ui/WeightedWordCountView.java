@@ -53,6 +53,7 @@ import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -64,6 +65,7 @@ public class WeightedWordCountView extends ViewPart implements
 		IWeightedWordCountViewConstants {
 	public static String ID = "edu.usc.cssl.tacit.wordcount.weighted.ui.view1";
 	private ScrolledForm form;
+	private ManageCorpora manageCorpora;
 	private FormToolkit toolkit;
 	private OutputLayoutData layoutData;
 	private TableLayoutData inputLayoutData;
@@ -591,7 +593,8 @@ public class WeightedWordCountView extends ViewPart implements
 				| SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(cmbSortType);
-		corpuraList = ManageCorpora.getNames();
+		manageCorpora = new ManageCorpora();
+		corpuraList = manageCorpora.getNames();
 		cmbSortType.setItems(corpuraList);
 		cmbSortType.setEnabled(false);
 
@@ -609,20 +612,32 @@ public class WeightedWordCountView extends ViewPart implements
 
 		cmbSortType.addSelectionListener(new SelectionAdapter() {
 
-			TwitterReadJsonData twitterReadJsonData = new TwitterReadJsonData();
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				ICorpus selectedCorpus = ManageCorpora
+				ICorpus selectedCorpus = manageCorpora
 						.readCorpusById(corpuraList[cmbSortType
 								.getSelectionIndex()]);
 				if (inputList == null) {
 					inputList = new ArrayList<String>();
 				}
-				for (ICorpusClass cls : selectedCorpus.getClasses()) {
-					inputList.addAll(twitterReadJsonData
-							.retrieveTwitterData(cls.getClassPath()));
+				if (selectedCorpus.getDatatype().equals(DataType.TWITTER_JSON)) {
+					TwitterReadJsonData twitterReadJsonData = new TwitterReadJsonData();
+					for (ICorpusClass cls : selectedCorpus.getClasses()) {
+						inputList.addAll(twitterReadJsonData
+								.retrieveTwitterData(cls.getClassPath()));
+					}
+				} else if (selectedCorpus.getDatatype().equals(
+						DataType.REDDIT_JSON)) {
+					// TO-Do
+				} else if (selectedCorpus.getDatatype().equals(
+						(DataType.PLAIN_TEXT))) {
+					// TO-Do
+				} else if (selectedCorpus.getDatatype().equals(
+						(DataType.MICROSOFT_WORD))) {
+					// TO-Do
+				} else if (selectedCorpus.getDatatype().equals((DataType.XML))) {
+					// TO-Do
 				}
 				inputLayoutData.refreshInternalTree(inputList);
 			}
