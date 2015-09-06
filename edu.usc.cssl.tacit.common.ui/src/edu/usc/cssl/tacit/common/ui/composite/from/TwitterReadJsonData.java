@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 public class TwitterReadJsonData {
 	DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 	Date dateobj = new Date();
+
 	public List<String> retrieveTwitterData(String location) {
 		List<String> result = new ArrayList<String>();
 		/*** read from file ***/
@@ -28,30 +29,34 @@ public class TwitterReadJsonData {
 		try {
 
 			jParser = new JSONParser();
-			JSONArray objects = (JSONArray) jParser.parse(new FileReader(
-					location));
 
 			// loop until token equal to "}"
-			
-			String path = new File(location).getParent() + File.separator
-					+ "twitter_";
-			for (Object obj : objects) {
-				JSONObject twitterStream = (JSONObject) obj;
-				dateobj = new Date();
-				File file = new File(path +  df.format(dateobj));
-				if (file.exists()) {
-					file.delete();
+
+			String path = new File(location) + File.separator + "twitter_";
+			File[] fileList = new File(location).listFiles();
+			for (int i = 0; i < fileList.length; i++) {
+				String fileName = fileList[i].getAbsolutePath();
+				if (!fileList[i].getAbsolutePath().endsWith(".json"))
+					continue;
+				JSONArray objects = (JSONArray) jParser.parse(new FileReader(
+						fileName));
+				for (Object obj : objects) {
+					JSONObject twitterStream = (JSONObject) obj;
+					dateobj = new Date();
+					File file = new File(path + df.format(dateobj));
+					if (file.exists()) {
+						file.delete();
+					}
+					file.createNewFile();
+
+					FileWriter fw = new FileWriter(file.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					bw.write(twitterStream.get("Text").toString());
+					bw.close();
+					result.add(file.getAbsolutePath());
+
 				}
-				file.createNewFile();
-
-				FileWriter fw = new FileWriter(file.getAbsoluteFile());
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write(twitterStream.get("Text").toString());
-				bw.close();
-				result.add(file.getAbsolutePath());
-
 			}
-
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
