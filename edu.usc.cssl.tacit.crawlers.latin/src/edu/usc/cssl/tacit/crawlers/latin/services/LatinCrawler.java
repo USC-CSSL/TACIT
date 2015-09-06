@@ -1,5 +1,5 @@
 /**
- * @author Niki Parmar <nikijitp@usc.edu>
+ * @author Niki Parmar <nikijitp@usc.edu>, Linda Pulickal<pulickal@usc.edu>
  */
 
 package edu.usc.cssl.tacit.crawlers.latin.services;

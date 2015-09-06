@@ -117,8 +117,7 @@ public class WeightedWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
 				.applyTo(wcTypeComposite);
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
-		createCorpusSection(wcTypeComposite);
-
+	
 		createWordCountType(toolkit, wcTypeComposite, form.getMessageManager());
 
 		Composite client = toolkit.createComposite(form.getBody());
@@ -157,14 +156,17 @@ public class WeightedWordCountView extends ViewPart implements
 				.applyTo(client1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
-
+		
+		createCorpusSection(client1);
+		TacitFormComposite.createEmptyRow(toolkit, form.getBody());
+		
 		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
 				form.getMessageManager());
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
-
+		
 	}
 
 	@Override
