@@ -125,13 +125,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		buttonComposite.setLayout(buttonLayout);
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
-		Button addCorpora = toolkit.createButton(buttonComposite, "Add Corpora", SWT.PUSH);
+		Button addCorpora = toolkit.createButton(buttonComposite, "Add Corpus", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addCorpora);
 		
 		final Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
 		
-		Button remove = toolkit.createButton(buttonComposite, "Remove Corpora/Class", SWT.PUSH);
+		Button remove = toolkit.createButton(buttonComposite, "Remove Corpus/Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(remove);		
 		
 		section.setClient(client);

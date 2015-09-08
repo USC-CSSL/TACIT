@@ -24,7 +24,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
-
 //import edu.usc.cssl.tacit.common.corpusmanagement;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
@@ -110,7 +109,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateData();
-				selectedCorpus.getViewer().refresh(); //code has a circular dependancy issue. need to fix the design.
+				//selectedCorpus.getViewer().refresh(); //code has a circular dependancy issue. need to fix the design.
 				ManageCorpora.saveCorpus(selectedCorpus); 
 			}
 		});	
@@ -221,11 +220,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 		redditJSON.setSelection(false);
 		xmlData.setSelection(false);
 		wordData.setSelection(false);
-		if(null == type) {
-			plainText.setSelection(true);
-			return;
-		}
-		switch(type){
+		if(null == type) return;
+		switch(type) { 
 				case PLAIN_TEXT: plainText.setSelection(true);
 								 break;
 				case TWITTER_JSON: twitterJSON.setSelection(true);
@@ -236,9 +232,6 @@ public class CorpusDetailsPage implements IDetailsPage {
 								 break;
 				case MICROSOFT_WORD: wordData.setSelection(true);
 								 break;
-				default:
-					plainText.setSelection(true);
-					break;
 		}
 	}
 	@Override
