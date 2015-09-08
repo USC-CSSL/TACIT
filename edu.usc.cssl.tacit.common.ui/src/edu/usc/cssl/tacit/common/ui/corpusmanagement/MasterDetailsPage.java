@@ -185,7 +185,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);					 	
 		            	((Corpus)corpusSelected).addClass(new CorpusClass(new String(classTempName), "", corpuses));
 					 	corpusList.set(corpusIndex, corpusSelected);
-					 	//corpuses.refresh(); we can only refresh on save 
+					 	corpuses.refresh(); 
 						corpuses.setExpandedElements(expandNewCorpus(corpuses.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));
 		             } catch(Exception exp) { 
 		             }
