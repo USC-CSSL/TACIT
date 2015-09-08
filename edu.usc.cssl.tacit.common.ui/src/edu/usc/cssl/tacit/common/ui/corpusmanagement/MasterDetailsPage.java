@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,12 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		public Object[] getElements(Object inputElement) {
 			if(inputElement instanceof List) return ((List)inputElement).toArray();
 			else if(inputElement instanceof ICorpus) return  ((ICorpus)inputElement).getClasses().toArray();
+			else if(inputElement instanceof String) {
+				File tacitLocationFiles = new File((String) inputElement);
+				if(tacitLocationFiles.isDirectory()) {
+					return tacitLocationFiles.listFiles();
+				}
+			}
 			return new Object[] {};
 		}
 
@@ -93,6 +100,11 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				return ((ICorpus) element).getCorpusId();
 			else if(element instanceof ICorpusClass)
 				return ((ICorpusClass) element).getClassName();
+			else if(element instanceof String) {
+				File tacitLocationFiles = new File((String) element);
+				if(tacitLocationFiles.exists()) 
+					return tacitLocationFiles.getAbsolutePath();
+			}			
 			return null;
 		}
 	}

@@ -99,7 +99,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(buttonComposite);
 		
 		Button saveCorpora = new Button(buttonComposite, SWT.PUSH);
-		saveCorpora.setText("Save Corpora");
+		saveCorpora.setText("Save Corpus");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(saveCorpora);		
 		
 		saveCorpora.addSelectionListener(new SelectionAdapter() {
