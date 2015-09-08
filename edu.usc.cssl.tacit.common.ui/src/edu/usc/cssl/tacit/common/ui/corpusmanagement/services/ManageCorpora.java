@@ -60,6 +60,7 @@ public class ManageCorpora {
 				CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
+				String currClassPath = currClass.getClassPath();
 				classObj.put("original_loc", currClass.getClassPath());
 
 				String[] dirParts = currClass.getClassName().split(
@@ -157,7 +158,7 @@ public class ManageCorpora {
 	}
 
 	private static void copyCorpus(JSONObject jsonObj) {
-		int numClasses = (Integer) jsonObj.get("num_classes");
+		int numClasses = Integer.parseInt((String) jsonObj.get("num_classes"));
 		JSONArray classArray = (JSONArray) jsonObj.get("class_details");
 
 		for (int i = 0; i < numClasses; i++) {

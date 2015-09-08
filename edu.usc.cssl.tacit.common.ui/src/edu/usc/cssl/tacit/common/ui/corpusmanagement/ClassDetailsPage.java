@@ -79,6 +79,7 @@ public class ClassDetailsPage implements IDetailsPage {
 				if (path == null)
 					return; 
 				classPathTxt.setText(path);
+				selectedCorpusClass.setClassPath(classPathTxt.getText());
 			}
 
 			@Override
