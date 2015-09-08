@@ -62,6 +62,25 @@ public class ClassDetailsPage implements IDetailsPage {
 
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 
+		final Label classLbl = toolkit.createLabel(sectionClient, "Class Name:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(classLbl);
+		classNameTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(classNameTxt);
+		if(null != selectedCorpusClass) classNameTxt.setText(selectedCorpusClass.getClassName());
+		classNameTxt.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				selectedCorpusClass.setClassName(classNameTxt.getText());
+				//selectedCorpusClass.getViewer().refresh();
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				selectedCorpusClass.setClassName(classNameTxt.getText());
+				//selectedCorpusClass.getViewer().refresh();
+			}
+		});	
+		
 		final Label classPathLbl = toolkit.createLabel(sectionClient, "Class Path:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(classPathLbl);
 		classPathTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
@@ -70,7 +89,6 @@ public class ClassDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(classPathTxt);
 		final Button browseBtn = toolkit.createButton(sectionClient, "Browse...", SWT.PUSH);
 		browseBtn.addSelectionListener(new SelectionListener() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(), SWT.OPEN);
@@ -86,13 +104,6 @@ public class ClassDetailsPage implements IDetailsPage {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-
-		final Label classLbl = toolkit.createLabel(sectionClient, "Class Name:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(classLbl);
-		classNameTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(classNameTxt);
-		if(null != selectedCorpusClass) classNameTxt.setText(selectedCorpusClass.getClassName());
-		
 		classPathTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -107,19 +118,6 @@ public class ClassDetailsPage implements IDetailsPage {
 			}
 		});	
 		
-		classNameTxt.addKeyListener(new KeyListener() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				selectedCorpusClass.setClassName(classNameTxt.getText());
-				//selectedCorpusClass.getViewer().refresh();
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				selectedCorpusClass.setClassName(classNameTxt.getText());
-				//selectedCorpusClass.getViewer().refresh();
-			}
-		});		
 	}
 
 	@Override

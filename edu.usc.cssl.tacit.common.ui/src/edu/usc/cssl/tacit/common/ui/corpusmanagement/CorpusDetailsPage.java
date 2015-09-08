@@ -88,11 +88,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(dataTypes);
 		dataTypes.setText("Data Type");
 		
-		//TacitFormComposite.createEmptyRow(toolkit, dataTypes);
 		createDataTypeOptions(dataTypes);
 		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
-
-		//TacitFormComposite.createEmptyRow(toolkit, dataTypes);
 		
 		//Add save button
 		Composite buttonComposite = new Composite(sectionClient, SWT.NONE);
@@ -109,7 +106,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateData();
-				//selectedCorpus.getViewer().refresh(); //code has a circular dependancy issue. need to fix the design.
+				if(null != selectedCorpus) selectedCorpus.getViewer().refresh(); //code has a circular dependancy issue. need to fix the design.
 				ManageCorpora.saveCorpus(selectedCorpus); 
 			}
 		});	
@@ -120,14 +117,12 @@ public class CorpusDetailsPage implements IDetailsPage {
 			public void keyReleased(KeyEvent e) {
 				selectedCorpus.setCorpusId(corpusIDTxt.getText());
 				//selectedCorpus.getViewer().refresh();
-				//printCorpusDetails();
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				selectedCorpus.setCorpusId(corpusIDTxt.getText());
 				//selectedCorpus.getViewer().refresh();
-				//printCorpusDetails();
 			}
 		});
 		

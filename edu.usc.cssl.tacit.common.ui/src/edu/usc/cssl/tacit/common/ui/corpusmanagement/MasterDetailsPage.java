@@ -142,14 +142,6 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
-				/*
-				try {
-					ICorpus corpusSelected = (ICorpus)((IStructuredSelection)event.getSelection()).getFirstElement();					
-					addClass.setEnabled(true);
-				}catch(ClassCastException e) {
-					addClass.setEnabled(false);
-				}*/
-				
 				 try {
 					 	IStructuredSelection selection  = (IStructuredSelection) event.getSelection();
 					 	Object selectedObj = selection.getFirstElement();
@@ -191,7 +183,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);					 	
 		            	((Corpus)corpusSelected).addClass(new CorpusClass(new String(classTempName), "", corpuses));
 					 	corpusList.set(corpusIndex, corpusSelected);
-					 	corpuses.refresh(); 
+					 	//corpuses.refresh(); we can only refresh on save 
 						corpuses.setExpandedElements(expandNewCorpus(corpuses.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));
 		             } catch(Exception exp) { 
 		             }
@@ -213,7 +205,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			     			Corpus parentCorpus = (Corpus)classSelection.getPaths()[0].getParentPath().getLastSegment();
 			            	parentCorpus.removeClass(selectedClass);					 		
 					 	}
-					 	corpuses.refresh();   
+					 	//corpuses.refresh(); refresh only on save   
 		         } catch(Exception exp) { //exception means item selected is not a corpus but a class.
 		         }
 			}
