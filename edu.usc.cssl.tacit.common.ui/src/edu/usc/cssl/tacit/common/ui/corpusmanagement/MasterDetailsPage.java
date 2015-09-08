@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -169,6 +170,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				Object[] expandedItems = corpuses.getExpandedElements();
 				corpuses.setInput(corpusList);
 				corpuses.setExpandedElements(expandNewCorpus(expandedItems, c));
+				corpuses.setSelection(new StructuredSelection(c),true);
 			}
 		});	
 		
@@ -205,7 +207,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			     			Corpus parentCorpus = (Corpus)classSelection.getPaths()[0].getParentPath().getLastSegment();
 			            	parentCorpus.removeClass(selectedClass);					 		
 					 	}
-					 	//corpuses.refresh(); refresh only on save   
+					 	corpuses.refresh();
 		         } catch(Exception exp) { //exception means item selected is not a corpus but a class.
 		         }
 			}
