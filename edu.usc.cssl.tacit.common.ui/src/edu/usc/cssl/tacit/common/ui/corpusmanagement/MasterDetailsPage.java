@@ -182,11 +182,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	ICorpus corpusSelected = (ICorpus)selection.getFirstElement();
 					 	int corpusIndex = corpusList.indexOf(corpusSelected);					 	
 					 	StringBuilder classTempName = new StringBuilder("Class ");
-					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);					 	
-		            	((Corpus)corpusSelected).addClass(new CorpusClass(new String(classTempName), "", corpuses));
+					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);
+					 	CorpusClass newClass = new CorpusClass(new String(classTempName), "", corpuses);
+		            	((Corpus)corpusSelected).addClass(newClass);
 					 	corpusList.set(corpusIndex, corpusSelected);
 					 	corpuses.refresh(); 
 						corpuses.setExpandedElements(expandNewCorpus(corpuses.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));
+						corpuses.setSelection(new StructuredSelection(newClass),true);
 		             } catch(Exception exp) { 
 		             }
 			}
