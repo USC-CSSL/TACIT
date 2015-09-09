@@ -44,6 +44,7 @@ import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin;
 import edu.usc.cssl.tacit.wordcount.standard.ui.internal.IStandardWordCountViewConstants;
@@ -277,24 +278,17 @@ public class StandardWordCountView extends ViewPart implements
 			public void run() {
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
-				final List<String> inputFiles = inputLayoutData
-						.getSelectedFiles();
-				final List<String> dictionaryFiles = dictLayoutData
-						.getSelectedFiles();
+				final List<String> inputFiles = TacitUtil.refineInput(inputLayoutData.getSelectedFiles());
+				final List<String> dictionaryFiles = dictLayoutData.getSelectedFiles();
 				final boolean isStemDic = stemEnabled.getSelection();
 				final boolean doPennCounts = defaultTags.getSelection();
-				final boolean doWordDistribution = wordDistribution
-						.getSelection();
+				final boolean doWordDistribution = wordDistribution.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
 				final boolean wcType = weightedWordCountButton.getSelection();
 				final boolean datFile = createDATFile.getSelection();
-				final Preprocess preprocessor = new Preprocess(
-						"TACIT_Word_Count");
+				final Preprocess preprocessor = new Preprocess("TACIT_Word_Count");
 				final Date dateObj = new Date();
-				// final WordCountPlugin wc = new WordCountPlugin(false,
-				// dateObj,
-				// isStemDic, doPennCounts, doWordDistribution, outputPath);
-
+				
 				// Creating a new Job to do Word Count so that the UI will not
 				// freeze
 				wordCountJob = new Job("Word Count Plugin Job") {

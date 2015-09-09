@@ -40,6 +40,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -54,6 +56,7 @@ public class TargetLocationsGroup {
 	@SuppressWarnings("unused")
 	private FormToolkit toolKit;
 	private Label dummy;
+	private ManageCorpora corporaManagement;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -76,6 +79,7 @@ public class TargetLocationsGroup {
 
 	private TargetLocationsGroup(FormToolkit toolKit, Composite parent) {
 		this.toolKit = toolKit;
+		corporaManagement = new ManageCorpora();
 	}
 
 	public CheckboxTreeViewer getTreeViewer() {
@@ -279,7 +283,7 @@ public class TargetLocationsGroup {
 						protected IStatus run(IProgressMonitor monitor) {
 							allCorpus.clear();
 							try {
-								String[] corpusList = new ManageCorpora().getNames();
+								String[] corpusList = corporaManagement.getNames();
 								allCorpus.addAll(Arrays.asList(corpusList));							
 								Display.getDefault().asyncExec(new Runnable() {
 									@Override
@@ -297,7 +301,11 @@ public class TargetLocationsGroup {
 					CorpusDialog.setMultipleSelection(true);
 
 					if (CorpusDialog.open() == Window.OK) {
-						updateLocationTree(CorpusDialog.getSelections());					
+						List<String> modifiedCorpusNames = new ArrayList<String>(); 
+						for(String corpus : CorpusDialog.getSelections()) {
+							modifiedCorpusNames.add("--corpus--" + corpus);
+						}
+						updateLocationTree(modifiedCorpusNames.toArray(new String[0]));		
 					}
 				}
 			});
@@ -356,11 +364,16 @@ public class TargetLocationsGroup {
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}
-		if (!path.equals("root")) {
-			if (checkExistensence(path)) {
-				return "The selected File is already added to the location";
-			} 
+		if (!path.equals("root")) {	
 			for (String file : path) {
+				boolean isCorpus = false;
+				if (file.startsWith("--corpus--")) {
+					isCorpus = true;
+					file = file.replaceFirst("--corpus--", "");
+				}
+				if (checkExisting(file)) {
+					continue;
+				} 
 				File fileHandler = new File(file); // length returns the size in 
 				Long availalbeJVMSpace = Runtime.getRuntime().freeMemory();
 				
@@ -369,7 +382,10 @@ public class TargetLocationsGroup {
 				
 				if (file.contains(".DS_Store")) continue;
 				final TreeParent node = new TreeParent(file);
-				if (new File(file).isDirectory()) {
+				if (isCorpus) {
+					processCorpusFiles(node);
+				}
+				else if (new File(file).isDirectory()) {
 					if(FileUtils.sizeOfDirectory(new File(file)) <= 0){
 						return "The selected Folder " + file + " is empty . Hence, it is not added to the list";
 					}
@@ -417,20 +433,25 @@ public class TargetLocationsGroup {
 		return result;
 	}
 
-	private boolean checkExistensence(String[] path) {
-
+	private boolean checkExisting(String newNode) {
 		for (TreeParent node : locationPaths) {
-
-			for (String file : path) {
-				if (file.equals(node.getName())) {
+			if (newNode.equals(node.getName())) {
 					return true;
-				}
 			}
-
 		}
 		return false;
 	}
-
+	
+	private void processCorpusFiles(TreeParent corpusNode) {
+		ICorpus myCorpus = corporaManagement.readCorpusById(corpusNode.getName());
+		List<ICorpusClass> myCorpusClasses = myCorpus.getClasses();
+		for(ICorpusClass class_ : myCorpusClasses) {
+			String classNameOnGui = String.format("%s (%s)", class_.getClassName(), class_.getTacitLocation());
+			TreeParent classFolder = new TreeParent(classNameOnGui);
+			corpusNode.addChildren(classFolder);
+		}
+	}
+	
 	private void processSubFiles(TreeParent node) {
 		File[] files = new File(node.getName()).listFiles();
 		if(null == files || files.length == 0) return;

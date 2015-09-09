@@ -57,6 +57,7 @@ import edu.usc.cssl.tacit.classify.naivebayes.ui.internal.NaiveBayesClassifierVi
 import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class NaiveBayesClassifierView extends ViewPart implements
@@ -845,7 +846,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			TreeItem temp = tree.getItem(i);
 			if (temp.getChecked()) {
 				classPaths.put(temp.getData().toString(),
-						classLayoutData.getSelectedItems(temp));
+						TacitUtil.refineInput(classLayoutData.getSelectedItems(temp)));
 			}
 		}
 		// the final results will nbe in classPaths

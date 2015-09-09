@@ -44,6 +44,7 @@ import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 
 public class SVMView extends ViewPart implements ISVMViewConstants {
@@ -158,10 +159,10 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			public void run() {
 				if (!canProceed())
 					return;
-				final List<String> class1Files = class1LayoutData
-						.getSelectedFiles();
-				final List<String> class2Files = class2LayoutData
-						.getSelectedFiles();
+				final List<String> class1Files = TacitUtil.refineInput(class1LayoutData
+						.getSelectedFiles());
+				final List<String> class2Files = TacitUtil.refineInput(class2LayoutData
+						.getSelectedFiles());
 				final String class1NameStr = class1Name.getText();
 				final String class2NameStr = class2Name.getText();
 				final int kValueInt = Integer.parseInt(kValue.getText());
@@ -310,8 +311,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		form.getMessageManager().removeMessage("kValue");
 		form.getMessageManager().removeMessage("output");
 
-		List<String> class1Files = class1LayoutData.getSelectedFiles();
-		List<String> class2Files = class2LayoutData.getSelectedFiles();
+		List<String> class1Files = TacitUtil.refineInput(class1LayoutData.getSelectedFiles());
+		List<String> class2Files = TacitUtil.refineInput(class2LayoutData.getSelectedFiles());
 		boolean noProperFiles = true;
 
 		if (class1Files.size() < 1) {

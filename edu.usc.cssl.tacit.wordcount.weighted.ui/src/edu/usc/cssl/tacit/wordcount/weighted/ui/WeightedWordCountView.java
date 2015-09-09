@@ -50,6 +50,7 @@ import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.wordcount.weighted.ui.internal.IWeightedWordCountViewConstants;
 import edu.usc.cssl.tacit.wordcount.weighted.ui.internal.WeightedWordCountImageRegistry;
@@ -373,8 +374,8 @@ public class WeightedWordCountView extends ViewPart implements
 				final File sFile = new File(outputPath + File.separator
 						+ fileName + ".dat");
 
-				final List<String> inputFiles = inputLayoutData
-						.getSelectedFiles();
+				final List<String> inputFiles = TacitUtil.refineInput(inputLayoutData
+						.getSelectedFiles());
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles();
 				final boolean isLiwcStemming = liwcStemming.getSelection();

@@ -42,6 +42,7 @@ import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.wordcount.cooccurrence.services.CooccurrenceAnalysis;
@@ -250,8 +251,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				final List<String> selectedFiles = TacitUtil.refineInput(inputLayoutData
+						.getSelectedFiles());
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();

@@ -44,6 +44,7 @@ import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -210,7 +211,7 @@ public class KmeansClusterView extends ViewPart implements
 				final int noOfClusters = Integer
 						.valueOf(noClusterTxt.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = layData.getSelectedFiles();
+				final List<String> selectedFiles = TacitUtil.refineInput(layData.getSelectedFiles());
 				final String outputPath = layoutData.getOutputLabel().getText();
 				performCluster = new Job("Clustering...") {
 					@Override

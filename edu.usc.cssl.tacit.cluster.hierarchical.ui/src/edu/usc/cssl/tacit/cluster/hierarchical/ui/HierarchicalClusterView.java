@@ -46,6 +46,7 @@ import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -211,8 +212,8 @@ public class HierarchicalClusterView extends ViewPart implements
 						.writeInConsoleHeader("Hierarchical clustering started "
 								+ (df.format(dateObj)));
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = layoutData
-						.getSelectedFiles();
+				final List<String> selectedFiles = TacitUtil.refineInput(layoutData
+						.getSelectedFiles());
 				final String outputPath = layoutOutputData.getOutputLabel()
 						.getText();
 				final boolean isSaveImage = saveImage.getSelection();

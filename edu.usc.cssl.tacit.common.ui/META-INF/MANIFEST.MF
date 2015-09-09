@@ -19,6 +19,7 @@ Export-Package: edu.usc.cssl.tacit.common.ui,
  edu.usc.cssl.tacit.common.ui.corpusmanagement.internal,
  edu.usc.cssl.tacit.common.ui.corpusmanagement.services,
  edu.usc.cssl.tacit.common.ui.outputdata,
+ edu.usc.cssl.tacit.common.ui.utility,
  edu.usc.cssl.tacit.common.ui.validation,
  edu.usc.cssl.tacit.common.ui.views,
  org.apache.commons.io
