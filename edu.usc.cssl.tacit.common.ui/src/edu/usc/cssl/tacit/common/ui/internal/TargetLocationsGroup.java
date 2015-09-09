@@ -2,11 +2,16 @@ package edu.usc.cssl.tacit.common.ui.internal;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -17,6 +22,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +39,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class TargetLocationsGroup {
@@ -40,6 +48,7 @@ public class TargetLocationsGroup {
 	private CheckboxTreeViewer fTreeViewer;
 	private Button fAddButton;
 	private Button fAddFileButton;
+	private Button fAddCorpusButton;
 	private Button fRemoveButton;
 	private List<TreeParent> locationPaths;
 	@SuppressWarnings("unused")
@@ -58,10 +67,10 @@ public class TargetLocationsGroup {
 	 * @return generated instance of the table part
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent,
-			FormToolkit toolkit, boolean isFolder, boolean isFile) {
+			FormToolkit toolkit, boolean isFolder, boolean isFile, boolean isCorpus) {
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
-		contentTable.createFormContents(parent, toolkit, isFolder,isFile);
+		contentTable.createFormContents(parent, toolkit, isFolder, isFile, isCorpus);
 		return contentTable;
 	}
 
@@ -104,7 +113,7 @@ public class TargetLocationsGroup {
 	 * @param isFolder
 	 */
 	private void createFormContents(Composite parent, FormToolkit toolkit,
-			boolean isFolder, boolean isFile) {
+			boolean isFolder, boolean isFile, boolean isCorpus) {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
@@ -128,6 +137,12 @@ public class TargetLocationsGroup {
 					SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddFileButton);
+		}
+		if (isCorpus) {
+			fAddCorpusButton = toolkit.createButton(buttonComp, "Add Corpus...",
+					SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddCorpusButton);
 		}
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
@@ -250,6 +265,44 @@ public class TargetLocationsGroup {
 				}
 			});
 		}
+		
+		if (fAddCorpusButton != null) {
+			fAddCorpusButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final TacitElementSelectionDialog CorpusDialog = new TacitElementSelectionDialog(fAddCorpusButton.getShell());
+					CorpusDialog.setTitle("Select the Corpus from the list");
+					CorpusDialog.setMessage("Enter Corpus name to search");
+					final SortedSet<String> allCorpus = new TreeSet<String>();
+					Job getCorpus = new Job("Retrieving corpus list ...") {
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							allCorpus.clear();
+							try {
+								String[] corpusList = new ManageCorpora().getNames();
+								allCorpus.addAll(Arrays.asList(corpusList));							
+								Display.getDefault().asyncExec(new Runnable() {
+									@Override
+									public void run() {
+										CorpusDialog.refresh(allCorpus.toArray());
+									}
+								});
+							} catch (final Exception ex) { 	}
+							return Status.OK_STATUS;
+						}
+					};
+					getCorpus.schedule();
+					allCorpus.add("Loading...");
+					CorpusDialog.setElements(allCorpus.toArray());
+					CorpusDialog.setMultipleSelection(true);
+
+					if (CorpusDialog.open() == Window.OK) {
+						updateLocationTree(CorpusDialog.getSelections());					
+					}
+				}
+			});
+		}
+
 		if (fAddFileButton != null) {
 			fAddFileButton.addSelectionListener(new SelectionAdapter() {
 				@Override

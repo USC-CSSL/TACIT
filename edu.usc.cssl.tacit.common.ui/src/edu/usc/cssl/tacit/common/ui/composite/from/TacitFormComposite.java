@@ -265,7 +265,7 @@ public class TacitFormComposite {
 
 	public static TableLayoutData createTableSection(final Composite parent,
 			FormToolkit toolkit, GridLayout layout, String title,
-			String description, boolean isFolder, boolean isFile) {
+			String description, boolean isFolder, boolean isFile, boolean isCorpus) {
 		Section section = toolkit.createSection(parent, Section.TWISTIE
 				| Section.TITLE_BAR);
 		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
@@ -300,7 +300,7 @@ public class TacitFormComposite {
 		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 200)
 				.span(1, 1).applyTo(pluginTabContainer);
 		targetLocationContent = TargetLocationsGroup.createInForm(scInput,
-				toolkit, isFolder, isFile);
+				toolkit, isFolder, isFile, isCorpus);
 		Label dummyLb1 = toolkit.createLabel(scInput, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(dummyLb1);
