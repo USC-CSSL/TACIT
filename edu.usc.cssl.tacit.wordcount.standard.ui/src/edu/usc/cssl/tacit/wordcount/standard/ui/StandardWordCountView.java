@@ -24,7 +24,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -43,11 +42,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
@@ -71,9 +65,6 @@ public class StandardWordCountView extends ViewPart implements
 	private Button wordDistribution;
 	private Button createDATFile;
 	protected Job wordCountJob;
-	private List<String> inputList;
-	private String[] corpuraList;
-	private ManageCorpora manageCorpora;
 	
 	@Override
 	public Image getTitleImage() {
@@ -118,10 +109,10 @@ public class StandardWordCountView extends ViewPart implements
 		inputLayoutData = TacitFormComposite
 				.createTableSection(client, toolkit, layout, "Input",
 						"Add File(s) and Folder(s) to include in analysis.",
-						true, true);
+						true, true, true);
 		dictLayoutData = TacitFormComposite
 				.createTableSection(client, toolkit, layout, "Dictionary",
-						"Add location of Dictionary", false, true);
+						"Add location of Dictionary", false, true, false);
 
 		Composite compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
@@ -145,7 +136,7 @@ public class StandardWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 		
-		createCorpusSection(client1);
+		//createCorpusSection(client1);
 		TacitFormComposite.createEmptyRow(toolkit, form.getBody());
 		
 		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
@@ -444,23 +435,30 @@ public class StandardWordCountView extends ViewPart implements
 	
 	private void createCorpusSection(Composite client) {
 
-		Group group = new Group(client, SWT.SHADOW_IN);
+		/*Group group = new Group(client, SWT.SHADOW_IN);
 		group.setText("Input Type");
 
-		// group.setBackground(client.getBackground());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		group.setLayout(layout);
+		group.setLayout(layout);*/
 
-		final Button corpusEnabled = new Button(group, SWT.CHECK);
+		final Button corpusEnabled = new Button(client, SWT.CHECK);
 		corpusEnabled.setText("Use Corpus");
 		corpusEnabled.setBounds(10, 10, 10, 10);
 		corpusEnabled.pack();
-
-		// TacitFormComposite.createEmptyRow(toolkit, group);
-
-		final Composite sectionClient = new Composite(group, SWT.None);
+		
+		corpusEnabled.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (corpusEnabled.getSelection()) {
+					
+				} else {
+					
+				}
+			}
+		});
+		/*final Composite sectionClient = new Composite(group, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(sectionClient);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
@@ -526,6 +524,6 @@ public class StandardWordCountView extends ViewPart implements
 				inputLayoutData.refreshInternalTree(inputList);
 			}
 		});
-		TacitFormComposite.createEmptyRow(null, sectionClient);
-	}
+		TacitFormComposite.createEmptyRow(null, sectionClient);*/
+	} 
 }
