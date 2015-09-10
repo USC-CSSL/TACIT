@@ -50,7 +50,7 @@ public class RedditJsonHandler {
 				}
 				
 				for(String commentBody : postComments) {
-					bw.write(commentBody); // description
+					bw.write(commentBody); // comment body
 					bw.write("\n");					
 				}				
 				bw.close();
@@ -59,7 +59,6 @@ public class RedditJsonHandler {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return result;
 	}
 	
