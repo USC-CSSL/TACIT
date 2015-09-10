@@ -277,7 +277,7 @@ public class RedditPlugin {
 			                    data = ((JSONObject) data.get("data"));
 			                    linkComments.add(getSimplifiedCommentData(data));
 			                    count++;
-			                    if(count == limitComments) break breakCommentFetch;
+			                    if(count == this.limitComments) break breakCommentFetch;
 			                } else if (kind.equals(Kind.MORE.value())) {
 			                	// handle more comments
 			        	    	dataObject = (JSONObject) data.get("data");
@@ -287,7 +287,7 @@ public class RedditPlugin {
 			        	        	if(null != result)
 			        	        		linkComments.add(result);
 			        	        	count++;
-			        	        	if(count == limitComments) break breakCommentFetch;
+			        	        	if(count == this.limitComments) break breakCommentFetch;
 			        	        }
 			                }
 						}	
