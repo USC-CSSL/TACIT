@@ -48,7 +48,7 @@ public class ManageCorpora {
 			jsonObj.put("corpus_name", corpus.getCorpusId());
 			jsonObj.put("data_type", corpus.getDatatype().toString());
 			jsonObj.put("num_classes",
-					Integer.toString(corpus.getClasses().size()));
+					corpus.getClasses().size());
 
 			int numClasses = corpus.getClasses().size();
 			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus
@@ -66,7 +66,7 @@ public class ManageCorpora {
 			}
 
 			jsonObj.put("class_details", classArray);
-			jsonObj.put("num_analysis", "0");
+			jsonObj.put("num_analysis", 0);
 			JSONArray analysisArray = new JSONArray();
 			jsonObj.put("prev_analysis", analysisArray);
 
@@ -107,7 +107,7 @@ public class ManageCorpora {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("corpus_name", corpus.getCorpusId());
 			jsonObj.put("data_type", corpus.getDatatype().toString());
-			jsonObj.put("num_classes", Integer.toString(corpus.getClasses().size()));
+			jsonObj.put("num_classes", corpus.getClasses().size());
 
 			int numClasses = corpus.getClasses().size();
 			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus .getClasses();
@@ -136,6 +136,10 @@ public class ManageCorpora {
 			copyCorpus(jsonObj);
 		}
 
+	}
+	
+	public static void removeCorpus(Corpus corpusObj) {
+		
 	}
 
 	private static void copyCorpus(JSONObject jsonObj) {
