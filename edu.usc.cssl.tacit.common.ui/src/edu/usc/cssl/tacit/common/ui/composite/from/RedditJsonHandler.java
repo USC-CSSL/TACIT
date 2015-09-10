@@ -50,6 +50,7 @@ public class RedditJsonHandler {
 				}
 				
 				for(String commentBody : postComments) {
+					if(null == commentBody) continue;
 					bw.write(commentBody); // comment body
 					bw.write("\n");					
 				}				
