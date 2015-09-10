@@ -57,7 +57,9 @@ public class RedditJsonHandler {
 				bw.close();
 				result.add(file.getAbsolutePath());
 			}
-		} catch (Exception e) {
+		} catch(ClassCastException e) {
+			// ignore consolidated json file
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return result;
@@ -83,4 +85,10 @@ public class RedditJsonHandler {
 		if(null == post) return null;
 		return post.get("title").toString();
 	}
+	
+//	public static void main(String[] args) {
+//		RedditJsonHandler rh = new RedditJsonHandler();
+//		rh.retrieveRedditData("F:\\NLP\\TEMP_OUTPUT\\Reddit\\Reddit_new");
+//	}
+	
 }
