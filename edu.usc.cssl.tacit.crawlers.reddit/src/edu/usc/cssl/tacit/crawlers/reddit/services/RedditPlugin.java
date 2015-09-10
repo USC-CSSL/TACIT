@@ -215,9 +215,10 @@ public class RedditPlugin {
 		            String kind = safeJsonToString(data.get("kind"));
 					if (kind != null) {
 						if (kind.equals(Kind.LINK.value())) { // only links are saved, not comments, etc.
-		                    data = ((JSONObject) data.get("data"));		                    
-		                    resultData.add(getSimplifiedLinkData(data)); // add the simplified link data to resultant object array
-		                    saveLinkComments(data); // save the link comments
+		                    data = ((JSONObject) data.get("data"));	
+		                    JSONObject simplifiedLinkData = getSimplifiedLinkData(data);
+		                    resultData.add(simplifiedLinkData); // add the simplified link data to resultant object array
+		                    saveLinkComments(data, simplifiedLinkData); // save the link comments
 		                    count++;
 		                    monitor.worked(1);
 		                    if(this.limitLinks == count)  break breakEverything;
@@ -245,7 +246,7 @@ public class RedditPlugin {
      * 3. There are comments for comments, crawl only the top level comments
      */
 	@SuppressWarnings("unchecked")
-	private void saveLinkComments(JSONObject obj) throws IOException, URISyntaxException {
+	private void saveLinkComments(JSONObject obj, JSONObject linkData) throws IOException, URISyntaxException {
 		String permalink = String.valueOf(obj.get("permalink")); // direct link to comments
 		if(-1 != permalink.indexOf("?")) {
 			String temp[] = permalink.split("\\?");
@@ -296,11 +297,14 @@ public class RedditPlugin {
 			       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
 		    }
 		}
-		 
+		
+		JSONObject consolidatedData  = new JSONObject();
+		consolidatedData.put("post", linkData);
+		consolidatedData.put("comments", linkComments);
 		ConsoleView.printlInConsoleln("Writing "+ filePath);
     	FileWriter file = new FileWriter(filePath);
     	Writer writer = new JSONWriter(); 
-    	linkComments.writeJSONString(writer);
+    	consolidatedData.writeJSONString(writer);
 		file.write(writer.toString());
 		file.flush();
         file.close();
