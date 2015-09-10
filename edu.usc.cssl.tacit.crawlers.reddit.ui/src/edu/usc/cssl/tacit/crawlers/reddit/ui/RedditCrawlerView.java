@@ -74,7 +74,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	
 	String sortTypes[] = {"Relevance", "Top", "Hot", "New", "Comments"};
 	String trendTypes[] = {"Hot", "New", "Rising"};
-	String timeFrames[] = {"All", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
+	//String timeFrames[] = {"All", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
+	String timeFrames[] = {"All", "Day", "Hour", "Week", "Month", "Year"};
 	String labelDataTypes[] = {"Top", "Controversial"};
 
 	private Text subreddits;
