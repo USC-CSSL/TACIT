@@ -144,7 +144,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		final Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
 		
-		Button remove = toolkit.createButton(buttonComposite, "Remove Corpus/Class", SWT.PUSH);
+		Button remove = toolkit.createButton(buttonComposite, "Remove", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(remove);		
 		
 		section.setClient(client);
