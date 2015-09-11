@@ -53,17 +53,19 @@
 					</tr>
 					
 					<tr>					
-						<td> The Naive Bayes tool requires that data organization satisfies two criteria. First, every text
-						instance must be contained in its own file. Second, class labels must be represented by directories. That is, a directory must be created 
-						for each class label and all text files associated with a given label must be located in the relevant 
-						directory. <br> <br>
-						
-						Once the data is organized into separate text files contained in class directories, the class directories can be
-						added to the program by clicking the <b>Add Folder</b> button, which is located in the
-						<b>Class Details</b> panel. AFter selecting the desired folder, all subfiles within that folder will be added and automatically selected for inclusion. Depending
-						on whether the text files need to be preprocessed, the <b>Preprocess</b> option, also contained in the <b>Class Details</b> panel
-						can be selected.  <br> <br> 
-						
+						<td> All input data files must be saved as a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						 	<br><br>
+						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
+						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
+							<br><br> 
+							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
+							<br>
+							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
+							<br>
+							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
+ 							<br>
+						</td>
+						<td>
 						Notably, the naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
 						the data contained in the class directories is automatically split into training and test sets, following a 90% to 10% 
 						ratio, respectively. <br> <br> 

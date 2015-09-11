@@ -7,12 +7,12 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">TACIT LDA Tool</td>
+				<td class = "header">TACIT LDA Topic Modelling Tool</td>
 			</tr>
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Method Overview</td>
+						<td class = "head">Overview</td>
 					</tr>
 					<tr>
 						<td>TACIT’s <b>LDA plugin</b> allows you to explore the structure of topics within a set of documents and the relations between them. Researchers can adjusting the number of topics generated to focus the level of granularity, with smaller numbers of topics generating a few overarching themes to larger numbers of topics providing many tightly focused topics. Each topic is described by a distribution over the words in the vocabulary, allowing you to see which words are most associated with that topic and explore connections between them across the entire corpus. Additionally, each document is described by the mixture of topics which underlie it, providing a way to compare topic use across documents. 
@@ -23,11 +23,23 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Basic Tutorial: Using TACIT LDA Tool</td>
+						<td class = "head">Basic Tutorial: Using TACIT LDA Topic Modelling Tool</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Specifying Input Files for Analysis</td>
 					</tr>
+					<td> All input data files must be saved as a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						 	<br><br>
+						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
+						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
+							<br><br> 
+							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
+							<br>
+							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
+							<br>
+							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
+ 							<br>
+						</td>
 					<tr>
 						<td class = "subtitle">Additional Options</td>
 					</tr>
