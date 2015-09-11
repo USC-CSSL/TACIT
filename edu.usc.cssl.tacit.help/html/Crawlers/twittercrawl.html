@@ -49,33 +49,17 @@
 					</tr>
 					<tr>
 						<td>Twitter data can be crawled based on keywords (Word Filter) or locations (Geo Filter) of interest.
+						<td>The <b>Word Filter</b> allows you to crawl for tweets using a specific keyword or set of keywords. For multiple keywords, separate each word by entering a semicolon in between each word. 
+						<br><br>The <b>Geo Filter</b> lets you enter in a specific geolocation box (latitude and longitude) to crawl tweets that originate from a certain location. To determine the bounding box needed for your area of interest, you can use the tool available at http://boundingbox.klokantech.com/. Change the <b>Copy & Paste</b> option in the bottom panel drop down menu to CSV. You can then enter in the name of the city, state, or country you want to crawl or click and drag the selection box on the map to the desired location. The geo-coordiate box for that area will appear at the bottom of the page. Copy paste these numbers into the Geo Filter box in the TACIT tool. If you would like to crawl from multiple distinct locations, simply add the geo-coordiate box for each location into the tool separated by semi-colons.
 						</td>
 					</tr>
 					<tr>
-						<td class = "section">Word Filter</td>
+						<td class = "subtitle">Crawling Limits</td>
 					</tr>
 					<tr>
-						<td class = "section">Geo Filter</td>
-					</tr>
-					<tr>
-						<td>To determine the bounding box needed for your area of interest, you can use the tool available at http://boundingbox.klokantech.com/. Change the <b>Copy & Paste</b> option in the bottom panel drop down menu to CSV. You can then enter in the name of the city, state, or country you want to crawl or click and drag the selection box on the map to the desired location. The geo-coordiate box for that area will appear at the bottom of the page. Copy paste these numbers into the Geo Filter box in the TACIT tool. If you would like to crawl from multiple distinct locations, simply add the geo-coordiate box for each location into the tool separated by semi-colons.
-						</td>
-					</tr>
-					<tr>
-						<td class = "subtitle">Tweet Limits</td>
-					</tr>
-					<tr>
-						<td class = "section">Time Limit</td>
-					</tr>
-					<tr>
-						<td>For events that are infrequent or that you expect to unfold over a certain time frame, you can specify a length of time that the tool should continue to run and crawl data. TACIT will  collect tweets as long as the program remains running on your computer and you continue to be connected to the Internet.	
-						</td>
-					</tr>
-					<tr>
-						<td class = "section">Maximum Limit</td>
-					</tr>
-					<tr>
-						<td>The Twitter crawler is automatically set to download 10 total tweets per request. This option can be changed to any number of tweets you are interested in collecting. The tool will continue to run until the number is reached.	
+						<td>The <b>Time Limit</b> lets you specify a length of time that the tool should continue to run and crawl data for events that are infrequent or that you expect to unfold over a certain time frame. TACIT will collect tweets as long as the program remains running on your computer and you continue to be connected to the Internet.	
+							<br><br>
+							The <b>Maximum Limit</b> section limits the number of tweets to crawl. The Twitter crawler is automatically set to download 10 total tweets per request. This option can be changed to any number of tweets you are interested in collecting. The tool will continue to run until the number is reached.	
 						</td>
 					</tr>
 					<tr>
@@ -110,7 +94,7 @@
 						<td class = "subtitle">Understanding Twitter Crawler Output</td>
 					</tr>
 					<tr>
-						<td> Describe data output files.
+						<td> Crawl data is saved in JSON format which is automatically stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a>.
 						</td>
 					</tr>					
 				</table>

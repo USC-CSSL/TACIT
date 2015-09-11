@@ -27,12 +27,60 @@
 						<td class = "head">Basic Tutorial: Collecting data using the Reddit Crawler</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Selecting Reddit Data</td>
-					</tr>
-					<tr>
-						<td>Description
+						<td> The <b>Crawl</b> panel provides three Reddit webpage stream options to focus your data collection.
+							Selecting the <b>Search</b> option will allow you to search <a href = "https://www.reddit.com/search" target="_blank">the entire Reddit website</a> for posts that fit user-specified criteria such as keywords, titles, website names, authors, and subreddits.
+							Selecting the <b>Trending Data</b> option will focus the crawl on the <a href = "https://www.reddit.com/" target="_blank">Hot</a>, <a href = "https://www.reddit.com/new/" target="_blank">New</a>, and <a href = "https://www.reddit.com/rising/" target="_blank">Rising</a> pages for information on new and upcoming Reddit topics.
+							Selecting the <b>Top/Controversial</b> option will focus the crawl on the <a href = "https://www.reddit.com/top/" target="_blank">Top</a> and <a href = "https://www.reddit.com/controversial/" target="_blank">Controversial</a> pages for individuals interested in the topics with the most conflicted opinions (same number of up and down votes) or the highest scoring posts.
 						</td>
 					</tr>
+					<tr>
+						<td class = "subtitle">Selecting Input Parameters</td>
+					</tr>
+					<tr>
+						<td> The<b> Text</b>input box allows you to specify a keyword/keywords you would like to search
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Selecting the Trending Data Reddit Stream for Data Collection</td>
+					</tr>
+						<tr>
+							<td class = "section">Selecting the Stream Type to Crawl</td>
+						</tr>
+						<tr> 
+							<td>The <b>Select Stream</b> panel provides the option crawl data from either the Top Reddit Stream or the Controversial Reddit Stream.
+						  		The <a href = "https://www.reddit.com/top/" target="_blank">Top Reddit Stream</a> is a listing of the highest scoring submissions (posts) to Reddit, and comments on submissions, regardless of their age.
+						  		The <a href = "https://www.reddit.com/controversial/" target="_blank">Controversial page</a> is a list of Reddit submissions (posts) that the community has given an equal amount of upvotes and downvotes.
+						  	</td>
+						</tr>
+						<tr>
+							<td class = "section">Crawling Limits</td>
+						</tr>
+						<tr> 
+							<td> The crawler defaults to limiting the amount of data collected to 10 links (posts) and 200 comments per link.  Changing the numbers in the <b> Limit Links Per Request</b> and <b>Limit Comments Per Link</b> text boxes will allow you to change these default numbers. Note: Both links per request and comments per link must be specified in order for the crawler to work, due to the vast size of Reddit.
+							</td>
+						</tr>
+					<tr>
+						<td class = "subtitle">Selecting the Top/Controversial Reddit Stream for Data Collection</td>
+					</tr>
+						<tr>
+							<td class = "section">Selecting the Stream Type to Crawl</td>
+						</tr>
+						<tr> 
+							<td>The <b>Select Stream</b> panel provides the option to crawl data from either the Hot Stream, New Stream, or Rising Stream.
+						  		The <a href = "https://www.reddit.com/" target="_blank">Hot page</a> crawls the posts considered "hot" at that moment, which signifies the new posts with the highest rating (combining the "top" and "new" streams).
+						  		The <a href = "https://www.reddit.com/new/" target="_blank">New Stream</a> crawls the most recent Reddit posts first, regardless of their other attributes.
+						  		The <a href = "https://www.reddit.com/rising/" target="_blank">Rising Stream</a> crawls the posts that are getting the most upvotes per minute at that moment. 
+						  	</td>
+						</tr>
+						<tr>
+							<td class = "section">Crawling Limits</td>
+						</tr>
+						<tr> 
+							<td> The <b>Time Frame</b>drop down menu allows you to specify the time frame that you would like to receive data for (All posts regardless of time frame, past hour, 24 hours, week, month, or year).
+							The crawler defaults to limiting the amount of data collected to 10 links (posts) and 200 comments per link.  
+							Changing the numbers in the <b> Limit Links Per Request</b> and <b>Limit Comments Per Link</b> text boxes will allow you to change these default numbers. Note: Both links per request and comments per link must be specified in order for the crawler to work, due to the vast size of Reddit.
+							</td>
+						</tr>
 					<tr>
 						<td class = "subtitle">Specifying Output Folder</td>
 					</tr>
@@ -45,7 +93,7 @@
 						<td class = "subtitle">Understanding Reddit Crawler Output</td>
 					</tr>
 					<tr>
-						<td> Describe data output files.
+						<td> Crawl data is saved in JSON format which is automatically stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a>.
 						</td>
 					</tr>					
 				</table>
