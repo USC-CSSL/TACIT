@@ -13,11 +13,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		super(configurer);
 	}
 
+	@Override
 	public ActionBarAdvisor createActionBarAdvisor(
 			IActionBarConfigurer configurer) {
 		return new ApplicationActionBarAdvisor(configurer);
 	}
 
+	@Override
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		configurer.setShowCoolBar(true);
@@ -30,6 +32,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		if (!(new File(tempDir).exists())){
 			new File(tempDir).mkdir();
 		}
+		
+		tempDir = System.getProperty("user.dir")+System.getProperty("file.separator")+"tacit_temp_files";
+		
+		if (!(new File(tempDir).exists())){
+			new File(tempDir).mkdir();
+		}		
+		
 	}
 	
 	@Override

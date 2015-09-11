@@ -169,6 +169,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		});
 		corpuses.setContentProvider(new MasterContentProvider());
 		corpuses.setLabelProvider(new MasterLabelProvider());
+		for(ICorpus corpus : corpusList) // set the viewer for the old corpuses loaded form disk
+			corpus.setViewer(corpuses);
 		corpuses.setInput(corpusList);
 		
 		addCorpora.addSelectionListener(new SelectionAdapter() {

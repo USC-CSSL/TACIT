@@ -106,7 +106,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateData();
-				if(null != selectedCorpus) selectedCorpus.getViewer().refresh(); //code has a circular dependancy issue. need to fix the design.
+				if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
 				ManageCorpora.saveCorpus(selectedCorpus); 
 			}
 		});	
