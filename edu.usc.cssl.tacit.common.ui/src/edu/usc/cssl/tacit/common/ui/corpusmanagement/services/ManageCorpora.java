@@ -191,7 +191,8 @@ public class ManageCorpora {
 				if(null == jsonObject) continue;
 				corpora.setCorpusId((String) jsonObject.get("corpus_name"));
 				corpora.setDataType(DataType.get((String)jsonObject.get("data_type")));
-				if(Integer.parseInt((String) jsonObject.get("num_classes"))>0) 
+				long numClasses = (Long) jsonObject.get("num_classes");
+				if(numClasses>0) 
 					parseClassDetails(corpora, (JSONArray) jsonObject.get("class_details"));
 				corpuses.add(corpora);
 			} 
