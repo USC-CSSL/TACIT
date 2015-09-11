@@ -22,17 +22,22 @@ public class TwitterReadJsonData {
 	DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 	Date dateobj = new Date();
 
-	public List<String> retrieveTwitterData(String location) {
-		List<String> result = new ArrayList<String>();
+	public String retrieveTwitterData(String location) {
 		/*** read from file ***/
+		String path = null;
 		JSONParser jParser;
 		try {
 
 			jParser = new JSONParser();
 
 			// loop until token equal to "}"
-
-			String path = new File(location) + File.separator + "twitter_";
+			dateobj = new Date();
+			 path = new File(System.getProperty("user.dir")
+					+ System.getProperty("file.separator") + "tacit_temp_files")
+					+ System.getProperty("file.separator")
+					+ "twitter_"
+					+ df.format(dateobj);
+			new File(path).mkdir();
 			File[] fileList = new File(location).listFiles();
 			for (int i = 0; i < fileList.length; i++) {
 				String fileName = fileList[i].getAbsolutePath();
@@ -43,17 +48,17 @@ public class TwitterReadJsonData {
 				for (Object obj : objects) {
 					JSONObject twitterStream = (JSONObject) obj;
 					dateobj = new Date();
-					File file = new File(path + df.format(dateobj));
+					File file = new File(path + File.separator+"twitter_" + df.format(dateobj));
 					if (file.exists()) {
 						file.delete();
 					}
-					file.createNewFile();
+					
 
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
 					bw.write(twitterStream.get("Text").toString());
 					bw.close();
-					result.add(file.getAbsolutePath());
+					
 
 				}
 			}
@@ -68,7 +73,7 @@ public class TwitterReadJsonData {
 			e.printStackTrace();
 		}
 
-		return result;
+		return path;
 	}
 
 }

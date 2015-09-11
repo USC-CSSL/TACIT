@@ -11,6 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,7 +25,8 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 
 public class ManageCorpora {
-
+	private static boolean stop;
+	private static String printDot = ".";
 	static String rootDir = System.getProperty("user.dir")
 			+ System.getProperty("file.separator") + "tacit_corpora"
 			+ System.getProperty("file.separator");
@@ -143,7 +149,7 @@ public class ManageCorpora {
 	}
 
 	private static void copyCorpus(JSONObject jsonObj) {
-		int numClasses = Integer.parseInt((String) jsonObj.get("num_classes"));
+		int numClasses = ((Integer) jsonObj.get("num_classes"));
 		JSONArray classArray = (JSONArray) jsonObj.get("class_details");
 
 		for (int i = 0; i < numClasses; i++) {
@@ -156,8 +162,38 @@ public class ManageCorpora {
 				new File(tacitLoc).mkdir();
 
 				try {
+					final Job pr = new Job("run") {
+						
+						
+
+						@Override
+						protected IStatus run(IProgressMonitor arg0) {
+							int i = 0;
+							arg0.beginTask("Crawling Twitter ...",
+									100);
+							while(stop){
+								if(i==0){
+									printDot = "";
+									i++;
+								}
+								else{
+									printDot = ".";
+									i++;
+									if(i == 10000){
+										i = 0;
+									}
+								}
+							arg0.setTaskName(printDot);
+
+							}
+							
+							return Status.OK_STATUS;
+						}
+					};
+					pr.schedule();
 					FileUtils.copyDirectory(new File(originalLoc), new File(
 							tacitLoc));
+					stop = false;
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -242,4 +278,27 @@ public class ManageCorpora {
 		}
 		return null;
 	}
+	
+	public DataType getCorpusDataType(String location){
+		
+		String metaDataFilePath = new File(location).getParent() + File.separator + "meta.txt";
+		FileReader metaDataFile;
+		try {
+			metaDataFile = new FileReader(metaDataFilePath);  // get the meta data file
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+		if(null == metaDataFile) return null; // if there is no metadata file inside the folder
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject;
+		try {
+			jsonObject = (JSONObject) jsonParser.parse(metaDataFile);
+			return DataType.get((String)jsonObject.get("data_type"));
+		} catch (Exception e) { // if there is a parsing issue, just ignore this corpus and look for next
+			return null;
+		}
+		
+	}
+	
+	
  }
