@@ -37,9 +37,39 @@
 						<td class = "subtitle">Selecting Input Parameters</td>
 					</tr>
 					<tr>
-						<td> The<b> Text</b>input box allows you to specify a keyword/keywords you would like to search
+						<td> The<b> Text</b>input box allows you to specify a keyword/keywords you would like to base your search on. The crawler will return posts that include the keyword. Note: Reddit does not allow comments to be included as searchable text at this time. 
+							<br><br>
+							The <b> Subreddit</b> input box lets you specify specific subreddit threads to which you would like to limit your search. 
+							<br><br>
+							The <b>Sort Links By</b> drop down menu will allow you to collect data that matches your keyword(s) based on the following order: 
+							<br> the <b>Relevance</b> of the post,
+							<br> the <b>Top</b> posts (overall posts with the highest rating),
+							<br> the <b>Hot</b> posts (the new posts with the highest rating),
+							<br> the <b>New</b> posts that have been posted most recently,
+							<br> or the posts with the most <b>Comments</b>. 
 						</td>
 					</tr>
+					<tr>
+							<td class = "section">Crawler Filters</td>
+						</tr>
+						<tr> 
+							<td> You can further tailor and filter your crawling results using the following options:
+								<br>
+								<b>Title Keyword:</b> search for your keyword within posts that include a separate, specific keyword.
+								<b>Site:</b> search for your keyword within posts that metion a specific website url. 
+								<b>Author</b> search for your keyword within posts by a specific author.
+								<b>Link ID:</b> search for your keyword within posts that reference a specific Reddit page link ID.
+							</td>
+						</tr>
+						<tr>
+							<td class = "section">Crawler Limits</td>
+						</tr>
+						<tr> 
+							<td> The <b>Time Frame</b>drop down menu allows you to specify the time frame that you would like to receive data for (All posts regardless of time frame, past hour, 24 hours, week, month, or year).
+							The crawler defaults to limiting the amount of data collected to 10 links (posts) and 200 comments per link.  
+							Changing the numbers in the <b> Limit Links Per Request</b> and <b>Limit Comments Per Link</b> text boxes will allow you to change these default numbers. Note: Both links per request and comments per link must be specified in order for the crawler to work, due to the vast size of Reddit.
+							</td>
+						</tr>
 					<tr>
 						<td class = "subtitle">Selecting the Trending Data Reddit Stream for Data Collection</td>
 					</tr>
@@ -53,7 +83,7 @@
 						  	</td>
 						</tr>
 						<tr>
-							<td class = "section">Crawling Limits</td>
+							<td class = "section">Crawler Limits</td>
 						</tr>
 						<tr> 
 							<td> The crawler defaults to limiting the amount of data collected to 10 links (posts) and 200 comments per link.  Changing the numbers in the <b> Limit Links Per Request</b> and <b>Limit Comments Per Link</b> text boxes will allow you to change these default numbers. Note: Both links per request and comments per link must be specified in order for the crawler to work, due to the vast size of Reddit.
@@ -73,7 +103,7 @@
 						  	</td>
 						</tr>
 						<tr>
-							<td class = "section">Crawling Limits</td>
+							<td class = "section">Crawler Limits</td>
 						</tr>
 						<tr> 
 							<td> The <b>Time Frame</b>drop down menu allows you to specify the time frame that you would like to receive data for (All posts regardless of time frame, past hour, 24 hours, week, month, or year).
@@ -93,7 +123,7 @@
 						<td class = "subtitle">Understanding Reddit Crawler Output</td>
 					</tr>
 					<tr>
-						<td> Crawl data is saved in JSON format which is automatically stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a>.
+						<td> Crawl data is saved in a single .JSON format file in the specified output folder with the file name Reddit_Crawl_[date/time]. This file is automatically stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a>. This format allows the program to store metadata about each post crawled that can be used in the analysis plugins to select groups based on their properties for more focused analysis or sort data into groups (or classes) for comparison. 
 						</td>
 					</tr>					
 				</table>
