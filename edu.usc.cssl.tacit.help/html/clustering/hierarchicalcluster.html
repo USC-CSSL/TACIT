@@ -15,7 +15,13 @@
 						<td class = "head">Method Overview</td>
 					</tr>
 					<tr>
-						<td><b>Hierarchical clustering</b> (Johnson, 1967) by comparison does not require a prespecified number of clusters. Instead, this technique identifies the optimal number of clusters by starting with the assumption that all data points (in this case documents) belong to one cluster. The algorithm then splits this root cluster into smaller child clusters based on the degree of similarity between the documents. These child clusters are recursively divided further until only singleton clusters remain. which have the longest distance. Besides providing a csv file with membership information, TACIT also provides the option to visualize the clusters in a dendrogram which presents an overview of hierarchies of clusters.
+						<td><b>Hierarchical clustering</b> (Johnson, 1967) refers to a subset of algorithms that identify the optimal
+						number of clusters in a dataset by starting with the assumption that all data points (in this case documents)
+						belong to one cluster. The algorithm then splits this root cluster into smaller child 
+						clusters based on the degree of similarity between the documents. These child clusters 
+						are recursively divided further until only singleton clusters remain. Besides providing a .txt file with cluster
+						membership information, TACIT also provides the option to visualize the clusters in a dendrogram,
+						which presents an hierarchical view of the clusters and their relations. 
 						</td>
 					</tr>
 				</table>
@@ -25,33 +31,48 @@
 					<tr>
 						<td class = "head">Basic Tutorial: Using TACIT Hierarchical Clustering Tool</td>
 					</tr>
+					
+					<tr>
+						<td>
+							The Hierarchical Clustering Tool can be used to identify clusters of related documents within
+							a corpus. Identifying clusters is useful for understanding relationships between documents and
+							can also serve as an intermediary step in a sequence of analyses. 
+						</td>
+					</tr>
+					
 					<tr>
 						<td class = "subtitle">Specifying Input Files for Analysis</td>
 					</tr>
-						<td> All input data files must be saved as a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
-						 	<br><br>
-						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
-						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
-							<br><br> 
-							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
-							<br>
-							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
-							<br>
-							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
- 							<br>
+					
+					<tr>
+						<td>
+							The Hierarchical Clustering Tool requires that each document be stored in a separate file. Each document 
+							that should be included in an analysis must be specified using either the <b>Add File(s)...</b> button or 
+							the <b>Add Folder</b> button, which are located in the <b>Input Details</b> section of the Hierarchical
+							Clustering Tool. Note that if the <b>Add Folder</b>option is used, all files located in the specified directory 
+							will be included in the analysis. 
+						
+							
 						</td>
+					</tr>
+					
 					<tr>
 						<td class = "subtitle">Additional Options</td>
 					</tr>
 					<tr>
-						<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> Dendogram
+						<td> The Hierarchical Clustering Tool offers to optional parameters <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> and 
+						automatic Dendogram visualization. To implement either of these options, select their adjacent check-boxes prior to analysis. 
 						</td>
 					</tr>		
 					<tr>
 						<td class = "subtitle">Specifying Output Path</td>
 					</tr>
 					<tr>
-					<td>To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool.
+					<td>To specify an output folder where the output from an analysis will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. 
+					If you create a new folder within this menu and change its name from "New Folder", click on any other 
+					folder and then click back on your newly created & renamed folder to select it. After specifying all parameters,
+					 click the <b>green and white play button</b> located in the top right corner of the window to run the program. 
+					 Output information will display in the console panel at the bottom of the tool.
 					<br><br>
 					</td>
 				</tr>			
@@ -59,8 +80,63 @@
 						<td class = "subtitle">Understanding Hierarchical Clustering Output</td>
 					</tr>
 					<tr>
-						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
-
+						<td>The Hierarchical Clustering Tool automatically generates two output files, a run report and the cluster structure. 
+						If the dendogram visualization option was activated, a dendogram will also generated. 
+						The file names include the type of technique used for analysis and the time stamp for when the analysis was completed. 
+						<br><br>
+						The cluster structure report, which is generated as a .txt file, specifies the hierarchical structure of the cluster and the 
+						degree of difference between the cluster's leaves and nodes. In TACIT's implementation of hierarchical clustering, each document
+						is represented as a tf-idf vector and the difference between documents is measured by calculating the Euclidian distance between 
+						their vectors. 
+						<br><br>
+						In the cluster structure report, each document is assigned an ID that ranges from 1 through <i>N</i> where
+						<i>N</i> equals the number of documents included in the analysis. The structure of the clusters is then represented in a parenthetical
+						list format called a Newick tree. 
+						<br><br>
+						In addition to specifying the hierarchical structure, the Newick tree also lists the distance measure for each 
+						component of the cluster. The Newick tree refers to each document using the document's assigned ID number. Each document ID is followed
+						by a colon and the distance of the document from the document or cluster of documents contained in the same parenthetical area. 
+						<br><br>
+						Thus, the Newick tree <b>(1:5.6,2:5.6)</b> shows that the Euclidian distance between documents 1 and 2 is 5.6. 
+						The Newick tree also shows the distance between sub-clusters of documents (nodes) and documents. For example, 
+						<b>(1:3.0,2:3.0):1.0,3:4.0)</b> indicates that documents 1 and 2 have a distance of 3.0 and the distance between the (1,2) node and document 3
+						equals 4.0 (note, this distance is listed after document 3 <i>and</i> it can be arrived at by adding the distance between documents 1 and 2
+						and the distance measure listed after the (1,2) node). 
+						
+						<br><br>
+						
+						For another example, consider the following structure, which is the same as that shown in Image 1: <br><br>
+						((1:19.10497,((2:18.27567,3:18.27567):0.77689,4:19.05256):0.05241):1.06927,5:20.17424) <br><br>
+						The innermost parenthetical structure contains documents 1 and 2 and their distance is 18.27567. The next level 
+						shows that document 4 is the closest to the (2,3) node and that the distance between document 4 and the (2,3) node
+						is 19.05256. The next level shows that document 1 is the closest to the (2,3,4) node and that the distance between 
+						document 4 and the (2,3,4) node is 19.10497. The final level contains document 5 and shows the distance between document 5
+						and the node containing the other documents; the distance is 20.17424.
+						
+						
+							<br>
+							<br>
+							<i>Image 1. Example Hierarchical Cluster Analysis Output</i>
+							<img class="image" src="HCAOut.png" 
+							alt="Hierarchical Output Example" height="81" width="576" align="left">
+							<br>
+							<br>
+							<br>
+							<br>
+							<br>
+							<br>
+							<br>
+					
+						The dendogram that TACIT can generate is a visualization of the cluster calculated by the Hierarchical Clustering 
+						Tool (Image 2). The height of each branch is determined by the Euclidian distance measure associated with the branch
+						in the cluster structure report. Image 2 shows the dendogram generated from the report shown in Image 1. 
+							
+							<br>
+							<br>
+							<i>Image 2. Example Dendogram</i><br>
+							<img class="image" src="HCADendogram.jpeg" 
+							alt="Dendogram Example"  height="200" width="300" align="left">
+							<br>
 						</td>
 					</tr>					
 				</table>
