@@ -169,9 +169,10 @@
                relative="org.eclipse.ui.editorss"
                visible="false">
          </view>
+         
           <view
                 id="edu.usc.cssl.tacit.common.ui.corpusmanagement.view1"
-                minimized="false"
+                minimized="true"
                 relationship="stack"
                 relative="org.eclipse.ui.editorss"
                 visible="false">

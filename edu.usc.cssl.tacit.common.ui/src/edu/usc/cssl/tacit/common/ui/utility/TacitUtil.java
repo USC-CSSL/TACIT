@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
@@ -28,9 +28,7 @@ public class TacitUtil {
 					input = new TwitterReadJsonData()
 							.retrieveTwitterData(corpusClassPath);
 				else if (corpusType.equals(DataType.REDDIT_JSON))
-					continue;
-				// input = new
-				// RedditReadJsonData().retrieveRedditData(corpusClassPath);
+				input = new RedditJsonHandler().retrieveRedditData(corpusClassPath);
 			}
 			File inputFile = new File(input);
 			if (!inputFile.exists())
