@@ -16,21 +16,15 @@
 					</tr>
 					<tr>
 					
-						<td>Naive Bayes methods are a family of supervised learning algorithms that are used to classify text files according 
-						to a user-determined set of class types. Naive Bayes classification is accomplished by applying Bayes theorem with the strong assumption
-						that dependent features (i.e. dependent variables) are statistically independent. While this assumption
-						is often violated, it permits naive Bayes algorithms to work quickly and efficiently, which often yields benefits 
-						that outweigh the costs of the independence assumption. 
-						To implement a naive Bayes algorithm, the only definite requirement is that class labeled data instances are available for 
-						algorithm training and testing. If this condition is satisfied, implementation is executed through three steps:  <br> <br>
-			
-						<b>1.</b> Splitting labeled data into training and test data sets <br>
-						<b>2.</b> Training the algorithm on the training data <br>
-						<b>3.</b> Estimating the trained algorithm's error rate by testing it on the test data set <br> <br>
-						
-						If a project step also includes classifying unlabeled data instances, a fourth step is required: <br> <br>
-						<b>4.</b> Using the trained algorithm to probabilistically assign a class to a set of unlabeled data instances. 
-													
+						<td>Naive Bayes classification is a supervised learning algorithm that is used to assess the uniqueness of text files belonging to user-determined set of two or more distinct groups (called classes, e.g., Democrats, Republicans, and Independents). This tool can also predict the classes of documents that have not yet been sorted into a group. 
+						After using the naive Bayes plugin to label unclassified data, users can conduct further analyses on the automatically classified dataset.
+						<br><br>Naive Bayes classification is accomplished by applying Bayes theorem, which (like Word Count techniques) assumes that all language features (i.e. single words, punctuation, etc) are independent from one another. While this assumption is often incorrect (e.g., the words "fried" and "chicken" mean something different when they are put together as "fried chicken"), it permits the algorithm to work quickly and efficiently, which often yields benefits 
+						that outweigh the costs of the independence assumption. Classification is accomplished through three steps. First, the researcher organizes and labels documents according to the groups they are interested in assessing and then splits the dataset into a training subset and testing subset. The classifier uses the training subset of data to determine features (i.e., words) that distinguish the groups from each other. 
+						The classifier then uses this information to test how accurately the trained algorithm can predict group membership for the remaining labeled documents in the test subset. Finally, if the trained classifier is sufficiently accurate, the algorithm can be used to predict which group (or class) any remaining unsorted documents belong in. 
+						<br><br>
+						To implement a naive Bayes algorithm, the only definite requirement is that the documents be pre-sorted into the groups the user is interested in comparing.	
+						During the training process, the algorithm extracts features from training texts that are predictive of class association. 
+						The extraction of these features is both automatic and optimized, so it is not necessary to specify the number features to be extracted. 								
 						</td>
 					</tr>
 				</table>
@@ -39,137 +33,68 @@
 				<table class = "contents">
 					
 					<tr>
-						<td class = "head">Basic Tutorial: Using the Naive Bayes Tool</td>
+						<td class = "head">Basic Tutorial: Using the Naive Bayes Classification Tool</td>
 					</tr>
-					
 					<tr>
-						<td> The Naive Bayes tool can be used to learn probabilistic associations between text instances and class labels. 
-							 During the training process, the algorithm extracts features from training texts that are predictive of class association.
-							 The extraction of these features is both automatic and optimized, so it is not necessary to specify the number features 
-							 to be extracted. 
-					
-					<tr>
-						<td class = "section">Specifying Input Text for Analysis</td>
+						<td class = "subtitle">Specifying Input Files for Analysis</td>
 					</tr>
 					
 					<tr>					
-						<td> All input data files must be saved as a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						<td> All input data files must be saved as corpus classes (subgroups) within a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or as .txt files within separate folders to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats. 
+							Notably, the naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
+							the data contained in the class directories is automatically split into training and test sets, following a 90% to 10% 
+							ratio, respectively. 
 						 	<br><br>
-						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
-						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
+						 	To specify which classes/groups you would like to compare in analysis, select <b>Add Corpus</b> or <b>Add Folder</b> under the <b>Input Details</b> panel. All corpora and folders added to the Input Details panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
 							<br><br> 
-							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
+							<b> Add Corpus: </b> The Add Corpus button will allow you to add a group/class from a corpus stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b>.
 							<br>
-							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
-							<br>
-							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
- 							<br>
-						</td>
-						<td>
-						Notably, the naive Bayes tool does not require that data be split into training and test sets. When the algorithm is run, 
-						the data contained in the class directories is automatically split into training and test sets, following a 90% to 10% 
-						ratio, respectively. <br> <br> 
-						
-						In order to use a trained algorithm to classify unlabeled data, it is also necessary to organize the unlabeled data.
-						Each instance must be contained in a separate file and all files must be stored in a single directory. The <b>classify 
-						data</b> option must then be selected and the directory that contains the unlabeled data must be specified as the 
-						<b>Classification Input Path</b>. Both of these fields are located in the <b>Classification</b> area of the naive Bayes window
-						in TACIT.<br><br>
-						
-						<td>
-						
-					</tr>
-					
-
-					<tr>
-						<td class = "section">Specify k-value for cross validation  </td>
-					</tr>
-					
-					<tr>
-						<td> In order to estimate the accuracy of the classifier, thes naive Bayes module uses k-fold validation. K-fold validation 
-						randomly splits a data set into k equal sized subsamples. One of these subsamples is then randomly selected as the test set and
-						the algorithm is trained on the remaining k-1 samples. This process is then repeated k-times (the folds) so that each subsample 
-						is used once as the test set. The error rates obtained from each fold are then averaged to estimate the actual error rate.  
-						Any number up to the total sample size can be specified as the k-value; however, k=10 is one of the most commonly used values. 
-						<br> <br> 
-						
-						To specify the k value, enter the desired value in the <b>k value for cross validation</b> field, which is located in the <b>Input Parameters</b>
-						field within the TACIT naive Bayes module window. 
-						
-					</tr>
-					
-					<tr>
-						<td class = "section">Output and implementation  </td>
+							<b> Add Folder: </b> The Add Folder button will allow you to add a folder as a subgroup for analysis.  
+							<br><br>
+						</td>	
 					</tr>
 					<tr>
-					<td>To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool.
-					<br><br>
-					</td>
-				</tr>	
-					<tr>
-						<td> 
-						If unlabeled data classification is desired, an output path must be specified. After the algorithm runs, a .csv file with the classification
-						data will be generated. This file will contain a row for every unlabeled data instance and row will contain the filename of that row's instance,
-						the assigned class, and other relevant information. <br> <br>
-						
-						After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
-						standard error will be displayed in the console panel at the bottom of the tool. 
-						</td>
-					</tr>
-						
-					<tr>
-						<td class = "section">Summary of steps  </td>
+						<td class = "section">Additional Input Options</td>
 					</tr>
 					<tr>
-						<td>
-						<b>1.</b> Store each text instance in its own text file<br>
-						<b>2.</b> Create a directory for each class and store the data instance files created in step one in the appropriate directory<br>
-						<b>3.</b> Select all relevant class directories within the naive Bayes window using the <b>Add Folder</b> button<br>
-						<b>4.</b> If preprocessing is desired, select <b>Preprocess</b> and specify the required parameters<br>
-						<b>5.</b> If unlabeled data classification is desired, store each unlabeled data instance in an individual file, place the 
-						files in a single directory, and specify this directory as the <b>Classifcation input path</b> using the <b>Browse</b> button <br>
-						<b>6.</b> Specify the desired number of folds for k-fold validation<br>
-						<b>7.</b> If unlabeled data classification is desired, specify the output path in which the classification .csv should be stored
+						<td><b><a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a></b>: The Preprocess check box allows users to apply a variety of data cleaning techniques to the input data before analysis. Click on the hyperlink in order to specify which cleaning processes you would like to apply (i.e., Stop Word Removal, Delimiters, Porter Stemming, Capitalization).
+							<br><br>
+							<b> Selecting the <b>Classify Unlabeled Data</b> option will allow you to automatically sort documents that have not yet been assigned a group into the groups you have provided in the input details section. To specify a folder/corpus class containing the files to be sorted, click the <b>Add Folder</b> or <b>Add Corpus Class</b> buttons next to the <b>Classify Input Path</b> box.
 						</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Understanding Naive Bayes Output</td>
-					</tr>
-					
-						<tr>
-						<td class = "section">Training and test output </td>
+						<td class = "subtitle">Specify Output Details</td>
 					</tr>
 					<tr>
-					<td> 
-						When TACIT's naive Bayes module is implemented performance statistics for each k-fold validation will be output in the Console window. 
-						The average test accuracy (averaged across k-folds), as well as its standard deviation and standard error, will also be output in the Console window.
-						These statistics should be used to evaluate the performance of the algorithm on the data provided. <br><br>
-						
-						Each time the module is implemented a log file will be created in the directory that contains the class directories. 
-						This file will be titled "Naive_Baye's-run-report-Date-Time.txt" and it will contain the TACIT version number and the date 
-						and time. 
-						
-						Naive-Bayes's-run-report-07-29-15-10-44-46.txt
-					</td>
-					</tr>		
-					
-					<tr>
-						<td class = "section">Classification output</td>
+						<td> <b>K-value for Cross Validation: K-fold validation determines the accuracy of the classifier at sorting the texts into groups based on the features it has identified. The number entered in this text box specifies
+							the number of equal-sized randomly generated subsamples the text should be split into. One of these subsamples is then randomly selected as the test set for feature identification and
+							the algorithm is trained on the remaining samples. This process is then repeated k-times (the folds) so that each subsample 
+							is used once as the test set. The error rates obtained from each fold are then averaged to estimate the actual error rate.  
+							Any number up to the total sample size can be specified as the k-value; however, k=10 is one of the most commonly used values. 
+							<br><br> 
+							To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. 
+							<br><br>
+							After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
+							standard error will be displayed in the console panel at the bottom of the tool. 
+							<br><br>
+						</td>
 					</tr>
-					
 					<tr>
-					<td>
-					
-					If unlabeled data is classified during the naive Bayes implementation a classification file will be created in the directory that contains 
-					the class directories. The title of this file will be the names of the classes followed by the date and time (e.g. "class1-class2-Date-Time.csv"). 
-					Classification files created by TACIT's naive Bayes module  contain N rows for each of the N instances that were classified and four columns. 
-					The columns are: "File," which contains the file name of each instance; "Predicted Class," which contains the class predicted for instance N;
-					"Predicted Class Probability," which contains the estimated probability that instance N belongs to the predicted class; and "Other Class Probabilities,"
-					which contains the estimated probabilities of instance N belonging to the classes that were not predicted. <br><br>
-					
-				
-						
-					</td>
+						<td class = "section">Understanding Naive Bayes Classification Output</td>
+					</tr>
+					<tr>
+						<td> While TACIT's naive Bayes tool is running, performance statistics for each k-fold validation will be output in the Console window. 
+							The average test accuracy (averaged across k-folds), as well as its standard deviation and standard error, will also be output in the Console window.
+							These statistics should be used to evaluate the accuracy performance of the algorithm on the data provided. 
+							<br><br>
+							For each analysis, a summary log file titled "Naive_Bayes_Run_Report_[date]_[time]" is created. This file contains the TACIT version number, date, and time of the analysis.
+							<br><br>
+							If <b>Classify Unlabeled Data</b> was selected, a .csv file with the classification data will be generated. The name will be the names of the folders/classes followed by the date and time (e.g. "class1-class2-Date-Time.csv").
+							This file will contain a row for every document being sorted with the following columns: "File," which contains the file name of each instance; "Predicted Class," which contains the class predicted for instance N;
+							"Predicted Class Probability," which contains the estimated probability that instance N belongs to the predicted class; and "Other Class Probabilities,"
+							which contains the estimated probabilities of instance N belonging to the classes that were not predicted. <br><br>
+							<br><br>
+						</td>
 					</tr>
 				</table>
 			</tr>	
