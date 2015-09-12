@@ -336,7 +336,9 @@ img, img:focus{
 .btn:hover {
 	background-color: #7269a4 !important;
 }
-
+#send_button {
+	background-color: #861520 !important;
+}
 /* Download Bottom Banner
 ------------------------------ */
 #download_banner_wrapper {

@@ -13,16 +13,17 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-public class HelloWorld extends HttpServlet {
+public class TacitDBHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String univ = request.getParameter("universityname");
+		String org = request.getParameter("orgname");
 		String emailid = request.getParameter("emailid");
+		String orgType = request.getParameter("orgtype");
 		MongoClient mongoClient = new MongoClient();
 
 		MongoDatabase database = mongoClient.getDatabase("test");
 		MongoCollection<Document> collection = database.getCollection("tacit");
-		Document doc = new Document("university", univ).append("emailid", emailid);
+		Document doc = new Document("organization", org).append("emailid", emailid).append("orgtype", orgType);
 		collection.insertOne(doc);
 		response.sendRedirect("download2.html");
 	}

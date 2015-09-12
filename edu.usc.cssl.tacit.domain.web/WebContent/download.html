@@ -29,9 +29,9 @@
 <script type="text/javascript">
 function validateForm() {
  
-     var x = document.forms["myForm"]["universityname"].value;
+     var x = document.forms["myForm"]["orgname"].value;
      if (x == null || x == "") {
-        alert("University Name must be filled out");
+        alert("Organization Name must be filled out");
         return false;
     }
      var x = document.forms["myForm"]["emailid"].value;
@@ -74,11 +74,11 @@ function validateForm() {
 
 		<div id="menu_wrapper">
 			<ul id="nav">
-				<li><a href="index.html">Overview</a></li>
-				<li><a href="index.html">Get Started</a></li>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="index.html">Getting Started</a></li>
 				<li><a href="documentation.html">Documentation</a></li>
 				<li class="current_menu_item"><a href="download.html">Download</a></li>
-				<li><a href="updatesite.html">Update site</a></li>
+				<li><a href="contactus.html">Contact Us</a></li>
 			</ul>
 		</div>
 		<!-- Fin menu_wrapper -->
@@ -89,13 +89,24 @@ function validateForm() {
 <h1 class="page_title">Get TACIT</h1>
 		<div class="simple">
 	<form name="myForm" onsubmit="return validateForm()" action="Hello">
-  University Name*:<br>
-  <input type="text" name="universityname" style="width: 900px;" required><br>
-   Email*:<br>
-  <input type="text" name="emailid" style="width: 900px;" required><br><br>
+  University/Organization Name*:<br>
+  <input type="text" name="orgname" style="width: 100%;" required><br/>
+  Organization Type*:<br>
+  <select name = "orgtype" style="width: 100%;" required>
+	   <option value = "1">Accademic</option>
+	   <option value = "2">Business</option>
+  </select><br/>
+  Email*:<br/>
+  <input type="text" name="emailid" style="width: 100%;" required><br><br>
 <div align="center">
 <button name="subject" class="btn btn_large" type="submit" value="Download Tacit">Download Tacit</button></div>
 </form>
-		</div> </div> 
+		</div> </div>
+<div class="intro_gallery" align="center">
+
+<p>TACIT may only be used for non-profit purposes. This website and associated software are the intellectual property of University of Southern California. <br/> 
+		Copyright 2015, University of Southern California, All Rights Reserved.</p>
+
+	</div>		
 </body>
 </html>
