@@ -44,23 +44,26 @@
 						<td class = "subtitle">Specifying Input Files for Analysis</td>
 					</tr>
 					
-					<tr>
-						<td>
-							The Hierarchical Clustering Tool requires that each document be stored in a separate file. Each document 
-							that should be included in an analysis must be specified using either the <b>Add File(s)...</b> button or 
-							the <b>Add Folder</b> button, which are located in the <b>Input Details</b> section of the Hierarchical
-							Clustering Tool. Note that if the <b>Add Folder</b>option is used, all files located in the specified directory 
-							will be included in the analysis. 
-						
+					<tr>					
+						<td> All input data files must be saved as corpus classes (subgroups) within a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or as .txt files within separate folders to be compatible with TACIT. 
+						See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats. 
 							
-						</td>
+						 	<br><br>
+						 	To specify which classes/groups you would like to compare in analysis, select <b>Add Corpus</b> or <b>Add Folder</b> under the <b>Input Details</b> panel. All corpora and folders added to the Input Details panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
+							<br><br> 
+							<b> Add Corpus: </b> The Add Corpus button will allow you to add a group/class from a corpus stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b>.
+							<br>
+							<b> Add Folder: </b> The Add Folder button will allow you to add a folder as a subgroup for analysis.  
+							<br><br>
+						</td>	
 					</tr>
+					<tr>
 					
 					<tr>
 						<td class = "subtitle">Additional Options</td>
 					</tr>
 					<tr>
-						<td> The Hierarchical Clustering Tool offers to optional parameters <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> and 
+						<td> The Hierarchical Clustering Tool offers two optional parameters: <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> and 
 						automatic Dendogram visualization. To implement either of these options, select their adjacent check-boxes prior to analysis. 
 						</td>
 					</tr>		
@@ -116,7 +119,7 @@
 						
 							<br>
 							<br>
-							<i>Image 1. Example Hierarchical Cluster Analysis Output</i>
+							<i>Image 1.</i> Example Hierarchical Cluster Analysis Output</i>
 							<img class="image" src="HCAOut.png" 
 							alt="Hierarchical Output Example" height="81" width="576" align="left">
 							<br>
@@ -133,7 +136,7 @@
 							
 							<br>
 							<br>
-							<i>Image 2. Example Dendogram</i><br>
+							<i>Image 2</i>. Example Dendogram<br>
 							<img class="image" src="HCADendogram.jpeg" 
 							alt="Dendogram Example"  height="200" width="300" align="left">
 							<br>
