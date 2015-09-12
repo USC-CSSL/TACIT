@@ -15,7 +15,7 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>TACIT’s <b>LDA plugin</b> allows you to explore the structure of topics within a set of documents and the relations between them. Researchers can adjusting the number of topics generated to focus the level of granularity, with smaller numbers of topics generating a few overarching themes to larger numbers of topics providing many tightly focused topics. Each topic is described by a distribution over the words in the vocabulary, allowing you to see which words are most associated with that topic and explore connections between them across the entire corpus. Additionally, each document is described by the mixture of topics which underlie it, providing a way to compare topic use across documents. 
+						<td>TACIT's <b>LDA plugin</b> allows you to explore the structure of topics within a set of documents and the relations between them. Researchers can adjusting the number of topics generated to focus the level of granularity, with smaller numbers of topics generating a few overarching themes to larger numbers of topics providing many tightly focused topics. Each topic is described by a distribution over the words in the vocabulary, allowing you to see which words are most associated with that topic and explore connections between them across the entire corpus. Additionally, each document is described by the mixture of topics which underlie it, providing a way to compare topic use across documents. 
 						</td>
 					</tr>
 				</table>
@@ -30,7 +30,7 @@
 					</tr>
 					<td> All input data files must be saved as a corpus in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
 						 	<br><br>
-						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
+						 	To specify which files you would like to analyze, select <b>Add Corpus</b>, <b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
 						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
 							<br><br> 
 							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
@@ -40,26 +40,68 @@
 							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
  							<br>
 						</td>
+						
+					<tr>
+						<td>In addition to selecting files for analysis, users must specify the number of topics to extract from the corpus. 
+						This parameter can be be set within the <b>Input Path</b> field within the LDA tool. 
+							<br><br>
+					</td>
+					</tr>
+					
 					<tr>
 						<td class = "subtitle">Additional Options</td>
 					</tr>
 					<tr>
 						<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> 
+						<br><br>
+						The word weights calculated during the analysis can be saved as an output file by selecting the <b>Create Word Weights File</b>
+						option in the Output Path field. 
 						</td>
 					</tr>		
 					<tr>
 						<td class = "subtitle">Specifying Output Path</td>
 					</tr>
 					<tr>
-					<td>To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool.
+					<td>To specify an output folder where the LDA output files will be saved, click on the <b>Browse</b> button to the right of the 
+					Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", 
+					click on any other folder and then click back on your newly created & renamed folder to select it. 
+					After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the 
+					window to run the program. Output information will display in the console panel at the bottom of the tool. 
+					
 					<br><br>
+					The output file prefix can also be specified using the <b>Output Prefix</b> input box located in the Output Path field. 
 					</td>
 					</tr>			
 					<tr>
 						<td class = "subtitle">Understanding LDA Output</td>
 					</tr>
 					<tr>
-						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
+						<td>The data output will be in .csv and .txt file formats. The file names will include the type of technique used for analysis (LDA) and the output type. 
+						The LDA tool generates the following output files:
+						<br><br>
+						<b>Run report:</b> The run report lists the version of TACIT used for the analysis and a time stamp.
+						
+						<br><br>
+						<b>Topic composition:</b> The topic composition file contains the topic probabilities for each document. 
+						Each row in the file is associated with a single a single document and the columns are: Number, which 
+						specifies the document number; File Name, which lists the document file name, and Topic N Probability,
+						where the number of columns and N ranges from 0 through the number of topics specified. The Topic N Probability
+						columns contain the probability that each document is associated with that columns topic. 
+						 
+						
+						<br><br>
+						<b>Topic keys:</b> The topic keys file lists the top 19 words for each topic. This information can be used to gain a 
+						general idea of what each topic represents. 
+						
+						<br><br>
+						<b>Word counts:</b>
+						
+						<br><br>
+						<b>Word weights (optional):</b> The word weights file lists the weight of each word for each topic. The words that have the 
+						highest weights for a given topic are the words that constitute the general focus of the topic. This output file is not 
+						automatically generated and must be requested by selecting Create Word Weight File option, which is located in the
+						output path field. 
+						
 
 						</td>
 					</tr>					

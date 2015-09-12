@@ -15,7 +15,9 @@
 						<td class = "head">Method Overview</td>
 					</tr>
 					<tr>
-						<td>TACIT’s seeded <b>z-label LDA plugin</b> expands upon the capabilities of LDA by implementing the z-label LDA (Andrzejewski & Zhu, 2009) algorithm. Z-label LDA allows the researcher to provide a word or list of words they are interested in exploring called seed words.The algorithm then uses these seed words as the core of the topics that it generates, building the rest of the words around those key concepts.
+						<td>TACIT's seeded <b>z-label LDA plugin</b> expands upon the capabilities of LDA by implementing the z-label LDA (Andrzejewski & Zhu, 2009) algorithm. 
+						Z-label LDA allows the researcher to provide a word or list of words they are interested in exploring called seed words. 
+						The algorithm then uses these seed words as the core of the topics that it generates, building the rest of the words around those key concepts.
 						</td>
 					</tr>
 				</table>
@@ -38,13 +40,20 @@
 							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
 							<br>
 							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
- 							<br>
+ 							<br><br>
+ 							
+ 							In addition to specifying the input files for the analysis, the ZLabel LDA tool also requires a list of <b>seed words</b>. 
+ 							The seed words should be listed in a single .txt formatted file. To input a seed words file, use the <b>Browse</b> button 
+ 							located next to the <b>Seed File Location</b> input box in the input path field. 
+ 							
+ 						
 						</td>
 					<tr>
 						<td class = "subtitle">Additional Options</td>
 					</tr>
 					<tr>
-						<td> <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> Dendogram
+						<td> Preprocessing can be implemented by selecting the <a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a> option, 
+						which is located in the Input Path field. 
 						</td>
 					</tr>		
 					<tr>
@@ -59,8 +68,21 @@
 						<td class = "subtitle">Understanding Z-Label LDA Output</td>
 					</tr>
 					<tr>
-						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
-
+						<td>						
+						The data output will be in .csv and .txt file formats. The file names will include the type output and a time stamp. 
+						The ZLDA tool generates the following output files:
+						<br><br>
+						<b>Run report:</b> The run report lists the version of TACIT used for the analysis and a time stamp.
+						
+						<br><br>
+						<b>Phi:</b>
+						
+						<br><br>
+						<b>Theta:</b>
+						
+						<br><br>
+						<b>Theta:</b>
+						
 						</td>
 					</tr>					
 				</table>
