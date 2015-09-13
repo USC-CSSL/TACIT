@@ -115,8 +115,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 		// Create table layout to hold the input data
 		classLayoutData = TacitFormComposite.createTableSection(client,
-				toolkit, layout, "Class Details",
-				"Add File(s) and Folder(s) to include in analysis.", true,
+				toolkit, layout, "Input Details",
+				"Add Folder(s) or Corpus Classes to include in analysis.", true,
 				false, true);
 		// Create preprocess link
 		createPreprocessLink(client);
