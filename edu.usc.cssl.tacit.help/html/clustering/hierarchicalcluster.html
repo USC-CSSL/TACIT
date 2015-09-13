@@ -54,7 +54,10 @@
 							<b> Add Corpus: </b> The Add Corpus button will allow you to add a group/class from a corpus stored in <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b>.
 							<br>
 							<b> Add Folder: </b> The Add Folder button will allow you to add a folder as a subgroup for analysis.  
-							<br><br>
+							<br>
+							<b>Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
+ 							<br>
+							<br>
 						</td>	
 					</tr>
 					<tr>
@@ -74,9 +77,15 @@
 					<td>To specify an output folder where the output from an analysis will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. 
 					If you create a new folder within this menu and change its name from "New Folder", click on any other 
 					folder and then click back on your newly created & renamed folder to select it. After specifying all parameters,
-					 click the <b>green and white play button</b> located in the top right corner of the window to run the program. 
+					 click the <b>green and white play button</b> (Image 1) located in the top right corner of the window to run the program. 
 					 Output information will display in the console panel at the bottom of the tool.
 					<br><br>
+					
+
+							<i>Image 1.</i> Run button location<br>
+							<img class="image" src="../Images/RunButton.png" 
+							alt="Run Button"  height="121" width="200" align="left">
+							<br>
 					</td>
 				</tr>			
 					<tr>
@@ -84,7 +93,7 @@
 					</tr>
 					<tr>
 						<td>The Hierarchical Clustering Tool automatically generates two output files, a run report and the cluster structure. 
-						If the dendogram visualization option was activated, a dendogram will also generated. 
+						If the dendogram visualization option was activated, a dendogram will also be generated. 
 						The file names include the type of technique used for analysis and the time stamp for when the analysis was completed. 
 						<br><br>
 						The cluster structure report, which is generated as a .txt file, specifies the hierarchical structure of the cluster and the 
@@ -108,7 +117,7 @@
 						
 						<br><br>
 						
-						For another example, consider the following structure, which is the same as that shown in Image 1: <br><br>
+						For another example, consider the following structure, which is the same as that shown in Image 2: <br><br>
 						((1:19.10497,((2:18.27567,3:18.27567):0.77689,4:19.05256):0.05241):1.06927,5:20.17424) <br><br>
 						The innermost parenthetical structure contains documents 1 and 2 and their distance is 18.27567. The next level 
 						shows that document 4 is the closest to the (2,3) node and that the distance between document 4 and the (2,3) node
@@ -119,7 +128,7 @@
 						
 							<br>
 							<br>
-							<i>Image 1.</i> Example Hierarchical Cluster Analysis Output</i>
+							<i>Image 2.</i> Example Hierarchical Cluster Analysis Output</i>
 							<img class="image" src="HCAOut.png" 
 							alt="Hierarchical Output Example" height="81" width="576" align="left">
 							<br>
@@ -131,12 +140,12 @@
 							<br>
 					
 						The dendogram that TACIT can generate is a visualization of the cluster calculated by the Hierarchical Clustering 
-						Tool (Image 2). The height of each branch is determined by the Euclidian distance measure associated with the branch
+						Tool (Image 3). The height of each branch is determined by the Euclidian distance measure associated with the branch
 						in the cluster structure report. Image 2 shows the dendogram generated from the report shown in Image 1. 
 							
 							<br>
 							<br>
-							<i>Image 2</i>. Example Dendogram<br>
+							<i>Image 3</i>. Example Dendogram<br>
 							<img class="image" src="HCADendogram.jpeg" 
 							alt="Dendogram Example"  height="200" width="300" align="left">
 							<br>

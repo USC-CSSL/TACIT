@@ -15,7 +15,11 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>The <b>K-means clustering plugin</b> (MacQueen, 1967) aims to cluster texts into a user-specified number of clusters (or groups) such that the texts included in each cluster are the nearest to the cluster�s centroid (the prototypical document of that cluster), and have the farthest distance from other clusters� centroids. Once this optimization is performed, TACIT outputs a csv file containing the membership information for the documents in the corpus. 
+						<td>The <b>K-means clustering plugin</b> (MacQueen, 1967) aims to cluster texts into a 
+						user-specified number of clusters (or groups) such that the texts included in each cluster 
+						are the nearest to the cluster's centroid (the prototypical document of that cluster), 
+						and have the farthest distance from other clusters' centroids. Once this optimization is performed, 
+						TACIT outputs a .csv file containing the membership information for the documents in the corpus. 
 						</td>
 					</tr>
 				</table>
@@ -46,7 +50,7 @@
 					</tr>
 					<tr>
 						<td>In addition to selecting files for analysis, users must specify the number of clusters into which the corpus will separated. 
-						This parameter can be be set within the <b> Output Path</b> field within the KMeans tool. 
+						This parameter can be be set within the <b> Output Path</b> field within the K-Means tool. 
 							<br><br>
 						
 					</td>
@@ -64,8 +68,14 @@
 					<tr>
 					<td>To specify an output folder where the output files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. 
 					If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. 
-					After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool.
+					After specifying all parameters, click the <b>green and white play button</b> (Image 1) located in the top right corner of the window to run the program. Output information will display in the console panel at the bottom of the tool.
 					<br><br>
+					
+
+							<i>Image 1.</i> Run button location<br>
+							<img class="image" src="../Images/RunButton.png" 
+							alt="Dendogram Example"  height="121" width="200" align="left">
+							<br>
 					</td>
 				</tr>		
 					<tr>
@@ -73,20 +83,20 @@
 					</tr>
 					<tr>
 						<td>
-						The KMeans Cluster tool automatically generates two output files in .txt format, a run report and the cluster structure.
+						The K-Means Cluster tool automatically generates two output files in .txt format, a run report and the cluster structure.
 						The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
 						<br> <br> 
-						The cluster structure report (see Image 1 for example) lists each cluster and the documents that comprise them. 
-						For example, Image 1. shows the results of analysis of 8 documents that were separated into 3 clusters. As the 
+						The cluster structure report (see Image 2 for example) lists each cluster and the documents that comprise them. 
+						For example, Image 2. shows the results of analysis of 8 documents that were separated into 3 clusters. As the 
 						report indicates, most (6) of the documents are contained in the 2nd cluster and two documents each formed singleton 
 						clusters.   
 						
 						
 							<br>
 							<br>
-							<i>Image 1.</i> KMeans Output Example<br>
+							<i>Image 2.</i> K-Means Output Example<br>
 							<img class="image" src="KMeansOut.png" 
-							alt="Dendogram Example"  height="175" width="146" align="left">
+							alt="Run Button"  height="175" width="146" align="left">
 							<br>
 						
 
