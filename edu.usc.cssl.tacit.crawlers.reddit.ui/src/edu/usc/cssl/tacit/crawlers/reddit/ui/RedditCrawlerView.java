@@ -1,6 +1,7 @@
 package edu.usc.cssl.tacit.crawlers.reddit.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -74,8 +75,17 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	
 	String sortTypes[] = {"Relevance", "Top", "Hot", "New", "Comments"};
 	String trendTypes[] = {"Hot", "New", "Rising"};
-	//String timeFrames[] = {"All", "Past 24 hours", "Past hour", "Past week", "Past month", "Past year"};
-	String timeFrames[] = {"All", "Day", "Hour", "Week", "Month", "Year"};
+	HashMap<Integer, String> timeFramesMap = new HashMap<Integer, String>();
+	{
+		timeFramesMap.put(0, "All");
+		timeFramesMap.put(1, "Hour");
+		timeFramesMap.put(2, "Day");
+		timeFramesMap.put(3, "Week");
+		timeFramesMap.put(4, "Month");
+		timeFramesMap.put(5, "Year");	
+	}
+	String timeFrames[] = {"All", "Past hour", "Past 24 hours", "Past week", "Past month", "Past year"};
+	//String actualTimeFrames[] = {"All", "Hour", "Day", "Week", "Month", "Year"};
 	String labelDataTypes[] = {"Top", "Controversial"};
 
 	private Text subreddits;
@@ -492,12 +502,12 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 									site = siteText.getText();
 									linkId = linkText.getText();
 									sortType = sortTypes[cmbSortType.getSelectionIndex()].toLowerCase();
-									timeFrame = timeFrames[cmbTimeFrames.getSelectionIndex()].toLowerCase();
+									timeFrame = timeFramesMap.get(cmbTimeFrames.getSelectionIndex()).toLowerCase();
 								} else if(trendingData) {
 									trendType = trendTypes[cmbTrendType.getSelectionIndex()].toLowerCase();								
 								} else if(labeledData) {
 									labelType = labelDataTypes[cmbLabelType.getSelectionIndex()].toLowerCase();
-									timeFrame = timeFrames[cmbTimeFrames.getSelectionIndex()].toLowerCase();
+									timeFrame = timeFramesMap.get(cmbTimeFrames.getSelectionIndex()).toLowerCase();
 								}
 								limitLinks = Integer.parseInt(numLinksText.getText());
 								limitComments = Integer.parseInt(numCommentsText.getText());						

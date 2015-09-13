@@ -159,12 +159,15 @@ public class LdaTopicModelView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -219,6 +222,7 @@ public class LdaTopicModelView extends ViewPart implements
 			 * 
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
+			@Override
 			public void run() {
 				final int noOfTopics = Integer
 						.valueOf(numberOfTopics.getText()).intValue();
@@ -472,7 +476,7 @@ public class LdaTopicModelView extends ViewPart implements
 				if (selectedCorpus.getDatatype().equals(DataType.TWITTER_JSON)) {
 					TwitterReadJsonData twitterReadJsonData = new TwitterReadJsonData();
 					for (ICorpusClass cls : selectedCorpus.getClasses()) {
-						inputList.addAll(twitterReadJsonData
+						inputList.add(twitterReadJsonData
 								.retrieveTwitterData(cls.getClassPath()));
 					}
 				} else if (selectedCorpus.getDatatype().equals(
