@@ -19,6 +19,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
@@ -29,8 +30,13 @@ public class ClassDetailsPage implements IDetailsPage {
 	private CorpusClass selectedCorpusClass;
 	private Text classPathTxt;
 	private Text classNameTxt;
+	private ScrolledForm corpusMgmtViewform;
 
 	public ClassDetailsPage() {
+	}
+
+	public ClassDetailsPage(ScrolledForm corpusMgmtViewform) {
+		this.corpusMgmtViewform = corpusMgmtViewform;
 	}
 
 	@Override

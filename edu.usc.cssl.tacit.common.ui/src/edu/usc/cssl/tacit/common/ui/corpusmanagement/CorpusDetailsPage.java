@@ -1,5 +1,7 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -26,6 +28,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 //import edu.usc.cssl.tacit.common.corpusmanagement;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
@@ -35,7 +38,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
 	private Text corpusIDTxt;
 	private Corpus selectedCorpus;
-	private ScrolledForm form;
+	private ScrolledForm corpusMgmtViewform;
 	FormToolkit toolkit;
 	private Button plainText = null;
 	private Button twitterJSON = null;
@@ -43,6 +46,13 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private Button xmlData = null;
 	private Button wordData = null;
 	
+	ManageCorpora corpusManagement;
+	
+	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform) {
+		this.corpusMgmtViewform = corpusMgmtViewform;
+		corpusManagement = new ManageCorpora();
+	}
+
 	@Override
 	public void initialize(IManagedForm mform) {
 		this.mform = mform;
@@ -98,16 +108,17 @@ public class CorpusDetailsPage implements IDetailsPage {
 		buttonComposite.setLayout(buttonLayout);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(buttonComposite);
 		
-		Button saveCorpora = new Button(buttonComposite, SWT.PUSH);
-		saveCorpora.setText("Save Corpus");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(saveCorpora);		
+		Button saveCorpus = new Button(buttonComposite, SWT.PUSH);
+		saveCorpus.setText("Save Corpus");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(saveCorpus);		
 		
-		saveCorpora.addSelectionListener(new SelectionAdapter() {
+		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				validateData();
-				if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
-				ManageCorpora.saveCorpus(selectedCorpus); 
+				if(validateData()) {
+					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
+					ManageCorpora.saveCorpus(selectedCorpus);
+				}
 			}
 		});	
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
@@ -137,13 +148,23 @@ public class CorpusDetailsPage implements IDetailsPage {
 	
 	public boolean validateData() {
 		String corpusId = corpusIDTxt.getText();
-		if(corpusId.isEmpty()) {
-			mform.getForm().getForm().getMessageManager().addMessage("corpusId", "Provide valid corpus ID", null, IMessageProvider.ERROR);
+		if(corpusId.isEmpty() || corpusIdExists(corpusId)) {
+			corpusMgmtViewform.getMessageManager().addMessage("corpusId", "Provide valid corpus ID", null, IMessageProvider.ERROR);
 			return false;
 		}
 		return true;
 	}
 	
+	
+
+	private boolean corpusIdExists(String corpusId) {
+		List<ICorpus> corpuses = corpusManagement.getAllCorpusDetails();
+		for(ICorpus corpus : corpuses) {
+			if(corpus.getCorpusId().equals(corpusId)) return true;
+		}
+		return false;
+	}
+
 	private void createDataTypeOptions(Composite dataTypeGroup) {
 		plainText = toolkit.createButton(dataTypeGroup, "Plain Text", SWT.RADIO);
 		plainText.addSelectionListener(new SelectionAdapter(){

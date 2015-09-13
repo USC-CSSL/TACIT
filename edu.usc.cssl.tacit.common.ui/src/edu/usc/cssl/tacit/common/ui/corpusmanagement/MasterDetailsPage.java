@@ -41,13 +41,14 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
-
+	private ScrolledForm corpusMgmtViewform;
 	List<ICorpus> corpusList;
 	ManageCorpora corpusManagement;
-	MasterDetailsPage() throws IOException, ParseException {
+	MasterDetailsPage(ScrolledForm form) throws IOException, ParseException {
 		corpusList = new ArrayList<ICorpus>();
 		corpusManagement = new ManageCorpora();
 		corpusList = corpusManagement.getAllCorpusDetails();
+		this.corpusMgmtViewform = form;
 	}
 	
 	class MasterContentProvider implements ITreeContentProvider {
@@ -87,7 +88,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return true;
+			if(element instanceof ICorpus) return true;
+			return false;
 		}
 
 	}
@@ -243,8 +245,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage());
-		detailsPart.registerPage(CorpusClass.class, new ClassDetailsPage());
+		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform));
+		detailsPart.registerPage(CorpusClass.class, new ClassDetailsPage(corpusMgmtViewform));
 	}
 
 	@Override
