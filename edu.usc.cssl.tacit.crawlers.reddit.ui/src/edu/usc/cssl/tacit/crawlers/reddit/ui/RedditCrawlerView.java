@@ -237,7 +237,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(trendingDataComposite);
 		
 		Label trendType = new Label(trendingDataComposite, SWT.NONE);
-		trendType.setText("Trend Type:");
+		trendType.setText("Select Stream:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(trendType);
 		cmbTrendType = new Combo(trendingDataComposite, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbTrendType);
@@ -251,7 +251,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(labeledDataComposite);
 		
 		Label labelType = new Label(labeledDataComposite, SWT.NONE);
-		labelType.setText("Select Type:");
+		labelType.setText("Select Stream:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(labelType);
 		cmbLabelType = new Combo(labeledDataComposite, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(cmbLabelType);
