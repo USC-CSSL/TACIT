@@ -83,6 +83,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	HashMap<String, List<String>> classPaths;
 	protected Job job;
 
+	private Button preprocessEnabledInput;
+	private boolean isPreprocessEnabledOnInput = false;
+
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
@@ -120,6 +123,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				false, true);
 		// Create preprocess link
 		createPreprocessLink(client);
+		createClassificationParameters(client);
 		createNBClassifierInputParameters(client); // to get k-value
 		// Create ouput section
 		// createOutputSection(client, layout, "Classify",
@@ -134,7 +138,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 			@Override
 			public void handleEvent(Event event) {
-				System.out.println("Focussed");
 				consolidateSelectedFiles(classLayoutData, classPaths);
 				canItProceed(classPaths);
 			}
@@ -283,7 +286,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 
-		TacitFormComposite.createEmptyRow(toolkit, client);
+		//TacitFormComposite.createEmptyRow(toolkit, client);
 
 		// Output path
 		final Label outputPathLabel = toolkit.createLabel(sectionClient,
@@ -324,13 +327,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 
-		createClassificationParameters(client);
+		//createClassificationParameters(client);
 
 	}
 
 	private void createClassificationParameters(Composite client) {
 		Group group = new Group(client, SWT.SHADOW_IN);
-		group.setText("Classification");
+		//group.setText("Classification");
 
 		// group.setBackground(client.getBackground());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -339,7 +342,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		group.setLayout(layout);
 
 		classificationEnabled = new Button(group, SWT.CHECK);
-		classificationEnabled.setText("Classify Data");
+		classificationEnabled.setText("Classify Unlabeled Data");
 		classificationEnabled.setBounds(10, 10, 10, 10);
 		classificationEnabled.pack();
 
@@ -350,7 +353,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				.applyTo(sectionClient);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
 				.applyTo(sectionClient);
-		sectionClient.setEnabled(false);
 		sectionClient.pack();
 
 		// Create a row that holds the textbox and browse button
@@ -404,19 +406,54 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					inputPathLabel.setEnabled(true);
 					classifyInputText.setEnabled(true);
 					browseBtn1.setEnabled(true);
-					inputPathListener(classifyInputText,
-							"Classification input path must be a valid diretory location");
+					inputPathListener(classifyInputText, "Classification input path must be a valid diretory location");
+					//preprocessEnabledInput.setEnabled(true);
 
 				} else {
 					sectionClient.setEnabled(false);
 					inputPathLabel.setEnabled(false);
 					classifyInputText.setEnabled(false);
 					browseBtn1.setEnabled(false);
+					//preprocessEnabledInput.setEnabled(false);
 					form.getMessageManager().removeMessage("classifyInput");
 				}
 			}
 		});
+		
+		
+		//Create preprocess link for unlabeled data
+		/*
+		Composite clientLink = new Composite(sectionClient , SWT.NONE);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
+		preprocessEnabledInput = new Button(clientLink, SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(preprocessEnabledInput);
+		final Hyperlink link = new Hyperlink(clientLink, SWT.NONE);
+		link.setText("Preprocess");
+		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
+			public void linkEntered(HyperlinkEvent e) {
+			}
 
+			@Override
+			public void linkExited(HyperlinkEvent e) {
+			}
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+						new String[] { id }, null).open();
+			}
+		});
+
+		preprocessEnabledInput.setEnabled(false);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+		*/
+		
 		// TacitFormComposite.createEmptyRow(sectionClient, group);
 	}
 
@@ -513,10 +550,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
-								isPreprocessEnabled = preprocessEnabled
-										.getSelection();
-								isClassificationEnabled = classificationEnabled
-										.getSelection();
+								isPreprocessEnabled = preprocessEnabled.getSelection();
+								isClassificationEnabled = classificationEnabled.getSelection();
+								//isPreprocessEnabledOnInput = preprocessEnabledInput.getSelection();
 							}
 						});
 
@@ -538,19 +574,14 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										return handledCancelRequest("Cancelled");
 									}
 
-									List<String> selectedFiles = classPaths
-											.get(dirPath);
-									String preprocessedDirPath = preprocessTask
-											.doPreprocessing(selectedFiles,
-													new File(dirPath).getName());
+									List<String> selectedFiles = classPaths.get(dirPath);
+									String preprocessedDirPath = preprocessTask.doPreprocessing(selectedFiles,new File(dirPath).getName());
 									trainingDataPaths.add(preprocessedDirPath);
 									List<String> temp = new ArrayList<String>();
-									for (File f : new File(preprocessedDirPath)
-											.listFiles()) {
+									for (File f : new File(preprocessedDirPath).listFiles()) {
 										temp.add(f.getAbsolutePath());
 									}
-									tempClassPaths.put(preprocessedDirPath,
-											temp);
+									tempClassPaths.put(preprocessedDirPath,temp);
 									monitor.worked(1); // for the pre-processing
 														// of each directory
 									if (monitor.isCanceled()) {
@@ -566,12 +597,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								// preprocess the inputDir if required
 								if (isClassificationEnabled) {
 									ArrayList<String> files = new ArrayList<String>();
-									nbc.selectAllFiles(classificationInputDir,
-											files);
-									classificationInputDir = preprocessTask
-											.doPreprocessing(files, new File(
-													classificationInputDir)
-													.getName());
+									nbc.selectAllFiles(classificationInputDir, files);
+									classificationInputDir = preprocessTask.doPreprocessing(files, new File(classificationInputDir).getName());
 									monitor.worked(1);
 								}
 								if (monitor.isCanceled()) {
@@ -583,18 +610,15 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										"Preprocessing failed. Provide valid data");
 							}
 							monitor.worked(10);
-						} else { // consolidate the files into respective
-									// classes
+						} else { // consolidate the files into respective classes
 							if (monitor.isCanceled()) {
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 								return handledCancelRequest("Cancelled");
 							}
 							try {
-								nbc.createTempDirectories(classPaths,
-										trainingDataPaths, monitor);
+								nbc.createTempDirectories(classPaths, trainingDataPaths, monitor);
 							} catch (IOException e) {
-								return handleException(monitor, e,
-										"Naive Bayes Classifier failed. Provide valid data");
+								return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
 							}
 							monitor.worked(10); // after creating temp
 												// directories
@@ -622,14 +646,23 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							// classificationOutputDir, false, false, kValue);
 							// // perform cross validation
 							if (isClassificationEnabled) {
+								/*
+								String preprocessedInputDirPath = null;
+								if(isPreprocessEnabledOnInput) {
+									if(preprocessTask == null)  preprocessTask = new Preprocess("NB_Classifier");
+									File inputDir = new File(classificationInputDir);
+									List<String> filePaths = new ArrayList<String>();
+									for(File f : inputDir.listFiles()) 
+										filePaths.add(f.getAbsolutePath());
+									preprocessedInputDirPath = preprocessTask.doPreprocessing(filePaths, inputDir.getName());
+								}
+								*/
 								monitor.subTask("Classifying...");
-								ConsoleView
-										.printlInConsoleln("---------- Classification Starts ------------");
-								nbc.classify(trainingDataPaths,
-										classificationInputDir, outputDir,
-										false, false, dateObj);
-								ConsoleView
-										.printlInConsoleln("---------- Classification Finished ------------");
+								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
+								//if(!isPreprocessEnabledOnInput) nbc.classify(trainingDataPaths,classificationInputDir, outputDir,false, false, dateObj);
+								//else nbc.classify(trainingDataPaths, preprocessedInputDirPath, outputDir,false, false, dateObj);
+								nbc.classify(trainingDataPaths,classificationInputDir, outputDir,false, false, dateObj);
+								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 							}
 							monitor.worked(15);
 							if (monitor.isCanceled()) {
