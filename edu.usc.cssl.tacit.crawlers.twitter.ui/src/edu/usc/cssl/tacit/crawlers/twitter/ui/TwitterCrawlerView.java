@@ -170,7 +170,7 @@ public class TwitterCrawlerView extends ViewPart implements
 				DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 				Date dateobj = new Date();
 				final String outputFile = layoutData.getOutputLabel().getText()
-						+ File.separator + "Twitter_Strem_"
+						+ File.separator + "Twitter_Stream_"
 						+ df.format(dateobj) + ".json";
 				storedAtts = new boolean[8];
 
