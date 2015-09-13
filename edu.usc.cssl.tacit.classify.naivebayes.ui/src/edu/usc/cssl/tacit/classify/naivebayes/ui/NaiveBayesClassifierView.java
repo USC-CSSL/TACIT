@@ -262,7 +262,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				"k Value for Cross Validation:", SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(kValueLabel);
-		kValueText = toolkit.createText(sectionClient, "", SWT.BORDER);
+		kValueText = toolkit.createText(sectionClient, "10", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(kValueText);
 
