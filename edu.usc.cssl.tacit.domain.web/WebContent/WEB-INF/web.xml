@@ -12,4 +12,12 @@
     <servlet-name>Hello</servlet-name>
     <url-pattern>/Hello</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <servlet-name>Contact</servlet-name>
+    <servlet-class>edu.usc.cssl.tacit.domain.web.services.TacitContactHandler</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Contact</servlet-name>
+    <url-pattern>/Contact</url-pattern>
+  </servlet-mapping>
 </web-app>
