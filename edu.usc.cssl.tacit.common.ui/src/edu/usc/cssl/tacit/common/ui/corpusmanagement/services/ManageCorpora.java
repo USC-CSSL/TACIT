@@ -7,15 +7,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Display;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,8 +33,7 @@ public class ManageCorpora {
 			+ System.getProperty("file.separator") + "tacit_corpora"
 			+ System.getProperty("file.separator");
 
-	@SuppressWarnings("unchecked")
-	public static void saveCorpuses(ArrayList<Corpus> corporaList) {
+	public static void saveCorpora(ArrayList<Corpus> corporaList) {
 		for (Corpus corpus : corporaList) {
 			saveCorpus(corpus);
 		}
@@ -144,8 +145,107 @@ public class ManageCorpora {
 
 	}
 	
-	public static void removeCorpus(Corpus corpusObj) {
+	@SuppressWarnings("unchecked")
+	public static void removeCorpus(Corpus corpus, Boolean isCorpus) {
+		String corpusLocation = rootDir+corpus.getCorpusId();
+		if (isCorpus) {
+			try {
+				FileUtils.deleteDirectory(new File(corpusLocation));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			return;
+		}
 		
+		File[] classes = new File(corpusLocation).listFiles();
+		HashMap<String, Boolean> oldClasses = new HashMap<String, Boolean>();
+		
+		for (File f:classes) {
+			if (f.isDirectory()) {
+				oldClasses.put(f.getAbsolutePath(), false);
+			}
+		}
+		
+		ArrayList<String> newClasses = new ArrayList<String>();
+		int numNewClass = corpus.getClasses().size();
+		
+		for (int i=0; i<numNewClass; i++) {
+			String classPath = corpus.getClasses().get(i).getClassPath();
+			newClasses.add(classPath);
+			
+			if (oldClasses.get(classPath) != null) {
+				oldClasses.put(classPath, true);
+			}
+		}
+		
+		//Delete the data from file system of the removed classes
+		Iterator<Entry<String, Boolean>> it = oldClasses.entrySet().iterator();
+		while(it.hasNext()) {
+			Map.Entry<String, Boolean> curr = (Map.Entry<String, Boolean>) it.next();
+			String classPath = curr.getKey();
+			
+			if(!curr.getValue()) {
+				try {
+					FileUtils.deleteDirectory(new File(classPath));
+					it.remove();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		//Save the new meta file
+		String metaFile = corpusLocation + System.getProperty("file.separator") + "meta.txt";
+		JSONArray analysisArray = new JSONArray();
+		int numAnalysis = 0;
+		if(!new File(metaFile).exists()) { 
+			JSONParser parser = new JSONParser();
+			try {
+				analysisArray = (JSONArray) ((JSONObject) parser
+						.parse(new FileReader(metaFile))).get("prev_analysis");
+				numAnalysis = (Integer) ((JSONObject) parser
+						.parse(new FileReader(metaFile))).get("num_analysis");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} 
+		}
+
+		File metaFp = new File(metaFile);
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("corpus_name", corpus.getCorpusId());
+		jsonObj.put("data_type", corpus.getDatatype().toString());
+		jsonObj.put("num_classes", corpus.getClasses().size());
+
+		int numClasses = corpus.getClasses().size();
+		ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus .getClasses();
+		JSONArray classArray = new JSONArray();
+
+		for (int i = 0; i < numClasses; i++) {
+			CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
+			JSONObject classObj = new JSONObject();
+			classObj.put("class_name", currClass.getClassName());
+			classObj.put("original_loc", currClass.getClassPath());
+			classObj.put("tacit_loc", corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
+			classArray.add(classObj);
+		}
+
+		jsonObj.put("class_details", classArray);
+		jsonObj.put("num_analysis", numAnalysis);
+		jsonObj.put("prev_analysis", analysisArray);
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(metaFp));
+			bw.write(jsonObj.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void copyCorpus(JSONObject jsonObj) {
