@@ -7,7 +7,7 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">Support Vector Machine (SVM)</td>
+				<td class = "header">TACIT's Support Vector Machine (SVM) Classification Plugin</td>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -20,8 +20,8 @@
 						separate directories/corpora. Once the data is organized by group, the SVM plugin automatically 
 						conducts training and test runs on the data, determines predictive accuracy, and calculates relevant 
 						classification statistics. The SVM plugin supports k-fold cross validation of accuracy rates and can 
-						provide information about the features that distinguish the groups from each other. 
-							
+						provide information about the language features that it has identified that distinguish the groups from each other.
+						By exploring this output, users can identify the words that are most strongly associated with class membership. 	
 						</td>
 					</tr>
 				</table>
@@ -29,83 +29,46 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Basic Tutorial: Using the SVM Tool</td>
+						<td class = "head">Basic Tutorial: Using TACIT's SVM Plugin</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Specifying Input Files for Classification</td>
 					</tr>
 					<tr>
-						<td> All input data files must be saved as a classes in a corpus using <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or as .txt format files separated into two groups to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						<td> All input data files must be saved as a classes in a corpus using <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or as .txt format files to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
 						 	<br><br>
-						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
-						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
-							<br><br> 
+						 	The tool has two panels for class inputs (<b>Class 1</b> and <b>Class 2</b>. For each class, users must enter a label for the group (e.g., Democrat) and specify the files which reflect that group. 
+							The <b>Add Folder</b> and <b>Add File(s)</b> buttons permit users to assign corpora, folders, or files to each class. 
+							<br>
 							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
 							<br>
 							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
 							<br>
 							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
- 							<br>
+ 							<br><br>
+ 							Users can also elect to <a href = "../corpusmanage/preprocess.html" target="_blank">preprocess</a> the data selected for analysis
+							by checking the box next to <b>Preprocess</b>. 
 						</td>
-						</tr>
-						<td> The tool has two fields for class inputs (<b>Class 1</b> and <b>Class 2</b>) and in each 
-						field there are <b>Add Folder</b> and <b>Add File(s)</b> buttons that permit users to assign entire directories and/or 
-						individual files to class 1 and class 2. To use the tool, all class 1 and 2 files/directories must be specified within the
-						relevant field. 
-							<br><br>
-						
-							</td>
-
 					</tr>		
-					
-						<tr>
-						<td class = "subtitle">Additional Input Parameters</td>
+					<tr>
+						<td class = "subtitle">Specifying Output Details</td>
 					</tr>
 					<tr>
-						<td>In addition to selecting files for analysis, users must provide class labels and specify the k value for 
-						cross validation. These parameters can be be set within the <b> Input Parameters</b> field within the SVM tool. 
+					<td> <b>K-value for Cross Validation: K-fold validation determines the accuracy of the classifier at sorting the texts into groups based on the features it has identified. The number entered in this text box specifies
+							the number of equal-sized randomly generated subsamples the text should be split into. One of these subsamples is then randomly selected as the test set for feature identification and
+							the algorithm is trained on the remaining samples. This process is then repeated k-times (the folds) so that each subsample 
+							is used once as the test set. The error rates obtained from each fold are then averaged to estimate the actual error rate.  
+							Any number up to the total sample size can be specified as the k-value; however, k=10 is one of the most commonly used values. 
+							<br><br> 
+							<b>Create Feature Weight Files</b>: Selecting this check box will generate a list of words that the algorithm used to predict group/class membership and a weight for each word signifying its predictive power (higher weight=more predictive of class membership). The list of features will be generated for each k-fold analysis.
 							<br><br>
-						
-							</td>
-							
-							
-
-					</tr>	
-					<tr>
-						<td class = "subtitle">Additional Options</td>
-					</tr>
-					<tr>
-						<td> In addition to the above mandatory input parameters, users can also elect to  
-						<a href = "../corpusmanage/preprocess.html" target="_blank">preprocess</a> the data selected for analysis
-						by checking the <b>Preprocess</b>. 
-						
-						
-					
+							To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. 
+							<br><br>
+							After specifying all parameters, click the <b>green and white play button</b> located in the top right corner of the window to run the program. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
+							standard error will be displayed in the console panel at the bottom of the tool. 
+							<br><br>
 						</td>
-				<tr>
-						<td class = "subtitle">Output Parameters</td>
-					</tr>
-					<tr>
-					<td>To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your 
-					newly created & renamed folder to select it. After specifying all parameters, click the <b>green and white play button</b> (Image 1)
-					located in the top right corner of the window to run the program. Output information will display in the console panel at the 
-					bottom of the tool.
-					<br><br>
-					
-					
-							<i>Image 1.</i> Run button location<br>
-							<img class="image" src="../Images/RunButton.png" 
-							alt="Run Button"  height="121" width="200" align="left">
-							<br>
-					</td>
-				</tr>	
-					<tr>
-						<td>To implement the SVM tool an output directory must be specified. When the analysis is run, the tool will automatically 
-						create a time-stamped analysis summary .txt file and a classification accuracy report within the specified output directory. If desired,
-						the tool can also be set to report the feature weights generated by the analysis by selecting the <b>Create feature weights file</b> 
-						option located in the <b>Output Path</b> section of the SVM tool. 
-					<br><br>
-
+					</tr>	
 					<tr>
 						<td class = "subtitle">Understanding SVM Classification Output</td>
 					</tr>
@@ -120,7 +83,6 @@
 						 These feature weights can be used to gain insight into the role individual data features (e.g. words) played in the classification process. For example,
 						 by examining the features that are most heavily weighted, users can identify the features that had the greatest discriminative predictive power. This can be
 						 valuable for identifying and understanding differences between classes. 
-
 						</td>
 					</tr>			
 				</table>
