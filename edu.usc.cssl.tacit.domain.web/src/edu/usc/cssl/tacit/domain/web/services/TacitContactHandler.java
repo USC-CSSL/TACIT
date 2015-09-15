@@ -16,7 +16,7 @@ import com.mongodb.client.MongoDatabase;
 public class TacitContactHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String name = request.getParameter("personname");
+		String name = request.getParameter("name");
 		String emailid = request.getParameter("email");
 		String orgName = request.getParameter("orgname");
 		String message = request.getParameter("message");
