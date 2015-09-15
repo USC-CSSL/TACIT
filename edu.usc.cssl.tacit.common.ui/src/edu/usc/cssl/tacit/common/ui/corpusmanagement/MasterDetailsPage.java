@@ -219,11 +219,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	if(selectedObj instanceof ICorpus) {
 					 		ICorpus selectedCorpus = (ICorpus) selection.getFirstElement(); 
 					 		corpusList.remove(selectedCorpus);
+					 		ManageCorpora.removeCorpus((Corpus) selectedCorpus, true);
 					 	} else if(selectedObj instanceof ICorpusClass){
 					 		ITreeSelection classSelection = (ITreeSelection)selection;
 					 		ICorpusClass selectedClass = (ICorpusClass) selection.getFirstElement();
 			     			Corpus parentCorpus = (Corpus)classSelection.getPaths()[0].getParentPath().getLastSegment();
-			            	parentCorpus.removeClass(selectedClass);					 		
+			            	parentCorpus.removeClass(selectedClass);					
+			            	ManageCorpora.removeCorpus(parentCorpus, false);
 					 	}
 					 	corpuses.refresh();
 		         } catch(Exception exp) { //exception means item selected is not a corpus but a class.
