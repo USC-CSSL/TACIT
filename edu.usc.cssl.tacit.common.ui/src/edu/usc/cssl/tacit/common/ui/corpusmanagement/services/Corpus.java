@@ -11,7 +11,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 public class Corpus implements ICorpus {
 	String corpusId;
 	DataType dataType;
-	List<ICorpusClass> classes;
+	private List<ICorpusClass> classes;
 	TreeViewer viewer;
 	
 	public Corpus(String corpusId, DataType dataType) {
@@ -53,6 +53,7 @@ public class Corpus implements ICorpus {
 	
 	public void addClass(ICorpusClass c) {
 		if(null == c) return;
+		((CorpusClass)c).setParent(this);
 		this.classes.add(c);
 	}
 	

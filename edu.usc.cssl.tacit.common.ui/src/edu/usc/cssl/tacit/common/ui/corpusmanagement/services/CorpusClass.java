@@ -5,10 +5,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 
 public class CorpusClass implements ICorpusClass{
-	String className;
-	String classPath;
-	TreeViewer viewer;
-	String tacitLocation;
+	private String className;
+	private String classPath;
+	private TreeViewer viewer;
+	private String tacitLocation;
+	private Corpus parent;
 	
 	public CorpusClass(String className, String classPath) {
 		this.className = className;
@@ -57,6 +58,15 @@ public class CorpusClass implements ICorpusClass{
 	@Override
 	public String getTacitLocation() {
 		return this.tacitLocation;
+	}
+
+	@Override
+	public Corpus getParent() {
+		return parent;
+	}
+
+	public void setParent(Corpus parent) {
+		this.parent = parent;
 	}
 	
 	

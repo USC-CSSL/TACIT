@@ -158,6 +158,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
 				 try {
+					 	//corpusMgmtViewform.getMessageManager().removeAllMessages(); // removes all error messages
 					 	IStructuredSelection selection  = (IStructuredSelection) event.getSelection();
 					 	Object selectedObj = selection.getFirstElement();
 					 	if(selectedObj instanceof ICorpus) {
@@ -172,7 +173,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		corpuses.setContentProvider(new MasterContentProvider());
 		corpuses.setLabelProvider(new MasterLabelProvider());
 		for(ICorpus corpus : corpusList) // set the viewer for the old corpuses loaded form disk
-			corpus.setViewer(corpuses);
+			((Corpus)corpus).setViewer(corpuses);
 		corpuses.setInput(corpusList);
 		
 		addCorpora.addSelectionListener(new SelectionAdapter() {
@@ -181,7 +182,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");
 				corpusTempName.append(corpusList.size()+1);
 				Corpus c = new Corpus(new String(corpusTempName), DataType.PLAIN_TEXT, corpuses);
-				c.addClass(new CorpusClass("Class 1", "", corpuses));;
+				c.addClass(new CorpusClass("Class 1", System.getProperty("user.dir"), corpuses));;
 				corpusList.add(c);
 				Object[] expandedItems = corpuses.getExpandedElements();
 				corpuses.setInput(corpusList);
@@ -199,7 +200,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	int corpusIndex = corpusList.indexOf(corpusSelected);					 	
 					 	StringBuilder classTempName = new StringBuilder("Class ");
 					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);
-					 	CorpusClass newClass = new CorpusClass(new String(classTempName), "", corpuses);
+					 	CorpusClass newClass = new CorpusClass(new String(classTempName), System.getProperty("user.dir"), corpuses);
 		            	((Corpus)corpusSelected).addClass(newClass);
 					 	corpusList.set(corpusIndex, corpusSelected);
 					 	corpuses.refresh(); 
@@ -247,7 +248,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform));
+		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform, corpusList));
 		detailsPart.registerPage(CorpusClass.class, new ClassDetailsPage(corpusMgmtViewform));
 	}
 
@@ -273,5 +274,4 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);
 	}
-
 }

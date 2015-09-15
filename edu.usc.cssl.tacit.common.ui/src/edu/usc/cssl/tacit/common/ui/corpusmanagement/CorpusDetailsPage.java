@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -31,6 +32,7 @@ import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
@@ -47,10 +49,11 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private Button wordData = null;
 	
 	ManageCorpora corpusManagement;
-	
-	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform) {
+	List<ICorpus> corpusList;
+	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform, List<ICorpus> corpusList) {
 		this.corpusMgmtViewform = corpusMgmtViewform;
 		corpusManagement = new ManageCorpora();
+		corpusList = this.corpusList;
 	}
 
 	@Override
@@ -99,7 +102,9 @@ public class CorpusDetailsPage implements IDetailsPage {
 		dataTypes.setText("Data Type");
 		
 		createDataTypeOptions(dataTypes);
-		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		if(null != selectedCorpus) {
+			corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		}
 		
 		//Add save button
 		Composite buttonComposite = new Composite(sectionClient, SWT.NONE);
@@ -115,7 +120,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(validateData()) {
+				if(validateData(corpusIDTxt.getText())) {
 					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
 					ManageCorpora.saveCorpus(selectedCorpus);
 				}
@@ -126,19 +131,45 @@ public class CorpusDetailsPage implements IDetailsPage {
 		corpusIDTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				selectedCorpus.setCorpusId(corpusIDTxt.getText());
-				//selectedCorpus.getViewer().refresh();
+				if(isCorpusIdValid(corpusIDTxt.getText())) {
+					selectedCorpus.setCorpusId(corpusIDTxt.getText());
+					selectedCorpus.getViewer().refresh();
+				}
+				
+				if(!corpusIDTxt.getText().isEmpty())
+					corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				selectedCorpus.setCorpusId(corpusIDTxt.getText());
-				//selectedCorpus.getViewer().refresh();
+				if(isCorpusIdValid(corpusIDTxt.getText())) {
+					selectedCorpus.setCorpusId(corpusIDTxt.getText());
+					selectedCorpus.getViewer().refresh();
+				}
+				
+				if(!corpusIDTxt.getText().isEmpty())
+					corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
 			}
 		});
 		
 	}
 	
+	protected boolean isCorpusIdValid(String corpusId) {
+		if(corpusId.isEmpty()) {
+			corpusMgmtViewform.getMessageManager().addMessage("corpusIdEmpty", "Provide valid corpus ID", null, IMessageProvider.ERROR);
+			return false;
+		} else 
+			corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
+		
+		if(corpusIdExists(corpusId)) {
+			corpusMgmtViewform.getMessageManager().addMessage("corpusId", "Corpus ID \""+ corpusId +"\"already exists. Provide different ID", null, IMessageProvider.ERROR);
+			return false;
+		} else 
+			corpusMgmtViewform.getMessageManager().removeMessage("corpusId");
+		
+		return true;	
+	}
+
 	public void printCorpusDetails() {
 		System.out.println("Corupus ID :" + selectedCorpus.getCorpusId());
 		for(ICorpusClass cc : selectedCorpus.getClasses()) {
@@ -146,16 +177,75 @@ public class CorpusDetailsPage implements IDetailsPage {
 		}
 	}
 	
-	public boolean validateData() {
-		String corpusId = corpusIDTxt.getText();
-		if(corpusId.isEmpty() || corpusIdExists(corpusId)) {
-			corpusMgmtViewform.getMessageManager().addMessage("corpusId", "Provide valid corpus ID", null, IMessageProvider.ERROR);
-			return false;
-		}
+	public boolean validateData(String corpusId) {
+		if(isCorpusIdValid(corpusId)) {
+			List<ICorpusClass> classes = selectedCorpus.getClasses(); // validate the class details as well
+			int count = 1;
+			for(ICorpusClass cc : classes) {
+				if(!validateClassData(cc)) return false;
+				count++;
+			}
+		} else 
+			return false; // corpusId is not valid
 		return true;
 	}
 	
 	
+	private boolean isClassnameValid(String className, ICorpusClass selectedCorpusClass) {
+		if(className.isEmpty()) {
+			corpusMgmtViewform.getMessageManager().addMessage("classNameEmpty", "Class name cannot be empty", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
+		}
+		ICorpus corpus = selectedCorpusClass.getParent();
+		String corpusId = corpus.getCorpusId();
+		for(ICorpusClass cc : corpus.getClasses()) {
+			if((CorpusClass)cc != selectedCorpusClass) {
+				if(cc.getClassName().equals(className)) {
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ corpusId, null, IMessageProvider.ERROR);
+					return false;
+				}
+			}
+		}
+		corpusMgmtViewform.getMessageManager().removeMessage("className");
+		return true;
+	}
+
+	protected boolean isClassPathValid(String classPathText) {
+		if (classPathText.isEmpty()) {
+			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location", null, IMessageProvider.ERROR);
+			return false;
+		}
+		File tempFile = new File(classPathText);
+		if (!tempFile.exists() || !tempFile.isDirectory()) {
+			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			corpusMgmtViewform.getMessageManager().removeMessage("classPath");
+			String message = validateOutputDirectory(classPathText);
+			if (null != message) {
+				corpusMgmtViewform.getMessageManager().addMessage("classPath", message, null, IMessageProvider.ERROR);
+				return false;
+			}
+		}
+		corpusMgmtViewform.getMessageManager().removeMessage("classPath");
+		return true;
+	}
+	
+	
+	private String validateOutputDirectory(String location) {
+		File locationFile = new File(location);
+		if (locationFile.canRead()) {
+			return null;
+		} else {
+			return "Class path does not have read permission";
+		}
+	}
+
+	private boolean validateClassData(ICorpusClass cc) {
+		return isClassnameValid(cc.getClassName(), cc) && isClassPathValid(cc.getClassPath());
+	}	
 
 	private boolean corpusIdExists(String corpusId) {
 		List<ICorpus> corpuses = corpusManagement.getAllCorpusDetails();
@@ -287,9 +377,11 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
+		corpusMgmtViewform.getMessageManager().removeAllMessages();
 		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();	
 		corpusIDTxt.setText(selectedCorpus.getCorpusId());
 		setDataTypeOption(selectedCorpus.getDatatype());
+		validateData(selectedCorpus.getCorpusId());
 	}
 
 }
