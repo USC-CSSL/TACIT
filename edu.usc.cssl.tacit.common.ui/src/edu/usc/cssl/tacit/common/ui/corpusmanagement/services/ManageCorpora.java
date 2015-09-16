@@ -150,6 +150,7 @@ public class ManageCorpora {
 		String corpusLocation = rootDir+corpus.getCorpusId();
 		if (isCorpus) {
 			try {
+				new File(corpusLocation+System.getProperty("file.separator")+"meta.txt").delete();
 				FileUtils.deleteDirectory(new File(corpusLocation));
 			} catch (IOException e) {
 				e.printStackTrace();
