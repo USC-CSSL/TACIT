@@ -3,7 +3,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-language" content="en">
 <meta name="description" content="Graphical Editors for your DSL">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 <script type="text/javascript">
 	var OSName = "unknown OS";
@@ -18,7 +19,7 @@
 </script>
 <script type="text/javascript">
 	function process() {
-                var servId = document.getElementById('input-bits').value;
+		var servId = document.getElementById('input-bits').value;
 		var url = new Array();
 		var num = 0;
 		url[0] = "/tacit/downloads/product/tacit-linuxgtk.x86.zip";
@@ -27,33 +28,28 @@
 		url[3] = "/tacit/downloads/product/tacit-macosx.cocoa.x86_64.zip";
 		url[4] = "/tacit/downloads/product/tacit-win32.win32.x86.zip";
 		url[5] = "/tacit/downloads/product/tacit-win32.win32.x86_64.zip";
-		if(OSName == "Linux") {
-			if( servId == "i386"){
+		if (OSName == "Linux") {
+			if (servId == "i386") {
 				num = 0;
-			}
-			else {
+			} else {
 				num = 1;
 			}
-		}
-		else if(OSName == "Windows") {
-			if( servId == "i386"){
+		} else if (OSName == "Windows") {
+			if (servId == "i386") {
 				num = 4;
-			}
-			else {
+			} else {
 				num = 5;
 			}
-		}
-		else if(OSName == "MacOS") {
-			if( servId == "i386"){
+		} else if (OSName == "MacOS") {
+			if (servId == "i386") {
 				num = 2;
-			}
-			else {
+			} else {
 				num = 3;
 			}
 		}
-		
-		document.location= url[num];
-                
+
+		document.location = url[num];
+
 	}
 </script>
 <link rel="icon" type="image/png" href="icon16.png" />
@@ -69,22 +65,28 @@
 	rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="css/font-awesome.min.css">
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
 
-  ga('create', 'UA-67308301-1', 'auto');
-  ga('send', 'pageview');
-
+	ga('create', 'UA-67308301-1', 'auto');
+	ga('send', 'pageview');
 </script>
 </head>
 
-<body>
+<body style="text-align: initial">
 
 	<div id="header_wrapper">
 		<div id="logo">
-			<a href="tacit.html"><img alt="logo" src="logo.png" /></a>
+			<a href="index.html"><img alt="logo" src="logo.png" /></a>
 		</div>
 
 		<div id="menu_wrapper">
@@ -99,48 +101,87 @@
 	</div>
 	<!-- Fin header_wrapper -->
 
-					
+
 	<div id="body_wrapper">
 		<h1 class="page_title">Get TACIT</h1>
-		<div class="usecase"> 
-		<div class="medias">
-			<div class="popup-gallery">
-				<a href="tacit.png" title="TACIT Download">
-					<img class="shadow" src="tacit.png" alt="TACIT Download" width="520" />
-				</a>
+		<div align="center">Download the latest version of TACIT, a free
+			and Open Source Text Analysis software.</div>
+		<div class="usecase">
+
+			<div class="medias">
+				<div class="popup-gallery">
+					<a href="tacit.png" title="TACIT Download"> <img class="shadow"
+						src="tacit.png" alt="TACIT Download" width="520" />
+					</a>
+				</div>
 			</div>
-		</div> 
-		<div class="infos">
-			<div class="title">
+			<div class="infos">
+				<!-- div class="title">
 				<h2>Download TACIT</h2>
 			</div> 
 		
 			<div class="descr">
 				<p>The latest version of the TACIT a free software including
 							only Open Source packages.</p>
-<br>
-				<h2><i class="fa fa-check-circle"></i> Required configuration</h2>
- <ul>
-<li>2 GB of main memory</li>
-<li>At least 512 MB of free space on the hard drive for extraction</li>
-<li>JRE version 6 (or later)</li>
-</ul>
+<br></div-->
+				<h2>
+					<i class="fa fa-check-circle"></i> Required configuration
+				</h2>
+				<ul>
+					<li>2 GB of main memory</li>
+					<li>At least 512 MB of free space on the hard drive for
+						extraction</li>
+					<li>JRE version 6 (or later)</li>
+				</ul>
 
-<h2><i class="fa fa-suitcase"></i> Download Links</h2>
-       <p><i class="fa fa-download dark_blue"></i>
-        <a href="http://tacit.usc.edu/tacit/downloads/product/tacit-win32.win32.x86.zip">Windows 32 Bit</a>/<a href="http://tacit.usc.edu/tacit/downloads/product/tacit-win32.win32.x86_64.zip">64 Bit</a>
-</p>
-        <p><i class="fa fa-download dark_blue"></i>
-        <a href="http://tacit.usc.edu/tacit/downloads/product/tacit-linuxgtk.x86.zip">Linux 32 Bit</a>/<a href="http://tacit.usc.edu/tacit/downloads/product/tacit-linuxgtk.x86_64.zip">64 Bit</a>
-</p>
-         <p><i class="fa fa-download dark_blue"></i>
-        <a href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86.zip">Mac 32 Bit</a>/<a href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86_64.zip">64 Bit</a>
-</p>
-		
-	
+				<h2>
+					<i class="fa fa-check-circle"></i> Installation Steps
+				</h2>
+				<ul>
+					<li>Install JRE as mentioned in <a
+						href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">JRE
+							Installation Guide.</a></li>
+					<li>Make sure to install 32-bit JRE for 32-bit TACIT and
+						64-bit JRE for 64-bit TACIT.</li>
+					<li>Download the TACIT zip file and unzip it.</li>
+					<li>To run TACIT:
+					<li>For Windows & Linux: Double click the TACIT.exe file in
+						the unzipped folder.</li>
+					<li>For MAC: Press CTRL key and click to open the TACIT.exe
+						file.</li>
+					</li>
+				</ul>
+
+				<h2>
+					<i class="fa fa-suitcase"></i> Download Links
+				</h2>
+				<p>
+					<i class="fa fa-download dark_blue"></i> <a
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-win32.win32.x86.zip">Windows
+						32 Bit</a>/<a
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-win32.win32.x86_64.zip">64
+						Bit</a>
+				</p>
+				<p>
+					<i class="fa fa-download dark_blue"></i> <a
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-linuxgtk.x86.zip">Linux
+						32 Bit</a>/<a
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-linuxgtk.x86_64.zip">64
+						Bit</a>
+				</p>
+				<p>
+					<i class="fa fa-download dark_blue"></i> <a
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86.zip">Mac
+						32 Bit</a>/<a
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86_64.zip">64
+						Bit</a>
+				</p>
+
+
+			</div>
+
 		</div>
-			
-		</div></div></div>
-	
+	</div>
+
 </body>
 </html>

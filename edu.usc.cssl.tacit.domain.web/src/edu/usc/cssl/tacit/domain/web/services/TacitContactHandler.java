@@ -24,9 +24,9 @@ public class TacitContactHandler extends HttpServlet {
 
 		MongoDatabase database = mongoClient.getDatabase("test");
 		MongoCollection<Document> collection = database.getCollection("tacit_contact");
-		Document doc = new Document("personname", name).append("email", emailid).append("orgname", orgName).append("message", message);
+		Document doc = new Document("personname", name).append("email", emailid).append("orgname", orgName)
+				.append("message", message);
 		collection.insertOne(doc);
 		response.sendRedirect("index.html");
 	}
 }
-
