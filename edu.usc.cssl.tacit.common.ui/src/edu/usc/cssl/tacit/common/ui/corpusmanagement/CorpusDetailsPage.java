@@ -166,7 +166,6 @@ public class CorpusDetailsPage implements IDetailsPage {
 			return false;
 		} else 
 			corpusMgmtViewform.getMessageManager().removeMessage("corpusId");
-		
 		return true;	
 	}
 
@@ -196,12 +195,13 @@ public class CorpusDetailsPage implements IDetailsPage {
 		} else {
 			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
 		}
-		String parentCorpusId = selectedCorpusClass.getParentId();
-		ICorpus parentCorpus = corpusManagement.readCorpusById(parentCorpusId);
+		ICorpus parentCorpus = selectedCorpusClass.getParent();
+		//ICorpus parentCorpus = corpusManagement.readCorpusById(parentCorpusId);
+		if(null == parentCorpus) return true; // newly created corpus
 		for(ICorpusClass cc : parentCorpus.getClasses()) {
 			if((CorpusClass)cc != selectedCorpusClass) {
 				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpusId, null, IMessageProvider.ERROR);
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusId(), null, IMessageProvider.ERROR);
 					return false;
 				}
 			}

@@ -39,11 +39,8 @@ public class ClassDetailsPage implements IDetailsPage {
 	private ScrolledForm corpusMgmtViewform;
 	private ManageCorpora corpusManagement;
 
-	public ClassDetailsPage() {
-		corpusManagement = new ManageCorpora();
-	}
-
 	public ClassDetailsPage(ScrolledForm corpusMgmtViewform) {
+		corpusManagement = new ManageCorpora();
 		this.corpusMgmtViewform = corpusMgmtViewform;
 	}
 
@@ -86,8 +83,10 @@ public class ClassDetailsPage implements IDetailsPage {
 		classNameTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(isClassnameValid(classNameTxt.getText())) 
-					selectedCorpusClass.setClassName(classNameTxt.getText());				
+				if(isClassnameValid(classNameTxt.getText())) {
+					selectedCorpusClass.setClassName(classNameTxt.getText());
+					selectedCorpusClass.getViewer().refresh();
+				}
 				
 				if(!selectedCorpusClass.getClassName().isEmpty()) 
 					corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
@@ -95,8 +94,10 @@ public class ClassDetailsPage implements IDetailsPage {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(isClassnameValid(classNameTxt.getText())) 
+				if(isClassnameValid(classNameTxt.getText())) {
 					selectedCorpusClass.setClassName(classNameTxt.getText());
+					selectedCorpusClass.getViewer().refresh();
+				}
 				
 				if(!selectedCorpusClass.getClassName().isEmpty()) 
 					corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
@@ -153,13 +154,12 @@ public class ClassDetailsPage implements IDetailsPage {
 		} else {
 			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
 		}
-		String parentCorpusId = selectedCorpusClass.getParentId();
-		ICorpus parentCorpus = corpusManagement.readCorpusById(parentCorpusId);
-		//String corpusId = corpus.getCorpusId();
+		ICorpus parentCorpus = selectedCorpusClass.getParent();
+		if(null == parentCorpus) return true; // newly created corpus, not saved
 		for(ICorpusClass cc : parentCorpus.getClasses()) {
 			if((CorpusClass)cc != selectedCorpusClass) {
 				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpusId, null, IMessageProvider.ERROR);
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusId(), null, IMessageProvider.ERROR);
 					return false;
 				}
 			}

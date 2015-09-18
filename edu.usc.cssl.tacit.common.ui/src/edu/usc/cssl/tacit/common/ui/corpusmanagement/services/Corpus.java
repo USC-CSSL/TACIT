@@ -53,7 +53,7 @@ public class Corpus implements ICorpus {
 	
 	public void addClass(ICorpusClass c) {
 		if(null == c) return;
-		((CorpusClass)c).setParentId(this.corpusId);
+		((CorpusClass)c).setParent(this);
 		this.classes.add(c);
 	}
 	
