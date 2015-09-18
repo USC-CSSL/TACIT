@@ -239,21 +239,17 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 	private void createNBClassifierInputParameters(Composite client) {
 		Label kValueLabel;
-		Section inputParamsSection = toolkit.createSection(client,
-				Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(inputParamsSection);
-		GridLayoutFactory.fillDefaults().numColumns(3)
-				.applyTo(inputParamsSection);
-		inputParamsSection.setText("Input Parameters");
+		Section inputParamsSection = toolkit.createSection(client,Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(inputParamsSection);
+		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(inputParamsSection);
+		inputParamsSection.setText("Output Details");
+		inputParamsSection.setDescription("Choose output details for storing the results");
 
-		ScrolledComposite sc = new ScrolledComposite(inputParamsSection,
-				SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(inputParamsSection, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
 
 		Composite sectionClient = toolkit.createComposite(inputParamsSection);
 		sc.setContent(sectionClient);
@@ -262,6 +258,8 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				.applyTo(sectionClient);
 		inputParamsSection.setClient(sectionClient);
 
+		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
+		
 		kValueLabel = toolkit.createLabel(sectionClient,
 				"k Value for Cross Validation:", SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
