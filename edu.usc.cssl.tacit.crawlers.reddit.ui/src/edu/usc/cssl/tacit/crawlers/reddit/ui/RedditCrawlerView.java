@@ -417,7 +417,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			String linkId = linkText.getText();
 			String text = queryText.getText();
 			String[] temp = subreddits.getText().split(",");
-			for(String s : temp)
+			content.clear(); // remove old contents, subreddits
+			for(String s : temp) 
 				content.add(s);
 			
 			if(title.isEmpty() && author.isEmpty() && url.isEmpty() && linkId.isEmpty() && content.size() == 0) {
