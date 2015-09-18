@@ -153,12 +153,13 @@ public class ClassDetailsPage implements IDetailsPage {
 		} else {
 			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
 		}
-		ICorpus corpus = selectedCorpusClass.getParent();
-		String corpusId = corpus.getCorpusId();
-		for(ICorpusClass cc : corpus.getClasses()) {
+		String parentCorpusId = selectedCorpusClass.getParentId();
+		ICorpus parentCorpus = corpusManagement.readCorpusById(parentCorpusId);
+		//String corpusId = corpus.getCorpusId();
+		for(ICorpusClass cc : parentCorpus.getClasses()) {
 			if((CorpusClass)cc != selectedCorpusClass) {
 				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ corpusId, null, IMessageProvider.ERROR);
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpusId, null, IMessageProvider.ERROR);
 					return false;
 				}
 			}

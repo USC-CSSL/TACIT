@@ -180,10 +180,8 @@ public class CorpusDetailsPage implements IDetailsPage {
 	public boolean validateData(String corpusId) {
 		if(isCorpusIdValid(corpusId)) {
 			List<ICorpusClass> classes = selectedCorpus.getClasses(); // validate the class details as well
-			int count = 1;
 			for(ICorpusClass cc : classes) {
 				if(!validateClassData(cc)) return false;
-				count++;
 			}
 		} else 
 			return false; // corpusId is not valid
@@ -198,12 +196,12 @@ public class CorpusDetailsPage implements IDetailsPage {
 		} else {
 			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
 		}
-		ICorpus corpus = selectedCorpusClass.getParent();
-		String corpusId = corpus.getCorpusId();
-		for(ICorpusClass cc : corpus.getClasses()) {
+		String parentCorpusId = selectedCorpusClass.getParentId();
+		ICorpus parentCorpus = corpusManagement.readCorpusById(parentCorpusId);
+		for(ICorpusClass cc : parentCorpus.getClasses()) {
 			if((CorpusClass)cc != selectedCorpusClass) {
 				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ corpusId, null, IMessageProvider.ERROR);
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpusId, null, IMessageProvider.ERROR);
 					return false;
 				}
 			}
@@ -250,7 +248,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private boolean corpusIdExists(String corpusId) {
 		List<ICorpus> corpuses = corpusManagement.getAllCorpusDetails();
 		for(ICorpus corpus : corpuses) {
-			if(corpus.getCorpusId().equals(corpusId)) return true;
+			if(!corpus.equals(selectedCorpus) && corpus.getCorpusId().equals(corpusId)) return true;
 		}
 		return false;
 	}
