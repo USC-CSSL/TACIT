@@ -1,7 +1,11 @@
 package edu.usc.cssl.tacit.classify.naivebayes.ui;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -669,43 +673,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 								return handledCancelRequest("Cancelled");
 							}
-							double avgAccuracy = 0.0;
-							double accuracies[] = new double[kValue];
-							ConsoleView
-									.printlInConsoleln("------Cross Validation Results------");
-							if (null != perf) {
-								for (Integer trialNum : perf.keySet()) {
-									ConsoleView.printlInConsoleln("Fold "
-											+ trialNum + " Results");
-									if (null != perf.get(trialNum)) {
-										String[] results = perf.get(trialNum)
-												.split("=");
-										for (int i = 0; i < results.length; i++) {
-											if (results[i]
-													.contains("test accuracy")) {
-												avgAccuracy += Double
-														.parseDouble(results[i + 1]
-																.split(" ")[1]);
-												accuracies[i] = Double
-														.parseDouble(results[i + 1]
-																.split(" ")[1]);
-											}
-										}
-										ConsoleView.printlInConsoleln(perf
-												.get(trialNum));
-										ConsoleView.printlInConsoleln();
-									}
-								}
-							}
-							monitor.worked(10);
-							ConsoleView
-									.printlInConsoleln("Average test accuracy = "
-											+ avgAccuracy / kValue);
-							ConsoleView
-									.printlInConsoleln("Standard Deviation = "
-											+ MatrixOps.stddev(accuracies));
-							ConsoleView.printlInConsoleln("Standard Error = "
-									+ MatrixOps.stderr(accuracies));
+							createNBOutputReport(outputDir, "Naive Bayes's", dateObj, perf, kValue, monitor);
 
 							if (monitor.isCanceled()) {
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
@@ -899,6 +867,61 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
+	
+	public static void createNBOutputReport (String location, String title, Date dateObj, HashMap<Integer, String> perf, int kValue, IProgressMonitor monitor) {
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		File readme = new File(location + System.getProperty("file.separator")+title.replace(" ", "-")+"-output-report-"+df.format(dateObj)+".txt");
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(readme));
+			Date date = new Date();
+			bw.write(title+" Output");
+			bw.newLine();
+			bw.write("--------------------------");bw.newLine();bw.newLine();
+			bw.write("Date: " + date.toString());bw.newLine(); bw.newLine();
+			bw.write("Cross Validation Results");bw.newLine();
+			bw.write("--------------------------");bw.newLine();
+			
+			double avgAccuracy = 0.0;
+			double totalPvalue = 0.0;
+			double accuracies[] = new double[kValue];
+			ConsoleView.printlInConsoleln("------Cross Validation Results------");
+			if (null != perf) {
+				for (Integer trialNum : perf.keySet()) {
+					bw.write("Fold " + trialNum + " Results"); bw.newLine();
+					ConsoleView.printlInConsoleln("Fold " + trialNum + " Results");
+					if (null != perf.get(trialNum)) {
+						String[] results = perf.get(trialNum).split("=");
+						for (int i = 0; i < results.length; i++) {
+							if (results[i].contains("test accuracy")) {
+								avgAccuracy += Double.parseDouble(results[i + 1].split(" ")[1]);
+								accuracies[i] = Double.parseDouble(results[i + 1].split(" ")[1]);
+							} else if(results[i].contains("Pvalue")) {
+								totalPvalue += Double.parseDouble(results[i + 1].split(" ")[1]);
+							}
+						}
+						bw.write(perf.get(trialNum)); bw.newLine();bw.newLine();
+						ConsoleView.printlInConsoleln(perf.get(trialNum));
+						ConsoleView.printlInConsoleln();
+					}
+				}
+			}
+			monitor.worked(10);
+			bw.newLine();
+			bw.write("Average test accuracy = " + avgAccuracy / kValue); bw.newLine();
+			ConsoleView.printlInConsoleln("Average test accuracy = " + avgAccuracy / kValue);
+			bw.write("Average Binomial 2-Sided Pvalue = " + totalPvalue / kValue); bw.newLine();
+			ConsoleView.printlInConsoleln("Average Binomial 2-Sided Pvalue = " + totalPvalue / kValue);			
+			bw.write("Standard Deviation = " + MatrixOps.stddev(accuracies)); bw.newLine();
+			ConsoleView.printlInConsoleln("Standard Deviation = " + MatrixOps.stddev(accuracies));
+			bw.write("Standard Error = " + MatrixOps.stderr(accuracies)); bw.newLine();
+			ConsoleView.printlInConsoleln("Standard Error = "+ MatrixOps.stderr(accuracies));
+			bw.close();
+			ConsoleView.printlInConsoleln("Finished creating output report file :"+readme.getAbsolutePath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	/**
 	 * 
