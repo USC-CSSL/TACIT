@@ -259,34 +259,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		inputParamsSection.setClient(sectionClient);
 
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
-		
-		kValueLabel = toolkit.createLabel(sectionClient,
-				"k Value for Cross Validation:", SWT.None);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(kValueLabel);
-		kValueText = toolkit.createText(sectionClient, "10", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
-				.applyTo(kValueText);
-
-		kValueText.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (!(e.character >= '0' && e.character <= '9')) {
-					form.getMessageManager().addMessage("kvalue",
-							"Provide valid K-Value for cross validation", null,
-							IMessageProvider.ERROR);
-					kValueText.setText("");
-				} else {
-					form.getMessageManager().removeMessage("kvalue");
-				}
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-		});
 
 		//TacitFormComposite.createEmptyRow(toolkit, client);
 
@@ -329,7 +301,33 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			}
 		});
 
-		//createClassificationParameters(client);
+		kValueLabel = toolkit.createLabel(sectionClient,
+				"k Value for Cross Validation:", SWT.None);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(kValueLabel);
+		kValueText = toolkit.createText(sectionClient, "10", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+				.applyTo(kValueText);
+
+		kValueText.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!(e.character >= '0' && e.character <= '9')) {
+					form.getMessageManager().addMessage("kvalue",
+							"Provide valid K-Value for cross validation", null,
+							IMessageProvider.ERROR);
+					kValueText.setText("");
+				} else {
+					form.getMessageManager().removeMessage("kvalue");
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
 
 	}
 
