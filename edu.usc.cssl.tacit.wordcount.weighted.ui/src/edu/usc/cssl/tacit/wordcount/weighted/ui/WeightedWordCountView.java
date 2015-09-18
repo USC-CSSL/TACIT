@@ -118,7 +118,7 @@ public class WeightedWordCountView extends ViewPart implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		inputLayoutData = TacitFormComposite
-				.createTableSection(client, toolkit, layout, "Input",
+				.createTableSection(client, toolkit, layout, "Input Details",
 						"Add File(s) and Folder(s) to include in analysis.",
 						true, true, true);
 		dictLayoutData = TacitFormComposite
@@ -137,9 +137,9 @@ public class WeightedWordCountView extends ViewPart implements
 
 		createStemmingOptions(compInput);
 
-		createAdditionalOptions(toolkit, form.getBody());
+		//createAdditionalOptions(toolkit, form.getBody());
 
-		TacitFormComposite.createEmptyRow(toolkit, form.getBody());
+		//TacitFormComposite.createEmptyRow(toolkit, form.getBody());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -150,6 +150,7 @@ public class WeightedWordCountView extends ViewPart implements
 		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
 				form.getMessageManager());
 
+		createAdditionalOptions(toolkit, client1);
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
