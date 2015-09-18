@@ -110,15 +110,13 @@ public class HierarchicalClusterView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		layoutOutputData = TacitFormComposite.createOutputSection(toolkit,
-				client1, form.getMessageManager());
+		layoutOutputData = TacitFormComposite.createOutputSection(toolkit, client1, form.getMessageManager());
+		createAdditionalOptions(toolkit, client1);
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
 
-		Composite output = layoutData.getSectionClient();
-
-		createAdditionalOptions(toolkit, output);
+		//Composite output = layoutData.getSectionClient();
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -151,12 +149,15 @@ public class HierarchicalClusterView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -205,6 +206,7 @@ public class HierarchicalClusterView extends ViewPart implements
 				return "Analyze";
 			}
 
+			@Override
 			public void run() {
 				final DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				final Date dateObj = new Date();
