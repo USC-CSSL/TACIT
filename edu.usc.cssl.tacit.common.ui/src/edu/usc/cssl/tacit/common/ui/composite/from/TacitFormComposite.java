@@ -188,7 +188,7 @@ public class TacitFormComposite {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
-		section.setText("Input Path "); //$NON-NLS-1$
+		section.setText("Input Details "); //$NON-NLS-1$
 		section.setDescription("Choose input folder for analysis.");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL

@@ -476,7 +476,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				.applyTo(inputParamsSection);
 		GridLayoutFactory.fillDefaults().numColumns(3)
 				.applyTo(inputParamsSection);
-		inputParamsSection.setText("Input Parameters");
+		inputParamsSection.setText("Input Details");
 
 		ScrolledComposite sc = new ScrolledComposite(inputParamsSection,
 				SWT.H_SCROLL | SWT.V_SCROLL);

@@ -229,7 +229,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		Section inputParamsSection = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(inputParamsSection);
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(inputParamsSection);
-		inputParamsSection.setText("Input Parameters");
+		inputParamsSection.setText("Input Details");
 		
 		ScrolledComposite sc = new ScrolledComposite(inputParamsSection, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
