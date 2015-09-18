@@ -122,10 +122,21 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				client1, form.getMessageManager());
 		Composite output = layoutData.getSectionClient();
 
+		kValueLabel = toolkit.createLabel(output,
+				"k Value for Cross Validation:", SWT.None);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(kValueLabel);
+		kValue = toolkit.createText(output, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+				.applyTo(kValue);
+		
+		
 		featureFileButton = toolkit.createButton(output,
 				"Create feature weights file", SWT.CHECK);
 		featureFileButton.setBounds(10, 35, 10, 10);
 		featureFileButton.pack();
+		
+		
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		this.setPartName("SVM Classification");
@@ -496,13 +507,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		class2Name = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class2Name);
-		kValueLabel = toolkit.createLabel(sectionClient,
-				"k Value for Cross Validation:", SWT.None);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(kValueLabel);
-		kValue = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
-				.applyTo(kValue);
+		
 
 	}
 
