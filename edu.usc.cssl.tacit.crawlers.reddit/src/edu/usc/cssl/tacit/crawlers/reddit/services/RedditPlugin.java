@@ -268,7 +268,6 @@ public class RedditPlugin {
 			    	if(null == dataObject || dataObject.isEmpty()) return;
 			        JSONArray userComments = (JSONArray) dataObject.get("children");
 			        if(null == userComments || userComments.isEmpty()) return;
-			        
 			    	for (Object post : userComments) {
 			    		JSONObject data = (JSONObject) post;
 			            String kind = safeJsonToString(data.get("kind"));
@@ -290,8 +289,9 @@ public class RedditPlugin {
 			        	        	if(count == this.limitComments) break breakCommentFetch;
 			        	        }
 			                }
-						}	
+						} 
 			    	}
+			    	break breakCommentFetch; // no more comments
 			    } 
 			else {
 			       	throw new IllegalArgumentException("Parsing failed because JSON input is not from a submission.");
