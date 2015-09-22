@@ -1,8 +1,5 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
-import java.io.File;
-
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,8 +23,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusMangementValidation;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
@@ -83,7 +79,7 @@ public class ClassDetailsPage implements IDetailsPage {
 		classNameTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(isClassnameValid(classNameTxt.getText())) {
+				if(CorpusMangementValidation.isClassnameValid(classNameTxt.getText(), selectedCorpusClass, corpusMgmtViewform)) {
 					selectedCorpusClass.setClassName(classNameTxt.getText());
 					selectedCorpusClass.getViewer().refresh();
 				}
@@ -94,7 +90,7 @@ public class ClassDetailsPage implements IDetailsPage {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(isClassnameValid(classNameTxt.getText())) {
+				if(CorpusMangementValidation.isClassnameValid(classNameTxt.getText(), selectedCorpusClass, corpusMgmtViewform)) {
 					selectedCorpusClass.setClassName(classNameTxt.getText());
 					selectedCorpusClass.getViewer().refresh();
 				}
@@ -120,6 +116,7 @@ public class ClassDetailsPage implements IDetailsPage {
 					return; 
 				classPathTxt.setText(path);
 				selectedCorpusClass.setClassPath(classPathTxt.getText());
+				corpusMgmtViewform.getMessageManager().removeMessage("classPath");	
 			}
 
 			@Override
@@ -129,78 +126,22 @@ public class ClassDetailsPage implements IDetailsPage {
 		classPathTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(isClassPathValid(classPathTxt.getText())) 
+				if(CorpusMangementValidation.isClassPathValid(classPathTxt.getText(), selectedCorpusClass.getClassName(), corpusMgmtViewform))
 					selectedCorpusClass.setClassPath(classPathTxt.getText());				
 				
 				if(!selectedCorpusClass.getClassPath().isEmpty()) 
-					corpusMgmtViewform.getMessageManager().removeMessage("classPathEmpty");			
+					corpusMgmtViewform.getMessageManager().removeMessage("classPath");			
 				}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(isClassPathValid(classPathTxt.getText())) 
+				if(CorpusMangementValidation.isClassPathValid(classPathTxt.getText(), selectedCorpusClass.getClassName(), corpusMgmtViewform))
 					selectedCorpusClass.setClassPath(classPathTxt.getText());				
 				
 				if(!selectedCorpusClass.getClassPath().isEmpty()) 
-					corpusMgmtViewform.getMessageManager().removeMessage("classPathEmpty");				}
-		});	
-		
-	}
-	
-	private boolean isClassnameValid(String className) {
-		if(className.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classNameEmpty", "Class name cannot be empty", null, IMessageProvider.ERROR);
-			return false;
-		} else {
-			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
-		}
-		ICorpus parentCorpus = selectedCorpusClass.getParent();
-		if(null == parentCorpus) return true; // newly created corpus, not saved
-		for(ICorpusClass cc : parentCorpus.getClasses()) {
-			if((CorpusClass)cc != selectedCorpusClass) {
-				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusName(), null, IMessageProvider.ERROR);
-					return false;
+					corpusMgmtViewform.getMessageManager().removeMessage("classPath");			
 				}
-			}
-		}
-		corpusMgmtViewform.getMessageManager().removeMessage("className");
-		return true;
-	}
-
-	protected boolean isClassPathValid(String classPathText) {
-		if (classPathText.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location", null, IMessageProvider.ERROR);
-			return false;
-		}
-		File tempFile = new File(classPathText);
-		if (!tempFile.exists() || !tempFile.isDirectory()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location", null, IMessageProvider.ERROR);
-			return false;
-		} else {
-			corpusMgmtViewform.getMessageManager().removeMessage("classPath");
-			String message = validateOutputDirectory(classPathText);
-			if (null != message) {
-				corpusMgmtViewform.getMessageManager().addMessage("classPath", message, null, IMessageProvider.ERROR);
-				return false;
-			}
-		}
-		corpusMgmtViewform.getMessageManager().removeMessage("classPath");
-		return true;
-	}
-	
-	
-	private String validateOutputDirectory(String location) {
-		File locationFile = new File(location);
-		if (locationFile.canRead()) {
-			return null;
-		} else {
-			return "Class path does not have read permission";
-		}
-	}
-
-	private boolean validateData() {
-		return isClassnameValid(classNameTxt.getText()) && isClassPathValid(classPathTxt.getText());
+		});	
 	}
 
 	@Override
@@ -244,7 +185,7 @@ public class ClassDetailsPage implements IDetailsPage {
 		selectedCorpusClass = (CorpusClass) ((IStructuredSelection) selection).getFirstElement();	
 		classNameTxt.setText(selectedCorpusClass.getClassName());
 		classPathTxt.setText(selectedCorpusClass.getClassPath());
-		validateData();
+		CorpusMangementValidation.validateClassData(selectedCorpusClass, corpusMgmtViewform);
 	}
 
 }
