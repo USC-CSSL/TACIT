@@ -14,7 +14,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 public class TacitUtil {
 	public static List<String> refineInput(List<String> selectedInputs) {
 		List<String> refinedInputList = new ArrayList<String>();
-		Pattern corpusDetector = Pattern.compile(".* [(](.*)[)]");
+		Pattern corpusDetector = Pattern.compile(".* [(]Internal Path: (.*)[)]");
 
 		for (String input : selectedInputs) {
 			Matcher m = corpusDetector.matcher(input);
