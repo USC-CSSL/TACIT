@@ -123,9 +123,9 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 		
-		TacitFormComposite.createEmptyRow(toolkit, sc);
+		/*TacitFormComposite.createEmptyRow(toolkit, sc);
 		createCorpusSection(client1);
-		TacitFormComposite.createEmptyRow(toolkit, sc);
+		TacitFormComposite.createEmptyRow(toolkit, sc);*/
 		
 		layoutData = TacitFormComposite.createOutputSection(toolkit,
 				client1, form.getMessageManager());
@@ -278,8 +278,10 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								File[] inputFile = new File(inputPath)
 										.listFiles();
 								for (File iFile : inputFile) {
+									if (iFile.getAbsolutePath().contains(
+											"DS_Store"))
+										continue;
 									inputFiles.add(iFile.toString());
-
 								}
 								topicModelDirPath = preprocessTask
 										.doPreprocessing(inputFiles, "");
@@ -434,7 +436,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		return canProceed;
 	}
 	
-	private void createCorpusSection(Composite client) {
+	/*private void createCorpusSection(Composite client) {
 
 		Group group = new Group(client, SWT.SHADOW_IN);
 		group.setText("Input Type");
@@ -519,6 +521,6 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 			}
 		});
 		TacitFormComposite.createEmptyRow(null, sectionClient);
-	}
+	}*/
 
 }

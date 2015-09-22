@@ -119,9 +119,9 @@ public class LdaTopicModelView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 		
-		TacitFormComposite.createEmptyRow(toolkit, sc);
+		/*TacitFormComposite.createEmptyRow(toolkit, sc);
 		createCorpusSection(client1);
-		TacitFormComposite.createEmptyRow(toolkit, sc);
+		TacitFormComposite.createEmptyRow(toolkit, sc);*/
 		
 		layoutData = TacitFormComposite.createOutputSection(toolkit,
 				client1, form.getMessageManager());
@@ -410,7 +410,7 @@ public class LdaTopicModelView extends ViewPart implements
 		return super.getAdapter(adapter);
 	}
 	
-	private void createCorpusSection(Composite client) {
+	/*private void createCorpusSection(Composite client) {
 
 		Group group = new Group(client, SWT.SHADOW_IN);
 		group.setText("Input Type");
@@ -495,6 +495,6 @@ public class LdaTopicModelView extends ViewPart implements
 			}
 		});
 		TacitFormComposite.createEmptyRow(null, sectionClient);
-	}
+	}*/
 
 }
