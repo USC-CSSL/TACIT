@@ -15,7 +15,9 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>why you might want to preprocess
+						<td>TACIT provides a number of preprocessing options that can be applied to text before analysis. To access these settings, click on the <b> Presprocess</b> link within any of the tools. You can also access preprocessing through the main toolbar by clicking on <b>View </b>, followed by <b>Preferences, TACIT, and Preprocess</b>. 
+						Finally, for cases where you do not want to run an analysis yet and want to first Preprocess your text, there is a stand-alone Preprocessing tool that can be accessed by clicking on <b>Preprocess</b> under <b>View</b> in the main toolbar. 
+						<br><br> The Preprocessor has options for stop word removal, lowercase conversion, delimiter specification, stemming, and preprocessed-file storage.
 							
 						</td>
 					</tr>
@@ -30,35 +32,36 @@
 						<td class = "subtitle">Stop Words</td>
 					</tr>
 					<tr>
-						<td>Stop words information. 
+						<td>Stop words are common words that occur in more than 99% of documents such as “a” and “the”. You can specify a text file with a list of stop words that you would like to remove from the text, leaving the presumably meaningful words as the focus of analysis (Salton, 1989). However, one should only alter the texts’ structure in this manner with clear theoretic justification and knowledge of the tradeoffs involved. Faced with small amounts of text, it is sometimes helpful to remove uninformative variations; however, elements like stopwords can be useful indicators for tasks like authorship identification
 						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Delimiters</td>
 					</tr>
 					<tr>
-						<td>Delimiters information. 
+						<td>The program will use the punctuation (or delimiters) provided in this box to divide the text into meaningful units (sentences, clauses, etc).
 						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Stemming</td>
 					</tr>	
 					<tr>
-						<td>Stemming information. 
+						<td>When the box <b>Stemming</b> is checked, TACIT will use the Porter stemming algorithm to reduce words in the text to their root form (e.g., “running”, “runs” and “ran” would all reduce to “run”) which serves to reduce the number of unique words in the documents and make sure that words that represent the same meaning, but that are in different tenses, are treated the same(Porter, 2006). 
 						</td>
 					</tr>	
 					<tr>
 						<td class = "subtitle">Convert to Lowercase</td>
 					</tr>
 					<tr>
-						<td>Lowercase information. 
+						<td> Selecting <b>Convert to Lowercase </b> converts all text to single case (all lowercase) so that algorithms can recognize that “Freedom” and “freedom” represent the same word.
 						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Saving Preprocessed Files</td>
 					</tr>
 					<tr>
-						<td>Save location information. <b> Clean up preprocessed files </b>
+						<td> Click <b>Browse</b> next to <b>Pre-Processed File Location </b> to specify where you would like the newly created, pre-processed files to be stored.
+						<br><br> By selecting <b> Clean up preprocessed files </b>, the program will automatically  delete the created, pre-processed files after running the analysis.
 						</td>
 					</tr>		
 				</table>
