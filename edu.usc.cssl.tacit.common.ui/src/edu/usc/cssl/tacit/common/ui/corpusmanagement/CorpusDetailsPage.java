@@ -2,6 +2,9 @@ package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
@@ -18,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -34,7 +38,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
-public class CorpusDetailsPage implements IDetailsPage {
+public class CorpusDetailsPage implements IDetailsPage{
 	private IManagedForm mform;
 	private Text corpusNameTxt;
 	private Corpus selectedCorpus;
@@ -45,13 +49,15 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private Button redditJSON = null;
 	private Button xmlData = null;
 	private Button wordData = null;
+	private IViewSite viewSite;
 	
 	ManageCorpora corpusManagement;
 	List<ICorpus> corpusList;
-	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform, List<ICorpus> corpusList) {
+	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform, List<ICorpus> corpusList, IViewSite viewSite) {
 		this.corpusMgmtViewform = corpusMgmtViewform;
 		corpusManagement = new ManageCorpora();
 		corpusList = this.corpusList;
+		this.viewSite = viewSite;
 	}
 
 	@Override
@@ -118,9 +124,14 @@ public class CorpusDetailsPage implements IDetailsPage {
 		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(CorpusMangementValidation.validateCorpus(selectedCorpus, false, corpusMgmtViewform, corpusManagement)) {
+				if(CorpusMangementValidation.validateCorpus(selectedCorpus, true, corpusMgmtViewform, corpusManagement)) {
+					corpusMgmtViewform.getMessageManager().addMessage("saveCorpus", "Creating corpus...", null, IMessageProvider.INFORMATION);
+					TacitFormComposite.updateStatusMessage(viewSite, "Creating corpus \""+selectedCorpus.getCorpusName()+"\"", IStatus.INFO, corpusMgmtViewform);
 					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
 					ManageCorpora.saveCorpus(selectedCorpus);
+					corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
+					TacitFormComposite.updateStatusMessage(viewSite, "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully", IStatus.OK, corpusMgmtViewform);
+					MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info", "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully");
 				}
 			}
 		});	
@@ -288,5 +299,6 @@ public class CorpusDetailsPage implements IDetailsPage {
 		setDataTypeOption(selectedCorpus.getDatatype());
 		CorpusMangementValidation.validateCorpus(selectedCorpus, false, corpusMgmtViewform, corpusManagement);
 	}
+
 
 }

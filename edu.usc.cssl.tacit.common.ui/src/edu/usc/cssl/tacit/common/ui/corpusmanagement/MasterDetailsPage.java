@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -45,11 +46,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	private ScrolledForm corpusMgmtViewform;
 	List<ICorpus> corpusList;
 	ManageCorpora corpusManagement;
-	MasterDetailsPage(ScrolledForm form) throws IOException, ParseException {
+	IViewSite viewSite;
+	MasterDetailsPage(ScrolledForm form, IViewSite viewSite) throws IOException, ParseException {
 		corpusList = new ArrayList<ICorpus>();
 		corpusManagement = new ManageCorpora();
 		corpusList = corpusManagement.getAllCorpusDetails();
 		this.corpusMgmtViewform = form;
+		this.viewSite = viewSite;
 	}
 	
 	class MasterContentProvider implements ITreeContentProvider {
@@ -247,7 +250,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform, corpusList));
+		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform, corpusList, viewSite));
 		detailsPart.registerPage(CorpusClass.class, new ClassDetailsPage(corpusMgmtViewform));
 	}
 
