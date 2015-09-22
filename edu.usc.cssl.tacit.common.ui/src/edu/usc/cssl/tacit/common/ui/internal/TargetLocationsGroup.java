@@ -446,7 +446,7 @@ public class TargetLocationsGroup {
 		ICorpus myCorpus = corporaManagement.readCorpusById(corpusNode.getName());
 		List<ICorpusClass> myCorpusClasses = myCorpus.getClasses();
 		for(ICorpusClass class_ : myCorpusClasses) {
-			String classNameOnGui = String.format("%s (%s)", class_.getClassName(), class_.getTacitLocation());
+			String classNameOnGui = String.format("%s (Internal Path: %s)", class_.getClassName(), class_.getTacitLocation());
 			TreeParent classFolder = new TreeParent(classNameOnGui);
 			corpusNode.addChildren(classFolder);
 		}
