@@ -144,14 +144,14 @@
                    tooltip="Console">
             </command>
       </menuContribution>
-      <menuContribution
+    <!--  <menuContribution
             locationURI="menu:view">
              <command
                   commandId="usc.edu.cssl.common.preprocess.command"
                   label="Preprocess">
             </command>
-      </menuContribution>
-      <menuContribution
+      </menuContribution> -->
+      <menuContribution 
             locationURI="menu:view">
          <command
                commandId="usc.edu.cssl.common.progressview.command1"
@@ -189,7 +189,7 @@
              restorable="true">
        </view>
     </extension>
-    <extension
+  <!--  <extension
           point="org.eclipse.ui.views">
        <view
              class="edu.usc.cssl.tacit.common.ui.views.PreprocessorView"
@@ -212,7 +212,7 @@
             class="edu.usc.cssl.tacit.common.ui.handlers.OpenPreProcessViewHandler"
             commandId="usc.edu.cssl.common.preprocess.command">
       </handler>
-   </extension>
+   </extension> -->
    <extension
          point="org.eclipse.ui.views">
       <view
