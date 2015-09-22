@@ -58,13 +58,11 @@ public class TacitFormComposite {
 
 	public static void createEmptyRow(FormToolkit toolkit,
 			Composite sectionClient) {
-		Label dummy =  new Label(sectionClient, SWT.NONE);
+		Label dummy = new Label(sectionClient, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
 	}
-	
-	
-	
+
 	public static OutputLayoutData createOutputSection(FormToolkit toolkit,
 			Composite parent, final IMessageManager mmng) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
@@ -265,7 +263,8 @@ public class TacitFormComposite {
 
 	public static TableLayoutData createTableSection(final Composite parent,
 			FormToolkit toolkit, GridLayout layout, String title,
-			String description, boolean isFolder, boolean isFile, boolean isCorpus) {
+			String description, boolean isFolder, boolean isFile,
+			boolean isCorpus) {
 		Section section = toolkit.createSection(parent, Section.TWISTIE
 				| Section.TITLE_BAR);
 		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
@@ -369,36 +368,36 @@ public class TacitFormComposite {
 	}
 
 	public static void addErrorPopup(final Form form, final FormToolkit toolkit) {
-//		form.addMessageHyperlinkListener(new HyperlinkAdapter() {
-//			@Override
-//			public void linkActivated(HyperlinkEvent e) {
-//				String title = e.getLabel();
-//				Object href = e.getHref();
-//				if (href instanceof IMessage[]) {
-//					// details =
-//					// managedForm.getMessageManager().createSummary((IMessage[])href);
-//				}
-//
-//				Point hl = ((Control) e.widget).toDisplay(0, 0);
-//				hl.x += 10;
-//				hl.y += 10;
-//				Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
-//				shell.setImage(getImage(form.getMessageType()));
-//				shell.setText(title);
-//				shell.setLayout(new FillLayout());
-//				// ScrolledFormText stext = new ScrolledFormText(shell, false);
-//				// stext.setBackground(toolkit.getColors().getBackground());
-//				FormText text = toolkit.createFormText(shell, true);
-//				configureFormText(form, text);
-//				// stext.setFormText(text);
-//				if (href instanceof IMessage[])
-//					text.setText(createFormTextContent((IMessage[]) href),
-//							true, false);
-//				shell.setLocation(hl);
-//				shell.pack();
-//				shell.open();
-//			}
-//		});
+		// form.addMessageHyperlinkListener(new HyperlinkAdapter() {
+		// @Override
+		// public void linkActivated(HyperlinkEvent e) {
+		// String title = e.getLabel();
+		// Object href = e.getHref();
+		// if (href instanceof IMessage[]) {
+		// // details =
+		// // managedForm.getMessageManager().createSummary((IMessage[])href);
+		// }
+		//
+		// Point hl = ((Control) e.widget).toDisplay(0, 0);
+		// hl.x += 10;
+		// hl.y += 10;
+		// Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
+		// shell.setImage(getImage(form.getMessageType()));
+		// shell.setText(title);
+		// shell.setLayout(new FillLayout());
+		// // ScrolledFormText stext = new ScrolledFormText(shell, false);
+		// // stext.setBackground(toolkit.getColors().getBackground());
+		// FormText text = toolkit.createFormText(shell, true);
+		// configureFormText(form, text);
+		// // stext.setFormText(text);
+		// if (href instanceof IMessage[])
+		// text.setText(createFormTextContent((IMessage[]) href),
+		// true, false);
+		// shell.setLocation(hl);
+		// shell.pack();
+		// shell.open();
+		// }
+		// });
 	}
 
 	private static Image getImage(int type) {
@@ -491,7 +490,7 @@ public class TacitFormComposite {
 		final DateFormat dateFormat = new SimpleDateFormat(
 				"MMM dd, yyyy, HH:mm:ss aaa");
 		final Calendar cal = Calendar.getInstance();
-		ConsoleView.writeInConsoleHeader(statusText
+		ConsoleView.writeInConsoleHeader(statusText + ", "
 				+ (dateFormat.format(cal.getTime())));
 	}
 }

@@ -1,7 +1,6 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +8,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -18,8 +19,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -46,6 +45,7 @@ import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin;
 import edu.usc.cssl.tacit.wordcount.standard.ui.internal.IStandardWordCountViewConstants;
 import edu.usc.cssl.tacit.wordcount.standard.ui.internal.StandardWordCountImageRegistry;
@@ -66,12 +66,13 @@ public class StandardWordCountView extends ViewPart implements
 	private Button wordDistribution;
 	private Button createDATFile;
 	protected Job wordCountJob;
-	
+
 	@Override
 	public Image getTitleImage() {
-		return StandardWordCountImageRegistry.getImageIconFactory()
-				.getImage(IMAGE_WORD_TITLE);
+		return StandardWordCountImageRegistry.getImageIconFactory().getImage(
+				IMAGE_WORD_TITLE);
 	}
+
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -107,13 +108,13 @@ public class StandardWordCountView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		inputLayoutData = TacitFormComposite
-				.createTableSection(client, toolkit, layout, "Input Details",
-						"Add File(s) and Folder(s) to include in analysis.",
-						true, true, true);
-		dictLayoutData = TacitFormComposite
-				.createTableSection(client, toolkit, layout, "Dictionary",
-						"Add location of Dictionary", false, true, false);
+		inputLayoutData = TacitFormComposite.createTableSection(client,
+				toolkit, layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true);
+		dictLayoutData = TacitFormComposite.createTableSection(client, toolkit,
+				layout, "Dictionary", "Add location of Dictionary", false,
+				true, false);
 
 		Composite compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
@@ -127,19 +128,19 @@ public class StandardWordCountView extends ViewPart implements
 
 		createStemmingOptions(compInput);
 
-		//createAdditionalOptions(toolkit, form.getBody());
+		// createAdditionalOptions(toolkit, form.getBody());
 
-		//TacitFormComposite.createEmptyRow(toolkit, form.getBody());
+		// TacitFormComposite.createEmptyRow(toolkit, form.getBody());
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
-		
-		//createCorpusSection(client1);
-		//TacitFormComposite.createEmptyRow(toolkit, form.getBody());
-		
+
+		// createCorpusSection(client1);
+		// TacitFormComposite.createEmptyRow(toolkit, form.getBody());
+
 		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
 				form.getMessageManager());
 		createAdditionalOptions(toolkit, client1);
@@ -224,7 +225,7 @@ public class StandardWordCountView extends ViewPart implements
 		weightedWordCountButton.setForeground(parent.getForeground());
 
 		Label lblEmpty = new Label(buttonComposite, SWT.None);
-		//TacitFormComposite.createEmptyRow(toolkit, parent);
+		// TacitFormComposite.createEmptyRow(toolkit, parent);
 
 	}
 
@@ -235,8 +236,8 @@ public class StandardWordCountView extends ViewPart implements
 		layout.numColumns = 1;
 		downloadGroup.setLayout(layout);
 
-		stemEnabled = toolkit.createButton(downloadGroup, "Stem Dictionary (Porter)",
-				SWT.CHECK);
+		stemEnabled = toolkit.createButton(downloadGroup,
+				"Stem Dictionary (Porter)", SWT.CHECK);
 		stemEnabled.pack();
 		stemEnabled.setEnabled(true);
 
@@ -279,17 +280,21 @@ public class StandardWordCountView extends ViewPart implements
 			public void run() {
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
-				final List<String> inputFiles = TacitUtil.refineInput(inputLayoutData.getSelectedFiles());
-				final List<String> dictionaryFiles = dictLayoutData.getSelectedFiles();
+				final List<String> inputFiles = TacitUtil
+						.refineInput(inputLayoutData.getSelectedFiles());
+				final List<String> dictionaryFiles = dictLayoutData
+						.getSelectedFiles();
 				final boolean isStemDic = stemEnabled.getSelection();
 				final boolean doPennCounts = defaultTags.getSelection();
-				final boolean doWordDistribution = wordDistribution.getSelection();
+				final boolean doWordDistribution = wordDistribution
+						.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
 				final boolean wcType = weightedWordCountButton.getSelection();
 				final boolean datFile = createDATFile.getSelection();
-				final Preprocess preprocessor = new Preprocess("TACIT_Word_Count");
+				final Preprocess preprocessor = new Preprocess(
+						"TACIT_Word_Count");
 				final Date dateObj = new Date();
-				
+
 				// Creating a new Job to do Word Count so that the UI will not
 				// freeze
 				wordCountJob = new Job("Word Count Plugin Job") {
@@ -329,8 +334,10 @@ public class StandardWordCountView extends ViewPart implements
 								if (ppValue && preprocessor.doCleanUp())
 									preprocessor.clean();
 								monitor.worked(1);
-							} catch (IOException e) {
-								e.printStackTrace();
+							} catch (Exception e) {
+								// e.printStackTrace();
+								monitor.done();
+								return Status.CANCEL_STATUS;
 							}
 						} else {
 							monitor.worked(5);
@@ -343,13 +350,29 @@ public class StandardWordCountView extends ViewPart implements
 								form);
 						TacitFormComposite
 								.writeConsoleHeaderBegining("<terminated> Word count analysis");
+						monitor.done();
 						return Status.OK_STATUS;
 					}
 				};
 				wordCountJob.setUser(true);
 				if (canProceed()) {
 					wordCountJob.schedule();
+					wordCountJob.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <terminated> Word count analysis");
+								ConsoleView
+										.printlInConsoleln("Word count analysis met with error.");
+								ConsoleView
+										.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
+							}
+						}
+					});
+
 				}
+
 			};
 		});
 		Action helpAction = new Action() {
@@ -428,98 +451,5 @@ public class StandardWordCountView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
-	
-	private void createCorpusSection(Composite client) {
 
-		/*Group group = new Group(client, SWT.SHADOW_IN);
-		group.setText("Input Type");
-
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		group.setLayout(layout);*/
-
-		final Button corpusEnabled = new Button(client, SWT.CHECK);
-		corpusEnabled.setText("Use Corpus");
-		corpusEnabled.setBounds(10, 10, 10, 10);
-		corpusEnabled.pack();
-		
-		corpusEnabled.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (corpusEnabled.getSelection()) {
-					
-				} else {
-					
-				}
-			}
-		});
-		/*final Composite sectionClient = new Composite(group, SWT.None);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(sectionClient);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sectionClient);
-		sectionClient.pack();
-
-		// Create a row that holds the textbox and browse button
-		final Label inputPathLabel = new Label(sectionClient, SWT.NONE);
-		inputPathLabel.setText("Select Corpus:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(inputPathLabel);
-
-		final Combo cmbSortType = new Combo(sectionClient, SWT.FLAT
-				| SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
-				.applyTo(cmbSortType);
-		manageCorpora = new ManageCorpora();
-		corpuraList = manageCorpora.getNames();
-		cmbSortType.setItems(corpuraList);
-		cmbSortType.setEnabled(false);
-
-		corpusEnabled.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (corpusEnabled.getSelection()) {
-					cmbSortType.setEnabled(true);
-
-				} else {
-					cmbSortType.setEnabled(false);
-				}
-			}
-		});
-
-		cmbSortType.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				ICorpus selectedCorpus = manageCorpora
-						.readCorpusById(corpuraList[cmbSortType
-								.getSelectionIndex()]);
-				if (inputList == null) {
-					inputList = new ArrayList<String>();
-				}
-				if (selectedCorpus.getDatatype().equals(DataType.TWITTER_JSON)) {
-					TwitterReadJsonData twitterReadJsonData = new TwitterReadJsonData();
-					for (ICorpusClass cls : selectedCorpus.getClasses()) {
-						inputList.addAll(twitterReadJsonData
-								.retrieveTwitterData(cls.getClassPath()));
-					}
-				} else if (selectedCorpus.getDatatype().equals(
-						DataType.REDDIT_JSON)) {
-					// TO-Do
-				} else if (selectedCorpus.getDatatype().equals(
-						(DataType.PLAIN_TEXT))) {
-					// TO-Do
-				} else if (selectedCorpus.getDatatype().equals(
-						(DataType.MICROSOFT_WORD))) {
-					// TO-Do
-				} else if (selectedCorpus.getDatatype().equals((DataType.XML))) {
-					// TO-Do
-				}
-				inputLayoutData.refreshInternalTree(inputList);
-			}
-		});
-		TacitFormComposite.createEmptyRow(null, sectionClient);*/
-	} 
 }

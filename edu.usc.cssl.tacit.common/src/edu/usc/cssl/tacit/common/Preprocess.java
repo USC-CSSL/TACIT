@@ -66,6 +66,8 @@ public class Preprocess {
 				.getPreferenceStore().getString("islower_case"));
 		this.doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault()
 				.getPreferenceStore().getString("isStemming"));
+		this.doStopWords = Boolean.parseBoolean(CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("removeStopWords"));
 		this.doCleanUp = Boolean.parseBoolean(CommonUiActivator.getDefault()
 				.getPreferenceStore().getString("ispreprocessed"));
 		this.outputPath = CommonUiActivator.getDefault().getPreferenceStore()
@@ -76,7 +78,7 @@ public class Preprocess {
 
 	// for File as well as Directory
 	public String doPreprocessing(List<String> inputFiles, String subFolder)
-			throws IOException {
+			throws IOException, NullPointerException {
 
 		File[] files;
 		files = new File[inputFiles.size()];
@@ -93,7 +95,7 @@ public class Preprocess {
 
 		if (this.outputPath == null || this.outputPath.trim().length() == 0) {
 			this.outputPath = System.getProperty("user.dir");
-		//	this.outputPath = (new File(inputFiles.get(0)).getParent());
+			// this.outputPath = (new File(inputFiles.get(0)).getParent());
 			outputPathNotSet = true;
 		}
 		preprocessingParentFolder = this.outputPath + File.separator
@@ -109,14 +111,19 @@ public class Preprocess {
 			preprocessingParentFolder = preprocessingParentFolder
 					+ File.separator + subFolder;
 			if (new File(preprocessingParentFolder).mkdir()) {
-				ConsoleView.printlInConsoleln("Folder " + preprocessingParentFolder
-						+ " created successfully.");
+				ConsoleView.printlInConsoleln("Folder "
+						+ preprocessingParentFolder + " created successfully.");
 			}
 		}
 
-		if (stopwordsFile.trim().length() != 0) {
-			doStopWords = true;
+		if (doStopWords) {
 			String currentLine;
+			File sfile = new File(stopwordsFile);
+			if (!sfile.exists() || sfile.isDirectory()) {
+				ConsoleView
+						.printlInConsoleln("Stop Words file is not valid. Please provide a correct file path");
+				throw new IOException();
+			}
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					stopwordsFile)));
 			while ((currentLine = br.readLine()) != null) {
@@ -129,16 +136,25 @@ public class Preprocess {
 							// appropriate stemmer.
 			if (stemLang.equals("AUTODETECT")) {
 				doLangDetect = true;
-				Bundle bundle = Platform
-						.getBundle("edu.usc.cssl.tacit.common");
-				URL url = FileLocator.find(bundle, new Path("profiles"), null);
-				URL fileURL = FileLocator.toFileURL(url);
-				//ConsoleView.printlInConsoleln(fileURL.getPath());
+				Bundle bundle = Platform.getBundle("edu.usc.cssl.tacit.common");
+				URL fileURL = null;
+				try {
+					URL url = FileLocator.find(bundle, new Path("profiles"),
+							null);
+					fileURL = FileLocator.toFileURL(url);
+				} catch (NullPointerException e) {
+					ConsoleView
+							.printlInConsoleln("Common bundle do not have profiles. ");
+					throw new NullPointerException();
+				}
+
+				// ConsoleView.printlInConsoleln(fileURL.getPath());
 				try {
 					DetectorFactory.loadProfile(fileURL.getPath());
 				} catch (com.cybozu.labs.langdetect.LangDetectException ex) {
 					// ex.printStackTrace();
-					ConsoleView.printlInConsoleln("Exception code - " + ex.getCode());
+					ConsoleView.printlInConsoleln("Exception code - "
+							+ ex.getCode());
 					// ex.getCode().toString() -> is not visible!
 				}
 			} else {
@@ -148,17 +164,18 @@ public class Preprocess {
 		}
 
 		int currentCount = 0;
-		int adder = files.length/10;
+		int adder = files.length / 10;
 		int breakPoint = adder;
 		int statusPoint = 0;
 		ConsoleView.printlInConsoleln("Preprocessing Status: 0% completed");
 		for (File f : files) {
 			currentCount++;
-			if (currentCount >= breakPoint){
-				if (statusPoint != 9){ 
+			if (currentCount >= breakPoint) {
+				if (statusPoint != 9) {
 					statusPoint++;
-					ConsoleView.printlInConsoleln("Preprocessing Status: " + statusPoint*10+"% completed");
-					breakPoint = breakPoint+adder;
+					ConsoleView.printlInConsoleln("Preprocessing Status: "
+							+ statusPoint * 10 + "% completed");
+					breakPoint = breakPoint + adder;
 				}
 			}
 			if (f == null)
@@ -170,7 +187,7 @@ public class Preprocess {
 			if ("_preprocessed".equals(f.getName()))
 				continue;
 			String inputFile = f.getAbsolutePath();
-			//ConsoleView.printlInConsoleln("Preprocessing " + inputFile);
+			// ConsoleView.printlInConsoleln("Preprocessing " + inputFile);
 
 			// doLangDetect only if doStemming is true
 			if (doLangDetect) {
@@ -209,14 +226,14 @@ public class Preprocess {
 					bw.write(linear + "\n");
 				}
 			}
-			//ConsoleView.printlInConsoleln(preprocessingParentFolder
-			//		+ System.getProperty("file.separator") + f.getName());
+			// ConsoleView.printlInConsoleln(preprocessingParentFolder
+			// + System.getProperty("file.separator") + f.getName());
 
 			br.close();
 			bw.close();
 		}
 		ConsoleView.printlInConsoleln("Preprocessing Status: 100% completed");
-		//ConsoleView.printlInConsoleln("Preprocessing Status: 100% completed");
+		// ConsoleView.printlInConsoleln("Preprocessing Status: 100% completed");
 		ConsoleView.printlInConsoleln("Preprocessed files stored in "
 				+ preprocessingParentFolder);
 		return preprocessingParentFolder;
@@ -296,11 +313,14 @@ public class Preprocess {
 
 	public void clean() {
 		final Boolean cleanUp = Boolean.valueOf(CommonUiActivator.getDefault()
-				.getPreferenceStore().getString(IPreprocessorSettingsConstant.PRE_PROCESSED));
-		if(!cleanUp){
+				.getPreferenceStore()
+				.getString(IPreprocessorSettingsConstant.PRE_PROCESSED));
+		if (!cleanUp) {
 			return;
 		}
-		File toDel = new File(this.outputPath+System.getProperty("file.separator")+this.callingPlugin+"_"+this.currTime);
+		File toDel = new File(this.outputPath
+				+ System.getProperty("file.separator") + this.callingPlugin
+				+ "_" + this.currTime);
 		try {
 			if (toDel.exists())
 				FileUtils.deleteDirectory(toDel);

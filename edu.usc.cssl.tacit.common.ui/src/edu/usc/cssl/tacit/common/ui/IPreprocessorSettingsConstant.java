@@ -3,6 +3,7 @@ package edu.usc.cssl.tacit.common.ui;
 public interface IPreprocessorSettingsConstant {
 	
 	public static String INITIAL = "initial";
+	public static String REMOVE_STOPS = "removeStopWords";
 	public static String STOP_PATH = "stop_words_path";
 	public static String DELIMETERS = "delimeters";
 	public static String STEMMING = "isStemming";

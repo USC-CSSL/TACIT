@@ -24,14 +24,17 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
+import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 
 public class PrepocessorSettings extends PreferencePage implements
 		IWorkbenchPreferencePage, IPreprocessorSettingsConstant {
 
 	private Button lowerCase;
 	private Button stemming;
+
 	private Combo language;
 	private Button cleanup;
+	private Button removeStopWords;
 	private Text location;
 	private Text delimeters;
 	private Text output;
@@ -138,12 +141,15 @@ public class PrepocessorSettings extends PreferencePage implements
 	private void initializeDefaultValues() {
 		getPreferenceStore().setDefault(DELIMETERS, ".,;'\\\"!-()[]{}:?/@");
 		getPreferenceStore().setDefault(STOP_PATH, "");
+		getPreferenceStore().setDefault(REMOVE_STOPS, "false");
 		getPreferenceStore().setDefault(LOWER_CASE, "true");
-		getPreferenceStore().setDefault(LANGUAGE, ELanguageType.AUTODETECT.toString());
+		getPreferenceStore().setDefault(LANGUAGE,
+				ELanguageType.AUTODETECT.toString());
 		getPreferenceStore().setDefault(STEMMING, "false");
 		getPreferenceStore().setDefault(PRE_PROCESSED, "false");
 		getPreferenceStore().setDefault(INITIAL, "true");
-		getPreferenceStore().setDefault(OUTPUT_PATH, System.getProperty("user.dir"));
+		getPreferenceStore().setDefault(OUTPUT_PATH,
+				System.getProperty("user.dir"));
 	}
 
 	private void setDefaultValues() {
@@ -154,6 +160,8 @@ public class PrepocessorSettings extends PreferencePage implements
 				.getDefaultString(LOWER_CASE)));
 		stemming.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(STEMMING)));
+		removeStopWords.setSelection(Boolean.valueOf(getPreferenceStore()
+				.getDefaultString(REMOVE_STOPS)));
 		language.setText(getPreferenceStore().getDefaultString(LANGUAGE));
 		cleanup.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(PRE_PROCESSED)));
@@ -167,6 +175,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		location.setText(load(STOP_PATH));
 		lowerCase.setSelection(Boolean.valueOf(load(LOWER_CASE)));
 		stemming.setSelection(Boolean.valueOf(load(STEMMING)));
+		removeStopWords.setSelection(Boolean.valueOf(load(REMOVE_STOPS)));
 		language.setText(load(LANGUAGE));
 		cleanup.setSelection(Boolean.valueOf(load(PRE_PROCESSED)));
 		if (stemming.getSelection()) {
@@ -227,6 +236,8 @@ public class PrepocessorSettings extends PreferencePage implements
 	}
 
 	private Text createStopWordPathLocation(Composite sectionClient) {
+		removeStopWords = createCheckBox(sectionClient, "Remove Stop Words");
+
 		Label locationLbl = new Label(sectionClient, SWT.NONE);
 		locationLbl.setText("Stop Words Location:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
@@ -236,9 +247,11 @@ public class PrepocessorSettings extends PreferencePage implements
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
 		outputLocationTxt.setEditable(false);
+		outputLocationTxt.setEnabled(false);
 
 		final Button browseBtn = new Button(sectionClient, SWT.PUSH);
 		browseBtn.setText("Browse...");
+		browseBtn.setEnabled(false);
 		browseBtn.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -255,9 +268,24 @@ public class PrepocessorSettings extends PreferencePage implements
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+
+		removeStopWords.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (removeStopWords.getSelection()) {
+					outputLocationTxt.setEnabled(true);
+					browseBtn.setEnabled(true);
+
+				} else {
+					outputLocationTxt.setEnabled(false);
+					browseBtn.setEnabled(false);
+				}
+			}
+		});
+
 		return outputLocationTxt;
 	}
-	
+
 	private Text createOutputPathLocation(Composite sectionClient) {
 		Label locationLbl = new Label(sectionClient, SWT.NONE);
 		locationLbl.setText("Pre-Processed Files Location:");
@@ -267,9 +295,9 @@ public class PrepocessorSettings extends PreferencePage implements
 		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(outputLocationTxt);
-		
-//		String cwd = System.getProperty("user.dir");
-//		outputLocationTxt.setText(cwd);
+
+		// String cwd = System.getProperty("user.dir");
+		// outputLocationTxt.setText(cwd);
 		outputLocationTxt.setEditable(false);
 
 		final Button browseBtn = new Button(sectionClient, SWT.PUSH);
@@ -278,7 +306,8 @@ public class PrepocessorSettings extends PreferencePage implements
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(), SWT.OPEN);
+				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
+						SWT.OPEN);
 				dlg.setText("Open");
 				String path = dlg.open();
 				if (path == null)
@@ -312,10 +341,12 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(INITIAL, Boolean.toString(false));
 		store(DELIMETERS, delimeters.getText());
 		store(STOP_PATH, location.getText());
+		store(REMOVE_STOPS, Boolean.toString(removeStopWords.getSelection()));
+
 		store(LOWER_CASE, Boolean.toString(lowerCase.getSelection()));
 		store(STEMMING, Boolean.toString(stemming.getSelection()));
 		store(LANGUAGE, language.getText());
-		store(OUTPUT_PATH,output.getText());
+		store(OUTPUT_PATH, output.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
 		return super.performOk();
 	}
