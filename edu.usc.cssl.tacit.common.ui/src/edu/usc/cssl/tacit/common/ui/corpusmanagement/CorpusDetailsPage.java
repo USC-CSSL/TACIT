@@ -2,8 +2,10 @@ package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -18,6 +20,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -125,13 +128,31 @@ public class CorpusDetailsPage implements IDetailsPage{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(CorpusMangementValidation.validateCorpus(selectedCorpus, true, corpusMgmtViewform, corpusManagement)) {
-					corpusMgmtViewform.getMessageManager().addMessage("saveCorpus", "Creating corpus...", null, IMessageProvider.INFORMATION);
-					TacitFormComposite.updateStatusMessage(viewSite, "Creating corpus \""+selectedCorpus.getCorpusName()+"\"", IStatus.INFO, corpusMgmtViewform);
+					//corpusMgmtViewform.getMessageManager().addMessage("saveCorpus", "Creating corpus...", null, IMessageProvider.INFORMATION);
+					
 					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
-					ManageCorpora.saveCorpus(selectedCorpus);
-					corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
-					TacitFormComposite.updateStatusMessage(viewSite, "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully", IStatus.OK, corpusMgmtViewform);
-					MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info", "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully");
+					Job saveCorpus = new Job("Creating corpus...") {						
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							TacitFormComposite.updateStatusMessage(viewSite, "Creating corpus \""+selectedCorpus.getCorpusName()+"\"", IStatus.INFO, corpusMgmtViewform);
+							ManageCorpora.saveCorpus(selectedCorpus);
+							TacitFormComposite.updateStatusMessage(viewSite, "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully", IStatus.OK, corpusMgmtViewform);
+							
+							Display.getDefault().syncExec(new Runnable() {
+								@Override
+								public void run() {
+									MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info", "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully");
+								}
+							});
+							
+							return Status.OK_STATUS;
+						}
+					};
+					saveCorpus.schedule();
+					
+					//corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
+					
+					
 				}
 			}
 		});	
