@@ -2,6 +2,7 @@ package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -9,22 +10,25 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 
 public class Corpus implements ICorpus {
-	String corpusId;
-	DataType dataType;
+	private String corpusName;
+	private String corpusId; // unique id for corpus
+	private DataType dataType;
 	private List<ICorpusClass> classes;
-	TreeViewer viewer;
+	private TreeViewer viewer;
 	
-	public Corpus(String corpusId, DataType dataType) {
-		this.corpusId = corpusId;
+	public Corpus(String corpusName, DataType dataType) {
+		this.corpusName = corpusName;
 		this.dataType = dataType;
 		this.classes = new ArrayList<ICorpusClass>();
+		setCorpusId(UUID.randomUUID().toString());
 	}
 	
-	public Corpus(String corpusId, DataType dataType, TreeViewer viewer) {
-		this.corpusId = corpusId;
+	public Corpus(String corpusName, DataType dataType, TreeViewer viewer) {
+		this.corpusName = corpusName;
 		this.dataType = dataType;
 		this.classes = new ArrayList<ICorpusClass>();
 		this.viewer = viewer;
+		setCorpusId(UUID.randomUUID().toString());
 	}	
 	
 	public Corpus() {
@@ -32,8 +36,8 @@ public class Corpus implements ICorpus {
 	}
 
 	@Override
-	public String getCorpusId() {
-		return this.corpusId;
+	public String getCorpusName() {
+		return this.corpusName;
 	}
 
 	@Override
@@ -45,6 +49,22 @@ public class Corpus implements ICorpus {
 	public List<ICorpusClass> getClasses() {
 		return this.classes;
 	}
+
+	@Override
+	public String getCorpusId() {
+		return this.corpusId;
+	}
+	
+	public void setCorpusName(String corpusName) {
+		if(null == corpusName) return;
+		this.corpusName = corpusName;
+	}	
+	
+	public void setCorpusId(String corpusId) {
+		if(null == corpusId) return;
+		this.corpusId = corpusId;
+	}
+	
 	
 	public void setClasses(List<ICorpusClass> classes) {
 		if(null == classes) return;
@@ -60,10 +80,6 @@ public class Corpus implements ICorpus {
 	public void removeClass(ICorpusClass c) {
 		if(this.classes.contains(c)) 
 			this.classes.remove(c);
-	}
-	
-	public void setCorpusId(String corpusId) {
-		this.corpusId = corpusId;
 	}
 	
 	public void setDataType(DataType dataType) {

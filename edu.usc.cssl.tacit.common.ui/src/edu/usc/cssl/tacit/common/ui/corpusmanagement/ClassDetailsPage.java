@@ -159,7 +159,7 @@ public class ClassDetailsPage implements IDetailsPage {
 		for(ICorpusClass cc : parentCorpus.getClasses()) {
 			if((CorpusClass)cc != selectedCorpusClass) {
 				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusId(), null, IMessageProvider.ERROR);
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusName(), null, IMessageProvider.ERROR);
 					return false;
 				}
 			}

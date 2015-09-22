@@ -52,7 +52,6 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	}
 	
 	class MasterContentProvider implements ITreeContentProvider {
-
 		@Override
 		public void dispose() {
 		}
@@ -99,7 +98,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		@Override
 		public String getText(Object element) {
 			if(element instanceof ICorpus)
-				return ((ICorpus) element).getCorpusId();
+				return ((ICorpus) element).getCorpusName();
 			else if(element instanceof ICorpusClass)
 				return ((ICorpusClass) element).getClassName();
 			else if(element instanceof String) {
@@ -140,8 +139,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		buttonComposite.setLayout(buttonLayout);
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
-		Button addCorpora = toolkit.createButton(buttonComposite, "Add Corpus", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addCorpora);
+		Button addCorpus = toolkit.createButton(buttonComposite, "Add Corpus", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addCorpus);
 		
 		final Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
@@ -176,7 +175,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			((Corpus)corpus).setViewer(corpuses);
 		corpuses.setInput(corpusList);
 		
-		addCorpora.addSelectionListener(new SelectionAdapter() {
+		addCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");

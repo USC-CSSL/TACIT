@@ -38,7 +38,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class CorpusDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
-	private Text corpusIDTxt;
+	private Text corpusNameTxt;
 	private Corpus selectedCorpus;
 	private ScrolledForm corpusMgmtViewform;
 	FormToolkit toolkit;
@@ -90,11 +90,11 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 
-		final Label corpusIDLbl = toolkit.createLabel(sectionClient, "Corpus ID:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusIDLbl);
-		corpusIDTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusIDTxt);
-		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		final Label corpusNameLbl = toolkit.createLabel(sectionClient, "Corpus Name:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusNameLbl);
+		corpusNameTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusNameTxt);
+		if(null != selectedCorpus) corpusNameTxt.setText(selectedCorpus.getCorpusName());
 
 		Group dataTypes = new Group(sectionClient, SWT.LEFT);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dataTypes);
@@ -103,7 +103,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		
 		createDataTypeOptions(dataTypes);
 		if(null != selectedCorpus) {
-			corpusIDTxt.setText(selectedCorpus.getCorpusId());
+			corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		}
 		
 		//Add save button
@@ -120,7 +120,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(validateData(corpusIDTxt.getText())) {
+				if(validateData(corpusNameTxt.getText())) {
 					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
 					ManageCorpora.saveCorpus(selectedCorpus);
 				}
@@ -128,62 +128,62 @@ public class CorpusDetailsPage implements IDetailsPage {
 		});	
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
 		
-		corpusIDTxt.addKeyListener(new KeyListener() {
+		corpusNameTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(isCorpusIdValid(corpusIDTxt.getText())) {
-					selectedCorpus.setCorpusId(corpusIDTxt.getText());
+				if(isCorpusNameValid(corpusNameTxt.getText())) {
+					selectedCorpus.setCorpusName(corpusNameTxt.getText());
 					selectedCorpus.getViewer().refresh();
 				}
 				
-				if(!corpusIDTxt.getText().isEmpty())
-					corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
+				if(!corpusNameTxt.getText().isEmpty())
+					corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(isCorpusIdValid(corpusIDTxt.getText())) {
-					selectedCorpus.setCorpusId(corpusIDTxt.getText());
+				if(isCorpusNameValid(corpusNameTxt.getText())) {
+					selectedCorpus.setCorpusName(corpusNameTxt.getText());
 					selectedCorpus.getViewer().refresh();
 				}
 				
-				if(!corpusIDTxt.getText().isEmpty())
-					corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
+				if(!corpusNameTxt.getText().isEmpty())
+					corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 			}
 		});
 		
 	}
 	
-	protected boolean isCorpusIdValid(String corpusId) {
-		if(corpusId.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("corpusIdEmpty", "Provide valid corpus ID", null, IMessageProvider.ERROR);
+	protected boolean isCorpusNameValid(String corpusName) {
+		if(corpusName.isEmpty()) {
+			corpusMgmtViewform.getMessageManager().addMessage("corpusNameEmpty", "Provide valid corpus Name", null, IMessageProvider.ERROR);
 			return false;
 		} else 
-			corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
+			corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 		
-		if(corpusIdExists(corpusId)) {
-			corpusMgmtViewform.getMessageManager().addMessage("corpusId", "Corpus ID \""+ corpusId +"\"already exists. Provide different ID", null, IMessageProvider.ERROR);
+		if(corpusNameExists(corpusName)) {
+			corpusMgmtViewform.getMessageManager().addMessage("corpusName", "Corpus Name \""+ corpusName +"\"already exists. Provide different ID", null, IMessageProvider.ERROR);
 			return false;
 		} else 
-			corpusMgmtViewform.getMessageManager().removeMessage("corpusId");
+			corpusMgmtViewform.getMessageManager().removeMessage("corpusName");
 		return true;	
 	}
 
 	public void printCorpusDetails() {
-		System.out.println("Corupus ID :" + selectedCorpus.getCorpusId());
+		System.out.println("Corupus Name :" + selectedCorpus.getCorpusName());
 		for(ICorpusClass cc : selectedCorpus.getClasses()) {
 			System.out.println("Classes " + cc.getClassName() + "," + cc.getClassPath());
 		}
 	}
 	
-	public boolean validateData(String corpusId) {
-		if(isCorpusIdValid(corpusId)) {
+	public boolean validateData(String corpusName) {
+		if(isCorpusNameValid(corpusName)) {
 			List<ICorpusClass> classes = selectedCorpus.getClasses(); // validate the class details as well
 			for(ICorpusClass cc : classes) {
 				if(!validateClassData(cc)) return false;
 			}
 		} else 
-			return false; // corpusId is not valid
+			return false; // corpusName is not valid
 		return true;
 	}
 	
@@ -201,7 +201,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		for(ICorpusClass cc : parentCorpus.getClasses()) {
 			if((CorpusClass)cc != selectedCorpusClass) {
 				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusId(), null, IMessageProvider.ERROR);
+					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusName(), null, IMessageProvider.ERROR);
 					return false;
 				}
 			}
@@ -245,10 +245,10 @@ public class CorpusDetailsPage implements IDetailsPage {
 		return isClassnameValid(cc.getClassName(), cc) && isClassPathValid(cc.getClassPath());
 	}	
 
-	private boolean corpusIdExists(String corpusId) {
+	private boolean corpusNameExists(String corpusName) {
 		List<ICorpus> corpuses = corpusManagement.getAllCorpusDetails();
 		for(ICorpus corpus : corpuses) {
-			if(!corpus.equals(selectedCorpus) && corpus.getCorpusId().equals(corpusId)) return true;
+			if(!corpus.getCorpusId().equals(selectedCorpus.getCorpusId()) && corpus.getCorpusName().equals(corpusName)) return true;
 		}
 		return false;
 	}
@@ -377,9 +377,9 @@ public class CorpusDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		corpusMgmtViewform.getMessageManager().removeAllMessages();
 		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();	
-		corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		setDataTypeOption(selectedCorpus.getDatatype());
-		validateData(selectedCorpus.getCorpusId());
+		validateData(selectedCorpus.getCorpusName());
 	}
 
 }

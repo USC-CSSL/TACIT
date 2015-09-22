@@ -41,8 +41,8 @@ public class ManageCorpora {
 
 	@SuppressWarnings("unchecked")
 	public static void saveCorpus(Corpus corpus) {
-		String corpusID = corpus.getCorpusId();
-		String corpusLocation = rootDir + corpusID;
+		String corpusName = corpus.getCorpusName();
+		String corpusLocation = rootDir + corpusName;
 		if (!(new File(corpusLocation).exists())) {
 			// Add code for everything
 			new File(corpusLocation).mkdir();
@@ -52,7 +52,8 @@ public class ManageCorpora {
 			File metaFp = new File(metaFile);
 
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("corpus_name", corpus.getCorpusId());
+			jsonObj.put("corpus_name", corpus.getCorpusName());
+			jsonObj.put("corpus_id", corpus.getCorpusId());
 			jsonObj.put("data_type", corpus.getDatatype().toString());
 			jsonObj.put("num_classes",
 					corpus.getClasses().size());
@@ -112,7 +113,8 @@ public class ManageCorpora {
 			File metaFp = new File(metaFile);
 
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("corpus_name", corpus.getCorpusId());
+			jsonObj.put("corpus_name", corpus.getCorpusName());
+			jsonObj.put("corpus_id", corpus.getCorpusId());
 			jsonObj.put("data_type", corpus.getDatatype().toString());
 			jsonObj.put("num_classes", corpus.getClasses().size());
 
@@ -147,7 +149,7 @@ public class ManageCorpora {
 	
 	@SuppressWarnings("unchecked")
 	public static void removeCorpus(Corpus corpus, Boolean isCorpus) {
-		String corpusLocation = rootDir+corpus.getCorpusId();
+		String corpusLocation = rootDir+corpus.getCorpusName();
 		if (isCorpus) {
 			try {
 				new File(corpusLocation+System.getProperty("file.separator")+"meta.txt").delete();
@@ -183,7 +185,7 @@ public class ManageCorpora {
 		//Delete the data from file system of the removed classes
 		Iterator<Entry<String, Boolean>> it = oldClasses.entrySet().iterator();
 		while(it.hasNext()) {
-			Map.Entry<String, Boolean> curr = (Map.Entry<String, Boolean>) it.next();
+			Map.Entry<String, Boolean> curr = it.next();
 			String classPath = curr.getKey();
 			
 			if(!curr.getValue()) {
@@ -219,7 +221,8 @@ public class ManageCorpora {
 		File metaFp = new File(metaFile);
 
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("corpus_name", corpus.getCorpusId());
+		jsonObj.put("corpus_name", corpus.getCorpusName());
+		jsonObj.put("corpus_id", corpus.getCorpusId());
 		jsonObj.put("data_type", corpus.getDatatype().toString());
 		jsonObj.put("num_classes", corpus.getClasses().size());
 
@@ -326,7 +329,8 @@ public class ManageCorpora {
 					continue;
 				}
 				if(null == jsonObject) continue;
-				corpora.setCorpusId((String) jsonObject.get("corpus_name"));
+				corpora.setCorpusName((String) jsonObject.get("corpus_name"));
+				corpora.setCorpusId((String) jsonObject.get("corpus_id"));
 				corpora.setDataType(DataType.get((String)jsonObject.get("data_type")));
 				long numClasses = (Long) jsonObject.get("num_classes");
 				if(numClasses>0) 
@@ -337,8 +341,8 @@ public class ManageCorpora {
 		return corpuses;
 	}
  
-	private void parseClassDetails(Corpus corpora, JSONArray classes) {
-		if(null == corpora || null  == classes) return;
+	private void parseClassDetails(Corpus corpus, JSONArray classes) {
+		if(null == corpus || null  == classes) return;
 		Iterator<JSONObject> classItr = classes.iterator();
 		while (classItr.hasNext()) {
 			JSONObject corpusClassObj = classItr.next();
@@ -347,7 +351,7 @@ public class ManageCorpora {
 			cc.setClassName((String) corpusClassObj.get("class_name"));
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
-			corpora.getClasses().add(cc);
+			corpus.getClasses().add(cc);
 		}		
 	}	
 	
@@ -355,7 +359,7 @@ public class ManageCorpora {
 		List<ICorpus> readCorpusList = readCorpusList();
 		List<String> names = new ArrayList<String>();
 		for (ICorpus iCorpus : readCorpusList) {
-			names.add(iCorpus.getCorpusId());
+			names.add(iCorpus.getCorpusName());
 		}
 		return names.toArray(new String[names.size()]);
 	}
@@ -373,7 +377,7 @@ public class ManageCorpora {
 	public ICorpus readCorpusById(String id) {  // why? - to get updated corpus instead of stale data at tool
 		List<ICorpus> readCorpusList = readCorpusList();
 		for (ICorpus iCorpus : readCorpusList) {
-			if (iCorpus.getCorpusId().equals(id)) {
+			if (iCorpus.getCorpusName().equals(id)) {
 				return iCorpus;
 			}
 		}
