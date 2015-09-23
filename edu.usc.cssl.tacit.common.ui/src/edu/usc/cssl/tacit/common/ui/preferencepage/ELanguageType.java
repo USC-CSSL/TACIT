@@ -2,7 +2,7 @@ package edu.usc.cssl.tacit.common.ui.preferencepage;
 
 public enum ELanguageType {
 	
-	AUTODETECT,
+	//AUTODETECT,
 	EN,
 	DE,
 	FR,
