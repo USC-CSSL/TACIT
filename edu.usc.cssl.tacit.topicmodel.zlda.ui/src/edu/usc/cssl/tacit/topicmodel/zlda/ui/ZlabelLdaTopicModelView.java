@@ -268,6 +268,11 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 										.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 								e.printStackTrace();
 							}
+							catch (NullPointerException e) {
+								TacitFormComposite
+								.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
+								e.printStackTrace();
+							}
 							monitor.worked(10);
 						} else { // copy files to a parent directory
 							new File(topicModelDirPath).mkdir();

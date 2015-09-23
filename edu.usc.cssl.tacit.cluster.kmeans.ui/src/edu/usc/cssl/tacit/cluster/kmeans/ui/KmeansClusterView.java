@@ -241,6 +241,10 @@ public class KmeansClusterView extends ViewPart implements
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+							catch (NullPointerException e) {
+								e.printStackTrace();
+							}
+							
 							monitor.worked(10);
 						} else {
 							for (String filepath : selectedFiles) {

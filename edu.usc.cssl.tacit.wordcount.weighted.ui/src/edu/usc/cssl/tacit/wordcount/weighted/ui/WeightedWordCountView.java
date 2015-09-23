@@ -430,6 +430,9 @@ public class WeightedWordCountView extends ViewPart implements
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
+								catch (NullPointerException e) {
+									e.printStackTrace();
+								}
 							} else {
 								for (String filepath : inputFiles) {
 									if ((new File(filepath).isDirectory())) {

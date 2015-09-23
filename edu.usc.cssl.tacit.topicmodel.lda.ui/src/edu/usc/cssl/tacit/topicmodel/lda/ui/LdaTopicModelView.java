@@ -239,6 +239,9 @@ public class LdaTopicModelView extends ViewPart implements
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+							catch (NullPointerException e) {
+								e.printStackTrace();
+							}
 							monitor.worked(10);
 						} else { // copy files to a parent directory
 							new File(topicModelDirPath).mkdir();

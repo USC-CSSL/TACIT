@@ -302,6 +302,9 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+							catch (NullPointerException e) {
+								e.printStackTrace();
+							}
 						} else {
 							for (String filepath : selectedFiles) {
 								if ((new File(filepath).isDirectory())) {

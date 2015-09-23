@@ -206,6 +206,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 										class2Files, class2NameStr);
 							} catch (IOException e) {
 								return null;
+							} catch (NullPointerException e) {
+								return null;
 							}
 
 							class1FilesL = (new File(ppClass1)).listFiles();
