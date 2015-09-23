@@ -14,7 +14,8 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 public class TacitUtil {
 	public static List<String> refineInput(List<String> selectedInputs) {
 		List<String> refinedInputList = new ArrayList<String>();
-		Pattern corpusDetector = Pattern.compile(".* [(]Internal Path: (.*)[)]");
+		Pattern corpusDetector = Pattern
+				.compile(".* [(]Tacit Internal Class Path: (.*)[)]");
 
 		for (String input : selectedInputs) {
 			Matcher m = corpusDetector.matcher(input);
@@ -28,7 +29,10 @@ public class TacitUtil {
 					input = new TwitterReadJsonData()
 							.retrieveTwitterData(corpusClassPath);
 				else if (corpusType.equals(DataType.REDDIT_JSON))
-				input = new RedditJsonHandler().retrieveRedditData(corpusClassPath);
+					input = new RedditJsonHandler()
+							.retrieveRedditData(corpusClassPath);
+				else
+					input = corpusClassPath;
 			}
 			File inputFile = new File(input);
 			if (!inputFile.exists())

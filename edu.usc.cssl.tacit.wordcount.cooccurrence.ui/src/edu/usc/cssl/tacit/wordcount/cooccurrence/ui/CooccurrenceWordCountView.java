@@ -63,7 +63,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private Text windowSize;
 	private Text thresholdValue;
 	private Job cooccurrenceAnalysisJob;
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -73,11 +73,13 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
-		String description = "This section gives details about Heirarchical clustering ";
-		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
-				false);
-		section.setDescriptionControl(descriptionFrm);
+		/*
+		 * String description =
+		 * "This section gives details about Heirarchical clustering "; FormText
+		 * descriptionFrm = toolkit.createFormText(section, false);
+		 * descriptionFrm.setText("<form><p>" + description + "</p></form>",
+		 * true, false); section.setDescriptionControl(descriptionFrm);
+		 */
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -95,10 +97,10 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-		inputLayoutData = TacitFormComposite
-				.createTableSection(client, toolkit, layout, "Input Details",
-						"Add File(s) and Folder(s) to include in analysis.",
-						true, true, true);
+		inputLayoutData = TacitFormComposite.createTableSection(client,
+				toolkit, layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true);
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
@@ -109,16 +111,15 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		seedFile = createWordFileControl(compInput, "Word File :");
 		windowSize = createAdditionalOptions(compInput, "Window Size :", "1");
 		thresholdValue = createAdditionalOptions(compInput, "Threshold :", "");
-		
-		
+
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
-		
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				client1, form.getMessageManager());
+
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		buildCooccurrenceMatrix(form.getBody());
 
@@ -251,8 +252,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil.refineInput(inputLayoutData
-						.getSelectedFiles());
+				final List<String> selectedFiles = TacitUtil
+						.refineInput(inputLayoutData.getSelectedFiles());
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();
@@ -267,8 +268,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask("TACIT started clustering...",
 								selectedFiles.size() + 40);
 						preprocessTask = null;
@@ -333,7 +334,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							}
 							monitor.worked(5);
 							TacitFormComposite
-							.writeConsoleHeaderBegining("<terminated> Co-occurrence Analysis");
+									.writeConsoleHeaderBegining("<terminated> Co-occurrence Analysis");
 							return Status.OK_STATUS;
 						} else {
 							TacitFormComposite
@@ -347,7 +348,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							}
 							monitor.worked(5);
 							TacitFormComposite
-							.writeConsoleHeaderBegining("<terminated> Co-occurrence Analysis");
+									.writeConsoleHeaderBegining("<terminated> Co-occurrence Analysis");
 							return Status.CANCEL_STATUS;
 						}
 					}
@@ -395,8 +396,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
-		TacitFormComposite.updateStatusMessage(getViewSite(), null, null,
-				form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
@@ -407,6 +407,13 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		if (message != null) {
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
+			canPerform = false;
+		}
+		// validate input
+		if (inputLayoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
@@ -424,5 +431,5 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
-	
+
 }

@@ -3,10 +3,10 @@ package edu.usc.cssl.tacit.topicmodel.lda.ui;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,14 +19,9 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -43,12 +38,9 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
+import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.topicmodel.lda.services.LdaAnalysis;
@@ -63,16 +55,12 @@ public class LdaTopicModelView extends ViewPart implements
 	private Button preprocessEnabled;
 
 	private OutputLayoutData layoutData;
-	private OutputLayoutData inputLayoutData;
+	private TableLayoutData inputLayoutData;
 	private Text numberOfTopics;
 	private Text prefixTxt;
 	private LdaAnalysis lda = new LdaAnalysis();
 	protected Job job;
 	private Button wordWeights;
-	private List<String> inputList;
-	private String[] corpuraList;
-	private ManageCorpora manageCorpora;
-	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -99,32 +87,29 @@ public class LdaTopicModelView extends ViewPart implements
 				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		// create input data
-		inputLayoutData = TacitFormComposite.createInputSection(toolkit,
-				client, form.getMessageManager());
+		// create input layout
+		inputLayoutData = TacitFormComposite.createTableSection(client,
+				toolkit, layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true);
 		Composite compInput;
-		// Create pre process link
-		compInput = inputLayoutData.getSectionClient();
-
-		numberOfTopics = createAdditionalOptions(compInput, "No. of Topics :",
-				"1");
-
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+		compInput = toolkit.createComposite(form.getBody());
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
+				.applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
+		numberOfTopics = createAdditionalOptions(compInput, "No. of Topics :",
+				"1");
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
-		
-		/*TacitFormComposite.createEmptyRow(toolkit, sc);
-		createCorpusSection(client1);
-		TacitFormComposite.createEmptyRow(toolkit, sc);*/
-		
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				client1, form.getMessageManager());
+
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
@@ -145,11 +130,10 @@ public class LdaTopicModelView extends ViewPart implements
 	}
 
 	private void createPreprocessLink(Composite client) {
-
 		Composite clientLink = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
 				.applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
 				.applyTo(clientLink);
 
 		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
@@ -159,22 +143,19 @@ public class LdaTopicModelView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
-			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
-			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
-			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
 						new String[] { id }, null).open();
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
 				.applyTo(link);
 
 	}
@@ -227,42 +208,50 @@ public class LdaTopicModelView extends ViewPart implements
 				final int noOfTopics = Integer
 						.valueOf(numberOfTopics.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final String inputPath = inputLayoutData.getOutputLabel()
-						.getText();
+				final List<String> selectedFiles = TacitUtil
+						.refineInput(inputLayoutData.getSelectedFiles());
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final String preFix = prefixTxt.getText();
 				final boolean wordWeightFile = wordWeights.getSelection();
-				TacitFormComposite.writeConsoleHeaderBegining("Topic Modelling started  ");
+				TacitFormComposite
+						.writeConsoleHeaderBegining("Topic Modelling started  ");
 				job = new Job("Analyzing...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask("TACIT started analyzing...", 100);
-						List<String> inputFiles = new ArrayList<String>();
-						String topicModelDirPath = inputPath;
+						String topicModelDirPath = System
+								.getProperty("user.dir")
+								+ File.separator
+								+ "TopicModel"
+								+ "_"
+								+ String.valueOf(System.currentTimeMillis());
 						Preprocess preprocessTask = new Preprocess("ZLabel");
 						if (isPreprocess) {
 							monitor.subTask("Preprocessing...");
-							//preprocessTask = new Preprocess("ZLabel");
 							try {
-								File[] inputFile = new File(inputPath)
-										.listFiles();
-								for (File iFile : inputFile) {
-									if (iFile.getAbsolutePath().contains(
-											"DS_Store"))
-										continue;
-									inputFiles.add(iFile.toString());
 
-								}
 								topicModelDirPath = preprocessTask
-										.doPreprocessing(inputFiles, "");
+										.doPreprocessing(selectedFiles, "");
 
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 							monitor.worked(10);
+						} else { // copy files to a parent directory
+							new File(topicModelDirPath).mkdir();
+							for (String filename : selectedFiles) {
+								File srcFile = new File(filename);
+								File destDir = new File(topicModelDirPath);
+								try {
+									FileUtils.copyFileToDirectory(srcFile,
+											destDir, false);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
 						}
 
 						lda.initialize(topicModelDirPath, noOfTopics,
@@ -273,32 +262,37 @@ public class LdaTopicModelView extends ViewPart implements
 						Date dateObj = new Date();
 						monitor.subTask("Topic Modelling...");
 						try {
-							lda.doLDA(monitor,dateObj);
+							lda.doLDA(monitor, dateObj);
 						} catch (FileNotFoundException e) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
+							TacitFormComposite
+									.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						} catch (IOException e) {
 							monitor.done();
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
+							TacitFormComposite
+									.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(20);
-						ConsoleView.printlInConsoleln("LDA Topic Modelling completed successfully in "
+						ConsoleView
+								.printlInConsoleln("LDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
 
 						if (monitor.isCanceled()) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
+							TacitFormComposite
+									.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
-						if (isPreprocess) preprocessTask.clean();
+						if (isPreprocess)
+							preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
-						TacitFormComposite.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), "LDA analysis completed",
-								IStatus.OK, form);
+						TacitFormComposite
+								.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								"LDA analysis completed", IStatus.OK, form);
 
 						return Status.OK_STATUS;
 					}
@@ -334,21 +328,16 @@ public class LdaTopicModelView extends ViewPart implements
 				PlatformUI
 						.getWorkbench()
 						.getHelpSystem()
-						.displayHelp(
-								"edu.usc.cssl.tacit.topicmodel.lda.ui.lda");
+						.displayHelp("edu.usc.cssl.tacit.topicmodel.lda.ui.lda");
 			};
 		};
 		mgr.add(helpAction);
 		PlatformUI
 				.getWorkbench()
 				.getHelpSystem()
-				.setHelp(helpAction,
-						"edu.usc.cssl.tacit.topicmodel.lda.ui.lda");
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(form,
-						"edu.usc.cssl.tacit.topicmodel.lda.ui.lda");
+				.setHelp(helpAction, "edu.usc.cssl.tacit.topicmodel.lda.ui.lda");
+		PlatformUI.getWorkbench().getHelpSystem()
+				.setHelp(form, "edu.usc.cssl.tacit.topicmodel.lda.ui.lda");
 		form.getToolBarManager().update(true);
 	}
 
@@ -374,16 +363,11 @@ public class LdaTopicModelView extends ViewPart implements
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
-
-		String inputMessage = OutputPathValidation.getInstance()
-				.validateOutputDirectory(
-						inputLayoutData.getOutputLabel().getText(), "Input");
-		if (inputMessage != null) {
-
-			inputMessage = inputLayoutData.getOutputLabel().getText() + " "
-					+ inputMessage;
-			form.getMessageManager().addMessage("inputlocation", inputMessage,
-					null, IMessageProvider.ERROR);
+		// validate input
+		if (inputLayoutData.getSelectedFiles().size() < 1) {
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
+					IMessageProvider.ERROR);
 			canProceed = false;
 		}
 
@@ -409,92 +393,5 @@ public class LdaTopicModelView extends ViewPart implements
 		}
 		return super.getAdapter(adapter);
 	}
-	
-	/*private void createCorpusSection(Composite client) {
-
-		Group group = new Group(client, SWT.SHADOW_IN);
-		group.setText("Input Type");
-
-		// group.setBackground(client.getBackground());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		group.setLayout(layout);
-
-		final Button corpusEnabled = new Button(group, SWT.CHECK);
-		corpusEnabled.setText("Use Corpus");
-		corpusEnabled.setBounds(10, 10, 10, 10);
-		corpusEnabled.pack();
-
-		// TacitFormComposite.createEmptyRow(toolkit, group);
-
-		final Composite sectionClient = new Composite(group, SWT.None);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(sectionClient);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sectionClient);
-		sectionClient.pack();
-
-		// Create a row that holds the textbox and browse button
-		final Label inputPathLabel = new Label(sectionClient, SWT.NONE);
-		inputPathLabel.setText("Select Corpus:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(inputPathLabel);
-
-		final Combo cmbSortType = new Combo(sectionClient, SWT.FLAT
-				| SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
-				.applyTo(cmbSortType);
-		manageCorpora = new ManageCorpora();
-		corpuraList = manageCorpora.getNames();
-		cmbSortType.setItems(corpuraList);
-		cmbSortType.setEnabled(false);
-
-		corpusEnabled.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (corpusEnabled.getSelection()) {
-					cmbSortType.setEnabled(true);
-
-				} else {
-					cmbSortType.setEnabled(false);
-				}
-			}
-		});
-
-		cmbSortType.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				ICorpus selectedCorpus = manageCorpora
-						.readCorpusById(corpuraList[cmbSortType
-								.getSelectionIndex()]);
-				if (inputList == null) {
-					inputList = new ArrayList<String>();
-				}
-				if (selectedCorpus.getDatatype().equals(DataType.TWITTER_JSON)) {
-					TwitterReadJsonData twitterReadJsonData = new TwitterReadJsonData();
-					for (ICorpusClass cls : selectedCorpus.getClasses()) {
-						inputList.add(twitterReadJsonData
-								.retrieveTwitterData(cls.getClassPath()));
-					}
-				} else if (selectedCorpus.getDatatype().equals(
-						DataType.REDDIT_JSON)) {
-					// TO-Do
-				} else if (selectedCorpus.getDatatype().equals(
-						(DataType.PLAIN_TEXT))) {
-					// TO-Do
-				} else if (selectedCorpus.getDatatype().equals(
-						(DataType.MICROSOFT_WORD))) {
-					// TO-Do
-				} else if (selectedCorpus.getDatatype().equals((DataType.XML))) {
-					// TO-Do
-				}
-				//inputLayoutData.refreshInternalTree(inputList);
-			}
-		});
-		TacitFormComposite.createEmptyRow(null, sectionClient);
-	}*/
 
 }
