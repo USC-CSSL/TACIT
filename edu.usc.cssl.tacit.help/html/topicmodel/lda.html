@@ -100,7 +100,10 @@
 						general idea of what each topic represents. 
 						
 						<br><br>
-						<b>Word counts:</b>
+						<b>Word counts:</b> The word-counts file lists the frequency of occurrence for each word within each topic.
+						For example, for an LDA analysis with two topics the line "Turing 1:32 2:1" would indicate that the word "Turing"
+						occurs 32 times within topic 1 and 1 time within topic 2. If a word does not occur within a topic, that topic is not listed
+						for that word within the word-counts file; that is, there are no entries of the form i:0. 
 						
 						<br><br>
 						<b>Word weights (optional):</b> The word weights file lists the weight of each word for each topic. The words that have the 

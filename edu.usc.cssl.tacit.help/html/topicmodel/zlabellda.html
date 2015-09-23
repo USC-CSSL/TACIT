@@ -43,7 +43,10 @@
  							<br><br>
  							
  							In addition to specifying the input files for the analysis, the ZLabel LDA tool also requires a list of <b>seed words</b>. 
- 							The seed words should be listed in a single .txt formatted file. To input a seed words file, use the <b>Browse</b> button 
+ 							The seed words should be contained in a single .txt formatted file. Each line in the seed words .txt file will be interpreted
+ 							 by the ZLDA tool as seed words for a different topic. For example, to specify seed words for two topics, a seed words file
+ 							 would need to contain one line of seed words for topic 1 and one line of seed words for topic 2. To specify a seed words file, 
+ 							 use the <b>Browse</b> button 
  							located next to the <b>Seed File Location</b> input box in the input path field. 
  							
  						
@@ -79,13 +82,17 @@
 						<b>Run report:</b> The run report lists the version of TACIT used for the analysis and a time stamp.
 						
 						<br><br>
-						<b>Phi:</b>
+						<b>Phi:</b> This file is output by the ZLDA implementation, but it is not readily interpretaable.
 						
 						<br><br>
-						<b>Theta:</b>
+						<b>Theta:</b> The Theta file contains the distributions of topics over documents. For each document, 
+						the estimated probability that it contains each topic is provided. These probability estimates can 
+						be used to identify the most likely topics for a given document. 
 						
 						<br><br>
-						<b>Theta:</b>
+						<b>Topic Words:</b> The topic words file lists the words that have the highest probability of occurrence for each topic. 
+						Both the words and their probabilities are contained in the file. This information can be used to gain insight into the 
+						semantic content of a given topic. 
 						
 						</td>
 					</tr>					

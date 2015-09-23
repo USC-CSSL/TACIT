@@ -16,8 +16,8 @@
 					</tr>
 					<tr>
 						<td>A text or document refers to the unit of analysis for text analysis, and a corpus is a collection of these documents. A document can refer to any length of text from a single tweet to an entire book. 
-						<br><br> TACIT’s Corpus Management tool aims to provide a simple user interface to provide an easy and efficient way to manage different types of corpora (or sets of documents/text). The <b>Corpus Management</b> tool can be accessed under <b>View</b> in the main toolbar.  
-						Corpus Management allows users’ corpora (documents/sets of text) to be compiled in TACIT at the beginning of a project so that the process of loading and managing the data need not to be repeated multiple times. 
+						<br><br> TACIT's Corpus Management tool aims to provide a simple user interface to provide an easy and efficient way to manage different types of corpora (or sets of documents/text). The <b>Corpus Management</b> tool can be accessed under <b>View</b> in the main toolbar.  
+						Corpus Management allows users' corpora (documents/sets of text) to be compiled in TACIT at the beginning of a project so that the process of loading and managing the data need not to be repeated multiple times. 
 						The corpus management tool can import user data in multiple formats such as JSON, Microsoft Word and CSV files. After creating a corpus in TACIT, the program will automatically record and provide a summary log of how and when the data was collected as well as all analyses performed on that corpus (e.g. type of analysis, date and time of analysis). 
 						When such corpora are used for any analysis, users have the ability to filter their data on the basis of various parameters including tweet/comment data, keywords and associated hashtags (called metadata). 
 						</td>
@@ -33,7 +33,7 @@
 						<td class = "subtitle">Creating a Corpus</td>
 					</tr>
 					<tr>
-						<td> To create a new corpus, click <b>Add Corpus</b> under the <b>Corpora</b>panel. This will open a new <b>Corpus Details</b> section to the right of the list of corpora. 
+						<td> To create a new corpus, click <b>Add Corpus</b> under the <b>Corpora</b> panel. This will open a new <b>Corpus Details</b> section to the right of the list of corpora. 
 							Enter the name for this corpus in the <b>Corpus ID</b> text box, and specify the file format of the text/documents that will be in this corpus. TACIT currently supports Plain text, Twitter JSON, and Reddit JSON file formats. 
 							You can change both the name of the corpus and the file format settings at any time by selecting the newly created corpus under <b>Corpora</b>.
 							If you no longer need a corpus/class, you can remove it by selecting it under <b>Corpora</b> and clicking the <b>Remove</b> button. Removing a corpus will remove all classes underneath it.
@@ -43,7 +43,47 @@
 						<td class = "subtitle">Adding Classes to a Corpus</td>
 					</tr>
 					<tr>
-						<td>
+						<td> After creating a corpus, it needs to be populated with documents. To add documents to a new corpus, select the corpus under
+						<b> Corpora </b> and click the <b> Add Class </b> button. This will open a <b> Class Details </b> section that contains two fields:
+						<b> Class Name </b> and <b> Class Path </b>. To create the new class, specify a Class Name and use the <b>Browse</b> button to select the
+						directory that contains the documents to be imported to the new class. After specifying the Class Name and Class Path, select the corpus 
+						under <b> Corpora </b> and click the <b> Save Corpus </b> button in the <b> Corpus Details </b> section. This will save the new class
+						and the documents contained in the Class Path to the corpus for later use. To populate a corpus with multiple classes, repeat these steps
+						for each desired class. 
+						<br>
+						<br>
+						 <b>Note:</b> TACIT can implement a range of text analysis tools. Some of these tools require at least 2 classes of documents 
+						 (e.g. the Support Vector Machines tool and the naive Bayes tool) and some of these tools can be implemented with documents that
+						 have not been assigned to any classes at all (e.g. Hierarchical and KMeans Clustering). The Corpus Management tool can be used for both of these cases. 
+						 To create a corpus for documents that have no class labels, all documents can simply be entered into a single class. 
+						</td>
+					</tr>	
+					
+					</tr>
+					<tr>
+						<td class = "subtitle">Using Corpora with TACIT's Tools </td>
+					</tr>
+					<tr>
+						<td> To analyze documents contained in a TACIT corpus use the <b> Add Corpus </b> button to 
+						specify the corpus for analysis. A corpus is structured like a single directory with classes contained
+						in the directory. After specifying a corpus with the <b> Add Corpus</b> button, the corpus directory can be
+						expanded using the grey arrow next to the corpus name (See <i>Image 1</i>) and specific classes within the 
+						corpus can be excluded or included in the analysis. 
+						
+						<br><br>	
+ 							<i>Image 1.</i> Corpus and Class Specification<br>
+							<img class="image" src="../Images/CorpusManagement.png" 
+							alt="Run Button"  height="114" width="800" align="left">
+						<br> <br><br><br><br><br><br><br>
+						
+						To implement a classification tool such as naive Bayes or SVM on a corpus, the same corpus can be used for each 
+						of <i>N</i> classification classes as long as the corpus has <i>N</i> classes within it. To use the same corpus 
+						for multiple classification classes select the corpus for each classification class and then select/exclude the 
+						corpus classes within each classification class according to the analysis goals (see <i>Image 1</i>). 
+						<br><br>
+						To implement tools that do not require classes (such as cluster analysis) simply specify the desired corpus/corpora
+						and and select the desired classes within the corpus/corpora. 
+							
 						</td>
 					</tr>	
 				</table>
