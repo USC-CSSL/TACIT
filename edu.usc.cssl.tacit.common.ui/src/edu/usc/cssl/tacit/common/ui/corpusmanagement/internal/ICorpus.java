@@ -5,9 +5,11 @@ import java.util.List;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 
 public interface ICorpus {
-	public String getCorpusId();
+	public String getCorpusName();
 	
 	public DataType getDatatype();
 	
 	public List<ICorpusClass> getClasses();
+	
+	public String getCorpusId();
 }

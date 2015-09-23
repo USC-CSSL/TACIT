@@ -53,7 +53,7 @@ public class CorpusManagementView extends ViewPart {
 		blocksc.setExpandVertical(true);
 		IManagedForm managedForm = new ManagedForm(toolkit, blocksc);
 		try {
-			block = new MasterDetailsPage(form);
+			block = new MasterDetailsPage(form, getViewSite());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

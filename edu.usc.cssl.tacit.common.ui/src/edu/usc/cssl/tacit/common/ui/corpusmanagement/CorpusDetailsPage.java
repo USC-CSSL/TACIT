@@ -1,9 +1,12 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
-import java.io.File;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
@@ -17,9 +20,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -29,16 +34,16 @@ import org.eclipse.ui.forms.widgets.Section;
 
 //import edu.usc.cssl.tacit.common.corpusmanagement;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusMangementValidation;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
-public class CorpusDetailsPage implements IDetailsPage {
+public class CorpusDetailsPage implements IDetailsPage{
 	private IManagedForm mform;
-	private Text corpusIDTxt;
+	private Text corpusNameTxt;
 	private Corpus selectedCorpus;
 	private ScrolledForm corpusMgmtViewform;
 	FormToolkit toolkit;
@@ -47,13 +52,15 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private Button redditJSON = null;
 	private Button xmlData = null;
 	private Button wordData = null;
+	private IViewSite viewSite;
 	
 	ManageCorpora corpusManagement;
 	List<ICorpus> corpusList;
-	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform, List<ICorpus> corpusList) {
+	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform, List<ICorpus> corpusList, IViewSite viewSite) {
 		this.corpusMgmtViewform = corpusMgmtViewform;
 		corpusManagement = new ManageCorpora();
 		corpusList = this.corpusList;
+		this.viewSite = viewSite;
 	}
 
 	@Override
@@ -90,11 +97,11 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
 
-		final Label corpusIDLbl = toolkit.createLabel(sectionClient, "Corpus ID:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusIDLbl);
-		corpusIDTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusIDTxt);
-		if(null != selectedCorpus) corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		final Label corpusNameLbl = toolkit.createLabel(sectionClient, "Corpus Name:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusNameLbl);
+		corpusNameTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusNameTxt);
+		if(null != selectedCorpus) corpusNameTxt.setText(selectedCorpus.getCorpusName());
 
 		Group dataTypes = new Group(sectionClient, SWT.LEFT);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dataTypes);
@@ -103,7 +110,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		
 		createDataTypeOptions(dataTypes);
 		if(null != selectedCorpus) {
-			corpusIDTxt.setText(selectedCorpus.getCorpusId());
+			corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		}
 		
 		//Add save button
@@ -120,137 +127,69 @@ public class CorpusDetailsPage implements IDetailsPage {
 		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(validateData(corpusIDTxt.getText())) {
+				if(CorpusMangementValidation.validateCorpus(selectedCorpus, true, corpusMgmtViewform, corpusManagement)) {
+					//corpusMgmtViewform.getMessageManager().addMessage("saveCorpus", "Creating corpus...", null, IMessageProvider.INFORMATION);
+					
 					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
-					ManageCorpora.saveCorpus(selectedCorpus);
+					Job saveCorpus = new Job("Creating corpus...") {						
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							TacitFormComposite.updateStatusMessage(viewSite, "Creating corpus \""+selectedCorpus.getCorpusName()+"\"", IStatus.INFO, corpusMgmtViewform);
+							ManageCorpora.saveCorpus(selectedCorpus);
+							TacitFormComposite.updateStatusMessage(viewSite, "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully", IStatus.OK, corpusMgmtViewform);
+							
+							Display.getDefault().syncExec(new Runnable() {
+								@Override
+								public void run() {
+									MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info", "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully");
+								}
+							});
+							
+							return Status.OK_STATUS;
+						}
+					};
+					saveCorpus.schedule();
+					
+					//corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
+					
+					
 				}
 			}
 		});	
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
 		
-		corpusIDTxt.addKeyListener(new KeyListener() {
+		corpusNameTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(isCorpusIdValid(corpusIDTxt.getText())) {
-					selectedCorpus.setCorpusId(corpusIDTxt.getText());
+				if(CorpusMangementValidation.isCorpusNameValid(corpusNameTxt.getText(), selectedCorpus.getCorpusId(), corpusMgmtViewform, corpusManagement)){
+					selectedCorpus.setCorpusName(corpusNameTxt.getText());
 					selectedCorpus.getViewer().refresh();
 				}
 				
-				if(!corpusIDTxt.getText().isEmpty())
-					corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
+				if(!corpusNameTxt.getText().isEmpty())
+					corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(isCorpusIdValid(corpusIDTxt.getText())) {
-					selectedCorpus.setCorpusId(corpusIDTxt.getText());
+				if(CorpusMangementValidation.isCorpusNameValid(corpusNameTxt.getText(), selectedCorpus.getCorpusId(), corpusMgmtViewform, corpusManagement)){
+					selectedCorpus.setCorpusName(corpusNameTxt.getText());
 					selectedCorpus.getViewer().refresh();
 				}
 				
-				if(!corpusIDTxt.getText().isEmpty())
-					corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
+				if(!corpusNameTxt.getText().isEmpty())
+					corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 			}
 		});
 		
 	}
-	
-	protected boolean isCorpusIdValid(String corpusId) {
-		if(corpusId.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("corpusIdEmpty", "Provide valid corpus ID", null, IMessageProvider.ERROR);
-			return false;
-		} else 
-			corpusMgmtViewform.getMessageManager().removeMessage("corpusIdEmpty");
-		
-		if(corpusIdExists(corpusId)) {
-			corpusMgmtViewform.getMessageManager().addMessage("corpusId", "Corpus ID \""+ corpusId +"\"already exists. Provide different ID", null, IMessageProvider.ERROR);
-			return false;
-		} else 
-			corpusMgmtViewform.getMessageManager().removeMessage("corpusId");
-		return true;	
-	}
+
 
 	public void printCorpusDetails() {
-		System.out.println("Corupus ID :" + selectedCorpus.getCorpusId());
+		System.out.println("Corupus Name :" + selectedCorpus.getCorpusName());
 		for(ICorpusClass cc : selectedCorpus.getClasses()) {
 			System.out.println("Classes " + cc.getClassName() + "," + cc.getClassPath());
 		}
-	}
-	
-	public boolean validateData(String corpusId) {
-		if(isCorpusIdValid(corpusId)) {
-			List<ICorpusClass> classes = selectedCorpus.getClasses(); // validate the class details as well
-			for(ICorpusClass cc : classes) {
-				if(!validateClassData(cc)) return false;
-			}
-		} else 
-			return false; // corpusId is not valid
-		return true;
-	}
-	
-	
-	private boolean isClassnameValid(String className, ICorpusClass selectedCorpusClass) {
-		if(className.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classNameEmpty", "Class name cannot be empty", null, IMessageProvider.ERROR);
-			return false;
-		} else {
-			corpusMgmtViewform.getMessageManager().removeMessage("classNameEmpty");
-		}
-		ICorpus parentCorpus = selectedCorpusClass.getParent();
-		//ICorpus parentCorpus = corpusManagement.readCorpusById(parentCorpusId);
-		if(null == parentCorpus) return true; // newly created corpus
-		for(ICorpusClass cc : parentCorpus.getClasses()) {
-			if((CorpusClass)cc != selectedCorpusClass) {
-				if(cc.getClassName().equals(className)) {
-					corpusMgmtViewform.getMessageManager().addMessage("className", "Class name \""+ className +"\"already exists in corpus "+ parentCorpus.getCorpusId(), null, IMessageProvider.ERROR);
-					return false;
-				}
-			}
-		}
-		corpusMgmtViewform.getMessageManager().removeMessage("className");
-		return true;
-	}
-
-	protected boolean isClassPathValid(String classPathText) {
-		if (classPathText.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location", null, IMessageProvider.ERROR);
-			return false;
-		}
-		File tempFile = new File(classPathText);
-		if (!tempFile.exists() || !tempFile.isDirectory()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location", null, IMessageProvider.ERROR);
-			return false;
-		} else {
-			corpusMgmtViewform.getMessageManager().removeMessage("classPath");
-			String message = validateOutputDirectory(classPathText);
-			if (null != message) {
-				corpusMgmtViewform.getMessageManager().addMessage("classPath", message, null, IMessageProvider.ERROR);
-				return false;
-			}
-		}
-		corpusMgmtViewform.getMessageManager().removeMessage("classPath");
-		return true;
-	}
-	
-	
-	private String validateOutputDirectory(String location) {
-		File locationFile = new File(location);
-		if (locationFile.canRead()) {
-			return null;
-		} else {
-			return "Class path does not have read permission";
-		}
-	}
-
-	private boolean validateClassData(ICorpusClass cc) {
-		return isClassnameValid(cc.getClassName(), cc) && isClassPathValid(cc.getClassPath());
-	}	
-
-	private boolean corpusIdExists(String corpusId) {
-		List<ICorpus> corpuses = corpusManagement.getAllCorpusDetails();
-		for(ICorpus corpus : corpuses) {
-			if(!corpus.equals(selectedCorpus) && corpus.getCorpusId().equals(corpusId)) return true;
-		}
-		return false;
 	}
 
 	private void createDataTypeOptions(Composite dataTypeGroup) {
@@ -377,9 +316,10 @@ public class CorpusDetailsPage implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		corpusMgmtViewform.getMessageManager().removeAllMessages();
 		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();	
-		corpusIDTxt.setText(selectedCorpus.getCorpusId());
+		corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		setDataTypeOption(selectedCorpus.getDatatype());
-		validateData(selectedCorpus.getCorpusId());
+		CorpusMangementValidation.validateCorpus(selectedCorpus, false, corpusMgmtViewform, corpusManagement);
 	}
+
 
 }

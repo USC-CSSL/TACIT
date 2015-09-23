@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -35,6 +36,7 @@ import org.json.simple.parser.ParseException;
 
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusManagementConstants;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
@@ -44,15 +46,16 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	private ScrolledForm corpusMgmtViewform;
 	List<ICorpus> corpusList;
 	ManageCorpora corpusManagement;
-	MasterDetailsPage(ScrolledForm form) throws IOException, ParseException {
+	IViewSite viewSite;
+	MasterDetailsPage(ScrolledForm form, IViewSite viewSite) throws IOException, ParseException {
 		corpusList = new ArrayList<ICorpus>();
 		corpusManagement = new ManageCorpora();
 		corpusList = corpusManagement.getAllCorpusDetails();
 		this.corpusMgmtViewform = form;
+		this.viewSite = viewSite;
 	}
 	
 	class MasterContentProvider implements ITreeContentProvider {
-
 		@Override
 		public void dispose() {
 		}
@@ -77,7 +80,6 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			
 			return getElements(parentElement);
 		}
 
@@ -99,7 +101,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		@Override
 		public String getText(Object element) {
 			if(element instanceof ICorpus)
-				return ((ICorpus) element).getCorpusId();
+				return ((ICorpus) element).getCorpusName();
 			else if(element instanceof ICorpusClass)
 				return ((ICorpusClass) element).getClassName();
 			else if(element instanceof String) {
@@ -140,8 +142,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		buttonComposite.setLayout(buttonLayout);
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
-		Button addCorpora = toolkit.createButton(buttonComposite, "Add Corpus", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addCorpora);
+		Button addCorpus = toolkit.createButton(buttonComposite, "Add Corpus", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addCorpus);
 		
 		final Button addClass = toolkit.createButton(buttonComposite, "Add Class", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
@@ -176,13 +178,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			((Corpus)corpus).setViewer(corpuses);
 		corpuses.setInput(corpusList);
 		
-		addCorpora.addSelectionListener(new SelectionAdapter() {
+		addCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");
 				corpusTempName.append(corpusList.size()+1);
 				Corpus c = new Corpus(new String(corpusTempName), DataType.PLAIN_TEXT, corpuses);
-				c.addClass(new CorpusClass("Class 1", System.getProperty("user.dir"), corpuses));;
+				c.addClass(new CorpusClass("Class 1", ICorpusManagementConstants.DEFAULT_CLASSPATH, corpuses));;
 				corpusList.add(c);
 				Object[] expandedItems = corpuses.getExpandedElements();
 				corpuses.setInput(corpusList);
@@ -200,7 +202,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 	int corpusIndex = corpusList.indexOf(corpusSelected);					 	
 					 	StringBuilder classTempName = new StringBuilder("Class ");
 					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);
-					 	CorpusClass newClass = new CorpusClass(new String(classTempName), System.getProperty("user.dir"), corpuses);
+					 	CorpusClass newClass = new CorpusClass(new String(classTempName),ICorpusManagementConstants.DEFAULT_CLASSPATH, corpuses);
 		            	((Corpus)corpusSelected).addClass(newClass);
 					 	corpusList.set(corpusIndex, corpusSelected);
 					 	corpuses.refresh(); 
@@ -248,7 +250,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform, corpusList));
+		detailsPart.registerPage(Corpus.class, new CorpusDetailsPage(corpusMgmtViewform, corpusList, viewSite));
 		detailsPart.registerPage(CorpusClass.class, new ClassDetailsPage(corpusMgmtViewform));
 	}
 
