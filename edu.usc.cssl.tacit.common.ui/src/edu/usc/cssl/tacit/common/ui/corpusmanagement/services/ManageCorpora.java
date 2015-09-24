@@ -175,7 +175,7 @@ public class ManageCorpora {
 		int numNewClass = corpus.getClasses().size();
 		
 		for (int i=0; i<numNewClass; i++) {
-			String classPath = corpus.getClasses().get(i).getClassPath();
+			String classPath = corpus.getClasses().get(i).getTacitLocation();
 			newClasses.add(classPath);
 			
 			if (oldClasses.get(classPath) != null) {
