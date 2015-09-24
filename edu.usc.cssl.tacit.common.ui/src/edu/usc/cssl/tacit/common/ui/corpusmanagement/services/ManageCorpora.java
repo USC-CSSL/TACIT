@@ -143,6 +143,7 @@ public class ManageCorpora {
 				e.printStackTrace();
 			}
 			copyCorpus(jsonObj);
+			removeCorpus(corpus, false);
 		}
 
 	}
