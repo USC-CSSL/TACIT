@@ -129,10 +129,10 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		//Create a tree to hold all corpuses
 		toolkit.paintBordersFor(client);
 		
-		final TreeViewer corpuses = new TreeViewer(client, SWT.BORDER);
+		final TreeViewer corpusViewer = new TreeViewer(client, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 400; gd.widthHint = 100;
-		corpuses.getTree().setLayoutData(gd);
+		corpusViewer.getTree().setLayoutData(gd);
 		
 		//Add all required buttons in the composite
 		Composite buttonComposite = new Composite(client, SWT.NONE);
@@ -155,7 +155,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
 		
-		corpuses.addSelectionChangedListener(new ISelectionChangedListener() {
+		corpusViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
@@ -172,42 +172,46 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		         }				
 			}
 		});
-		corpuses.setContentProvider(new MasterContentProvider());
-		corpuses.setLabelProvider(new MasterLabelProvider());
-		for(ICorpus corpus : corpusList) // set the viewer for the old corpuses loaded form disk
-			((Corpus)corpus).setViewer(corpuses);
-		corpuses.setInput(corpusList);
+		corpusViewer.setContentProvider(new MasterContentProvider());
+		corpusViewer.setLabelProvider(new MasterLabelProvider());
+		for(ICorpus corpus : corpusList) { // set the viewer for the old corpuses loaded form disk
+			((Corpus)corpus).setViewer(corpusViewer);
+			for(ICorpusClass cc: corpus.getClasses()){
+				((CorpusClass)cc).setViewer(corpusViewer);
+			}
+		}
+		corpusViewer.setInput(corpusList);
 		
 		addCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");
 				corpusTempName.append(corpusList.size()+1);
-				Corpus c = new Corpus(new String(corpusTempName), DataType.PLAIN_TEXT, corpuses);
-				c.addClass(new CorpusClass("Class 1", ICorpusManagementConstants.DEFAULT_CLASSPATH, corpuses));;
+				Corpus c = new Corpus(new String(corpusTempName), DataType.PLAIN_TEXT, corpusViewer);
+				c.addClass(new CorpusClass("Class 1", ICorpusManagementConstants.DEFAULT_CLASSPATH, corpusViewer));;
 				corpusList.add(c);
-				Object[] expandedItems = corpuses.getExpandedElements();
-				corpuses.setInput(corpusList);
-				corpuses.setExpandedElements(expandNewCorpus(expandedItems, c));
-				corpuses.setSelection(new StructuredSelection(c),true);
+				Object[] expandedItems = corpusViewer.getExpandedElements();
+				corpusViewer.setInput(corpusList);
+				corpusViewer.setExpandedElements(expandNewCorpus(expandedItems, c));
+				corpusViewer.setSelection(new StructuredSelection(c),true);
 			}
 		});	
 		
 		addClass.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)corpuses.getSelection();
+				IStructuredSelection selection = (IStructuredSelection)corpusViewer.getSelection();
 				 try {
 					 	ICorpus corpusSelected = (ICorpus)selection.getFirstElement();
 					 	int corpusIndex = corpusList.indexOf(corpusSelected);					 	
 					 	StringBuilder classTempName = new StringBuilder("Class ");
 					 	classTempName.append(corpusList.get(corpusIndex).getClasses().size()+1);
-					 	CorpusClass newClass = new CorpusClass(new String(classTempName),ICorpusManagementConstants.DEFAULT_CLASSPATH, corpuses);
+					 	CorpusClass newClass = new CorpusClass(new String(classTempName),ICorpusManagementConstants.DEFAULT_CLASSPATH, corpusViewer);
 		            	((Corpus)corpusSelected).addClass(newClass);
 					 	corpusList.set(corpusIndex, corpusSelected);
-					 	corpuses.refresh(); 
-						corpuses.setExpandedElements(expandNewCorpus(corpuses.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));
-						corpuses.setSelection(new StructuredSelection(newClass),true);
+					 	corpusViewer.refresh(); 
+						corpusViewer.setExpandedElements(expandNewCorpus(corpusViewer.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));
+						corpusViewer.setSelection(new StructuredSelection(newClass),true);
 		             } catch(Exception exp) { 
 		             }
 			}
@@ -216,7 +220,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		remove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)corpuses.getSelection();
+				IStructuredSelection selection = (IStructuredSelection)corpusViewer.getSelection();
 				 try {
 					 	Object selectedObj = selection.getFirstElement();
 					 	if(selectedObj instanceof ICorpus) {
@@ -230,7 +234,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			            	parentCorpus.removeClass(selectedClass);					
 			            	ManageCorpora.removeCorpus(parentCorpus, false);
 					 	}
-					 	corpuses.refresh();
+					 	corpusViewer.refresh();
 		         } catch(Exception exp) { //exception means item selected is not a corpus but a class.
 		         }
 			}
