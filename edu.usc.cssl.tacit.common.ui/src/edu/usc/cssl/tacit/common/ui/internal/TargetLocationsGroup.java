@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -70,10 +71,12 @@ public class TargetLocationsGroup {
 	 * @return generated instance of the table part
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent,
-			FormToolkit toolkit, boolean isFolder, boolean isFile, boolean isCorpus) {
+			FormToolkit toolkit, boolean isFolder, boolean isFile,
+			boolean isCorpus) {
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
-		contentTable.createFormContents(parent, toolkit, isFolder, isFile, isCorpus);
+		contentTable.createFormContents(parent, toolkit, isFolder, isFile,
+				isCorpus);
 		return contentTable;
 	}
 
@@ -143,8 +146,8 @@ public class TargetLocationsGroup {
 					.applyTo(fAddFileButton);
 		}
 		if (isCorpus) {
-			fAddCorpusButton = toolkit.createButton(buttonComp, "Add Corpus...",
-					SWT.PUSH);
+			fAddCorpusButton = toolkit.createButton(buttonComp,
+					"Add Corpus...", SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddCorpusButton);
 		}
@@ -257,8 +260,8 @@ public class TargetLocationsGroup {
 						if (!message.equals("")) {
 							ErrorDialog.openError(dlg.getParent(),
 									"Select Different Folder",
-									"Please select different Folder", new Status(
-											IStatus.ERROR,
+									"Please select different Folder",
+									new Status(IStatus.ERROR,
 											CommonUiActivator.PLUGIN_ID,
 											message));
 						} else {
@@ -269,12 +272,13 @@ public class TargetLocationsGroup {
 				}
 			});
 		}
-		
+
 		if (fAddCorpusButton != null) {
 			fAddCorpusButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final TacitElementSelectionDialog CorpusDialog = new TacitElementSelectionDialog(fAddCorpusButton.getShell());
+					final TacitElementSelectionDialog CorpusDialog = new TacitElementSelectionDialog(
+							fAddCorpusButton.getShell());
 					CorpusDialog.setTitle("Select the Corpus from the list");
 					CorpusDialog.setMessage("Enter Corpus name to search");
 					final SortedSet<String> allCorpus = new TreeSet<String>();
@@ -283,15 +287,18 @@ public class TargetLocationsGroup {
 						protected IStatus run(IProgressMonitor monitor) {
 							allCorpus.clear();
 							try {
-								String[] corpusList = corporaManagement.getNames();
-								allCorpus.addAll(Arrays.asList(corpusList));							
+								String[] corpusList = corporaManagement
+										.getNames();
+								allCorpus.addAll(Arrays.asList(corpusList));
 								Display.getDefault().asyncExec(new Runnable() {
 									@Override
 									public void run() {
-										CorpusDialog.refresh(allCorpus.toArray());
+										CorpusDialog.refresh(allCorpus
+												.toArray());
 									}
 								});
-							} catch (final Exception ex) { 	}
+							} catch (final Exception ex) {
+							}
 							return Status.OK_STATUS;
 						}
 					};
@@ -301,11 +308,12 @@ public class TargetLocationsGroup {
 					CorpusDialog.setMultipleSelection(true);
 
 					if (CorpusDialog.open() == Window.OK) {
-						List<String> modifiedCorpusNames = new ArrayList<String>(); 
-						for(String corpus : CorpusDialog.getSelections()) {
+						List<String> modifiedCorpusNames = new ArrayList<String>();
+						for (String corpus : CorpusDialog.getSelections()) {
 							modifiedCorpusNames.add("--corpus--" + corpus);
 						}
-						updateLocationTree(modifiedCorpusNames.toArray(new String[0]));		
+						updateLocationTree(modifiedCorpusNames
+								.toArray(new String[0]));
 					}
 				}
 			});
@@ -329,16 +337,16 @@ public class TargetLocationsGroup {
 							String[] listFile = dlg.getFileNames();
 							String[] fullFile = new String[listFile.length];
 							for (int i = 0; i < listFile.length; i++) {
-								fullFile[i] = dlg.getFilterPath() + File.separator
-										+ listFile[i];
+								fullFile[i] = dlg.getFilterPath()
+										+ File.separator + listFile[i];
 							}
-	
+
 							message = updateLocationTree(fullFile);
 							if (!message.equals("")) {
 								ErrorDialog.openError(dlg.getParent(),
 										"Select Different File",
-										"Please select different File", new Status(
-												IStatus.ERROR,
+										"Please select different File",
+										new Status(IStatus.ERROR,
 												CommonUiActivator.PLUGIN_ID,
 												message));
 							} else {
@@ -364,7 +372,7 @@ public class TargetLocationsGroup {
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}
-		if (!path.equals("root")) {	
+		if (!path.equals("root")) {
 			for (String file : path) {
 				boolean isCorpus = false;
 				if (file.startsWith("--corpus--")) {
@@ -373,40 +381,45 @@ public class TargetLocationsGroup {
 				}
 				if (checkExisting(file)) {
 					continue;
-				} 
-				File fileHandler = new File(file); // length returns the size in 
+				}
+				File fileHandler = new File(file); // length returns the size in
 				Long availalbeJVMSpace = Runtime.getRuntime().freeMemory();
-				
-				if(fileHandler.exists() && fileHandler.length()>availalbeJVMSpace) 
+
+				if (fileHandler.exists()
+						&& fileHandler.length() > availalbeJVMSpace)
 					return "No memory available to upload the file/folder";
-				
-				if (file.contains(".DS_Store")) continue;
+
+				if (file.contains(".DS_Store"))
+					continue;
 				final TreeParent node = new TreeParent(file);
 				if (isCorpus) {
 					processCorpusFiles(node);
-				}
-				else if (new File(file).isDirectory()) {
-					if(FileUtils.sizeOfDirectory(new File(file)) <= 0){
-						return "The selected Folder " + file + " is empty . Hence, it is not added to the list";
+				} else if (new File(file).isDirectory()) {
+					if (FileUtils.sizeOfDirectory(new File(file)) <= 0) {
+						return "The selected Folder "
+								+ file
+								+ " is empty . Hence, it is not added to the list";
 					}
 					processSubFiles(node);
-				}
-				else {
-					if(!sizeCheck(new String[]{file}).equals("")){
-						ConsoleView.printlInConsoleln("File "+file+" is empty. Hence, it is not added to the list");
+				} else {
+					if (!sizeCheck(new String[] { file }).equals("")) {
+						ConsoleView
+								.printlInConsoleln("File "
+										+ file
+										+ " is empty. Hence, it is not added to the list");
 						continue;
 					}
 				}
 				this.locationPaths.add(node);
 				this.fTreeViewer.refresh();
 				Display.getDefault().syncExec(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
 						fTreeViewer.setChecked(node, true);
 						fTreeViewer.setSubtreeChecked(node, true);
-						
+
 					}
 				});
 			}
@@ -422,10 +435,10 @@ public class TargetLocationsGroup {
 		for (String file : path) {
 			if (new File(file).isFile()) {
 				if (FileUtils.sizeOf(new File(file)) < 1) {
-					if(result.equals("")){
-						result =  " "+file;
-					}else{
-					result = result + "," + file;
+					if (result.equals("")) {
+						result = " " + file;
+					} else {
+						result = result + "," + file;
 					}
 				}
 			}
@@ -436,37 +449,44 @@ public class TargetLocationsGroup {
 	private boolean checkExisting(String newNode) {
 		for (TreeParent node : locationPaths) {
 			if (newNode.equals(node.getName())) {
-					return true;
+				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	private void processCorpusFiles(TreeParent corpusNode) {
-		ICorpus myCorpus = corporaManagement.readCorpusById(corpusNode.getName());
+		ICorpus myCorpus = corporaManagement.readCorpusById(corpusNode
+				.getName());
 		List<ICorpusClass> myCorpusClasses = myCorpus.getClasses();
-		for(ICorpusClass class_ : myCorpusClasses) {
-			String classNameOnGui = String.format("%s (Tacit Internal Class Path: %s)", class_.getClassName(), class_.getTacitLocation());
+		for (ICorpusClass class_ : myCorpusClasses) {
+			String classNameOnGui = String.format(
+					"%s (Tacit Internal Class Path: %s)",
+					class_.getClassName(), class_.getTacitLocation());
 			TreeParent classFolder = new TreeParent(classNameOnGui);
 			corpusNode.addChildren(classFolder);
 		}
 	}
-	
+
 	private void processSubFiles(TreeParent node) {
 		File[] files = new File(node.getName()).listFiles();
-		if(null == files || files.length == 0) return;
-		
+		if (null == files || files.length == 0)
+			return;
+
 		for (File input : files) {
-			if (input.getAbsolutePath().contains(".DS_Store") || input.getAbsolutePath().contains("$RECYCLE.BIN")) continue;
-			if (input.isFile() && FileUtils.sizeOf(input)>0) {
+			if (input.getAbsolutePath().contains(".DS_Store")
+					|| input.getAbsolutePath().contains("$RECYCLE.BIN"))
+				continue;
+			if (input.isFile() && FileUtils.sizeOf(input) > 0) {
 				node.addChildren(input.getAbsolutePath());
-			} else if(input.isDirectory() && null != input.listFiles() && input.listFiles().length>0) {
+			} else if (input.isDirectory() && null != input.listFiles()
+					&& input.listFiles().length > 0) {
 				TreeParent subFolder = new TreeParent(input.getAbsolutePath());
 				processSubFiles(subFolder);
 				node.addChildren(subFolder);
-			}
-			else{
-				ConsoleView.printlInConsoleln("File "+input.getAbsolutePath()+" is empty. Hence, it is not added to the list");
+			} else {
+				ConsoleView.printlInConsoleln("File " + input.getAbsolutePath()
+						+ " is empty. Hence, it is not added to the list");
 				continue;
 			}
 		}
@@ -475,6 +495,10 @@ public class TargetLocationsGroup {
 
 	private void handleRemove() {
 		TreeItem[] items = fTreeViewer.getTree().getSelection();
+		boolean result = MessageDialog.openConfirm(fRemoveButton.getShell(), "Remove", "Remove will remove the object from Tree. Do you still want to Continue?");
+		if (!result) {
+			return;
+		}
 		for (TreeItem treeItem : items) {
 			this.locationPaths.remove(treeItem.getData());
 		}
