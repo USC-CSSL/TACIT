@@ -52,7 +52,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private FormToolkit toolkit;
 	private Button crawlLabeledButton;
 	private Button crawlSearchResultsButton;
-	private OutputLayoutData outputLayout;
 	private Combo cmbTrendType;
 	private Combo cmbLabelType;
 	private Combo cmbTimeFrames;

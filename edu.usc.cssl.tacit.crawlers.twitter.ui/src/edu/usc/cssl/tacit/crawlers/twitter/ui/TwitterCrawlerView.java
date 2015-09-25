@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -42,8 +44,13 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.twitter.services.TwitterStreamApi;
 import edu.usc.cssl.tacit.crawlers.twitter.ui.internal.ITwitterCrawlerUIConstants;
 import edu.usc.cssl.tacit.crawlers.twitter.ui.internal.TwitterCrawlerImageRegistry;
@@ -53,7 +60,6 @@ public class TwitterCrawlerView extends ViewPart implements
 	public static final String ID = "edu.usc.cssl.tacit.crawlers.twitter.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
-	private OutputLayoutData layoutData;
 	private static Text wordFilterText;
 	private static Text geoFilterText;
 	private static Button limitRecords;
@@ -78,6 +84,7 @@ public class TwitterCrawlerView extends ViewPart implements
 
 	private String keyWords[];
 	private double[][] geoLocations;
+	private Text corpusNameTxt;
 	private static Button wordFilterLbl;
 	private static Button geoFilterLbl;
 
@@ -131,9 +138,8 @@ public class TwitterCrawlerView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0)
 				.applyTo(filler);
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
+		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit,
 				form.getBody(), form.getMessageManager());
-		Composite outputSectionClient = layoutData.getSectionClient();
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -167,11 +173,21 @@ public class TwitterCrawlerView extends ViewPart implements
 				noLocationFilter = false;
 
 				// check if the output address is correct and writable
+				Date dateObj = new Date();
+				final String corpusName = corpusNameTxt.getText();
+				final String outputDir = System.getProperty("user.dir")
+						+ System.getProperty("file.separator")
+						+ "json_corpuses"
+						+ System.getProperty("file.separator") + "twitter"
+						+ File.separator + corpusName;
+				;
+				if (!new File(outputDir).exists()) {
+					new File(outputDir).mkdir();
+				}
 				DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 				Date dateobj = new Date();
-				final String outputFile = layoutData.getOutputLabel().getText()
-						+ File.separator + "Twitter_Stream_"
-						+ df.format(dateobj) + ".json";
+				final String outputFile = outputDir + File.separator
+						+ "Twitter_Stream_" + df.format(dateobj) + ".json";
 				storedAtts = new boolean[8];
 
 				// Get stored attribute values
@@ -214,6 +230,20 @@ public class TwitterCrawlerView extends ViewPart implements
 							TacitFormComposite.updateStatusMessage(
 									getViewSite(), "Crawling completed",
 									IStatus.OK, form);
+							ConsoleView.printlInConsoleln("Creating Corpus "+corpusName+"...");
+							Corpus twitterCorpus = new Corpus(corpusName, CMDataType.TWITTER_JSON);
+							CorpusClass twitterCorpusClass = new CorpusClass();
+							twitterCorpusClass.setClassName(corpusName+"_class1");
+							twitterCorpusClass.setClassPath(outputDir);
+							List<ICorpusClass> corpusList = new ArrayList<ICorpusClass>();
+							corpusList.add(twitterCorpusClass);
+							twitterCorpus.setClasses(corpusList);
+							try {
+								ConsoleView.printlInConsoleln("Saving Corpus "+corpusName+"...");
+								ManageCorpora.saveCorpus(twitterCorpus);
+							} catch(Exception e) {
+								e.printStackTrace();
+							}
 							return Status.OK_STATUS;
 						} catch (IOException e1) {
 							TacitFormComposite
@@ -389,11 +419,11 @@ public class TwitterCrawlerView extends ViewPart implements
 		}
 		// is there any geofilter?
 		if (geoFilterLbl.getSelection()) {
-			if (geoLocations.length == 0 || geoFilterText.getText().isEmpty()){
+			if (geoLocations.length == 0 || geoFilterText.getText().isEmpty()) {
 				noLocationFilter = true;
 				validGeoFilter = false;
 			}
-			
+
 		}
 
 		if (limitRecords.getSelection()) {
@@ -411,15 +441,14 @@ public class TwitterCrawlerView extends ViewPart implements
 			}
 		}
 		// Is there valid max tweet number?
-			try {
-				maxTweetLimit = Long.parseLong(maxText.getText().toString());
-				if (maxTweetLimit <= 0)
-					validLimitState = false;
-			} catch (NumberFormatException e1) {
+		try {
+			maxTweetLimit = Long.parseLong(maxText.getText().toString());
+			if (maxTweetLimit <= 0)
 				validLimitState = false;
-			}
-		
-		
+		} catch (NumberFormatException e1) {
+			validLimitState = false;
+		}
+
 		form.getMessageManager().removeMessage("word");
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("geolocation");
@@ -429,11 +458,9 @@ public class TwitterCrawlerView extends ViewPart implements
 		form.getMessageManager().removeMessage("stored-attribute");
 
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
-						"Output");
+				.validateOutputCorpus(corpusNameTxt.getText());
 		if (message != null) {
 
-			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
 			canProceed = false;
@@ -454,7 +481,8 @@ public class TwitterCrawlerView extends ViewPart implements
 					new String[] { id }, null).open();
 			canProceed = false;
 
-		}  if (wordFilterLbl.getSelection()) {
+		}
+		if (wordFilterLbl.getSelection()) {
 			noLocationFilter = true;
 			noWordFilter = false;
 			keyWords = wordFilterText.getText().split(";");
@@ -466,7 +494,7 @@ public class TwitterCrawlerView extends ViewPart implements
 			}
 		}
 
-	     if (geoFilterLbl.getSelection()) {
+		if (geoFilterLbl.getSelection()) {
 			noLocationFilter = false;
 			noWordFilter = true;
 			if (!validGeoFilter) {
@@ -477,7 +505,8 @@ public class TwitterCrawlerView extends ViewPart implements
 								null, IMessageProvider.ERROR);
 				canProceed = false;
 			}
-		}  if (!validLimitParse) {
+		}
+		if (!validLimitParse) {
 			form.getMessageManager()
 					.addMessage(
 							"limit",
@@ -485,16 +514,16 @@ public class TwitterCrawlerView extends ViewPart implements
 							null, IMessageProvider.ERROR);
 			canProceed = false;
 
-		} 
-		 if (!validLimitState) {
-				form.getMessageManager()
-						.addMessage(
-								"maxlimit",
-								"Error: Invalid Limit tweets per Crawl is entered. Please enter valid positive number",
-								null, IMessageProvider.ERROR);
-				canProceed = false;
+		}
+		if (!validLimitState) {
+			form.getMessageManager()
+					.addMessage(
+							"maxlimit",
+							"Error: Invalid Limit tweets per Crawl is entered. Please enter valid positive number",
+							null, IMessageProvider.ERROR);
+			canProceed = false;
 
-			} 
+		}
 
 		if (!(userNameBtn.getSelection() || createdBtn.getSelection()
 				|| geoLocBtn.getSelection() || langBtn.getSelection()
@@ -686,8 +715,6 @@ public class TwitterCrawlerView extends ViewPart implements
 				}
 			}
 		});
-
-
 
 	}
 

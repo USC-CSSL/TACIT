@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -45,6 +46,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import edu.usc.cssl.tacit.common.ui.ICommonUiConstants;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.internal.CommonUiViewImageRegistry;
 import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
@@ -90,10 +93,47 @@ public class TacitFormComposite {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusNameLbl);
 		final Text corpusNameTxt = toolkit.createText(sectionClient, "",SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(corpusNameTxt);
-		
+		corpusNameTxt.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				corpusPathListener(corpusNameTxt, mmng);
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				corpusPathListener(corpusNameTxt, mmng);
+			}
+		});
+	
 		return corpusNameTxt;
 	}
 	
+	protected static void corpusPathListener(Text corpusNameTxt,
+			IMessageManager mmng) {
+		mmng.removeMessage("output");
+		if (corpusNameTxt.getText().isEmpty()) {
+			mmng.addMessage("output",
+					"Corpus name must not be empty", null,
+					IMessageProvider.ERROR);
+			return;
+		}
+		else if(corpusNameExists(corpusNameTxt.getText())){
+			mmng.addMessage("output",
+					"Corpus name already exist", null,
+					IMessageProvider.ERROR);
+			return;
+		}
+		
+	}
+	
+	public static boolean corpusNameExists(String corpusName) {
+		List<ICorpus> corpuses = new ManageCorpora().getAllCorpusDetails();
+		for(ICorpus corpus : corpuses) {
+			if(corpus.getCorpusName().equals(corpusName)) return true;
+		}
+		return false;
+	}
+
 	public static OutputLayoutData createOutputSection(FormToolkit toolkit,
 			Composite parent, final IMessageManager mmng) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
