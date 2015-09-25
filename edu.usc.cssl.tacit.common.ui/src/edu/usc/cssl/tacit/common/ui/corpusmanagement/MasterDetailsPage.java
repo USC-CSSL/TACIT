@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -37,9 +39,9 @@ import org.json.simple.parser.ParseException;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusManagementConstants;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
@@ -217,11 +219,19 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			}
 		});
 		
+		final MessageDialog dg = new MessageDialog(
+				corpusMgmtViewform.getShell(), "Delete Corpus/Class", null, "Are you sure you want to delete?", MessageDialog.QUESTION_WITH_CANCEL, 
+				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+		
 		remove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)corpusViewer.getSelection();
 				 try {
+						switch(dg.open()) {
+							case 1:
+								return;
+						}
 					 	Object selectedObj = selection.getFirstElement();
 					 	if(selectedObj instanceof ICorpus) {
 					 		ICorpus selectedCorpus = (ICorpus) selection.getFirstElement(); 
