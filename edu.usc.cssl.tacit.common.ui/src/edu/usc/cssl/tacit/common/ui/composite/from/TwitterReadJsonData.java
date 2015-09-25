@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -35,7 +36,7 @@ public class TwitterReadJsonData {
 			 path = new File(System.getProperty("user.dir")
 					+ System.getProperty("file.separator") + "tacit_temp_files")
 					+ System.getProperty("file.separator")
-					+ "twitter_"
+					+ "twitter_" + UUID.randomUUID().toString()+ "_"
 					+ df.format(dateobj);
 			new File(path).mkdir();
 			File[] fileList = new File(location).listFiles();
@@ -45,10 +46,12 @@ public class TwitterReadJsonData {
 					continue;
 				JSONArray objects = (JSONArray) jParser.parse(new FileReader(
 						fileName));
+				int j=0;
 				for (Object obj : objects) {
 					JSONObject twitterStream = (JSONObject) obj;
 					dateobj = new Date();
-					File file = new File(path + File.separator+"twitter_" + df.format(dateobj));
+					File file = new File(path + File.separator+"twitter_"+j+"-" + df.format(dateobj));
+					j++;
 					if (file.exists()) {
 						file.delete();
 					}
