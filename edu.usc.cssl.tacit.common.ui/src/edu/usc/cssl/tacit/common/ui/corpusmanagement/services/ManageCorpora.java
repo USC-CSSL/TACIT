@@ -1,10 +1,9 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,8 +78,9 @@ public class ManageCorpora {
 			jsonObj.put("prev_analysis", analysisArray);
 
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(metaFp));
-				bw.write(jsonObj.toString());
+				FileOutputStream bw = new FileOutputStream(metaFp);
+				bw.write(jsonObj.toString().getBytes());
+				bw.flush();
 				bw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -136,8 +136,9 @@ public class ManageCorpora {
 			jsonObj.put("prev_analysis", analysisArray);
 
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(metaFp));
-				bw.write(jsonObj.toString());
+				FileOutputStream bw = new FileOutputStream(metaFp);
+				bw.write(jsonObj.toString().getBytes());
+				bw.flush();
 				bw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -245,8 +246,9 @@ public class ManageCorpora {
 		jsonObj.put("prev_analysis", analysisArray);
 
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(metaFp));
-			bw.write(jsonObj.toString());
+			FileOutputStream bw = new FileOutputStream(metaFp);
+			bw.write(jsonObj.toString().getBytes());
+			bw.flush();
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
