@@ -205,6 +205,9 @@ public class LdaTopicModelView extends ViewPart implements
 			 */
 			@Override
 			public void run() {
+				if(!canProceedCluster()) {
+					return;
+				}
 				final int noOfTopics = Integer
 						.valueOf(numberOfTopics.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
@@ -379,10 +382,9 @@ public class LdaTopicModelView extends ViewPart implements
 					"Prefix Cannout be empty", null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
-
-		if (Integer.parseInt(numberOfTopics.getText()) < 1) {
+		if (numberOfTopics.getText().isEmpty() || Integer.parseInt(numberOfTopics.getText()) < 1) {
 			form.getMessageManager().addMessage("topic",
-					"Number of topics cannot be less than 1", null,
+					"Number of topics cannot be empty or less than 1", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}

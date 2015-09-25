@@ -232,6 +232,9 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 			 */
 			@Override
 			public void run() {
+				if(!canProceedJob()) {
+					return;
+				}
 				final int noOfTopics = Integer.valueOf(topics.getText())
 						.intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
@@ -416,9 +419,9 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
-		if (Integer.parseInt(topics.getText()) < 1) {
-			form.getMessageManager().addMessage("topics",
-					"Number of topics cannot be less than 1", null,
+		if (topics.getText().isEmpty() || Integer.parseInt(topics.getText()) < 1) {
+			form.getMessageManager().addMessage("topic",
+					"Number of topics cannot be empty or less than 1", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}

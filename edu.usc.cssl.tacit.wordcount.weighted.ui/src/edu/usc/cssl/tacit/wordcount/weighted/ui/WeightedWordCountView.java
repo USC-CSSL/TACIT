@@ -352,6 +352,9 @@ public class WeightedWordCountView extends ViewPart implements
 
 			@Override
 			public void run() {
+				if(!canProceed()) {
+					return;
+				}
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Word count analysis");
 				final String stopWordPath = CommonUiActivator.getDefault()

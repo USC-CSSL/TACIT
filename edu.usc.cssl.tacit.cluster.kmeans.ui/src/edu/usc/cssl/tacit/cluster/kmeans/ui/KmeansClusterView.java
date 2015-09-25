@@ -213,6 +213,9 @@ public class KmeansClusterView extends ViewPart implements
 			 */
 			@Override
 			public void run() {
+				if(!canProceedCluster()) {
+					return;
+				}
 				TacitFormComposite.writeConsoleHeaderBegining("KMeans Clustering started ");
 				final int noOfClusters = Integer.valueOf(noClusterTxt.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();

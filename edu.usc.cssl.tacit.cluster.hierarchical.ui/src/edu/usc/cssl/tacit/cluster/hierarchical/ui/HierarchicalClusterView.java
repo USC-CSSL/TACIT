@@ -209,6 +209,9 @@ public class HierarchicalClusterView extends ViewPart implements
 
 			@Override
 			public void run() {
+				if(!canProceedCluster()) {
+					return;
+				}
 				final DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				final Date dateObj = new Date();
 				ConsoleView

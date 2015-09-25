@@ -278,6 +278,9 @@ public class StandardWordCountView extends ViewPart implements
 
 			@Override
 			public void run() {
+				if(!canProceed()) {
+					return;
+				}
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final List<String> inputFiles = TacitUtil

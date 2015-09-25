@@ -249,7 +249,9 @@ public class CooccurrenceWordCountView extends ViewPart implements
 			}
 
 			public void run() {
-
+				if(!canProceed()) {
+					return;
+				}
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final List<String> selectedFiles = TacitUtil
