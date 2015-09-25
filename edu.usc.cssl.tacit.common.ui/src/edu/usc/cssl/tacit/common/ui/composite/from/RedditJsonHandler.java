@@ -12,7 +12,7 @@ import org.json.simple.parser.JSONParser;
 
 public class RedditJsonHandler {
 	Date dateObj;
-	
+	String invalidFilenameCharacters = "[\\/:*?\"<>|]+";
 	public String retrieveRedditData(String location) { // tacit location of the corpus
 		JSONParser jParser;
 		dateObj = new Date();
@@ -32,7 +32,7 @@ public class RedditJsonHandler {
 				String[] postComments = getPostComments(redditStream);
 				
 				dateObj = new Date();				
-				File file = new File(path + System.getProperty("file.separator") + postTitle.substring(0, 20) + "-" + dateObj.getTime() + ".txt");
+				File file = new File(path + System.getProperty("file.separator") + postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "") + "-" + dateObj.getTime() + ".txt");
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
 				
