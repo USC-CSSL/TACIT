@@ -2,7 +2,9 @@ package edu.usc.cssl.tacit.common.ui.utility;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +15,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class TacitUtil {
 	public static List<String> refineInput(List<String> selectedInputs) {
-		List<String> refinedInputList = new ArrayList<String>();
+		Set<String> refinedInputList = new HashSet<String>();
 		Pattern corpusDetector = Pattern
 				.compile(".* [(]Tacit Internal Class Path: (.*)[)]");
 
@@ -43,7 +45,7 @@ public class TacitUtil {
 				refinedInputList.addAll(getFilesFromFolder(inputFile
 						.getAbsolutePath()));
 		}
-		return refinedInputList;
+		return new ArrayList<String>(refinedInputList);
 	}
 
 	public static List<String> getFilesFromFolder(String folderPath) {
