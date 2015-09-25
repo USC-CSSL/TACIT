@@ -39,7 +39,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusManagementConstants;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
@@ -187,7 +187,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			public void widgetSelected(SelectionEvent e) {
 				StringBuilder corpusTempName = new StringBuilder("Corpus ");
 				corpusTempName.append(corpusList.size()+1);
-				Corpus c = new Corpus(new String(corpusTempName), DataType.PLAIN_TEXT, corpusViewer);
+				Corpus c = new Corpus(new String(corpusTempName), CMDataType.PLAIN_TEXT, corpusViewer);
 				c.addClass(new CorpusClass("Class 1", ICorpusManagementConstants.DEFAULT_CLASSPATH, corpusViewer));;
 				corpusList.add(c);
 				Object[] expandedItems = corpusViewer.getExpandedElements();

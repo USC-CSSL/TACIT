@@ -331,7 +331,7 @@ public class ManageCorpora {
 				if(null == jsonObject) continue;
 				corpora.setCorpusName((String) jsonObject.get("corpus_name"));
 				corpora.setCorpusId((String) jsonObject.get("corpus_id"));
-				corpora.setDataType(DataType.get((String)jsonObject.get("data_type")));
+				corpora.setDataType(CMDataType.get((String)jsonObject.get("data_type")));
 				long numClasses = (Long) jsonObject.get("num_classes");
 				if(numClasses>0) 
 					parseClassDetails(corpora, (JSONArray) jsonObject.get("class_details"));
@@ -384,7 +384,7 @@ public class ManageCorpora {
 		return null;
 	}
 	
-	public DataType getCorpusDataType(String location){
+	public CMDataType getCorpusDataType(String location){
 		
 		String metaDataFilePath = new File(location).getParent() + File.separator + "meta.txt";
 		FileReader metaDataFile;
@@ -398,7 +398,7 @@ public class ManageCorpora {
 		JSONObject jsonObject;
 		try {
 			jsonObject = (JSONObject) jsonParser.parse(metaDataFile);
-			return DataType.get((String)jsonObject.get("data_type"));
+			return CMDataType.get((String)jsonObject.get("data_type"));
 		} catch (Exception e) { // if there is a parsing issue, just ignore this corpus and look for next
 			return null;
 		}

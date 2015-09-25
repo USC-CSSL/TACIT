@@ -38,7 +38,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusMangementVal
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class CorpusDetailsPage implements IDetailsPage{
@@ -199,7 +199,7 @@ public class CorpusDetailsPage implements IDetailsPage{
 			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(plainText.getSelection()){
-		            selectedCorpus.setDataType(DataType.PLAIN_TEXT);
+		            selectedCorpus.setDataType(CMDataType.PLAIN_TEXT);
 		        }
 		    }
 		});
@@ -211,7 +211,7 @@ public class CorpusDetailsPage implements IDetailsPage{
 			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(twitterJSON.getSelection()){
-		            selectedCorpus.setDataType(DataType.TWITTER_JSON);
+		            selectedCorpus.setDataType(CMDataType.TWITTER_JSON);
 		        }
 		    }
 		});
@@ -224,7 +224,7 @@ public class CorpusDetailsPage implements IDetailsPage{
 			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(redditJSON.getSelection()){
-		            selectedCorpus.setDataType(DataType.REDDIT_JSON);
+		            selectedCorpus.setDataType(CMDataType.REDDIT_JSON);
 		        }
 		    }
 		});
@@ -236,7 +236,7 @@ public class CorpusDetailsPage implements IDetailsPage{
 			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(xmlData.getSelection()){
-		            selectedCorpus.setDataType(DataType.XML);
+		            selectedCorpus.setDataType(CMDataType.XML);
 		        }
 		    }
 		});
@@ -249,7 +249,7 @@ public class CorpusDetailsPage implements IDetailsPage{
 			public void widgetSelected(final SelectionEvent e){
 		        super.widgetSelected(e);
 		        if(wordData.getSelection()){
-		            selectedCorpus.setDataType(DataType.MICROSOFT_WORD);
+		            selectedCorpus.setDataType(CMDataType.MICROSOFT_WORD);
 		        }
 		    }
 		});
@@ -257,7 +257,7 @@ public class CorpusDetailsPage implements IDetailsPage{
 		
 	}
 	
-	private void setDataTypeOption(DataType type) {
+	private void setDataTypeOption(CMDataType type) {
 		plainText.setSelection(false);
 		twitterJSON.setSelection(false);
 		redditJSON.setSelection(false);

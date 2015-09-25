@@ -46,7 +46,8 @@ public class RedditPlugin {
     	this.limitComments = limitComments; 
     	this.monitor = monitor; 
     	this.filesDownloaded = 0;
-    	dateObj = new Date();    	
+    	dateObj = new Date();   
+    	
 	}
 
 	protected HashMap<String, String> fetchRedditCategories(int limit) {

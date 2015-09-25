@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.DataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class TacitUtil {
@@ -21,14 +21,14 @@ public class TacitUtil {
 			Matcher m = corpusDetector.matcher(input);
 			if (m.find()) {
 				String corpusClassPath = m.group(1);
-				DataType corpusType = new ManageCorpora()
+				CMDataType corpusType = new ManageCorpora()
 						.getCorpusDataType(corpusClassPath);
 				if (corpusType == null)
 					continue;
-				if (corpusType.equals(DataType.TWITTER_JSON))
+				if (corpusType.equals(CMDataType.TWITTER_JSON))
 					input = new TwitterReadJsonData()
 							.retrieveTwitterData(corpusClassPath);
-				else if (corpusType.equals(DataType.REDDIT_JSON))
+				else if (corpusType.equals(CMDataType.REDDIT_JSON))
 					input = new RedditJsonHandler()
 							.retrieveRedditData(corpusClassPath);
 				else

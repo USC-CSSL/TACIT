@@ -63,6 +63,37 @@ public class TacitFormComposite {
 				.applyTo(dummy);
 	}
 
+	public static Text createCorpusSection(FormToolkit toolkit, Composite parent, final IMessageManager mmng) {
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
+
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(section);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(section);
+		section.setText("Output Details"); //$NON-NLS-1$
+		section.setDescription("Provide output details for storing the results");
+
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sc);
+
+		Composite sectionClient = toolkit.createComposite(section);
+		sc.setContent(sectionClient);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
+		section.setClient(sectionClient);
+
+		createEmptyRow(toolkit, sectionClient);
+
+		final Label corpusNameLbl = toolkit.createLabel(sectionClient,"Corpus Name:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusNameLbl);
+		final Text corpusNameTxt = toolkit.createText(sectionClient, "",SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(corpusNameTxt);
+		
+		return corpusNameTxt;
+	}
+	
 	public static OutputLayoutData createOutputSection(FormToolkit toolkit,
 			Composite parent, final IMessageManager mmng) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR

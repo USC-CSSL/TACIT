@@ -37,6 +37,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		
 		if (!(new File(tempDir).exists())){
 			new File(tempDir).mkdir();
+		}
+		
+		tempDir = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_corpuses" + System.getProperty("file.separator") + "reddit";
+		
+		if (!(new File(tempDir).exists())){
+			new File(tempDir).mkdirs();
+		}	
+		
+		tempDir = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_corpuses" + System.getProperty("file.separator") + "twitter";
+		
+		if (!(new File(tempDir).exists())){
+			new File(tempDir).mkdirs();
 		}		
 		
 	}

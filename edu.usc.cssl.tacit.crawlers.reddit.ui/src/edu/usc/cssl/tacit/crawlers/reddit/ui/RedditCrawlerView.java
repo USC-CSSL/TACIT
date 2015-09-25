@@ -1,6 +1,8 @@
 package edu.usc.cssl.tacit.crawlers.reddit.ui;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,8 +35,10 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
-import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.reddit.services.RedditCrawler;
 import edu.usc.cssl.tacit.crawlers.reddit.ui.internal.IRedditCrawlerViewConstants;
@@ -66,7 +70,9 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Text linkText;
 	private Text queryText;
 	private Composite commonsearchComposite;
-	private Combo cmbSortType;
+	private Combo cmbSortType;	
+	private Text subreddits;
+	private Text corpusNameTxt;
 	
 	String subredditText;
 	int redditCount = 1;
@@ -87,8 +93,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	String timeFrames[] = {"All", "Past hour", "Past 24 hours", "Past week", "Past month", "Past year"};
 	//String actualTimeFrames[] = {"All", "Hour", "Day", "Week", "Month", "Year"};
 	String labelDataTypes[] = {"Top", "Controversial"};
-
-	private Text subreddits;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -113,7 +117,8 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);		
 		
 		createCrawlInputParameters(toolkit, client);
-		outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
+		//outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
+		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
@@ -419,7 +424,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			String[] temp = subreddits.getText().split(",");
 			content.clear(); // remove old contents, subreddits
 			for(String s : temp) 
-				content.add(s);
+				if(!s.isEmpty()) content.add(s);
 			
 			if(title.isEmpty() && author.isEmpty() && url.isEmpty() && linkId.isEmpty() && content.size() == 0) {
 				if(text.isEmpty()) {
@@ -454,6 +459,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			return false;
 		}	
 		
+		/*
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
 		if (message != null) {
 			message = outputLayout.getOutputLabel().getText() + " " + message;
@@ -462,7 +468,16 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		} else {
 			form.getMessageManager().removeMessage("output");
 		}
+		*/
 		
+		//Validate corpus name
+		String corpusName = corpusNameTxt.getText();
+		if(null == corpusName || corpusName.isEmpty()) {
+			form.getMessageManager().addMessage("corpusName", "Provide corpus name", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			form.getMessageManager().removeMessage("corpusName");
+		}		
 		return true;
 	}
 	
@@ -479,7 +494,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			}
 			
 			String outputDir; String query; String title; String author; String site;
-			String linkId; String sortType; String trendType; String labelType; String timeFrame;			
+			String linkId; String sortType; String trendType; String labelType; String timeFrame; String corpusName;			
 			int limitLinks, limitComments;
 			boolean search; boolean trendingData; boolean labeledData; boolean canProceed; 
 			
@@ -496,6 +511,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 								search = crawlSearchResultsButton.getSelection();
 								trendingData = crawlTrendingDataButton.getSelection();
 								labeledData = crawlLabeledButton.getSelection();
+								corpusName = corpusNameTxt.getText();
 								if(search) {
 									query = queryText.getText();
 									title = titleText.getText();
@@ -512,8 +528,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 								}
 								limitLinks = Integer.parseInt(numLinksText.getText());
 								limitComments = Integer.parseInt(numCommentsText.getText());						
-								outputDir = outputLayout.getOutputLabel().getText();	
-							}
+								//outputDir = outputLayout.getOutputLabel().getText();
+								Date dateObj = new Date();
+								corpusName+= "_" + dateObj.getTime();
+								outputDir = IRedditCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+								if(!new File(outputDir).exists())
+									new File(outputDir).mkdir();
+						}
 						});
 						int progressSize = limitLinks+30;
 						if(content.size()>0)
@@ -525,13 +546,14 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if(monitor.isCanceled())
-							handledCancelRequest("Cancelled");						
+							handledCancelRequest("Cancelled");
+						Corpus redditCorpus = new Corpus(corpusName, CMDataType.REDDIT_JSON);
 						if(search) {
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
 									return handledCancelRequest("Cancelled");								
-								rc.search(query, title, author, site, linkId, timeFrame, sortType, content);
+								rc.search(query, title, author, site, linkId, timeFrame, sortType, content, redditCorpus, corpusName);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch (Exception e) {
@@ -544,21 +566,26 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 									return handledCancelRequest("Cancelled");								
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
-								rc.crawlTrendingData(trendType);
+								rc.crawlTrendingData(trendType, redditCorpus);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
-						} else if(labeledData) {
+						} else if(labeledData) {												
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");																
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");								
-								rc.crawlLabeledData(labelType, timeFrame);
+								rc.crawlLabeledData(labelType, timeFrame, redditCorpus);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
+						}
+						try {
+							ManageCorpora.saveCorpus(redditCorpus);
+						} catch(Exception e) {
+							e.printStackTrace();
 						}
 						if(monitor.isCanceled())
 							return handledCancelRequest("Cancelled");
