@@ -339,6 +339,11 @@ public class ManageCorpora {
 				if(numClasses>0) 
 					parseClassDetails(corpora, (JSONArray) jsonObject.get("class_details"));
 				corpuses.add(corpora);
+				try {
+					metaDataFile.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			} 
 		}		
 		return corpuses;
@@ -401,7 +406,9 @@ public class ManageCorpora {
 		JSONObject jsonObject;
 		try {
 			jsonObject = (JSONObject) jsonParser.parse(metaDataFile);
-			return CMDataType.get((String)jsonObject.get("data_type"));
+			String dataType = (String)jsonObject.get("data_type");
+			metaDataFile.close();
+			return CMDataType.get(dataType);
 		} catch (Exception e) { // if there is a parsing issue, just ignore this corpus and look for next
 			return null;
 		}
