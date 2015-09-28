@@ -25,14 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
@@ -90,33 +85,30 @@ public class KmeansClusterView extends ViewPart implements
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-		layData = TacitFormComposite
-				.createTableSection(client, toolkit, layout, "Input Details",
-						"Add File(s) and Folder(s) to include in analysis.",
-						true, true, true);
-		
+		layData = TacitFormComposite.createTableSection(client, toolkit,
+				layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true);
+
 		Composite compInput;
 		compInput = layData.getSectionClient();
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(compInput);
-		createPreprocessLink(compInput);
+		preprocessEnabled = TacitFormComposite.createPreprocessLink(compInput,
+				toolkit);
 		createAdditionalOptions(compInput);
-		
+
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(client1);
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				client1, form.getMessageManager());
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
-
-		Composite output = layoutData.getSectionClient();
-
-		//createAdditionalOptions(output);
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -134,51 +126,21 @@ public class KmeansClusterView extends ViewPart implements
 		return super.getAdapter(adapter);
 	}
 
-	private void createPreprocessLink(Composite client) {
-
-		Composite clientLink = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
-				.applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(clientLink);
-
-		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(preprocessEnabled);
-		final Hyperlink link = toolkit.createHyperlink(clientLink,
-				"Preprocess", SWT.NONE);
-		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		link.addHyperlinkListener(new IHyperlinkListener() {
-			@Override
-			public void linkEntered(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkExited(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
-						new String[] { id }, null).open();
-			}
-		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(link);
-
-	}
-
 	private void createAdditionalOptions(Composite sectionClient) {
 		Composite comp = toolkit.createComposite(sectionClient);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2).applyTo(comp);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(comp);
-		
-		Label noClusterTxtLbl = toolkit.createLabel(comp,"Number of clusters:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(noClusterTxtLbl);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(comp);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(comp);
+
+		Label noClusterTxtLbl = toolkit.createLabel(comp,
+				"Number of clusters:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(noClusterTxtLbl);
 		noClusterTxt = toolkit.createText(comp, "", SWT.BORDER);
 		noClusterTxt.setText("1");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(noClusterTxt);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(noClusterTxt);
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -213,20 +175,23 @@ public class KmeansClusterView extends ViewPart implements
 			 */
 			@Override
 			public void run() {
-				if(!canProceedCluster()) {
+				if (!canProceedCluster()) {
 					return;
 				}
-				TacitFormComposite.writeConsoleHeaderBegining("KMeans Clustering started ");
-				final int noOfClusters = Integer.valueOf(noClusterTxt.getText()).intValue();
+				TacitFormComposite
+						.writeConsoleHeaderBegining("KMeans Clustering started ");
+				final int noOfClusters = Integer
+						.valueOf(noClusterTxt.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil.refineInput(layData.getSelectedFiles());
+				final List<String> selectedFiles = TacitUtil
+						.refineInput(layData.getSelectedFiles());
 				final String outputPath = layoutData.getOutputLabel().getText();
 				performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask("TACIT started clustering...", 100);
 						List<File> inputFiles = new ArrayList<File>();
 						if (isPreprocess) {
@@ -243,11 +208,10 @@ public class KmeansClusterView extends ViewPart implements
 
 							} catch (IOException e) {
 								e.printStackTrace();
-							}
-							catch (NullPointerException e) {
+							} catch (NullPointerException e) {
 								e.printStackTrace();
 							}
-							
+
 							monitor.worked(10);
 						} else {
 							for (String filepath : selectedFiles) {
@@ -279,9 +243,9 @@ public class KmeansClusterView extends ViewPart implements
 						monitor.worked(10);
 						monitor.done();
 
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), "k-Means clustering completed",
-								IStatus.OK, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								"k-Means clustering completed", IStatus.OK,
+								form);
 						TacitFormComposite
 								.writeConsoleHeaderBegining("<terminated> k-Means clustering  ");
 						return Status.OK_STATUS;
@@ -328,11 +292,8 @@ public class KmeansClusterView extends ViewPart implements
 				.getHelpSystem()
 				.setHelp(helpAction,
 						"edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(form,
-						"edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
+		PlatformUI.getWorkbench().getHelpSystem()
+				.setHelp(form, "edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
 		form.getToolBarManager().update(true);
 	}
 
@@ -343,8 +304,7 @@ public class KmeansClusterView extends ViewPart implements
 
 	private boolean canProceedCluster() {
 		boolean canProceed = true;
-		TacitFormComposite.updateStatusMessage(getViewSite(), null, null,
-				form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("cluster");
@@ -366,7 +326,8 @@ public class KmeansClusterView extends ViewPart implements
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
-		if (noClusterTxt.getText().isEmpty() || Integer.parseInt(noClusterTxt.getText()) < 1) {
+		if (noClusterTxt.getText().isEmpty()
+				|| Integer.parseInt(noClusterTxt.getText()) < 1) {
 			form.getMessageManager().addMessage("cluster",
 					"Number of clusters cannot be less than 1", null,
 					IMessageProvider.ERROR);

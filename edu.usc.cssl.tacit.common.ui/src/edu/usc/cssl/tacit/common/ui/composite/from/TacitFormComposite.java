@@ -34,14 +34,17 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -66,8 +69,10 @@ public class TacitFormComposite {
 				.applyTo(dummy);
 	}
 
-	public static Text createCorpusSection(FormToolkit toolkit, Composite parent, final IMessageManager mmng) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
+	public static Text createCorpusSection(FormToolkit toolkit,
+			Composite parent, final IMessageManager mmng) {
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR
+				| Section.EXPANDED | Section.DESCRIPTION);
 
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
 				.applyTo(section);
@@ -75,24 +80,31 @@ public class TacitFormComposite {
 		section.setText("Output Details"); //$NON-NLS-1$
 		section.setDescription("Provide output details for storing the results");
 
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false)
+				.applyTo(sc);
 
 		Composite sectionClient = toolkit.createComposite(section);
 		sc.setContent(sectionClient);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sectionClient);
 		section.setClient(sectionClient);
 
 		createEmptyRow(toolkit, sectionClient);
 
-		final Label corpusNameLbl = toolkit.createLabel(sectionClient,"Corpus Name:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusNameLbl);
-		final Text corpusNameTxt = toolkit.createText(sectionClient, "",SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(corpusNameTxt);
+		final Label corpusNameLbl = toolkit.createLabel(sectionClient,
+				"Corpus Name:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(corpusNameLbl);
+		final Text corpusNameTxt = toolkit.createText(sectionClient, "",
+				SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(corpusNameTxt);
 		corpusNameTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -104,32 +116,30 @@ public class TacitFormComposite {
 				corpusPathListener(corpusNameTxt, mmng);
 			}
 		});
-	
+
 		return corpusNameTxt;
 	}
-	
+
 	protected static void corpusPathListener(Text corpusNameTxt,
 			IMessageManager mmng) {
 		mmng.removeMessage("output");
 		if (corpusNameTxt.getText().isEmpty()) {
-			mmng.addMessage("output",
-					"Corpus name must not be empty", null,
+			mmng.addMessage("output", "Corpus name must not be empty", null,
+					IMessageProvider.ERROR);
+			return;
+		} else if (corpusNameExists(corpusNameTxt.getText())) {
+			mmng.addMessage("output", "Corpus name already exist", null,
 					IMessageProvider.ERROR);
 			return;
 		}
-		else if(corpusNameExists(corpusNameTxt.getText())){
-			mmng.addMessage("output",
-					"Corpus name already exist", null,
-					IMessageProvider.ERROR);
-			return;
-		}
-		
+
 	}
-	
+
 	public static boolean corpusNameExists(String corpusName) {
 		List<ICorpus> corpuses = new ManageCorpora().getAllCorpusDetails();
-		for(ICorpus corpus : corpuses) {
-			if(corpus.getCorpusName().equals(corpusName)) return true;
+		for (ICorpus corpus : corpuses) {
+			if (corpus.getCorpusName().equals(corpusName))
+				return true;
 		}
 		return false;
 	}
@@ -436,6 +446,41 @@ public class TacitFormComposite {
 			}
 		});
 
+	}
+
+	public static Button createPreprocessLink(Composite client, FormToolkit toolkit) {
+		Button preprocessEnabled;
+		Composite clientLink = toolkit.createComposite(client);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
+
+		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(preprocessEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Preprocess", SWT.NONE);
+		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
+			public void linkEntered(HyperlinkEvent e) {
+			}
+
+			@Override
+			public void linkExited(HyperlinkEvent e) {
+			}
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+						new String[] { id }, null).open();
+			}
+		});
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(link);
+		return preprocessEnabled;
 	}
 
 	public static void addErrorPopup(final Form form, final FormToolkit toolkit) {
