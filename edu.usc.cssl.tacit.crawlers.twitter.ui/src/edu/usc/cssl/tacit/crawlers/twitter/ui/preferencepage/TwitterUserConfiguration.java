@@ -125,7 +125,7 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				Program.launch("https://blog.twitter.com/developer"); // replace with url
+				Program.launch("https://code.google.com/p/socialauth-android/wiki/Twitter"); // replace with url
 			}
 		});
 		link.setText("User Name");
