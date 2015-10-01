@@ -115,6 +115,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Button extensionBtn;
 	private Button dailyDigestBtn;
 	private Composite limitRecordsClient;
+	final UsCongressCrawler sc = new UsCongressCrawler();
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -908,7 +909,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			boolean crawlExtension = false;
 			@Override
 			public void run() {
-				final UsCongressCrawler sc = new UsCongressCrawler();
 
 				final Job job = new Job("US Congress Crawler") {					
 					@Override
@@ -1095,6 +1095,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("US Congress crawler cancelled.");
+		ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
 		TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 		return Status.CANCEL_STATUS;
 		

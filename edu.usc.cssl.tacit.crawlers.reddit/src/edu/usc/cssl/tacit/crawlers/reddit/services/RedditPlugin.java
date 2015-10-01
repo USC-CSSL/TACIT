@@ -87,6 +87,7 @@ public class RedditPlugin {
 	    	System.out.println(name + ":" + redditCategories.get(name));
 	    }
     	return redditCategories;
+    	
     }
 
     /*
@@ -95,6 +96,7 @@ public class RedditPlugin {
 	public void crawlTrendingPosts(String trendType) throws IOException, URISyntaxException {
 		filesDownloaded = 0;
 		if(monitor.isCanceled()) {
+			ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 			monitor.subTask("Cancelling...");
 			return;
 		}	
@@ -109,6 +111,7 @@ public class RedditPlugin {
 		file.flush();
         file.close();
 		if(monitor.isCanceled()) {
+			ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 			monitor.subTask("Cancelling...");
 			return;
 		} 
@@ -139,6 +142,7 @@ public class RedditPlugin {
 	public void crawlLabeledPosts(String url, String label) throws IOException, URISyntaxException { // As of now fetches only links
 		filesDownloaded = 0;
 		if(monitor.isCanceled()) {
+			ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 			monitor.subTask("Cancelling...");
 			return;
 		}
@@ -153,6 +157,7 @@ public class RedditPlugin {
 		file.flush();
         file.close();
 		if(monitor.isCanceled()) {
+			ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 			monitor.subTask("Cancelling...");
 			return;
 		}
@@ -168,6 +173,7 @@ public class RedditPlugin {
 	public void crawlQueryResults(String query, String subreddit) throws IOException, URISyntaxException { // As of now fetches only links
 		filesDownloaded = 0;
 		if(monitor.isCanceled()) {
+			ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 			monitor.subTask("Cancelling...");
 			return;
 		}		
@@ -188,6 +194,7 @@ public class RedditPlugin {
 		file.flush();
         file.close();
 		if(monitor.isCanceled()) {
+			ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 			monitor.subTask("Cancelling...");
 			return;
 		}
@@ -209,6 +216,7 @@ public class RedditPlugin {
 	            JSONArray userPosts = (JSONArray) dataObject.get("children");
 		    	for (Object post : userPosts) {
 					if(monitor.isCanceled()) {
+						ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
 						monitor.subTask("Cancelling...");
 						return;
 					}
