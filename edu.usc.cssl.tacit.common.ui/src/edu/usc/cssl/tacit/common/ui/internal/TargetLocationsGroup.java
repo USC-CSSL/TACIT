@@ -2,7 +2,6 @@ package edu.usc.cssl.tacit.common.ui.internal;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -43,6 +42,7 @@ import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -58,6 +58,7 @@ public class TargetLocationsGroup {
 	private FormToolkit toolKit;
 	private Label dummy;
 	private ManageCorpora corporaManagement;
+	private TreeParent node;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -281,39 +282,42 @@ public class TargetLocationsGroup {
 							fAddCorpusButton.getShell());
 					CorpusDialog.setTitle("Select the Corpus from the list");
 					CorpusDialog.setMessage("Enter Corpus name to search");
-					final SortedSet<String> allCorpus = new TreeSet<String>();
-					Job getCorpus = new Job("Retrieving corpus list ...") {
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {
-							allCorpus.clear();
-							try {
-								String[] corpusList = corporaManagement
-										.getNames();
-								allCorpus.addAll(Arrays.asList(corpusList));
-								Display.getDefault().asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										CorpusDialog.refresh(allCorpus
-												.toArray());
-									}
-								});
-							} catch (final Exception ex) {
-							}
-							return Status.OK_STATUS;
-						}
-					};
-					getCorpus.schedule();
-					allCorpus.add("Loading...");
-					CorpusDialog.setElements(allCorpus.toArray());
+					final SortedSet<ICorpus> allCorpus = new TreeSet<ICorpus>();
+//					Job getCorpus = new Job("Retrieving corpus list ...") {
+//						@Override
+//						protected IStatus run(IProgressMonitor monitor) {
+//							allCorpus.clear();
+//							try {
+//								List<ICorpus> corpusList = corporaManagement
+//										.getAllCorpusDetails();
+//								allCorpus.addAll(corpusList);
+//								CorpusDialog.setElements(allCorpus.toArray());
+//								Display.getDefault().syncExec(new Runnable() {
+//									@Override
+//									public void run() {
+//										CorpusDialog.refresh(allCorpus
+//												.toArray());
+//										
+//									}
+//								});
+//							} catch (final Exception ex) {
+//							}
+//							return Status.OK_STATUS;
+//						}
+//					};
+//					getCorpus.schedule();
+					List<ICorpus> corpusList = corporaManagement
+							.getAllCorpusDetails();
+				//	allCorpus.addAll(corpusList);
+					CorpusDialog.setElements(corpusList.toArray());
 					CorpusDialog.setMultipleSelection(true);
 
 					if (CorpusDialog.open() == Window.OK) {
-						List<String> modifiedCorpusNames = new ArrayList<String>();
-						for (String corpus : CorpusDialog.getSelections()) {
-							modifiedCorpusNames.add("--corpus--" + corpus);
-						}
-						updateLocationTree(modifiedCorpusNames
-								.toArray(new String[0]));
+
+						updateLocationTree((Object[]) CorpusDialog
+								.getSelectionObjects().toArray(
+										new Object[CorpusDialog
+												.getSelectionObjects().size()]));
 					}
 				}
 			});
@@ -368,49 +372,55 @@ public class TargetLocationsGroup {
 		updateButtons();
 	}
 
-	public String updateLocationTree(String[] path) {
+	public String updateLocationTree(Object[] path) {
 		if (this.locationPaths == null) {
 			this.locationPaths = new ArrayList<TreeParent>();
 		}
 		if (!path.equals("root")) {
-			for (String file : path) {
+			for (Object file : path) {
+				node = null;
 				boolean isCorpus = false;
-				if (file.startsWith("--corpus--")) {
-					isCorpus = true;
-					file = file.replaceFirst("--corpus--", "");
-				}
-				if (checkExisting(file)) {
-					continue;
-				}
-				File fileHandler = new File(file); // length returns the size in
-				Long availalbeJVMSpace = Runtime.getRuntime().freeMemory();
-
-				if (fileHandler.exists()
-						&& fileHandler.length() > availalbeJVMSpace)
-					return "No memory available to upload the file/folder";
-
-				if (file.contains(".DS_Store"))
-					continue;
-				final TreeParent node = new TreeParent(file);
-				if (isCorpus) {
+				if (file instanceof ICorpus) {
+					node = new TreeParent((Corpus) file);
 					processCorpusFiles(node);
-				} else if (new File(file).isDirectory()) {
-					if (FileUtils.sizeOfDirectory(new File(file)) <= 0) {
-						return "The selected Folder "
-								+ file
-								+ " is empty . Hence, it is not added to the list";
-					}
-					processSubFiles(node);
 				} else {
-					if (!sizeCheck(new String[] { file }).equals("")) {
-						ConsoleView
-								.printlInConsoleln("File "
-										+ file
-										+ " is empty. Hence, it is not added to the list");
+					if (checkExisting((String) file)) {
 						continue;
 					}
+					File fileHandler = new File((String) file); // length
+																// returns the
+																// size in
+					Long availalbeJVMSpace = Runtime.getRuntime().freeMemory();
+
+					if (fileHandler.exists()
+							&& fileHandler.length() > availalbeJVMSpace)
+						return "No memory available to upload the file/folder";
+
+					if (((String) file).contains(".DS_Store"))
+						continue;
+					node = new TreeParent((String) file);
+					if (isCorpus) {
+						processCorpusFiles(node);
+					} else if (new File((String) file).isDirectory()) {
+						if (FileUtils.sizeOfDirectory(new File((String) file)) <= 0) {
+							return "The selected Folder "
+									+ file
+									+ " is empty . Hence, it is not added to the list";
+						}
+						processSubFiles(node);
+					} else {
+						if (!sizeCheck(new String[] { (String) file }).equals(
+								"")) {
+							ConsoleView
+									.printlInConsoleln("File "
+											+ file
+											+ " is empty. Hence, it is not added to the list");
+							continue;
+						}
+					}
 				}
-				this.locationPaths.add(node);
+				if (node != null)
+					this.locationPaths.add(node);
 				this.fTreeViewer.refresh();
 				Display.getDefault().syncExec(new Runnable() {
 
@@ -456,14 +466,10 @@ public class TargetLocationsGroup {
 	}
 
 	private void processCorpusFiles(TreeParent corpusNode) {
-		ICorpus myCorpus = corporaManagement.readCorpusById(corpusNode
-				.getName());
+		ICorpus myCorpus = corpusNode.getCorpus();
 		List<ICorpusClass> myCorpusClasses = myCorpus.getClasses();
 		for (ICorpusClass class_ : myCorpusClasses) {
-			String classNameOnGui = String.format(
-					"%s (Tacit Internal Class Path: %s)",
-					class_.getClassName(), class_.getTacitLocation());
-			TreeParent classFolder = new TreeParent(classNameOnGui);
+			TreeParent classFolder = new TreeParent(class_);
 			corpusNode.addChildren(classFolder);
 		}
 	}
@@ -495,7 +501,9 @@ public class TargetLocationsGroup {
 
 	private void handleRemove() {
 		TreeItem[] items = fTreeViewer.getTree().getSelection();
-		boolean result = MessageDialog.openConfirm(fRemoveButton.getShell(), "Remove", "Remove will remove the object from Tree. Do you still want to Continue?");
+		boolean result = MessageDialog
+				.openConfirm(fRemoveButton.getShell(), "Remove",
+						"Remove will remove the object from Tree. Do you still want to Continue?");
 		if (!result) {
 			return;
 		}

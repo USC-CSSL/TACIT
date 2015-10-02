@@ -11,5 +11,7 @@ public interface INlpCommonUiConstants {
 	public static final String IMAGE_CRAWL_TITLE = "crawl_tle";
 	public static final String FLDR_OBJ = "fldr_obj";
 	public static final String FILE_OBJ = "file_obj";
+	public static final String CORPUS = "corpus";
+	public static final String CORPUS_CLASS = "corpus_class";
 
 }

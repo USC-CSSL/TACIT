@@ -6,6 +6,8 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+
 public class TargetLocationContentProvider implements ITreeContentProvider {
 
 	 /**
@@ -63,10 +65,10 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 			  else {
 				  if(arg0 instanceof TreeParent){
 					  TreeParent parent = (TreeParent) arg0;
-					  for (String file : parent.getFiles()) {
+					  for (Object file : parent.getFiles()) {
 						  elements.add(file);
 					}
-					  for(TreeParent child : parent.getFolder()){
+					  for(Object child : parent.getFolder()){
 						  elements.add(child);
 					  }
 				  }

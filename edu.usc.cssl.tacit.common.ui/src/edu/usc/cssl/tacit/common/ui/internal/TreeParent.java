@@ -3,16 +3,43 @@ package edu.usc.cssl.tacit.common.ui.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+
 public class TreeParent {
 
-	List<String> children;
-	List<TreeParent> folder;
+	List<Object> children;
+	List<Object> folder;
 	String name;
+	private Corpus corpus;
+	private CorpusClass corpusClass;
+	public Corpus getCorpus(){
+		return this.corpus;
+	}
+	public CorpusClass getCorpusClass() {
+		return corpusClass;
+	}
+	
+	public TreeParent(Corpus corpus){
+		this.corpus = corpus;
+		this.name = corpus.getCorpusName();
+		folder = new ArrayList<Object>();
+		children = new ArrayList<Object>();
+	}
+	
+	public TreeParent(ICorpusClass corpusClass){
+		this.name = corpusClass.getClassName();
+		this.corpusClass = (CorpusClass) corpusClass;
+		children = new ArrayList<Object>();
+		folder = new ArrayList<Object>();
+	}
+
 
 	public TreeParent(String name) {
 		this.name = name;
-		children = new ArrayList<String>();
-		folder = new ArrayList<TreeParent>();
+		children = new ArrayList<Object>();
+		folder = new ArrayList<Object>();
 	}
 	
 	public String getName() {
@@ -29,11 +56,11 @@ public class TreeParent {
 
 	}
 
-	public List<TreeParent> getFolder() {
+	public List<Object> getFolder() {
 		return folder;
 	}
 
-	public List<String> getFiles() {
+	public List<Object> getFiles() {
 		return children;
 	}
 	
