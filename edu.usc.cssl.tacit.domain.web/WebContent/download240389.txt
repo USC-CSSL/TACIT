@@ -194,6 +194,12 @@
 
 		</div>
 	</div>
+<div class="intro_gallery" align="center">
 
+		<p>
+		TACIT is distributed under <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"> GNU General Public License v2.0 </a>
+		</p>
+
+	</div>
 </body>
 </html>
