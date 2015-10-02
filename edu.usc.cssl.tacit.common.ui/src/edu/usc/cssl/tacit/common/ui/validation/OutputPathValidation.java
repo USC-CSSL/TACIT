@@ -3,8 +3,6 @@ package edu.usc.cssl.tacit.common.ui.validation;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IMessageProvider;
-
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 

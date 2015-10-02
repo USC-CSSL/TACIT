@@ -44,7 +44,6 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
-import edu.usc.cssl.tacit.common.ui.internal.TreeParent;
 import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
 

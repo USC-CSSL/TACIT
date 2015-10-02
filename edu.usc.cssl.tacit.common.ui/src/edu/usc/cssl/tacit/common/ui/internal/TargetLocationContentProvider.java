@@ -6,8 +6,6 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
-
 public class TargetLocationContentProvider implements ITreeContentProvider {
 
 	 /**
