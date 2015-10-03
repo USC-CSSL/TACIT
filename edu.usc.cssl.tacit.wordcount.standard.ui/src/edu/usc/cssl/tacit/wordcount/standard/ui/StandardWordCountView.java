@@ -65,6 +65,7 @@ public class StandardWordCountView extends ViewPart implements
 	private Button defaultTags;
 	private Button wordDistribution;
 	private Button createDATFile;
+	private Button createPOSTags;
 	protected Job wordCountJob;
 
 	@Override
@@ -155,6 +156,10 @@ public class StandardWordCountView extends ViewPart implements
 				"Create output for default tags", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(defaultTags);
+		createPOSTags = toolkit.createButton(output,
+				"Create Part of Speech tagged files", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(createPOSTags);
 		createDATFile = toolkit.createButton(output, "Create .DAT File",
 				SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
@@ -278,7 +283,7 @@ public class StandardWordCountView extends ViewPart implements
 
 			@Override
 			public void run() {
-				if(!canProceed()) {
+				if (!canProceed()) {
 					return;
 				}
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
@@ -294,6 +299,7 @@ public class StandardWordCountView extends ViewPart implements
 				final boolean ppValue = preprocessButton.getSelection();
 				final boolean wcType = weightedWordCountButton.getSelection();
 				final boolean datFile = createDATFile.getSelection();
+				final boolean doPOSTags = createPOSTags.getSelection();
 				final Preprocess preprocessor = new Preprocess(
 						"TACIT_Word_Count");
 				final Date dateObj = new Date();
@@ -307,8 +313,8 @@ public class StandardWordCountView extends ViewPart implements
 								(inputFiles.size() * 15) + 15);
 						WordCountPlugin wc = new WordCountPlugin(wcType,
 								dateObj, isStemDic, doPennCounts,
-								doWordDistribution, datFile, outputPath,
-								monitor);
+								doWordDistribution, datFile, doPOSTags,
+								outputPath, monitor);
 
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),

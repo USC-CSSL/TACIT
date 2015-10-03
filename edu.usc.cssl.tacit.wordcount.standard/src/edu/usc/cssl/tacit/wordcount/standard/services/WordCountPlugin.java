@@ -49,9 +49,11 @@ public class WordCountPlugin {
 	private boolean doPennCounts;
 	private boolean doWordDistribution;
 	private boolean createDATFile;
+	private boolean createPOSTags;
 	private Date dateObj;
 	private String outputPath;
 	private String wordDistributionDir;
+	private String posTagsDir;
 
 	PorterStemmer stemmer = new PorterStemmer();
 
@@ -81,7 +83,7 @@ public class WordCountPlugin {
 	public WordCountPlugin(boolean weighted, Date dateObj,
 			boolean stemDictionary, boolean doPennCounts,
 			boolean doWordDistribution, boolean createDATFile,
-			String outputPath, IProgressMonitor monitor) {
+			boolean createPOSTags, String outputPath, IProgressMonitor monitor) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
 		this.stemDictionary = stemDictionary;
@@ -90,13 +92,21 @@ public class WordCountPlugin {
 		this.createDATFile = createDATFile;
 		this.outputPath = outputPath;
 		this.monitor = monitor;
+		this.createPOSTags = createPOSTags;
 
 		// Create folder for word distribution files
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		if (doWordDistribution) {
-			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 			wordDistributionDir = outputPath
 					+ System.getProperty("file.separator")
 					+ "TACIT-word-distribution-" + df.format(dateObj);
+		}
+
+		if (createPOSTags) {
+			posTagsDir = outputPath + System.getProperty("file.separator")
+					+ "TACIT-POS-Tags-" + df.format(dateObj);
+
+			new File(posTagsDir).mkdir();
 		}
 	}
 
@@ -289,14 +299,30 @@ public class WordCountPlugin {
 			int numDictWords = 0;
 			int numSentences = 0;
 
+			BufferedWriter posBW = null;
+
+			if (createPOSTags) {
+				posBW = new BufferedWriter(new FileWriter(posTagsDir
+						+ System.getProperty("file.separator")
+						+ inputFile.substring(inputFile.lastIndexOf(System
+								.getProperty("file.separator")) + 1)));
+			}
+
 			while ((currentLine = br.readLine()) != null) {
 				String[] sentences = sentDetector.sentDetect(currentLine);
 				numSentences = numSentences + sentences.length;
 				this.numSentences = this.numSentences + sentences.length;
+				StringBuilder toWrite = new StringBuilder();
 
 				for (int i = 0; i < sentences.length; i++) {
 					String[] words = tokenize.tokenize(sentences[i]);
 					String[] posTags = posTagger.tag(words);
+
+					if (createPOSTags) {
+						for (int k = 0; k < words.length; k++) {
+							toWrite.append(words[k] + "/" + posTags[k] + " ");
+						}
+					}
 					numWords = numWords + words.length;
 					this.numWords = this.numWords + words.length;
 
@@ -347,6 +373,13 @@ public class WordCountPlugin {
 					}
 
 				}
+				if (createPOSTags) {
+					posBW.write(toWrite.toString());
+					posBW.newLine();
+				}
+			}
+			if (createPOSTags) {
+				posBW.close();
 			}
 			br.close();
 			monitor.worked(4);
