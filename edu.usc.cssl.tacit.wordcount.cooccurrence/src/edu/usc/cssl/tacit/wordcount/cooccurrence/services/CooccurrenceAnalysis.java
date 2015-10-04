@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,7 +23,7 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class CooccurrenceAnalysis {
 
-	private static String delimiters = "";// " .,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>";
+	private static String delimiters = "";// .,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>";
 	private boolean doPhrases;
 	private Map<String, Integer> seedWords;
 	private String outputPath;
@@ -41,8 +42,7 @@ public class CooccurrenceAnalysis {
 		String[] seeds = null;
 		String currentLine = null;
 
-		BufferedReader br = new BufferedReader(new FileReader(
-				new File(seedFile)));
+		BufferedReader br = new BufferedReader(new FileReader(new File(seedFile)));
 		while ((currentLine = br.readLine()) != null) {
 			seeds = currentLine.split(" ");
 			for (String seed : seeds) {
@@ -66,9 +66,8 @@ public class CooccurrenceAnalysis {
 		createIfMissing(outputPath);
 	}
 
-	public boolean calculateCooccurrences(List<String> selectedFiles,
-			String seedFile, int windowSize, String outputPath, int threshold,
-			boolean buildMatrix, IProgressMonitor monitor) {
+	public boolean calculateCooccurrences(List<String> selectedFiles, String seedFile, int windowSize,
+			String outputPath, int threshold, boolean buildMatrix, IProgressMonitor monitor) {
 
 		String currentLine = null;
 		Queue<String> q = new LinkedList<String>();
@@ -92,15 +91,14 @@ public class CooccurrenceAnalysis {
 			int count;
 			for (String fname : listOfFiles) {
 				File f = new File(fname);
-				monitor.subTask("Processing input file "+f.getName());
-				appendLog("Processing input file "+f.getName());
+				monitor.subTask("Processing input file " + f.getName());
+				appendLog("Processing input file " + f.getName());
 				count = 0;
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;
-
-				List<String> words = new ArrayList<String>();
 				if (!f.exists() || f.isDirectory())
 					continue;
+
 				BufferedReader br = new BufferedReader(new FileReader(f));
 
 				int line_no = 0;
@@ -108,16 +106,15 @@ public class CooccurrenceAnalysis {
 					if (currentLine.isEmpty() || currentLine.equals(""))
 						continue;
 					line_no++;
-					for (String word : currentLine.split(" ")) {
+
+					List<String> words = new ArrayList<String>(Arrays.asList(currentLine.split(" ")));
+					for (int wi = 0; wi < words.size(); wi++) {
+						String word = words.get(wi);
+						word = word.replaceAll(delimiters, "");
 						if (word.isEmpty() || word.equals(""))
 							continue;
 
-						word.replaceAll(delimiters, "");
-						if (buildMatrix)
-							words.add(word);
-
 						if (doPhrases) {
-
 							if (count >= threshold || count >= seedWordCount) {
 								StringBuilder match = new StringBuilder();
 								for (String str : q) {
@@ -125,8 +122,7 @@ public class CooccurrenceAnalysis {
 										match.append('*');
 									match.append(str + ' ');
 								}
-								phrase.add(f.getName() + "  " + line_no + " "
-										+ match.toString());
+								phrase.add(f.getName() + "  " + line_no + " " + match.toString());
 								q.clear();
 								count = 0;
 								for (String s : seedWords.keySet()) {
@@ -150,34 +146,36 @@ public class CooccurrenceAnalysis {
 							}
 
 						}
-
-						if (buildMatrix) {
-
-							Map<String, Integer> vec = null;
-							// ConsoleView.writeInConsole("Building word mat for " +
-							// word);
-							if (wordMat.containsKey(word)) {
-								vec = wordMat.get(word);
-							} else {
-								vec = new HashMap<String, Integer>();
-								wordMat.put(word, vec);
-							}
-							for (String second : words) {
-								if (vec.containsKey(second)) {
-									vec.put(second, vec.get(second) + 1);
-								} else {
-									vec.put(second, 1);
+						try{
+							if (buildMatrix) {
+								Map<String, Integer> vec = wordMat.get(word);
+								if (vec == null) {
+									vec = new HashMap<String, Integer>();
+									wordMat.put(word, vec);
 								}
-								Map<String, Integer> temp = wordMat.get(second);
-								if (temp.containsKey(word)) {
-									temp.put(word, temp.get(word) + 1);
-								} else {
-									temp.put(word, 1);
+								for (int i = wi + 1; i <= windowSize+wi && i < words.size(); i++) { //all words within window size co-occur together
+									String nextWord = words.get(i);
+									if (vec.containsKey(nextWord)) {
+										vec.put(nextWord, vec.get(nextWord) + 1);
+									} else {
+										vec.put(nextWord, 1);
+									}
+									Map<String, Integer> revVec = wordMat.get(nextWord); //do forward and reverse lookup for word co-occurence
+									if (revVec == null) {
+										revVec = new HashMap<String, Integer>();
+										wordMat.put(nextWord, revVec);
+									}
+									if (revVec.containsKey(word)) {
+										revVec.put(word, revVec.get(word) + 1);
+									} else {
+										revVec.put(word, 1);
+									}
+	
 								}
-
 							}
+						} catch(OutOfMemoryError e) {
+														
 						}
-
 					}
 				}
 				br.close();
@@ -187,7 +185,7 @@ public class CooccurrenceAnalysis {
 			if (buildMatrix) {
 				monitor.subTask("Writing Word Matrix");
 				writeWordMatrix();
-				
+
 			}
 			monitor.worked(10);
 			if (ret && phrase.size() > 0) {
@@ -197,11 +195,10 @@ public class CooccurrenceAnalysis {
 			monitor.worked(10);
 			ConsoleView.printlInConsoleln(String.valueOf(phrase.size()));
 			Date dateObj = new Date();
-			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis",dateObj);
+			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis", dateObj);
 			return true;
 		} catch (Exception e) {
-			ConsoleView.printlInConsoleln("Exception occurred in Cooccurrence Analysis "
-					+ e);
+			ConsoleView.printlInConsoleln("Exception occurred in Cooccurrence Analysis " + e);
 		}
 
 		return false;
@@ -215,13 +212,11 @@ public class CooccurrenceAnalysis {
 	 */
 	private void writePhrases(List<String> phrases) {
 		try {
-			FileWriter fw = new FileWriter(new File(outputPath + File.separator
-					+ "phrases.txt"));
+			FileWriter fw = new FileWriter(new File(outputPath + File.separator + "phrases.txt"));
 			for (String p : phrases) {
 				fw.write(p + "\n");
 			}
-			ConsoleView.printlInConsoleln("Writing phrases at "+outputPath + File.separator
-					+ "phrases.txt");
+			ConsoleView.printlInConsoleln("Writing phrases at " + outputPath + File.separator + "phrases.txt");
 			fw.close();
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to file phrases.txt " + e);
@@ -248,27 +243,26 @@ public class CooccurrenceAnalysis {
 
 		SortedSet<String> keys = new TreeSet<String>(wordMat.keySet());
 		Map<String, Integer> vec = null;
-        
+
 		try {
-			FileWriter fw = new FileWriter(new File(outputPath + File.separator
-					+ "word-to-word-matrix.csv"));
+			FileWriter fw = new FileWriter(new File(outputPath + File.separator + "word-to-word-matrix.csv"));
 			fw.write(" ,");
 			for (String key : keys) {
 				fw.write(key + ",");
 			}
 			fw.write("\n");
-
 			for (String key : keys) {
-				fw.write(key + ",");
+				StringBuilder rowStr =  new StringBuilder();
+				rowStr.append(key + ",");
 				vec = wordMat.get(key);
 				for (String value : keys) {
 					if (vec.containsKey(value)) {
-						fw.write(vec.get(value) + ",");
+						rowStr.append(vec.get(value) + ",");
 					} else {
-						fw.write("0,");
+						rowStr.append("0,");
 					}
 				}
-				fw.write("\n");
+				fw.write(rowStr+"\n");
 			}
 			appendLog("Writng Word Matrix into word-to-word-matrix.csv");
 			fw.close();
@@ -277,9 +271,8 @@ public class CooccurrenceAnalysis {
 		}
 	}
 
-	public boolean invokeCooccurrence(List<String> selectedFiles,
-			String seedFileLocation, String fOutputDir, String numTopics,
-			String ftxtThreshold, boolean fOption, IProgressMonitor monitor) {
+	public boolean invokeCooccurrence(List<String> selectedFiles, String seedFileLocation, String fOutputDir,
+			String numTopics, String ftxtThreshold, boolean fOption, IProgressMonitor monitor) {
 
 		int windowSize = 0;
 		if (!numTopics.equals(""))
@@ -295,22 +288,19 @@ public class CooccurrenceAnalysis {
 
 		// ConsoleView.writeInConsole("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
-		boolean isSuccess = calculateCooccurrences(selectedFiles,
-				seedFileLocation, windowSize, fOutputDir, threshold,
-				buildMatrix,monitor);
+		boolean isSuccess = calculateCooccurrences(selectedFiles, seedFileLocation, windowSize, fOutputDir, threshold,
+				buildMatrix, monitor);
 		if (isSuccess == false) {
-			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
+			appendLog(
+					"Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
 			return isSuccess;
 		}
 
 		appendLog("Output for Co-occurrence Analysis");
 
-		appendLog("Word to word matrix stored in " + fOutputDir
-				+ File.separator + "word-to-word-matrix.csv");
-		if (seedFileLocation != "" && !seedFileLocation.isEmpty()
-				&& windowSize != 0)
-			appendLog("Phrases stored in " + fOutputDir + File.separator
-					+ "phrases.txt");
+		appendLog("Word to word matrix stored in " + fOutputDir + File.separator + "word-to-word-matrix.csv");
+		if (seedFileLocation != "" && !seedFileLocation.isEmpty() && windowSize != 0)
+			appendLog("Phrases stored in " + fOutputDir + File.separator + "phrases.txt");
 		return true;
 
 	}
