@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
+import edu.usc.cssl.tacit.common.ui.internal.TreeParent;
 
 public class TableLayoutData {
 	private Composite sectionClient;
@@ -79,6 +80,15 @@ public class TableLayoutData {
 		Object[] checkedElements = treeViewer.getCheckedElements();
 		List<String> files = new ArrayList<String>();
 		for (int i = 0; i < checkedElements.length; i++) {
+			if(checkedElements[i] instanceof TreeParent){
+				if(((TreeParent)checkedElements[i]).getCorpus() != null) {
+					continue;
+				}
+				if(((TreeParent)checkedElements[i]).getCorpusClass() != null) {
+					files.add(((TreeParent)checkedElements[i]).getCorpusClass().getClassPath());
+					continue;
+				}
+			}
 			files.add(checkedElements[i].toString());
 		}
 		return files;

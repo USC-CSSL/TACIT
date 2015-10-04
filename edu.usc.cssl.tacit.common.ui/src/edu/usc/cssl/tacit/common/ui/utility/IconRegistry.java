@@ -34,6 +34,12 @@ public class IconRegistry {
 
 		ir.put(INlpCommonUiConstants.FLDR_OBJ, ImageDescriptor.createFromFile(
 				IconRegistry.class, "/icons/fldr_obj.gif"));
+		ir.put(INlpCommonUiConstants.IMAGE_SAVE_CO, ImageDescriptor.createFromFile(
+				IconRegistry.class, "/icons/save.gif"));
+		ir.put(INlpCommonUiConstants.CORPUS, ImageDescriptor.createFromFile(
+				IconRegistry.class, "/icons/corpus.gif"));
+		ir.put(INlpCommonUiConstants.CORPUS_CLASS, ImageDescriptor.createFromFile(
+				IconRegistry.class, "/icons/corpusclass.gif"));
 
 	}
 

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,6 +44,8 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
+import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
+import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
 	private ScrolledForm corpusMgmtViewform;
@@ -110,6 +113,22 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				File tacitLocationFiles = new File((String) element);
 				if(tacitLocationFiles.exists()) 
 					return tacitLocationFiles.getAbsolutePath();
+			}			
+			return null;
+		}
+		
+		@Override
+		public Image getImage(Object element) {
+			
+			if(element instanceof ICorpusClass)
+				return IconRegistry.getImageIconFactory().getImage(
+						INlpCommonUiConstants.CORPUS_CLASS);
+			else if(element instanceof ICorpus)
+				return IconRegistry.getImageIconFactory().getImage(
+						INlpCommonUiConstants.CORPUS);
+			else if(element instanceof String) {
+				return IconRegistry.getImageIconFactory().getImage(
+						INlpCommonUiConstants.FILE_OBJ);
 			}			
 			return null;
 		}

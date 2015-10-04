@@ -40,7 +40,15 @@ public class TargetLocationLabelProvider implements ILabelProvider {
 
 		} else if (arg0 instanceof TreeParent) {
 			TreeParent parent = (TreeParent) arg0;
-			if (parent.getFiles().size() == 0 && parent.getFolder().size() == 0) {
+			if(((TreeParent)arg0).getCorpusClass() != null){
+				return IconRegistry.getImageIconFactory().getImage(
+						INlpCommonUiConstants.CORPUS_CLASS);
+			}
+			else if(((TreeParent)arg0).getCorpus() != null){
+				return IconRegistry.getImageIconFactory().getImage(
+						INlpCommonUiConstants.CORPUS);
+				
+			}else if (parent.getFiles().size() == 0 && parent.getFolder().size() == 0) {
 				return IconRegistry.getImageIconFactory().getImage(
 						INlpCommonUiConstants.FILE_OBJ);
 			}

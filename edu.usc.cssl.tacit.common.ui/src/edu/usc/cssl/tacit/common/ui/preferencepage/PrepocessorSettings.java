@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
-import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 
 public class PrepocessorSettings extends PreferencePage implements
 		IWorkbenchPreferencePage, IPreprocessorSettingsConstant {

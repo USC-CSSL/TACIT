@@ -2,7 +2,6 @@ package edu.uc.cssl.tacit.crawlers.supremecourt.services;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

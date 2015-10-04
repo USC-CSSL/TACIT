@@ -2,16 +2,12 @@ package edu.usc.cssl.tacit.crawlers.twitter.services;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.swt.widgets.Display;
 
 import twitter4j.FilterQuery;
 import twitter4j.StallWarning;
@@ -55,7 +51,7 @@ public class TwitterStreamApi {
 		String accessToken;
 		String accessTokenSecret;
 		terminate = false;
-		monitor.subTask("Accessing User key");
+		monitor.subTask("Accessing User Information to authenticate...");
 		consumerKey = CommonUiActivator.getDefault().getPreferenceStore()
 				.getString("ckey");
 		consumerSecret = CommonUiActivator.getDefault().getPreferenceStore()
@@ -69,8 +65,10 @@ public class TwitterStreamApi {
 				.setOAuthConsumerSecret(consumerSecret)
 				.setOAuthAccessToken(accessToken)
 				.setOAuthAccessTokenSecret(accessTokenSecret);
-		monitor.worked(2);
 		twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+		monitor.subTask("User Information is Verified");
+		monitor.worked(2);
+		monitor.subTask("Started Streaming your request...");
 
 		// Create File
 		File streamFile = new File(fileName);
