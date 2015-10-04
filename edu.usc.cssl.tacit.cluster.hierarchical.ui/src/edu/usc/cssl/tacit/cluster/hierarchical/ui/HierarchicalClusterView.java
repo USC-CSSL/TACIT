@@ -230,11 +230,13 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 
 						// Hierarchical processing
 						long startTime = System.currentTimeMillis();
-						HierarchicalClusterAnalysis.runClustering(inputFiles, outputPath, isSaveImage,
+						boolean isSuccessful = HierarchicalClusterAnalysis.runClustering(inputFiles, outputPath, isSaveImage,
 								new SubProgressMonitor(monitor, 50), dateObj);
-						if (monitor.isCanceled()) {
+						if(monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
+						if(!isSuccessful)
+							return Status.CANCEL_STATUS;
 
 						Display.getDefault().asyncExec(new Runnable() {
 							@Override

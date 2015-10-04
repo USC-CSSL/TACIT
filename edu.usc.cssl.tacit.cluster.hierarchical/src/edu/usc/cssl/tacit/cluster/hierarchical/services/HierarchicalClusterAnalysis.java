@@ -169,7 +169,7 @@ public class HierarchicalClusterAnalysis {
 		return fgraph.toString();
 	}
 
-	public static String runClustering(List<File> listOfFiles,
+	public static boolean runClustering(List<File> listOfFiles,
 			String fOutputDir, boolean fSaveImg,
 			SubProgressMonitor subProgressMonitor, Date dateObj) {
 
@@ -190,7 +190,7 @@ public class HierarchicalClusterAnalysis {
 			throw new OperationCanceledException();
 		}
 		if (clusters == null) {
-			return null;
+			return false;
 		}
 		ConsoleView.printlInConsoleln("Output for Hierarchical Clustering");
 		ConsoleView.printlInConsoleln("Mapping of document ID to actual names");
@@ -208,6 +208,6 @@ public class HierarchicalClusterAnalysis {
 		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj);
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
-		return clusters;
+		return true;
 	}
 }

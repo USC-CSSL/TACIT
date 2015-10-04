@@ -203,7 +203,10 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 						long startTime = System.currentTimeMillis();
 						monitor.subTask("Clustering files...");
 						Date dateObj = new Date();
-						KmeansClusterAnalysis.runClustering(noOfClusters, inputFiles, outputPath, dateObj);
+						boolean isSuccessful = KmeansClusterAnalysis.runClustering(noOfClusters, inputFiles, outputPath, dateObj);
+						if(!isSuccessful) 
+							return Status.CANCEL_STATUS;
+						
 						monitor.worked(80);
 						ConsoleView.printlInConsoleln("K-Means Clustering completed successfully in "
 								+ (System.currentTimeMillis() - startTime) + " milliseconds.");

@@ -38,14 +38,11 @@ public class KmeansClusterAnalysis {
 
 				try {
 					double[] newInst = new double[1];
-					String content = new Scanner(inputFiles.get(i))
-							.useDelimiter("\\Z").next();
-					newInst[0] = (double) docs.attribute(0).addStringValue(
-							content);
+					String content = new Scanner(inputFiles.get(i)).useDelimiter("\\Z").next();
+					newInst[0] = (double) docs.attribute(0).addStringValue(content);
 					docs.add(new Instance(1.0, newInst));
 				} catch (Exception e) {
-					ConsoleView.printlInConsoleln("Exception occurred in reading files"
-							+ e);
+					ConsoleView.printlInConsoleln("Exception occurred in reading files" + e);
 					return null;
 				}
 			}
@@ -60,8 +57,7 @@ public class KmeansClusterAnalysis {
 
 			int i = 0;
 			for (int clusterNum : assignments) {
-				System.out
-						.printf("Instance %d -> Cluster %d \n", i, clusterNum);
+				System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
 				i++;
 			}
 
@@ -72,8 +68,7 @@ public class KmeansClusterAnalysis {
 		return null;
 	}
 
-	public static void runClustering(int fNumClusters, List<File> listOfFiles,
-			String fOutputDir, Date dateObj) {
+	public static boolean runClustering(int fNumClusters, List<File> listOfFiles, String fOutputDir, Date dateObj) {
 
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles) {
@@ -81,15 +76,16 @@ public class KmeansClusterAnalysis {
 				continue;
 			inputFiles.add(f);
 		}
-		
+
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
 		ConsoleView.printlInConsoleln("Running KMeans Clustering...");
 
 		int[] clusters = doClustering(inputFiles, fNumClusters);
 		if (clusters == null) {
-			ConsoleView.printlInConsoleln("Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
-			return;
+			ConsoleView.printlInConsoleln(
+					"Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
+			return false;
 		}
 		int i = 0;
 		ConsoleView.printlInConsoleln("Output for KMeans Clustering");
@@ -110,7 +106,7 @@ public class KmeansClusterAnalysis {
 		}
 
 		try {
-			String op = fOutputDir + File.separator + "KMeansClusters-"+df.format(dateObj)+".txt";
+			String op = fOutputDir + File.separator + "KMeansClusters-" + df.format(dateObj) + ".txt";
 			ConsoleView.printlInConsoleln("Saving the output for Kmeans clustering in " + op);
 			FileWriter fw = new FileWriter(new File(op));
 			for (int c : outputClusters.keySet()) {
@@ -126,10 +122,12 @@ public class KmeansClusterAnalysis {
 				ConsoleView.printlInConsoleln("");
 			}
 			fw.close();
-			TacitUtility.createRunReport(fOutputDir, "K Means Clustering",dateObj);
+			TacitUtility.createRunReport(fOutputDir, "K Means Clustering", dateObj);
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to files" + e);
+			return false;
 		}
-
+		return true;
 	}
+
 }
