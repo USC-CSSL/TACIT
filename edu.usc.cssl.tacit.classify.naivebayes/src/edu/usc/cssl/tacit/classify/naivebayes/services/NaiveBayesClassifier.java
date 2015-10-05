@@ -248,13 +248,7 @@ public class NaiveBayesClassifier {
 
 			for (int num = 0; num < numFiles; num++) {
 				files[num] = new File(classFiles.get(num));
-				// new File(files[num].getAbsolutePath(), new File(tempTrainDir
-				// + File.separator + files[num].getName()).getAbsolutePath());
-				// Files.copy(files[num].toPath(), new File(tempTrainDir+
-				// File.separator + files[num].getName()).toPath(), new
-				// CopyOption[] { REPLACE_EXISTING });
-				FileUtils.copyFileToDirectory(files[num],
-						new File(tempTrainDir));
+				FileUtils.copyFileToDirectory(files[num], new File(tempTrainDir));
 			}
 			trainingDataPaths.add(new File(tempTrainDir).getAbsolutePath());
 			monitor.worked(1); // processing of each directory/class

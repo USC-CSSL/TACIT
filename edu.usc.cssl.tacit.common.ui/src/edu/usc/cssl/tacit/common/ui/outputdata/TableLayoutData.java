@@ -31,22 +31,31 @@ public class TableLayoutData {
 	
 	public void refreshInternalTree(List<String> files){
 		if(this.lgroup!= null){
-			this.lgroup.updateLocationTree((String[]) files.toArray(new String[files.size()]));
+			this.lgroup.updateLocationTree(files.toArray(new String[files.size()]));
 		
 		}
 	}
-	
+	/*
+	 * To maintain class and its selected files association
+	 */
 	public List<String> getSelectedItems(TreeItem tree) {		
 		Map<String, TreeItem> subfolders = Collections.synchronizedMap(new LinkedHashMap<String, TreeItem>()); //LinkedHashMap - helps to iterate the key in which it is inserted
 		ArrayList<String> selectedItems = new ArrayList<String>();
 		TreeItem[] children = tree.getItems();
 		for(TreeItem ti : children) {
 			if(null != ti.getData()) {
-				String filename = ti.getData().toString();				
+				String filename = ti.getData().toString();
 				if(ti.getChecked()) {
-					if(!(new File(filename).isDirectory())) {
+					if(!new File(filename).exists()) { // corpus class
+						String classPath = getCorpusClass(tree.getData().toString(), filename);
+						if(null != classPath)
+							//subfolders.put(classPath, ti);
+							selectedItems.add(classPath);
+					} 
+					else if(!(new File(filename).isDirectory())) {
 						selectedItems.add(filename);
-					} else {
+					}
+					else {
 						subfolders.put(new File(filename).getAbsolutePath(), ti);
 					}
 				}
@@ -54,7 +63,22 @@ public class TableLayoutData {
 		}
 		return processSubfolders(subfolders, selectedItems);
 	}
-	
+
+	/*
+	 * Returns the corpus class path of the given corpus class string and its parent
+	 */
+	private String getCorpusClass(String parent, String filename) {
+		Object[] checkedElements = treeViewer.getCheckedElements();
+		for (int i = 0; i < checkedElements.length; i++) {
+			if(checkedElements[i].toString().equals(parent)){ // its in the order as displayed in the tree
+				for(int j = i+1; j<checkedElements.length; j++)
+					if(checkedElements[j].toString().equals(filename))
+						return ((TreeParent)checkedElements[j]).getCorpusClass().getClassPath();
+			}
+		}
+		return null;
+	}
+
 	public List<String> processSubfolders(Map<String, TreeItem> subfolders, ArrayList<String> selectedItems) {		
 		Iterator<Entry<String, TreeItem>> iterator = subfolders.entrySet().iterator();
 		while(iterator.hasNext()) {

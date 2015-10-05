@@ -71,24 +71,19 @@ public class NaiveBayesClassifierView extends ViewPart implements
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private TableLayoutData classLayoutData;
+	
 	// Classification parameters
 	private Text kValueText;
 	private Text classifyInputText;
 	private Text outputPath;
 	private Button preprocessEnabled;
-
 	private Preprocess preprocessTask;
 	private boolean isPreprocessEnabled = false;
 	private boolean isClassificationEnabled = false;
 	boolean canProceed = false;
-
 	private Button classificationEnabled;
-
 	HashMap<String, List<String>> classPaths;
 	protected Job job;
-
-	private Button preprocessEnabledInput;
-	private boolean isPreprocessEnabledOnInput = false;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -129,12 +124,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		createPreprocessLink(client);
 		createClassificationParameters(client);
 		createNBClassifierInputParameters(client); // to get k-value
-		// Create ouput section
-		// createOutputSection(client, layout, "Classify",
-		// "Choose the input and output path for classification"); // Create
-		// dispatchable output section
-		// outputLayout = TacitFormComposite.createOutputSection(toolkit,
-		// client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
 
@@ -259,8 +248,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		inputParamsSection.setClient(sectionClient);
 
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
-
-		//TacitFormComposite.createEmptyRow(toolkit, client);
 
 		// Output path
 		final Label outputPathLabel = toolkit.createLabel(sectionClient,
@@ -419,42 +406,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				}
 			}
 		});
-		
-		
-		//Create preprocess link for unlabeled data
-		/*
-		Composite clientLink = new Composite(sectionClient , SWT.NONE);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
-				.applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(clientLink);
-		preprocessEnabledInput = new Button(clientLink, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(preprocessEnabledInput);
-		final Hyperlink link = new Hyperlink(clientLink, SWT.NONE);
-		link.setText("Preprocess");
-		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		link.addHyperlinkListener(new IHyperlinkListener() {
-			@Override
-			public void linkEntered(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkExited(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
-						new String[] { id }, null).open();
-			}
-		});
-
-		preprocessEnabledInput.setEnabled(false);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
-		*/
-		
-		// TacitFormComposite.createEmptyRow(sectionClient, group);
 	}
 
 	/**
@@ -516,20 +467,17 @@ public class NaiveBayesClassifierView extends ViewPart implements
 
 			String classificationInputDir;
 
+			String outputDir;
+			String tempkValue;
 			@Override
 			public void run() {
-				// Classification i/p and o/p paths
-				final String outputDir = outputPath.getText();
-				classificationInputDir = classifyInputText.getText();
 				final ArrayList<String> trainingDataPaths = new ArrayList<String>();
-				final String tempkValue = kValueText.getText();
-
-				classPaths = new HashMap<String, List<String>>();
-				consolidateSelectedFiles(classLayoutData, classPaths);
 				final HashMap<String, List<String>> tempClassPaths = new HashMap<String, List<String>>();
 				final NaiveBayesClassifier nbc = new NaiveBayesClassifier();
 				final CrossValidator cv = new CrossValidator();
-
+				classPaths = new HashMap<String, List<String>>();
+				consolidateSelectedFiles(classLayoutData, classPaths);
+				
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Naive Bayes Classification started ");
 
@@ -550,9 +498,13 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
+								// Classification i/p and o/p paths
+								outputDir = outputPath.getText();
+								classificationInputDir = classifyInputText.getText();
+								tempkValue = kValueText.getText();
+								
 								isPreprocessEnabled = preprocessEnabled.getSelection();
 								isClassificationEnabled = classificationEnabled.getSelection();
-								//isPreprocessEnabledOnInput = preprocessEnabledInput.getSelection();
 							}
 						});
 
@@ -582,8 +534,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 										temp.add(f.getAbsolutePath());
 									}
 									tempClassPaths.put(preprocessedDirPath,temp);
-									monitor.worked(1); // for the pre-processing
-														// of each directory
+									monitor.worked(1); // for the pre-processing of each directory
 									if (monitor.isCanceled()) {
 										TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 										return handledCancelRequest("Cancelled");
@@ -620,8 +571,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							} catch (IOException e) {
 								return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
 							}
-							monitor.worked(10); // after creating temp
-												// directories
+							monitor.worked(10); // after creating temp directories
 							if (monitor.isCanceled()) {
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 								return handledCancelRequest("Cancelled");
@@ -642,25 +592,10 @@ public class NaiveBayesClassifierView extends ViewPart implements
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 								return handledCancelRequest("Cancelled");
 							}
-							// nbc.doCross(trainingDataPaths,
-							// classificationOutputDir, false, false, kValue);
-							// // perform cross validation
+							// perform cross validation
 							if (isClassificationEnabled) {
-								/*
-								String preprocessedInputDirPath = null;
-								if(isPreprocessEnabledOnInput) {
-									if(preprocessTask == null)  preprocessTask = new Preprocess("NB_Classifier");
-									File inputDir = new File(classificationInputDir);
-									List<String> filePaths = new ArrayList<String>();
-									for(File f : inputDir.listFiles()) 
-										filePaths.add(f.getAbsolutePath());
-									preprocessedInputDirPath = preprocessTask.doPreprocessing(filePaths, inputDir.getName());
-								}
-								*/
 								monitor.subTask("Classifying...");
 								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
-								//if(!isPreprocessEnabledOnInput) nbc.classify(trainingDataPaths,classificationInputDir, outputDir,false, false, dateObj);
-								//else nbc.classify(trainingDataPaths, preprocessedInputDirPath, outputDir,false, false, dateObj);
 								nbc.classify(trainingDataPaths,classificationInputDir, outputDir,false, false, dateObj);
 								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 							}
@@ -711,11 +646,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						TacitFormComposite
 								.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 						return Status.OK_STATUS;
-					}
-
-					@Override
-					protected void canceling() {
-						// done(Status.CANCEL_STATUS);
 					}
 
 				};
@@ -794,19 +724,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 			form.getMessageManager().removeMessage("classes");
 		}
 
-		// Preprocessing
-		/*
-		 * isPreprocessEnabled = preprocessEnabled.getSelection(); String
-		 * tempPPOutputPath =
-		 * CommonUiActivator.getDefault().getPreferenceStore()
-		 * .getString("pp_output_path"); if (isPreprocessEnabled &&
-		 * tempPPOutputPath.isEmpty()) { form.getMessageManager()
-		 * .addMessage("pp_location",
-		 * "Pre-Processed output location is required for pre-processing", null,
-		 * IMessageProvider.ERROR); return false; } else {
-		 * form.getMessageManager().removeMessage("pp_location"); }
-		 */
-
 		// K-Vlaue
 		if (kValueText.getText().isEmpty()) {
 			form.getMessageManager().addMessage("kvalue",
@@ -846,7 +763,6 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						TacitUtil.refineInput(classLayoutData.getSelectedItems(temp)));
 			}
 		}
-		// the final results will nbe in classPaths
 	}
 
 	private IStatus handleException(IProgressMonitor monitor, Exception e,
