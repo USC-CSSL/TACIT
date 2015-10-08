@@ -359,6 +359,7 @@ public class ManageCorpora {
 			cc.setClassName((String) corpusClassObj.get("class_name"));
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
+			cc.setParent(corpus);
 			corpus.getClasses().add(cc);
 		}		
 	}	
