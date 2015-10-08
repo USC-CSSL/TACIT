@@ -225,7 +225,24 @@ public class TargetLocationsGroup {
 			if (file instanceof String) {
 				fileName = (String) file;
 			} else {
-				fileName = ((TreeParent) file).getName();
+				if(file instanceof TreeParent){
+					if(((TreeParent) file).getCorpusClass()!= null){
+						String classPath = ((TreeParent) file).getCorpusClass().getClassPath();
+						if(new File(classPath).isFile()){
+							select++;
+							 continue;
+						}
+						else if(new File(classPath).isDirectory()){
+							select += new File(classPath).listFiles().length;
+							continue;
+						}
+					}
+					else{
+						
+						fileName = ((TreeParent) file).getName();
+					}
+					
+				}
 			}
 			if (new File(fileName).isFile()) {
 				select++;
