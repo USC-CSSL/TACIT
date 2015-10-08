@@ -11,20 +11,19 @@ import java.util.regex.Pattern;
 import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class TacitUtil {
-	public static List<String> refineInput(List<String> selectedInputs) {
+	public static List<String> refineInput(List<Object> selectedInputs) {
 		Set<String> refinedInputList = new HashSet<String>();
 		Pattern corpusDetector = Pattern
 				.compile(".* [(]Tacit Internal Class Path: (.*)[)]");
 
-		for (String input : selectedInputs) {
-			Matcher m = corpusDetector.matcher(input);
-			if (m.find()) {
-				String corpusClassPath = m.group(1);
-				CMDataType corpusType = new ManageCorpora()
-						.getCorpusDataType(corpusClassPath);
+		for (Object input : selectedInputs) {
+			if (input instanceof CorpusClass) {
+				String corpusClassPath = ((CorpusClass)input).getClassPath();
+				CMDataType corpusType = ((CorpusClass)input).getParent().getDatatype();
 				if (corpusType == null)
 					continue;
 				if (corpusType.equals(CMDataType.TWITTER_JSON))
@@ -36,7 +35,7 @@ public class TacitUtil {
 				else
 					input = corpusClassPath;
 			}
-			File inputFile = new File(input);
+			File inputFile = new File((String) input);
 			if (!inputFile.exists())
 				continue;
 			if (!inputFile.isDirectory())

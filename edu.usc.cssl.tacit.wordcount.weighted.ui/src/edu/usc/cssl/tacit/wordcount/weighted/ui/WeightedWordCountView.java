@@ -381,7 +381,7 @@ public class WeightedWordCountView extends ViewPart implements
 				final List<String> inputFiles = TacitUtil.refineInput(inputLayoutData
 						.getSelectedFiles());
 				final List<String> dictionaryFiles = dictLayoutData
-						.getSelectedFiles();
+						.getSelectedFiles(false);
 				final boolean isLiwcStemming = liwcStemming.getSelection();
 				final boolean isSnowBall = snowballStemming.getSelection();
 				final boolean isSpss = spssRawFile.getSelection();

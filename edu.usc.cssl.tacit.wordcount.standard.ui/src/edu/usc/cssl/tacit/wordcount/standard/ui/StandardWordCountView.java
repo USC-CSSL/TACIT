@@ -291,7 +291,7 @@ public class StandardWordCountView extends ViewPart implements
 				final List<String> inputFiles = TacitUtil
 						.refineInput(inputLayoutData.getSelectedFiles());
 				final List<String> dictionaryFiles = dictLayoutData
-						.getSelectedFiles();
+						.getSelectedFiles(false);
 				final boolean isStemDic = stemEnabled.getSelection();
 				final boolean doPennCounts = defaultTags.getSelection();
 				final boolean doWordDistribution = wordDistribution

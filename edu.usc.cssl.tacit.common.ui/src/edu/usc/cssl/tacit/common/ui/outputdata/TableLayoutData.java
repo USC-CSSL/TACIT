@@ -100,16 +100,29 @@ public class TableLayoutData {
 		return selectedItems;
 	}
 	
-	public List<String> getSelectedFiles() {
+	public List<String> getSelectedFiles(boolean corpus) {
+		
 		Object[] checkedElements = treeViewer.getCheckedElements();
 		List<String> files = new ArrayList<String>();
+		for (int i = 0; i < checkedElements.length; i++) {
+			if(checkedElements[i] instanceof String){
+			files.add(checkedElements[i].toString());
+			}
+		}
+		return files;
+
+	}
+	
+	public List<Object> getSelectedFiles() {
+		Object[] checkedElements = treeViewer.getCheckedElements();
+		List<Object> files = new ArrayList<Object>();
 		for (int i = 0; i < checkedElements.length; i++) {
 			if(checkedElements[i] instanceof TreeParent){
 				if(((TreeParent)checkedElements[i]).getCorpus() != null) {
 					continue;
 				}
 				if(((TreeParent)checkedElements[i]).getCorpusClass() != null) {
-					files.add(((TreeParent)checkedElements[i]).getCorpusClass().getClassPath());
+					files.add(((TreeParent)checkedElements[i]).getCorpusClass());
 					continue;
 				}
 			}
