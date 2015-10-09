@@ -34,10 +34,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -61,7 +59,6 @@ import edu.usc.cssl.tacit.classify.naivebayes.ui.internal.NaiveBayesClassifierVi
 import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
-import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class NaiveBayesClassifierView extends ViewPart implements
@@ -127,6 +124,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
 
+		/*
 		client.addListener(SWT.FOCUSED, new Listener() {
 
 			@Override
@@ -134,7 +132,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				consolidateSelectedFiles(classLayoutData, classPaths);
 				canItProceed(classPaths);
 			}
-		});
+		}); */
 	}
 
 	@Override
@@ -759,8 +757,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		for (int i = 0; i < tree.getItemCount(); i++) {
 			TreeItem temp = tree.getItem(i);
 			if (temp.getChecked()) {
-				classPaths.put(temp.getData().toString(),
-						TacitUtil.refineInput(classLayoutData.getSelectedItems(temp)));
+				classPaths.put(temp.getData().toString(),classLayoutData.getSelectedItems(temp));
 			}
 		}
 	}

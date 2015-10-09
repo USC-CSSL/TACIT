@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
@@ -306,8 +307,9 @@ public abstract class Vectors2Classify {
 			java.io.IOException {
 		result.clear();
 		classifierTrainerStrings = new ArrayList<String>();
-		ReportOptions = new boolean[][]{{false, false, false, false}, {false, false, false, false}, {false, false, false, false}};
-			
+		for( int i = 0; i < ReportOptions.length; i++)
+			   Arrays.fill( ReportOptions[i], false);
+		
 		double pvalue = 0;
 		// Process the command-line options
 		CommandOption

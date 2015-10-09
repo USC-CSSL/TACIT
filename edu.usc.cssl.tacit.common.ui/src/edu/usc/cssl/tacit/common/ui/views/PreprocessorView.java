@@ -31,6 +31,7 @@ import edu.usc.cssl.tacit.common.ui.ICommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.internal.CommonUiViewImageRegistry;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 
 public class PreprocessorView extends ViewPart {
 
@@ -124,12 +125,15 @@ public class PreprocessorView extends ViewPart {
 					.createHyperlink(clientLink, "Preprocessing Settings", SWT.NONE);
 			link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			link.addHyperlinkListener(new IHyperlinkListener() {
+				@Override
 				public void linkEntered(HyperlinkEvent e) {
 				}
 	
+				@Override
 				public void linkExited(HyperlinkEvent e) {
 				}
 	
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 					PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -166,6 +170,7 @@ public class PreprocessorView extends ViewPart {
 				return "Analyze";
 			}
 	
+			@Override
 			public void run() {
 				if (!canProceed()) return;
 	
@@ -185,6 +190,7 @@ public class PreprocessorView extends ViewPart {
 				return "Help";
 			}
 	
+			@Override
 			public void run() {
 	
 			};
@@ -199,7 +205,7 @@ public class PreprocessorView extends ViewPart {
 		form.getMessageManager().removeMessage("inputNoProper");
 		form.getMessageManager().removeMessage("noOutput");
 		
-		List<String> inputFiles = layData.getSelectedFiles();
+		List<String> inputFiles = TacitUtil.refineInput(layData.getSelectedFiles());
 		boolean noProperFiles = true;
 
 		if (inputFiles.size() < 1) {
