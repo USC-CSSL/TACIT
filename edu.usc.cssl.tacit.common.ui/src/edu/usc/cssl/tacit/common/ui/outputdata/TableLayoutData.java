@@ -101,9 +101,7 @@ public class TableLayoutData {
 		Object[] checkedElements = treeViewer.getCheckedElements();
 		List<String> files = new ArrayList<String>();
 		for (int i = 0; i < checkedElements.length; i++) {
-			if(checkedElements[i] instanceof String){
 			files.add(checkedElements[i].toString());
-			}
 		}
 		return files;
 
