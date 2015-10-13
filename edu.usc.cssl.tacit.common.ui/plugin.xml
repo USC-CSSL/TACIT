@@ -2,46 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
 <!-- intro -->
- <!-- <extension
-         point="org.eclipse.ui.intro">
-      <intro
-            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
-            icon="icons/welcome16.gif"
-            id="edu.usc.cssl.tacit.common.ui.intro">
-      </intro>
-      <introProductBinding
-            introId="edu.usc.cssl.tacit.common.ui.intro"
-            productId="edu.usc.cssl.tacit.repository.product">
-      </introProductBinding>
-   </extension> 
-  <extension
-         point="org.eclipse.ui.intro.config">
-      <config
-            introId="edu.usc.cssl.tacit.common.ui.intro"
-            content="introContent.xml"
-            id="edu.usc.cssl.tacit.common.ui.configId">
-         <presentation
-               home-page-id="root">
-            <implementation
-                  kind="html"
-                  os="win32,linux,macosx">
-            </implementation>
-         </presentation>
-      </config>
-      <config
-            content="introContent.xml"
-            id="usc.edu.sampleapp.introConfigId"
-            introId="edu.usc.cssl.tacit.common.ui.intro">
-         <presentation
-               home-page-id="root">
-            <implementation
-                  kind="html"
-                  os="win32,linux,macosx"
-                  style="content/shared.css">
-            </implementation>
-         </presentation>
-      </config>
-   </extension> -->
+ <extension point="org.eclipse.ui.intro">
+	<introProductBinding
+		 introId="org.eclipse.ui.intro.universal"
+		 productId="edu.usc.cssl.tacit.repository.product">
+	</introProductBinding>
+</extension>
+<extension point="org.eclipse.ui.intro.configExtension">
+ 	<configExtension
+		configId="org.eclipse.ui.intro.universalConfig"
+		content="intro/tacit-intro.xml" />
+</extension>
    <!-- Main menu -->
     <extension
          point="org.eclipse.ui.menus">

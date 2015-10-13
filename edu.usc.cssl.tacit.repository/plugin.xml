@@ -16,6 +16,8 @@
        <product
              application="edu.usc.cssl.tacit.repository.application"
              name="TACIT">
+             <property name="introBrandingImage" value="product:icons/icon48.png"/>
+		 <property name="introTitle" value="Welcome to TACIT Tool"/>
           <property
                 name="appName"
                 value="TACIT">

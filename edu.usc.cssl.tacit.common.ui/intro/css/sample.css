@@ -1,0 +1,7 @@
+
+a#tacitintro-introLink img { background-image : url(graphics/icon32.png); }
+a#tacitintro-introLink:hover img { background-image : url(graphics/icon48.png); }
+
+a#tacitintro-wizardLink img { background-image : url(graphics/sample.gif); }
+a#tacitintro-wizardLink:hover img { background-image : url(graphics/sample_hov.gif); }
+

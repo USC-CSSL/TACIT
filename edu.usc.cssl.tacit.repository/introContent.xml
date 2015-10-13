@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+   <extensionContent id="extra" name="Extra" alt-style="css/swt.properties" style="css/overview.css" path="overview/@">
+      <group id="extra-group" style-id="content-group">
+         <link label="Extra Overview link" url="http://org.eclipse.ui.intro/showPage?id=extraOverview" 
+					  id="extra-overview">
+      	    <text>Showing the third-level extra page for overview</text>
+
+         </link>
+         <anchor id="additions"/>
+      </group>
+   </extensionContent>
+</introContent>
