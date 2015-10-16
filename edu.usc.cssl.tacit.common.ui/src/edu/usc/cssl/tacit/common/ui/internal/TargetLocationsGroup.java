@@ -2,7 +2,9 @@ package edu.usc.cssl.tacit.common.ui.internal;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -51,10 +53,11 @@ public class TargetLocationsGroup {
 	private Button fAddFileButton;
 	private Button fAddCorpusButton;
 	private Button fRemoveButton;
-	private List<TreeParent> locationPaths;
+	private Set<TreeParent> locationPaths;
 	@SuppressWarnings("unused")
 	private FormToolkit toolKit;
 	private Label dummy;
+	private Label dummyCorpus;
 	private ManageCorpora corporaManagement;
 	private TreeParent node;
 
@@ -157,6 +160,11 @@ public class TargetLocationsGroup {
 		dummy = toolkit.createLabel(parent, "");
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
+		if(isCorpus){
+		dummyCorpus = toolkit.createLabel(parent, "");
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(dummyCorpus);
+		}
 		toolkit.paintBordersFor(comp);
 	}
 
@@ -173,11 +181,20 @@ public class TargetLocationsGroup {
 
 	private void updateSelectionText() {
 		int totalFiles = calculateFiles(fTreeViewer.getCheckedElements());
-		if (locationPaths.size() > 0)
+		if (totalFiles > 0)
 			dummy.setText("No. of files selected : "
 					+ String.valueOf(totalFiles));
 		else {
 			dummy.setText("");
+		}
+		if(dummyCorpus != null){
+			int totalCorpusClass = calculateCorpus(fTreeViewer.getCheckedElements());
+			if (totalCorpusClass > 0)
+				dummyCorpus.setText("No. of corpus class selected : "
+						+ String.valueOf(totalCorpusClass));
+			else {
+				dummyCorpus.setText("");
+			}
 		}
 	}
 
@@ -193,7 +210,7 @@ public class TargetLocationsGroup {
 		fTreeViewer.setContentProvider(new TargetLocationContentProvider());
 		fTreeViewer.setLabelProvider(new TargetLocationLabelProvider());
 		if (this.locationPaths == null) {
-			this.locationPaths = new ArrayList<TreeParent>();
+			this.locationPaths = new LinkedHashSet<TreeParent>();
 		}
 		this.fTreeViewer.setInput(this.locationPaths);
 
@@ -227,15 +244,7 @@ public class TargetLocationsGroup {
 			} else {
 				if(file instanceof TreeParent){
 					if(((TreeParent) file).getCorpusClass()!= null){
-						String classPath = ((TreeParent) file).getCorpusClass().getClassPath();
-						if(new File(classPath).isFile()){
-							select++;
-							 continue;
-						}
-						else if(new File(classPath).isDirectory()){
-							select += new File(classPath).listFiles().length;
-							continue;
-						}
+						continue;
 					}
 					else{
 						
@@ -247,6 +256,24 @@ public class TargetLocationsGroup {
 			if (new File(fileName).isFile()) {
 				select++;
 			}
+		}
+		return select;
+
+	}
+	
+	private int calculateCorpus(Object[] objects) {
+		int select = 0;
+		for (Object file : objects) {
+			
+				if(file instanceof TreeParent){
+					if(((TreeParent) file).getCorpusClass()!= null){
+						select++;
+						}
+					
+					
+				}
+			
+			
 		}
 		return select;
 
@@ -389,13 +416,16 @@ public class TargetLocationsGroup {
 
 	public String updateLocationTree(Object[] path) {
 		if (this.locationPaths == null) {
-			this.locationPaths = new ArrayList<TreeParent>();
+			this.locationPaths = new LinkedHashSet<TreeParent>();
 		}
 		if (!path.equals("root")) {
 			for (Object file : path) {
 				node = null;
 				boolean isCorpus = false;
 				if (file instanceof ICorpus) {
+					if (checkExisting((ICorpus) file)) {
+						continue;
+					}
 					node = new TreeParent((Corpus) file);
 					processCorpusFiles(node);
 				} else {
@@ -453,6 +483,15 @@ public class TargetLocationsGroup {
 		}
 		updateSelectionText();
 		return "";
+	}
+
+	private boolean checkExisting(ICorpus file) {
+		for (TreeParent node : locationPaths) {
+			if(node.getCorpus() != null && node.getCorpus().getCorpusId().equals(file.getCorpusId())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String sizeCheck(String[] path) {

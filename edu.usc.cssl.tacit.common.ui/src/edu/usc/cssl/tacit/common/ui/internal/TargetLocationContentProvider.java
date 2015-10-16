@@ -1,7 +1,7 @@
 package edu.usc.cssl.tacit.common.ui.internal;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -55,9 +55,9 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 	   * @return Object[]
 	   */
 	  public Object[] getElements(Object arg0) {
-		  List<Object> elements = new ArrayList<Object>();
-		  if(arg0 instanceof List){
-			  List<Object> elementList = (List<Object>) arg0;
+		  Set<Object> elements = new LinkedHashSet<Object>();
+		  if(arg0 instanceof Set){
+			  Set<Object> elementList = (Set<Object>) arg0;
 			  elements.addAll(elementList);
 		  }
 			  else {
