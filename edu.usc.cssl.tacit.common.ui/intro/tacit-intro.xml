@@ -4,6 +4,7 @@
 		 <group style-id="content-group" id="tacitintro-introLink-group">
 			 <link label="TACIT Tools Overview" url="http://cssl.usc.edu/wiki/index.php/TACIT" id="tacitintro-introLink" style-id="content-link">
 				 <text>This site provides you helpful information on features implemented in TACIT</text>
+				
 			 </link>
 		 </group>
 	</extensionContent>
