@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.json.simple.JSONArray;
@@ -115,7 +116,7 @@ public class RedditPlugin {
 			monitor.subTask("Cancelling...");
 			return;
 		} 
-		filesDownloaded++;
+		//filesDownloaded++; for summary file
 		ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);
         monitor.worked(5);
 	}
@@ -161,7 +162,7 @@ public class RedditPlugin {
 			monitor.subTask("Cancelling...");
 			return;
 		}
-		filesDownloaded++;
+		//filesDownloaded++; for summary files
 		ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);		
         monitor.worked(5);
 	}
@@ -198,7 +199,7 @@ public class RedditPlugin {
 			monitor.subTask("Cancelling...");
 			return;
 		}
-		filesDownloaded++;
+		//filesDownloaded++; // for the summary file
 		ConsoleView.printlInConsoleln("Total no.of.files downloaded :"+ filesDownloaded);			
         monitor.worked(5);
 	}
@@ -263,7 +264,7 @@ public class RedditPlugin {
 		}
 		System.out.println("Crawling comments :" + permalink);
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
-		String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) + "-" + df.format(dateObj) + ".json";	    
+		String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) + "-" + df.format(dateObj) +  UUID.randomUUID().toString() + ".json";	    
 		JSONArray linkComments = new JSONArray();		
 		Object response = restClient.get(permalink.concat("/.json?sort=best"), null).getResponseObject(); // sorts by best
 		int count = 0;
@@ -360,6 +361,7 @@ public class RedditPlugin {
         simplifiedData.put("num_comments", data.get("num_comments"));
         simplifiedData.put("created_utc", data.get("created_utc"));
         simplifiedData.put("selftext", data.get("selftext"));
+        simplifiedData.put("subreddit", data.get("subreddit"));
         simplifiedData.put("thumbnail", data.get("thumbnail"));
         simplifiedData.put("author", data.get("author"));
         simplifiedData.put("url", data.get("url"));
