@@ -111,26 +111,26 @@ public class CrossValidator {
 		for (int i = 0; i < kValue; i++) {
 			File toDelete = new File(outputPath
 					+ System.getProperty("file.separator")
-					+ "SVM_Classification_k" + Integer.toString(i + 1)
+					+ "SVM-Classification_k" + Integer.toString(i + 1)
 					+ ".hashmap");
 			toDelete.delete();
 			toDelete = new File(outputPath
 					+ System.getProperty("file.separator")
-					+ "SVM_Classification_k" + Integer.toString(i + 1)
+					+ "SVM-Classification_k" + Integer.toString(i + 1)
 					+ ".model");
 			toDelete.delete();
 			toDelete = new File(outputPath
 					+ System.getProperty("file.separator")
-					+ "SVM_Classification_k" + Integer.toString(i + 1) + ".out");
+					+ "SVM-Classification_k" + Integer.toString(i + 1) + ".out");
 			toDelete.delete();
 			toDelete = new File(outputPath
 					+ System.getProperty("file.separator")
-					+ "SVM_Classification_k" + Integer.toString(i + 1)
+					+ "SVM-Classification_k" + Integer.toString(i + 1)
 					+ ".test");
 			toDelete.delete();
 			toDelete = new File(outputPath
 					+ System.getProperty("file.separator")
-					+ "SVM_Classification_k" + Integer.toString(i + 1)
+					+ "SVM-Classification_k" + Integer.toString(i + 1)
 					+ ".train");
 			toDelete.delete();
 		}
