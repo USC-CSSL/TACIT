@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 
+import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -44,6 +45,7 @@ public class Preprocess {
 	private boolean doStopWords = false;
 	private boolean doLangDetect = false;
 	private boolean doCleanUp = false;
+	private boolean latinStem = false;
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	// private String[] inputFiles;
 	private String outputPath;
@@ -54,6 +56,7 @@ public class Preprocess {
 	private String callingPlugin;
 	private String currTime;
 	private String preprocessingParentFolder;
+	private String latinStemLocation;
 
 	public Preprocess(String caller) {
 		this.stopwordsFile = CommonUiActivator.getDefault()
@@ -72,6 +75,8 @@ public class Preprocess {
 				.getPreferenceStore().getString("ispreprocessed"));
 		this.outputPath = CommonUiActivator.getDefault().getPreferenceStore()
 				.getString("pp_output_path");
+		this.latinStemLocation = CommonUiActivator.getDefault().getPreferenceStore()
+				.getString("latin_stemmer");
 		this.callingPlugin = caller;
 		this.currTime = String.valueOf(System.currentTimeMillis());
 	}
@@ -157,6 +162,9 @@ public class Preprocess {
 							+ ex.getCode());
 					// ex.getCode().toString() -> is not visible!
 				}
+			} else if (stemLang.equals("LATIN")) {
+				doLangDetect = false;
+				latinStem = true;
 			} else {
 				doLangDetect = false;
 				stemmer = stemSelect(stemLang);
@@ -223,6 +231,16 @@ public class Preprocess {
 						linear = removeStopWords(linear);
 					if (doStemming && stemmer != null)
 						linear = stem(linear);
+					if (doStemming && latinStem) {
+						LatinStemFilter ls = new LatinStemFilter(latinStemLocation);
+						try {
+							linear = ls.doStemming(linear);
+						} catch (TreeTaggerException e) {
+							ConsoleView.printlInConsole("Error stemming the line: "+linear);
+							ConsoleView.printlInConsole("Skipping the line and continuing.");
+						}
+						ls.destroyTT();
+					}
 					bw.write(linear + "\n");
 				}
 			}

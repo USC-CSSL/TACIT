@@ -37,6 +37,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Text location;
 	private Text delimeters;
 	private Text output;
+	private Text LatinStemmerLocation;
 
 	public PrepocessorSettings() {
 	}
@@ -149,6 +150,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		getPreferenceStore().setDefault(INITIAL, "true");
 		getPreferenceStore().setDefault(OUTPUT_PATH,
 				System.getProperty("user.dir"));
+		getPreferenceStore().setDefault(LATIN_STEMMER, "");
 	}
 
 	private void setDefaultValues() {
@@ -165,6 +167,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		cleanup.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(PRE_PROCESSED)));
 		output.setText(getPreferenceStore().getDefaultString(OUTPUT_PATH));
+		LatinStemmerLocation.setText(getPreferenceStore().getDefaultString(LATIN_STEMMER));
 		language.setEnabled(false);
 	}
 
@@ -181,6 +184,7 @@ public class PrepocessorSettings extends PreferencePage implements
 			language.setEnabled(true);
 		}
 		output.setText(load(OUTPUT_PATH));
+		LatinStemmerLocation.setText(load(LATIN_STEMMER));
 
 	}
 
@@ -211,13 +215,44 @@ public class PrepocessorSettings extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				if (stemming.getSelection()) {
 					language.setEnabled(true);
+					LatinStemmerLocation.setEnabled(true);
 					language.select(0);
 				} else {
 					language.setEnabled(false);
+					LatinStemmerLocation.setEnabled(false);
 				}
 			}
 		});
+		
+		Label locationLbl = new Label(sectionClient, SWT.NONE);
+		locationLbl.setText("Latin Stemmer Location:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(locationLbl);
 
+		LatinStemmerLocation = new Text(sectionClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(LatinStemmerLocation);
+		
+		final Button browseBtn = new Button(sectionClient, SWT.PUSH);
+		browseBtn.setText("Browse...");
+		browseBtn.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
+						SWT.OPEN);
+				dlg.setText("Open");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				LatinStemmerLocation.setText(path);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
 		return stemming;
 	}
 
@@ -346,6 +381,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(STEMMING, Boolean.toString(stemming.getSelection()));
 		store(LANGUAGE, language.getText());
 		store(OUTPUT_PATH, output.getText());
+		store(LATIN_STEMMER,LatinStemmerLocation.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
 		return super.performOk();
 	}

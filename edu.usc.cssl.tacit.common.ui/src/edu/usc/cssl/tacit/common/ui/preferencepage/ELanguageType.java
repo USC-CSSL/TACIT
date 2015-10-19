@@ -12,7 +12,8 @@ public enum ELanguageType {
 	FI,
 	HU,
 	NO,
-	TR;
+	TR,
+	LATIN;
 	private String text;
 
 	ELanguageType(String langName){

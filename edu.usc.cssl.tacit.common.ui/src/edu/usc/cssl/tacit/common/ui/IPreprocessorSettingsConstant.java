@@ -11,5 +11,5 @@ public interface IPreprocessorSettingsConstant {
 	public static String LOWER_CASE = "islower_case";
 	public static String PRE_PROCESSED = "ispreprocessed";
 	public static String OUTPUT_PATH = "pp_output_path";
-
+	public static String LATIN_STEMMER = "latin_stemmer";
 }

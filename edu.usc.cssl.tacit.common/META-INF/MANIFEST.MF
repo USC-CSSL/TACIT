@@ -31,4 +31,5 @@ Bundle-ClassPath: gson-2.3.1.jar,
  jackson-core-2.5.0.jar,
  json-path-2.0.0.jar,
  json-path-assert-2.0.0.jar,
- json-smart-2.1.1.jar
+ json-smart-2.1.1.jar,
+ org.annolab.tt4j-1.2.1.jar
