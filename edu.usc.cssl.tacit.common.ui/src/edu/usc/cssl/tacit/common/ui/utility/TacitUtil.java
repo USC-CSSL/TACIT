@@ -53,6 +53,8 @@ public class TacitUtil {
 		if (!folder.exists() || !folder.isDirectory())
 			return subFiles;
 		for (File f : folder.listFiles()) {
+			if(f.getName().endsWith(".csv"))
+				continue;
 			if (!f.isDirectory())
 				subFiles.add(f.getAbsolutePath());
 			else
