@@ -23,10 +23,6 @@
                 value="TACIT">
           </property>
           <property
-                name="preferenceCustomization"
-                value="plugin_customization.ini">
-          </property>
-          <property
                 name="windowImages"
                 value="icons/icon16.png,icons/icon32.png,icons/icon48.png,icons/icon64.png,icons/icon128.png,icons/icon256.png">
           </property>
@@ -49,6 +45,10 @@
           <property
                 name="aboutText"
                 value="(c) Copyright 2015, University of Southern California. All Rights Reserved.&#x0A;&#x0A;This software is experimental in nature and is provided on an AS-IS basis only. The University SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS AND IMPLIED, INCLUDING WITHOUT LIMITATION ANY WARRANTY AS TO MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE.&#x0A;&#x0A;This software may be reproduced and used for non-commercial purposes only, so long as this copyright notice is reproduces with each such copy made.">
+          </property>
+          <property
+                name="preferenceCustomization"
+                value="plugin_customization.ini">
           </property>
        </product>
     </extension>

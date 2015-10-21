@@ -60,6 +60,7 @@ public class TargetLocationsGroup {
 	private Label dummyCorpus;
 	private ManageCorpora corporaManagement;
 	private TreeParent node;
+	private Button fAddCorpusClassButton;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -74,11 +75,11 @@ public class TargetLocationsGroup {
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent,
 			FormToolkit toolkit, boolean isFolder, boolean isFile,
-			boolean isCorpus) {
+			boolean isCorpus,boolean isClass) {
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
 		contentTable.createFormContents(parent, toolkit, isFolder, isFile,
-				isCorpus);
+				isCorpus,isClass);
 		return contentTable;
 	}
 
@@ -122,7 +123,7 @@ public class TargetLocationsGroup {
 	 * @param isFolder
 	 */
 	private void createFormContents(Composite parent, FormToolkit toolkit,
-			boolean isFolder, boolean isFile, boolean isCorpus) {
+			boolean isFolder, boolean isFile, boolean isCorpus,boolean isClass) {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
@@ -152,6 +153,12 @@ public class TargetLocationsGroup {
 					"Add Corpus...", SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddCorpusButton);
+		}
+		if(isClass){
+			fAddCorpusClassButton = toolkit.createButton(buttonComp,
+					"Add Corpus Class...", SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddCorpusClassButton);
 		}
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
@@ -316,6 +323,60 @@ public class TargetLocationsGroup {
 			});
 		}
 
+		if (fAddCorpusClassButton != null) {
+			fAddCorpusClassButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final TacitElementSelectionDialog CorpusDialog = new TacitElementSelectionDialog(
+							fAddCorpusButton.getShell());
+					CorpusDialog.setTitle("Select the Corpus Class from the list");
+					CorpusDialog.setMessage("Enter Corpus Class name to search");
+					final List<ICorpusClass> allCorpus = new ArrayList<ICorpusClass>();
+//					Job getCorpus = new Job("Retrieving corpus list ...") {
+//						@Override
+//						protected IStatus run(IProgressMonitor monitor) {
+//							allCorpus.clear();
+//							try {
+//								List<ICorpus> corpusList = corporaManagement
+//										.getAllCorpusDetails();
+//								allCorpus.addAll(corpusList);
+//								CorpusDialog.setElements(allCorpus.toArray());
+//								Display.getDefault().syncExec(new Runnable() {
+//									@Override
+//									public void run() {
+//										CorpusDialog.refresh(allCorpus
+//												.toArray());
+//										
+//									}
+//								});
+//							} catch (final Exception ex) {
+//							}
+//							return Status.OK_STATUS;
+//						}
+//					};
+//					getCorpus.schedule();
+					List<ICorpus> corpusList = corporaManagement
+							.getAllCorpusDetails();
+					List<ICorpusClass> corpusClass = new ArrayList<ICorpusClass>();
+					for (ICorpus iCorpusClass : corpusList) {
+						corpusClass.addAll(iCorpusClass.getClasses());
+					}
+					allCorpus.addAll(corpusClass);
+					CorpusDialog.setElements(allCorpus.toArray());
+					CorpusDialog.setMultipleSelection(true);
+
+					if (CorpusDialog.open() == Window.OK) {
+
+						updateLocationTree((Object[]) CorpusDialog
+								.getSelectionObjects().toArray(
+										new Object[CorpusDialog
+												.getSelectionObjects().size()]));
+					}
+				}
+			});
+		}
+		
+		
 		if (fAddCorpusButton != null) {
 			fAddCorpusButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -428,7 +489,11 @@ public class TargetLocationsGroup {
 					}
 					node = new TreeParent((Corpus) file);
 					processCorpusFiles(node);
-				} else {
+				} else if(file instanceof ICorpusClass){
+					continue;
+				}else
+				{
+				
 					if (checkExisting((String) file)) {
 						continue;
 					}
@@ -493,6 +558,15 @@ public class TargetLocationsGroup {
 		}
 		return false;
 	}
+	
+//	private boolean checkExisting(ICorpusClass file) {
+//		for (TreeParent node : locationPaths) {
+//			if(node.getCorpusClass() != null && node.getCorpus().getCorpusId().equals(file.getCorpusId())){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	private String sizeCheck(String[] path) {
 		String result = "";

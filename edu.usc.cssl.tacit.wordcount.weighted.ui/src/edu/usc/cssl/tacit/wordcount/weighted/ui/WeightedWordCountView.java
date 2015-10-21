@@ -120,10 +120,10 @@ public class WeightedWordCountView extends ViewPart implements
 		inputLayoutData = TacitFormComposite
 				.createTableSection(client, toolkit, layout, "Input Details",
 						"Add File(s) and Folder(s) to include in analysis.",
-						true, true, true);
+						true, true, true,false);
 		dictLayoutData = TacitFormComposite
 				.createTableSection(client, toolkit, layout, "Dictionary",
-						"Add location of Dictionary", false, true, false);
+						"Add location of Dictionary", false, true, false,false);
 
 		Composite compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)

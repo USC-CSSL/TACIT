@@ -11,6 +11,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
+
 public class TacitElementSelectionDialog extends ElementListSelectionDialog {
 	public TacitElementSelectionDialog(Shell parent) {
 		super(parent, new ArrayLabelProvider());
@@ -22,6 +24,9 @@ public class TacitElementSelectionDialog extends ElementListSelectionDialog {
 	
 	static class ArrayLabelProvider extends LabelProvider {
 		public String getText(Object element) {
+			if(element instanceof ICorpusClass){
+				return ((ICorpusClass)element).getClassName() +" : "+((ICorpusClass)element).getParent().getCorpusName();
+			}else
 			return  element.toString();
 		}
 	}

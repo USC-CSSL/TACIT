@@ -76,7 +76,7 @@ public class PreprocessorView extends ViewPart {
 		layout.numColumns = 1;
 	
 		layData = TacitFormComposite.createTableSection(client, toolkit,
-				layout, "Input Details", "Add File(s) and Folder(s) to include in analysis.", true, true, false);
+				layout, "Input Details", "Add File(s) and Folder(s) to include in analysis.", true, true, false,false);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(layData.getSectionClient());
 
 		createPreprocessLink(layData.getSectionClient());

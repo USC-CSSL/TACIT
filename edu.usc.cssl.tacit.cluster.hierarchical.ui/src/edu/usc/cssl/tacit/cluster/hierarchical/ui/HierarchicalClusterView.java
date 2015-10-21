@@ -87,7 +87,7 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 		layout.numColumns = 1;
 
 		layoutData = TacitFormComposite.createTableSection(client, toolkit, layout, "Input Details",
-				"Add File(s) and Folder(s) to include in analysis.", true, true, true);
+				"Add File(s) and Folder(s) to include in analysis.", true, true, true,false);
 
 		Composite compInput;
 		compInput = layoutData.getSectionClient();

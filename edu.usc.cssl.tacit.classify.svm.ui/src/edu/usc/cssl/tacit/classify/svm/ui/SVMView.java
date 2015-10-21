@@ -102,11 +102,11 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		class1LayoutData = TacitFormComposite
 				.createTableSection(client, toolkit, layout, "Class 1 Details",
 						"Add File(s) and Folder(s) to include in analysis.",
-						true, true, true);
+						true, true, true,false);
 		class2LayoutData = TacitFormComposite
 				.createTableSection(client, toolkit, layout, "Class 2 Details",
 						"Add File(s) and Folder(s) to include in analysis.",
-						true, true, true);
+						true, true, true,false);
 
 		createPreprocessLink(form.getBody());
 		createInputParams(form.getBody());
