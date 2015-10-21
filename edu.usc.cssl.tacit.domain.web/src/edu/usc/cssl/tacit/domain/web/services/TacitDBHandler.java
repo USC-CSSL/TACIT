@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,13 +27,17 @@ public class TacitDBHandler extends HttpServlet {
 			String org = request.getParameter("orgname");
 			String emailid = request.getParameter("emailid");
 			String orgType = request.getParameter("orgtype");
+			// to let users from cssl to test freely
+			if(!emailid.equals("cssl@usc.edu")) {
+				
 			MongoClient mongoClient = new MongoClient();
-
-			MongoDatabase database = mongoClient.getDatabase("test");
+			String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+			MongoDatabase database = mongoClient.getDatabase("downloads");
 			MongoCollection<Document> collection = database.getCollection("tacit");
 			Document doc = new Document("organization", org).append("emailid",
-					emailid).append("orgtype", orgType);
+					emailid).append("orgtype", orgType).append("createdDate", date);
 			collection.insertOne(doc);
+			}
 			// Set response content type
 			response.setContentType("text/html");
 
