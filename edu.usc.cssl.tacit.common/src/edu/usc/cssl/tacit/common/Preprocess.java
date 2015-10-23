@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -78,7 +80,9 @@ public class Preprocess {
 		this.latinStemLocation = CommonUiActivator.getDefault().getPreferenceStore()
 				.getString("latin_stemmer");
 		this.callingPlugin = caller;
-		this.currTime = String.valueOf(System.currentTimeMillis());
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+	    Date now = new Date();
+	    this.currTime = sdfDate.format(now);
 	}
 
 	// for File as well as Directory
