@@ -99,7 +99,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		inputLayoutData = TacitFormComposite.createTableSection(client,
 				toolkit, layout, "Input Details",
 				"Add File(s) and Folder(s) to include in analysis.", true,
-				true, true,false);
+				true, true, false);
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
@@ -107,7 +107,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
-		seedFile = createWordFileControl(compInput, "Word File :");
+		seedFile = createWordFileControl(compInput, "Seed File :");
 		windowSize = createAdditionalOptions(compInput, "Window Size :", "1");
 		thresholdValue = createAdditionalOptions(compInput, "Threshold :", "");
 
@@ -248,7 +248,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 			}
 
 			public void run() {
-				if(!canProceed()) {
+				if (!canProceed()) {
 					return;
 				}
 				final String outputPath = layoutData.getOutputLabel().getText();
@@ -271,7 +271,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								null, null, form);
-						monitor.beginTask("TACIT started clustering...",
+						monitor.beginTask(
+								"TACIT started co-occurence analysis...",
 								selectedFiles.size() + 40);
 						preprocessTask = null;
 						dirPath = "";
@@ -302,8 +303,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 							} catch (IOException e) {
 								e.printStackTrace();
-							}
-							catch (NullPointerException e) {
+							} catch (NullPointerException e) {
 								e.printStackTrace();
 							}
 						} else {
@@ -405,6 +405,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");
+
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
 						"Output");
@@ -418,6 +419,29 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		if (inputLayoutData.getSelectedFiles().size() < 1) {
 			form.getMessageManager().addMessage("input",
 					"Select/Add atleast one input file", null,
+					IMessageProvider.ERROR);
+			canPerform = false;
+		}
+		if (windowSize.getText().isEmpty()
+				|| Integer.parseInt(windowSize.getText()) < 1) {
+			form.getMessageManager().addMessage("windowsize",
+					"Window should be an integer value greater than 1", null,
+					IMessageProvider.ERROR);
+			canPerform = false;
+		}
+
+		if (thresholdValue.getText().isEmpty()
+				|| Integer.parseInt(thresholdValue.getText()) < 1) {
+			form.getMessageManager().addMessage("threshold",
+					"Threshold should be an integer value greater than 1",
+					null, IMessageProvider.ERROR);
+			canPerform = false;
+		}
+
+		if (Integer.parseInt(thresholdValue.getText()) > Integer
+				.parseInt(windowSize.getText())) {
+			form.getMessageManager().addMessage("threshold",
+					"Window size should be greater than threshold", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
