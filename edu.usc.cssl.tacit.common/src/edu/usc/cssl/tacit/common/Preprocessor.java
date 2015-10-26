@@ -1,0 +1,169 @@
+package edu.usc.cssl.tacit.common;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+
+import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.DutchStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.EnglishStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.FinnishStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.FrenchStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.GermanStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.HungarianStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.ItalianStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.NorwegianStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.SnowballStemmer;
+import edu.usc.cssl.tacit.common.snowballstemmer.TurkishStemmer;
+import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
+public class Preprocessor {
+
+	private String ppDir = "";
+	private boolean doLowercase = false;
+	private boolean doStemming = false;
+	private boolean doStopWords = false;
+	private boolean doCleanUp = false;
+	private boolean isLatin = false;
+	private String delimiters = " .,;'\"!-()[]{}:?";
+	private String ppOutputPath;
+	private HashSet<String> stopWordsSet = new HashSet<String>();
+	SnowballStemmer stemmer = null;
+	LatinStemFilter latinStemmer = null;
+	private String stemLang;
+	private String currTime;
+	private String latinStemLocation;
+
+	public String processData(String caller, List<Object> inData,
+			boolean doPreprocessing) throws IOException {
+
+		boolean existCorpus = false;
+
+		setupParams(caller, doPreprocessing);
+
+		return ppDir;
+	}
+
+	private void setupParams(String caller, boolean doPreprocessing)
+			throws IOException {
+		if (doPreprocessing) {
+			// Setup global parameters
+			String stopwordsFile = CommonUiActivator.getDefault()
+					.getPreferenceStore().getString("stop_words_path");
+			delimiters = CommonUiActivator.getDefault().getPreferenceStore()
+					.getString("delimeters");
+			stemLang = CommonUiActivator.getDefault().getPreferenceStore()
+					.getString("language");
+			doLowercase = Boolean.parseBoolean(CommonUiActivator.getDefault()
+					.getPreferenceStore().getString("islower_case"));
+			doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault()
+					.getPreferenceStore().getString("isStemming"));
+			doStopWords = Boolean.parseBoolean(CommonUiActivator.getDefault()
+					.getPreferenceStore().getString("removeStopWords"));
+			doCleanUp = Boolean.parseBoolean(CommonUiActivator.getDefault()
+					.getPreferenceStore().getString("ispreprocessed"));
+			ppOutputPath = CommonUiActivator.getDefault().getPreferenceStore()
+					.getString("pp_output_path");
+			latinStemLocation = CommonUiActivator.getDefault()
+					.getPreferenceStore().getString("latin_stemmer");
+
+			SimpleDateFormat sdfDate = new SimpleDateFormat(
+					"yyyy-MM-dd-HH-mm-ss");
+			Date now = new Date();
+			this.currTime = sdfDate.format(now);
+
+			// Setup output directory after preprocessing
+			if (ppOutputPath == null || ppOutputPath.trim().length() == 0) {
+				String tempOutputPath = System.getProperty("user.dir")
+						+ System.getProperty("file.separator") + "ppFiles";
+
+				if (!(new File(tempOutputPath).exists())) {
+					new File(tempOutputPath).mkdir();
+				} else {
+					ppDir = tempOutputPath
+							+ System.getProperty("file.separator") + caller
+							+ "_" + currTime;
+				}
+			} else {
+				ppDir = ppOutputPath + System.getProperty("file.separator")
+						+ caller + "_" + currTime;
+				new File(ppDir).mkdir();
+			}
+
+			// Setup stop words set
+			if (doStopWords) {
+				String currentLine;
+				File sfile = new File(stopwordsFile);
+				if (!sfile.exists() || sfile.isDirectory()) {
+					ConsoleView
+							.printlInConsoleln("Stop Words file is not valid. Please provide a correct file path");
+					throw new IOException();
+				}
+				BufferedReader br = new BufferedReader(new FileReader(new File(
+						stopwordsFile)));
+				while ((currentLine = br.readLine()) != null) {
+					stopWordsSet.add(currentLine.trim().toLowerCase());
+				}
+				br.close();
+			}
+
+			// Setup Stemmer
+			if (doStemming) {
+				if (stemLang.equals("LATIN")) {
+					isLatin = true;
+					latinStemmer = new LatinStemFilter(latinStemLocation);
+				} else {
+					stemmer = stemSelect(stemLang);
+				}
+			}
+		}
+	}
+
+	private SnowballStemmer stemSelect(String stemLang) {
+		if (stemLang.toUpperCase().equals("EN")) {
+			return new EnglishStemmer();
+		} else if (stemLang.toUpperCase().equals("DE")) {
+			return new GermanStemmer();
+		} else if (stemLang.toUpperCase().equals("FR")) {
+			return new FrenchStemmer();
+		} else if (stemLang.toUpperCase().equals("IT")) {
+			return new ItalianStemmer();
+		} else if (stemLang.toUpperCase().equals("DA")) {
+			return new DanishStemmer();
+		} else if (stemLang.toUpperCase().equals("NL")) {
+			return new DutchStemmer();
+		} else if (stemLang.toUpperCase().equals("FI")) {
+			return new FinnishStemmer();
+		} else if (stemLang.toUpperCase().equals("HU")) {
+			return new HungarianStemmer();
+		} else if (stemLang.toUpperCase().equals("NO")) {
+			return new NorwegianStemmer();
+		} else if (stemLang.toUpperCase().equals("TR")) {
+			return new TurkishStemmer();
+		}
+		return null;
+	}
+
+	public void clean() {
+		if (ppDir != "") {
+			if (doCleanUp) {
+				File toDel = new File(ppDir);
+				try {
+					if (toDel.exists())
+						FileUtils.deleteDirectory(toDel);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
+	}
+}
