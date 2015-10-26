@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,10 @@ import edu.usc.cssl.tacit.common.snowballstemmer.NorwegianStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.SnowballStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.TurkishStemmer;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
+import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class Preprocessor {
@@ -36,24 +41,37 @@ public class Preprocessor {
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	private String ppOutputPath;
 	private HashSet<String> stopWordsSet = new HashSet<String>();
+	private ArrayList<String> outputFiles = new ArrayList<String>();
 	SnowballStemmer stemmer = null;
 	LatinStemFilter latinStemmer = null;
 	private String stemLang;
 	private String currTime;
 	private String latinStemLocation;
 
-	public String processData(String caller, List<Object> inData,
+	public ArrayList<String> processData(String caller, List<Object> inData,
 			boolean doPreprocessing) throws IOException {
 
-		boolean existCorpus = false;
+		createppDir(caller);
+		setupParams(doPreprocessing);
 
-		setupParams(caller, doPreprocessing);
+		for (Object obj : inData) {
+			if (obj instanceof CorpusClass) {
+				// Process each corpus
+				// Include Querying
+			} else {
+				File inputFile = new File((String) obj);
+				if (!inputFile.isDirectory()) {
+					// add all files of dir
+				} else {
+					// add file to list
+				}
+			}
+		}
 
-		return ppDir;
+		return outputFiles;
 	}
 
-	private void setupParams(String caller, boolean doPreprocessing)
-			throws IOException {
+	private void setupParams(boolean doPreprocessing) throws IOException {
 		if (doPreprocessing) {
 			// Setup global parameters
 			String stopwordsFile = CommonUiActivator.getDefault()
@@ -79,24 +97,6 @@ public class Preprocessor {
 					"yyyy-MM-dd-HH-mm-ss");
 			Date now = new Date();
 			this.currTime = sdfDate.format(now);
-
-			// Setup output directory after preprocessing
-			if (ppOutputPath == null || ppOutputPath.trim().length() == 0) {
-				String tempOutputPath = System.getProperty("user.dir")
-						+ System.getProperty("file.separator") + "ppFiles";
-
-				if (!(new File(tempOutputPath).exists())) {
-					new File(tempOutputPath).mkdir();
-				} else {
-					ppDir = tempOutputPath
-							+ System.getProperty("file.separator") + caller
-							+ "_" + currTime;
-				}
-			} else {
-				ppDir = ppOutputPath + System.getProperty("file.separator")
-						+ caller + "_" + currTime;
-				new File(ppDir).mkdir();
-			}
 
 			// Setup stop words set
 			if (doStopWords) {
@@ -124,6 +124,24 @@ public class Preprocessor {
 					stemmer = stemSelect(stemLang);
 				}
 			}
+		}
+	}
+
+	private void createppDir(String caller) {
+		if (ppOutputPath == null || ppOutputPath.trim().length() == 0) {
+			String tempOutputPath = System.getProperty("user.dir")
+					+ System.getProperty("file.separator") + "ppFiles";
+
+			if (!(new File(tempOutputPath).exists())) {
+				new File(tempOutputPath).mkdir();
+			} else {
+				ppDir = tempOutputPath + System.getProperty("file.separator")
+						+ caller + "_" + currTime;
+			}
+		} else {
+			ppDir = ppOutputPath + System.getProperty("file.separator")
+					+ caller + "_" + currTime;
+			new File(ppDir).mkdir();
 		}
 	}
 
