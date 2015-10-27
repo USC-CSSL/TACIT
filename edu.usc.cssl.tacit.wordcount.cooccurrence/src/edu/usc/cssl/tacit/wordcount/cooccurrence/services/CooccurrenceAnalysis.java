@@ -61,6 +61,8 @@ public class CooccurrenceAnalysis {
 		while ((currentLine = br.readLine()) != null) {
 			seeds = currentLine.trim().toLowerCase().split(" ");
 			for (String seed : seeds) {
+				seed = seed.trim();
+				if (seed.isEmpty() || seed.equals("")) continue;
 				if (!seedWords.containsKey(seed)) {
 					seedWords.put(seed, new ArrayList<Integer>());
 				}
@@ -173,14 +175,14 @@ public class CooccurrenceAnalysis {
 						String pprev_word = null;
 						String prev_word = null;
 						for (int wi = 0; wi < words.size(); wi++) {
-							String word = words.get(wi);
+							String word = words.get(wi).trim();
 							if (word.isEmpty() || word.equals(""))
 								continue;
 
 							if (window.size() > 0)
 								window.remove(0);
 							if (windowend < words.size() && windowSize > 1)
-								window.add(words.get(windowend++));
+								window.add(words.get(windowend++).trim());
 
 							if (buildMatrix) {
 								Map<String, Integer> vec = wordMat.get(word);
@@ -280,6 +282,10 @@ public class CooccurrenceAnalysis {
 					writePhrases(phrase, phraseFilename);
 					writeSeedComboStats(freqFilename);
 				}
+				else {
+					appendLog("None of the seed combinations occured in the input files for the given window size and threshold");
+					appendLog("Phrase and frequency files not created");
+				}
 			} catch (OutOfMemoryError e) {
 				appendLog("Exception occurred in Cooccurrence Analysis :");
 				appendLog("Sorry the co-occurence matrix is so huge. Please run again without opting Build Matrix");
@@ -310,6 +316,9 @@ public class CooccurrenceAnalysis {
 			appendLog("Writing frequencies of seed combinations at "
 					+ outputPath + File.separator + filename);
 			fw.close();
+			appendLog("Seed combination frequencies stored in " + outputPath + File.separator
+					+ filename);
+		
 		} catch (IOException e) {
 			appendLog("Error writing seed frequencies to file " + filename + e);
 		}
@@ -332,6 +341,9 @@ public class CooccurrenceAnalysis {
 			appendLog("Writing phrases at " + outputPath + File.separator
 					+ filename);
 			fw.close();
+			appendLog("Phrases stored in " + outputPath + File.separator
+					+ filename);
+		
 		} catch (IOException e) {
 			appendLog("Error writing phrases to file " + filename + e);
 		}
@@ -381,6 +393,9 @@ public class CooccurrenceAnalysis {
 			}
 			appendLog("Writng Word Matrix into " + filename);
 			fw.close();
+			appendLog("Word to word matrix stored in " + outputPath
+					+ File.separator + filename);
+			
 		} catch (IOException e) {
 			appendLog("Error writing word matrix " + e);
 		}
@@ -412,13 +427,6 @@ public class CooccurrenceAnalysis {
 			return isSuccess;
 		}
 
-		appendLog("Output for Co-occurrence Analysis");
-		appendLog("Word to word matrix stored in " + fOutputDir
-				+ File.separator + "co-occur_wordmatrix.csv");
-		if (seedFileLocation != "" && !seedFileLocation.isEmpty()
-				&& windowSize != 0)
-			appendLog("Phrases stored in " + fOutputDir + File.separator
-					+ "phrases.txt");
 		return true;
 
 	}
