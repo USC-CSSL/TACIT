@@ -24,9 +24,6 @@ import edu.usc.cssl.tacit.common.snowballstemmer.NorwegianStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.SnowballStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.TurkishStemmer;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
-import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
-import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -56,19 +53,62 @@ public class Preprocessor {
 
 		for (Object obj : inData) {
 			if (obj instanceof CorpusClass) {
-				// Process each corpus
-				// Include Querying
+				processCorpus((CorpusClass) obj, doPreprocessing);
 			} else {
 				File inputFile = new File((String) obj);
 				if (!inputFile.isDirectory()) {
-					// add all files of dir
+					processDirectory(inputFile.getAbsolutePath(),
+							doPreprocessing);
 				} else {
-					// add file to list
+					if (doPreprocessing) {
+						outputFiles
+								.add(processFile(inputFile.getAbsolutePath()));
+					} else {
+						outputFiles.add(inputFile.getAbsolutePath());
+					}
 				}
 			}
 		}
 
 		return outputFiles;
+	}
+
+	private void processDirectory(String dirpath, boolean doPreprocessing) {
+		File[] files = new File(dirpath).listFiles();
+
+		if (doPreprocessing) {
+			for (File file : files) {
+				outputFiles.add(processFile(file.getAbsolutePath()));
+			}
+		} else {
+			for (File file : files) {
+				outputFiles.add(file.getAbsolutePath());
+			}
+		}
+	}
+
+	private String processFile(String inFile) {
+
+		return "";
+	}
+
+	/*
+	 * CorpusType = Json, doPreprocessing = True: Traverse through all the data
+	 * of the corpus. Check if the Json data satisfies query parameters. If it
+	 * does, create a single temp file corresponding to that unit of data. Pass
+	 * this temp file to processFile to perform all preprocessing tasks. Add the
+	 * output of processFile to outputFiles. Note: You just need to create a
+	 * single temp file. You can recycle it for the data. Make sure to delete
+	 * this file at the end of the function
+	 * 
+	 * CorpusType = Json, doPreprocessing = False: Create temp files out of the
+	 * Json data if the query is satisfied and add them to outputFiles
+	 * 
+	 * CorpusType = Plain Text: Call processDirectory, passing one class path at
+	 * a time
+	 */
+	private void processCorpus(CorpusClass corpus, boolean doPreprocessing) {
+
 	}
 
 	private void setupParams(boolean doPreprocessing) throws IOException {
