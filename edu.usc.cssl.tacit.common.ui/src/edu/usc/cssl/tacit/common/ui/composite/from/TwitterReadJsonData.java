@@ -24,24 +24,28 @@ public class TwitterReadJsonData {
 	Date dateobj = new Date();
 	private BufferedWriter bw;
 	private String summaryFile;
-
-	public String retrieveTwitterData(String location) {
-		/*** read from file ***/
-		String path = null;
-		JSONParser jParser;
-		try {
-
-			jParser = new JSONParser();
-
-			// loop until token equal to "}"
-			dateobj = new Date();
-			 path = new File(System.getProperty("user.dir")
+	private String path;
+	
+	public TwitterReadJsonData() {
+		 path = new File(System.getProperty("user.dir")
 					+ System.getProperty("file.separator") + "tacit_temp_files")
 					+ System.getProperty("file.separator")
 					+ "twitter_" + UUID.randomUUID().toString()+ "_"
 					+ df.format(dateobj);
 			new File(path).mkdir();
 			openSummaryFile(path);
+	}
+
+	public String retrieveTwitterData(String location) {
+		/*** read from file ***/
+		JSONParser jParser;
+		try {
+
+			jParser = new JSONParser();
+
+			// loop until token equal to "}"	
+			dateobj = new Date();
+			
 			File[] fileList = new File(location).listFiles();
 			for (int i = 0; i < fileList.length; i++) {
 				String fileName = fileList[i].getAbsolutePath();
@@ -69,7 +73,7 @@ public class TwitterReadJsonData {
 					
 
 				}
-				summaryFileClose();
+				
 			}
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -81,7 +85,7 @@ public class TwitterReadJsonData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return path;
 	}
 	
@@ -125,8 +129,10 @@ public class TwitterReadJsonData {
 	
 	public void summaryFileClose() {
 		try {
+			if(bw != null){
 			bw.close();
 			ConsoleView.printlInConsoleln("Mapping of twitter file name to tweet is stored at "+summaryFile);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

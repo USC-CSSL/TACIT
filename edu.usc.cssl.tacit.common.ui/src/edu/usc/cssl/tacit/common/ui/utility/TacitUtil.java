@@ -5,21 +5,19 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class TacitUtil {
 	public static List<String> refineInput(List<Object> selectedInputs) {
 		Set<String> refinedInputList = new HashSet<String>();
 		Pattern corpusDetector = Pattern
 				.compile(".* [(]Tacit Internal Class Path: (.*)[)]");
-
+		TwitterReadJsonData twitterParser = new TwitterReadJsonData();
 		for (Object input : selectedInputs) {
 			if (input instanceof CorpusClass) {
 				String corpusClassPath = ((CorpusClass)input).getClassPath();
@@ -27,7 +25,7 @@ public class TacitUtil {
 				if (corpusType == null)
 					continue;
 				if (corpusType.equals(CMDataType.TWITTER_JSON))
-					input = new TwitterReadJsonData()
+					input = twitterParser
 							.retrieveTwitterData(corpusClassPath);
 				else if (corpusType.equals(CMDataType.REDDIT_JSON))
 					input = new RedditJsonHandler()
@@ -44,6 +42,7 @@ public class TacitUtil {
 				refinedInputList.addAll(getFilesFromFolder(inputFile
 						.getAbsolutePath()));
 		}
+		twitterParser.summaryFileClose();
 		return new ArrayList<String>(refinedInputList);
 	}
 
