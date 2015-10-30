@@ -1,8 +1,11 @@
 package edu.usc.cssl.tacit.common;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
 
 import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
@@ -60,9 +64,13 @@ public class Preprocessor {
 					processDirectory(inputFile.getAbsolutePath(),
 							doPreprocessing);
 				} else {
+					if (inputFile.getName().contains("DS_Store"))
+						continue;
+
 					if (doPreprocessing) {
-						outputFiles
-								.add(processFile(inputFile.getAbsolutePath()));
+						String ppFile = inputFile.getAbsolutePath();
+						if (ppFile != "")
+							outputFiles.add(processFile(ppFile));
 					} else {
 						outputFiles.add(inputFile.getAbsolutePath());
 					}
@@ -78,7 +86,9 @@ public class Preprocessor {
 
 		if (doPreprocessing) {
 			for (File file : files) {
-				outputFiles.add(processFile(file.getAbsolutePath()));
+				String ppFile = processFile(file.getAbsolutePath());
+				if (ppFile != "")
+					outputFiles.add(ppFile);
 			}
 		} else {
 			for (File file : files) {
@@ -88,8 +98,88 @@ public class Preprocessor {
 	}
 
 	private String processFile(String inFile) {
+		String outFile = ppDir + System.getProperty("file.separator")
+				+ (new File(inFile).getName());
 
-		return "";
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(inFile));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+
+			String currLine = "";
+
+			while ((currLine = br.readLine()) != null) {
+				if (currLine != "") {
+					if (doLowercase) {
+						currLine.toLowerCase();
+					}
+
+					for (char c : delimiters.toCharArray()) {
+						currLine = currLine.replace(c, ' ');
+					}
+
+					if (doStopWords) {
+						currLine = removeStopWords(currLine);
+					}
+
+					if (doStemming) {
+						if (isLatin) {
+							try {
+								currLine = latinStemmer.doStemming(currLine);
+							} catch (TreeTaggerException e) {
+								ConsoleView
+										.printlInConsole("Error stemming the line: "
+												+ currLine);
+								ConsoleView
+										.printlInConsole("Skipping the line and continuing.");
+							}
+							latinStemmer.destroyTT();
+						} else {
+							currLine = stemLine(currLine);
+						}
+					}
+					bw.write(currLine + "\n");
+				}
+			}
+
+			bw.close();
+			br.close();
+		} catch (FileNotFoundException e) {
+			ConsoleView.printlInConsoleln("Error in input file path " + inFile);
+			return "";
+		} catch (IOException e) {
+			ConsoleView.printlInConsoleln("I/O issues with file " + inFile);
+		}
+		return outFile;
+	}
+
+	private String stemLine(String line) {
+		if (line.isEmpty())
+			return "";
+		StringBuilder returnString = new StringBuilder();
+		String[] wordArray = line.split("\\s+");
+		for (String word : wordArray) {
+			stemmer.setCurrent(word);
+			String stemmedWord = "";
+			if (stemmer.stem())
+				stemmedWord = stemmer.getCurrent();
+			if (!stemmedWord.equals(""))
+				word = stemmedWord;
+			returnString.append(word);
+			returnString.append(' ');
+		}
+		return returnString.toString();
+	}
+
+	private String removeStopWords(String line) {
+		StringBuilder returnString = new StringBuilder();
+		String[] wordArray = line.split("\\s+");
+		for (String word : wordArray) {
+			if (!stopWordsSet.contains(word.toLowerCase())) {
+				returnString.append(word);
+				returnString.append(' ');
+			}
+		}
+		return returnString.toString();
 	}
 
 	/*
