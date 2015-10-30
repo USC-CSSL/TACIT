@@ -332,29 +332,6 @@ public class TargetLocationsGroup {
 					CorpusDialog.setTitle("Select the Corpus Class from the list");
 					CorpusDialog.setMessage("Enter Corpus Class name to search");
 					final List<ICorpusClass> allCorpus = new ArrayList<ICorpusClass>();
-//					Job getCorpus = new Job("Retrieving corpus list ...") {
-//						@Override
-//						protected IStatus run(IProgressMonitor monitor) {
-//							allCorpus.clear();
-//							try {
-//								List<ICorpus> corpusList = corporaManagement
-//										.getAllCorpusDetails();
-//								allCorpus.addAll(corpusList);
-//								CorpusDialog.setElements(allCorpus.toArray());
-//								Display.getDefault().syncExec(new Runnable() {
-//									@Override
-//									public void run() {
-//										CorpusDialog.refresh(allCorpus
-//												.toArray());
-//										
-//									}
-//								});
-//							} catch (final Exception ex) {
-//							}
-//							return Status.OK_STATUS;
-//						}
-//					};
-//					getCorpus.schedule();
 					List<ICorpus> corpusList = corporaManagement
 							.getAllCorpusDetails();
 					List<ICorpusClass> corpusClass = new ArrayList<ICorpusClass>();
@@ -490,7 +467,10 @@ public class TargetLocationsGroup {
 					node = new TreeParent((Corpus) file);
 					processCorpusFiles(node);
 				} else if(file instanceof ICorpusClass){
-					continue;
+					if(checkExisting((ICorpusClass)file)){
+						continue;
+					}
+					node = new TreeParent((ICorpusClass) file);
 				}else
 				{
 				
@@ -559,14 +539,14 @@ public class TargetLocationsGroup {
 		return false;
 	}
 	
-//	private boolean checkExisting(ICorpusClass file) {
-//		for (TreeParent node : locationPaths) {
-//			if(node.getCorpusClass() != null && node.getCorpus().getCorpusId().equals(file.getCorpusId())){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	private boolean checkExisting(ICorpusClass file) {
+		for (TreeParent node : locationPaths) {
+			if(node.getCorpusClass() != null && node.getCorpusClass().getParent().getCorpusId().equals(((ICorpusClass)file).getParent().getCorpusId()) && node.getName().equals(((ICorpusClass)file).getClassName())){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private String sizeCheck(String[] path) {
 		String result = "";

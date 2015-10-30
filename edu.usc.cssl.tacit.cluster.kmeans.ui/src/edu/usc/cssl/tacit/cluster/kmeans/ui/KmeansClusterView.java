@@ -80,7 +80,7 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 		layout.numColumns = 1;
 
 		layData = TacitFormComposite.createTableSection(client, toolkit, layout, "Input Details",
-				"Add File(s) and Folder(s) to include in analysis.", true, true, true,false);
+				"Add File(s) and Folder(s) to include in analysis.", true, true, true,true);
 
 		Composite compInput;
 		compInput = layData.getSectionClient();
