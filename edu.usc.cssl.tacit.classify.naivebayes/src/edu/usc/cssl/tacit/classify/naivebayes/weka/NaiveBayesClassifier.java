@@ -1,3 +1,6 @@
+/**
+ * @author Yuvarani Shankar <yshankar@usc.edu>
+ **/
 package edu.usc.cssl.tacit.classify.naivebayes.weka;
 
 import java.util.Random;

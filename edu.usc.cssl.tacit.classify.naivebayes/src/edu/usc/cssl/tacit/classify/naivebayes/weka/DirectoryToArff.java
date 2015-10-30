@@ -1,5 +1,7 @@
+/**
+ * @author Yuvarani Shankar <yshankar@usc.edu>
+ **/
 package edu.usc.cssl.tacit.classify.naivebayes.weka;
-
 
 import java.io.BufferedReader;
 import java.io.File;
