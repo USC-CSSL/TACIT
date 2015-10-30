@@ -20,6 +20,6 @@ Export-Package: bsh,
 Bundle-ClassPath: commons-math3-3.3.jar,
  mallet-deps.jar,
  mallet.jar,
- weka.jar,
  .,
- commons-io-2.4.jar
+ commons-io-2.4.jar,
+ weka-3.7.0.jar
