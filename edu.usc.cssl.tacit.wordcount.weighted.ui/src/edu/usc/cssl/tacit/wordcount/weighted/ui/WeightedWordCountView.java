@@ -63,15 +63,14 @@ public class WeightedWordCountView extends ViewPart implements
 	private OutputLayoutData layoutData;
 	private TableLayoutData inputLayoutData;
 	private TableLayoutData dictLayoutData;
-	private Button snowballStemming;
-	private Button liwcStemming;
-	private Button stemEnabled;
+	//private Button snowballStemming;
+	//private Button liwcStemming;
+	//private Button stemEnabled;
 	private Button spssRawFile;
 	private Button wordDistributionFile;
 	private WordCountApi wordCountController;
 	private Button weightedWordCountButton;
 	private Button standardWordCountButton;
-	private Button preprocessButton;
 	private Job wordCountJob;
 	
 	@Override
@@ -133,13 +132,9 @@ public class WeightedWordCountView extends ViewPart implements
 		layout = new GridLayout();
 		layout.numColumns = 2;
 
-		createPreprocessLink(compInput);
+		//createPreprocessLink(compInput);
 
-		createStemmingOptions(compInput);
-
-		//createAdditionalOptions(toolkit, form.getBody());
-
-		//TacitFormComposite.createEmptyRow(toolkit, form.getBody());
+		//createStemmingOptions(compInput);
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -165,42 +160,7 @@ public class WeightedWordCountView extends ViewPart implements
 		return super.getAdapter(adapter);
 	}
 
-	private void createPreprocessLink(Composite client) {
-
-		Composite clientLink = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
-				.applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(clientLink);
-
-		preprocessButton = toolkit.createButton(clientLink, "", SWT.CHECK);
-		preprocessButton.setEnabled(false);
-		preprocessButton.setSelection(false);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(preprocessButton);
-		final Hyperlink link = toolkit.createHyperlink(clientLink,
-				"Preprocess", SWT.NONE);
-		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		link.addHyperlinkListener(new IHyperlinkListener() {
-			@Override
-			public void linkEntered(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkExited(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
-						new String[] { id }, null).open();
-			}
-		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
-				.applyTo(link);
-
-	}
+	
 
 	private void createWordCountType(FormToolkit toolkit2, Composite parent,
 			IMessageManager messageManager) {
@@ -223,7 +183,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (standardWordCountButton.getSelection()) {
+				/*if (standardWordCountButton.getSelection()) {
 					stemEnabled.setEnabled(false);
 					stemEnabled.setSelection(false);
 					liwcStemming.setEnabled(false);
@@ -233,8 +193,7 @@ public class WeightedWordCountView extends ViewPart implements
 					liwcStemming.setVisible(false);
 					stemEnabled.setVisible(false);
 					snowballStemming.setVisible(false);
-					preprocessButton.setSelection(false);
-				} else {
+					} else {
 					stemEnabled.setVisible(true);
 					stemEnabled.setEnabled(true);
 					stemEnabled.setSelection(false);
@@ -242,8 +201,7 @@ public class WeightedWordCountView extends ViewPart implements
 					liwcStemming.setSelection(false);
 					snowballStemming.setVisible(true);
 					snowballStemming.setSelection(false);
-					preprocessButton.setEnabled(true);
-				}
+					}*/
 
 			}
 
@@ -268,7 +226,7 @@ public class WeightedWordCountView extends ViewPart implements
 
 	}
 
-	private void createStemmingOptions(Composite body) {
+	/*private void createStemmingOptions(Composite body) {
 		Composite downloadGroup = toolkit.createComposite(body, SWT.NONE);
 		// downloadGroup.setText("Steming");
 
@@ -311,7 +269,7 @@ public class WeightedWordCountView extends ViewPart implements
 		});
 		stemEnabled.setEnabled(false);
 		stemEnabled.setVisible(false);
-	}
+	}*/
 
 	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
 		spssRawFile = toolkit.createButton(output, "Create .DAT file",
@@ -382,12 +340,12 @@ public class WeightedWordCountView extends ViewPart implements
 						.getSelectedFiles());
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
-				final boolean isLiwcStemming = liwcStemming.getSelection();
-				final boolean isSnowBall = snowballStemming.getSelection();
+				final boolean isLiwcStemming = false; //liwcStemming.getSelection();
+				final boolean isSnowBall = false;// snowballStemming.getSelection();
 				final boolean isSpss = spssRawFile.getSelection();
 				final boolean isWdist = wordDistributionFile.getSelection();
-				final boolean isStemDic = stemEnabled.getSelection();
-				final boolean isPreprocess = preprocessButton.getSelection();
+				final boolean isStemDic = false; //stemEnabled.getSelection();
+				final boolean isPreprocess = false;//preprocessButton.getSelection();
 				wordCountJob = new Job("Analyzing...") {
 					private Preprocess preprocessTask;
 					private String dirPath;
