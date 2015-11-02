@@ -103,6 +103,16 @@ public class Preprocessor {
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(inFile));
+			if (new File(outFile).exists()) {
+				for (int i=1; i<Integer.MAX_VALUE; i++) {
+					if (new File(outFile+Integer.toString(i)).exists()) {
+						continue;
+					} else {
+						outFile = outFile+Integer.toString(i);
+						break;
+					}
+				}
+			}
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 
 			String currLine = "";
