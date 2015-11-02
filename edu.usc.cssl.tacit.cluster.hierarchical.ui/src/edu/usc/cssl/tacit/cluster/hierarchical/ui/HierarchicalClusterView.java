@@ -232,9 +232,7 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 						long startTime = System.currentTimeMillis();
 						boolean isSuccessful = HierarchicalClusterAnalysis.runClustering(inputFiles, outputPath, isSaveImage,
 								new SubProgressMonitor(monitor, 50), dateObj);
-						if(monitor.isCanceled()) {
-							throw new OperationCanceledException();
-						}
+						
 						if(!isSuccessful)
 							return Status.CANCEL_STATUS;
 
@@ -257,12 +255,7 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 						}
 
 						monitor.done();
-						TacitFormComposite.updateStatusMessage(getViewSite(), "CLustering is successfully Completed.",
-								IStatus.OK, form);
-						ConsoleView.writeInConsoleHeader(
-								"<terminated> Hierarchical clustering  " + (df.format(new Date())));
-						TacitFormComposite.updateStatusMessage(getViewSite(), "Hierarchical clustering completed",
-								IStatus.OK, form);
+						
 						return Status.OK_STATUS;
 					}
 				};
@@ -274,10 +267,16 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <terminated> Hierarchical Clustering");
-								ConsoleView.printlInConsoleln("Clustering terminated...");
+								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Hierarchical Clustering");
+								ConsoleView.printlInConsoleln("Hierarchical Clustering met with error.");
 								ConsoleView.printlInConsoleln(
 										"Take appropriate action to resolve the issues and run again.");
+							}
+							else {
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Hierarchical Clustering successfully completed.",
+										IStatus.OK, form);
+								ConsoleView.writeInConsoleHeader(
+										"Success: <Completed> Hierarchical clustering  " + (df.format(new Date())));
 							}
 						}
 					});

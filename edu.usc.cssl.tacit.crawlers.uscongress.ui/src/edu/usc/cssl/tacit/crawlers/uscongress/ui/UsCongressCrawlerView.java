@@ -12,7 +12,9 @@ import java.util.LinkedHashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -997,31 +999,26 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						}
 							
 						if(monitor.isCanceled()) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 							return handledCancelRequest("Cancelled");
 						}
 						try {
 							monitor.subTask("Initializing...");
 							monitor.worked(10);
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							sc.initialize(sortType, maxDocs, Integer.parseInt(congressNum), congressMemberDetails, dateFrom, dateTo, outputDir, allCongresses, monitor, progressSize - 30, isSenate, crawlSenateRecords, crawlHouseRepRecords, crawlDailyDigest, crawlExtension);
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							monitor.worked(10);
 														
 							monitor.subTask("Crawling...");
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							sc.crawl();
 							if(monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 								return handledCancelRequest("Cancelled");
 							}
 							monitor.worked(10);
@@ -1034,11 +1031,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						}
 						monitor.worked(100);
 						monitor.done();
-						ConsoleView.printlInConsoleln("US Congress crawler completed successfully.");
-						ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
-						ConsoleView.printlInConsoleln("Done");
-						TacitFormComposite.updateStatusMessage(getViewSite(), "US Congress crawler completed successfully.", IStatus.OK, form);
-						TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 						return Status.OK_STATUS;
 					}					
 				};	
@@ -1046,6 +1038,22 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				canProceed = canItProceed();
 				if(canProceed) {
 					job.schedule(); // schedule the job
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> US Congress Crawler");
+							}
+							else {
+								ConsoleView.printlInConsoleln("US Congress crawler completed successfully.");
+								ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
+								ConsoleView.printlInConsoleln("Done");
+								TacitFormComposite.updateStatusMessage(getViewSite(), "US Congress crawler completed successfully.", IStatus.OK, form);
+								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> US Congress Crawler");	
+							}
+						}
+					});
 				}
 			}
 		});

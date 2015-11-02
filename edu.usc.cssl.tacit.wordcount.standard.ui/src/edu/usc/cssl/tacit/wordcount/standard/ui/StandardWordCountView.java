@@ -353,12 +353,6 @@ public class StandardWordCountView extends ViewPart implements
 							wc.countWords(inputFiles, dictionaryFiles);
 							monitor.worked(1);
 						}
-
-						TacitFormComposite.updateStatusMessage(getViewSite(),
-								"Word count analysis completed", IStatus.OK,
-								form);
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Word count analysis");
 						monitor.done();
 						return Status.OK_STATUS;
 					}
@@ -371,11 +365,19 @@ public class StandardWordCountView extends ViewPart implements
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite
-										.writeConsoleHeaderBegining("Error: <terminated> Word count analysis");
+										.writeConsoleHeaderBegining("Error: <Terminated> Word count analysis");
 								ConsoleView
 										.printlInConsoleln("Word count analysis met with error.");
 								ConsoleView
 										.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
+							}
+							else {
+								TacitFormComposite.updateStatusMessage(getViewSite(),
+										"Word count analysis completed", IStatus.OK,
+										form);
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> Word count analysis");
+								
 							}
 						}
 					});

@@ -10,7 +10,9 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -241,6 +243,7 @@ public class LdaTopicModelView extends ViewPart implements
 
 							} catch (IOException e) {
 								e.printStackTrace();
+								return Status.CANCEL_STATUS;
 							}
 							catch (NullPointerException e) {
 								e.printStackTrace();
@@ -256,6 +259,7 @@ public class LdaTopicModelView extends ViewPart implements
 											destDir, false);
 								} catch (IOException e) {
 									e.printStackTrace();
+									return Status.CANCEL_STATUS;
 								}
 							}
 						}
@@ -270,42 +274,52 @@ public class LdaTopicModelView extends ViewPart implements
 						try {
 							lda.doLDA(monitor, dateObj);
 						} catch (FileNotFoundException e) {
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							e.printStackTrace();
+							monitor.done();
 							return Status.CANCEL_STATUS;
 						} catch (IOException e) {
+							e.printStackTrace();
 							monitor.done();
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
 						monitor.worked(20);
-						ConsoleView
-								.printlInConsoleln("LDA Topic Modelling completed successfully in "
-										+ (System.currentTimeMillis() - startTime)
-										+ " milliseconds.");
-
 						if (monitor.isCanceled()) {
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
 							return Status.CANCEL_STATUS;
 						}
+						ConsoleView
+						.printlInConsoleln("LDA Topic Modelling completed successfully in "
+								+ (System.currentTimeMillis() - startTime)
+								+ " milliseconds.");
 						if (isPreprocess)
 							preprocessTask.clean();
 						monitor.worked(10);
 						monitor.done();
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Topic Modelling   ");
-						TacitFormComposite.updateStatusMessage(getViewSite(),
-								"LDA analysis completed", IStatus.OK, form);
-
 						return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
 				if (canProceedCluster()) {
 					job.schedule();
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> LDA Topic Modelling");
+								ConsoleView
+										.printlInConsoleln("LDA not successful.");
+							}
+							else {
+								TacitFormComposite.updateStatusMessage(getViewSite(),
+										"LDA topic modelling completed", IStatus.OK,
+										form);
+								
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> LDA Topic Modelling ");
+								
+							}
+						}
+					});
 				} else {
 					TacitFormComposite
 							.updateStatusMessage(

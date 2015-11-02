@@ -14,7 +14,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -617,12 +619,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 							}
 						} catch (IOException e) {
 							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+									.writeConsoleHeaderBegining("Erro: <Terminated> Naive Bayes Classifier ");
 							return handleException(monitor, e,
 									"Naive Bayes Classifier failed. Provide valid data");
 						} catch (EvalError e) {
 							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+									.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
 							return handleException(monitor, e,
 									"Naive Bayes Classifier failed. Provide valid data");
 
@@ -636,13 +638,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						}
 						monitor.worked(100);
 						monitor.done();
-						ConsoleView.printlInConsoleln("Naive Bayes classifier completed successfully.");
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(),
-								"Naive Bayes analysis completed", IStatus.OK,
-								form);
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+						
 						return Status.OK_STATUS;
 					}
 
@@ -651,6 +647,25 @@ public class NaiveBayesClassifierView extends ViewPart implements
 				canProceed = canItProceed(classPaths);
 				if (canProceed) {
 					job.schedule(); // schedule the job
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier");
+							}
+							else {
+								TacitFormComposite.updateStatusMessage(
+										getViewSite(),
+										"Naive Bayes classification completed", IStatus.OK,
+										form);
+								ConsoleView.printlInConsoleln("Naive Bayes classifier completed successfully.");
+								
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> Naive Bayes Classification ");
+							}
+						}
+					});
 				}
 			};
 

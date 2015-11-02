@@ -70,8 +70,8 @@ public class WeightedWordCountView extends ViewPart implements
 	private Button wordDistributionFile;
 	private WordCountApi wordCountController;
 	private Button weightedWordCountButton;
-	private Button liwcWordCountButton;
-	private Button stopWordPathEnabled;
+	private Button standardWordCountButton;
+	private Button preprocessButton;
 	private Job wordCountJob;
 	
 	@Override
@@ -173,11 +173,11 @@ public class WeightedWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(clientLink);
 
-		stopWordPathEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
-		stopWordPathEnabled.setEnabled(false);
-		stopWordPathEnabled.setSelection(false);
+		preprocessButton = toolkit.createButton(clientLink, "", SWT.CHECK);
+		preprocessButton.setEnabled(false);
+		preprocessButton.setSelection(false);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(stopWordPathEnabled);
+				.applyTo(preprocessButton);
 		final Hyperlink link = toolkit.createHyperlink(clientLink,
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -214,16 +214,16 @@ public class WeightedWordCountView extends ViewPart implements
 		buttonComposite.setLayout(layout);
 		buttonComposite.setForeground(parent.getForeground());
 
-		liwcWordCountButton = new Button(buttonComposite, SWT.RADIO);
-		liwcWordCountButton.setText("Standard Word Count");
-		liwcWordCountButton.setSelection(true);
-		// liwcWordCountButton.setBackground(parent.getBackground());
-		liwcWordCountButton.setForeground(parent.getForeground());
-		liwcWordCountButton.addSelectionListener(new SelectionListener() {
+		standardWordCountButton = new Button(buttonComposite, SWT.RADIO);
+		standardWordCountButton.setText("Standard Word Count");
+		standardWordCountButton.setSelection(true);
+		// standardWordCountButton.setBackground(parent.getBackground());
+		standardWordCountButton.setForeground(parent.getForeground());
+		standardWordCountButton.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (liwcWordCountButton.getSelection()) {
+				if (standardWordCountButton.getSelection()) {
 					stemEnabled.setEnabled(false);
 					stemEnabled.setSelection(false);
 					liwcStemming.setEnabled(false);
@@ -233,7 +233,7 @@ public class WeightedWordCountView extends ViewPart implements
 					liwcStemming.setVisible(false);
 					stemEnabled.setVisible(false);
 					snowballStemming.setVisible(false);
-					stopWordPathEnabled.setSelection(false);
+					preprocessButton.setSelection(false);
 				} else {
 					stemEnabled.setVisible(true);
 					stemEnabled.setEnabled(true);
@@ -242,7 +242,7 @@ public class WeightedWordCountView extends ViewPart implements
 					liwcStemming.setSelection(false);
 					snowballStemming.setVisible(true);
 					snowballStemming.setSelection(false);
-					stopWordPathEnabled.setEnabled(true);
+					preprocessButton.setEnabled(true);
 				}
 
 			}
@@ -387,7 +387,7 @@ public class WeightedWordCountView extends ViewPart implements
 				final boolean isSpss = spssRawFile.getSelection();
 				final boolean isWdist = wordDistributionFile.getSelection();
 				final boolean isStemDic = stemEnabled.getSelection();
-				final boolean isPreprocess = stopWordPathEnabled.getSelection();
+				final boolean isPreprocess = preprocessButton.getSelection();
 				wordCountJob = new Job("Analyzing...") {
 					private Preprocess preprocessTask;
 					private String dirPath;

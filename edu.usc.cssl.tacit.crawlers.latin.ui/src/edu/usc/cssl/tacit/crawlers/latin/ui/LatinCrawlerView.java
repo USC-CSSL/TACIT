@@ -15,7 +15,9 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -54,8 +56,7 @@ import edu.usc.cssl.tacit.crawlers.latin.services.LatinCrawler;
 import edu.usc.cssl.tacit.crawlers.latin.ui.internal.ILatinCrawlerUIConstants;
 import edu.usc.cssl.tacit.crawlers.latin.ui.internal.LatinCrawlerImageRegistry;
 
-public class LatinCrawlerView extends ViewPart implements
-		ILatinCrawlerUIConstants {
+public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstants {
 	public static final String ID = "edu.usc.cssl.tacit.crawlers.latin.ui.view1";
 	private ScrolledForm form;
 	private AuthorListDialog dialog;
@@ -79,27 +80,22 @@ public class LatinCrawlerView extends ViewPart implements
 		form.setText("Latin Crawler"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 
-		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
-				.applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
 		section.setExpanded(true);
 		String description = "This sections gives details about the crawler settigs";
 		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
-				false);
+		descriptionFrm.setText("<form><p>" + description + "</p></form>", true, false);
 		section.setDescriptionControl(descriptionFrm);
 
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
-		
+
 		Section authorSection = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
 
@@ -108,35 +104,27 @@ public class LatinCrawlerView extends ViewPart implements
 		authorSection.setText("Author Details"); //$NON-NLS-1$
 		authorSection.setDescription("Add list of authors that need to be crawled");
 
-		ScrolledComposite authorsc = new ScrolledComposite(authorSection,
-				SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite authorsc = new ScrolledComposite(authorSection, SWT.H_SCROLL | SWT.V_SCROLL);
 		authorsc.setExpandHorizontal(true);
 		authorsc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(authorsc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(authorsc);
 
 		Composite authorSectionClient = toolkit.createComposite(authorSection);
 		authorsc.setContent(authorSectionClient);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(authorsc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(authorSectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(authorSectionClient);
 		authorSection.setClient(authorSectionClient);
 
 		Label dummy1 = toolkit.createLabel(authorSectionClient, "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
-				.applyTo(dummy1);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy1);
 
-		authorTable = toolkit.createTable(authorSectionClient, SWT.BORDER
-				| SWT.MULTI);
-		GridDataFactory.fillDefaults().grab(true, true).span(2, 3)
-				.hint(100, 200).applyTo(authorTable);
+		authorTable = toolkit.createTable(authorSectionClient, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(2, 3).hint(100, 200).applyTo(authorTable);
 		authorTable.setBounds(100, 100, 100, 500);
 
-		final Button addAuthorBtn = toolkit.createButton(authorSectionClient,
-				"Add...", SWT.PUSH); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(addAuthorBtn);
+		final Button addAuthorBtn = toolkit.createButton(authorSectionClient, "Add...", SWT.PUSH); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addAuthorBtn);
 
 		addAuthorBtn.addSelectionListener(new SelectionAdapter() {
 
@@ -146,10 +134,8 @@ public class LatinCrawlerView extends ViewPart implements
 			}
 		});
 
-		removeAuthor = toolkit.createButton(authorSectionClient, "Remove...",
-				SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(removeAuthor);
+		removeAuthor = toolkit.createButton(authorSectionClient, "Remove...", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeAuthor);
 
 		removeAuthor.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -166,9 +152,8 @@ public class LatinCrawlerView extends ViewPart implements
 		});
 		TacitFormComposite.createEmptyRow(toolkit, form.getBody());
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				form.getBody(), form.getMessageManager());
-		
+		layoutData = TacitFormComposite.createOutputSection(toolkit, form.getBody(), form.getMessageManager());
+
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Latin Crawler");
@@ -176,8 +161,7 @@ public class LatinCrawlerView extends ViewPart implements
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (LatinCrawlerImageRegistry.getImageIconFactory()
-						.getImageDescriptor(IMAGE_LRUN_OBJ));
+				return (LatinCrawlerImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
 			@Override
@@ -186,27 +170,23 @@ public class LatinCrawlerView extends ViewPart implements
 			}
 
 			public void run() {
-				TacitFormComposite.updateStatusMessage(getViewSite(), null,
-						null, form);
+				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 				latinCrawler.initialize(layoutData.getOutputLabel().getText());
 
 				Job job = new Job("Crawling...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 
-						final DateFormat dateFormat = new SimpleDateFormat(
-								"MMM dd, yyyy, HH:mm:ss aaa");
+						final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
 						final Calendar cal = Calendar.getInstance();
 						ConsoleView
-								.writeInConsoleHeader("Latin Crawling started "
-										+ (dateFormat.format(cal.getTime())));
+								.writeInConsoleHeader("Latin Crawling started " + (dateFormat.format(cal.getTime())));
 						Iterator<String> authorItr;
 						int totalWork = 1;
 						try {
 							authorItr = selectedAuthors.iterator();
 							totalWork = selectedAuthors.size();
-							monitor.beginTask("TACIT started crawling...",
-									totalWork);
+							monitor.beginTask("TACIT started crawling...", totalWork);
 							int totalFilesCreated = 0;
 							while (authorItr.hasNext()) {
 								if (monitor.isCanceled()) {
@@ -215,57 +195,56 @@ public class LatinCrawlerView extends ViewPart implements
 								}
 								String author = authorItr.next();
 								monitor.subTask("crawling " + author + "...");
-								ConsoleView.printlInConsoleln("Crawling "+author);
-								totalFilesCreated+= latinCrawler.getBooksByAuthor(
-										author,
-										latinCrawler.getAuthorNames().get(
-												author),monitor);
+								ConsoleView.printlInConsoleln("Crawling " + author);
+								totalFilesCreated += latinCrawler.getBooksByAuthor(author,
+										latinCrawler.getAuthorNames().get(author), monitor);
 								monitor.worked(1);
 							}
-							ConsoleView.printlInConsole("Total number of files downloaded : "+totalFilesCreated);
-							
+							ConsoleView.printlInConsole("Total number of files downloaded : " + totalFilesCreated);
+
 						} catch (final IOException exception) {
 							ConsoleView.printlInConsole(exception.toString());
 							Display.getDefault().syncExec(new Runnable() {
 
 								@Override
 								public void run() {
-									ErrorDialog
-											.openError(
-													Display.getDefault()
-															.getActiveShell(),
-													"Problem Occurred",
-													"Please Check your connectivity to server",
-													new Status(
-															IStatus.ERROR,
-															CommonUiActivator.PLUGIN_ID,
-															exception
-																	.getMessage()));
+									ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred",
+											"Please Check your connectivity to server", new Status(IStatus.ERROR,
+													CommonUiActivator.PLUGIN_ID, exception.getMessage()));
 
 								}
 							});
-							TacitFormComposite.updateStatusMessage(
-									getViewSite(), "Crawling is stopped ",
-									IStatus.INFO, form);
-							ConsoleView
-							.writeInConsoleHeader("<terminated> Latin crawling  "
-									+ (dateFormat.format(cal.getTime())));
+
 							return Status.CANCEL_STATUS;
 						}
 						monitor.done();
-						TacitFormComposite
-								.updateStatusMessage(getViewSite(),
-										"Crawling completed", IStatus.OK, form);
-						ConsoleView
-						.writeInConsoleHeader("<terminated> Latin crawling  "
-								+ (dateFormat.format(cal.getTime())));
-						
 						return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
 				if (canProceedCrawl()) {
 					job.schedule();
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
+							final Calendar cal = Calendar.getInstance();
+
+							if (!event.getResult().isOK()) {
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped ",
+										IStatus.INFO, form);
+								ConsoleView.writeInConsoleHeader(
+										"Error: <Terminated> Latin crawler" + (dateFormat.format(cal.getTime())));
+
+							} else {
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
+										form);
+								ConsoleView.writeInConsoleHeader(
+										"Success: <Completed> Latin crawling  " + (dateFormat.format(cal.getTime())));
+
+							}
+						}
+					});
 				}
 
 			};
@@ -273,8 +252,7 @@ public class LatinCrawlerView extends ViewPart implements
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (LatinCrawlerImageRegistry.getImageIconFactory()
-						.getImageDescriptor(IMAGE_HELP_CO));
+				return (LatinCrawlerImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
 			}
 
 			@Override
@@ -284,24 +262,12 @@ public class LatinCrawlerView extends ViewPart implements
 
 			@Override
 			public void run() {
-				PlatformUI
-						.getWorkbench()
-						.getHelpSystem()
-						.displayHelp(
-								"edu.usc.cssl.tacit.crawlers.latin.ui.latin");
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.latin.ui.latin");
 			};
 		};
 		mgr.add(helpAction);
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(helpAction,
-						"edu.usc.cssl.tacit.crawlers.latin.ui.latin");
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(form,
-						"edu.usc.cssl.tacit.crawlers.latin.ui.latin");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.latin.ui.latin");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.latin.ui.latin");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
 	}
@@ -321,18 +287,15 @@ public class LatinCrawlerView extends ViewPart implements
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("author");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
-						"Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(), "Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null,
-					IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
 		if (selectedAuthors == null || selectedAuthors.size() < 1) {
-			form.getMessageManager().addMessage("author",
-					"Author details cannot be empty", null,
+			form.getMessageManager().addMessage("author", "Author details cannot be empty", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
@@ -351,8 +314,7 @@ public class LatinCrawlerView extends ViewPart implements
 				authors.clear();
 				try {
 					if (authorListFromWeb == null) {
-						authorListFromWeb = new LatinCrawler().getAuthorNames()
-								.keySet();
+						authorListFromWeb = new LatinCrawler().getAuthorNames().keySet();
 					}
 					authors.addAll(authorListFromWeb);
 					if (selectedAuthors != null)
@@ -371,15 +333,13 @@ public class LatinCrawlerView extends ViewPart implements
 
 						@Override
 						public void run() {
-							ErrorDialog.openError(Display.getDefault()
-									.getActiveShell(), "Problem Occurred",
+							ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred",
 									"Please Check your connectivity to server",
-									new Status(IStatus.ERROR,
-											CommonUiActivator.PLUGIN_ID,
-											"Network is not reachable"));
-
+									new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID, "Network is not reachable"));
+							
 						}
 					});
+					return Status.CANCEL_STATUS;
 				}
 				return Status.OK_STATUS;
 

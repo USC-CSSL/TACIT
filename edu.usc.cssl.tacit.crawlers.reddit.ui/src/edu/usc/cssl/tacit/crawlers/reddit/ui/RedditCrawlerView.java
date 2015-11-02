@@ -8,7 +8,9 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -584,16 +586,13 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 							ManageCorpora.saveCorpus(redditCorpus);
 						} catch(Exception e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 						if(monitor.isCanceled())
 							return handledCancelRequest("Cancelled");
 						
 						monitor.worked(100);
 						monitor.done();
-						ConsoleView.printlInConsoleln("Reddit crawler completed successfully.");
-						ConsoleView.printlInConsoleln("Done");
-						TacitFormComposite.updateStatusMessage(getViewSite(), "Reddit crawler completed successfully.", IStatus.OK, form);
-						TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
 						return Status.OK_STATUS;
 					}
 				};
@@ -601,6 +600,24 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 				canProceed = canItProceed();
 				if(canProceed) {
 					job.schedule(); // schedule the job
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Reddit Crawler  ");
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+										IStatus.INFO, form);
+
+							} else {
+								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Reddit Crawler  ");
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+										IStatus.INFO, form);
+								ConsoleView.printlInConsoleln("Done");
+								ConsoleView.printlInConsoleln("Reddit crawler completed successfully.");
+	
+							}
+						}
+					});
 				}				
 			}
 		});
@@ -641,7 +658,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("Reddit crawler cancelled.");
-		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
 		return Status.CANCEL_STATUS;
 	}
 
@@ -651,7 +667,6 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		System.out.println(message);
 		e.printStackTrace();
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
-		TacitFormComposite.writeConsoleHeaderBegining("<terminated> Reddit Crawler");
 		return Status.CANCEL_STATUS;
 	}	
 }

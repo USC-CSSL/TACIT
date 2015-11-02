@@ -8,7 +8,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -53,8 +55,7 @@ import edu.usc.cssl.tacit.crawlers.supremecourt.ui.internal.ISupremeCrawlerUICon
 import edu.usc.cssl.tacit.crawlers.supremecourt.ui.internal.SupremeCourtCaseListDialog;
 import edu.usc.cssl.tacit.crawlers.supremecourt.ui.internal.SupremeCrawlerImageRegistry;
 
-public class SupremeCrawlerView extends ViewPart implements
-		ISupremeCrawlerUIConstants {
+public class SupremeCrawlerView extends ViewPart implements ISupremeCrawlerUIConstants {
 	public static final String ID = "edu.usc.cssl.tacit.crawlers.supremecourt.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -82,75 +83,54 @@ public class SupremeCrawlerView extends ViewPart implements
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
-		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-				HyperlinkSettings.UNDERLINE_HOVER);
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		form.setText("Supreme Court Crawler"); //$NON-NLS-1$
-		form.setImage(SupremeCrawlerImageRegistry.getImageIconFactory().getImage(
-				IMAGE_TITLE));
+		form.setImage(SupremeCrawlerImageRegistry.getImageIconFactory().getImage(IMAGE_TITLE));
 		final IMessageManager mmng = form.getMessageManager();
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
-		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR | Section.EXPANDED);
-		
+		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
-				.applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
 		section.setExpanded(true);
-		//	section.setText("Crawler Details"); //$NON-NLS-1$
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		// section.setText("Crawler Details"); //$NON-NLS-1$
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
 
 		Composite sectionClient = toolkit.createComposite(section);
 		sc.setContent(sectionClient);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
-				.applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
 		section.setClient(sectionClient);
 
 		Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
-				.applyTo(dummy);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
 		Composite selectionType = toolkit.createComposite(sectionClient);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true)
-				.applyTo(selectionType);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0)
-				.applyTo(selectionType);
-		Label lblFilterType = toolkit.createLabel(selectionType,
-				"Filter Type:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(lblFilterType);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true).applyTo(selectionType);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(selectionType);
+		Label lblFilterType = toolkit.createLabel(selectionType, "Filter Type:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(lblFilterType);
 		termBtn = toolkit.createButton(selectionType, "Term", SWT.RADIO);
 		termBtn.setSelection(true);
 		termBtn.setData("cases");
 		segment = (String) termBtn.getData();
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(termBtn);
-		final Button issuesBtn = toolkit.createButton(selectionType, "Issues",
-				SWT.RADIO);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(issuesBtn);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(termBtn);
+		final Button issuesBtn = toolkit.createButton(selectionType, "Issues", SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(issuesBtn);
 		issuesBtn.setData("issues");
-		Label filterRangeLbl = toolkit.createLabel(sectionClient,
-				"Filter Range:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(filterRangeLbl);
-		
+		Label filterRangeLbl = toolkit.createLabel(sectionClient, "Filter Range:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(filterRangeLbl);
+
 		createMultiSelectRange(sectionClient);
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
-		Label limitRecords = toolkit.createLabel(sectionClient,
-				"Limit Cases per Issue/Term:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
-				.applyTo(limitRecords);
+		Label limitRecords = toolkit.createLabel(sectionClient, "Limit Cases per Issue/Term:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitRecords);
 		limitRecordTxt = toolkit.createText(sectionClient, "10");
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
-		.applyTo(limitRecordTxt);
-		
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitRecordTxt);
+
 		termBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -162,11 +142,10 @@ public class SupremeCrawlerView extends ViewPart implements
 				refreshFilterRangeTable();
 			}
 		});
-		
+
 		createDownloadGroupSection(form.getBody());
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
-		layoutData = TacitFormComposite.createOutputSection(toolkit,
-				form.getBody(), form.getMessageManager());
+		layoutData = TacitFormComposite.createOutputSection(toolkit, form.getBody(), form.getMessageManager());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Supreme Crawler");
 		mgr = form.getToolBarManager();
@@ -174,8 +153,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (SupremeCrawlerImageRegistry.getImageIconFactory()
-						.getImageDescriptor(IMAGE_HELP_CO));
+				return (SupremeCrawlerImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
 			}
 
 			@Override
@@ -185,34 +163,23 @@ public class SupremeCrawlerView extends ViewPart implements
 
 			@Override
 			public void run() {
-				PlatformUI
-						.getWorkbench()
-						.getHelpSystem()
-						.displayHelp(
-								"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
+				PlatformUI.getWorkbench().getHelpSystem()
+						.displayHelp("edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
 			};
 		};
 		mgr.add(helpAction);
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(helpAction,
-						"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(form,
-						"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction,
+				"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form,
+				"edu.usc.cssl.tacit.crawlers.supremecourt.ui.supremecourt");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
 	}
 
 	private void createMultiSelectRange(Composite sectionClient) {
 
-		filterListTable = toolkit.createTable(sectionClient, SWT.BORDER
-				| SWT.MULTI);
-		GridDataFactory.fillDefaults().grab(true, true).span(1, 3)
-				.hint(100, 200).applyTo(filterListTable);
+		filterListTable = toolkit.createTable(sectionClient, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).hint(100, 200).applyTo(filterListTable);
 		filterListTable.setBounds(100, 100, 100, 500);
 
 		Composite buttonComp = new Composite(sectionClient, SWT.NONE);
@@ -222,10 +189,9 @@ public class SupremeCrawlerView extends ViewPart implements
 		buttonComp.setLayout(btnLayout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-		final Button addfilterBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
+		final Button addfilterBtn = new Button(buttonComp, SWT.PUSH); // $NON-NLS-1$
 		addfilterBtn.setText("Add...");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(addfilterBtn);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addfilterBtn);
 
 		addfilterBtn.addSelectionListener(new SelectionAdapter() {
 
@@ -237,8 +203,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 		final Button removeFileButton = new Button(buttonComp, SWT.PUSH);
 		removeFileButton.setText("Remove...");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
-				.applyTo(removeFileButton);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeFileButton);
 
 		removeFileButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -247,10 +212,9 @@ public class SupremeCrawlerView extends ViewPart implements
 				for (TableItem item : filterListTable.getSelection()) {
 
 					selectedFilterList.remove(item.getText());
-					if(termBtn.getSelection()){
+					if (termBtn.getSelection()) {
 						caseList.remove(item.getText());
-					}
-					else{
+					} else {
 						issueList.remove(item.getText());
 					}
 					item.dispose();
@@ -270,13 +234,11 @@ public class SupremeCrawlerView extends ViewPart implements
 		return super.getAdapter(adapter);
 	}
 
-	private void addCrawlButton(final IMessageManager mmng,
-			final Text outputPath, IToolBarManager mgr) {
+	private void addCrawlButton(final IMessageManager mmng, final Text outputPath, IToolBarManager mgr) {
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (SupremeCrawlerImageRegistry.getImageIconFactory()
-						.getImageDescriptor(IMAGE_LRUN_OBJ));
+				return (SupremeCrawlerImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
 			@Override
@@ -287,25 +249,20 @@ public class SupremeCrawlerView extends ViewPart implements
 			@Override
 			public void run() {
 				List<String> selectedFilterValue = selectedFilterList;
-				final SupremeCourtCrawler sc = new SupremeCourtCrawler(
-						selectedFilterValue,  outputPath.getText(),
-						ISupremeCrawlerUIConstants.CRAWLER_URL,Integer.valueOf(limitRecordTxt.getText()));
+				final SupremeCourtCrawler sc = new SupremeCourtCrawler(selectedFilterValue, outputPath.getText(),
+						ISupremeCrawlerUIConstants.CRAWLER_URL, Integer.valueOf(limitRecordTxt.getText()));
 				sc.setDownloadAudio(downloadAudio.getSelection());
 				sc.setTruncate(truncateAudio.getSelection());
-				TacitFormComposite
-						.writeConsoleHeaderBegining("Crawling started  ");
+				TacitFormComposite.writeConsoleHeaderBegining("Crawling started  ");
 
 				job = new Job("Crawling...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(),
-								null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 						monitor.beginTask("TACIT started crawling...", 10000);
 
 						if (monitor.isCanceled()) {
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Crawling  ");
 							return Status.CANCEL_STATUS;
 						}
 
@@ -318,37 +275,15 @@ public class SupremeCrawlerView extends ViewPart implements
 
 								@Override
 								public void run() {
-									ErrorDialog
-											.openError(
-													Display.getDefault()
-															.getActiveShell(),
-													"Problem Occurred",
-													"Please Check your connectivity to server",
-													new Status(
-															IStatus.ERROR,
-															CommonUiActivator.PLUGIN_ID,
-															exception
-																	.getMessage()));
+									ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred",
+											"Please Check your connectivity to server", new Status(IStatus.ERROR,
+													CommonUiActivator.PLUGIN_ID, exception.getMessage()));
 
 								}
 							});
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Crawling  ");
-							TacitFormComposite.updateStatusMessage(
-									getViewSite(), "Crawling is Stopped ",
-									IStatus.INFO, form);
-							ConsoleView.printlInConsoleln();
-							ConsoleView
-									.printlInConsoleln("Crawling is Stopped.");
+
 							return Status.CANCEL_STATUS;
 						}
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Crawling  ");
-						ConsoleView.printlInConsoleln();
-						ConsoleView
-								.printlInConsoleln("Crawling is sucessfully Completed.");
-						TacitFormComposite.updateStatusMessage(getViewSite(),
-								"Crawling completed", IStatus.OK, form);
 						return Status.OK_STATUS;
 					}
 				};
@@ -356,6 +291,23 @@ public class SupremeCrawlerView extends ViewPart implements
 				if (canProceedCrawl()) {
 
 					job.schedule();
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Crawling  ");
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is Stopped ",
+										IStatus.INFO, form);
+								ConsoleView.printlInConsoleln("Crawling stopped.");
+							} else {
+								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Crawling  ");
+								ConsoleView.printlInConsoleln("Crawling sucessfully Completed.");
+								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
+										form);
+
+							}
+						}
+					});
 
 				}
 			};
@@ -367,13 +319,11 @@ public class SupremeCrawlerView extends ViewPart implements
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
-						"Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(), "Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null,
-					IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
 		boolean validLimitParse = true;
@@ -384,13 +334,10 @@ public class SupremeCrawlerView extends ViewPart implements
 		} catch (NumberFormatException e1) {
 			validLimitParse = false;
 		}
-		
+
 		if (!validLimitParse) {
-			form.getMessageManager()
-					.addMessage(
-							"limit",
-							"Error: Limit Records per case is not a positive number",
-							null, IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("limit", "Error: Limit Records per case is should be a positive number",
+					null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
 		return canProceed;
@@ -450,8 +397,7 @@ public class SupremeCrawlerView extends ViewPart implements
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				SupremCrawlerFilter sFilter = new SupremCrawlerFilter(
-						ISupremeCrawlerUIConstants.CRAWLER_URL);
+				SupremCrawlerFilter sFilter = new SupremCrawlerFilter(ISupremeCrawlerUIConstants.CRAWLER_URL);
 				try {
 					items = sFilter.filters(segment);
 					if (selectedFilterList != null)
@@ -465,12 +411,9 @@ public class SupremeCrawlerView extends ViewPart implements
 
 						@Override
 						public void run() {
-							ErrorDialog.openError(Display.getDefault()
-									.getActiveShell(), "Problem Occurred",
+							ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred",
 									"Please Check your connectivity to server",
-									new Status(IStatus.ERROR,
-											CommonUiActivator.PLUGIN_ID,
-											"Network is not reachable"));
+									new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID, "Network is not reachable"));
 
 						}
 					});
@@ -490,7 +433,7 @@ public class SupremeCrawlerView extends ViewPart implements
 		};
 
 		listAuthors.schedule();
-		dialog.setElements(new String[]{"Loading..."});
+		dialog.setElements(new String[] { "Loading..." });
 		dialog.setMultipleSelection(true);
 
 		if (dialog.open() == Window.OK) {

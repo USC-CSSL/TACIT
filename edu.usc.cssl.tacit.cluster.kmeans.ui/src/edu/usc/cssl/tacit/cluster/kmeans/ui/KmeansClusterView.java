@@ -212,15 +212,11 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 								+ (System.currentTimeMillis() - startTime) + " milliseconds.");
 
 						if (monitor.isCanceled()) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> k-Means clustering  ");
+							TacitFormComposite.writeConsoleHeaderBegining("<Terminated> k-Means clustering  ");
 							throw new OperationCanceledException();
 						}
 						monitor.worked(10);
 						monitor.done();
-
-						TacitFormComposite.updateStatusMessage(getViewSite(), "k-Means clustering completed",
-								IStatus.OK, form);
-						TacitFormComposite.writeConsoleHeaderBegining("<terminated> k-Means clustering  ");
 						return Status.OK_STATUS;
 					}
 				};
@@ -231,10 +227,15 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <terminated> Kmeans Clustering");
-								ConsoleView.printlInConsoleln("Clustering terminated...");
+								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Kmeans Clustering");
+								ConsoleView.printlInConsoleln("K-Means Clustering met with error.");
 								ConsoleView.printlInConsoleln(
 										"Take appropriate action to resolve the issues and run again.");
+							}
+							else {
+								TacitFormComposite.updateStatusMessage(getViewSite(), "K-Means clustering completed",
+										IStatus.OK, form);
+								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> k-Means clustering  ");
 							}
 						}
 					});

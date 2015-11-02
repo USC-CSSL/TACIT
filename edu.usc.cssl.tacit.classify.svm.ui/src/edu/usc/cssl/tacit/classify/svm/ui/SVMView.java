@@ -9,7 +9,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -46,6 +48,7 @@ import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class SVMView extends ViewPart implements ISVMViewConstants {
 
@@ -205,9 +208,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								ppClass2 = preprocessor.doPreprocessing(
 										class2Files, class2NameStr);
 							} catch (IOException e) {
-								return null;
+								return Status.CANCEL_STATUS;
 							} catch (NullPointerException e) {
-								return null;
+								return Status.CANCEL_STATUS;
 							}
 
 							class1FilesL = (new File(ppClass1)).listFiles();
@@ -255,22 +258,39 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							monitor.worked(2);
 						} catch (NumberFormatException e) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> SVM classification ");
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (IOException e) {
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> SVM classification ");
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 						monitor.done();
-						TacitFormComposite.updateStatusMessage(
-								getViewSite(), "SVM analysis completed",
-								IStatus.OK, form);
-						TacitFormComposite.writeConsoleHeaderBegining("<terminated> SVM classification ");
 						return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
 				job.schedule();
+				job.addJobChangeListener(new JobChangeAdapter() {
+
+					public void done(IJobChangeEvent event) {
+						if (!event.getResult().isOK()) {
+							TacitFormComposite
+									.writeConsoleHeaderBegining("Error: <Terminated> SVM classification");
+							ConsoleView
+									.printlInConsoleln("SVM met with error.");
+							ConsoleView
+									.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
+						}
+						else {
+							TacitFormComposite.updateStatusMessage(getViewSite(),
+									"SVM classification completed", IStatus.OK,
+									form);
+							TacitFormComposite
+									.writeConsoleHeaderBegining("Success: <Completed> SVM Classification");
+							
+						}
+					}
+				});
 			};
 		});
 

@@ -1,6 +1,7 @@
 package edu.usc.cssl.tacit.topicmodel.zlda.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -45,6 +48,7 @@ import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.topicmodel.zlda.services.ZlabelTopicModelAnalysis;
 import edu.usc.cssl.tacit.topicmodel.zlda.ui.internal.IZlabelLdaTopicModelClusterViewConstants;
 import edu.usc.cssl.tacit.topicmodel.zlda.ui.internal.ZlabelLdaTopicModelViewImageRegistry;
@@ -266,14 +270,13 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 										.doPreprocessing(selectedFiles, "");
 
 							} catch (IOException e) {
-								TacitFormComposite
-										.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 								e.printStackTrace();
+								return Status.CANCEL_STATUS;
+								
 							}
 							catch (NullPointerException e) {
-								TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
 								e.printStackTrace();
+								return Status.CANCEL_STATUS;
 							}
 							monitor.worked(10);
 						} else { // copy files to a parent directory
@@ -286,6 +289,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 											destDir, false);
 								} catch (IOException e) {
 									e.printStackTrace();
+									return Status.CANCEL_STATUS;
 								}
 							}
 						}
@@ -296,38 +300,56 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						ZlabelTopicModelAnalysis zlda = new ZlabelTopicModelAnalysis(
 								new SubProgressMonitor(monitor, 70));
 						monitor.subTask("Topic Modelling...");
-						zlda.invokeLDA(topicModelDirPath, seedFilePath,
-								noOfTopics, outputPath, dateObj);
-						System.out
-								.println("ZLabel LDA Topic Modelling completed successfully in "
-										+ (System.currentTimeMillis() - startTime)
-										+ " milliseconds.");
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
-						if (monitor.isCanceled()) {
-							TacitFormComposite
-									.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
+						try {
+							zlda.invokeLDA(topicModelDirPath, seedFilePath,
+									noOfTopics, outputPath, dateObj);
+						} catch (Exception e) {
+							e.printStackTrace();
+							monitor.done();
 							return Status.CANCEL_STATUS;
 						}
-
+						
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
+						System.out
+						.println("ZLabel LDA Topic Modelling completed successfully in "
+								+ (System.currentTimeMillis() - startTime)
+								+ " milliseconds.");
+		
 						if (isPreprocess) {
 							monitor.subTask("Cleaning Preprocessed Files...");
 							preprocessTask.clean();
 						}
 						monitor.worked(10);
 						monitor.done();
-						TacitFormComposite.updateStatusMessage(getViewSite(),
-								"z-Label LDA analysis completed", IStatus.OK,
-								form);
-						;
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Topic Modelling ");
+						
 						return Status.OK_STATUS;
 					}
 				};
 				job.setUser(true);
 				if (canProceedJob()) {
 					job.schedule();
+					job.addJobChangeListener(new JobChangeAdapter() {
+
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> Z-LDA Topic Modelling");
+								ConsoleView
+										.printlInConsoleln("Z-LDA not successful.");
+							}
+							else {
+								TacitFormComposite.updateStatusMessage(getViewSite(),
+										"Z-Label LDA topic modelling completed", IStatus.OK,
+										form);
+								
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> Z-LDA Topic Modelling ");
+								
+							}
+						}
+					});
 				} else {
 					TacitFormComposite
 							.updateStatusMessage(
