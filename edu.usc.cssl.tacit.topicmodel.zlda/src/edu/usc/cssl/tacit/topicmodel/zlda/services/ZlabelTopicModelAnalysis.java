@@ -30,8 +30,7 @@ public class ZlabelTopicModelAnalysis {
 		this.monitor = monitor;
 	}
 
-	private void runLDA(File dir, File preSeedFile, int numTopics,
-			int noOfSamples, double alphaval, double betaval,
+	private void runLDA(File dir, File preSeedFile, int numTopics, int noOfSamples, double alphaval, double betaval,
 			double confidenceValue, String outputdir, Date dateObj) {
 
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
@@ -48,9 +47,8 @@ public class ZlabelTopicModelAnalysis {
 		}
 		monitor.worked(5);
 
-
 		ConsoleView.printlInConsoleln("running zlabel LDA...");
-		DTWC dtwc = new DTWC(inputFiles, preSeedFile,this.monitor);
+		DTWC dtwc = new DTWC(inputFiles, preSeedFile, this.monitor);
 		dtwc.computeDocumentVectors();
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -58,7 +56,6 @@ public class ZlabelTopicModelAnalysis {
 
 		int[][][] zlabels = dtwc.getTopicSeedsAsInt();
 		int[][] docs = dtwc.getDocVectorsAsInt();
-
 
 		int T = numTopics;
 		int W = dtwc.getVocabSize();
@@ -75,13 +72,11 @@ public class ZlabelTopicModelAnalysis {
 			}
 		}
 
-		ZlabelLDA zelda = new ZlabelLDA(docs, zlabels, confidenceValue, alpha,
-				beta, noOfSamples);
+		ZlabelLDA zelda = new ZlabelLDA(docs, zlabels, confidenceValue, alpha, beta, noOfSamples);
 		this.monitor.subTask("Calculating Z label ...");
 		boolean retVal = zelda.zLDA();
 		if (!retVal) {
-			System.out
-					.println("Sorry, something is wrong with the input - please check format and try again");
+			System.out.println("Sorry, something is wrong with the input - please check format and try again");
 			return;
 		}
 		this.monitor.worked(15);
@@ -109,53 +104,70 @@ public class ZlabelTopicModelAnalysis {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				if (phi[i][j] > 0.001) {
-					topicWords.get(i).add(
-							new AbstractMap.SimpleEntry<String, Double>(revDict
-									.get(j), new Double(phi[i][j])));
+				if (phi[i][j] > Float.MIN_VALUE) {
+					topicWords.get(i)
+							.add(new AbstractMap.SimpleEntry<String, Double>(revDict.get(j), new Double(phi[i][j])));
 				}
 			}
 		}
 		this.monitor.worked(15);
-this.monitor.subTask("writing corresponding words and phi values in topicwords-"+df.format(dateObj)+".csv");
-		System.out
-				.println("\nTopic and its corresponding words and phi values stored in "
-						+ outputdir + File.separator + "topicwords-"+df.format(dateObj)+".csv");
+		this.monitor.subTask("writing corresponding words and phi values in topicwords-" + df.format(dateObj) + ".csv");
+		System.out.println("\nTopic and its corresponding words and phi values stored in " + outputdir + File.separator
+				+ "topicwords-" + df.format(dateObj) + ".csv");
 		try {
-			FileWriter fw = new FileWriter(new File(outputdir + File.separator
-					+ "topicwords-"+df.format(dateObj)+".csv"));
+			FileWriter fw = new FileWriter(
+					new File(outputdir + File.separator + "topicwords-" + df.format(dateObj) + ".csv"));
+			StringBuilder row = new StringBuilder();
+			StringBuilder rowValues = new StringBuilder();
 			for (int i = 0; i < T; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				fw.write("Topic" + i + ",");
-				Collections.sort(topicWords.get(i),
-						new Comparator<Map.Entry<String, Double>>() {
-							@Override
-							public int compare(Entry<String, Double> arg0,
-									Entry<String, Double> arg1) {
-								return -(arg0.getValue()).compareTo(arg1
-										.getValue());
-							}
-						});
-				for (int j = 0; (j < topicWords.get(i).size() && j < 50); j++) {
+				row.append("Topic" + i + ", ,");
+				rowValues.append("Word,Probability,");
+			}
+			// adding headers
+			fw.write(row.toString() + "\n");
+			fw.write(rowValues.toString() + "\n");
+
+			for (int i = 0; i < T; i++) {
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				// fw.write("Topic" + i + ","+"");
+				Collections.sort(topicWords.get(i), new Comparator<Map.Entry<String, Double>>() {
+					@Override
+					public int compare(Entry<String, Double> arg0, Entry<String, Double> arg1) {
+						return -(arg0.getValue()).compareTo(arg1.getValue());
+					}
+				});
+
+			}
+			for (int k = 0; k < 50; k++) {
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				row=new StringBuilder();
+				for (int i = 0; i < T; i++) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					fw.write(topicWords.get(i).get(j).getKey() + ","
-							+ topicWords.get(i).get(j).getValue() + ",");
+					if (topicWords.get(i).get(k).getKey() != null) {
+						row.append(topicWords.get(i).get(k).getKey() + "," + topicWords.get(i).get(k).getValue() + ",");
+					} else {
+						row.append(" , ,");
+					}
 				}
-				fw.write("\n");
+				fw.write(row.toString()+"\n");
 				fw.flush();
 			}
 			fw.flush();
 			fw.close();
 			this.monitor.worked(15);
-			this.monitor.subTask("writing Phi values for each stopic in phi-"+df.format(dateObj)+".csv");
-			ConsoleView.printlInConsoleln("\nPhi values for each stopic stored in "
-					+ outputdir + File.separator + "phi-"+df.format(dateObj)+".csv");
-			fw = new FileWriter(
-					new File(outputdir + File.separator + "phi-"+df.format(dateObj)+".csv"));
+			this.monitor.subTask("writing Phi values for each stopic in topicsPerDocument(Phi)-" + df.format(dateObj) + ".csv");
+			ConsoleView.printlInConsoleln("\nPhi values for each stopic stored in " + outputdir + File.separator
+					+ "topicsPerDocument(Phi)-" + df.format(dateObj) + ".csv");
+			fw = new FileWriter(new File(outputdir + File.separator + "topicsPerDocument(Phi)-" + df.format(dateObj) + ".csv"));
 			for (int i = 0; i < T; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -165,7 +177,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords-"
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					if (phi[i][j] > 0.001) {
+					if (phi[i][j] > Float.MIN_VALUE) {
 						fw.write(phi[i][j] + ",");
 					}
 				}
@@ -175,11 +187,10 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords-"
 			fw.flush();
 			fw.close();
 			this.monitor.worked(15);
-			this.monitor.subTask("writing Theta values for each stopic in theta-"+df.format(dateObj)+".csv");
-			ConsoleView.printlInConsoleln("\nTheta values for each document stored in "
-					+ outputdir + File.separator + "theta-"+df.format(dateObj)+".csv");
-			fw = new FileWriter(new File(outputdir + File.separator
-					+ "theta-"+df.format(dateObj)+".csv"));
+			this.monitor.subTask("writing Theta values for each stopic in wordsinTopics(theta)-" + df.format(dateObj) + ".csv");
+			ConsoleView.printlInConsoleln("\nTheta values for each document stored in " + outputdir + File.separator
+					+ "wordsinTopics(theta)-" + df.format(dateObj) + ".csv");
+			fw = new FileWriter(new File(outputdir + File.separator + "wordsinTopics(theta)-" + df.format(dateObj) + ".csv"));
 			for (int i = 0; i < docs.length; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -193,17 +204,21 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords-"
 			}
 			fw.flush();
 			fw.close();
-			TacitUtility.createRunReport(outputdir, "Z-Label LDA",dateObj);
-		} catch (Exception e) {
+			TacitUtility.createRunReport(outputdir, "Z-Label LDA", dateObj);
+		} catch (
+
+		Exception e)
+
+		{
 			ConsoleView.printlInConsoleln("Error writing output to files " + e);
 		}
 		ConsoleView.printlInConsoleln("\nDone zlabel LDA...");
 		this.monitor.worked(15);
 		this.monitor.done();
+
 	}
 
-	public void invokeLDA(String inputDir, String seedFileName, int numTopics,
-			String outputDir, Date dateObj) {
+	public void invokeLDA(String inputDir, String seedFileName, int numTopics, String outputDir, Date dateObj) {
 		File dir = new File(inputDir);
 
 		File seedFile = new File(seedFileName);
@@ -213,8 +228,7 @@ this.monitor.subTask("writing corresponding words and phi values in topicwords-"
 		int noOfSamples = 2000;
 		double confidenceValue = 1;
 
-		runLDA(dir, seedFile, numTopics, noOfSamples, alphaval, betaval,
-				confidenceValue, outputDir, dateObj);
+		runLDA(dir, seedFile, numTopics, noOfSamples, alphaval, betaval, confidenceValue, outputDir, dateObj);
 
 	}
 }
