@@ -28,6 +28,8 @@ import edu.usc.cssl.tacit.common.snowballstemmer.NorwegianStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.SnowballStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.TurkishStemmer;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -37,7 +39,7 @@ public class Preprocessor {
 	private boolean doLowercase = false;
 	private boolean doStemming = false;
 	private boolean doStopWords = false;
-	private boolean doCleanUp = false;
+	private boolean doCleanUp = true;
 	private boolean isLatin = false;
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	private String ppOutputPath;
@@ -48,6 +50,9 @@ public class Preprocessor {
 	private String stemLang;
 	private String currTime;
 	private String latinStemLocation;
+	private String tempPPFile = System.getProperty("user.dir")
+			+ System.getProperty("file.separator") + "tacit_temp_files"
+			+ System.getProperty("file.separator");
 
 	public ArrayList<String> processData(String caller, List<Object> inData,
 			boolean doPreprocessing) throws IOException {
@@ -60,7 +65,7 @@ public class Preprocessor {
 				processCorpus((CorpusClass) obj, doPreprocessing);
 			} else {
 				File inputFile = new File((String) obj);
-				if (!inputFile.isDirectory()) {
+				if (inputFile.isDirectory()) {
 					processDirectory(inputFile.getAbsolutePath(),
 							doPreprocessing);
 				} else {
@@ -70,7 +75,7 @@ public class Preprocessor {
 					if (doPreprocessing) {
 						String ppFile = inputFile.getAbsolutePath();
 						if (ppFile != "")
-							outputFiles.add(processFile(ppFile));
+							outputFiles.add(processFile(ppFile,""));
 					} else {
 						outputFiles.add(inputFile.getAbsolutePath());
 					}
@@ -86,29 +91,45 @@ public class Preprocessor {
 
 		if (doPreprocessing) {
 			for (File file : files) {
-				String ppFile = processFile(file.getAbsolutePath());
-				if (ppFile != "")
-					outputFiles.add(ppFile);
+				if (file.isDirectory()) {
+					processDirectory(file.getAbsolutePath(), doPreprocessing);
+				} else {
+					String ppFile = processFile(file.getAbsolutePath(),"");
+					if (ppFile != "")
+						outputFiles.add(ppFile);
+				}
 			}
 		} else {
 			for (File file : files) {
-				outputFiles.add(file.getAbsolutePath());
+				if (file.getName().contains("DS_Store"))
+					continue;
+
+				if (file.isDirectory())
+					processDirectory(file.getAbsolutePath(), doPreprocessing);
+				else
+					outputFiles.add(file.getAbsolutePath());
 			}
 		}
 	}
 
-	private String processFile(String inFile) {
-		String outFile = ppDir + System.getProperty("file.separator")
-				+ (new File(inFile).getName());
+	private String processFile(String inFile, String outName) {
+
+		String outFile;
+		if (outName == "" || outName == null) {
+			outFile = ppDir + System.getProperty("file.separator")
+					+ (new File(inFile).getName());
+		} else {
+			outFile = ppDir + System.getProperty("file.separator") + outName;
+		}
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(inFile));
 			if (new File(outFile).exists()) {
-				for (int i=1; i<Integer.MAX_VALUE; i++) {
-					if (new File(outFile+Integer.toString(i)).exists()) {
+				for (int i = 1; i < Integer.MAX_VALUE; i++) {
+					if (new File(outFile + Integer.toString(i)).exists()) {
 						continue;
 					} else {
-						outFile = outFile+Integer.toString(i);
+						outFile = outFile + Integer.toString(i);
 						break;
 					}
 				}
@@ -208,7 +229,26 @@ public class Preprocessor {
 	 * a time
 	 */
 	private void processCorpus(CorpusClass corpus, boolean doPreprocessing) {
+		String corpusClassPath = ((CorpusClass) corpus).getClassPath();
+		CMDataType corpusType = ((CorpusClass) corpus).getParent()
+				.getDatatype();
 
+		switch (corpusType) {
+		case PLAIN_TEXT:
+			processDirectory(corpusClassPath, doPreprocessing);
+			break;
+
+		case REDDIT_JSON:
+
+			break;
+
+		case TWITTER_JSON:
+
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	private void setupParams(boolean doPreprocessing) throws IOException {
@@ -268,6 +308,7 @@ public class Preprocessor {
 	}
 
 	private void createppDir(String caller) {
+		tempPPFile = tempPPFile + caller + "_" + System.currentTimeMillis();
 		if (ppOutputPath == null || ppOutputPath.trim().length() == 0) {
 			String tempOutputPath = System.getProperty("user.dir")
 					+ System.getProperty("file.separator") + "ppFiles";
@@ -311,6 +352,11 @@ public class Preprocessor {
 	}
 
 	public void clean() {
+
+		if (new File(tempPPFile).exists()) {
+			new File(tempPPFile).delete();
+		}
+
 		if (ppDir != "") {
 			if (doCleanUp) {
 				File toDel = new File(ppDir);
