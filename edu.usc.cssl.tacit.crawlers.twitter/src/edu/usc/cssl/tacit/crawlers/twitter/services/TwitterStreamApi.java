@@ -6,17 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
-
-import twitter4j.FilterQuery;
-import twitter4j.StallWarning;
-import twitter4j.Status;
-import twitter4j.StatusDeletionNotice;
-import twitter4j.StatusListener;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
-import twitter4j.conf.ConfigurationBuilder;
+import org.eclipse.jface.dialogs.ErrorDialog;
+//import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -28,6 +23,14 @@ import com.fasterxml.jackson.core.JsonToken;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+import twitter4j.FilterQuery;
+import twitter4j.StallWarning;
+//import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
+import twitter4j.StatusListener;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterStreamApi {
 	private boolean terminate = false;
@@ -36,11 +39,10 @@ public class TwitterStreamApi {
 	private TwitterStream twitterStream;
 	private StatusListener listener;
 
-	public void stream(String fileName, final boolean isNum,
-			final long numTweet, final boolean isTime, final long deadLine,
-			final boolean noWord, String keyWords[], final boolean noLocation,
-			double[][] locations, final boolean att[],
-			final IProgressMonitor monitor, final Job job) throws IOException {
+	public void stream(String fileName, final boolean isNum, final long numTweet, final boolean isTime,
+			final long deadLine, final boolean noWord, String keyWords[], final boolean noLocation,
+			double[][] locations, final boolean att[], final IProgressMonitor monitor, final Job job)
+					throws IOException {
 
 		final long startTime = System.currentTimeMillis();
 
@@ -52,19 +54,13 @@ public class TwitterStreamApi {
 		String accessTokenSecret;
 		terminate = false;
 		monitor.subTask("Accessing User Information to authenticate...");
-		consumerKey = CommonUiActivator.getDefault().getPreferenceStore()
-				.getString("ckey");
-		consumerSecret = CommonUiActivator.getDefault().getPreferenceStore()
-				.getString("csecret");
-		accessToken = CommonUiActivator.getDefault().getPreferenceStore()
-				.getString("accesstoken");
-		accessTokenSecret = CommonUiActivator.getDefault().getPreferenceStore()
-				.getString("atokensecret");
+		consumerKey = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
+		consumerSecret = CommonUiActivator.getDefault().getPreferenceStore().getString("csecret");
+		accessToken = CommonUiActivator.getDefault().getPreferenceStore().getString("accesstoken");
+		accessTokenSecret = CommonUiActivator.getDefault().getPreferenceStore().getString("atokensecret");
 
-		cb.setDebugEnabled(true).setOAuthConsumerKey(consumerKey)
-				.setOAuthConsumerSecret(consumerSecret)
-				.setOAuthAccessToken(accessToken)
-				.setOAuthAccessTokenSecret(accessTokenSecret);
+		cb.setDebugEnabled(true).setOAuthConsumerKey(consumerKey).setOAuthConsumerSecret(consumerSecret)
+				.setOAuthAccessToken(accessToken).setOAuthAccessTokenSecret(accessTokenSecret);
 		twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 		monitor.subTask("User Information is Verified");
 		monitor.worked(2);
@@ -75,15 +71,14 @@ public class TwitterStreamApi {
 
 		// Instantiate JSON writer
 		JsonFactory jsonfactory = new JsonFactory();
-		final JsonGenerator jsonGenerator = jsonfactory.createGenerator(
-				streamFile, JsonEncoding.UTF8);
+		final JsonGenerator jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
 		jsonGenerator.useDefaultPrettyPrinter();
 		jsonGenerator.writeStartArray();
 
 		// Setup Listener
 		listener = new StatusListener() {
 			@Override
-			public void onStatus(Status status) {
+			public void onStatus(twitter4j.Status status) {
 
 				statusNum++;
 				// Get GeoLocation of Status if it is private, make it NULL
@@ -99,28 +94,23 @@ public class TwitterStreamApi {
 					sLongitude = "NULL";
 				}
 				terminateTwitterCrawler(monitor);
-				monitor.subTask("Crawling Twitter from User : "
-						+ status.getUser().getScreenName());
-				ConsoleView.printlInConsoleln("Crawling Twitter from User : "
-						+ status.getUser().getScreenName());
+				monitor.subTask("Crawling Twitter from User : " + status.getUser().getScreenName());
+				ConsoleView.printlInConsoleln("Crawling Twitter from User : " + status.getUser().getScreenName());
 				monitor.worked(1);
 
 				// Append the new status instance to the file
 				try {
 					jsonGenerator.writeStartObject();
 					if (att[0]) {
-						jsonGenerator.writeStringField("Name", status.getUser()
-								.getScreenName());
+						jsonGenerator.writeStringField("Name", status.getUser().getScreenName());
 
 					}
 					if (att[1]) {
-						jsonGenerator
-								.writeStringField("Text", status.getText());
+						jsonGenerator.writeStringField("Text", status.getText());
 
 					}
 					if (att[2]) {
-						jsonGenerator.writeStringField("Retweet",
-								Integer.toString(status.getRetweetCount()));
+						jsonGenerator.writeStringField("Retweet", Integer.toString(status.getRetweetCount()));
 
 					}
 					if (att[3]) {
@@ -129,23 +119,19 @@ public class TwitterStreamApi {
 
 					}
 					if (att[4]) {
-						jsonGenerator.writeStringField("CreatedAt", status
-								.getCreatedAt().toString());
+						jsonGenerator.writeStringField("CreatedAt", status.getCreatedAt().toString());
 						if (monitor.isCanceled()) {
 							job.cancel();
 						}
 					}
 					if (att[5]) {
-						jsonGenerator.writeStringField("FavCount",
-								Integer.toString(status.getFavoriteCount()));
+						jsonGenerator.writeStringField("FavCount", Integer.toString(status.getFavoriteCount()));
 
 					}
 					if (att[6])
-						jsonGenerator.writeStringField("Id",
-								Long.toString(status.getId()));
+						jsonGenerator.writeStringField("Id", Long.toString(status.getId()));
 					if (att[7])
-						jsonGenerator.writeStringField("Language",
-								status.getLang());
+						jsonGenerator.writeStringField("Language", status.getLang());
 
 					jsonGenerator.writeEndObject();
 				} catch (IOException e) {
@@ -173,23 +159,18 @@ public class TwitterStreamApi {
 			}
 
 			@Override
-			public void onDeletionNotice(
-					StatusDeletionNotice statusDeletionNotice) {
-				ConsoleView
-						.printlInConsoleln("Got a status deletion notice id:"
-								+ statusDeletionNotice.getStatusId());
+			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
+				ConsoleView.printlInConsoleln("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());
 			}
 
 			@Override
 			public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
-				ConsoleView.printlInConsoleln("Got track limitation notice:"
-						+ numberOfLimitedStatuses);
+				ConsoleView.printlInConsoleln("Got track limitation notice:" + numberOfLimitedStatuses);
 			}
 
 			@Override
 			public void onScrubGeo(long userId, long upToStatusId) {
-				ConsoleView.printlInConsoleln("Got scrub_geo event userId:"
-						+ userId + " upToStatusId:" + upToStatusId);
+				ConsoleView.printlInConsoleln("Got scrub_geo event userId:" + userId + " upToStatusId:" + upToStatusId);
 			}
 
 			@Override
@@ -198,7 +179,17 @@ public class TwitterStreamApi {
 			}
 
 			@Override
-			public void onException(Exception exception) {
+			public void onException(final Exception exception) {
+				
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						ErrorDialog.openError(Display.getDefault().getActiveShell(), "Twitter Exception",
+								"The following exception was received from Twitter",
+								(IStatus) new org.eclipse.core.runtime.Status(IStatus.ERROR,
+										CommonUiActivator.PLUGIN_ID, exception.toString()));
+					}
+				});
 				terminateTwitterCrawler(monitor);
 				ConsoleView.printlInConsoleln(exception.toString());
 				stopStream();
@@ -226,8 +217,7 @@ public class TwitterStreamApi {
 			terminateTwitterCrawler(monitor);
 			ConsoleView.printlInConsoleln(exception.toString());
 			stopStream();
-			TacitFormComposite
-					.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
+			TacitFormComposite.writeConsoleHeaderBegining("<terminated> Twitter Crawler  ");
 		}
 		if (twitterStream != null)
 			twitterStream.shutdown();
@@ -242,8 +232,7 @@ public class TwitterStreamApi {
 
 		jsonGenerator.close();
 		if (new File(fileName).length() > 0)
-			ConsoleView.printlInConsoleln("Saving Crawled information at "
-					+ streamFile);
+			ConsoleView.printlInConsoleln("Saving Crawled information at " + streamFile);
 		else if (new File(fileName).exists())
 			new File(fileName).delete();
 		monitor.worked(2);
@@ -278,8 +267,7 @@ public class TwitterStreamApi {
 
 						// current token is "name",
 						// move to next, which is "name"'s value
-						token = token + "\"" + fieldname + "\" : \""
-								+ jParser.getText() + "\" ,";
+						token = token + "\"" + fieldname + "\" : \"" + jParser.getText() + "\" ,";
 						continue;
 
 					}
