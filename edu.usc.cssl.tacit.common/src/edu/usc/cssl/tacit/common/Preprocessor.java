@@ -28,7 +28,6 @@ import edu.usc.cssl.tacit.common.snowballstemmer.NorwegianStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.SnowballStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.TurkishStemmer;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
-import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -75,7 +74,7 @@ public class Preprocessor {
 					if (doPreprocessing) {
 						String ppFile = inputFile.getAbsolutePath();
 						if (ppFile != "")
-							outputFiles.add(processFile(ppFile,""));
+							outputFiles.add(processFile(ppFile, ""));
 					} else {
 						outputFiles.add(inputFile.getAbsolutePath());
 					}
@@ -94,7 +93,7 @@ public class Preprocessor {
 				if (file.isDirectory()) {
 					processDirectory(file.getAbsolutePath(), doPreprocessing);
 				} else {
-					String ppFile = processFile(file.getAbsolutePath(),"");
+					String ppFile = processFile(file.getAbsolutePath(), "");
 					if (ppFile != "")
 						outputFiles.add(ppFile);
 				}
@@ -216,17 +215,16 @@ public class Preprocessor {
 	/*
 	 * CorpusType = Json, doPreprocessing = True: Traverse through all the data
 	 * of the corpus. Check if the Json data satisfies query parameters. If it
-	 * does, create a single temp file corresponding to that unit of data. Pass
-	 * this temp file to processFile to perform all preprocessing tasks. Add the
-	 * output of processFile to outputFiles. Note: You just need to create a
-	 * single temp file. You can recycle it for the data. Make sure to delete
-	 * this file at the end of the function
+	 * does, create a single temp file (store the name of this file in the
+	 * tempPPFile variable, so that the same file can be reused. I have already
+	 * written the code to delete this file once the analysis is over)
+	 * corresponding to that unit of data. Pass this temp file to processFile to
+	 * perform all preprocessing tasks. Add the output of processFile to
+	 * outputFiles.
 	 * 
 	 * CorpusType = Json, doPreprocessing = False: Create temp files out of the
-	 * Json data if the query is satisfied and add them to outputFiles
-	 * 
-	 * CorpusType = Plain Text: Call processDirectory, passing one class path at
-	 * a time
+	 * Json data (Store these temp files the same way they were being stored
+	 * earlier) if the query is satisfied and add them to outputFiles
 	 */
 	private void processCorpus(CorpusClass corpus, boolean doPreprocessing) {
 		String corpusClassPath = ((CorpusClass) corpus).getClassPath();
