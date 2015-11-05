@@ -203,9 +203,9 @@ public class PreprocessorView extends ViewPart {
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("inputNoProper");
-		form.getMessageManager().removeMessage("noOutput");
+		form.getMessageManager().removeMessage("noOutput"); 
 		
-		List<String> inputFiles = TacitUtil.refineInput(layData.getSelectedFiles());
+		List<String> inputFiles = new TacitUtil().refineInput(layData.getSelectedFiles());
 		boolean noProperFiles = true;
 
 		if (inputFiles.size() < 1) {

@@ -186,8 +186,11 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 				final Date dateObj = new Date();
 				ConsoleView.writeInConsoleHeader("Hierarchical clustering started " + (df.format(dateObj)));
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil.refineInput(layoutData.getSelectedFiles());
 				final String outputPath = layoutOutputData.getOutputLabel().getText();
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> selectedFiles = tacitHelper.refineInput(layoutData.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
+			
 				final boolean isSaveImage = saveImage.getSelection();
 
 				performCluster = new Job("Clustering...") {

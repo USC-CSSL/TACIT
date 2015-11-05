@@ -241,9 +241,12 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				final int noOfTopics = Integer.valueOf(topics.getText())
 						.intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil
-						.refineInput(inputLayoutData.getSelectedFiles());
 				final String outputPath = layoutData.getOutputLabel().getText();
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> selectedFiles = tacitHelper
+						.refineInput(inputLayoutData.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
+				
 				final String seedFilePath = seedFileText.getText();
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Topic Modelling  started ");

@@ -35,7 +35,9 @@ public class TwitterReadJsonData {
 			new File(path).mkdir();
 			openSummaryFile(path);
 	}
-
+	public String getSummaryFile() {
+		return summaryFile;
+	}
 	public String retrieveTwitterData(String location) {
 		/*** read from file ***/
 		JSONParser jParser;

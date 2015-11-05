@@ -288,8 +288,10 @@ public class StandardWordCountView extends ViewPart implements
 				}
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
-				final List<String> inputFiles = TacitUtil
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> inputFiles = tacitHelper
 						.refineInput(inputLayoutData.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
 				final boolean isStemDic = stemEnabled.getSelection();

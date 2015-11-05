@@ -222,7 +222,9 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 				}
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil.refineInput(inputLayoutData.getSelectedFiles());
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> selectedFiles = tacitHelper.refineInput(inputLayoutData.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();

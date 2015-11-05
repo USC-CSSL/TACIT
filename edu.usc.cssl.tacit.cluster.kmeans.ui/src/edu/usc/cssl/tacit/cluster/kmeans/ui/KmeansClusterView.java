@@ -161,8 +161,11 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 				TacitFormComposite.writeConsoleHeaderBegining("KMeans Clustering started ");
 				final int noOfClusters = Integer.valueOf(noClusterTxt.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil.refineInput(layData.getSelectedFiles());
 				final String outputPath = layoutData.getOutputLabel().getText();
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> selectedFiles = tacitHelper.refineInput(layData.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
+				
 				performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {

@@ -213,9 +213,12 @@ public class LdaTopicModelView extends ViewPart implements
 				final int noOfTopics = Integer
 						.valueOf(numberOfTopics.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final List<String> selectedFiles = TacitUtil
-						.refineInput(inputLayoutData.getSelectedFiles());
 				final String outputPath = layoutData.getOutputLabel().getText();
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> selectedFiles = tacitHelper
+						.refineInput(inputLayoutData.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
+				
 				final String preFix = prefixTxt.getText();
 				final boolean wordWeightFile = wordWeights.getSelection();
 				TacitFormComposite

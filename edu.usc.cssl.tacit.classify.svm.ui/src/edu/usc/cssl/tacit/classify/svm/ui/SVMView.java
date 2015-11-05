@@ -173,9 +173,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			public void run() {
 				if (!canProceed())
 					return;
-				final List<String> class1Files = TacitUtil.refineInput(class1LayoutData
+				final List<String> class1Files = new TacitUtil().refineInput(class1LayoutData
 						.getSelectedFiles());
-				final List<String> class2Files = TacitUtil.refineInput(class2LayoutData
+				final List<String> class2Files = new TacitUtil().refineInput(class2LayoutData
 						.getSelectedFiles());
 				final String class1NameStr = class1Name.getText();
 				final String class2NameStr = class2Name.getText();
@@ -344,8 +344,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		form.getMessageManager().removeMessage("kValue");
 		form.getMessageManager().removeMessage("output");
 
-		List<String> class1Files = TacitUtil.refineInput(class1LayoutData.getSelectedFiles());
-		List<String> class2Files = TacitUtil.refineInput(class2LayoutData.getSelectedFiles());
+		List<String> class1Files = new TacitUtil().refineInput(class1LayoutData.getSelectedFiles());
+		List<String> class2Files = new TacitUtil().refineInput(class2LayoutData.getSelectedFiles());
 		boolean noProperFiles = true;
 
 		if (class1Files.size() < 1) {

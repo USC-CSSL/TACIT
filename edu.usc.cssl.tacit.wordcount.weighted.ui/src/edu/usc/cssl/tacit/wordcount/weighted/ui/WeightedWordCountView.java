@@ -335,9 +335,12 @@ public class WeightedWordCountView extends ViewPart implements
 						+ fileName + ".csv");
 				final File sFile = new File(outputPath + File.separator
 						+ fileName + ".dat");
-
-				final List<String> inputFiles = TacitUtil.refineInput(inputLayoutData
+				
+				TacitUtil tacitHelper = new TacitUtil();
+				final List<String> inputFiles = tacitHelper.refineInput(inputLayoutData
 						.getSelectedFiles());
+				tacitHelper.writeSummaryFile(outputPath);
+				
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
 				final boolean isLiwcStemming = false; //liwcStemming.getSelection();

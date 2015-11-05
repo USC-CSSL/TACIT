@@ -1,11 +1,14 @@
 package edu.usc.cssl.tacit.common.ui.utility;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.composite.from.TwitterReadJsonData;
@@ -13,7 +16,8 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 
 public class TacitUtil {
-	public static List<String> refineInput(List<Object> selectedInputs) {
+	public String summaryFile = null;
+	public List<String> refineInput(List<Object> selectedInputs) {
 		Set<String> refinedInputList = new HashSet<String>();
 		Pattern corpusDetector = Pattern
 				.compile(".* [(]Tacit Internal Class Path: (.*)[)]");
@@ -24,12 +28,16 @@ public class TacitUtil {
 				CMDataType corpusType = ((CorpusClass)input).getParent().getDatatype();
 				if (corpusType == null)
 					continue;
-				if (corpusType.equals(CMDataType.TWITTER_JSON))
+				if (corpusType.equals(CMDataType.TWITTER_JSON)) {
 					input = twitterParser
 							.retrieveTwitterData(corpusClassPath);
-				else if (corpusType.equals(CMDataType.REDDIT_JSON))
+					summaryFile = twitterParser.getSummaryFile();
+				}
+				else if (corpusType.equals(CMDataType.REDDIT_JSON)) {
 					input = new RedditJsonHandler()
 							.retrieveRedditData(corpusClassPath);
+					
+				}
 				else
 					input = corpusClassPath;
 			}
@@ -45,8 +53,18 @@ public class TacitUtil {
 		twitterParser.summaryFileClose();
 		return new ArrayList<String>(refinedInputList);
 	}
-
-	public static List<String> getFilesFromFolder(String folderPath) {
+	
+	public void writeSummaryFile(String outputPath) {
+		if(summaryFile == null) 
+			return;
+		try{
+			FileUtils.copyFileToDirectory(new File(summaryFile), new File(outputPath));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public List<String> getFilesFromFolder(String folderPath) {
 		File folder = new File(folderPath);
 		List<String> subFiles = new ArrayList<String>();
 		if (!folder.exists() || !folder.isDirectory())
