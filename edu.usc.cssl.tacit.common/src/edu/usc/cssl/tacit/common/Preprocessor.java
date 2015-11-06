@@ -15,6 +15,9 @@ import java.util.List;
 
 import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.DutchStemmer;
@@ -49,32 +52,33 @@ public class Preprocessor {
 	private String stemLang;
 	private String currTime;
 	private String latinStemLocation;
-	private String tempPPFile = System.getProperty("user.dir")
+	private String tempPPFileLoc = System.getProperty("user.dir")
 			+ System.getProperty("file.separator") + "tacit_temp_files"
 			+ System.getProperty("file.separator");
+	private boolean doPreprocessing;
 
 	public ArrayList<String> processData(String caller, List<Object> inData,
 			boolean doPreprocessing) throws IOException {
+		this.doPreprocessing = doPreprocessing;
 
 		createppDir(caller);
-		setupParams(doPreprocessing);
+		setupParams();
 
 		for (Object obj : inData) {
 			if (obj instanceof CorpusClass) {
-				processCorpus((CorpusClass) obj, doPreprocessing);
+				processCorpus((CorpusClass) obj);
 			} else {
 				File inputFile = new File((String) obj);
 				if (inputFile.isDirectory()) {
-					processDirectory(inputFile.getAbsolutePath(),
-							doPreprocessing);
+					processDirectory(inputFile.getAbsolutePath());
 				} else {
 					if (inputFile.getName().contains("DS_Store"))
 						continue;
 
 					if (doPreprocessing) {
-						String ppFile = inputFile.getAbsolutePath();
+						String ppFile = processFile(inputFile.getAbsolutePath(),"");
 						if (ppFile != "")
-							outputFiles.add(processFile(ppFile, ""));
+							outputFiles.add(ppFile);
 					} else {
 						outputFiles.add(inputFile.getAbsolutePath());
 					}
@@ -85,13 +89,16 @@ public class Preprocessor {
 		return outputFiles;
 	}
 
-	private void processDirectory(String dirpath, boolean doPreprocessing) {
+	private void processDirectory(String dirpath) {
 		File[] files = new File(dirpath).listFiles();
 
 		if (doPreprocessing) {
 			for (File file : files) {
+				if (file.getName().contains("DS_Store"))
+					continue;
+				
 				if (file.isDirectory()) {
-					processDirectory(file.getAbsolutePath(), doPreprocessing);
+					processDirectory(file.getAbsolutePath());
 				} else {
 					String ppFile = processFile(file.getAbsolutePath(), "");
 					if (ppFile != "")
@@ -104,7 +111,7 @@ public class Preprocessor {
 					continue;
 
 				if (file.isDirectory())
-					processDirectory(file.getAbsolutePath(), doPreprocessing);
+					processDirectory(file.getAbsolutePath());
 				else
 					outputFiles.add(file.getAbsolutePath());
 			}
@@ -226,18 +233,17 @@ public class Preprocessor {
 	 * Json data (Store these temp files the same way they were being stored
 	 * earlier) if the query is satisfied and add them to outputFiles
 	 */
-	private void processCorpus(CorpusClass corpus, boolean doPreprocessing) {
-		String corpusClassPath = ((CorpusClass) corpus).getClassPath();
-		CMDataType corpusType = ((CorpusClass) corpus).getParent()
-				.getDatatype();
+	private void processCorpus(CorpusClass corpus) {
+		String corpusClassPath = corpus.getClassPath();
+		CMDataType corpusType = corpus.getParent().getDatatype();
 
 		switch (corpusType) {
 		case PLAIN_TEXT:
-			processDirectory(corpusClassPath, doPreprocessing);
+			processDirectory(corpusClassPath);
 			break;
 
 		case REDDIT_JSON:
-
+			processReddit(corpus);
 			break;
 
 		case TWITTER_JSON:
@@ -249,7 +255,116 @@ public class Preprocessor {
 		}
 	}
 
-	private void setupParams(boolean doPreprocessing) throws IOException {
+	private boolean processQuery(CorpusClass corpusClass) {
+		return true;
+	}
+	
+	private void processReddit(CorpusClass corpusClass) {
+		if(!processQuery(corpusClass)) return;
+		String corpusClassPath = corpusClass.getClassPath();
+		String tempDir = "";
+		String tempFile = "";
+		String invalidFilenameCharacters = "[\\/:*?\"<>|]+";
+		JSONParser jParser;
+		Date dateObj = new Date();
+
+		if (doPreprocessing)
+			tempFile = tempPPFileLoc + "temp_reddit_"
+					+ System.currentTimeMillis() + ".txt";
+		else {
+			tempDir = ppDir + System.getProperty("file.separator")
+					+ "reddit_data_" + dateObj.getTime();
+			new File(tempDir).mkdir();
+		}
+
+		try {
+			jParser = new JSONParser();
+			File[] fileList = new File(corpusClassPath).listFiles();
+			for (File f : fileList) {
+				String fileName = f.getAbsolutePath();
+				if (!fileName.endsWith(".json"))
+					continue;
+
+				JSONObject redditStream = (JSONObject) jParser
+						.parse(new FileReader(fileName));
+				String postTitle = RedditGetPostTitle(redditStream);
+				String[] postComments = RedditGetPostComments(redditStream);
+
+				dateObj = new Date();
+				File file;
+
+				if (doPreprocessing) {
+					file = new File(tempFile);
+				} else {
+					file = new File(tempDir
+							+ System.getProperty("file.separator")
+							+ postTitle.substring(0, 20).replaceAll(
+									invalidFilenameCharacters, "") + "-"
+							+ dateObj.getTime() + ".txt");
+				}
+				FileWriter fw = new FileWriter(file.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+
+				if (null != postTitle) {
+					bw.write(postTitle); // description
+					bw.write("\n");
+				}
+
+				for (String commentBody : postComments) {
+					if (null == commentBody)
+						continue;
+					bw.write(commentBody); // comment body
+					bw.write("\n");
+				}
+				bw.close();
+
+				if (doPreprocessing)
+					outputFiles.add(processFile(
+							tempFile,
+							postTitle.substring(0, 20).replaceAll(
+									invalidFilenameCharacters, "")
+									+ "-" + dateObj.getTime() + ".txt"));
+				else
+					outputFiles.add(file.getAbsolutePath());
+			}
+		} catch (ClassCastException e) {
+			// ignore consolidated json file
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (new File(tempFile).exists()) {
+			new File(tempFile).delete();
+		}
+	}
+
+	private String[] RedditGetPostComments(JSONObject redditStream) {
+		if (null == redditStream)
+			return null;
+		JSONArray comments = (JSONArray) redditStream.get("comments");
+		if (null == comments)
+			return null;
+		String[] commentBody = new String[comments.size()];
+		int index = -1;
+		for (Object obj : comments) {
+			JSONObject comment = (JSONObject) obj;
+			if (null == comment)
+				continue;
+			commentBody[++index] = comment.get("body").toString();
+		}
+		return commentBody;
+	}
+
+	private String RedditGetPostTitle(JSONObject redditStream) {
+		if (null == redditStream)
+			return null;
+		JSONObject post = (JSONObject) redditStream.get("post");
+		if (null == post)
+			return null;
+		return post.get("title").toString();
+	}
+
+	private void setupParams() throws IOException {
 		if (doPreprocessing) {
 			// Setup global parameters
 			String stopwordsFile = CommonUiActivator.getDefault()
@@ -266,8 +381,6 @@ public class Preprocessor {
 					.getPreferenceStore().getString("removeStopWords"));
 			doCleanUp = Boolean.parseBoolean(CommonUiActivator.getDefault()
 					.getPreferenceStore().getString("ispreprocessed"));
-			ppOutputPath = CommonUiActivator.getDefault().getPreferenceStore()
-					.getString("pp_output_path");
 			latinStemLocation = CommonUiActivator.getDefault()
 					.getPreferenceStore().getString("latin_stemmer");
 
@@ -306,7 +419,8 @@ public class Preprocessor {
 	}
 
 	private void createppDir(String caller) {
-		tempPPFile = tempPPFile + caller + "_" + System.currentTimeMillis();
+		ppOutputPath = CommonUiActivator.getDefault().getPreferenceStore()
+				.getString("pp_output_path");
 		if (ppOutputPath == null || ppOutputPath.trim().length() == 0) {
 			String tempOutputPath = System.getProperty("user.dir")
 					+ System.getProperty("file.separator") + "ppFiles";
@@ -350,10 +464,6 @@ public class Preprocessor {
 	}
 
 	public void clean() {
-
-		if (new File(tempPPFile).exists()) {
-			new File(tempPPFile).delete();
-		}
 
 		if (ppDir != "") {
 			if (doCleanUp) {
