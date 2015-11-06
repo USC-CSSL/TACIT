@@ -56,7 +56,7 @@ public class RedditJsonHandler {
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (ClassCastException e) {
-					//ignore summary file
+					//ignore summary file, this should happen only when summary file get parsed!
 				} catch (Exception e) {
 					e.printStackTrace();
 				}	
@@ -85,8 +85,8 @@ public class RedditJsonHandler {
 		return post.get("title").toString();
 	}
 	
-	public static void main(String[] args) {
-		RedditJsonHandler rh = new RedditJsonHandler();
-		System.out.println(rh.retrieveRedditData("C:\\Program Files (x86)\\eclipse\\tacit_corpora\\Reddit_TOP_1443140353236\\top"));
-	}	
+//	public static void main(String[] args) {
+//		RedditJsonHandler rh = new RedditJsonHandler();
+//		System.out.println(rh.retrieveRedditData("C:\\Program Files (x86)\\eclipse\\tacit_corpora\\Reddit_TOP_1443140353236\\top"));
+//	}	
 }
