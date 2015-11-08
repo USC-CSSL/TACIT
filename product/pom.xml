@@ -40,6 +40,27 @@
         </executions>
       </plugin>
     </plugins>
+    <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <version>1.1</version>
+    <executions>
+        <execution>
+            <phase>test</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+                <tasks>
+                    <echo>Using env.test.properties</echo>
+                    <copy file="tacit.exe.manifest" tofile="${basedir}/target/tacit.exe.manifest"/>
+                    </tasks>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    
+    
   </build>
   <groupId>edu.usc.tacit.tools</groupId>
 </project> 
