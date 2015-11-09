@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,9 @@ import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import com.fasterxml.jackson.core.JsonParseException;
 
 import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.DutchStemmer;
@@ -76,7 +80,8 @@ public class Preprocessor {
 						continue;
 
 					if (doPreprocessing) {
-						String ppFile = processFile(inputFile.getAbsolutePath(),"");
+						String ppFile = processFile(
+								inputFile.getAbsolutePath(), "");
 						if (ppFile != "")
 							outputFiles.add(ppFile);
 					} else {
@@ -96,7 +101,7 @@ public class Preprocessor {
 			for (File file : files) {
 				if (file.getName().contains("DS_Store"))
 					continue;
-				
+
 				if (file.isDirectory()) {
 					processDirectory(file.getAbsolutePath());
 				} else {
@@ -247,7 +252,7 @@ public class Preprocessor {
 			break;
 
 		case TWITTER_JSON:
-
+			processTwitter(corpus);
 			break;
 
 		default:
@@ -258,9 +263,92 @@ public class Preprocessor {
 	private boolean processQuery(CorpusClass corpusClass) {
 		return true;
 	}
-	
+
+	private boolean processQuery(CorpusClass corpusClass, JSONObject obj) {
+		return true;
+	}
+
+	private void processTwitter(CorpusClass corpusClass) {
+		/*** read from file ***/
+		JSONParser jParser;
+		String corpusClassPath = corpusClass.getClassPath();
+		String tempDir = "";
+		String tempFile = "";
+		Date dateobj = new Date();
+		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
+
+		if (doPreprocessing)
+			tempFile = tempPPFileLoc + "temp_twitter_"
+					+ System.currentTimeMillis() + ".txt";
+		else {
+			tempDir = ppDir + System.getProperty("file.separator")
+					+ "twitter_data_" + dateobj.getTime();
+			new File(tempDir).mkdir();
+		}
+
+		try {
+
+			jParser = new JSONParser();
+
+			// loop until token equal to "}"
+			dateobj = new Date();
+
+			File[] fileList = new File(corpusClassPath).listFiles();
+			for (int i = 0; i < fileList.length; i++) {
+				String fileName = fileList[i].getAbsolutePath();
+				if (!fileList[i].getAbsolutePath().endsWith(".json"))
+					continue;
+				JSONArray objects = (JSONArray) jParser.parse(new FileReader(
+						fileName));
+				int j = 0;
+				for (Object obj : objects) {
+					JSONObject twitterStream = (JSONObject) obj;
+					if (!processQuery(corpusClass, twitterStream))
+						continue;
+					dateobj = new Date();
+					File file;
+					if (doPreprocessing) {
+						file = new File(tempFile);
+					} else {
+						file = new File(tempDir
+								+ System.getProperty("file.separator")
+								+ "twitter_" + j + "-" + df.format(dateobj));
+						j++;
+					}
+					if (file.exists()) {
+						file.delete();
+					}
+
+					FileWriter fw = new FileWriter(file.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					String tweet = twitterStream.get("Text").toString();
+					bw.write(tweet);
+					// addContentsToSummary(file.getName(),tweet);
+					bw.close();
+
+					if (doPreprocessing) {
+						int t = j - 1;
+						outputFiles.add(processFile(tempFile, "twitter_" + t
+								+ "-" + df.format(dateobj)));
+					} else {
+						outputFiles.add(file.getAbsolutePath());
+					}
+
+				}
+
+			}
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void processReddit(CorpusClass corpusClass) {
-		if(!processQuery(corpusClass)) return;
+		if (!processQuery(corpusClass))
+			return;
 		String corpusClassPath = corpusClass.getClassPath();
 		String tempDir = "";
 		String tempFile = "";
@@ -332,7 +420,7 @@ public class Preprocessor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if (new File(tempFile).exists()) {
 			new File(tempFile).delete();
 		}
