@@ -1,6 +1,7 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -112,10 +114,10 @@ public class StandardWordCountView extends ViewPart implements
 		inputLayoutData = TacitFormComposite.createTableSection(client,
 				toolkit, layout, "Input Details",
 				"Add File(s) and Folder(s) to include in analysis.", true,
-				true, true,true);
+				true, true, true);
 		dictLayoutData = TacitFormComposite.createTableSection(client, toolkit,
 				layout, "Dictionary", "Add location of Dictionary", false,
-				true, false,false);
+				true, false, false);
 
 		Composite compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
@@ -289,8 +291,7 @@ public class StandardWordCountView extends ViewPart implements
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<String> inputFiles = tacitHelper
-						.refineInput(inputLayoutData.getSelectedFiles());
+				 final List<Object> inputObjs = inputLayoutData.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
@@ -312,7 +313,7 @@ public class StandardWordCountView extends ViewPart implements
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("TACIT Word Count",
-								(inputFiles.size() * 15) + 15);
+								(inputObjs.size() * 15) + 15);
 						WordCountPlugin wc = new WordCountPlugin(wcType,
 								dateObj, isStemDic, doPennCounts,
 								doWordDistribution, datFile, doPOSTags,
@@ -324,36 +325,50 @@ public class StandardWordCountView extends ViewPart implements
 
 						String inputDir = "";
 
-						if (ppValue) {
-							try {
-								monitor.subTask("Preprocessing Input");
-								inputDir = preprocessor.doPreprocessing(
-										inputFiles, "");
+//						if (ppValue) {
+//							try {
+//								monitor.subTask("Preprocessing Input");
+//								inputDir = preprocessor.doPreprocessing(
+//										inputFiles, "");
+//
+//								File[] inputFilesL = (new File(inputDir))
+//										.listFiles();
+//								List<String> processedFiles = new ArrayList<String>();
+//								for (File file : inputFilesL) {
+//									if (file.getAbsolutePath().contains(
+//											".DS_Store"))
+//										continue;
+//									processedFiles.add(file.getAbsolutePath());
+//								}
+//								monitor.worked(5);
+//								wc.countWords(processedFiles, dictionaryFiles);
+//
+//								if (ppValue && preprocessor.doCleanUp())
+//									preprocessor.clean();
+//								monitor.worked(1);
+//							} catch (Exception e) {
+//								// e.printStackTrace();
+//								monitor.done();
+//								return Status.CANCEL_STATUS;
+//							}
+//						} else {
+//							monitor.worked(5);
+//							wc.countWords(inputFiles, dictionaryFiles);
+//							monitor.worked(1);
+//						}
 
-								File[] inputFilesL = (new File(inputDir))
-										.listFiles();
-								List<String> processedFiles = new ArrayList<String>();
-								for (File file : inputFilesL) {
-									if (file.getAbsolutePath().contains(
-											".DS_Store"))
-										continue;
-									processedFiles.add(file.getAbsolutePath());
-								}
-								monitor.worked(5);
-								wc.countWords(processedFiles, dictionaryFiles);
+						Preprocessor ppObj = new Preprocessor();
 
-								if (ppValue && preprocessor.doCleanUp())
-									preprocessor.clean();
-								monitor.worked(1);
-							} catch (Exception e) {
-								// e.printStackTrace();
-								monitor.done();
-								return Status.CANCEL_STATUS;
-							}
-						} else {
+						try {
+							List<String> inputFiles = ppObj.processData(
+									"TACIT_word_count",
+									inputObjs, ppValue);
 							monitor.worked(5);
 							wc.countWords(inputFiles, dictionaryFiles);
+							ppObj.clean();
 							monitor.worked(1);
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 						monitor.done();
 						return Status.OK_STATUS;
@@ -372,14 +387,14 @@ public class StandardWordCountView extends ViewPart implements
 										.printlInConsoleln("Word count analysis met with error.");
 								ConsoleView
 										.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
-							}
-							else {
-								TacitFormComposite.updateStatusMessage(getViewSite(),
-										"Word count analysis completed", IStatus.OK,
-										form);
+							} else {
+								TacitFormComposite.updateStatusMessage(
+										getViewSite(),
+										"Word count analysis completed",
+										IStatus.OK, form);
 								TacitFormComposite
 										.writeConsoleHeaderBegining("Success: <Completed> Word count analysis");
-								
+
 							}
 						}
 					});
