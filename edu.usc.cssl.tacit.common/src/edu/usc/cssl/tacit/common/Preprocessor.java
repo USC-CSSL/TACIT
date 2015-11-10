@@ -54,7 +54,8 @@ public class Preprocessor {
 	SnowballStemmer stemmer = null;
 	LatinStemFilter latinStemmer = null;
 	private String stemLang;
-	private String currTime;
+	DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
+	private String currTime = df.format(new Date());
 	private String latinStemLocation;
 	private String tempPPFileLoc = System.getProperty("user.dir")
 			+ System.getProperty("file.separator") + "tacit_temp_files"
@@ -71,10 +72,12 @@ public class Preprocessor {
 		for (Object obj : inData) {
 			if (obj instanceof CorpusClass) {
 				processCorpus((CorpusClass) obj);
-			} else {
+			} 
+			else if (obj instanceof String) {
 				File inputFile = new File((String) obj);
 				if (inputFile.isDirectory()) {
-					processDirectory(inputFile.getAbsolutePath());
+					continue;
+					//processDirectory(inputFile.getAbsolutePath());
 				} else {
 					if (inputFile.getName().contains("DS_Store"))
 						continue;
@@ -88,6 +91,8 @@ public class Preprocessor {
 						outputFiles.add(inputFile.getAbsolutePath());
 					}
 				}
+			} else {
+				continue;
 			}
 		}
 
@@ -239,7 +244,7 @@ public class Preprocessor {
 	 * earlier) if the query is satisfied and add them to outputFiles
 	 */
 	private void processCorpus(CorpusClass corpus) {
-		String corpusClassPath = corpus.getClassPath();
+		String corpusClassPath = corpus.getTacitLocation();
 		CMDataType corpusType = corpus.getParent().getDatatype();
 
 		switch (corpusType) {
@@ -271,11 +276,10 @@ public class Preprocessor {
 	private void processTwitter(CorpusClass corpusClass) {
 		/*** read from file ***/
 		JSONParser jParser;
-		String corpusClassPath = corpusClass.getClassPath();
+		String corpusClassPath = corpusClass.getTacitLocation();
 		String tempDir = "";
 		String tempFile = "";
 		Date dateobj = new Date();
-		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 
 		if (doPreprocessing)
 			tempFile = tempPPFileLoc + "temp_twitter_"
@@ -313,7 +317,6 @@ public class Preprocessor {
 						file = new File(tempDir
 								+ System.getProperty("file.separator")
 								+ "twitter_" + j + "-" + df.format(dateobj));
-						j++;
 					}
 					if (file.exists()) {
 						file.delete();
@@ -327,12 +330,12 @@ public class Preprocessor {
 					bw.close();
 
 					if (doPreprocessing) {
-						int t = j - 1;
-						outputFiles.add(processFile(tempFile, "twitter_" + t
+						outputFiles.add(processFile(tempFile, "twitter_" + j
 								+ "-" + df.format(dateobj)));
 					} else {
 						outputFiles.add(file.getAbsolutePath());
 					}
+					j++;
 
 				}
 
@@ -344,12 +347,16 @@ public class Preprocessor {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		if (new File(tempFile).exists()) {
+			new File(tempFile).delete();
+		}
 	}
 
 	private void processReddit(CorpusClass corpusClass) {
 		if (!processQuery(corpusClass))
 			return;
-		String corpusClassPath = corpusClass.getClassPath();
+		String corpusClassPath = corpusClass.getTacitLocation();
 		String tempDir = "";
 		String tempFile = "";
 		String invalidFilenameCharacters = "[\\/:*?\"<>|]+";
@@ -461,6 +468,8 @@ public class Preprocessor {
 					.getString("delimeters");
 			stemLang = CommonUiActivator.getDefault().getPreferenceStore()
 					.getString("language");
+			/*TODO: Check later why language is not getting selected*/
+			stemLang = "EN";
 			doLowercase = Boolean.parseBoolean(CommonUiActivator.getDefault()
 					.getPreferenceStore().getString("islower_case"));
 			doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault()
