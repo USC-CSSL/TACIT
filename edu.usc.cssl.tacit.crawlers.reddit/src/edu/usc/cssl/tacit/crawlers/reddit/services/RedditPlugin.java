@@ -53,7 +53,14 @@ public class RedditPlugin {
 
 	protected HashMap<String, String> fetchRedditCategories(int limit) {
     	redditCategories = new HashMap<String, String>();    	
-    	Object response = restClient.get("/subreddits/.json?limit=1000&sort=".concat(sortType), null).getResponseObject();
+    	Object response =  null;
+    	try{
+    		response = restClient.get("/subreddits/.json?limit=1000&sort=".concat(sortType), null).getResponseObject();
+		}catch(com.github.jreddit.exception.RetrievalFailedException re) {
+			ConsoleView.printlInConsoleln("Retrieval failed for the url: " + "/subreddits/.json?limit=1000&sort="+sortType);
+			ConsoleView.printlInConsoleln("Exception returned from Reddit : " + re.toString());
+			return null;
+		}
     	int count = 0;
     	breakEverything:
 	    while(true) {
@@ -75,7 +82,13 @@ public class RedditPlugin {
 			    	if(subRedditDetails.containsKey("after")) {
 			    		if(null == subRedditDetails.get("after")) 
 			    			break;
-			    		response = restClient.get("/subreddits/.json?limit=1000&after=".concat((String)subRedditDetails.get("after")), null).getResponseObject();
+			    		try{
+			    			response = restClient.get("/subreddits/.json?limit=1000&after=".concat((String)subRedditDetails.get("after")), null).getResponseObject();
+			    		}catch(com.github.jreddit.exception.RetrievalFailedException re) {
+			    			ConsoleView.printlInConsoleln("Retrieval failed for the url");
+			    			ConsoleView.printlInConsoleln("Exception returned from Reddit : " + re.toString());
+			    			break;
+			    		}
 			    	} else
 			    		break;
 		    	} else 
@@ -206,8 +219,16 @@ public class RedditPlugin {
 	
     @SuppressWarnings("unchecked")
 	private void getSimplifiedLinkData(JSONArray resultData, String url) throws IOException, URISyntaxException {
-    	Object response = restClient.get(url, null).getResponseObject();
-        int count = 0;
+    	Object response = null;
+    	try {
+    		response = restClient.get(url, null).getResponseObject();
+    	}catch(com.github.jreddit.exception.RetrievalFailedException re) {
+    		ConsoleView.printlInConsoleln("Retrieval failed for the url: " + url);
+    		ConsoleView.printlInConsoleln("Exception returned from Reddit : " + re.toString());
+    		return;
+    	}
+    	
+    	int count = 0;
         
         breakEverything:
         while(true) {
@@ -236,11 +257,17 @@ public class RedditPlugin {
 					}
 		    	}
 				if(dataObject.containsKey("after") && null != dataObject.get("after")) {
-					if(url.contains("?")) {
-						response = restClient.get(url.concat("&after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
-					} else {
-						response = restClient.get(url.concat("?after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
-					}
+					try{
+						if(url.contains("?")) {
+							response = restClient.get(url.concat("&after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
+						} else {
+							response = restClient.get(url.concat("?after=").concat(String.valueOf(dataObject.get("after"))), null).getResponseObject();
+						}
+					}catch(com.github.jreddit.exception.RetrievalFailedException re) {
+			    		ConsoleView.printlInConsoleln("Retrieval failed for the url: " + url);
+			    		ConsoleView.printlInConsoleln("Exception returned from Reddit : " + re.toString());
+			    		return;
+			    	}
 				} else { // doesnt contain any further data					
 					break breakEverything;
 				}
@@ -265,8 +292,15 @@ public class RedditPlugin {
 		System.out.println("Crawling comments :" + permalink);
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		String filePath = this.outputPath + File.separator + getLastURLComponent(permalink) + "-" + df.format(dateObj) +  UUID.randomUUID().toString() + ".json";	    
-		JSONArray linkComments = new JSONArray();		
-		Object response = restClient.get(permalink.concat("/.json?sort=best"), null).getResponseObject(); // sorts by best
+		JSONArray linkComments = new JSONArray();
+		Object response = null;
+		try{
+			response = restClient.get(permalink.concat("/.json?sort=best"), null).getResponseObject(); // sorts by best
+		}catch(com.github.jreddit.exception.RetrievalFailedException re) {
+    		ConsoleView.printlInConsoleln("Retrieval failed for the url: " + permalink + "/.json?sort=best");
+    		ConsoleView.printlInConsoleln("Exception returned from Reddit : " + re.toString());
+    		return;
+    	}
 		int count = 0;
 		
 		breakCommentFetch:
@@ -322,8 +356,16 @@ public class RedditPlugin {
 	}
 
 	private JSONObject fetchThisComment(Object morePost, String permalink) {
-    	Object response = restClient.get((permalink + morePost).concat("/.json?sort=best"), null).getResponseObject();
-    	if(null == response) return null;
+		Object response = null;
+		try{
+			response = restClient.get((permalink + morePost).concat("/.json?sort=best"), null).getResponseObject();
+		}catch(com.github.jreddit.exception.RetrievalFailedException re) {
+			ConsoleView.printlInConsoleln("Retrieval failed for the url: " + permalink + morePost + "/.json?sort=best");
+			ConsoleView.printlInConsoleln("Exception returned from Reddit : " + re.toString());
+			return null;
+		}
+		
+		if(null == response) return null;
     	JSONObject respObject =  (JSONObject)((JSONArray) response).get(1);
     	if(null == respObject || respObject.isEmpty()) return null;
     	JSONObject dataObject = (JSONObject) respObject.get("data");
