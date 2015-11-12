@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -340,6 +341,7 @@ public class WeightedWordCountView extends ViewPart implements
 				final List<String> inputFiles = tacitHelper.refineInput(inputLayoutData
 						.getSelectedFiles());
 				tacitHelper.writeSummaryFile(outputPath);
+				final Map<String, String[]> fileCorpusMap = tacitHelper.getFileCorpusMembership();
 				
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
@@ -405,13 +407,13 @@ public class WeightedWordCountView extends ViewPart implements
 									selectedFiles.add(new File(filepath));
 								}
 							}
-
+							
 							wordCountController.wordCount(monitor,
 									selectedFiles, dictionaryFiles,
 									isPreprocess ? stopWordPath : "",
 									outputPath, "", true, isLiwcStemming,
 									isSnowBall, isSpss, isWdist, isStemDic,
-									oFile, sFile, dateobj);
+									oFile, sFile, dateobj, fileCorpusMap);
 
 						} catch (IOException ioe) {
 

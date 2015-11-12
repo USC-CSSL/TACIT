@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -90,7 +91,7 @@ public class WordCountApi {
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
 			boolean doWordDistribution, boolean stemDictionary, File oFile,
-			File sFile, Date dateObj) throws IOException {
+			File sFile, Date dateObj, Map<String, String[]> fileCorpuses) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
 			this.delimiters = " ";
 		else
@@ -171,10 +172,14 @@ public class WordCountApi {
 		for (File inputFile : inputFiles) {
 
 			// Mac cache file filtering
-			if (inputFile.getAbsolutePath().contains("DS_Store"))
+			String absoluteFilePath = inputFile.getAbsolutePath(); 
+			if (absoluteFilePath.contains("DS_Store"))
 				continue;
 			monitor.subTask("Counting Words at " + inputFile );
-			countWords(inputFile, oFile, sFile,dateObj);
+			String corpus = "NIL";
+			if (fileCorpuses.containsKey(absoluteFilePath))
+					corpus = fileCorpuses.get(absoluteFilePath)[0] +"\\" + fileCorpuses.get(absoluteFilePath)[1]; 
+			countWords(inputFile, oFile, sFile,dateObj, corpus);
 			monitor.worked(1);
 		}
 		if (monitor.isCanceled()) {
@@ -200,7 +205,7 @@ public class WordCountApi {
 		}
 	}
 
-	public void countWords(File iFile, File oFile, File spssFile, Date dateObj)
+	public void countWords(File iFile, File oFile, File spssFile, Date dateObj, String corpus)
 			throws IOException {
 	
 		if (iFile.isDirectory()) {
@@ -355,12 +360,12 @@ public class WordCountApi {
 		if (noOfLines == 0)
 			noOfLines = 1;
 
-		writeToFile(oFile, iFile.getName(), totalWords, totalWords
+		writeToFile(oFile, iFile.getName(), corpus, totalWords, totalWords
 				/ (double) noOfLines, (sixltr * 100) / (double) totalWords,
 				(dicCount * 100) / (float) totalWords, (numerals * 100)
 						/ (double) totalWords, catCount);
 		if (doSpss)
-			writeToSpss(spssFile, iFile.getName(), totalWords, totalWords
+			writeToSpss(spssFile, iFile.getName(), corpus, totalWords, totalWords
 					/ (float) noOfLines, (sixltr * 100) / (float) totalWords,
 					(dicCount * 100) / (double) totalWords, catCount);
 	}
@@ -443,7 +448,7 @@ public class WordCountApi {
 
 	public void buildOutputFile(File oFile) throws IOException {
 		StringBuilder titles = new StringBuilder();
-		titles.append("Filename,Seg,WC,WPS,Sixltr,Dic,Numerals,");
+		titles.append("Filename, Parent Corpus, Seg,WC,WPS,Sixltr,Dic,Numerals,");
 		for (String title : categories.values()) {
 			titles.append(title + ",");
 		}
@@ -459,7 +464,7 @@ public class WordCountApi {
 
 	public void buildSpssFile(File spssFile) throws IOException {
 		StringBuilder titles = new StringBuilder();
-		titles.append("Filename WC WPS Sixltr Dic ");
+		titles.append("Filename ParentCorpus WC WPS Sixltr Dic ");
 		for (String title : categories.values()) {
 			titles.append(title + " ");
 		}
@@ -473,11 +478,11 @@ public class WordCountApi {
 
 
 
-	public void writeToSpss(File spssFile, String docName, int totalCount,
+	public void writeToSpss(File spssFile, String docName, String docCorpus, int totalCount,
 			float wps, float sixltr, double d, HashMap<String, Double> catCount)
 			throws IOException {
 		StringBuilder row = new StringBuilder();
-		row.append("\"" + docName + "\"" + " " + totalCount + " " + wps + " "
+		row.append("\"" + docName + "\"" + " "+ "\"" + docCorpus + "\"" + " " + totalCount + " " + wps + " "
 				+ sixltr + " " + d + " ");
 		double currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
@@ -499,11 +504,11 @@ public class WordCountApi {
 		ConsoleView.printlInConsole("DAT File Updated Successfully");
 	}
 
-	public void writeToFile(File oFile, String docName, int totalCount,
+	public void writeToFile(File oFile, String docName, String docCorpus, int totalCount,
 			double wps, double d, double dic, double numerals,
 			HashMap<String, Double> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
-		row.append(docName + ",1," + totalCount + "," + wps + ","
+		row.append(docName + "," + docCorpus + ",1," + totalCount + "," + wps + ","
 				+ d + "," + dic + ","
 				+ numerals + ",");
 
@@ -600,7 +605,7 @@ public class WordCountApi {
 					String[] words = currentLine.split("\\s+");
 					String currPhrase = words[0];
 					String condPhrase = words[0];
-					for (int i = initialize(); i < words.length; i = increment(i)) {
+					for (int i = initialize(); i < words.length-1; i = increment(i)) {
 						if (!words[i].matches("\\d+")) {
 							if (words[i].contains("/")) {
 								String[] splits = words[i].split("/");
@@ -623,10 +628,15 @@ public class WordCountApi {
 							}
 							continue;
 						}
-						if (this.weighted) {
-							weights.put(this.categories.get(Integer
-									.parseInt(words[i])), Double
-									.parseDouble(words[i + 1]));
+						
+						try{
+							if (this.weighted) {
+								weights.put(this.categories.get(Integer
+										.parseInt(words[i])), Double
+										.parseDouble(words[i + 1]));
+							}
+						} catch(Exception e) {
+							String a = e.getMessage();
 						}
 						categories.add(Integer.parseInt(words[i]));
 					}
