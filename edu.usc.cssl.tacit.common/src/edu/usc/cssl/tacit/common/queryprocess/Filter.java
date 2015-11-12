@@ -1,23 +1,23 @@
 package edu.usc.cssl.tacit.common.queryprocess;
 
 public class Filter {
-	SupportedDataTypes targetType = null;
+	QueryDataType targetType = null;
 	String operator = null;
 	String filterValue = null;
 	
 	public Filter() {
 	}
 	
-	public Filter(SupportedDataTypes targetType, String operator, String filterValue) {
+	public Filter(QueryDataType targetType, String operator, String filterValue) {
 		this.targetType = targetType;
 		this.operator = operator;
 		this.filterValue = filterValue;
 	}
 	
-	public SupportedDataTypes getTargetType() {
+	public QueryDataType getTargetType() {
 		return targetType;
 	}
-	public void setTargetType(SupportedDataTypes targetType) {
+	public void setTargetType(QueryDataType targetType) {
 		this.targetType = targetType;
 	}
 	public String getOperationType() {

@@ -12,8 +12,8 @@ import com.google.gson.JsonSyntaxException;
 
 class Attribute {
 	String key = null;
-	SupportedDataTypes dataType =  null;
-	public Attribute(String key, SupportedDataTypes dataType) {
+	QueryDataType dataType =  null;
+	public Attribute(String key, QueryDataType dataType) {
 		this.key = key;
 		this.dataType = dataType;
 	}
@@ -25,10 +25,10 @@ class Attribute {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public SupportedDataTypes getDataType() {
+	public QueryDataType getDataType() {
 		return dataType;
 	}
-	public void setDataType(SupportedDataTypes d) {
+	public void setDataType(QueryDataType d) {
 		this.dataType = d;
 	}	
 }
@@ -69,13 +69,13 @@ public class JsonParser {
 		    	if (!(map.get(key) instanceof Map) && !(map.get(key) instanceof Collection)){
 		    		Attribute attr = new Attribute();
 		    		if (map.get(key) instanceof Double) 
-						attr.setDataType(SupportedDataTypes.DOUBLE);
+						attr.setDataType(QueryDataType.DOUBLE);
 		    		else if(map.get(key) instanceof String)
-		    			attr.setDataType(SupportedDataTypes.STRING);
+		    			attr.setDataType(QueryDataType.STRING);
 		    		else if(map.get(key) instanceof Integer)
-		    			attr.setDataType(SupportedDataTypes.INTEGER);
+		    			attr.setDataType(QueryDataType.INTEGER);
 		    		else
-		    			attr.setDataType(SupportedDataTypes.STRING); // TODO : as of now, for default cases
+		    			attr.setDataType(QueryDataType.STRING); // TODO : as of now, for default cases
 		    		if(null != parent) attr.setKey(parent + "." + key.toString());
 		    		else attr.setKey(key.toString());
 		    		resultAttr.add(attr);
@@ -95,13 +95,13 @@ public class JsonParser {
 		    	if (!(key instanceof Map) && !(key instanceof Collection)){
 		    		Attribute attr = new Attribute();
 		    		if(key instanceof Double) 
-						attr.setDataType(SupportedDataTypes.DOUBLE);
+						attr.setDataType(QueryDataType.DOUBLE);
 		    		else if(key instanceof String)
-		    			attr.setDataType(SupportedDataTypes.STRING);
+		    			attr.setDataType(QueryDataType.STRING);
 		    		else if(key instanceof Integer)
-		    			attr.setDataType(SupportedDataTypes.INTEGER);
+		    			attr.setDataType(QueryDataType.INTEGER);
 		    		else 
-		    			attr.setDataType(SupportedDataTypes.STRING); // TODO : as of now, for default cases
+		    			attr.setDataType(QueryDataType.STRING); // TODO : as of now, for default cases
 		    		if(null != parent) attr.setKey(parent + "." + key.toString());
 		    		else attr.setKey(key.toString());
 		    		resultAttr.add(attr);
