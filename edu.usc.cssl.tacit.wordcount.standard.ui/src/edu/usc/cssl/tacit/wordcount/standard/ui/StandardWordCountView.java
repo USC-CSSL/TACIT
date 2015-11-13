@@ -1,8 +1,6 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +38,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.cssl.tacit.common.Preprocess;
 import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
@@ -303,8 +300,6 @@ public class StandardWordCountView extends ViewPart implements
 				final boolean wcType = weightedWordCountButton.getSelection();
 				final boolean datFile = createDATFile.getSelection();
 				final boolean doPOSTags = createPOSTags.getSelection();
-				final Preprocess preprocessor = new Preprocess(
-						"TACIT_Word_Count");
 				final Date dateObj = new Date();
 
 				// Creating a new Job to do Word Count so that the UI will not
@@ -322,40 +317,6 @@ public class StandardWordCountView extends ViewPart implements
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								"", null, form);
-
-						String inputDir = "";
-
-//						if (ppValue) {
-//							try {
-//								monitor.subTask("Preprocessing Input");
-//								inputDir = preprocessor.doPreprocessing(
-//										inputFiles, "");
-//
-//								File[] inputFilesL = (new File(inputDir))
-//										.listFiles();
-//								List<String> processedFiles = new ArrayList<String>();
-//								for (File file : inputFilesL) {
-//									if (file.getAbsolutePath().contains(
-//											".DS_Store"))
-//										continue;
-//									processedFiles.add(file.getAbsolutePath());
-//								}
-//								monitor.worked(5);
-//								wc.countWords(processedFiles, dictionaryFiles);
-//
-//								if (ppValue && preprocessor.doCleanUp())
-//									preprocessor.clean();
-//								monitor.worked(1);
-//							} catch (Exception e) {
-//								// e.printStackTrace();
-//								monitor.done();
-//								return Status.CANCEL_STATUS;
-//							}
-//						} else {
-//							monitor.worked(5);
-//							wc.countWords(inputFiles, dictionaryFiles);
-//							monitor.worked(1);
-//						}
 
 						Preprocessor ppObj = new Preprocessor();
 

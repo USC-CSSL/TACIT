@@ -45,6 +45,7 @@ import edu.usc.cssl.tacit.cluster.hierarchical.services.HierarchicalClusterAnaly
 import edu.usc.cssl.tacit.cluster.hierarchical.ui.internal.HeirarchicalClusterViewImageRegistry;
 import edu.usc.cssl.tacit.cluster.hierarchical.ui.internal.IHeirarchicalClusterViewConstants;
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -188,7 +189,7 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutOutputData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<String> selectedFiles = tacitHelper.refineInput(layoutData.getSelectedFiles());
+				final List<Object> selectedFiles = layoutData.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 			
 				final boolean isSaveImage = saveImage.getSelection();
@@ -205,30 +206,17 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 						preprocessTask = null;
 						dirPath = "";
 						List<File> inputFiles = new ArrayList<File>();
-						if (isPreprocess) {
-							monitor.subTask("Preprocessing...");
-							preprocessTask = new Preprocess("HierarchicalCluster");
-							try {
-								dirPath = preprocessTask.doPreprocessing(selectedFiles, "");
-								File[] inputFile = new File(dirPath).listFiles();
-								for (File iFile : inputFile) {
-									inputFiles.add(iFile);
-								}
-
-							} catch (IOException e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							} catch (NullPointerException e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
+						Preprocessor ppObj = new Preprocessor();
+						
+						List<String> inFiles;
+						try {
+							inFiles = ppObj.processData("Hierarchical_Clustering", selectedFiles, isPreprocess);
+							
+							for (String f : inFiles) {
+								inputFiles.add(new File(f));
 							}
-						} else {
-							for (String filepath : selectedFiles) {
-								if ((new File(filepath).isDirectory())) {
-									continue;
-								}
-								inputFiles.add(new File(filepath));
-							}
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 
 						// Hierarchical processing
@@ -256,7 +244,7 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 						if (monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
-
+						ppObj.clean();
 						monitor.done();
 						
 						return Status.OK_STATUS;

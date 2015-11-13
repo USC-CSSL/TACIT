@@ -38,6 +38,7 @@ import edu.uc.cssl.tacit.cluster.kmeans.services.KmeansClusterAnalysis;
 import edu.usc.cssl.tacit.cluster.kmeans.ui.internal.IKmeansClusterViewConstants;
 import edu.usc.cssl.tacit.cluster.kmeans.ui.internal.KmeansClusterViewImageRegistry;
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -163,7 +164,7 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<String> selectedFiles = tacitHelper.refineInput(layData.getSelectedFiles());
+				final List<Object> selectedFiles = layData.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 				
 				performCluster = new Job("Clustering...") {
@@ -172,34 +173,18 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 						monitor.beginTask("TACIT started clustering...", 100);
+						Preprocessor ppObj = new Preprocessor();
 						List<File> inputFiles = new ArrayList<File>();
-						if (isPreprocess) {
-							monitor.subTask("Preprocessing...");
-							Preprocess preprocessTask = new Preprocess("KMeans");
-							try {
-								String dirPath = preprocessTask.doPreprocessing(selectedFiles, "");
-								File[] inputFile = new File(dirPath).listFiles();
-								for (File iFile : inputFile) {
-									inputFiles.add(iFile);
-								}
-
-							} catch (IOException e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							} catch (NullPointerException e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
-
-							monitor.worked(10);
-						} else {
-							for (String filepath : selectedFiles) {
-								if ((new File(filepath).isDirectory())) {
-									continue;
-								}
-								inputFiles.add(new File(filepath));
+						
+						List<String> inFiles = null;
+						try {
+							inFiles = ppObj.processData("K_means", selectedFiles, isPreprocess);
+							for (String string : inFiles) {
+								inputFiles.add(new File(string));
 							}
 							monitor.worked(10);
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 
 						// kmeans processsing
@@ -218,6 +203,7 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 							TacitFormComposite.writeConsoleHeaderBegining("<Terminated> k-Means clustering  ");
 							throw new OperationCanceledException();
 						}
+						ppObj.clean();
 						monitor.worked(10);
 						monitor.done();
 						return Status.OK_STATUS;
