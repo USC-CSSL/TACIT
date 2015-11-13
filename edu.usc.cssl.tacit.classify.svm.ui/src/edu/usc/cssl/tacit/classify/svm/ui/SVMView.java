@@ -43,6 +43,7 @@ import edu.usc.cssl.tacit.classify.svm.services.SVMClassify;
 import edu.usc.cssl.tacit.classify.svm.ui.internal.ISVMViewConstants;
 import edu.usc.cssl.tacit.classify.svm.ui.internal.SVMViewImageRegistry;
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -173,10 +174,10 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			public void run() {
 				if (!canProceed())
 					return;
-				final List<String> class1Files = new TacitUtil().refineInput(class1LayoutData
-						.getSelectedFiles());
-				final List<String> class2Files = new TacitUtil().refineInput(class2LayoutData
-						.getSelectedFiles());
+				final List<Object> class1Files = class1LayoutData
+						.getSelectedFiles();
+				final List<Object> class2Files = class2LayoutData
+						.getSelectedFiles();
 				final String class1NameStr = class1Name.getText();
 				final String class2NameStr = class2Name.getText();
 				final int kValueInt = Integer.parseInt(kValue.getText());
@@ -201,68 +202,36 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 						File[] class1FilesL;
 						File[] class2FilesL;
 						Date dateObj = new Date();
-						if (ppValue) {
-							try {
-								ppClass1 = preprocessor.doPreprocessing(
-										class1Files, class1NameStr);
-								ppClass2 = preprocessor.doPreprocessing(
-										class2Files, class2NameStr);
-							} catch (IOException e) {
-								return Status.CANCEL_STATUS;
-							} catch (NullPointerException e) {
-								return Status.CANCEL_STATUS;
-							}
-
-							class1FilesL = (new File(ppClass1)).listFiles();
-							class2FilesL = (new File(ppClass2)).listFiles();
-						} else {
-							for (Iterator<String> iter = class1Files
-									.listIterator(); iter.hasNext();) {
-								String string = iter.next();
-								if ((new File(string)).isDirectory()
-										|| string.contains("DS_Store")) {
-									iter.remove();
-								}
-							}
-							class1FilesL = new File[class1Files.size()];
-							for (int i = 0; i < class1Files.size(); i++) {
-								class1FilesL[i] = new File(class1Files.get(i));
-							}
-
-							for (Iterator<String> iter = class2Files
-									.listIterator(); iter.hasNext();) {
-								String string = iter.next();
-								if ((new File(string)).isDirectory()
-										|| string.contains("DS_Store")) {
-									iter.remove();
-								}
-							}
-							class2FilesL = new File[class2Files.size()];
-							for (int i = 0; i < class2Files.size(); i++) {
-								class2FilesL[i] = new File(class2Files.get(i));
-							}
-						}
-						monitor.worked(2);
-
+						Preprocessor ppObjC1 = new Preprocessor();
+						Preprocessor ppObjC2 = new Preprocessor();
+						
 						try {
-
+							List<String> c1Files = ppObjC1.processData("SVM_Class1", class1Files, ppValue);
+							List<String> c2Files = ppObjC2.processData("SVM_Class2", class2Files, ppValue);
+							class1FilesL = new File[c1Files.size()];
+							class2FilesL = new File[c2Files.size()];
+							
+							for (int k=0;k<c1Files.size();k++) {
+								class1FilesL[k] = new File(c1Files.get(k));
+							}
+							
+							for (int k=0;k<c2Files.size();k++) {
+								class2FilesL[k] = new File(c2Files.get(k));
+							}
+							
+							monitor.worked(2);
+							
 							cv.doCross(svm, class1NameStr, class1FilesL,
 									class2NameStr, class2FilesL, kValueInt,
-									featureFile, outputPath, monitor,dateObj);
-							// monitor.worked(5);
-							if (ppValue && preprocessor.doCleanUp()) {
-								preprocessor.clean();
-								// monitor.worked(5);
-
-							}
+									featureFile, outputPath, monitor, dateObj);
+							monitor.worked(5);
+							ppObjC1.clean();
+							ppObjC2.clean();
 
 							monitor.worked(2);
-						} catch (NumberFormatException e) {
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
+							
 						} catch (IOException e) {
 							e.printStackTrace();
-							return Status.CANCEL_STATUS;
 						}
 						monitor.done();
 						return Status.OK_STATUS;
