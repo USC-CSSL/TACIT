@@ -97,20 +97,25 @@ public class LatinStemmer {
 				locale);
 		String stemmed = noun;
 		// check longest suffix
-		if ((noun.endsWith("ibus") || noun.endsWith("arum")
-				|| noun.endsWith("erum") || noun.endsWith("orum") || noun
+		if ((noun.endsWith("rimus") || noun.endsWith("limus"))
+				&& noun.length() >= 7) {
+			stemmed = String.valueOf(termBuffer, 0, termLength - 5);
+		} else if ((noun.endsWith("orum") || noun.endsWith("arum")
+				|| noun.endsWith("ibus") || noun.endsWith("erum") || noun
 					.endsWith("ebus")) && noun.length() >= 6) {
 			stemmed = String.valueOf(termBuffer, 0, termLength - 4);
-		} else if ((noun.endsWith("ius") || noun.endsWith("uum") || noun
-				.endsWith("ium")) && noun.length() >= 5) {
+		} else if ((noun.endsWith("ium") || noun.endsWith("uum")
+				|| noun.endsWith("ius") || noun.endsWith("lis")
+				|| noun.endsWith("eus") || noun.endsWith("ior"))
+				&& noun.length() >= 5) {
 			stemmed = String.valueOf(termBuffer, 0, termLength - 3);
-		} else if ((noun.endsWith("ae") || noun.endsWith("am")
-				|| noun.endsWith("as") || noun.endsWith("em")
+		} else if ((noun.endsWith("us") || noun.endsWith("um")
+				|| noun.endsWith("am") || noun.endsWith("ae")
+				|| noun.endsWith("as") || noun.endsWith("os")
+				|| noun.endsWith("is") || noun.endsWith("em")
 				|| noun.endsWith("es") || noun.endsWith("ia")
-				|| noun.endsWith("is") || noun.endsWith("nt")
-				|| noun.endsWith("os") || noun.endsWith("um")
-				|| noun.endsWith("us") || noun.endsWith("ei")
-				|| noun.endsWith("ui") || noun.endsWith("im"))
+				|| noun.endsWith("ei") || noun.endsWith("ua")
+				|| noun.endsWith("ui") || noun.endsWith("er"))
 				&& noun.length() >= 4) {
 			stemmed = String.valueOf(termBuffer, 0, termLength - 2);
 		} else if ((noun.endsWith("a") || noun.endsWith("e")
@@ -124,6 +129,8 @@ public class LatinStemmer {
 			return stemmed.substring(0, stemmed.lastIndexOf("an"));
 		} else if (stemmed.endsWith("end") || stemmed.endsWith("ent")) {
 			return stemmed.substring(0, stemmed.lastIndexOf("en"));
+		} else if (stemmed.endsWith("issim")) {
+			return stemmed.substring(0, stemmed.lastIndexOf("issim"));
 		}
 		return stemmed;
 	}
@@ -164,30 +171,33 @@ public class LatinStemmer {
 			stemmed = String.valueOf(termBuffer, 0, termLength - 7);
 		} else if ((verb.endsWith("bantur") || verb.endsWith("eramus")
 				|| verb.endsWith("erimus") || verb.endsWith("eratis")
-				|| verb.endsWith("eritis") || verb.endsWith("issent") || verb
-					.endsWith("assent")) && termLength >= 8) {
+				|| verb.endsWith("eritis") || verb.endsWith("issent")
+				|| verb.endsWith("assent") || verb.endsWith("bamini")
+				|| verb.endsWith("bimini") || verb.endsWith("buntur"))
+				&& termLength >= 8) {
 			// 'iuntur' 'erunt' 'untur' 'iunt' 'unt' -> 'i'
 			stemmed = String.valueOf(termBuffer, 0, termLength - 6);
 		} else if ((verb.endsWith("bamus") || verb.endsWith("batis")
 				|| verb.endsWith("bimus") || verb.endsWith("bitis")
 				|| verb.endsWith("batur") || verb.endsWith("baris")
-				|| verb.endsWith("resum") || verb.endsWith("retis")
 				|| verb.endsWith("beris") || verb.endsWith("erunt")
 				|| verb.endsWith("issem") || verb.endsWith("isses")
 				|| verb.endsWith("isset") || verb.endsWith("assem")
 				|| verb.endsWith("asses") || verb.endsWith("asset")
-				|| verb.endsWith("erint") || verb.endsWith("erant"))
-				&& termLength >= 7) {
+				|| verb.endsWith("erint") || verb.endsWith("erant")
+				|| verb.endsWith("imini") || verb.endsWith("istis")
+				|| verb.endsWith("bamur") || verb.endsWith("bitur") || verb
+					.endsWith("bimur")) && termLength >= 7) {
 			// 'mini' 'ntur' 'stis' -> delete
 			stemmed = String.valueOf(termBuffer, 0, termLength - 5);
 		} else if ((verb.endsWith("mini") || verb.endsWith("ntur")
-				|| verb.endsWith("stis") || verb.endsWith("isti")
-				|| verb.endsWith("bant") || verb.endsWith("bunt")
-				|| verb.endsWith("rent") || verb.endsWith("asse")
+				|| verb.endsWith("isti") || verb.endsWith("bant")
+				|| verb.endsWith("bunt") || verb.endsWith("asse")
 				|| verb.endsWith("eram") || verb.endsWith("eras")
 				|| verb.endsWith("erat") || verb.endsWith("isse")
 				|| verb.endsWith("eris") || verb.endsWith("erim")
-				|| verb.endsWith("erit") || verb.endsWith("ibus"))
+				|| verb.endsWith("erit") || verb.endsWith("orum")
+				|| verb.endsWith("arum") || verb.endsWith("imus"))
 				&& termLength >= 6) {
 			// 'mini' 'ntur' 'stis' -> delete
 			stemmed = String.valueOf(termBuffer, 0, termLength - 4);
@@ -195,24 +205,22 @@ public class LatinStemmer {
 				|| verb.endsWith("ris") || verb.endsWith("sti")
 				|| verb.endsWith("tis") || verb.endsWith("bam")
 				|| verb.endsWith("bas") || verb.endsWith("bat")
-				|| verb.endsWith("rem") || verb.endsWith("res")
-				|| verb.endsWith("ret") || verb.endsWith("bis")
-				|| verb.endsWith("bit") || verb.endsWith("tur")
-				|| verb.endsWith("are") || verb.endsWith("ire")
-				|| verb.endsWith("ere") || verb.endsWith("ari"))
-				&& termLength >= 5) {
+				|| verb.endsWith("bis") || verb.endsWith("bit")
+				|| verb.endsWith("tur") || verb.endsWith("are")
+				|| verb.endsWith("ire") || verb.endsWith("ere")
+				|| verb.endsWith("ari") || verb.endsWith("ite")
+				|| verb.endsWith("ero") || verb.endsWith("eri")
+				|| verb.endsWith("iri") || verb.endsWith("bar") || verb
+					.endsWith("bor")) && termLength >= 5) {
 			// 'mus' 'ris' 'sti' 'tis' 'tur' -> delete
 			stemmed = String.valueOf(termBuffer, 0, termLength - 3);
-		} else if ((verb.endsWith("ns") || verb.endsWith("nt")
-				|| verb.endsWith("nt") || verb.endsWith("it")
-				|| verb.endsWith("ae") || verb.endsWith("am")
-				|| verb.endsWith("as") || verb.endsWith("em")
-				|| verb.endsWith("es") || verb.endsWith("eo")
-				|| verb.endsWith("ia") || verb.endsWith("is")
-				|| verb.endsWith("nt") || verb.endsWith("os")
-				|| verb.endsWith("um") || verb.endsWith("us")
-				|| verb.endsWith("ei") || verb.endsWith("ui") || verb
-					.endsWith("im")) && termLength >= 4) {
+		} else if ((verb.endsWith("ns") || verb.endsWith("it")
+				|| verb.endsWith("us") || verb.endsWith("um")
+				|| verb.endsWith("te") || verb.endsWith("am")
+				|| verb.endsWith("ae") || verb.endsWith("as")
+				|| verb.endsWith("os") || verb.endsWith("is")
+				|| verb.endsWith("nt") || verb.endsWith("bo") || verb
+					.endsWith("or")) && termLength >= 4) {
 			// 'ns' 'nt' 'ri' -> delete
 			stemmed = String.valueOf(termBuffer, 0, termLength - 2);
 		} else if ((verb.endsWith("m") || verb.endsWith("r")
@@ -227,6 +235,8 @@ public class LatinStemmer {
 			return stemmed.substring(0, stemmed.lastIndexOf("an"));
 		} else if (stemmed.endsWith("end") || stemmed.endsWith("ent")) {
 			return stemmed.substring(0, stemmed.lastIndexOf("en"));
+		} else if (stemmed.endsWith("ur")) {
+			return stemmed.substring(0, stemmed.lastIndexOf("ur"));
 		}
 		return stemmed;
 	}
