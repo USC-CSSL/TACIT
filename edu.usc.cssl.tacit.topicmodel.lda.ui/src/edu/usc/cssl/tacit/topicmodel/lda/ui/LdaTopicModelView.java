@@ -38,7 +38,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -93,7 +93,7 @@ public class LdaTopicModelView extends ViewPart implements
 		inputLayoutData = TacitFormComposite.createTableSection(client,
 				toolkit, layout, "Input Details",
 				"Add File(s) and Folder(s) to include in analysis.", true,
-				true, true,true);
+				true, true, true);
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
@@ -207,7 +207,7 @@ public class LdaTopicModelView extends ViewPart implements
 			 */
 			@Override
 			public void run() {
-				if(!canProceedCluster()) {
+				if (!canProceedCluster()) {
 					return;
 				}
 				final int noOfTopics = Integer
@@ -215,10 +215,10 @@ public class LdaTopicModelView extends ViewPart implements
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<String> selectedFiles = tacitHelper
-						.refineInput(inputLayoutData.getSelectedFiles());
+				final List<Object> selectedFiles = inputLayoutData
+						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
-				
+
 				final String preFix = prefixTxt.getText();
 				final boolean wordWeightFile = wordWeights.getSelection();
 				TacitFormComposite
@@ -236,25 +236,13 @@ public class LdaTopicModelView extends ViewPart implements
 								+ "TopicModel"
 								+ "_"
 								+ String.valueOf(System.currentTimeMillis());
-						Preprocess preprocessTask = new Preprocess("ZLabel");
-						if (isPreprocess) {
-							monitor.subTask("Preprocessing...");
-							try {
+						Preprocessor ppObj = new Preprocessor();
+						List<String> inFiles;
+						try {
+							inFiles = ppObj.processData("LDA", selectedFiles,
+									isPreprocess);
 
-								topicModelDirPath = preprocessTask
-										.doPreprocessing(selectedFiles, "");
-
-							} catch (IOException e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
-							catch (NullPointerException e) {
-								e.printStackTrace();
-							}
-							monitor.worked(10);
-						} else { // copy files to a parent directory
-							new File(topicModelDirPath).mkdir();
-							for (String filename : selectedFiles) {
+							for (String filename : inFiles) {
 								File srcFile = new File(filename);
 								File destDir = new File(topicModelDirPath);
 								try {
@@ -265,6 +253,8 @@ public class LdaTopicModelView extends ViewPart implements
 									return Status.CANCEL_STATUS;
 								}
 							}
+						} catch (IOException e1) {
+							e1.printStackTrace();
 						}
 
 						lda.initialize(topicModelDirPath, noOfTopics,
@@ -290,11 +280,17 @@ public class LdaTopicModelView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
 						ConsoleView
-						.printlInConsoleln("LDA Topic Modelling completed successfully in "
-								+ (System.currentTimeMillis() - startTime)
-								+ " milliseconds.");
-						if (isPreprocess)
-							preprocessTask.clean();
+								.printlInConsoleln("LDA Topic Modelling completed successfully in "
+										+ (System.currentTimeMillis() - startTime)
+										+ " milliseconds.");
+
+						ppObj.clean();
+						try {
+							FileUtils.deleteDirectory(new File(
+									topicModelDirPath));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						monitor.worked(10);
 						monitor.done();
 						return Status.OK_STATUS;
@@ -311,15 +307,15 @@ public class LdaTopicModelView extends ViewPart implements
 										.writeConsoleHeaderBegining("Error: <Terminated> LDA Topic Modelling");
 								ConsoleView
 										.printlInConsoleln("LDA not successful.");
-							}
-							else {
-								TacitFormComposite.updateStatusMessage(getViewSite(),
-										"LDA topic modelling completed", IStatus.OK,
-										form);
-								
+							} else {
+								TacitFormComposite.updateStatusMessage(
+										getViewSite(),
+										"LDA topic modelling completed",
+										IStatus.OK, form);
+
 								TacitFormComposite
 										.writeConsoleHeaderBegining("Success: <Completed> LDA Topic Modelling ");
-								
+
 							}
 						}
 					});
@@ -399,7 +395,8 @@ public class LdaTopicModelView extends ViewPart implements
 					"Prefix Cannout be empty", null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
-		if (numberOfTopics.getText().isEmpty() || Integer.parseInt(numberOfTopics.getText()) < 1) {
+		if (numberOfTopics.getText().isEmpty()
+				|| Integer.parseInt(numberOfTopics.getText()) < 1) {
 			form.getMessageManager().addMessage("topic",
 					"Number of topics cannot be empty or less than 1", null,
 					IMessageProvider.ERROR);

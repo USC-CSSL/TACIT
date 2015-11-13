@@ -43,6 +43,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -243,8 +244,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<String> selectedFiles = tacitHelper
-						.refineInput(inputLayoutData.getSelectedFiles());
+				final List<Object> selectedFiles = inputLayoutData.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 				
 				final String seedFilePath = seedFileText.getText();
@@ -263,37 +263,25 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								+ "ZldaTopicModel"
 								+ "_"
 								+ String.valueOf(System.currentTimeMillis());
-						Preprocess preprocessTask = null;
-						if (isPreprocess) {
-							monitor.subTask("Preprocessing...");
-							preprocessTask = new Preprocess("ZLabelLDA");
+						Preprocessor ppObj = new Preprocessor();
+						
+						List<String> inFiles = null;
+						try {
+							inFiles = ppObj.processData("ZLabel_LDA", selectedFiles, isPreprocess);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						
+						new File(topicModelDirPath).mkdir();
+						for (String filename : inFiles) {
+							File srcFile = new File(filename);
+							File destDir = new File(topicModelDirPath);
 							try {
-
-								topicModelDirPath = preprocessTask
-										.doPreprocessing(selectedFiles, "");
-
+								FileUtils.copyFileToDirectory(srcFile,
+										destDir, false);
 							} catch (IOException e) {
 								e.printStackTrace();
 								return Status.CANCEL_STATUS;
-								
-							}
-							catch (NullPointerException e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
-							monitor.worked(10);
-						} else { // copy files to a parent directory
-							new File(topicModelDirPath).mkdir();
-							for (String filename : selectedFiles) {
-								File srcFile = new File(filename);
-								File destDir = new File(topicModelDirPath);
-								try {
-									FileUtils.copyFileToDirectory(srcFile,
-											destDir, false);
-								} catch (IOException e) {
-									e.printStackTrace();
-									return Status.CANCEL_STATUS;
-								}
 							}
 						}
 
@@ -320,10 +308,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								+ (System.currentTimeMillis() - startTime)
 								+ " milliseconds.");
 		
-						if (isPreprocess) {
-							monitor.subTask("Cleaning Preprocessed Files...");
-							preprocessTask.clean();
-						}
+						ppObj.clean();
 						monitor.worked(10);
 						monitor.done();
 						
