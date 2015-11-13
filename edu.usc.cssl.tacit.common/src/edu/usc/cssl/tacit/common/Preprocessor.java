@@ -468,8 +468,6 @@ public class Preprocessor {
 					.getString("delimeters");
 			stemLang = CommonUiActivator.getDefault().getPreferenceStore()
 					.getString("language");
-			/*TODO: Check later why language is not getting selected*/
-			stemLang = "EN";
 			doLowercase = Boolean.parseBoolean(CommonUiActivator.getDefault()
 					.getPreferenceStore().getString("islower_case"));
 			doStemming = Boolean.parseBoolean(CommonUiActivator.getDefault()
