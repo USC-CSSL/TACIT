@@ -93,6 +93,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				.applyTo(sc);
 
 		TacitFormComposite.createEmptyRow(toolkit, sc);
+		
+		createInputParams(form.getBody());
 
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2)
@@ -113,7 +115,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 						true, true, true,false);
 
 		createPreprocessLink(form.getBody());
-		createInputParams(form.getBody());
+		
 		
 		// Output Data
 		Composite client1 = toolkit.createComposite(form.getBody());
@@ -467,7 +469,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				.applyTo(inputParamsSection);
 		GridLayoutFactory.fillDefaults().numColumns(3)
 				.applyTo(inputParamsSection);
-		inputParamsSection.setText("Input Details");
+		inputParamsSection.setText("Class Labels");
 
 		ScrolledComposite sc = new ScrolledComposite(inputParamsSection,
 				SWT.H_SCROLL | SWT.V_SCROLL);
@@ -480,24 +482,28 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		Composite sectionClient = toolkit.createComposite(inputParamsSection);
 		sc.setContent(sectionClient);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false)
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false)
 				.applyTo(sectionClient);
 		inputParamsSection.setClient(sectionClient);
+		
+		
 
-		class1Label = toolkit.createLabel(sectionClient, "Class 1 Label:",
+		class1Label = toolkit.createLabel(sectionClient, "Enter Class 1 Label:",
 				SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(class1Label);
 		class1Name = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class1Name);
-		class2Label = toolkit.createLabel(sectionClient, "Class 2 Label:",
+		class2Label = toolkit.createLabel(sectionClient, "Enter Class 2 Label:",
 				SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(class2Label);
 		class2Name = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class2Name);
+		
+		
 		
 
 	}
