@@ -180,7 +180,7 @@ public class TwitterStreamApi {
 
 			@Override
 			public void onException(final Exception exception) {
-				
+
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -239,7 +239,7 @@ public class TwitterStreamApi {
 		if (terminate) {
 			throw new OperationCanceledException();
 		}
- 
+
 	}
 
 	private void splitJsonFactory(File streamFile) {
