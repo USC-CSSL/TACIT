@@ -239,7 +239,7 @@ public class TwitterStreamApi {
 		if (terminate) {
 			throw new OperationCanceledException();
 		}
-
+ 
 	}
 
 	private void splitJsonFactory(File streamFile) {

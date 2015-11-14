@@ -88,6 +88,7 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 	private Text corpusNameTxt;
 	private static Button wordFilterLbl;
 	private static Button geoFilterLbl;
+	private static Button randomFilterLbl;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -249,7 +250,6 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 										IStatus.INFO, form);
 								ConsoleView.printlInConsoleln("Twitter crawler completed successfully.");
 								ConsoleView.printlInConsoleln("Done");
-								
 
 							}
 						}
@@ -437,6 +437,7 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 			canProceed = false;
 
 		}
+
 		if (wordFilterLbl.getSelection()) {
 			noLocationFilter = true;
 			noWordFilter = false;
@@ -446,6 +447,11 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 						IMessageProvider.ERROR);
 				canProceed = false;
 			}
+		}
+
+		if (randomFilterLbl.getSelection()) {
+			noLocationFilter = true;
+			noWordFilter = true;
 		}
 
 		if (geoFilterLbl.getSelection()) {
@@ -527,6 +533,8 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 		geoFilterText.setMessage("For example(Los Angeles): -118.442,33.72,-117.86,34.12");
 		geoFilterText.setEditable(false);
 		geoFilterText.setEnabled(false);
+		randomFilterLbl = toolkit.createButton(sectionClient, "Random Tweets", SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(geoFilterLbl);
 		wordFilterLbl.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -535,11 +543,61 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 					wordFilterText.setEnabled(true);
 					geoFilterText.setEditable(false);
 					geoFilterText.setEnabled(false);
-				} else {
+				} else if (geoFilterLbl.getSelection()) {
 					wordFilterText.setEditable(false);
 					wordFilterText.setEnabled(false);
 					geoFilterText.setEditable(true);
 					geoFilterText.setEnabled(true);
+				} else if (randomFilterLbl.getSelection()) {
+					wordFilterText.setEditable(false);
+					wordFilterText.setEnabled(false);
+					geoFilterText.setEditable(false);
+					geoFilterText.setEnabled(false);
+
+				}
+			}
+		});
+		geoFilterLbl.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (wordFilterLbl.getSelection()) {
+					wordFilterText.setEditable(true);
+					wordFilterText.setEnabled(true);
+					geoFilterText.setEditable(false);
+					geoFilterText.setEnabled(false);
+				} else if (geoFilterLbl.getSelection()) {
+					wordFilterText.setEditable(false);
+					wordFilterText.setEnabled(false);
+					geoFilterText.setEditable(true);
+					geoFilterText.setEnabled(true);
+				} else if (randomFilterLbl.getSelection()) {
+					wordFilterText.setEditable(false);
+					wordFilterText.setEnabled(false);
+					geoFilterText.setEditable(false);
+					geoFilterText.setEnabled(false);
+
+				}
+			}
+		});
+		randomFilterLbl.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (wordFilterLbl.getSelection()) {
+					wordFilterText.setEditable(true);
+					wordFilterText.setEnabled(true);
+					geoFilterText.setEditable(false);
+					geoFilterText.setEnabled(false);
+				} else if (geoFilterLbl.getSelection()) {
+					wordFilterText.setEditable(false);
+					wordFilterText.setEnabled(false);
+					geoFilterText.setEditable(true);
+					geoFilterText.setEnabled(true);
+				} else if (randomFilterLbl.getSelection()) {
+					wordFilterText.setEditable(false);
+					wordFilterText.setEnabled(false);
+					geoFilterText.setEditable(false);
+					geoFilterText.setEnabled(false);
+
 				}
 			}
 		});
