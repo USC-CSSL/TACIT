@@ -15,6 +15,7 @@ Export-Package: bsh,
  cc.mallet.cluster,
  cc.mallet.types,
  edu.usc.cssl.tacit.classify.naivebayes.services,
+ edu.usc.cssl.tacit.classify.naivebayes.weka,
  org.apache.commons.math3,
  weka.classifiers
 Bundle-ClassPath: commons-math3-3.3.jar,

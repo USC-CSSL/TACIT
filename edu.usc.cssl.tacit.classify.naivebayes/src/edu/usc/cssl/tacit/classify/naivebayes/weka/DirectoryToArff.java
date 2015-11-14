@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -33,7 +36,7 @@ public class DirectoryToArff {
 	static public HashMap<Integer, String> instanceIdNameMap;
 	static int instanceId;
 	
-	private static void initailizeTrainInstances(ArrayList<String> classes) {
+	private  static void initailizeTrainInstances(Set<String> classes) {
 		FastVector cNames = new FastVector(classes.size());
 		for(String c: classes)
 			cNames.addElement(c);
@@ -43,7 +46,7 @@ public class DirectoryToArff {
 		trainData = new Instances("text_files", trainAtts, 0);	
 	}
 	
-	private static void initializeTestInstances() {
+	private  void initializeTestInstances() {
 		instanceId = 0;
 		instanceIdNameMap = new HashMap<Integer, String>();
 		FastVector cNames = new FastVector(1);
@@ -54,7 +57,7 @@ public class DirectoryToArff {
 		testData = new Instances("text_files", testAtts, 0);	
 	}	
 	
-	private static String getClassName(String directoryPath) {
+	private  String getClassName(String directoryPath) {
 		String[] segments = directoryPath.split("\\\\");
 		return segments[segments.length - 1];
 	}
@@ -81,7 +84,14 @@ public class DirectoryToArff {
 		}
 	}
 
-	public static void createDataset(String directoryPath, String className, Instances data, boolean isTestData) throws Exception {
+	public  static void createDataset(List<String> files, String className, Instances data, boolean isTestData) throws Exception {
+	
+		for(String file : files) {
+			createInstance(file, className, data, isTestData);
+		}
+	}
+	
+	public  void createDataset(String directoryPath, String className, Instances data, boolean isTestData) throws Exception {
 		File dir = new File(directoryPath);
 		String[] files = dir.list();
 		for (int i = 0; i < files.length; i++) {
@@ -97,28 +107,23 @@ public class DirectoryToArff {
 	}
 	
 	
-	public static void createTrainInstances(String[] classes) throws Exception {
-		initailizeTrainInstances(getClassNames(classes));
-		for(String c : classes) {
-			createDataset(c, getClassName(c), trainData, false);
+	public   void createTrainInstances(Map<String,List<String>> classes) throws Exception {
+		initailizeTrainInstances(classes.keySet());
+		for(String c : classes.keySet()) {
+			createDataset(classes.get(c), c, trainData, false);
 		}
 		saveInstance();
 	}
 
-	public static Instances createTestInstances(String input) throws Exception {
+	public  Instances createTestInstances(String input) throws Exception {
 		initializeTestInstances();
 		createDataset(input, "?", testData, true);
 		return testData;
 	}
 	
-	private static ArrayList<String> getClassNames(String[] classes) {
-		ArrayList<String> classNames = new ArrayList<String>();
-		for(String s: classes)
-			classNames.add(getClassName(s));
-		return classNames;
-	}
+	
 
-	public static Instances loadArff() throws IOException {
+	public  Instances loadArff() throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(arffFilename));
 		ArffReader arff = new ArffReader(reader);
 		Instances data = arff.getData();

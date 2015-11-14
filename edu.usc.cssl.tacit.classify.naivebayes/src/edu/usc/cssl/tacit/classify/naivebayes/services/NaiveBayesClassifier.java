@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -223,7 +223,7 @@ public class NaiveBayesClassifier {
 		}
 	}
 
-	public void createTempDirectories(HashMap<String, List<String>> classPaths,
+	public void createTempDirectories(Map<String, List<String>> classPaths,
 			ArrayList<String> trainingDataPaths, IProgressMonitor monitor)
 			throws IOException {
 		String tmpLocation = this.tmpLocation;
