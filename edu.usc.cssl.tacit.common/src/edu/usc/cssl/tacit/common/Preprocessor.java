@@ -157,7 +157,7 @@ public class Preprocessor {
 			while ((currLine = br.readLine()) != null) {
 				if (currLine != "") {
 					if (doLowercase) {
-						currLine.toLowerCase();
+						currLine = currLine.toLowerCase();
 					}
 
 					for (char c : delimiters.toCharArray()) {
