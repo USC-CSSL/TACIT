@@ -113,7 +113,7 @@ public class ZlabelTopicModelAnalysis {
 		this.monitor.worked(15);
 		this.monitor.subTask("writing corresponding words and phi values in topicwords-" + df.format(dateObj) + ".csv");
 		System.out.println("\nTopic and its corresponding words and phi values stored in " + outputdir + File.separator
-				+ "topicwords-" + df.format(dateObj) + ".csv");
+				+ "topicwords-" + df.format(dateObj) + ".csv"); 
 		try {
 			FileWriter fw = new FileWriter(
 					new File(outputdir + File.separator + "topicwords-" + df.format(dateObj) + ".csv"));
@@ -147,7 +147,7 @@ public class ZlabelTopicModelAnalysis {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				row=new StringBuilder();
+				row = new StringBuilder();
 				for (int i = 0; i < T; i++) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
@@ -158,27 +158,36 @@ public class ZlabelTopicModelAnalysis {
 						row.append(" , ,");
 					}
 				}
-				fw.write(row.toString()+"\n");
+				fw.write(row.toString() + "\n");
 				fw.flush();
 			}
 			fw.flush();
 			fw.close();
 			this.monitor.worked(15);
-			this.monitor.subTask("writing Phi values for each stopic in topicsPerDocument(Phi)-" + df.format(dateObj) + ".csv");
+			this.monitor
+					.subTask("writing Phi values for each stopic in wordsinTopics(Phi)-" + df.format(dateObj) + ".csv");
 			ConsoleView.printlInConsoleln("\nPhi values for each stopic stored in " + outputdir + File.separator
-					+ "topicsPerDocument(Phi)-" + df.format(dateObj) + ".csv");
-			fw = new FileWriter(new File(outputdir + File.separator + "topicsPerDocument(Phi)-" + df.format(dateObj) + ".csv"));
+					+ "wordsinTopics(Phi)-" + df.format(dateObj) + ".csv");
+			fw = new FileWriter(
+					new File(outputdir + File.separator + "wordsinTopics(Phi)-" + df.format(dateObj) + ".csv"));
+			fw.write("Topic/Words,");
+			for (int j = 0; j < revDict.size(); j++)
+				fw.write(revDict.get(j) + ",");
+			fw.write("\n");
 			for (int i = 0; i < T; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 				fw.write("Topic" + i + ",");
+
 				for (int j = 0; j < phi[i].length; j++) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
 					if (phi[i][j] > Float.MIN_VALUE) {
 						fw.write(phi[i][j] + ",");
+					} else {
+						fw.write("0,");
 					}
 				}
 				fw.write("\n");
@@ -187,10 +196,17 @@ public class ZlabelTopicModelAnalysis {
 			fw.flush();
 			fw.close();
 			this.monitor.worked(15);
-			this.monitor.subTask("writing Theta values for each stopic in wordsinTopics(theta)-" + df.format(dateObj) + ".csv");
+			this.monitor.subTask(
+					"writing Theta values for each stopic in topicsPerDocument(theta)-" + df.format(dateObj) + ".csv");
 			ConsoleView.printlInConsoleln("\nTheta values for each document stored in " + outputdir + File.separator
-					+ "wordsinTopics(theta)-" + df.format(dateObj) + ".csv");
-			fw = new FileWriter(new File(outputdir + File.separator + "wordsinTopics(theta)-" + df.format(dateObj) + ".csv"));
+					+ "topicsPerDocument(theta)-" + df.format(dateObj) + ".csv");
+			fw = new FileWriter(
+					new File(outputdir + File.separator + "topicsPerDocument(theta)-" + df.format(dateObj) + ".csv"));
+			fw.write("Document/Topic,");
+			for (int i = 0; i < T; i++) {
+				fw.write("Topic" + i + ",");
+			}
+			fw.write("\n");
 			for (int i = 0; i < docs.length; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
