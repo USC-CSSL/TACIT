@@ -12,8 +12,7 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.repository;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: bin.edu.usc.cssl.tacit.common,
- com.google.gson,
+Export-Package: com.google.gson,
  com.google.gson.annotations,
  com.google.gson.internal,
  com.google.gson.internal.bind,

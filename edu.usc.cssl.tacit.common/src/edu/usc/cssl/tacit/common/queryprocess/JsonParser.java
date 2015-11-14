@@ -68,50 +68,32 @@ public class JsonParser {
 	    	for (Object key : map.keySet()) {
 		    	if (!(map.get(key) instanceof Map) && !(map.get(key) instanceof Collection)){
 		    		Attribute attr = new Attribute();
-		    		if (map.get(key) instanceof Double) 
-						attr.setDataType(QueryDataType.DOUBLE);
-		    		else if(map.get(key) instanceof String)
-		    			attr.setDataType(QueryDataType.STRING);
-		    		else if(map.get(key) instanceof Integer)
-		    			attr.setDataType(QueryDataType.INTEGER);
-		    		else
-		    			attr.setDataType(QueryDataType.STRING); // TODO : as of now, for default cases
+		    		setDataType(attr, map.get(key));
+
 		    		if(null != parent) attr.setKey(parent + "." + key.toString());
 		    		else attr.setKey(key.toString());
 		    		resultAttr.add(attr);
-		    		
 		    	} else if(map.get(key) instanceof Map) {
-		    		if(null!= parent) parent+="."+key.toString();
-		    		else parent = key.toString();
-		    		collectAllTheKeys(map.get(key), resultAttr, parent);
+		    		if(null == parent) collectAllTheKeys(map.get(key), resultAttr, key.toString());
+		    		else collectAllTheKeys(map.get(key), resultAttr, parent + "." + key.toString());
 		    	} else if(map.get(key) instanceof Collection) {
-		    		if(null!= parent) parent+="."+key.toString();
-		    		else parent = key.toString();
-		    		collectAllTheKeys(map.get(key), resultAttr, parent);
+		    		if(null == parent) collectAllTheKeys(map.get(key), resultAttr, key.toString());
+		    		else collectAllTheKeys(map.get(key), resultAttr, parent + "." + key.toString());		    		
 		    	}
 	    	}
 	    } else if(o instanceof Collection) {
 	    	for (Object key : (Collection<?>)o) {
 		    	if (!(key instanceof Map) && !(key instanceof Collection)){
 		    		Attribute attr = new Attribute();
-		    		if(key instanceof Double) 
-						attr.setDataType(QueryDataType.DOUBLE);
-		    		else if(key instanceof String)
-		    			attr.setDataType(QueryDataType.STRING);
-		    		else if(key instanceof Integer)
-		    			attr.setDataType(QueryDataType.INTEGER);
-		    		else 
-		    			attr.setDataType(QueryDataType.STRING); // TODO : as of now, for default cases
+		    		setDataType(attr, key);		    		
 		    		if(null != parent) attr.setKey(parent + "." + key.toString());
 		    		else attr.setKey(key.toString());
 		    		resultAttr.add(attr);
 		    	} else if(key instanceof Map) {
 		    		collectAllTheKeys(key, resultAttr, parent);
 		    	} else if(key instanceof Collection) {
-		    		if(null!= parent) parent+="."+key.toString();
-		    		else parent = key.toString();
-		    		collectAllTheKeys(key, resultAttr, parent);
-		    	}
+		    		if(null == parent) collectAllTheKeys(key, resultAttr, key.toString());
+		    		else collectAllTheKeys(key, resultAttr, parent + "." + key.toString());		    	}
 		    	break;
 	    	}	    	
 	    } else {
@@ -120,10 +102,21 @@ public class JsonParser {
 	    return resultAttr;
 	 }
   	
+	private void setDataType(Attribute attr, Object key) {
+		if (key instanceof Double) 
+			attr.setDataType(QueryDataType.DOUBLE);
+		else if(key instanceof String)
+			attr.setDataType(QueryDataType.STRING);
+		else if(key instanceof Integer)
+			attr.setDataType(QueryDataType.INTEGER);
+		else
+			attr.setDataType(QueryDataType.STRING); // TODO : as of now, for default cases		
+	}
+	
 	public static void main(String[] args) {
 		JsonParser jh = new JsonParser();
 		//HashMap<String, String> jsonKeys = jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\test.json");
-		ArrayList<Attribute> jsonKeys = jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\random.json.txt");
+		ArrayList<Attribute> jsonKeys = jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\test.json");
 		for(Attribute attr : jsonKeys) {
 			System.out.println(attr.key + "->"+ attr.dataType);
 		}
