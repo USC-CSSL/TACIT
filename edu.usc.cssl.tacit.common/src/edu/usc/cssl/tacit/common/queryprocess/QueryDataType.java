@@ -6,9 +6,9 @@ import java.util.List;
 public enum QueryDataType {
 	INTEGER, DOUBLE, STRING;
 	
-	public static List<String> supportedOperations(QueryDataType dataType) {
-		if(dataType == QueryDataType.INTEGER || dataType == QueryDataType.DOUBLE) return Arrays.asList(">", "<", "==");
-		else if(dataType == QueryDataType.STRING) return Arrays.asList("equals", "startsWith", "endsWith");
+	public static List<QueryOperatorType> supportedOperations(QueryDataType dataType) {
+		if(dataType == QueryDataType.INTEGER || dataType == QueryDataType.DOUBLE) return Arrays.asList(QueryOperatorType.INTEGER_GREATER_THAN, QueryOperatorType.INTEGER_LESS_THAN, QueryOperatorType.INTEGER_EQUALS);
+		else if(dataType == QueryDataType.STRING) return Arrays.asList(QueryOperatorType.STRING_EQUALS, QueryOperatorType.STRING_STARS_WITH, QueryOperatorType.STRING_ENDS_WITH);
 		return null;
 	}	
 }

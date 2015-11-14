@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -61,6 +62,25 @@ public class JsonParser {
 	    collectAllTheKeys(things, resultAttr, null);
 	 }
 
+	public static List<String> getParentKeys(String jsonFileName) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+		Object jsonData = new Gson().fromJson(new FileReader(jsonFileName), Object.class);
+		List<String> parentKeys = new ArrayList<String>();
+		if (jsonData instanceof Map)
+	    {
+	    	Map<?, ?> map = (Map<?,?>) jsonData;
+	    	for (Object key : map.keySet()) {
+	    		parentKeys.add(key.toString());
+	    	}
+	    } else if(jsonData instanceof Collection) {
+	    	for (Object key : (Collection<?>)jsonData) {
+	    		parentKeys.add(key.toString());
+	    	}
+	    } else {
+	    	// TODO: ?? 
+	    }
+		
+		return parentKeys;		
+	}
 	private ArrayList<Attribute> collectAllTheKeys(Object o, ArrayList<Attribute> resultAttr, String parent) {
 		if (o instanceof Map)
 	    {

@@ -2,7 +2,7 @@ package edu.usc.cssl.tacit.common.queryprocess;
 
 public class Filter {
 	String targetName = null;
-	String operator = null;
+	QueryOperatorType operator = null;
 	String filterValue = null;
 	QueryDataType targetType = null;
 	
@@ -17,7 +17,7 @@ public class Filter {
 	public Filter() {
 	}
 	
-	public Filter(String targetName, String operator, String filterValue, QueryDataType targetType) {
+	public Filter(String targetName, QueryOperatorType operator, String filterValue, QueryDataType targetType) {
 		this.targetName = targetName;
 		this.operator = operator;
 		this.filterValue = filterValue;
@@ -30,10 +30,10 @@ public class Filter {
 	public void setTargetType(String targetName) {
 		this.targetName = targetName;
 	}
-	public String getOperationType() {
+	public QueryOperatorType getOperationType() {
 		return operator;
 	}
-	public void setOperationType(String operationType) {
+	public void setOperationType(QueryOperatorType operationType) {
 		this.operator = operationType;
 	}
 	public String getFilterValue() {
