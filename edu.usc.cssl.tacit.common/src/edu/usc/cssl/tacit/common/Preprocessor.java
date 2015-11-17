@@ -155,7 +155,7 @@ public class Preprocessor {
 			String currLine = "";
 
 			while ((currLine = br.readLine()) != null) {
-				if (currLine != "") {
+				if (currLine.trim().length() != 0) {
 					if (doLowercase) {
 						currLine = currLine.toLowerCase();
 					}
@@ -179,7 +179,7 @@ public class Preprocessor {
 								ConsoleView
 										.printlInConsole("Skipping the line and continuing.");
 							}
-							latinStemmer.destroyTT();
+							//latinStemmer.destroyTT();
 						} else {
 							currLine = stemLine(currLine);
 						}
