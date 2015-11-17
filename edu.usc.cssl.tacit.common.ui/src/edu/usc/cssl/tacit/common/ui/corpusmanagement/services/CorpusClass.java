@@ -10,6 +10,7 @@ public class CorpusClass implements ICorpusClass{
 	private TreeViewer viewer;
 	private String tacitLocation;
 	private Corpus parent;
+	private String id;
 	
 	public CorpusClass(String className, String classPath) {
 		this.className = className;
@@ -36,6 +37,7 @@ public class CorpusClass implements ICorpusClass{
 	}
 	
 	public void setClassName(String className) {
+		this.id = parent.getCorpusId() + "-" + this.className;
 		this.className = className;
 	}
 	
@@ -66,8 +68,11 @@ public class CorpusClass implements ICorpusClass{
 	}
 
 	public void setParent(Corpus parent) {
+		this.id = parent.getCorpusId() + "-" + this.className;
 		this.parent = parent;
 	}
 	
-	
+	public String getId() {
+		return id;
+	}	
 }
