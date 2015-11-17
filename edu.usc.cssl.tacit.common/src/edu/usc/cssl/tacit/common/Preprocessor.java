@@ -290,8 +290,6 @@ public class Preprocessor {
 			new File(tempDir).mkdir();
 		}
 
-		try {
-
 			jParser = new JSONParser();
 
 			// loop until token equal to "}"
@@ -299,6 +297,7 @@ public class Preprocessor {
 
 			File[] fileList = new File(corpusClassPath).listFiles();
 			for (int i = 0; i < fileList.length; i++) {
+				try { 
 				String fileName = fileList[i].getAbsolutePath();
 				if (!fileList[i].getAbsolutePath().endsWith(".json"))
 					continue;
@@ -339,14 +338,14 @@ public class Preprocessor {
 
 				}
 
+			}catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		} 
 		
 		if (new File(tempFile).exists()) {
 			new File(tempFile).delete();
@@ -372,10 +371,10 @@ public class Preprocessor {
 			new File(tempDir).mkdir();
 		}
 
-		try {
-			jParser = new JSONParser();
-			File[] fileList = new File(corpusClassPath).listFiles();
-			for (File f : fileList) {
+		jParser = new JSONParser();
+		File[] fileList = new File(corpusClassPath).listFiles();
+		for (File f : fileList) {
+			try {
 				String fileName = f.getAbsolutePath();
 				if (!fileName.endsWith(".json"))
 					continue;
@@ -391,11 +390,7 @@ public class Preprocessor {
 				if (doPreprocessing) {
 					file = new File(tempFile);
 				} else {
-					file = new File(tempDir
-							+ System.getProperty("file.separator")
-							+ postTitle.substring(0, 20).replaceAll(
-									invalidFilenameCharacters, "") + "-"
-							+ dateObj.getTime() + ".txt");
+					file = new File(tempDir + System.getProperty("file.separator") + postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "") + "-" + dateObj.getTime() + ".txt");
 				}
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
@@ -414,18 +409,14 @@ public class Preprocessor {
 				bw.close();
 
 				if (doPreprocessing)
-					outputFiles.add(processFile(
-							tempFile,
-							postTitle.substring(0, 20).replaceAll(
-									invalidFilenameCharacters, "")
-									+ "-" + dateObj.getTime() + ".txt"));
+					outputFiles.add(processFile(tempFile, postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "") + "-" + dateObj.getTime() + ".txt"));
 				else
 					outputFiles.add(file.getAbsolutePath());
+			} catch (ClassCastException e) {
+				// ignore consolidated json file
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (ClassCastException e) {
-			// ignore consolidated json file
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		if (new File(tempFile).exists()) {
