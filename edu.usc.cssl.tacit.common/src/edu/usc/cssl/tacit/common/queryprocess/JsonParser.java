@@ -4,8 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -34,6 +36,7 @@ class Attribute {
 	}	
 }
 public class JsonParser {
+	final int keyLevel = 3;
 	public JsonParser(String[] keyList) {
 		for (int i = 0; i < keyList.length; i++) {
 			keyList[i] = keyList[i].trim();
@@ -43,8 +46,8 @@ public class JsonParser {
 	public JsonParser() {
 	}
 
-	public ArrayList<Attribute> findJsonStructure(String filePath) {
-		ArrayList<Attribute> resultAttr = new ArrayList<Attribute>();
+	public Set<Attribute> findJsonStructure(String filePath) {
+		Set<Attribute> resultAttr = new HashSet<Attribute>();
 		try {
 			getKeysFromJson(filePath, resultAttr);
 		} catch (JsonSyntaxException e) {			
@@ -57,9 +60,9 @@ public class JsonParser {
 		return resultAttr;
 	}
 	
-	private void getKeysFromJson(String fileName, ArrayList<Attribute> resultAttr) throws JsonSyntaxException, JsonIOException, FileNotFoundException  {
+	private void getKeysFromJson(String fileName, Set<Attribute> resultAttr) throws JsonSyntaxException, JsonIOException, FileNotFoundException  {
 	    Object things = new Gson().fromJson(new FileReader(fileName), Object.class);
-	    collectAllTheKeys(things, resultAttr, null);
+	    collectAllTheKeys(things, resultAttr, null, keyLevel);
 	 }
 
 	public static List<String> getParentKeys(String jsonFileName) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
@@ -81,7 +84,9 @@ public class JsonParser {
 		
 		return parentKeys;		
 	}
-	private ArrayList<Attribute> collectAllTheKeys(Object o, ArrayList<Attribute> resultAttr, String parent) {
+	private void collectAllTheKeys(Object o, Set<Attribute> resultAttr, String parent, int keyLevel) {
+		if(keyLevel<0) return; // only accept keys within key level
+		
 		if (o instanceof Map)
 	    {
 	    	Map<?, ?> map = (Map<?,?>) o;
@@ -94,11 +99,11 @@ public class JsonParser {
 		    		else attr.setKey(key.toString());
 		    		resultAttr.add(attr);
 		    	} else if(map.get(key) instanceof Map) {
-		    		if(null == parent) collectAllTheKeys(map.get(key), resultAttr, key.toString());
-		    		else collectAllTheKeys(map.get(key), resultAttr, parent + "." + key.toString());
+		    		if(null == parent) collectAllTheKeys(map.get(key), resultAttr, key.toString(), keyLevel-1);
+		    		else collectAllTheKeys(map.get(key), resultAttr, parent + "." + key.toString(), keyLevel-1);
 		    	} else if(map.get(key) instanceof Collection) {
-		    		if(null == parent) collectAllTheKeys(map.get(key), resultAttr, key.toString());
-		    		else collectAllTheKeys(map.get(key), resultAttr, parent + "." + key.toString());		    		
+		    		if(null == parent) collectAllTheKeys(map.get(key), resultAttr, key.toString(), keyLevel-1);
+		    		else collectAllTheKeys(map.get(key), resultAttr, parent + "." + key.toString(), keyLevel-1);		    		
 		    	}
 	    	}
 	    } else if(o instanceof Collection) {
@@ -110,16 +115,16 @@ public class JsonParser {
 		    		else attr.setKey(key.toString());
 		    		resultAttr.add(attr);
 		    	} else if(key instanceof Map) {
-		    		collectAllTheKeys(key, resultAttr, parent);
+		    		collectAllTheKeys(key, resultAttr, parent, keyLevel-1);
 		    	} else if(key instanceof Collection) {
-		    		if(null == parent) collectAllTheKeys(key, resultAttr, key.toString());
-		    		else collectAllTheKeys(key, resultAttr, parent + "." + key.toString());		    	}
+		    		if(null == parent) collectAllTheKeys(key, resultAttr, key.toString(), keyLevel-1);
+		    		else collectAllTheKeys(key, resultAttr, parent + "." + key.toString(), keyLevel-1);		    	
+		    	}
 		    	break;
 	    	}	    	
 	    } else {
 	    	// TODO: ?? 
 	    }
-	    return resultAttr;
 	 }
   	
 	private void setDataType(Attribute attr, Object key) {
@@ -136,7 +141,7 @@ public class JsonParser {
 	public static void main(String[] args) {
 		JsonParser jh = new JsonParser();
 		//HashMap<String, String> jsonKeys = jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\test.json");
-		ArrayList<Attribute> jsonKeys = jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\test.json");
+		Set<Attribute> jsonKeys = jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\long.json");
 		for(Attribute attr : jsonKeys) {
 			System.out.println(attr.key + "->"+ attr.dataType);
 		}

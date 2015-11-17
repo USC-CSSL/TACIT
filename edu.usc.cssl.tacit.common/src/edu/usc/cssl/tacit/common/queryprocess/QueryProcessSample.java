@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -47,43 +48,64 @@ public class QueryProcessSample {
 		JSONParser parser = new JSONParser();
         Object obj = parser.parse(new FileReader(jsonFilePath));
         JSONObject jsonObject = (JSONObject) obj;
-        
 		for(Filter f : filters) {
 			Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
 			String filterQuery = constructJSONPathQuery(f);
-			System.out.println("Query : " + filterQuery);
-			JSONArray records =  JsonPath.parse(document).read(filterQuery);
-			for(Object ob : records)
-				filteredResults.add(ob);
+			Object result = JsonPath.parse(document).read(filterQuery);
+			System.out.println(filterQuery + " : "+ result.toString());
+			if(result instanceof LinkedHashMap<?, ?>) {
+				LinkedHashMap<?, ?> records = (LinkedHashMap<?, ?>) result;
+				filteredResults.add(records);
+			} else if(result instanceof JSONArray) {
+				JSONArray records =  (JSONArray) result;
+				for(Object ob : records)
+					filteredResults.add(ob);
+			}
 		}
 		return filteredResults;
 	}
 
 	private static String constructJSONPathQuery(Filter f) {
-		String[] queryComponents = f.getTargetName().split("\\.");
+		if(f.getFilterValue() == null) { // parent query construction
+			return constructParentQuery(f.getTargetName());
+		} else {
+			StringBuilder query = new StringBuilder();
+			String[] queryComponents = f.getTargetName().split("\\.");
+			query.append("$.");
+			for(int i = 0; i<queryComponents.length-1; i++) { // except the last component
+				query.append(queryComponents[i]);
+				if(i!= queryComponents.length-2) query.append(".");
+			}
+			if(f.getTargetType() == QueryDataType.INTEGER || f.getTargetType() == QueryDataType.DOUBLE) {
+				if(f.getOperationType().equals(QueryOperatorType.INTEGER_EQUALS) || f.getOperationType().equals(QueryOperatorType.DOUBLE_EQUALS))
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.filterValue + "')]");	
+				else if(f.getOperationType().equals(QueryOperatorType.INTEGER_GREATER_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_GREATER_THAN))
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " > '" + f.filterValue + "')]");
+				else if(f.getOperationType().equals(QueryOperatorType.INTEGER_LESS_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_LESS_THAN))
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " < '" + f.filterValue + "')]");
+			} else if(f.getTargetType() == QueryDataType.STRING) {
+				if(f.getOperationType().equals(QueryOperatorType.STRING_EQUALS))
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.filterValue + "')]");						
+			}
+			return new String(query);
+		}
+	}
+	
+	private static String constructParentQuery(String parentKey) {
 		StringBuilder query = new StringBuilder();
 		query.append("$.");
-		for(int i = 0; i<queryComponents.length-1; i++) { // except the last component
-			query.append(queryComponents[i]);
-			if(i!= queryComponents.length-2) query.append(".");
-		}
-		if(f.getTargetType() == QueryDataType.INTEGER || f.getTargetType() == QueryDataType.DOUBLE) 
-			query.append("[?(@."+ queryComponents[queryComponents.length-1] + f.getOperationType() + f.filterValue + ")]");
-		else if(f.getTargetType() == QueryDataType.STRING) {
-			if(f.getOperationType().equals(QueryOperatorType.STRING_EQUALS))
-				query.append("[?(@."+ queryComponents[queryComponents.length-1] + "== '" + f.filterValue + "')]");						
-		}
+		query.append(parentKey);
 		return new String(query);
-	}
+	}	
 
 	
 	private static List<Filter> createSampleFilters() {
 		List<Filter> filters = new ArrayList<Filter>();
-		//Filter f1 = new Filter("comments.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "5", QueryDataType.DOUBLE); // target names should always be valid
+		Filter f1 = new Filter("comments.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "500", QueryDataType.DOUBLE); // target names should always be valid
 		//Filter f2 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "50", QueryDataType.DOUBLE);
 		//Filter f3 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "60", QueryDataType.DOUBLE);
 		Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(0), "hankbaumbach", QueryDataType.STRING);
-		//filters.add(f1);
+		filters.add(f1);
 		//filters.add(f2);
 		//filters.add(f3);
 		filters.add(f4);
@@ -91,15 +113,21 @@ public class QueryProcessSample {
 	}	
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
-		String jsonFilePath = "C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\test.json";
+		String jsonFilePath = "C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\long.json";
 		System.out.println(jsonFilePath);
 		List<String> parentKeys = JsonParser.getParentKeys(jsonFilePath);
 		List<Filter> filters = createSampleFilters();
-		checkFilters(filters, parentKeys);
+		createParentFilters(filters, parentKeys);
 		applyFilters(filters, jsonFilePath);
 	}
 
-	private static void checkFilters(List<Filter> filters, List<String> parentKeys) {
-		
+	private static void createParentFilters(List<Filter> filters, List<String> parentKeys) {
+		List<String> parentFilters = new ArrayList<String>();
+		for(Filter f : filters) 
+			parentFilters.add(f.getTargetName().split("\\.")[0]);
+		parentKeys.removeAll(parentFilters);
+		for(String key : parentKeys) {
+			filters.add(new Filter(key, null, null, null));
+		}
 	}
 }
