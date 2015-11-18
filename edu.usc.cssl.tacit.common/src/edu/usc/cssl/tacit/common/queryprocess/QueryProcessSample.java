@@ -78,14 +78,16 @@ public class QueryProcessSample {
 			}
 			if(f.getTargetType() == QueryDataType.INTEGER || f.getTargetType() == QueryDataType.DOUBLE) {
 				if(f.getOperationType().equals(QueryOperatorType.INTEGER_EQUALS) || f.getOperationType().equals(QueryOperatorType.DOUBLE_EQUALS))
-					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.filterValue + "')]");	
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.getFilterValue() + "')]");	
 				else if(f.getOperationType().equals(QueryOperatorType.INTEGER_GREATER_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_GREATER_THAN))
-					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " > '" + f.filterValue + "')]");
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " > '" + f.getFilterValue() + "')]");
 				else if(f.getOperationType().equals(QueryOperatorType.INTEGER_LESS_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_LESS_THAN))
-					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " < '" + f.filterValue + "')]");
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " < '" + f.getFilterValue() + "')]");
 			} else if(f.getTargetType() == QueryDataType.STRING) {
 				if(f.getOperationType().equals(QueryOperatorType.STRING_EQUALS))
-					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.filterValue + "')]");						
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.getFilterValue() + "')]");		
+				else if(f.getOperationType().equals(QueryOperatorType.STRING_CONTAINS)) //$.store.book[?(@.title =~ /^.*sword.*$/i)]
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " =~ /^.*" + f.getFilterValue() + ".*$/i)]");
 			}
 			return new String(query);
 		}
@@ -104,7 +106,7 @@ public class QueryProcessSample {
 		Filter f1 = new Filter("comments.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "500", QueryDataType.DOUBLE); // target names should always be valid
 		//Filter f2 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "50", QueryDataType.DOUBLE);
 		//Filter f3 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "60", QueryDataType.DOUBLE);
-		Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(0), "hankbaumbach", QueryDataType.STRING);
+		Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(1), "hankbaumbach", QueryDataType.STRING);
 		filters.add(f1);
 		//filters.add(f2);
 		//filters.add(f3);
