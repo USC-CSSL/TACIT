@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.common.queryprocess;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -32,6 +33,8 @@ public class QueryProcessSample {
 	        for(Object ob : filteredResults) 
 	        	results.add(ob);
         	String filePath = jsonFilePath + ".test.txt";
+        	if(new File(filePath).exists())
+        		new File(filePath).delete();
 			FileWriter file = new FileWriter(filePath, true);
 	    	Writer writer = new JSONWriter(); // for pretty-printing 	
         	results.writeJSONString(writer);
@@ -88,6 +91,10 @@ public class QueryProcessSample {
 					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " == '" + f.getFilterValue() + "')]");		
 				else if(f.getOperationType().equals(QueryOperatorType.STRING_CONTAINS)) //$.store.book[?(@.title =~ /^.*sword.*$/i)]
 					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " =~ /^.*" + f.getFilterValue() + ".*$/i)]");
+				else if(f.getOperationType().equals(QueryOperatorType.STRING_STARS_WITH))
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " =~ /^" + f.getFilterValue() + ".*$/i)]");
+				else if(f.getOperationType().equals(QueryOperatorType.STRING_ENDS_WITH))
+					query.append("[?(@."+ queryComponents[queryComponents.length-1] + " =~ /^.*" + f.getFilterValue() + "$/i)]");
 			}
 			return new String(query);
 		}
@@ -104,13 +111,17 @@ public class QueryProcessSample {
 	private static List<Filter> createSampleFilters() {
 		List<Filter> filters = new ArrayList<Filter>();
 		Filter f1 = new Filter("comments.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "500", QueryDataType.DOUBLE); // target names should always be valid
-		//Filter f2 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "50", QueryDataType.DOUBLE);
-		//Filter f3 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "60", QueryDataType.DOUBLE);
-		Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(1), "hankbaumbach", QueryDataType.STRING);
+		Filter f2 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "50", QueryDataType.DOUBLE);
+		Filter f3 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "60", QueryDataType.DOUBLE);
+		Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(1), "Devi", QueryDataType.STRING); // CONTAINS
+		Filter f5 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(2), "SL", QueryDataType.STRING); //STARS WITH
+		Filter f6 = new Filter("comments.body", QueryDataType.supportedOperations(QueryDataType.STRING).get(3), "g", QueryDataType.STRING); //ENDS WITH
 		filters.add(f1);
-		//filters.add(f2);
-		//filters.add(f3);
+		filters.add(f2);
+		filters.add(f3);
 		filters.add(f4);
+		filters.add(f5);
+		filters.add(f6);
 		return filters;
 	}	
 	
