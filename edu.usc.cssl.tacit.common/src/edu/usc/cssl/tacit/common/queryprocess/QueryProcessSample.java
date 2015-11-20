@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,16 +18,110 @@ import net.minidev.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.jsoup.helper.StringUtil;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 
 public class QueryProcessSample {
-	private static void applyFilters(List<Filter> filters, String jsonFilePath) throws FileNotFoundException, IOException, ParseException {
+	
+	private static void applyFiltersSequential(List<Filter> filters, String jsonFilePath) throws FileNotFoundException, IOException, ParseException {
 		Set<Object> filteredResults = processFilter(filters, jsonFilePath);
 		writeToFile(jsonFilePath, filteredResults);
 	}
 	
+	private static void applySmartFilters(List<Filter> filters, String jsonFilePath) throws FileNotFoundException, IOException, ParseException {
+		Set<Object> filteredResults = new HashSet<Object>();
+		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
+		
+		// Read JSON doc
+		JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader(jsonFilePath));
+        JSONObject jsonObject = (JSONObject) obj;
+        
+        Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
+		for(String parentFilters : groupedFilters.keySet()) {
+			String smartQuery = createSmartFilters(parentFilters, groupedFilters, "&&");
+			System.out.println(parentFilters + ":" +smartQuery);
+			Object result = JsonPath.parse(document).read(smartQuery);
+			if(result instanceof LinkedHashMap<?, ?>) {
+				LinkedHashMap<?, ?> records = (LinkedHashMap<?, ?>) result;
+				filteredResults.add(records);
+			} else if(result instanceof JSONArray) {
+				JSONArray records =  (JSONArray) result;
+				for(Object ob : records)
+					filteredResults.add(ob);
+			}
+		}
+		writeToFile(jsonFilePath, filteredResults);
+	}
+	
+	/*
+	 * Create smart queries and apply them on JSON document
+	 */
+	private static String createSmartFilters(String parentFilters, HashMap<String, List<Filter>> groupedFilters, String condition) {
+		StringBuilder query = new StringBuilder();
+		query.append("$.");
+		query.append(parentFilters);
+		List<String> predicates = new ArrayList<String>();
+		for(Filter f : groupedFilters.get(parentFilters))
+			predicates.add(constructSmartQuery(f));
+		if(predicates.size()>1) {
+			query.append("[?(");
+			query.append(StringUtil.join(predicates, " " + condition + " "));
+			query.append(")]");
+		}	
+		return new String(query);
+	}
+
+	/*
+	 * Group filters based on the parents
+	 */
+	private static HashMap<String, List<Filter>> groupFilters(List<Filter> filters) {
+		HashMap<String, List<Filter>> groupedFilters = new HashMap<String, List<Filter>>();
+		if(null == filters) return groupedFilters;		
+		
+		for(Filter filter : filters) {
+			String targetName = filter.getTargetName();			
+			String parentAttr = (targetName.indexOf('.') == -1) ? targetName : targetName.substring(0, targetName.lastIndexOf('.'));
+			List<Filter> filterList;
+			if(groupedFilters.containsKey(parentAttr))
+				filterList = groupedFilters.get(parentAttr);
+			else 
+				filterList = new ArrayList<Filter>();
+			filterList.add(filter);
+			groupedFilters.put(parentAttr, filterList);
+		}
+		return groupedFilters;
+	}
+
+	private static String constructSmartQuery(Filter f) {
+		StringBuilder query = new StringBuilder();
+		if(f.getFilterValue() == null) 
+			return new String(query);
+		
+		String queryAttr = f.getTargetName().substring(f.getTargetName().lastIndexOf('.')+1);
+		if(f.getTargetType() == QueryDataType.INTEGER || f.getTargetType() == QueryDataType.DOUBLE) {
+			if(f.getOperationType().equals(QueryOperatorType.INTEGER_EQUALS) || f.getOperationType().equals(QueryOperatorType.DOUBLE_EQUALS))
+				query.append("@."+ queryAttr + " == '" + f.getFilterValue() + "'");	
+			else if(f.getOperationType().equals(QueryOperatorType.INTEGER_GREATER_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_GREATER_THAN))
+				query.append("@."+ queryAttr+ " > '" + f.getFilterValue() + "'");
+			else if(f.getOperationType().equals(QueryOperatorType.INTEGER_LESS_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_LESS_THAN))
+				query.append("@."+ queryAttr + " < '" + f.getFilterValue() + "'");
+		} else if(f.getTargetType() == QueryDataType.STRING) {
+			if(f.getOperationType().equals(QueryOperatorType.STRING_EQUALS))
+				query.append("@."+ queryAttr + " == '" + f.getFilterValue() + "'");		
+			else if(f.getOperationType().equals(QueryOperatorType.STRING_CONTAINS)) //$.store.book[?(@.title =~ /^.*sword.*$/i)]
+				query.append("@."+ queryAttr + " =~ /^.*" + f.getFilterValue() + ".*$/i");
+			else if(f.getOperationType().equals(QueryOperatorType.STRING_STARS_WITH))
+				query.append("@."+ queryAttr + " =~ /^" + f.getFilterValue() + ".*$/i");
+			else if(f.getOperationType().equals(QueryOperatorType.STRING_ENDS_WITH))
+				query.append("@."+ queryAttr + " =~ /^.*" + f.getFilterValue() + "$/i");
+		}
+		return new String(query);
+		
+	}
+
 	private static void writeToFile(String jsonFilePath, Set<Object> filteredResults) {
         try {
 	    	JSONArray results = new JSONArray(); // convert JSON objects to array //
@@ -47,7 +142,7 @@ public class QueryProcessSample {
 	
 
 	private static Set<Object> processFilter(List<Filter> filters, String jsonFilePath) throws FileNotFoundException, IOException, ParseException {
-        Set<Object> filteredResults = new HashSet<Object>();
+		Set<Object> filteredResults = new HashSet<Object>();
 		JSONParser parser = new JSONParser();
         Object obj = parser.parse(new FileReader(jsonFilePath));
         JSONObject jsonObject = (JSONObject) obj;
@@ -55,7 +150,7 @@ public class QueryProcessSample {
 			Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
 			String filterQuery = constructJSONPathQuery(f);
 			Object result = JsonPath.parse(document).read(filterQuery);
-			System.out.println(filterQuery + " : "+ result.toString());
+			//System.out.println(filterQuery + " : "+ result.toString());
 			if(result instanceof LinkedHashMap<?, ?>) {
 				LinkedHashMap<?, ?> records = (LinkedHashMap<?, ?>) result;
 				filteredResults.add(records);
@@ -110,16 +205,16 @@ public class QueryProcessSample {
 	
 	private static List<Filter> createSampleFilters() {
 		List<Filter> filters = new ArrayList<Filter>();
-		Filter f1 = new Filter("comments.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "500", QueryDataType.DOUBLE); // target names should always be valid
-		Filter f2 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "50", QueryDataType.DOUBLE);
-		Filter f3 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "60", QueryDataType.DOUBLE);
-		Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(1), "Devi", QueryDataType.STRING); // CONTAINS
+		Filter f1 = new Filter("comments.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "100", QueryDataType.DOUBLE); // target names should always be valid
+		//Filter f2 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "50", QueryDataType.DOUBLE);
+		//Filter f3 = new Filter("post.score", QueryDataType.supportedOperations(QueryDataType.DOUBLE).get(0), "60", QueryDataType.DOUBLE);
+		//Filter f4 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(1), "Devi", QueryDataType.STRING); // CONTAINS
 		Filter f5 = new Filter("comments.author", QueryDataType.supportedOperations(QueryDataType.STRING).get(2), "SL", QueryDataType.STRING); //STARS WITH
 		Filter f6 = new Filter("comments.body", QueryDataType.supportedOperations(QueryDataType.STRING).get(3), "g", QueryDataType.STRING); //ENDS WITH
 		filters.add(f1);
-		filters.add(f2);
-		filters.add(f3);
-		filters.add(f4);
+		//filters.add(f2);
+		//filters.add(f3);
+		//filters.add(f4);
 		filters.add(f5);
 		filters.add(f6);
 		return filters;
@@ -131,7 +226,11 @@ public class QueryProcessSample {
 		List<String> parentKeys = JsonParser.getParentKeys(jsonFilePath);
 		List<Filter> filters = createSampleFilters();
 		createParentFilters(filters, parentKeys);
-		applyFilters(filters, jsonFilePath);
+		applyFiltersSequential(filters, jsonFilePath);
+		
+		//smart filters
+		System.out.println("Smart Filters!");
+		applySmartFilters(filters, jsonFilePath);
 	}
 
 	private static void createParentFilters(List<Filter> filters, List<String> parentKeys) {
