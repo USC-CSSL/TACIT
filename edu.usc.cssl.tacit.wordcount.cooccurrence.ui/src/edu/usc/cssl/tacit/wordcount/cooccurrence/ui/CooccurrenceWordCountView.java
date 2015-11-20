@@ -40,6 +40,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.Preprocess;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -50,7 +51,8 @@ import edu.usc.cssl.tacit.wordcount.cooccurrence.services.CooccurrenceAnalysis;
 import edu.usc.cssl.tacit.wordcount.cooccurrence.ui.internal.CooccurrenceWordCountImageRegistry;
 import edu.usc.cssl.tacit.wordcount.cooccurrence.ui.internal.ICooccurrenceWordCountViewConstants;
 
-public class CooccurrenceWordCountView extends ViewPart implements ICooccurrenceWordCountViewConstants {
+public class CooccurrenceWordCountView extends ViewPart implements
+		ICooccurrenceWordCountViewConstants {
 	public static String ID = "edu.usc.cssl.tacit.wordcount.cooccurrence.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -67,9 +69,11 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
-		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(form.getBody(),
+				Section.TITLE_BAR | Section.EXPANDED);
 
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
+				.applyTo(section);
 		section.setExpanded(true);
 		/*
 		 * String description =
@@ -78,37 +82,47 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 		 * descriptionFrm.setText("<form><p>" + description + "</p></form>",
 		 * true, false); section.setDescriptionControl(descriptionFrm);
 		 */
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sc);
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
 		TacitFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+				.applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-
-		inputLayoutData = TacitFormComposite.createTableSection(client, toolkit, layout, "Input Details",
-				"Add File(s) and Folder(s) to include in analysis.", true, true, true, false);
+		inputLayoutData = TacitFormComposite.createTableSection(client,
+				toolkit, layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true, false);
 
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3).applyTo(compInput);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(compInput);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
+				.applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
+				.applyTo(compInput);
 		createPreprocessLink(compInput);
 		seedFile = createWordFileControl(compInput, "Seed File :");
 		windowSize = createAdditionalOptions(compInput, "Window Size :", "1");
 		thresholdValue = createAdditionalOptions(compInput, "Threshold :", "");
 
 		Composite client1 = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client1);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+				.applyTo(client1);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(client1);
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit, client1, form.getMessageManager());
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		buildCooccurrenceMatrix(form.getBody());
 
@@ -118,13 +132,16 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 
 	}
 
-	private Text createAdditionalOptions(Composite sectionClient, String numLabel, String defaultValue) {
+	private Text createAdditionalOptions(Composite sectionClient,
+			String numLabel, String defaultValue) {
 		Text numTxt;
 		Label noLabel = toolkit.createLabel(sectionClient, numLabel, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(noLabel);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(noLabel);
 		numTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
 		numTxt.setText(defaultValue);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(numTxt);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
+				.applyTo(numTxt);
 		return numTxt;
 	}
 
@@ -139,12 +156,16 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 	private void createPreprocessLink(Composite client) {
 
 		Composite clientLink = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3).applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(clientLink);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
+				.applyTo(clientLink);
 
 		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(preprocessEnabled);
-		final Hyperlink link = toolkit.createHyperlink(clientLink, "Preprocess", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(preprocessEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
@@ -155,32 +176,43 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id, new String[] { id }, null).open();
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+						new String[] { id }, null).open();
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(link);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+				.applyTo(link);
 
 	}
 
 	private void buildCooccurrenceMatrix(Composite body) {
 
-		buildMAtrix = toolkit.createButton(body, "Build Co-occurrence Matrices", SWT.CHECK);
+		buildMAtrix = toolkit.createButton(body,
+				"Build Co-occurrence Matrices", SWT.CHECK);
 
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 1).applyTo(buildMAtrix);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
+				.applyTo(buildMAtrix);
 
 	}
 
 	private Text createWordFileControl(Composite sectionClient, String lblText) {
-		Label simpleTxtLbl = toolkit.createLabel(sectionClient, lblText, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(simpleTxtLbl);
-		final Text simpleTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(simpleTxt);
-		fAddFileButton = toolkit.createButton(sectionClient, "Browse...", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fAddFileButton);
+		Label simpleTxtLbl = toolkit.createLabel(sectionClient, lblText,
+				SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(simpleTxtLbl);
+		final Text simpleTxt = toolkit
+				.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(simpleTxt);
+		fAddFileButton = toolkit.createButton(sectionClient, "Browse...",
+				SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(fAddFileButton);
 		fAddFileButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(fAddFileButton.getShell(), SWT.OPEN);
+				FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
+						SWT.OPEN);
 				dlg.setText("Select File");
 				String path = dlg.open();
 				if (path == null)
@@ -198,7 +230,8 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("Co-occurrence Analysis"); //$NON-NLS-1$
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
+				.applyTo(form.getBody());
 		return toolkit;
 	}
 
@@ -208,7 +241,9 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (CooccurrenceWordCountImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
+				return (CooccurrenceWordCountImageRegistry
+						.getImageIconFactory()
+						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
 			@Override
@@ -223,76 +258,55 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<String> selectedFiles = tacitHelper.refineInput(inputLayoutData.getSelectedFiles());
+				final List<Object> selectedFiles = inputLayoutData
+						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();
-				TacitFormComposite.writeConsoleHeaderBegining("Co-occurrence Analysis started  ");
+				TacitFormComposite
+						.writeConsoleHeaderBegining("Co-occurrence Analysis started  ");
 				cooccurrenceAnalysisJob = new Job("Co-occurrence Analysis...") {
 
-					private Preprocess preprocessTask;
-					private String dirPath;
 					private String seedFilePath = seedFile.getText();
-					private String seedFileLocation;
 
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-						monitor.beginTask("TACIT started co-occurence analysis...", selectedFiles.size() + 40);
-						preprocessTask = null;
-						dirPath = "";
-						List<File> inputFiles = new ArrayList<File>();
-						seedFileLocation = seedFilePath;
-						if (isPreprocess) {
-							monitor.subTask("Preprocessing Input Files...");
-							preprocessTask = new Preprocess("CooccurrenceAnalysis");
-							try {
-								dirPath = preprocessTask.doPreprocessing(selectedFiles, "");
-								monitor.worked(10);
-								ArrayList<String> seedList = new ArrayList<String>();
-								seedList.add(seedFilePath);
-								monitor.subTask("Preprocessing Seed File...");
-								preprocessTask.doPreprocessing(seedList, "");
-								monitor.worked(5);
-								seedFileLocation = new File(dirPath + File.separator + new File(seedFilePath).getName())
-										.getAbsolutePath();
-								File[] inputFile = new File(dirPath).listFiles();
-								for (File iFile : inputFile) {
-									inputFiles.add(iFile);
-								}
-
-							} catch (IOException e) {
-								monitor.done();
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							} catch (NullPointerException e) {
-								e.printStackTrace();
-								monitor.done();
-								return Status.CANCEL_STATUS;
-							}
-						} else {
-							for (String filepath : selectedFiles) {
-								if ((new File(filepath).isDirectory())) {
-									continue;
-								}
-								inputFiles.add(new File(filepath));
-							}
-							monitor.worked(15);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
+						monitor.beginTask(
+								"TACIT started co-occurence analysis...",
+								selectedFiles.size() + 40);
+						Preprocessor ppObj = null;
+						List<String> inFiles = null;
+						List<String> seedList = null;
+						try {
+							ppObj = new Preprocessor("Cooccurence",
+									isPreprocess);
+							inFiles = ppObj.processData("ppFiles",
+									selectedFiles);
+							List<Object> seedObjs = new ArrayList<Object>();
+							seedObjs.add(seedFilePath);
+							seedList = ppObj
+									.processData("seed_files", seedObjs);
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
+						;
 
 						long startTime = System.currentTimeMillis();
-						boolean result = new CooccurrenceAnalysis().invokeCooccurrence(selectedFiles, seedFileLocation,
-								outputPath, windowSizeStr, thresholdLimit, isBuildMatrix, monitor);
-						if (isPreprocess) {
-							monitor.subTask("Cleaning up Pre-processed Files");
-							preprocessTask.clean();
-						}
+						boolean result = new CooccurrenceAnalysis()
+								.invokeCooccurrence(inFiles, seedList.get(0),
+										outputPath, windowSizeStr,
+										thresholdLimit, isBuildMatrix, monitor);
+						ppObj.clean();
 						monitor.worked(5);
 
 						if (result) {
-							ConsoleView.printlInConsoleln("Co-occurrence Analysis completed in "
-									+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+							ConsoleView
+									.printlInConsoleln("Co-occurrence Analysis completed in "
+											+ (System.currentTimeMillis() - startTime)
+											+ " milliseconds.");
 							return Status.OK_STATUS;
 						} else {
 							return Status.CANCEL_STATUS;
@@ -302,35 +316,43 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 				cooccurrenceAnalysisJob.setUser(true);
 				if (canProceed()) {
 					cooccurrenceAnalysisJob.schedule();
-					cooccurrenceAnalysisJob.addJobChangeListener(new JobChangeAdapter() {
+					cooccurrenceAnalysisJob
+							.addJobChangeListener(new JobChangeAdapter() {
 
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.updateStatusMessage(getViewSite(),
-										"Co-occurrence Analysis is met with error. Please check the log in the console",
-										IStatus.ERROR, form);
+								public void done(IJobChangeEvent event) {
+									if (!event.getResult().isOK()) {
+										TacitFormComposite
+												.updateStatusMessage(
+														getViewSite(),
+														"Co-occurrence Analysis is met with error. Please check the log in the console",
+														IStatus.ERROR, form);
 
-								TacitFormComposite
-										.writeConsoleHeaderBegining("Error: <Terminated> Co-occurrence Analysis");
-								ConsoleView.printlInConsoleln(
-										"Take appropriate action to resolve the issues and try again.");
-							} else {
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Cooccurence analysis completed",
-										IStatus.OK, form);
+										TacitFormComposite
+												.writeConsoleHeaderBegining("Error: <Terminated> Co-occurrence Analysis");
+										ConsoleView
+												.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
+									} else {
+										TacitFormComposite
+												.updateStatusMessage(
+														getViewSite(),
+														"Cooccurence analysis completed",
+														IStatus.OK, form);
 
-								TacitFormComposite
-										.writeConsoleHeaderBegining("Success: <Completed> Co-occurrence Analysis");
+										TacitFormComposite
+												.writeConsoleHeaderBegining("Success: <Completed> Co-occurrence Analysis");
 
-							}
-						}
-					});
+									}
+								}
+							});
 				}
 			};
 		});
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (CooccurrenceWordCountImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
+				return (CooccurrenceWordCountImageRegistry
+						.getImageIconFactory()
+						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
 			@Override
@@ -340,15 +362,24 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem()
-						.displayHelp("edu.usc.cssl.tacit.wordcount.cooccurrence.ui.cooccurrence");
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.tacit.wordcount.cooccurrence.ui.cooccurrence");
 			};
 		};
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction,
-				"edu.usc.cssl.tacit.wordcount.cooccurrence.ui.cooccurrence");
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form,
-				"edu.usc.cssl.tacit.wordcount.cooccurrence.ui.cooccurrence");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.tacit.wordcount.cooccurrence.ui.cooccurrence");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.tacit.wordcount.cooccurrence.ui.cooccurrence");
 		form.getToolBarManager().update(true);
 	}
 
@@ -360,32 +391,41 @@ public class CooccurrenceWordCountView extends ViewPart implements ICooccurrence
 		form.getMessageManager().removeMessage("dict");
 
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(), "Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 			message = layoutData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
 			canPerform = false;
 		}
 		// validate input
 		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input", "Select/Add atleast one input file", null,
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
-		if (windowSize.getText().isEmpty() || Integer.parseInt(windowSize.getText()) < 1) {
-			form.getMessageManager().addMessage("windowsize", "Window should be an integer value greater than 1", null,
+		if (windowSize.getText().isEmpty()
+				|| Integer.parseInt(windowSize.getText()) < 1) {
+			form.getMessageManager().addMessage("windowsize",
+					"Window should be an integer value greater than 1", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
 
-		if (thresholdValue.getText().isEmpty() || Integer.parseInt(thresholdValue.getText()) < 1) {
-			form.getMessageManager().addMessage("threshold", "Threshold should be an integer value greater than 1",
+		if (thresholdValue.getText().isEmpty()
+				|| Integer.parseInt(thresholdValue.getText()) < 1) {
+			form.getMessageManager().addMessage("threshold",
+					"Threshold should be an integer value greater than 1",
 					null, IMessageProvider.ERROR);
 			canPerform = false;
 		}
 
-		if (Integer.parseInt(thresholdValue.getText()) > Integer.parseInt(windowSize.getText())) {
-			form.getMessageManager().addMessage("threshold", "Window size should not be less than threshold", null,
+		if (Integer.parseInt(thresholdValue.getText()) > Integer
+				.parseInt(windowSize.getText())) {
+			form.getMessageManager().addMessage("threshold",
+					"Window size should not be less than threshold", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
