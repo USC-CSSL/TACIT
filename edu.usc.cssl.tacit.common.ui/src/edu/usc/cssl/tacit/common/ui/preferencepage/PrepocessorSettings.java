@@ -383,6 +383,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(OUTPUT_PATH, output.getText());
 		//store(LATIN_STEMMER,LatinStemmerLocation.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
+		super.performApply();
 		return super.performOk();
 	}
 
