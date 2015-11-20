@@ -42,6 +42,7 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class Preprocessor {
 
 	private String ppDir = "";
+	private String ppFilesLoc = "";
 	private boolean doLowercase = false;
 	private boolean doStemming = false;
 	private boolean doStopWords = false;
@@ -50,7 +51,7 @@ public class Preprocessor {
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	private String ppOutputPath;
 	private HashSet<String> stopWordsSet = new HashSet<String>();
-	private ArrayList<String> outputFiles = new ArrayList<String>();
+	private ArrayList<String> outputFiles;
 	SnowballStemmer stemmer = null;
 	LatinStemFilter latinStemmer = null;
 	private String stemLang;
@@ -62,22 +63,27 @@ public class Preprocessor {
 			+ System.getProperty("file.separator");
 	private boolean doPreprocessing;
 
-	public ArrayList<String> processData(String caller, List<Object> inData,
-			boolean doPreprocessing) throws IOException {
+	public Preprocessor(String ppDirLocation, boolean doPreprocessing)
+			throws IOException {
+		createppDir(ppDirLocation);
 		this.doPreprocessing = doPreprocessing;
-
-		createppDir(caller);
 		setupParams();
+	}
+
+	public ArrayList<String> processData(String subFolder, List<Object> inData)
+			throws IOException {
+		outputFiles = new ArrayList<String>();
+		ppFilesLoc = ppDir + System.getProperty("file.separator") + subFolder;
+		new File(ppFilesLoc).mkdir();
 
 		for (Object obj : inData) {
 			if (obj instanceof CorpusClass) {
 				processCorpus((CorpusClass) obj);
-			} 
-			else if (obj instanceof String) {
+			} else if (obj instanceof String) {
 				File inputFile = new File((String) obj);
 				if (inputFile.isDirectory()) {
 					continue;
-					//processDirectory(inputFile.getAbsolutePath());
+					// processDirectory(inputFile.getAbsolutePath());
 				} else {
 					if (inputFile.getName().contains("DS_Store"))
 						continue;
@@ -132,10 +138,11 @@ public class Preprocessor {
 
 		String outFile;
 		if (outName == "" || outName == null) {
-			outFile = ppDir + System.getProperty("file.separator")
+			outFile = ppFilesLoc + System.getProperty("file.separator")
 					+ (new File(inFile).getName());
 		} else {
-			outFile = ppDir + System.getProperty("file.separator") + outName;
+			outFile = ppFilesLoc + System.getProperty("file.separator")
+					+ outName;
 		}
 
 		try {
@@ -179,7 +186,7 @@ public class Preprocessor {
 								ConsoleView
 										.printlInConsole("Skipping the line and continuing.");
 							}
-							//latinStemmer.destroyTT();
+							// latinStemmer.destroyTT();
 						} else {
 							currLine = stemLine(currLine);
 						}
@@ -285,19 +292,19 @@ public class Preprocessor {
 			tempFile = tempPPFileLoc + "temp_twitter_"
 					+ System.currentTimeMillis() + ".txt";
 		else {
-			tempDir = ppDir + System.getProperty("file.separator")
+			tempDir = ppFilesLoc + System.getProperty("file.separator")
 					+ "twitter_data_" + dateobj.getTime();
 			new File(tempDir).mkdir();
 		}
 
-			jParser = new JSONParser();
+		jParser = new JSONParser();
 
-			// loop until token equal to "}"
-			dateobj = new Date();
+		// loop until token equal to "}"
+		dateobj = new Date();
 
-			File[] fileList = new File(corpusClassPath).listFiles();
-			for (int i = 0; i < fileList.length; i++) {
-				try { 
+		File[] fileList = new File(corpusClassPath).listFiles();
+		for (int i = 0; i < fileList.length; i++) {
+			try {
 				String fileName = fileList[i].getAbsolutePath();
 				if (!fileList[i].getAbsolutePath().endsWith(".json"))
 					continue;
@@ -338,15 +345,15 @@ public class Preprocessor {
 
 				}
 
-			}catch (JsonParseException e) {
+			} catch (JsonParseException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-		} 
-		
+		}
+
 		if (new File(tempFile).exists()) {
 			new File(tempFile).delete();
 		}
@@ -366,7 +373,7 @@ public class Preprocessor {
 			tempFile = tempPPFileLoc + "temp_reddit_"
 					+ System.currentTimeMillis() + ".txt";
 		else {
-			tempDir = ppDir + System.getProperty("file.separator")
+			tempDir = ppFilesLoc + System.getProperty("file.separator")
 					+ "reddit_data_" + dateObj.getTime();
 			new File(tempDir).mkdir();
 		}
@@ -390,7 +397,11 @@ public class Preprocessor {
 				if (doPreprocessing) {
 					file = new File(tempFile);
 				} else {
-					file = new File(tempDir + System.getProperty("file.separator") + postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "") + "-" + dateObj.getTime() + ".txt");
+					file = new File(tempDir
+							+ System.getProperty("file.separator")
+							+ postTitle.substring(0, 20).replaceAll(
+									invalidFilenameCharacters, "") + "-"
+							+ dateObj.getTime() + ".txt");
 				}
 				FileWriter fw = new FileWriter(file.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
@@ -409,7 +420,11 @@ public class Preprocessor {
 				bw.close();
 
 				if (doPreprocessing)
-					outputFiles.add(processFile(tempFile, postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "") + "-" + dateObj.getTime() + ".txt"));
+					outputFiles.add(processFile(
+							tempFile,
+							postTitle.substring(0, 20).replaceAll(
+									invalidFilenameCharacters, "")
+									+ "-" + dateObj.getTime() + ".txt"));
 				else
 					outputFiles.add(file.getAbsolutePath());
 			} catch (ClassCastException e) {
