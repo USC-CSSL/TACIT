@@ -3,6 +3,11 @@
  **/
 package edu.usc.cssl.tacit.classify.naivebayes.weka;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +72,16 @@ public class NaiveBayesClassifierWeka {
 		return true;
 	}
 
-	public boolean  doClassify(String input,String output,IProgressMonitor monitor,Date dateObj) throws Exception {
-		Instances rawTestData = new DirectoryToArff().createTestInstances(input);
+	public boolean  doClassify(String classificationInputDir, String classificationOutputDir,
+			IProgressMonitor monitor,Date dateObj) throws Exception {
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		ConsoleView.printlInConsoleln("Classification starts ..");
+		String outputPath = classificationOutputDir
+				+ System.getProperty("file.separator") +"Naive_Bayes_classification_results"
+				+ "-" + df.format(dateObj);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+				outputPath + "-output.csv")));
+		Instances rawTestData = new DirectoryToArff().createTestInstances(classificationInputDir);
 		Instances filteredTestData = Filter.useFilter(rawTestData, filter);
 		Evaluation testEval = new Evaluation(dataFiltered);
 		testEval.evaluateModel(nbc, filteredTestData);
@@ -76,8 +89,8 @@ public class NaiveBayesClassifierWeka {
 		for (int i = 0; i < predictions.size(); i++) {
 			NominalPrediction np = (NominalPrediction) predictions.elementAt(i);
 			int pred = (int) np.predicted();
-			System.out.println(DirectoryToArff.instanceIdNameMap.get(i) + "\t"
-					+ dataFiltered.classAttribute().value(pred));
+			bw.write(DirectoryToArff.instanceIdNameMap.get(i) + "\t"
+					+ dataFiltered.classAttribute().value(pred) +"\n");
 		}
 		return true;
 	}
