@@ -288,7 +288,8 @@ public class StandardWordCountView extends ViewPart implements
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				 final List<Object> inputObjs = inputLayoutData.getSelectedFiles();
+				final List<Object> inputObjs = inputLayoutData
+						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
@@ -318,12 +319,13 @@ public class StandardWordCountView extends ViewPart implements
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								"", null, form);
 
-						Preprocessor ppObj = new Preprocessor();
-
+						Preprocessor ppObj;
 						try {
+							ppObj = new Preprocessor("TACIT_word_count",
+									ppValue);
+
 							List<String> inputFiles = ppObj.processData(
-									"TACIT_word_count",
-									inputObjs, ppValue);
+									"wc_files", inputObjs);
 							monitor.worked(5);
 							wc.countWords(inputFiles, dictionaryFiles);
 							ppObj.clean();

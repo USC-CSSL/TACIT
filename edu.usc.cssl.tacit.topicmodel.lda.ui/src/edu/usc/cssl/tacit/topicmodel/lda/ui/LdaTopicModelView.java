@@ -236,11 +236,11 @@ public class LdaTopicModelView extends ViewPart implements
 								+ "TopicModel"
 								+ "_"
 								+ String.valueOf(System.currentTimeMillis());
-						Preprocessor ppObj = new Preprocessor();
+						Preprocessor ppObj = null;
 						List<String> inFiles;
 						try {
-							inFiles = ppObj.processData("LDA", selectedFiles,
-									isPreprocess);
+							ppObj = new Preprocessor("LDA", isPreprocess);
+							inFiles = ppObj.processData("LDA", selectedFiles);
 
 							for (String filename : inFiles) {
 								File srcFile = new File(filename);

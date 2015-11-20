@@ -53,7 +53,8 @@ import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
-public class HierarchicalClusterView extends ViewPart implements IHeirarchicalClusterViewConstants {
+public class HierarchicalClusterView extends ViewPart implements
+		IHeirarchicalClusterViewConstants {
 	public static String ID = "edu.usc.cssl.tacit.cluster.hierarchical.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -66,41 +67,54 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
-		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(form.getBody(),
+				Section.TITLE_BAR | Section.EXPANDED);
 
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
+				.applyTo(section);
 		section.setExpanded(true);
 		String description = "This section gives details about Heirarchical clustering ";
 		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true, false);
+		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
+				false);
 		section.setDescriptionControl(descriptionFrm);
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sc);
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
 		TacitFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+				.applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-		layoutData = TacitFormComposite.createTableSection(client, toolkit, layout, "Input Details",
-				"Add File(s) and Folder(s) to include in analysis.", true, true, true,true);
+		layoutData = TacitFormComposite.createTableSection(client, toolkit,
+				layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true, true);
 
 		Composite compInput;
 		compInput = layoutData.getSectionClient();
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(compInput);
 
 		createPreprocessLink(compInput);
 
 		Composite client1 = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client1);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+				.applyTo(client1);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(client1);
 
-		layoutOutputData = TacitFormComposite.createOutputSection(toolkit, client1, form.getMessageManager());
+		layoutOutputData = TacitFormComposite.createOutputSection(toolkit,
+				client1, form.getMessageManager());
 		createAdditionalOptions(toolkit, client1);
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
@@ -121,12 +135,16 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 	private void createPreprocessLink(Composite client) {
 
 		Composite clientLink = toolkit.createComposite(client);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2).applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(clientLink);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
 
 		preprocessEnabled = toolkit.createButton(clientLink, "", SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(preprocessEnabled);
-		final Hyperlink link = toolkit.createHyperlink(clientLink, "Preprocess", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(preprocessEnabled);
+		final Hyperlink link = toolkit.createHyperlink(clientLink,
+				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			@Override
@@ -140,18 +158,23 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id, new String[] { id }, null).open();
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
+						new String[] { id }, null).open();
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(link);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(link);
 
 	}
 
 	private void createAdditionalOptions(FormToolkit toolkit, Composite output) {
 		Composite clientLink = toolkit.createComposite(output);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2).applyTo(clientLink);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(clientLink);
-		saveImage = toolkit.createButton(clientLink, "Save Dendogram as Image", SWT.CHECK);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(clientLink);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(clientLink);
+		saveImage = toolkit.createButton(clientLink, "Save Dendogram as Image",
+				SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).applyTo(saveImage);
 	}
 
@@ -161,7 +184,8 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("Heirarchial Cluster"); //$NON-NLS-1$
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
+				.applyTo(form.getBody());
 		return toolkit;
 	}
 
@@ -170,7 +194,9 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (HeirarchicalClusterViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
+				return (HeirarchicalClusterViewImageRegistry
+						.getImageIconFactory()
+						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
 			@Override
@@ -185,13 +211,17 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 				}
 				final DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				final Date dateObj = new Date();
-				ConsoleView.writeInConsoleHeader("Hierarchical clustering started " + (df.format(dateObj)));
+				ConsoleView
+						.writeInConsoleHeader("Hierarchical clustering started "
+								+ (df.format(dateObj)));
 				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final String outputPath = layoutOutputData.getOutputLabel().getText();
+				final String outputPath = layoutOutputData.getOutputLabel()
+						.getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = layoutData.getSelectedFiles();
+				final List<Object> selectedFiles = layoutData
+						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
-			
+
 				final boolean isSaveImage = saveImage.getSelection();
 
 				performCluster = new Job("Clustering...") {
@@ -201,17 +231,22 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask("TACIT started clustering...", 100);
 						preprocessTask = null;
 						dirPath = "";
 						List<File> inputFiles = new ArrayList<File>();
-						Preprocessor ppObj = new Preprocessor();
-						
-						List<String> inFiles;
+						Preprocessor ppObj = null;
 						try {
-							inFiles = ppObj.processData("Hierarchical_Clustering", selectedFiles, isPreprocess);
-							
+							ppObj = new Preprocessor("Hierarchical_Clustering",
+									isPreprocess);
+
+							List<String> inFiles;
+
+							inFiles = ppObj.processData(
+									"Hierarchical_Clustering", selectedFiles);
+
 							for (String f : inFiles) {
 								inputFiles.add(new File(f));
 							}
@@ -221,10 +256,12 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 
 						// Hierarchical processing
 						long startTime = System.currentTimeMillis();
-						boolean isSuccessful = HierarchicalClusterAnalysis.runClustering(inputFiles, outputPath, isSaveImage,
-								new SubProgressMonitor(monitor, 50), dateObj);
-						
-						if(!isSuccessful)
+						boolean isSuccessful = HierarchicalClusterAnalysis
+								.runClustering(inputFiles, outputPath,
+										isSaveImage, new SubProgressMonitor(
+												monitor, 50), dateObj);
+
+						if (!isSuccessful)
 							return Status.CANCEL_STATUS;
 
 						Display.getDefault().asyncExec(new Runnable() {
@@ -232,21 +269,25 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 							public void run() {
 								if (isPreprocess && preprocessTask.doCleanUp()) {
 									preprocessTask.clean();
-									ConsoleView.printlInConsoleln("Cleaning up preprocessed files - " + dirPath);
+									ConsoleView
+											.printlInConsoleln("Cleaning up preprocessed files - "
+													+ dirPath);
 								}
 							}
 
 						});
 
-						System.out.println("Hierarchical Clustering completed successfully in "
-								+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+						System.out
+								.println("Hierarchical Clustering completed successfully in "
+										+ (System.currentTimeMillis() - startTime)
+										+ " milliseconds.");
 
 						if (monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
 						ppObj.clean();
 						monitor.done();
-						
+
 						return Status.OK_STATUS;
 					}
 				};
@@ -258,23 +299,30 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Hierarchical Clustering");
-								ConsoleView.printlInConsoleln("Hierarchical Clustering met with error.");
-								ConsoleView.printlInConsoleln(
-										"Take appropriate action to resolve the issues and run again.");
-							}
-							else {
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Hierarchical Clustering successfully completed.",
-										IStatus.OK, form);
-								ConsoleView.writeInConsoleHeader(
-										"Success: <Completed> Hierarchical clustering  " + (df.format(new Date())));
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> Hierarchical Clustering");
+								ConsoleView
+										.printlInConsoleln("Hierarchical Clustering met with error.");
+								ConsoleView
+										.printlInConsoleln("Take appropriate action to resolve the issues and run again.");
+							} else {
+								TacitFormComposite
+										.updateStatusMessage(
+												getViewSite(),
+												"Hierarchical Clustering successfully completed.",
+												IStatus.OK, form);
+								ConsoleView
+										.writeInConsoleHeader("Success: <Completed> Hierarchical clustering  "
+												+ (df.format(new Date())));
 							}
 						}
 					});
 				} else {
-					TacitFormComposite.updateStatusMessage(getViewSite(),
-							"CLustering cannot be started. Please check the Form status to correct the errors",
-							IStatus.ERROR, form);
+					TacitFormComposite
+							.updateStatusMessage(
+									getViewSite(),
+									"CLustering cannot be started. Please check the Form status to correct the errors",
+									IStatus.ERROR, form);
 				}
 
 			}
@@ -284,7 +332,9 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (HeirarchicalClusterViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
+				return (HeirarchicalClusterViewImageRegistry
+						.getImageIconFactory()
+						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
 			@Override
@@ -294,15 +344,24 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem()
-						.displayHelp("edu.usc.cssl.tacit.cluster.hierarchical.ui.hierarchical");
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.tacit.cluster.hierarchical.ui.hierarchical");
 			};
 		};
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction,
-				"edu.usc.cssl.tacit.cluster.hierarchical.ui.hierarchical");
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form,
-				"edu.usc.cssl.tacit.cluster.hierarchical.ui.hierarchical");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.tacit.cluster.hierarchical.ui.hierarchical");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(form,
+						"edu.usc.cssl.tacit.cluster.hierarchical.ui.hierarchical");
 
 		form.getToolBarManager().update(true);
 	}
@@ -318,17 +377,21 @@ public class HierarchicalClusterView extends ViewPart implements IHeirarchicalCl
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutOutputData.getOutputLabel().getText(), "Output");
+				.validateOutputDirectory(
+						layoutOutputData.getOutputLabel().getText(), "Output");
 		if (message != null) {
 
-			message = layoutOutputData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
+			message = layoutOutputData.getOutputLabel().getText() + " "
+					+ message;
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
 			canProceed = false;
 		}
 
 		// check input
 		if (layoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input", "Select/Add atleast one input file", null,
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}

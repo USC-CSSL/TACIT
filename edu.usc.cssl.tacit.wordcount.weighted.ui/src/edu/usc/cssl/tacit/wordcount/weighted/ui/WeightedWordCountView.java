@@ -347,11 +347,11 @@ public class WeightedWordCountView extends ViewPart implements
 								"TACIT started Analyzing WordCount...",
 								inputFiles.size() + 20);
 
-						Preprocessor ppObj = new Preprocessor();
+						Preprocessor ppObj = null;
 						List<String> inFiles;
 						try {
-							inFiles = ppObj.processData("Liwc_word_count",
-									inputFiles, isPreprocess);
+							ppObj = new Preprocessor("Liwc", isPreprocess);
+							inFiles = ppObj.processData("ppFiles", inputFiles);
 
 							Display.getDefault().syncExec(new Runnable() {
 

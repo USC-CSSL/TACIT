@@ -46,7 +46,8 @@ import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
-public class KmeansClusterView extends ViewPart implements IKmeansClusterViewConstants {
+public class KmeansClusterView extends ViewPart implements
+		IKmeansClusterViewConstants {
 	public static String ID = "edu.usc.cssl.tacit.cluster.kmeansui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -59,41 +60,55 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
-		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(form.getBody(),
+				Section.TITLE_BAR | Section.EXPANDED);
 
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
+				.applyTo(section);
 		section.setExpanded(true);
 		String description = "This section gives details about KMeans clustering";
 		FormText descriptionFrm = toolkit.createFormText(section, false);
-		descriptionFrm.setText("<form><p>" + description + "</p></form>", true, false);
+		descriptionFrm.setText("<form><p>" + description + "</p></form>", true,
+				false);
 		section.setDescriptionControl(descriptionFrm);
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false)
+				.applyTo(sc);
 		TacitFormComposite.addErrorPopup(form.getForm(), toolkit);
 		TacitFormComposite.createEmptyRow(toolkit, sc);
 		Composite client = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+				.applyTo(client);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(client);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 
-		layData = TacitFormComposite.createTableSection(client, toolkit, layout, "Input Details",
-				"Add File(s) and Folder(s) to include in analysis.", true, true, true,true);
+		layData = TacitFormComposite.createTableSection(client, toolkit,
+				layout, "Input Details",
+				"Add File(s) and Folder(s) to include in analysis.", true,
+				true, true, true);
 
 		Composite compInput;
 		compInput = layData.getSectionClient();
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(compInput);
-		preprocessEnabled = TacitFormComposite.createPreprocessLink(compInput, toolkit);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(compInput);
+		preprocessEnabled = TacitFormComposite.createPreprocessLink(compInput,
+				toolkit);
 		createAdditionalOptions(compInput);
 
 		Composite client1 = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client1);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
+				.applyTo(client1);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1)
+				.applyTo(client1);
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit, client1, form.getMessageManager());
+		layoutData = TacitFormComposite.createOutputSection(toolkit, client1,
+				form.getMessageManager());
 
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
@@ -116,14 +131,19 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 
 	private void createAdditionalOptions(Composite sectionClient) {
 		Composite comp = toolkit.createComposite(sectionClient);
-		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2).applyTo(comp);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(comp);
+		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(2)
+				.applyTo(comp);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(comp);
 
-		Label noClusterTxtLbl = toolkit.createLabel(comp, "Number of clusters:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(noClusterTxtLbl);
+		Label noClusterTxtLbl = toolkit.createLabel(comp,
+				"Number of clusters:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(noClusterTxtLbl);
 		noClusterTxt = toolkit.createText(comp, "", SWT.BORDER);
 		noClusterTxt.setText("1");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(noClusterTxt);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(noClusterTxt);
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -132,7 +152,8 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("KMeans Cluster"); //$NON-NLS-1$
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
+				.applyTo(form.getBody());
 		return toolkit;
 	}
 
@@ -141,7 +162,8 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (KmeansClusterViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_LRUN_OBJ));
+				return (KmeansClusterViewImageRegistry.getImageIconFactory()
+						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
 			@Override
@@ -159,26 +181,31 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 				if (!canProceedCluster()) {
 					return;
 				}
-				TacitFormComposite.writeConsoleHeaderBegining("KMeans Clustering started ");
-				final int noOfClusters = Integer.valueOf(noClusterTxt.getText()).intValue();
+				TacitFormComposite
+						.writeConsoleHeaderBegining("KMeans Clustering started ");
+				final int noOfClusters = Integer
+						.valueOf(noClusterTxt.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
 				final List<Object> selectedFiles = layData.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
-				
+
 				performCluster = new Job("Clustering...") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+						TacitFormComposite.updateStatusMessage(getViewSite(),
+								null, null, form);
 						monitor.beginTask("TACIT started clustering...", 100);
-						Preprocessor ppObj = new Preprocessor();
+						Preprocessor ppObj = null;
 						List<File> inputFiles = new ArrayList<File>();
-						
+
 						List<String> inFiles = null;
 						try {
-							inFiles = ppObj.processData("K_means", selectedFiles, isPreprocess);
+							ppObj = new Preprocessor("Kmeans", isPreprocess);
+							inFiles = ppObj.processData("ppFiles",
+									selectedFiles);
 							for (String string : inFiles) {
 								inputFiles.add(new File(string));
 							}
@@ -191,16 +218,21 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 						long startTime = System.currentTimeMillis();
 						monitor.subTask("Clustering files...");
 						Date dateObj = new Date();
-						boolean isSuccessful = KmeansClusterAnalysis.runClustering(noOfClusters, inputFiles, outputPath, dateObj);
-						if(!isSuccessful) 
+						boolean isSuccessful = KmeansClusterAnalysis
+								.runClustering(noOfClusters, inputFiles,
+										outputPath, dateObj);
+						if (!isSuccessful)
 							return Status.CANCEL_STATUS;
-						
+
 						monitor.worked(80);
-						ConsoleView.printlInConsoleln("K-Means Clustering completed successfully in "
-								+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+						ConsoleView
+								.printlInConsoleln("K-Means Clustering completed successfully in "
+										+ (System.currentTimeMillis() - startTime)
+										+ " milliseconds.");
 
 						if (monitor.isCanceled()) {
-							TacitFormComposite.writeConsoleHeaderBegining("<Terminated> k-Means clustering  ");
+							TacitFormComposite
+									.writeConsoleHeaderBegining("<Terminated> k-Means clustering  ");
 							throw new OperationCanceledException();
 						}
 						ppObj.clean();
@@ -216,23 +248,29 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Kmeans Clustering");
-								ConsoleView.printlInConsoleln("K-Means Clustering met with error.");
-								ConsoleView.printlInConsoleln(
-										"Take appropriate action to resolve the issues and run again.");
-							}
-							else {
-								TacitFormComposite.updateStatusMessage(getViewSite(), "K-Means clustering completed",
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> Kmeans Clustering");
+								ConsoleView
+										.printlInConsoleln("K-Means Clustering met with error.");
+								ConsoleView
+										.printlInConsoleln("Take appropriate action to resolve the issues and run again.");
+							} else {
+								TacitFormComposite.updateStatusMessage(
+										getViewSite(),
+										"K-Means clustering completed",
 										IStatus.OK, form);
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> k-Means clustering  ");
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> k-Means clustering  ");
 							}
 						}
 					});
 
 				} else {
-					TacitFormComposite.updateStatusMessage(getViewSite(),
-							"CLustering cannot be started. Please check the Form status to correct the errors",
-							IStatus.ERROR, form);
+					TacitFormComposite
+							.updateStatusMessage(
+									getViewSite(),
+									"CLustering cannot be started. Please check the Form status to correct the errors",
+									IStatus.ERROR, form);
 				}
 
 			}
@@ -241,7 +279,8 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (KmeansClusterViewImageRegistry.getImageIconFactory().getImageDescriptor(IMAGE_HELP_CO));
+				return (KmeansClusterViewImageRegistry.getImageIconFactory()
+						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
 			@Override
@@ -251,12 +290,21 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
+				PlatformUI
+						.getWorkbench()
+						.getHelpSystem()
+						.displayHelp(
+								"edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
 			};
 		};
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(helpAction,
+						"edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
+		PlatformUI.getWorkbench().getHelpSystem()
+				.setHelp(form, "edu.usc.cssl.tacit.cluster.kmeans.ui.kmeans");
 		form.getToolBarManager().update(true);
 	}
 
@@ -272,17 +320,20 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("cluster");
 		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(), "Output");
+				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
+						"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("location", message, null,
+					IMessageProvider.ERROR);
 			canProceed = false;
 		}
 
 		// todo: check whether there is any real file - not just a folder name
 		if (layData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input", "Select/Add atleast one input file", null,
+			form.getMessageManager().addMessage("input",
+					"Select/Add atleast one input file", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
@@ -292,12 +343,18 @@ public class KmeansClusterView extends ViewPart implements IKmeansClusterViewCon
 			if (noClusters <= 0)
 				throw new NumberFormatException();
 		} catch (NumberFormatException e) {
-			form.getMessageManager().addMessage("cluster",
-					"Number of clusters should be a valid integer greater than 0", null, IMessageProvider.ERROR);
+			form.getMessageManager()
+					.addMessage(
+							"cluster",
+							"Number of clusters should be a valid integer greater than 0",
+							null, IMessageProvider.ERROR);
 			canProceed = false;
 		} catch (NullPointerException e) {
-			form.getMessageManager().addMessage("cluster",
-					"Number of clusters should be a valid integer greater than 0", null, IMessageProvider.ERROR);
+			form.getMessageManager()
+					.addMessage(
+							"cluster",
+							"Number of clusters should be a valid integer greater than 0",
+							null, IMessageProvider.ERROR);
 			canProceed = false;
 		}
 

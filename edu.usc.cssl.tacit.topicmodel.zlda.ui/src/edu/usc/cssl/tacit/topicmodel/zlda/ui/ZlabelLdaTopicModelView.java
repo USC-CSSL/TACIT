@@ -97,7 +97,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		inputLayoutData = TacitFormComposite.createTableSection(client,
 				toolkit, layout, "Input Details",
 				"Add File(s) and Folder(s) to include in analysis.", true,
-				true, true,true);
+				true, true, true);
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(false).numColumns(3)
@@ -236,7 +236,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 			 */
 			@Override
 			public void run() {
-				if(!canProceedJob()) {
+				if (!canProceedJob()) {
 					return;
 				}
 				final int noOfTopics = Integer.valueOf(topics.getText())
@@ -244,9 +244,10 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData.getSelectedFiles();
+				final List<Object> selectedFiles = inputLayoutData
+						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
-				
+
 				final String seedFilePath = seedFileText.getText();
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Topic Modelling  started ");
@@ -263,22 +264,24 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 								+ "ZldaTopicModel"
 								+ "_"
 								+ String.valueOf(System.currentTimeMillis());
-						Preprocessor ppObj = new Preprocessor();
-						
+						Preprocessor ppObj = null;
+
 						List<String> inFiles = null;
 						try {
-							inFiles = ppObj.processData("ZLabel_LDA", selectedFiles, isPreprocess);
+							ppObj = new Preprocessor("ZLabel_LDA", isPreprocess);
+							inFiles = ppObj.processData("ZLabel_LDA",
+									selectedFiles);
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						
+
 						new File(topicModelDirPath).mkdir();
 						for (String filename : inFiles) {
 							File srcFile = new File(filename);
 							File destDir = new File(topicModelDirPath);
 							try {
-								FileUtils.copyFileToDirectory(srcFile,
-										destDir, false);
+								FileUtils.copyFileToDirectory(srcFile, destDir,
+										false);
 							} catch (IOException e) {
 								e.printStackTrace();
 								return Status.CANCEL_STATUS;
@@ -299,19 +302,19 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 							monitor.done();
 							return Status.CANCEL_STATUS;
 						}
-						
+
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
 						System.out
-						.println("ZLabel LDA Topic Modelling completed successfully in "
-								+ (System.currentTimeMillis() - startTime)
-								+ " milliseconds.");
-		
+								.println("ZLabel LDA Topic Modelling completed successfully in "
+										+ (System.currentTimeMillis() - startTime)
+										+ " milliseconds.");
+
 						ppObj.clean();
 						monitor.worked(10);
 						monitor.done();
-						
+
 						return Status.OK_STATUS;
 					}
 				};
@@ -326,15 +329,16 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 										.writeConsoleHeaderBegining("Error: <Terminated> Z-LDA Topic Modelling");
 								ConsoleView
 										.printlInConsoleln("Z-LDA not successful.");
-							}
-							else {
-								TacitFormComposite.updateStatusMessage(getViewSite(),
-										"Z-Label LDA topic modelling completed", IStatus.OK,
-										form);
-								
+							} else {
+								TacitFormComposite
+										.updateStatusMessage(
+												getViewSite(),
+												"Z-Label LDA topic modelling completed",
+												IStatus.OK, form);
+
 								TacitFormComposite
 										.writeConsoleHeaderBegining("Success: <Completed> Z-LDA Topic Modelling ");
-								
+
 							}
 						}
 					});
@@ -428,7 +432,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
-		if (topics.getText().isEmpty() || Integer.parseInt(topics.getText()) < 1) {
+		if (topics.getText().isEmpty()
+				|| Integer.parseInt(topics.getText()) < 1) {
 			form.getMessageManager().addMessage("topic",
 					"Number of topics cannot be empty or less than 1", null,
 					IMessageProvider.ERROR);
