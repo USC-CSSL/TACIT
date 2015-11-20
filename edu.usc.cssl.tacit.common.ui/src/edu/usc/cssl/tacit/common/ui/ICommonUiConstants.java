@@ -9,4 +9,5 @@ public interface ICommonUiConstants {
 	public static final String IMAGE_ERROR_SB = "error";
 	public static final String IMAGE_INFO_SB = "info_st_obj";
 	public static final String CREATE_RUNREPORT = "create_readme";
+	public static final String CORPUS_LOCATION = "corpus_location";
 }
