@@ -37,8 +37,8 @@ public class CorpusClass implements ICorpusClass{
 	}
 	
 	public void setClassName(String className) {
-		this.id = parent.getCorpusId() + "-" + this.className;
 		this.className = className;
+		//this.id = parent.getCorpusId() + "-" + this.className;
 	}
 	
 	public void setClassPath(String classPath) {
