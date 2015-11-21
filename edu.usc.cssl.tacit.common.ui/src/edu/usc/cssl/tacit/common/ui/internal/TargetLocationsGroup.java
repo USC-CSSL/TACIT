@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -39,6 +41,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
 import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
@@ -53,6 +56,7 @@ public class TargetLocationsGroup {
 	private Button fAddFileButton;
 	private Button fAddCorpusButton;
 	private Button fRemoveButton;
+	private Button fFilterCorpusButton;
 	private Set<TreeParent> locationPaths;
 	@SuppressWarnings("unused")
 	private FormToolkit toolKit;
@@ -61,6 +65,7 @@ public class TargetLocationsGroup {
 	private ManageCorpora corporaManagement;
 	private TreeParent node;
 	private Button fAddCorpusClassButton;
+	private static Composite cmp;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -76,6 +81,7 @@ public class TargetLocationsGroup {
 	public static TargetLocationsGroup createInForm(Composite parent,
 			FormToolkit toolkit, boolean isFolder, boolean isFile,
 			boolean isCorpus,boolean isClass) {
+		cmp = parent;
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
 		contentTable.createFormContents(parent, toolkit, isFolder, isFile,
@@ -160,6 +166,12 @@ public class TargetLocationsGroup {
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddCorpusClassButton);
 		}
+		if (isCorpus) { //query filter component needs to appear only when corpus is selected
+			fFilterCorpusButton = toolkit.createButton(buttonComp,
+					"Filter Corpus...", SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fFilterCorpusButton);
+		}
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(fRemoveButton);
@@ -167,7 +179,7 @@ public class TargetLocationsGroup {
 		dummy = toolkit.createLabel(parent, "");
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
-		if(isCorpus){
+		if(isClass){
 		dummyCorpus = toolkit.createLabel(parent, "");
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummyCorpus);
@@ -402,7 +414,33 @@ public class TargetLocationsGroup {
 				}
 			});
 		}
+		
+		if (fFilterCorpusButton != null) {//linda
+			fFilterCorpusButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final TacitCorpusFilterDialog CorpusDialog = new TacitCorpusFilterDialog(fFilterCorpusButton.getShell());
+					//CorpusDialog.setFocus();//. setTitle("Select the Corpus Class from the list");
+					//CorpusDialog.setMessage("Enter Corpus Class name to search");
+					CorpusDialog.open();
+					/*CorpusDialog.setTitle("Select the Corpus from the list");
+					CorpusDialog.setMessage("Enter Corpus name to search");
+					final SortedSet<ICorpus> allCorpus = new TreeSet<ICorpus>();				
+					List<ICorpus> corpusList = corporaManagement
+							.getAllCorpusDetails();
+					CorpusDialog.setElements(corpusList.toArray());
+					CorpusDialog.setMultipleSelection(true);
 
+					if (CorpusDialog.open() == Window.OK) {
+
+						updateLocationTree((Object[]) CorpusDialog
+								.getSelectionObjects().toArray(
+										new Object[CorpusDialog
+												.getSelectionObjects().size()]));
+					}*/
+				}
+			});
+		}
 		if (fAddFileButton != null) {
 			fAddFileButton.addSelectionListener(new SelectionAdapter() {
 				@Override
