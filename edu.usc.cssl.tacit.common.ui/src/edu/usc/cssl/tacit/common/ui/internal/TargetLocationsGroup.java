@@ -1,6 +1,7 @@
 package edu.usc.cssl.tacit.common.ui.internal;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,8 +41,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
+import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
+import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
+import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
 import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
@@ -80,12 +86,12 @@ public class TargetLocationsGroup {
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent,
 			FormToolkit toolkit, boolean isFolder, boolean isFile,
-			boolean isCorpus,boolean isClass) {
+			boolean isCorpus, boolean isClass) {
 		cmp = parent;
 		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
 				parent);
 		contentTable.createFormContents(parent, toolkit, isFolder, isFile,
-				isCorpus,isClass);
+				isCorpus, isClass);
 		return contentTable;
 	}
 
@@ -129,7 +135,7 @@ public class TargetLocationsGroup {
 	 * @param isFolder
 	 */
 	private void createFormContents(Composite parent, FormToolkit toolkit,
-			boolean isFolder, boolean isFile, boolean isCorpus,boolean isClass) {
+			boolean isFolder, boolean isFile, boolean isCorpus, boolean isClass) {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
@@ -160,13 +166,14 @@ public class TargetLocationsGroup {
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddCorpusButton);
 		}
-		if(isClass){
+		if (isClass) {
 			fAddCorpusClassButton = toolkit.createButton(buttonComp,
 					"Add Corpus Class...", SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 					.applyTo(fAddCorpusClassButton);
 		}
-		if (isCorpus) { //query filter component needs to appear only when corpus is selected
+		if (isCorpus) { // query filter component needs to appear only when
+						// corpus is selected
 			fFilterCorpusButton = toolkit.createButton(buttonComp,
 					"Filter Corpus...", SWT.PUSH);
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
@@ -179,10 +186,10 @@ public class TargetLocationsGroup {
 		dummy = toolkit.createLabel(parent, "");
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
-		if(isClass){
-		dummyCorpus = toolkit.createLabel(parent, "");
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
-				.applyTo(dummyCorpus);
+		if (isClass) {
+			dummyCorpus = toolkit.createLabel(parent, "");
+			GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+					.applyTo(dummyCorpus);
 		}
 		toolkit.paintBordersFor(comp);
 	}
@@ -206,8 +213,9 @@ public class TargetLocationsGroup {
 		else {
 			dummy.setText("");
 		}
-		if(dummyCorpus != null){
-			int totalCorpusClass = calculateCorpus(fTreeViewer.getCheckedElements());
+		if (dummyCorpus != null) {
+			int totalCorpusClass = calculateCorpus(fTreeViewer
+					.getCheckedElements());
 			if (totalCorpusClass > 0)
 				dummyCorpus.setText("No. of corpus class selected : "
 						+ String.valueOf(totalCorpusClass));
@@ -261,15 +269,14 @@ public class TargetLocationsGroup {
 			if (file instanceof String) {
 				fileName = (String) file;
 			} else {
-				if(file instanceof TreeParent){
-					if(((TreeParent) file).getCorpusClass()!= null){
+				if (file instanceof TreeParent) {
+					if (((TreeParent) file).getCorpusClass() != null) {
 						continue;
-					}
-					else{
-						
+					} else {
+
 						fileName = ((TreeParent) file).getName();
 					}
-					
+
 				}
 			}
 			if (new File(fileName).isFile()) {
@@ -279,20 +286,18 @@ public class TargetLocationsGroup {
 		return select;
 
 	}
-	
+
 	private int calculateCorpus(Object[] objects) {
 		int select = 0;
 		for (Object file : objects) {
-			
-				if(file instanceof TreeParent){
-					if(((TreeParent) file).getCorpusClass()!= null){
-						select++;
-						}
-					
-					
+
+			if (file instanceof TreeParent) {
+				if (((TreeParent) file).getCorpusClass() != null) {
+					select++;
 				}
-			
-			
+
+			}
+
 		}
 		return select;
 
@@ -341,8 +346,10 @@ public class TargetLocationsGroup {
 				public void widgetSelected(SelectionEvent e) {
 					final TacitElementSelectionDialog CorpusDialog = new TacitElementSelectionDialog(
 							fAddCorpusButton.getShell());
-					CorpusDialog.setTitle("Select the Corpus Class from the list");
-					CorpusDialog.setMessage("Enter Corpus Class name to search");
+					CorpusDialog
+							.setTitle("Select the Corpus Class from the list");
+					CorpusDialog
+							.setMessage("Enter Corpus Class name to search");
 					final List<ICorpusClass> allCorpus = new ArrayList<ICorpusClass>();
 					List<ICorpus> corpusList = corporaManagement
 							.getAllCorpusDetails();
@@ -364,8 +371,7 @@ public class TargetLocationsGroup {
 				}
 			});
 		}
-		
-		
+
 		if (fAddCorpusButton != null) {
 			fAddCorpusButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -375,32 +381,32 @@ public class TargetLocationsGroup {
 					CorpusDialog.setTitle("Select the Corpus from the list");
 					CorpusDialog.setMessage("Enter Corpus name to search");
 					final SortedSet<ICorpus> allCorpus = new TreeSet<ICorpus>();
-//					Job getCorpus = new Job("Retrieving corpus list ...") {
-//						@Override
-//						protected IStatus run(IProgressMonitor monitor) {
-//							allCorpus.clear();
-//							try {
-//								List<ICorpus> corpusList = corporaManagement
-//										.getAllCorpusDetails();
-//								allCorpus.addAll(corpusList);
-//								CorpusDialog.setElements(allCorpus.toArray());
-//								Display.getDefault().syncExec(new Runnable() {
-//									@Override
-//									public void run() {
-//										CorpusDialog.refresh(allCorpus
-//												.toArray());
-//										
-//									}
-//								});
-//							} catch (final Exception ex) {
-//							}
-//							return Status.OK_STATUS;
-//						}
-//					};
-//					getCorpus.schedule();
+					// Job getCorpus = new Job("Retrieving corpus list ...") {
+					// @Override
+					// protected IStatus run(IProgressMonitor monitor) {
+					// allCorpus.clear();
+					// try {
+					// List<ICorpus> corpusList = corporaManagement
+					// .getAllCorpusDetails();
+					// allCorpus.addAll(corpusList);
+					// CorpusDialog.setElements(allCorpus.toArray());
+					// Display.getDefault().syncExec(new Runnable() {
+					// @Override
+					// public void run() {
+					// CorpusDialog.refresh(allCorpus
+					// .toArray());
+					//
+					// }
+					// });
+					// } catch (final Exception ex) {
+					// }
+					// return Status.OK_STATUS;
+					// }
+					// };
+					// getCorpus.schedule();
 					List<ICorpus> corpusList = corporaManagement
 							.getAllCorpusDetails();
-				//	allCorpus.addAll(corpusList);
+					// allCorpus.addAll(corpusList);
 					CorpusDialog.setElements(corpusList.toArray());
 					CorpusDialog.setMultipleSelection(true);
 
@@ -414,30 +420,52 @@ public class TargetLocationsGroup {
 				}
 			});
 		}
-		
-		if (fFilterCorpusButton != null) {//linda
+
+		if (fFilterCorpusButton != null) {// linda
 			fFilterCorpusButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					//final TacitCorpusFilterDialog CorpusDialog = new TacitCorpusFilterDialog(fFilterCorpusButton.getShell());
-					//CorpusDialog.setFocus();//. setTitle("Select the Corpus Class from the list");
-					//CorpusDialog.setMessage("Enter Corpus Class name to search");
-					//CorpusDialog.open();
-					/*CorpusDialog.setTitle("Select the Corpus from the list");
-					CorpusDialog.setMessage("Enter Corpus name to search");
-					final SortedSet<ICorpus> allCorpus = new TreeSet<ICorpus>();				
-					List<ICorpus> corpusList = corporaManagement
-							.getAllCorpusDetails();
-					CorpusDialog.setElements(corpusList.toArray());
-					CorpusDialog.setMultipleSelection(true);
-
-					if (CorpusDialog.open() == Window.OK) {
-
-						updateLocationTree((Object[]) CorpusDialog
-								.getSelectionObjects().toArray(
-										new Object[CorpusDialog
-												.getSelectionObjects().size()]));
-					}*/
+					final TacitCorpusFilterDialog corpusDialog = new TacitCorpusFilterDialog(
+							fFilterCorpusButton.getShell());
+					
+					TreeParent sel = (TreeParent) ((IStructuredSelection) fTreeViewer
+							.getSelection()).getFirstElement();
+					IQueryProcessor qp = new QueryProcesser(sel
+							.getCorpusClass());
+					List<String> keys = null;
+					try {
+						keys = qp.getJsonKeys();
+						corpusDialog.setFilterDetails(keys);
+						
+					} catch (JsonSyntaxException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (JsonIOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// CorpusDialog.setFocus();//.
+					// setTitle("Select the Corpus Class from the list");
+					// CorpusDialog.setMessage("Enter Corpus Class name to search");
+					corpusDialog.open();
+					/*
+					 * CorpusDialog.setTitle("Select the Corpus from the list");
+					 * CorpusDialog.setMessage("Enter Corpus name to search");
+					 * final SortedSet<ICorpus> allCorpus = new
+					 * TreeSet<ICorpus>(); List<ICorpus> corpusList =
+					 * corporaManagement .getAllCorpusDetails();
+					 * CorpusDialog.setElements(corpusList.toArray());
+					 * CorpusDialog.setMultipleSelection(true);
+					 * 
+					 * if (CorpusDialog.open() == Window.OK) {
+					 * 
+					 * updateLocationTree((Object[]) CorpusDialog
+					 * .getSelectionObjects().toArray( new Object[CorpusDialog
+					 * .getSelectionObjects().size()])); }
+					 */
 				}
 			});
 		}
@@ -504,14 +532,13 @@ public class TargetLocationsGroup {
 					}
 					node = new TreeParent((Corpus) file);
 					processCorpusFiles(node);
-				} else if(file instanceof ICorpusClass){
-					if(checkExisting((ICorpusClass)file)){
+				} else if (file instanceof ICorpusClass) {
+					if (checkExisting((ICorpusClass) file)) {
 						continue;
 					}
 					node = new TreeParent((ICorpusClass) file);
-				}else
-				{
-				
+				} else {
+
 					if (checkExisting((String) file)) {
 						continue;
 					}
@@ -570,16 +597,25 @@ public class TargetLocationsGroup {
 
 	private boolean checkExisting(ICorpus file) {
 		for (TreeParent node : locationPaths) {
-			if(node.getCorpus() != null && node.getCorpus().getCorpusId().equals(file.getCorpusId())){
+			if (node.getCorpus() != null
+					&& node.getCorpus().getCorpusId()
+							.equals(file.getCorpusId())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean checkExisting(ICorpusClass file) {
 		for (TreeParent node : locationPaths) {
-			if(node.getCorpusClass() != null && node.getCorpusClass().getParent().getCorpusId().equals(((ICorpusClass)file).getParent().getCorpusId()) && node.getName().equals(((ICorpusClass)file).getClassName())){
+			if (node.getCorpusClass() != null
+					&& node.getCorpusClass()
+							.getParent()
+							.getCorpusId()
+							.equals(((ICorpusClass) file).getParent()
+									.getCorpusId())
+					&& node.getName().equals(
+							((ICorpusClass) file).getClassName())) {
 				return true;
 			}
 		}
@@ -663,15 +699,22 @@ public class TargetLocationsGroup {
 	private void updateButtons() {
 		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
 				.getSelection();
+		Boolean removeEnabled = true;
+		Boolean filterEnabled = false;
 		if (this.locationPaths == null || this.locationPaths.size() < 1) {
-			fRemoveButton.setEnabled(false);
-			return;
+			removeEnabled = false;
 		}
 		if (!this.locationPaths.contains(sel.getFirstElement())) {
-			fRemoveButton.setEnabled(false);
-			return;
+			removeEnabled = false;
 		}
-		fRemoveButton.setEnabled(true);
+		if (sel.size() == 1
+				&& (sel.getFirstElement() instanceof TreeParent && ((TreeParent) sel
+						.getFirstElement()).getCorpusClass() != null)) {
+			filterEnabled = true;
+		}
+		if (fFilterCorpusButton != null)
+			fFilterCorpusButton.setEnabled(filterEnabled);
+		fRemoveButton.setEnabled(removeEnabled);
 
 	}
 
