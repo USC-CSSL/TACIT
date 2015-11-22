@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
-import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
+
 import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
@@ -419,10 +419,10 @@ public class TargetLocationsGroup {
 			fFilterCorpusButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final TacitCorpusFilterDialog CorpusDialog = new TacitCorpusFilterDialog(fFilterCorpusButton.getShell());
+					//final TacitCorpusFilterDialog CorpusDialog = new TacitCorpusFilterDialog(fFilterCorpusButton.getShell());
 					//CorpusDialog.setFocus();//. setTitle("Select the Corpus Class from the list");
 					//CorpusDialog.setMessage("Enter Corpus Class name to search");
-					CorpusDialog.open();
+					//CorpusDialog.open();
 					/*CorpusDialog.setTitle("Select the Corpus from the list");
 					CorpusDialog.setMessage("Enter Corpus name to search");
 					final SortedSet<ICorpus> allCorpus = new TreeSet<ICorpus>();				
