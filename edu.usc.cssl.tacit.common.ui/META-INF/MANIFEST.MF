@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.intro.universal,
  org.eclipse.help.ui,
  org.eclipse.help.webapp,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.jsoup;bundle-version="1.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.common.ui,
@@ -29,4 +30,5 @@ Bundle-ClassPath: commons-io-2.4.jar,
  json-path-2.0.0.jar,
  json-path-assert-2.0.0.jar,
  json-simple-1.1.1.jar,
- json-smart-2.1.1.jar
+ json-smart-2.1.1.jar,
+ gson-2.3.1.jar
