@@ -3,7 +3,6 @@ package edu.usc.cssl.tacit.classify.svm.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;

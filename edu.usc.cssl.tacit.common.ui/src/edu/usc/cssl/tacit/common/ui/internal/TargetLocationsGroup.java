@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -16,7 +17,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -45,6 +44,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
+import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
 import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
@@ -432,10 +432,11 @@ public class TargetLocationsGroup {
 							.getSelection()).getFirstElement();
 					IQueryProcessor qp = new QueryProcesser(sel
 							.getCorpusClass());
-					List<String> keys = null;
+					Map<String, QueryDataType> keys = null;
 					try {
 						keys = qp.getJsonKeys();
 						corpusDialog.setFilterDetails(keys);
+						corpusDialog.open();
 						
 					} catch (JsonSyntaxException e1) {
 						// TODO Auto-generated catch block

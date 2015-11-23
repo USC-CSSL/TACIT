@@ -3,13 +3,10 @@ package edu.usc.cssl.tacit.common.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -22,18 +19,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
+import edu.usc.cssl.tacit.common.queryprocess.QueryOperatorType;
 
 public class TacitCorpusFilterDialog extends Dialog {
 
@@ -49,6 +44,8 @@ public class TacitCorpusFilterDialog extends Dialog {
 	FormToolkit toolkit;
 
 	private Button removeFilterButton;
+
+	private Map<String, QueryDataType> jsonKeys;
 
 	public TacitCorpusFilterDialog(Shell parent) {
 		super(parent);
@@ -75,11 +72,13 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 	private Composite addSection(Composite parent) {
 
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED);
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR
+				| Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(section);
 		section.setExpanded(true);
 
-		ScrolledComposite scComposite = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite scComposite = new ScrolledComposite(section,
+				SWT.H_SCROLL | SWT.V_SCROLL);
 		scComposite.setExpandHorizontal(true);
 		scComposite.setExpandVertical(true);
 
@@ -115,25 +114,36 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 		Composite additionSectionClient = addSection(parent);
 
-		Label jsonFieldLabel = toolkit.createLabel(additionSectionClient, "Field", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(0, 0).applyTo(jsonFieldLabel);
+		Label jsonFieldLabel = toolkit.createLabel(additionSectionClient,
+				"Field", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(0, 0)
+				.applyTo(jsonFieldLabel);
 		jsonFieldCombo = new Combo(additionSectionClient, SWT.READ_ONLY);
 		jsonFieldCombo.setBounds(100, 100, 150, 100);
-		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(jsonFieldCombo);
+		GridDataFactory.fillDefaults().grab(false, false).span(2, 0)
+				.applyTo(jsonFieldCombo);
 
-		Label operationLabel = toolkit.createLabel(additionSectionClient, "Operation", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(operationLabel);
+		Label operationLabel = toolkit.createLabel(additionSectionClient,
+				"Operation", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(operationLabel);
 		operationCombo = new Combo(additionSectionClient, SWT.READ_ONLY);
 		operationCombo.setBounds(50, 50, 150, 65);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(operationCombo);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(operationCombo);
 
-		Label valueLabel = toolkit.createLabel(additionSectionClient, "Value", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(valueLabel);
+		Label valueLabel = toolkit.createLabel(additionSectionClient, "Value",
+				SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(valueLabel);
 		valueText = toolkit.createText(additionSectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(operationCombo);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(operationCombo);
 
-		addFilterButton = toolkit.createButton(additionSectionClient, "ADD", SWT.BUTTON1);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(addFilterButton);
+		addFilterButton = toolkit.createButton(additionSectionClient, "ADD",
+				SWT.BUTTON1);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(addFilterButton);
 
 		addFilterButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -149,13 +159,36 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 		Composite reviewSectionClient = addSection(parent);
 
-		filterTable = toolkit.createTable(reviewSectionClient, SWT.BORDER | SWT.MULTI);
-		GridDataFactory.fillDefaults().grab(true, true).span(6, 3).hint(150, 300).applyTo(filterTable);
+		filterTable = toolkit.createTable(reviewSectionClient, SWT.BORDER
+				| SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(6, 3)
+				.hint(150, 300).applyTo(filterTable);
 		tableViewer = new TableViewer(filterTable);
 		// filterTable.setBounds(100, 100, 100, 500);
 
-		removeFilterButton = toolkit.createButton(reviewSectionClient, "Remove...", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeFilterButton);
+		removeFilterButton = toolkit.createButton(reviewSectionClient,
+				"Remove...", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(removeFilterButton);
+		
+		jsonFieldCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				String selectedKey = jsonFieldCombo.getText();
+				QueryDataType dataType = jsonKeys.get(selectedKey);
+				List<QueryOperatorType> operations = QueryDataType.supportedOperations(dataType);
+				String [] operationList = new String[operations.size()];
+				int i = 0;
+				for(QueryOperatorType opType : operations){
+					operationList[i++] = opType.toString();
+				}
+				
+				operationCombo.setItems(operationList);
+				
+
+			}
+		});
 
 		removeFilterButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -170,18 +203,24 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 			}
 		});
-
+		setWidgetValues();
 	}
 
-	public void setFilterDetails(List<String> jsonKeys) {
-		//get operation type
-		setWidgetValues(jsonKeys.toArray());
+	public void setFilterDetails(Map<String, QueryDataType> keys) {
+		this.jsonKeys = keys;
 	}
-	
-	private void setWidgetValues(Object[] jsonKeys) {
-		String items[] = { "Item One", "Item Two", "Item Three", "Item Four", "Item Five" };
-		jsonFieldCombo.setItems((String [])jsonKeys);
-		operationCombo.setItems(items);
+
+	private void setWidgetValues() {
+		String items[] = { "Item One", "Item Two", "Item Three", "Item Four",
+				"Item Five" };
+		String[] jsonItems = new String[jsonKeys.keySet().size()];
+		int i = 0;
+		for(String keys : jsonKeys.keySet()){
+			jsonItems[i++] = keys;
+		}
+		
+		jsonFieldCombo.setItems(jsonItems);
+	//	operationCombo.setItems(items);
 
 	}
 	/*

@@ -15,7 +15,6 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -24,6 +23,7 @@ import weka.core.FastVector;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 /*
  * http://www.programcreek.com/2013/01/a-simple-machine-learning-example-in-java/

@@ -13,6 +13,15 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 //import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
 
+import twitter4j.FilterQuery;
+import twitter4j.StallWarning;
+//import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
+import twitter4j.StatusListener;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.ConfigurationBuilder;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -23,14 +32,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
-import twitter4j.FilterQuery;
-import twitter4j.StallWarning;
-//import twitter4j.Status;
-import twitter4j.StatusDeletionNotice;
-import twitter4j.StatusListener;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterStreamApi {
 	private boolean terminate = false;

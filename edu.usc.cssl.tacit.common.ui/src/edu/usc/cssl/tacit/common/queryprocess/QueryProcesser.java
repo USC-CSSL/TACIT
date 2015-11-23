@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.minidev.json.JSONArray;
@@ -28,10 +29,10 @@ import com.jayway.jsonpath.JsonPath;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
-public class QueryProcesser implements IQueryProcessor{
+public class QueryProcesser implements IQueryProcessor {
 
 	private CorpusClass corpusClass;
-	private List<String> jsonKeys;
+	private Map<String, QueryDataType> jsonKeys;
 
 	/*
 	 * Instantiate corpus class
@@ -330,15 +331,19 @@ public class QueryProcesser implements IQueryProcessor{
 		// applySmartFilters(filters, jsonFilePath);
 	}
 
-	public List<String> getJsonKeys() throws JsonSyntaxException,
+	public Map<String,QueryDataType> getJsonKeys() throws JsonSyntaxException,
 			JsonIOException, FileNotFoundException {
-		if (jsonKeys == null) {
-			jsonKeys = new ArrayList<String>();
-			jsonKeys = JsonParser.getParentKeys(this.corpusClass
-					.getTacitLocation());
+		if (this.jsonKeys == null) {
+			this.jsonKeys = new HashMap<String,QueryDataType>();
+			Set<Attribute> jsonKeys = new JsonParser()
+					.findJsonStructure(this.corpusClass.getTacitLocation());
+			for (Attribute attr : jsonKeys) {
+				this.jsonKeys.put(attr.key,attr.dataType);
+				// }
+			}
 		}
 
-		return jsonKeys;
+		return this.jsonKeys;
 	}
 
 	public String applyFilter() throws FileNotFoundException, IOException,

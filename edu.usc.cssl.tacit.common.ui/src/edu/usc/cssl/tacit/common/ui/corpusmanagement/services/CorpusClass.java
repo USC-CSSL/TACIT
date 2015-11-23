@@ -98,7 +98,7 @@ public class CorpusClass implements ICorpusClass {
 	}
 
 	public List<Filter> getFilters() {
-		
+			
 		return this.filters;
 	}
 }
