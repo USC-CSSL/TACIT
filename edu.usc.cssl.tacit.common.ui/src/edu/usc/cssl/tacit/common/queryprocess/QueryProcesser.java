@@ -77,7 +77,24 @@ public class QueryProcesser implements IQueryProcessor {
 		}
 		return writeToFile(jsonFilePath, filteredResults);
 	}
+	
+	public static boolean canProcessQuery(List<Filter> filters, JSONObject jsonObject)
+			throws ParseException {
+		Set<Object> filteredResults = new HashSet<Object>();
+		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
 
+		Object document = Configuration.defaultConfiguration().jsonProvider()
+				.parse(jsonObject.toJSONString());
+		for (String parentFilters : groupedFilters.keySet()) {
+			String smartQuery = createSmartFilters(parentFilters,
+					groupedFilters, "&&");
+			Object result = JsonPath.parse(document).read(smartQuery);
+			if (result != null)
+				return true;
+			
+		}
+		return false;	
+	}
 	/*
 	 * Create smart queries and apply them on JSON document
 	 */

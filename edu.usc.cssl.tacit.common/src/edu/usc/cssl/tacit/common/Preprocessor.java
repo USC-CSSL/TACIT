@@ -22,7 +22,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonParseException;
-
+		
+import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.DutchStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.EnglishStemmer;
@@ -272,12 +273,8 @@ public class Preprocessor {
 		}
 	}
 
-	private boolean processQuery(CorpusClass corpusClass) {
-		return true;
-	}
-
-	private boolean processQuery(CorpusClass corpusClass, JSONObject obj) {
-		return true;
+	private boolean processQuery(CorpusClass corpusClass, JSONObject obj) throws ParseException {
+		return QueryProcesser.canProcessQuery(corpusClass.getFilters(),  obj);
 	}
 
 	private void processTwitter(CorpusClass corpusClass) {
@@ -360,8 +357,6 @@ public class Preprocessor {
 	}
 
 	private void processReddit(CorpusClass corpusClass) {
-		if (!processQuery(corpusClass))
-			return;
 		String corpusClassPath = corpusClass.getTacitLocation();
 		String tempDir = "";
 		String tempFile = "";
@@ -388,6 +383,9 @@ public class Preprocessor {
 
 				JSONObject redditStream = (JSONObject) jParser
 						.parse(new FileReader(fileName));
+				if (!processQuery(corpusClass, redditStream))
+					continue;
+				
 				String postTitle = RedditGetPostTitle(redditStream);
 				String[] postComments = RedditGetPostComments(redditStream);
 
