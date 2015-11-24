@@ -116,11 +116,11 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 		Label jsonFieldLabel = toolkit.createLabel(additionSectionClient,
 				"Field", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(0, 0)
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(jsonFieldLabel);
 		jsonFieldCombo = new Combo(additionSectionClient, SWT.READ_ONLY);
 		jsonFieldCombo.setBounds(100, 100, 150, 100);
-		GridDataFactory.fillDefaults().grab(false, false).span(2, 0)
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(jsonFieldCombo);
 
 		Label operationLabel = toolkit.createLabel(additionSectionClient,
@@ -129,7 +129,7 @@ public class TacitCorpusFilterDialog extends Dialog {
 				.applyTo(operationLabel);
 		operationCombo = new Combo(additionSectionClient, SWT.READ_ONLY);
 		operationCombo.setBounds(50, 50, 150, 65);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(operationCombo);
 
 		Label valueLabel = toolkit.createLabel(additionSectionClient, "Value",
@@ -137,7 +137,7 @@ public class TacitCorpusFilterDialog extends Dialog {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(valueLabel);
 		valueText = toolkit.createText(additionSectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(operationCombo);
 
 		addFilterButton = toolkit.createButton(additionSectionClient, "ADD",
@@ -175,16 +175,7 @@ public class TacitCorpusFilterDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				String selectedKey = jsonFieldCombo.getText();
-				QueryDataType dataType = jsonKeys.get(selectedKey);
-				List<QueryOperatorType> operations = QueryDataType.supportedOperations(dataType);
-				String [] operationList = new String[operations.size()];
-				int i = 0;
-				for(QueryOperatorType opType : operations){
-					operationList[i++] = opType.toString();
-				}
-				
-				operationCombo.setItems(operationList);
+				fillOperationSection();
 				
 
 			}
@@ -220,6 +211,8 @@ public class TacitCorpusFilterDialog extends Dialog {
 		}
 		
 		jsonFieldCombo.setItems(jsonItems);
+		jsonFieldCombo.select(0);
+		fillOperationSection();
 	//	operationCombo.setItems(items);
 
 	}
@@ -237,5 +230,18 @@ public class TacitCorpusFilterDialog extends Dialog {
 	 * 
 	 * cls.addFilter(f1) or cls.addFilterAll(List<Filters> filters);
 	 */
+
+	private void fillOperationSection() {
+		String selectedKey = jsonFieldCombo.getText();
+		QueryDataType dataType = jsonKeys.get(selectedKey);
+		List<QueryOperatorType> operations = QueryDataType.supportedOperations(dataType);
+		String [] operationList = new String[operations.size()];
+		int i = 0;
+		for(QueryOperatorType opType : operations){
+			operationList[i++] = opType.toString();
+		}
+		operationCombo.setItems(operationList);
+		operationCombo.select(0);
+	}
 
 }
