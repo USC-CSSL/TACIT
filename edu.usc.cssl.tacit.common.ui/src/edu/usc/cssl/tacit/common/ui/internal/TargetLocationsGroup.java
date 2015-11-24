@@ -43,8 +43,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import edu.usc.cssl.tacit.common.queryprocess.Filter;
 import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
 import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
+import edu.usc.cssl.tacit.common.queryprocess.QueryOperatorType;
 import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
@@ -52,6 +54,7 @@ import edu.usc.cssl.tacit.common.ui.TacitElementSelectionDialog;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -421,23 +424,24 @@ public class TargetLocationsGroup {
 			});
 		}
 
-		if (fFilterCorpusButton != null) {// linda
+		if (fFilterCorpusButton != null) {
 			fFilterCorpusButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final TacitCorpusFilterDialog corpusDialog = new TacitCorpusFilterDialog(
+					final TacitCorpusFilterDialog filterDialog = new TacitCorpusFilterDialog(
 							fFilterCorpusButton.getShell());
-					
+
 					TreeParent sel = (TreeParent) ((IStructuredSelection) fTreeViewer
 							.getSelection()).getFirstElement();
-					IQueryProcessor qp = new QueryProcesser(sel
-							.getCorpusClass());
+					CorpusClass cls = sel.getCorpusClass();
+					IQueryProcessor qp = new QueryProcesser(cls);
 					Map<String, QueryDataType> keys = null;
 					try {
 						keys = qp.getJsonKeys();
-						corpusDialog.setFilterDetails(keys);
-						corpusDialog.open();
-						
+						filterDialog.setFilterDetails(keys);
+						filterDialog.addExistingFilters(cls.getFilters());
+						// set the already existing filters
+
 					} catch (JsonSyntaxException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -448,25 +452,10 @@ public class TargetLocationsGroup {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// CorpusDialog.setFocus();//.
-					// setTitle("Select the Corpus Class from the list");
-					// CorpusDialog.setMessage("Enter Corpus Class name to search");
-					corpusDialog.open();
-					/*
-					 * CorpusDialog.setTitle("Select the Corpus from the list");
-					 * CorpusDialog.setMessage("Enter Corpus name to search");
-					 * final SortedSet<ICorpus> allCorpus = new
-					 * TreeSet<ICorpus>(); List<ICorpus> corpusList =
-					 * corporaManagement .getAllCorpusDetails();
-					 * CorpusDialog.setElements(corpusList.toArray());
-					 * CorpusDialog.setMultipleSelection(true);
-					 * 
-					 * if (CorpusDialog.open() == Window.OK) {
-					 * 
-					 * updateLocationTree((Object[]) CorpusDialog
-					 * .getSelectionObjects().toArray( new Object[CorpusDialog
-					 * .getSelectionObjects().size()])); }
-					 */
+					if (filterDialog.open() == Window.OK) {
+						cls.refreshFilters(filterDialog.getSelectionObjects());
+					}
+
 				}
 			});
 		}

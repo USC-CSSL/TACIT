@@ -1,12 +1,13 @@
 package edu.usc.cssl.tacit.common.ui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -27,6 +28,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import edu.usc.cssl.tacit.common.queryprocess.Filter;
 import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
 import edu.usc.cssl.tacit.common.queryprocess.QueryOperatorType;
 
@@ -38,10 +40,10 @@ public class TacitCorpusFilterDialog extends Dialog {
 	private Button addFilterButton;
 
 	private Text valueText;
-	private List<String> selectedFilters;
+	private List<Filter> selectedFilters;
 	private Table filterTable;
-	private TableViewer tableViewer;
 	FormToolkit toolkit;
+	Set<Object> tableContent;
 
 	private Button removeFilterButton;
 
@@ -69,7 +71,13 @@ public class TacitCorpusFilterDialog extends Dialog {
 	protected Point getInitialSize() {
 		return new Point(600, 600);
 	}
-
+	
+	static class ArrayLabelProvider extends LabelProvider {
+		public String getText(Object element) {
+			return  ((Filter)element).getDescription();
+		}
+	}
+	
 	private Composite addSection(Composite parent) {
 
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
@@ -93,21 +101,24 @@ public class TacitCorpusFilterDialog extends Dialog {
 		return sectionClient;
 	}
 
-	private void updateFilterTable(String value) {
+	private void refreshFilterTable() {
 		if (selectedFilters == null) {
-			selectedFilters = new ArrayList<String>();
+			selectedFilters = new ArrayList<Filter>();
 		}
-
-		selectedFilters.add((String) value);
-
-		Collections.sort(selectedFilters);
 		filterTable.removeAll();
-		for (String itemName : selectedFilters) {
-
+		for (Filter f : selectedFilters) {
 			TableItem item = new TableItem(filterTable, 0);
-			item.setText(itemName);
+			item.setText(f.getDescription());
+			item.setData(f);
 		}
+	}
 
+	private void addFilterToTable(Filter filter) {
+		if (selectedFilters == null) {
+			selectedFilters = new ArrayList<Filter>();
+		}
+		selectedFilters.add(filter);
+		refreshFilterTable();
 	}
 
 	private void createWidgets(Composite parent) {
@@ -148,12 +159,13 @@ public class TacitCorpusFilterDialog extends Dialog {
 		addFilterButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
 				String field = jsonFieldCombo.getText();
-				String operation = operationCombo.getText();
 				String val = valueText.getText();
-				updateFilterTable(field + " " + operation + " " + val);
-
+				QueryDataType fieldDataType = jsonKeys.get(field);
+				QueryOperatorType opType = QueryOperatorType
+						.getOperatorType(operationCombo.getText());
+				Filter newFilter = new Filter(field, opType, val, fieldDataType);
+				addFilterToTable(newFilter);
 			}
 		});
 
@@ -161,22 +173,23 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 		filterTable = toolkit.createTable(reviewSectionClient, SWT.BORDER
 				| SWT.MULTI);
+		TableViewer t = new TableViewer(filterTable);
+		t.setLabelProvider(new ArrayLabelProvider());
 		GridDataFactory.fillDefaults().grab(true, true).span(6, 3)
 				.hint(150, 300).applyTo(filterTable);
-		tableViewer = new TableViewer(filterTable);
+		// tableViewer = new TableViewer(filterTable);
 		// filterTable.setBounds(100, 100, 100, 500);
 
 		removeFilterButton = toolkit.createButton(reviewSectionClient,
 				"Remove...", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(removeFilterButton);
-		
+
 		jsonFieldCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				fillOperationSection();
-				
 
 			}
 		});
@@ -186,12 +199,10 @@ public class TacitCorpusFilterDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 
 				for (TableItem item : filterTable.getSelection()) {
-
-					selectedFilters.remove(item.getText());
+					selectedFilters.remove(item.getData());
+					selectedFilters.remove(item);
 					item.dispose();
-
 				}
-
 			}
 		});
 		setWidgetValues();
@@ -202,46 +213,37 @@ public class TacitCorpusFilterDialog extends Dialog {
 	}
 
 	private void setWidgetValues() {
-		String items[] = { "Item One", "Item Two", "Item Three", "Item Four",
-				"Item Five" };
 		String[] jsonItems = new String[jsonKeys.keySet().size()];
 		int i = 0;
-		for(String keys : jsonKeys.keySet()){
+		for (String keys : jsonKeys.keySet()) {
 			jsonItems[i++] = keys;
 		}
-		
 		jsonFieldCombo.setItems(jsonItems);
 		jsonFieldCombo.select(0);
 		fillOperationSection();
-	//	operationCombo.setItems(items);
-
+		refreshFilterTable();
 	}
-	/*
-	 * IQuerryProcessor qp = new QueryProcessor(CorpusClass cls);
-	 * qp.getJsonKeys() // cache & retrieves once
-	 * 
-	 * 
-	 * //use same instance of corpus to add filter Filter f1 = new
-	 * Filter("comments.score", QueryDataType
-	 * 
-	 * .supportedOperations(QueryDataType.DOUBLE).get(0), "100",
-	 * 
-	 * QueryDataType.DOUBLE);
-	 * 
-	 * cls.addFilter(f1) or cls.addFilterAll(List<Filters> filters);
-	 */
 
 	private void fillOperationSection() {
 		String selectedKey = jsonFieldCombo.getText();
 		QueryDataType dataType = jsonKeys.get(selectedKey);
-		List<QueryOperatorType> operations = QueryDataType.supportedOperations(dataType);
-		String [] operationList = new String[operations.size()];
+		List<QueryOperatorType> operations = QueryDataType
+				.supportedOperations(dataType);
+		String[] operationList = new String[operations.size()];
 		int i = 0;
-		for(QueryOperatorType opType : operations){
+		for (QueryOperatorType opType : operations) {
 			operationList[i++] = opType.toString();
 		}
 		operationCombo.setItems(operationList);
 		operationCombo.select(0);
+	}
+
+	public void addExistingFilters(List<Filter> filters) {
+		this.selectedFilters = filters;
+	}
+
+	public List<Filter> getSelectionObjects() {
+		return selectedFilters;
 	}
 
 }
