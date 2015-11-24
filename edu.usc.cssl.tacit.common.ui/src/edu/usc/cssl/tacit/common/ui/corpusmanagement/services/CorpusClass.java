@@ -1,7 +1,9 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -15,12 +17,12 @@ public class CorpusClass implements ICorpusClass {
 	private String tacitLocation;
 	private Corpus parent;
 	private String id;
-	private List<Filter> filters;
+	private Set<Filter> filters;
 
 	public void addFilter(Filter filter) {
 
 		if (filters == null) {
-			filters = new ArrayList<Filter>();
+			filters = new HashSet<Filter>();
 		}
 		filters.add(filter);
 	}
@@ -28,14 +30,21 @@ public class CorpusClass implements ICorpusClass {
 	public void addFilterAll(List<Filter> filter) {
 
 		if (filters == null) {
-			filters = new ArrayList<Filter>();
+			filters = new HashSet<Filter>();
 		}
 		filters.addAll(filter);
+	}
+	
+	public void refreshFilters(List<Filter> filters) {
+		if(this.filters != null)
+			this.filters.clear();
+		addFilterAll(filters);
 	}
 
 	public CorpusClass(String className, String classPath) {
 		this.className = className;
 		this.classPath = classPath;
+		this.filters = null;
 	}
 
 	public CorpusClass(String className, String classPath, TreeViewer viewer) {
@@ -98,7 +107,8 @@ public class CorpusClass implements ICorpusClass {
 	}
 
 	public List<Filter> getFilters() {
-			
-		return this.filters;
+		if (filters == null)
+			return null;
+		return new ArrayList<Filter>(filters);
 	}
 }
