@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.intro,
  org.eclipse.ui.intro.universal,
  org.eclipse.help.ui,
- org.eclipse.ecf
+ org.eclipse.ecf,
+ edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.repository
