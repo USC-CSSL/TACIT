@@ -30,5 +30,24 @@ public enum QueryOperatorType {
 			throw new IllegalArgumentException();
 		}
 	}
+	
+	public static QueryOperatorType getOperatorType(String op) {
+		if(op.equals("equals"))
+			return STRING_EQUALS;
+		else if(op.equals("contains"))
+			return STRING_CONTAINS;
+		else if(op.equals("starts_with"))
+			return STRING_STARS_WITH;
+		else if(op.equals("ends_with"))
+			return STRING_ENDS_WITH;
+		else if(op.equals(">"))
+			return INTEGER_GREATER_THAN;
+		else if(op.equals("<"))
+			return INTEGER_LESS_THAN;
+		else if(op.equals("="))
+			return INTEGER_EQUALS;
+		else
+			return null;
+	}
 
 }
