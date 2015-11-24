@@ -7,8 +7,6 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -71,13 +69,7 @@ public class TacitCorpusFilterDialog extends Dialog {
 	protected Point getInitialSize() {
 		return new Point(600, 600);
 	}
-	
-	static class ArrayLabelProvider extends LabelProvider {
-		public String getText(Object element) {
-			return  ((Filter)element).getDescription();
-		}
-	}
-	
+
 	private Composite addSection(Composite parent) {
 
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
@@ -173,8 +165,6 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 		filterTable = toolkit.createTable(reviewSectionClient, SWT.BORDER
 				| SWT.MULTI);
-		TableViewer t = new TableViewer(filterTable);
-		t.setLabelProvider(new ArrayLabelProvider());
 		GridDataFactory.fillDefaults().grab(true, true).span(6, 3)
 				.hint(150, 300).applyTo(filterTable);
 		// tableViewer = new TableViewer(filterTable);
