@@ -159,6 +159,11 @@ public class ManageCorpora {
 		}
 
 	}
+	
+	public static boolean isCorpusLocChanged(String newPath) {
+		if (rootDir.equals(newPath+System.getProperty("file.separator"))) return false;
+		return true;
+	}
 
 	public static void moveCorpora() {
 		oldLoc = rootDir;
@@ -166,7 +171,7 @@ public class ManageCorpora {
 				.getString(ICommonUiConstants.CORPUS_LOCATION)
 				+ System.getProperty("file.separator");
 
-		if (rootDir == oldLoc)
+		if (rootDir.equals(oldLoc))
 			return;
 
 		try {
