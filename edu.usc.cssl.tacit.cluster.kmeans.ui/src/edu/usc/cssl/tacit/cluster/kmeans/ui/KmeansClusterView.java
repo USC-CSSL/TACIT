@@ -211,6 +211,8 @@ public class KmeansClusterView extends ViewPart implements
 							monitor.worked(10);
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 
 						// kmeans processsing
@@ -245,6 +247,7 @@ public class KmeansClusterView extends ViewPart implements
 					performCluster.schedule();
 					performCluster.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite

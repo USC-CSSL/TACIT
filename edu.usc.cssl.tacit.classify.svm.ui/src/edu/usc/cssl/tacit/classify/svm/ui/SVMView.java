@@ -167,6 +167,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				return "Run";
 			}
 
+			@Override
 			public void run() {
 				if (!canProceed())
 					return;
@@ -189,6 +190,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				TacitFormComposite
 						.writeConsoleHeaderBegining("SVM classification started  ");
 				job = new Job("Classifier Job") {
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
@@ -230,6 +232,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 						monitor.done();
 						return Status.OK_STATUS;
@@ -239,6 +243,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				job.schedule();
 				job.addJobChangeListener(new JobChangeAdapter() {
 
+					@Override
 					public void done(IJobChangeEvent event) {
 						if (!event.getResult().isOK()) {
 							TacitFormComposite
@@ -433,12 +438,15 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,

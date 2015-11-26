@@ -166,12 +166,15 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -249,6 +252,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				return "Analyze";
 			}
 
+			@Override
 			public void run() {
 				if (!canProceed()) {
 					return;
@@ -268,6 +272,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 					private String seedFilePath = seedFile.getText();
 
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
@@ -288,6 +293,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							seedList = ppObj
 									.processData("seed_files", seedObjs);
 						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 						;
@@ -317,6 +324,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 					cooccurrenceAnalysisJob
 							.addJobChangeListener(new JobChangeAdapter() {
 
+								@Override
 								public void done(IJobChangeEvent event) {
 									if (!event.getResult().isOK()) {
 										TacitFormComposite

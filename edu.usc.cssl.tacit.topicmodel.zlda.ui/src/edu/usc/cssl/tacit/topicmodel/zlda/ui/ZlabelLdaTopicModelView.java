@@ -140,12 +140,15 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -271,6 +274,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 									selectedFiles);
 						} catch (IOException e1) {
 							e1.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 
 						new File(topicModelDirPath).mkdir();
@@ -321,6 +326,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 					job.schedule();
 					job.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite

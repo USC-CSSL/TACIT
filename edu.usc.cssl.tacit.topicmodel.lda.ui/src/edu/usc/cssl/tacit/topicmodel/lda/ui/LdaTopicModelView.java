@@ -145,12 +145,15 @@ public class LdaTopicModelView extends ViewPart implements
 				"Preprocess", SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = "edu.usc.cssl.tacit.common.ui.prepocessorsettings";
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), id,
@@ -255,6 +258,8 @@ public class LdaTopicModelView extends ViewPart implements
 							}
 						} catch (IOException e1) {
 							e1.printStackTrace();
+						} catch (Exception e1) {
+							e1.printStackTrace();
 						}
 
 						lda.initialize(topicModelDirPath, noOfTopics,
@@ -301,6 +306,7 @@ public class LdaTopicModelView extends ViewPart implements
 					job.schedule();
 					job.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite

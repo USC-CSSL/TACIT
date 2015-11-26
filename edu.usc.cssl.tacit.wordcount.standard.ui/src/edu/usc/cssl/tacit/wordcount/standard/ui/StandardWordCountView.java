@@ -332,6 +332,8 @@ public class StandardWordCountView extends ViewPart implements
 							monitor.worked(1);
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 						monitor.done();
 						return Status.OK_STATUS;
@@ -342,6 +344,7 @@ public class StandardWordCountView extends ViewPart implements
 					wordCountJob.schedule();
 					wordCountJob.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite

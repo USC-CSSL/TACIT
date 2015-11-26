@@ -375,6 +375,8 @@ public class WeightedWordCountView extends ViewPart implements
 							ppObj.clean();
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 
 						TacitFormComposite.updateStatusMessage(getViewSite(),

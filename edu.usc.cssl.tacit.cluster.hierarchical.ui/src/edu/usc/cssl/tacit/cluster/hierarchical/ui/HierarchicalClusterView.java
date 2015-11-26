@@ -252,6 +252,8 @@ public class HierarchicalClusterView extends ViewPart implements
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 
 						// Hierarchical processing
@@ -297,6 +299,7 @@ public class HierarchicalClusterView extends ViewPart implements
 					performCluster.schedule();
 					performCluster.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite

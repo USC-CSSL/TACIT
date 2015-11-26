@@ -82,10 +82,10 @@ public class Preprocessor {
 	 *            List of objects from the treeviewer that need to be processed
 	 * @return A list of absolute paths to text files that contain data for
 	 *         analysis
-	 * @throws IOException
+	 * @throws Exception 
 	 */
 	public ArrayList<String> processData(String subFolder, List<Object> inData)
-			throws IOException {
+			throws Exception {
 		outputFiles = new ArrayList<String>();
 		ppFilesLoc = ppDir + System.getProperty("file.separator") + subFolder;
 		new File(ppFilesLoc).mkdir();
@@ -268,7 +268,7 @@ public class Preprocessor {
 	 * Json data (Store these temp files the same way they were being stored
 	 * earlier) if the query is satisfied and add them to outputFiles
 	 */
-	private void processCorpus(CorpusClass corpus) {
+	private void processCorpus(CorpusClass corpus) throws Exception {
 		String corpusClassPath = corpus.getTacitLocation();
 		CMDataType corpusType = corpus.getParent().getDatatype();
 
@@ -295,18 +295,20 @@ public class Preprocessor {
 
 	private boolean processQuery(CorpusClass corpusClass, JSONObject obj)
 			throws ParseException {
-		return QueryProcesser.canProcessQuery(corpusClass.getFilters(), obj);
+		//return QueryProcesser.canProcessQuery(corpusClass.getFilters(), obj);
+		return false;
 	}
 
-	private void processGenericJSON(CorpusClass corpusClass) {
+	private void processGenericJSON(CorpusClass corpusClass) throws Exception {
 		String corpusClassPath = corpusClass.getTacitLocation();
 
 		File[] fileList = new File(corpusClassPath).listFiles();
 
+		QueryProcesser qp = new QueryProcesser();
 		for (File f : fileList) {
 			// Call Query and get the filtered jsonarray
 			ArrayList<JSONArray> jsonArr;
-
+			qp.processJson(corpusClass.getFilters(), f.getAbsolutePath());
 			// Loop over individual objects
 			// If doPreprocessing = true, create a single temp file per
 			// object and send that file to processFile
