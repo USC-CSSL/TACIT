@@ -32,4 +32,7 @@ Bundle-ClassPath: commons-io-2.4.jar,
  json-path-assert-2.0.0.jar,
  json-smart-2.1.1.jar,
  gson-2.3.1.jar,
- json-simple-1.1.1.jar
+ json-simple-1.1.1.jar,
+ slf4j-api-1.7.5.jar,
+ slf4j-simple-1.7.5.jar,
+ asm-1.0.2.jar

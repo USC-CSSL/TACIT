@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="asm-1.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="json-simple-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="gson-2.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jackson-core-2.5.0.jar"/>
@@ -11,5 +12,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="html"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="slf4j-simple-1.7.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
