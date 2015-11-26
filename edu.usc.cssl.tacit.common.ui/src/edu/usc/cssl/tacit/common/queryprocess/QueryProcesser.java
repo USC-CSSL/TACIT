@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import net.minidev.json.JSONArray;
 
@@ -43,28 +44,35 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 	
 	private String applySmartFilters(List<Filter> filters, String jsonFilePath, String operator) throws FileNotFoundException, IOException, ParseException {
-		Set<Object> filteredResults = new HashSet<Object>();
+		Set<JSONObject> filteredResults = new HashSet<JSONObject>();
 		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
 
 		JSONParser parser = new JSONParser();
-		Object obj = parser.parse(new FileReader(jsonFilePath));
-		JSONObject jsonObject = (JSONObject) obj;
-		Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
-		
-		for (String parentFilters : groupedFilters.keySet()) {
-			String smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);
-			System.out.println(parentFilters + ":" + smartQuery);
-			Object result = JsonPath.parse(document).read(smartQuery);
-			if (result instanceof LinkedHashMap<?, ?>) {
-				LinkedHashMap<?, ?> records = (LinkedHashMap<?, ?>) result;
-				filteredResults.add(records);
-			} else if (result instanceof JSONArray) {
-				JSONArray records = (JSONArray) result;
-				for (Object ob : records)
-					filteredResults.add(ob);
+		try {
+			Object obj = parser.parse(new FileReader(jsonFilePath));
+			JSONObject jsonObject = (JSONObject) obj;
+			Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
+			for (String parentFilters : groupedFilters.keySet()) {
+				String smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);
+				System.out.println(parentFilters + ":" + smartQuery);
+				Object result = JsonPath.parse(document).read(smartQuery);
+				if (result instanceof LinkedHashMap<?, ?>) {
+					LinkedHashMap<?, ?> records = (LinkedHashMap<?, ?>) result;
+					JSONObject temp = new JSONObject();
+					temp.put(parentFilters, records);
+					filteredResults.add(temp);
+				} else if (result instanceof JSONArray) {
+					JSONArray records = (JSONArray) result;
+					for (Object ob : records)
+						filteredResults.add((JSONObject)ob);
+				}
 			}
+		} catch(ClassCastException e) {
+			return writeToFile(jsonFilePath, filteredResults);
 		}
+		
 		return writeToFile(jsonFilePath, filteredResults);
+		
 	}
 	
 	/* Create smart queries and apply them on JSON document */
@@ -127,8 +135,8 @@ public class QueryProcesser implements IQueryProcessor {
 		return new String(query);
 	}
 
-	private String writeToFile(String jsonFilePath, Set<Object> filteredResults) throws IOException {
-		String filePath = jsonFilePath + ".temp.json";
+	private String writeToFile(String jsonFilePath, Set<JSONObject> filteredResults) throws IOException {		
+		String filePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_processing.temp.json";
 		JSONArray results = new JSONArray(); // convert JSON objects to array
 		for (Object ob : filteredResults)
 			results.add(ob);
@@ -145,6 +153,7 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 
 	private static void createParentFilters(List<Filter> filters, List<String> parentKeys) {
+		if(null == filters) return;
 		List<String> parentFilters = new ArrayList<String>();
 		for (Filter f : filters)
 			parentFilters.add(f.getTargetName().split("\\.")[0]);
@@ -157,7 +166,7 @@ public class QueryProcesser implements IQueryProcessor {
 	@Override
 	public Map<String, QueryDataType> getJsonKeys() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		if (this.jsonKeys == null) {
-			this.jsonKeys = new HashMap<String, QueryDataType>();
+			this.jsonKeys = new TreeMap<String, QueryDataType>();
 			Set<Attribute> jsonKeys = new JsonParser().findJsonStructure(this.corpusClass.getTacitLocation());
 			for (Attribute attr : jsonKeys) 
 				this.jsonKeys.put(attr.key, attr.dataType);

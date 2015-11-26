@@ -278,7 +278,8 @@ public class Preprocessor {
 			break;
 
 		case REDDIT_JSON:
-			processReddit(corpus);
+			//processReddit(corpus);
+			processGenericJSON(corpus);
 			break;
 
 		case TWITTER_JSON:
