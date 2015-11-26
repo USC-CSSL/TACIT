@@ -22,7 +22,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonParseException;
-		
+
 import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.DutchStemmer;
@@ -71,6 +71,19 @@ public class Preprocessor {
 		setupParams();
 	}
 
+	/**
+	 * Public API to process the input data. Loops over all the Input objects
+	 * and processes them accordingly. Returns a list of absolute paths to files
+	 * that need to be sent to plugins for analysis
+	 * 
+	 * @param subFolder
+	 *            Name of the subfolder to create all the temp files under
+	 * @param inData
+	 *            List of objects from the treeviewer that need to be processed
+	 * @return A list of absolute paths to text files that contain data for
+	 *         analysis
+	 * @throws IOException
+	 */
 	public ArrayList<String> processData(String subFolder, List<Object> inData)
 			throws IOException {
 		outputFiles = new ArrayList<String>();
@@ -106,6 +119,10 @@ public class Preprocessor {
 		return outputFiles;
 	}
 
+	/**
+	 * Recursive functionto loop over
+	 * @param dirpath
+	 */
 	private void processDirectory(String dirpath) {
 		File[] files = new File(dirpath).listFiles();
 
@@ -268,13 +285,34 @@ public class Preprocessor {
 			processTwitter(corpus);
 			break;
 
+		case JSON:
+			processGenericJSON(corpus);
+
 		default:
 			break;
 		}
 	}
 
-	private boolean processQuery(CorpusClass corpusClass, JSONObject obj) throws ParseException {
-		return QueryProcesser.canProcessQuery(corpusClass.getFilters(),  obj);
+	private boolean processQuery(CorpusClass corpusClass, JSONObject obj)
+			throws ParseException {
+		return QueryProcesser.canProcessQuery(corpusClass.getFilters(), obj);
+	}
+
+	private void processGenericJSON(CorpusClass corpusClass) {
+		String corpusClassPath = corpusClass.getTacitLocation();
+
+		File[] fileList = new File(corpusClassPath).listFiles();
+
+		for (File f : fileList) {
+			// Call Query and get the filtered jsonarray
+			ArrayList<JSONArray> jsonArr;
+
+			// Loop over individual objects
+			// If doPreprocessing = true, create a single temp file per
+			// object and send that file to processFile
+			// If doPreprocessing = false, create temp files and add to
+			// output files
+		}
 	}
 
 	private void processTwitter(CorpusClass corpusClass) {
@@ -385,7 +423,7 @@ public class Preprocessor {
 						.parse(new FileReader(fileName));
 				if (!processQuery(corpusClass, redditStream))
 					continue;
-				
+
 				String postTitle = RedditGetPostTitle(redditStream);
 				String[] postComments = RedditGetPostComments(redditStream);
 
