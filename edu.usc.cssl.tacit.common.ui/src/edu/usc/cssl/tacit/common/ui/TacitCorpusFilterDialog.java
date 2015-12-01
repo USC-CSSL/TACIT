@@ -33,7 +33,6 @@ import edu.usc.cssl.tacit.common.queryprocess.QueryOperatorType;
 public class TacitCorpusFilterDialog extends Dialog {
 
 	private Combo jsonFieldCombo;
-
 	private Combo operationCombo;
 	private Button addFilterButton;
 
@@ -70,12 +69,13 @@ public class TacitCorpusFilterDialog extends Dialog {
 		return new Point(600, 600);
 	}
 
-	private Composite addSection(Composite parent) {
+	private Composite addSection(Composite parent, String title) {
 
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR
 				| Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(section);
 		section.setExpanded(true);
+		section.setText(title);
 
 		ScrolledComposite scComposite = new ScrolledComposite(section,
 				SWT.H_SCROLL | SWT.V_SCROLL);
@@ -115,7 +115,7 @@ public class TacitCorpusFilterDialog extends Dialog {
 
 	private void createWidgets(Composite parent) {
 
-		Composite additionSectionClient = addSection(parent);
+		Composite additionSectionClient = addSection(parent, "Choose the fields and filters");
 
 		Label jsonFieldLabel = toolkit.createLabel(additionSectionClient,
 				"Field", SWT.NONE);
@@ -161,7 +161,7 @@ public class TacitCorpusFilterDialog extends Dialog {
 			}
 		});
 
-		Composite reviewSectionClient = addSection(parent);
+		Composite reviewSectionClient = addSection(parent, "Selected Filters");
 
 		filterTable = toolkit.createTable(reviewSectionClient, SWT.BORDER
 				| SWT.MULTI);
