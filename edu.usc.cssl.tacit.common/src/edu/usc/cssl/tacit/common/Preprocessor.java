@@ -302,9 +302,19 @@ public class Preprocessor {
 
 	private void processGenericJSON(CorpusClass corpusClass) throws Exception {
 		String corpusClassPath = corpusClass.getTacitLocation();
-
+		String tempDir = "";
+		String tempFile = "";
+		Date dateobj = new Date();
+		if (doPreprocessing)
+			tempFile = tempPPFileLoc + "temp_twitter_"
+					+ System.currentTimeMillis() + ".txt";
+		else {
+			tempDir = ppFilesLoc + System.getProperty("file.separator")
+					+ "twitter_data_" + dateobj.getTime();
+			new File(tempDir).mkdir();
+		}
+		
 		File[] fileList = new File(corpusClassPath).listFiles();
-
 		QueryProcesser qp = new QueryProcesser();
 		for (File f : fileList) {
 			// Call Query and get the filtered jsonarray
