@@ -74,6 +74,7 @@ public class ManageCorpora {
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator")
 								+ currClass.getClassName());
+				classObj.put("data_key", currClass.getKeyTextFields());
 				classArray.add(classObj);
 			}
 
@@ -139,6 +140,7 @@ public class ManageCorpora {
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator")
 								+ currClass.getClassName());
+				classObj.put("data_key", currClass.getKeyTextFields());
 				classArray.add(classObj);
 			}
 
@@ -243,7 +245,9 @@ public class ManageCorpora {
 						newCC.put("class_name", oldCC.get("class_name"));
 						newCC.put("original_loc", oldCC.get("original_loc"));
 						newCC.put("tacit_loc", newTacitLoc);
-
+						if (oldCC.containsKey("data_key")) {
+							newCC.put("data_key", oldCC.get("data_key"));
+						}
 						newClasses.add(newCC);
 					}
 					newJsonObject.put("class_details", newClasses);
@@ -365,6 +369,7 @@ public class ManageCorpora {
 			classObj.put("tacit_loc",
 					corpusLocation + System.getProperty("file.separator")
 							+ currClass.getClassName());
+			classObj.put("data_key", currClass.getKeyTextFields());
 			classArray.add(classObj);
 		}
 
@@ -494,6 +499,9 @@ public class ManageCorpora {
 			cc.setClassName((String) corpusClassObj.get("class_name"));
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
+			if (corpusClassObj.containsKey("data_key")) {
+				cc.setKeyTextFields((String) corpusClassObj.get("data_key"));
+			}
 			cc.setParent(corpus);
 			corpus.getClasses().add(cc);
 		}
