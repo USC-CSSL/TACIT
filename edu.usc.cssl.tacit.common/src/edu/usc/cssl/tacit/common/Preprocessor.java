@@ -289,21 +289,37 @@ public class Preprocessor {
 		String tempFile = "";
 		Date dateobj = new Date();
 		if (doPreprocessing)
-			tempFile = tempPPFileLoc + "temp_twitter_" + System.currentTimeMillis() + ".txt";
+			tempFile = tempPPFileLoc + "temp_json_" + System.currentTimeMillis() + ".txt";
 		else {
-			tempDir = ppFilesLoc + System.getProperty("file.separator") + "twitter_data_" + dateobj.getTime();
+			tempDir = ppFilesLoc + System.getProperty("file.separator") + "json_data_" + dateobj.getTime();
 			new File(tempDir).mkdir();
 		}
 
 		File[] fileList = new File(corpusClassPath).listFiles();
+		int k = 0;
 		for (File f : fileList) {
-			if (corpusClass.getFilters() != null && corpusClass.getFilters().size() > 0) {
-				QueryProcesser qp = new QueryProcesser();
-				ArrayList<JSONArray> jsonArr;
-				qp.processJson(corpusClass.getFilters(), f.getAbsolutePath());
-			} else {
-				outputFiles.add(f.getAbsolutePath());
+			QueryProcesser qp = new QueryProcesser();
+			ArrayList<String> outputs = null;
+			qp.processJson(corpusClass.getFilters(), f.getAbsolutePath());
+			for (String str : outputs) {
+				if (doPreprocessing) {
+					FileWriter fw = new FileWriter(tempFile);
+					fw.write(str);
+					fw.close();
+					
+					outputFiles.add(processFile(tempFile, "json_file_"+k+".txt"));
+					k++;
+					new File(tempFile).delete();
+				} else {
+					String outFile = tempDir+System.getProperty("file.separator")+"json_file_"+k+".txt";
+					FileWriter fw = new FileWriter(outFile);
+					fw.write(str);
+					fw.close();
+					outputFiles.add(outFile);
+					k++;
+				}
 			}
+			
 		}
 	}
 
