@@ -69,7 +69,7 @@ public class JsonParser {
 				continue;
 			}
 			try {
-				getKeysFromJson(filePath + File.separatorChar + jsonFileName,
+				getKeysFromJson(filePath + File.separator + jsonFileName,
 						resultAttr);
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
@@ -82,7 +82,7 @@ public class JsonParser {
 		return resultAttr;
 	}
 
-	private void getKeysFromJson(String fileName, Set<Attribute> resultAttr)
+	public void getKeysFromJson(String fileName, Set<Attribute> resultAttr)
 			throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		Object things = new Gson().fromJson(new FileReader(fileName),
 				Object.class);
@@ -185,14 +185,14 @@ public class JsonParser {
 													// default cases
 	}
 
-	public static void main(String[] args) {
-//		JsonParser jh = new JsonParser();
-//		// HashMap<String, String> jsonKeys =
-//		// jh.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\test.json");
+	public static void main(String[] args) throws FileNotFoundException {
+		JsonParser jh = new JsonParser();
+		Set<Attribute> result = new HashSet<Attribute>();
+		 jh.getKeysFromJson("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\anybody_have_any_good_iphone_text_tones-09-24-15-16-51-35.json", result);
 //		Set<Attribute> jsonKeys = jh
 //				.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\long.json");
-//		for (Attribute attr : jsonKeys) {
-//			System.out.println(attr.key + "->" + attr.dataType);
-//		}
+		for (Attribute attr : result) {
+			System.out.println(attr.key + "->" + attr.dataType);
+		}
 	}
 }
