@@ -18,6 +18,7 @@ public class CorpusClass implements ICorpusClass {
 	private Corpus parent;
 	private String id;
 	private Set<Filter> filters;
+	private String keyTextFields = "";
 
 	public void addFilter(Filter filter) {
 
@@ -110,5 +111,13 @@ public class CorpusClass implements ICorpusClass {
 		if (filters == null)
 			return null;
 		return new ArrayList<Filter>(filters);
+	}
+
+	public String getKeyTextFields() {
+		return keyTextFields;
+	}
+
+	public void setKeyTextFields(String keyTextFields) {
+		this.keyTextFields = keyTextFields;
 	}
 }
