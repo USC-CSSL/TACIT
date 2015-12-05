@@ -81,9 +81,11 @@ public class QueryProcesser implements IQueryProcessor {
 		query.append("$.");
 		query.append(parentFilters);
 		List<String> predicates = new ArrayList<String>();
-		for (Filter f : groupedFilters.get(parentFilters))
-			predicates.add(constructSmartQuery(f));
-		if (predicates.size() > 1) {
+		for (Filter f : groupedFilters.get(parentFilters)) {
+			if(f.getFilterValue() != null) // only if there is a proper filter
+				predicates.add(constructSmartQuery(f));
+		}
+		if (predicates.size() > 0) {
 			query.append("[?(");
 			query.append(StringUtil.join(predicates, " " + condition + " "));
 			query.append(")]");
