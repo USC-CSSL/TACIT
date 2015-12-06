@@ -163,6 +163,25 @@
 								file.</li>
 						</ul>
 					</li>
+					
+					
+					
+				<!--	<li>For High Resolution Windows Screen:
+						<ul>
+							<li>When using Tacit on a high-resolution, high DPI monitor (such as the 3200x1800 display on the Lenovo Yoga 2 Pro) interface elements, please follow the following steps once you downloaded TACIT</li>
+							<li>Allow Windows to execute external manifests by editing the registry:<li>
+							<ul><li>Click Start, click Run, type regedit, and then click OK.<br></li>
+		<li>Locate and then click the following registry subkey:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\SideBySide <br></li>
+		<li>On the Edit menu, point to New, and then click DWORD Value.<br></li>
+		<li>Type PreferExternalManifest, and then press ENTER.<br></li>
+		<li>Right-click PreferExternalManifest, and then click Modify.<br></li>
+		<li>n the Edit DWORD Value dialog box, click Decimal under Base.<br></li>
+		<li>In the Value data box, type 1, and then click OK.<br></li>
+		<li>On the File menu, click Exit to close Registry Editor.<br></li></ul>
+		<li>Copy tacit.exe.manifest from [http://tacit.usc.edu/resources.html here]  and move it to the same folder as the tacit.exe program</li>
+		<li>Reboot your computer. Open tacit with tacit.exe and the display should be fixed.</li>
+						</ul>
+					</li> -->
 				</ul>
 
 				<h2>
