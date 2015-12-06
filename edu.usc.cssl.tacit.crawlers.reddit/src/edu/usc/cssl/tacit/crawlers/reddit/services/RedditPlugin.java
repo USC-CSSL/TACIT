@@ -194,9 +194,9 @@ public class RedditPlugin {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		String filePath = this.outputPath + File.separator;
 		if(null != subreddit && !subreddit.isEmpty())
-			filePath+= "SearchResults-" + subreddit + "-" + df.format(dateObj) +".json";
+			filePath+= "SearchResults-" + subreddit + "-" + df.format(dateObj) +".txt";
 		else
-			filePath+= "SearchResults-" + df.format(dateObj) + ".json";
+			filePath+= "SearchResults-" + df.format(dateObj) + ".txt";
 		
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/search/.json?".concat(query));
