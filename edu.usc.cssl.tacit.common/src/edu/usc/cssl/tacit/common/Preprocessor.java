@@ -347,8 +347,8 @@ public class Preprocessor {
 		int k = 0;
 		for (File f : fileList) {
 			QueryProcesser qp = new QueryProcesser();
-			ArrayList<String> outputs = null;
-			qp.processJson(corpusClass.getFilters(), f.getAbsolutePath());
+			//qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(), corpusClass.getKeyTextFields());
+			List<String> outputs = qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(), "post.selftext,comments.body");
 			for (String str : outputs) {
 				if (doPreprocessing) {
 					FileWriter fw = new FileWriter(tempFile);

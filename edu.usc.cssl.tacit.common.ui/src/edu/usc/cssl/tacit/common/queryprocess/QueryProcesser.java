@@ -43,17 +43,21 @@ public class QueryProcesser implements IQueryProcessor {
 		this.corpusClass = corpusClass;
 	}
 	
-	private String applySmartFilters(List<Filter> filters, String jsonFilePath, String operator) throws FileNotFoundException, IOException, ParseException {
+	private List<String> applySmartFilters(List<Filter> filters, String jsonFilePath, String operator, String keyFields) throws FileNotFoundException, IOException, ParseException {
+		HashMap<String, List<String>> keys = processKeyfields(keyFields);
+		
+		List<String> resultText = new ArrayList<String>();
 		Set<JSONObject> filteredResults = new HashSet<JSONObject>();
 		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
-
 		JSONParser parser = new JSONParser();
-		try {
-			Object obj = parser.parse(new FileReader(jsonFilePath));
-			JSONObject jsonObject = (JSONObject) obj;
-			Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
-			for (String parentFilters : groupedFilters.keySet()) {
-				String smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);
+		Object obj = parser.parse(new FileReader(jsonFilePath));
+		JSONObject jsonObject = (JSONObject) obj;
+		Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
+		
+		for (String parentFilters : groupedFilters.keySet()) {
+			try {	
+				String smartQuery;
+				smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);				
 				System.out.println(parentFilters + ":" + smartQuery);
 				Object result = JsonPath.parse(document).read(smartQuery);
 				if (result instanceof LinkedHashMap<?, ?>) {
@@ -61,20 +65,60 @@ public class QueryProcesser implements IQueryProcessor {
 					JSONObject temp = new JSONObject();
 					temp.put(parentFilters, records);
 					filteredResults.add(temp);
+					if(keys.containsKey(parentFilters)) {//fetchdata
+						for(String k : keys.get(parentFilters)) 
+							resultText.add((String) ((LinkedHashMap) result).get(k));
+					}
 				} else if (result instanceof JSONArray) {
 					JSONArray records = (JSONArray) result;
-					for (Object ob : records)
-						filteredResults.add((JSONObject)ob);
+					for (Object ob : records) {
+						LinkedHashMap<?, ?> res = (LinkedHashMap<?, ?>) ob;
+						//temp.put(key, value)
+						//filteredResults.add((LinkedHashMap<?, ?>)ob);
+						if(keys.containsKey(parentFilters)) {
+							for(String k: keys.get(parentFilters))
+								resultText.add((String) ((LinkedHashMap) res).get(k));
+						}
+					}
 				}
+			} catch(ClassCastException e) {
+				continue; // incase if one key fails, continue with others
 			}
-		} catch(ClassCastException e) {
-			return writeToFile(jsonFilePath, filteredResults);
 		}
 		
-		return writeToFile(jsonFilePath, filteredResults);
+		return resultText;
+		//return writeToFile(jsonFilePath, filteredResults);
 		
 	}
 	
+
+
+	private HashMap<String, List<String>> processKeyfields(String keyFields) {
+		HashMap<String, List<String>> keyAttr = new HashMap<String, List<String>>();
+		for(String key : keyFields.split("\\,")) {
+			String[] temp = key.split("\\.");
+			List<String> keyChilds;
+			if(keyAttr.containsKey(temp[0])) 
+				keyChilds = keyAttr.get(temp[0]);
+			else
+				keyChilds = new ArrayList<String>();
+			
+			StringBuilder tempKey = new StringBuilder();
+			for(int i = 1; i<temp.length; i++) {
+				tempKey.append(temp[i]);
+				if(i != temp.length-1) tempKey.append(".");
+			}
+			
+			keyChilds.add(new String(tempKey));
+			keyAttr.put(temp[0], keyChilds);
+		}
+		return keyAttr;
+	}
+
+	private List<String> filterResults(Set<JSONObject> filteredResults) {
+		return null;
+	}
+
 	/* Create smart queries and apply them on JSON document */
 	private static String createSmartFilters(String parentFilters, HashMap<String, List<Filter>> groupedFilters, String condition) {
 		StringBuilder query = new StringBuilder();
@@ -177,9 +221,10 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 	
 
-	public String processJson(List<Filter> corpusFilters, String jsonFilepath) throws JsonSyntaxException, JsonIOException, IOException, ParseException{
+	public List<String> processJson(List<Filter> corpusFilters, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException{
 		List<String> parentKeys = JsonParser.getParentKeys(jsonFilepath);
 		createParentFilters(corpusFilters, parentKeys);	
-		return applySmartFilters(corpusFilters, jsonFilepath, "&&");
+		return applySmartFilters(corpusFilters, jsonFilepath, "&&", keyFields);
 	}
+
 }
