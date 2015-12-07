@@ -42,11 +42,11 @@
   </context>
   <context id="standard">
      <description>Check here for help with Standard Word Count.</description>
-     <topic href="html/wordcount/wordcount.html" label="Standard Word Count"/>
+     <topic href="html/wordcount/wordcount.html" label="TACIT Word Count"/>
   </context>
   <context id="weighted">
      <description>Check here for help with Liwc style and Weighted word count.</description>
-     <topic href="html/wordcount/wordcount.html" label="Liwc/Weighted Word Count"/>
+     <topic href="html/wordcount/liwc_wwc.html" label="Liwc/Weighted Word Count"/>
   </context>
   <context id="reddit" title="Reddit">
      <description>Check here for help with Reddit Crawler.</description>
