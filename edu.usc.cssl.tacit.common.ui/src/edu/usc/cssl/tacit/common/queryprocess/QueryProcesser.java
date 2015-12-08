@@ -199,10 +199,14 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 
 	private static void createParentFilters(List<Filter> filters, List<String> parentKeys) {
-		if(null == filters) return;
+		//if(null == filters) return;
+//		if(null == filters)
+//			filters = new ArrayList<Filter>();
+		
 		List<String> parentFilters = new ArrayList<String>();
 		for (Filter f : filters)
 			parentFilters.add(f.getTargetName().split("\\.")[0]);
+		
 		parentKeys.removeAll(parentFilters);
 		for (String key : parentKeys) {
 			filters.add(new Filter(key, null, null, null));
@@ -221,7 +225,8 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 	
 
-	public List<String> processJson(List<Filter> corpusFilters, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException{
+	public List<String> processJson(List<Filter> corpusFilters, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException {
+		if(null == corpusFilters) corpusFilters = new ArrayList<Filter>();
 		List<String> parentKeys = JsonParser.getParentKeys(jsonFilepath);
 		createParentFilters(corpusFilters, parentKeys);	
 		return applySmartFilters(corpusFilters, jsonFilepath, "&&", keyFields);
