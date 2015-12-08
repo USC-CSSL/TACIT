@@ -348,7 +348,7 @@ public class Preprocessor {
 		for (File f : fileList) {
 			QueryProcesser qp = new QueryProcesser();
 			//qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(), corpusClass.getKeyTextFields());
-			List<String> outputs = qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(), "post.selftext,comments.body");
+			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body");
 			for (String str : outputs) {
 				if (doPreprocessing) {
 					FileWriter fw = new FileWriter(tempFile);
@@ -655,6 +655,7 @@ public class Preprocessor {
 			} else {
 				ppDir = tempOutputPath + System.getProperty("file.separator")
 						+ caller + "_" + currTime;
+				new File(ppDir).mkdir();
 			}
 		} else {
 			ppDir = ppOutputPath + System.getProperty("file.separator")

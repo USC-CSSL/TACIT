@@ -27,6 +27,7 @@ import com.google.gson.JsonSyntaxException;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -43,7 +44,7 @@ public class QueryProcesser implements IQueryProcessor {
 		this.corpusClass = corpusClass;
 	}
 	
-	private List<String> applySmartFilters(List<Filter> filters, String jsonFilePath, String operator, String keyFields) throws FileNotFoundException, IOException, ParseException {
+	private List<String> applySmartFilters(List<Filter> filters, String jsonFilePath, String operator, String keyFields, CMDataType corpusType ) throws FileNotFoundException, IOException, ParseException {
 		HashMap<String, List<String>> keys = processKeyfields(keyFields);
 		
 		List<String> resultText = new ArrayList<String>();
@@ -86,12 +87,22 @@ public class QueryProcesser implements IQueryProcessor {
 			}
 		}
 		
+		if(!corpusType.equals(CMDataType.TWITTER_JSON))
+			return processedResult(resultText);
 		return resultText;
 		//return writeToFile(jsonFilePath, filteredResults);
-		
 	}
 	
 
+
+	private List<String> processedResult(List<String> resultText) {
+		StringBuilder sb = new StringBuilder();
+		for(String s : resultText)
+			sb.append(s);
+		resultText.clear();
+		resultText.add(new String(sb));
+		return resultText;
+	}
 
 	private HashMap<String, List<String>> processKeyfields(String keyFields) {
 		HashMap<String, List<String>> keyAttr = new HashMap<String, List<String>>();
@@ -225,11 +236,12 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 	
 
-	public List<String> processJson(List<Filter> corpusFilters, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException {
+	public List<String> processJson(CorpusClass corpusClass, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException {
+		List<Filter> corpusFilters = corpusClass.getFilters();
 		if(null == corpusFilters) corpusFilters = new ArrayList<Filter>();
 		List<String> parentKeys = JsonParser.getParentKeys(jsonFilepath);
 		createParentFilters(corpusFilters, parentKeys);	
-		return applySmartFilters(corpusFilters, jsonFilepath, "&&", keyFields);
+		return applySmartFilters(corpusFilters, jsonFilepath, "&&", keyFields, corpusClass.getParent().getDatatype());
 	}
 
 }
