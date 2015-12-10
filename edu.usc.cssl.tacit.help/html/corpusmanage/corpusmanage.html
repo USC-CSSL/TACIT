@@ -37,6 +37,7 @@
 							Enter the name for this corpus in the <b>Corpus ID</b> text box, and specify the file format of the text/documents that will be in this corpus. TACIT currently supports Plain text, Twitter JSON, and Reddit JSON file formats. 
 							You can change both the name of the corpus and the file format settings at any time by selecting the newly created corpus under <b>Corpora</b>.
 							If you no longer need a corpus/class, you can remove it by selecting it under <b>Corpora</b> and clicking the <b>Remove</b> button. Removing a corpus will remove all classes underneath it.
+							<br><br> If you are creating a corpus of a JSON file or another file with multiple attributes, you will need to specify which attribute/section contains the text to be analyzed.  
 						</td>
 					</tr>
 					<tr>
@@ -69,6 +70,12 @@
 						in the directory. After specifying a corpus with the <b> Add Corpus</b> button, the corpus directory can be
 						expanded using the grey arrow next to the corpus name (See <i>Image 1</i>) and specific classes within the 
 						corpus can be excluded or included in the analysis. 
+						<br><br> You can also analyze a subset of a corpus by using the filter function for corpora with pre-determined attributes.  
+						For any corpus with pre-determined attributes you can click on <b>Filter Corpus</b> to restrict the analysis to only those 
+						texts that meet your specifications.  For example if you have a JSON corpus with an attribute specifying author age, you
+						you can indicate that you only want authors that are older than 60 by clicking on the <b>Filter Corpus</b> button, selecting 
+						the <b>></b>function and entering 60 in the text box.  In the same way, if you want to filter for posts by specific authors,
+						the filter function can be used with the <b>=</b> sign and you can enter a string variable (such as author name) into the text box.
 						
 						<br><br>	
  							<i>Image 1.</i> Corpus and Class Specification<br>
