@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -43,10 +45,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import edu.usc.cssl.tacit.common.queryprocess.Filter;
 import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
 import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
-import edu.usc.cssl.tacit.common.queryprocess.QueryOperatorType;
 import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
@@ -88,11 +88,14 @@ public class TargetLocationsGroup {
 	 * @param isFolder
 	 * @return generated instance of the table part
 	 */
-	public static TargetLocationsGroup createInForm(Composite parent, FormToolkit toolkit, boolean isFolder,
-			boolean isFile, boolean isCorpus, boolean isClass) {
+	public static TargetLocationsGroup createInForm(Composite parent,
+			FormToolkit toolkit, boolean isFolder, boolean isFile,
+			boolean isCorpus, boolean isClass) {
 		cmp = parent;
-		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit, parent);
-		contentTable.createFormContents(parent, toolkit, isFolder, isFile, isCorpus, isClass);
+		TargetLocationsGroup contentTable = new TargetLocationsGroup(toolkit,
+				parent);
+		contentTable.createFormContents(parent, toolkit, isFolder, isFile,
+				isCorpus, isClass);
 		return contentTable;
 	}
 
@@ -105,7 +108,8 @@ public class TargetLocationsGroup {
 		return fTreeViewer;
 	}
 
-	private GridLayout createSectionClientGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
+	private GridLayout createSectionClientGridLayout(
+			boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
 
 		layout.marginHeight = 0;
@@ -134,53 +138,77 @@ public class TargetLocationsGroup {
 	 *            form toolkit to create widgets
 	 * @param isFolder
 	 */
-	private void createFormContents(Composite parent, FormToolkit toolkit, boolean isFolder, boolean isFile,
-			boolean isCorpus, boolean isClass) {
+	private void createFormContents(Composite parent, FormToolkit toolkit,
+			boolean isFolder, boolean isFile, boolean isCorpus, boolean isClass) {
+		// Create the ScrolledComposite to scroll horizontally and vertically
+		
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_VERTICAL));
 		initializeTreeViewer(comp);
-
-		Composite buttonComp = toolkit.createComposite(comp);
+		ScrolledComposite sc = new ScrolledComposite(comp, SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
+		.applyTo(sc);
+		Composite buttonComp = toolkit.createComposite(sc);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.makeColumnsEqualWidth = false;
 		buttonComp.setLayout(layout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		if (isFolder) {
-			fAddButton = toolkit.createButton(buttonComp, "Add Folder...", SWT.PUSH);
-			GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fAddButton);
+			fAddButton = toolkit.createButton(buttonComp, "Add Folder...",
+					SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddButton);
 		}
 		if (isFile) {
-			fAddFileButton = toolkit.createButton(buttonComp, "Add File(s)...", SWT.PUSH);
-			GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fAddFileButton);
+			fAddFileButton = toolkit.createButton(buttonComp, "Add File(s)...",
+					SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddFileButton);
 		}
 		if (isCorpus) {
-			fAddCorpusButton = toolkit.createButton(buttonComp, "Add Corpus...", SWT.PUSH);
-			GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fAddCorpusButton);
+			fAddCorpusButton = toolkit.createButton(buttonComp,
+					"Add Corpus...", SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddCorpusButton);
 		}
 		if (isClass) {
-			fAddCorpusClassButton = toolkit.createButton(buttonComp, "Add Corpus Class...", SWT.PUSH);
-			GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fAddCorpusClassButton);
+			fAddCorpusClassButton = toolkit.createButton(buttonComp,
+					"Add Corpus Class...", SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fAddCorpusClassButton);
 		}
 		if (isCorpus) { // query filter component needs to appear only when
 						// corpus is selected
-			fFilterCorpusButton = toolkit.createButton(buttonComp, "Filter Corpus...", SWT.PUSH);
-			GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fFilterCorpusButton);
+			fFilterCorpusButton = toolkit.createButton(buttonComp,
+					"Filter Corpus...", SWT.PUSH);
+			GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+					.applyTo(fFilterCorpusButton);
 		}
 		fRemoveButton = toolkit.createButton(buttonComp, "Remove...", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(fRemoveButton);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
+				.applyTo(fRemoveButton);
 		initializeButtons();
 		dummy = toolkit.createLabel(parent, "");
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(dummy);
 		if (isClass) {
 			dummyCorpus = toolkit.createLabel(parent, "");
-			GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummyCorpus);
+			GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+					.applyTo(dummyCorpus);
 		}
 		toolkit.paintBordersFor(comp);
+		sc.setContent(buttonComp);
+		// Expand both horizontally and vertically
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
 	}
 
-	Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill) {
+	Composite createComposite(Composite parent, Font font, int columns,
+			int hspan, int fill) {
 		Composite g = new Composite(parent, SWT.NONE);
 		g.setLayout(new GridLayout(columns, false));
 		g.setFont(font);
@@ -193,14 +221,17 @@ public class TargetLocationsGroup {
 	private void updateSelectionText() {
 		int totalFiles = calculateFiles(fTreeViewer.getCheckedElements());
 		if (totalFiles > 0)
-			dummy.setText("No. of files selected : " + String.valueOf(totalFiles));
+			dummy.setText("No. of files selected : "
+					+ String.valueOf(totalFiles));
 		else {
 			dummy.setText("");
 		}
 		if (dummyCorpus != null) {
-			int totalCorpusClass = calculateCorpus(fTreeViewer.getCheckedElements());
+			int totalCorpusClass = calculateCorpus(fTreeViewer
+					.getCheckedElements());
 			if (totalCorpusClass > 0)
-				dummyCorpus.setText("No. of corpus class selected : " + String.valueOf(totalCorpusClass));
+				dummyCorpus.setText("No. of corpus class selected : "
+						+ String.valueOf(totalCorpusClass));
 			else {
 				dummyCorpus.setText("");
 			}
@@ -223,19 +254,21 @@ public class TargetLocationsGroup {
 		}
 		this.fTreeViewer.setInput(this.locationPaths);
 
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-				updateSelectionText();
-			}
+		fTreeViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						updateButtons();
+						updateSelectionText();
+					}
 
-		});
+				});
 
 		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				fTreeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
+				fTreeViewer.setSubtreeChecked(event.getElement(),
+						event.getChecked());
 				updateSelectionText();
 			}
 		});
@@ -292,7 +325,8 @@ public class TargetLocationsGroup {
 			fAddButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					DirectoryDialog dlg = new DirectoryDialog(fAddButton.getShell(), SWT.OPEN);
+					DirectoryDialog dlg = new DirectoryDialog(fAddButton
+							.getShell(), SWT.OPEN);
 					dlg.setText("Select Folder");
 					String path = null;
 					String message = "";
@@ -304,9 +338,12 @@ public class TargetLocationsGroup {
 
 						message = updateLocationTree(new String[] { path });
 						if (!message.equals("")) {
-							ErrorDialog.openError(dlg.getParent(), "Select Different Folder",
+							ErrorDialog.openError(dlg.getParent(),
+									"Select Different Folder",
 									"Please select different Folder",
-									new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID, message));
+									new Status(IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID,
+											message));
 						} else {
 							canExit = true;
 						}
@@ -322,10 +359,13 @@ public class TargetLocationsGroup {
 				public void widgetSelected(SelectionEvent e) {
 					final TacitElementSelectionDialog CorpusDialog = new TacitElementSelectionDialog(
 							fAddCorpusButton.getShell());
-					CorpusDialog.setTitle("Select the Corpus Class from the list");
-					CorpusDialog.setMessage("Enter Corpus Class name to search");
+					CorpusDialog
+							.setTitle("Select the Corpus Class from the list");
+					CorpusDialog
+							.setMessage("Enter Corpus Class name to search");
 					final List<ICorpusClass> allCorpus = new ArrayList<ICorpusClass>();
-					List<ICorpus> corpusList = corporaManagement.getAllCorpusDetails();
+					List<ICorpus> corpusList = corporaManagement
+							.getAllCorpusDetails();
 					List<ICorpusClass> corpusClass = new ArrayList<ICorpusClass>();
 					for (ICorpus iCorpusClass : corpusList) {
 						corpusClass.addAll(iCorpusClass.getClasses());
@@ -336,8 +376,10 @@ public class TargetLocationsGroup {
 
 					if (CorpusDialog.open() == Window.OK) {
 
-						updateLocationTree((Object[]) CorpusDialog.getSelectionObjects()
-								.toArray(new Object[CorpusDialog.getSelectionObjects().size()]));
+						updateLocationTree((Object[]) CorpusDialog
+								.getSelectionObjects().toArray(
+										new Object[CorpusDialog
+												.getSelectionObjects().size()]));
 					}
 				}
 			});
@@ -375,15 +417,18 @@ public class TargetLocationsGroup {
 					// }
 					// };
 					// getCorpus.schedule();
-					List<ICorpus> corpusList = corporaManagement.getAllCorpusDetails();
+					List<ICorpus> corpusList = corporaManagement
+							.getAllCorpusDetails();
 					// allCorpus.addAll(corpusList);
 					CorpusDialog.setElements(corpusList.toArray());
 					CorpusDialog.setMultipleSelection(true);
 
 					if (CorpusDialog.open() == Window.OK) {
 
-						updateLocationTree((Object[]) CorpusDialog.getSelectionObjects()
-								.toArray(new Object[CorpusDialog.getSelectionObjects().size()]));
+						updateLocationTree((Object[]) CorpusDialog
+								.getSelectionObjects().toArray(
+										new Object[CorpusDialog
+												.getSelectionObjects().size()]));
 					}
 				}
 			});
@@ -396,7 +441,8 @@ public class TargetLocationsGroup {
 					final TacitCorpusFilterDialog filterDialog = new TacitCorpusFilterDialog(
 							fFilterCorpusButton.getShell());
 
-					TreeParent sel = (TreeParent) ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+					TreeParent sel = (TreeParent) ((IStructuredSelection) fTreeViewer
+							.getSelection()).getFirstElement();
 					CorpusClass cls = sel.getCorpusClass();
 					IQueryProcessor qp = new QueryProcesser(cls);
 					Map<String, QueryDataType> keys = null;
@@ -427,7 +473,8 @@ public class TargetLocationsGroup {
 			fAddFileButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					FileDialog dlg = new FileDialog(fAddFileButton.getShell(), SWT.OPEN | SWT.MULTI);
+					FileDialog dlg = new FileDialog(fAddFileButton.getShell(),
+							SWT.OPEN | SWT.MULTI);
 					dlg.setText("Select File");
 					String message = "";
 					String path = null;
@@ -440,14 +487,18 @@ public class TargetLocationsGroup {
 							String[] listFile = dlg.getFileNames();
 							String[] fullFile = new String[listFile.length];
 							for (int i = 0; i < listFile.length; i++) {
-								fullFile[i] = dlg.getFilterPath() + File.separator + listFile[i];
+								fullFile[i] = dlg.getFilterPath()
+										+ File.separator + listFile[i];
 							}
 
 							message = updateLocationTree(fullFile);
 							if (!message.equals("")) {
-								ErrorDialog.openError(dlg.getParent(), "Select Different File",
+								ErrorDialog.openError(dlg.getParent(),
+										"Select Different File",
 										"Please select different File",
-										new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID, message));
+										new Status(IStatus.ERROR,
+												CommonUiActivator.PLUGIN_ID,
+												message));
 							} else {
 								canExit = true;
 							}
@@ -496,7 +547,8 @@ public class TargetLocationsGroup {
 																// size in
 					Long availalbeJVMSpace = Runtime.getRuntime().freeMemory();
 
-					if (fileHandler.exists() && fileHandler.length() > availalbeJVMSpace)
+					if (fileHandler.exists()
+							&& fileHandler.length() > availalbeJVMSpace)
 						return "No memory available to upload the file/folder";
 
 					if (((String) file).contains(".DS_Store"))
@@ -506,13 +558,18 @@ public class TargetLocationsGroup {
 						processCorpusFiles(node);
 					} else if (new File((String) file).isDirectory()) {
 						if (FileUtils.sizeOfDirectory(new File((String) file)) <= 0) {
-							return "The selected Folder " + file + " is empty . Hence, it is not added to the list";
+							return "The selected Folder "
+									+ file
+									+ " is empty . Hence, it is not added to the list";
 						}
 						processSubFiles(node);
 					} else {
-						if (!sizeCheck(new String[] { (String) file }).equals("")) {
-							ConsoleView.printlInConsoleln(
-									"File " + file + " is empty. Hence, it is not added to the list");
+						if (!sizeCheck(new String[] { (String) file }).equals(
+								"")) {
+							ConsoleView
+									.printlInConsoleln("File "
+											+ file
+											+ " is empty. Hence, it is not added to the list");
 							continue;
 						}
 					}
@@ -540,7 +597,9 @@ public class TargetLocationsGroup {
 
 	private boolean checkExisting(ICorpus file) {
 		for (TreeParent node : locationPaths) {
-			if (node.getCorpus() != null && node.getCorpus().getCorpusId().equals(file.getCorpusId())) {
+			if (node.getCorpus() != null
+					&& node.getCorpus().getCorpusId()
+							.equals(file.getCorpusId())) {
 				return true;
 			}
 		}
@@ -550,9 +609,13 @@ public class TargetLocationsGroup {
 	private boolean checkExisting(ICorpusClass file) {
 		for (TreeParent node : locationPaths) {
 			if (node.getCorpusClass() != null
-					&& node.getCorpusClass().getParent().getCorpusId()
-							.equals(((ICorpusClass) file).getParent().getCorpusId())
-					&& node.getName().equals(((ICorpusClass) file).getClassName())) {
+					&& node.getCorpusClass()
+							.getParent()
+							.getCorpusId()
+							.equals(((ICorpusClass) file).getParent()
+									.getCorpusId())
+					&& node.getName().equals(
+							((ICorpusClass) file).getClassName())) {
 				return true;
 			}
 		}
@@ -599,17 +662,19 @@ public class TargetLocationsGroup {
 			return;
 
 		for (File input : files) {
-			if (input.getAbsolutePath().contains(".DS_Store") || input.getAbsolutePath().contains("$RECYCLE.BIN"))
+			if (input.getAbsolutePath().contains(".DS_Store")
+					|| input.getAbsolutePath().contains("$RECYCLE.BIN"))
 				continue;
 			if (input.isFile() && FileUtils.sizeOf(input) > 0) {
 				node.addChildren(input.getAbsolutePath());
-			} else if (input.isDirectory() && null != input.listFiles() && input.listFiles().length > 0) {
+			} else if (input.isDirectory() && null != input.listFiles()
+					&& input.listFiles().length > 0) {
 				TreeParent subFolder = new TreeParent(input.getAbsolutePath());
 				processSubFiles(subFolder);
 				node.addChildren(subFolder);
 			} else {
-				ConsoleView.printlInConsoleln(
-						"File " + input.getAbsolutePath() + " is empty. Hence, it is not added to the list");
+				ConsoleView.printlInConsoleln("File " + input.getAbsolutePath()
+						+ " is empty. Hence, it is not added to the list");
 				continue;
 			}
 		}
@@ -618,8 +683,9 @@ public class TargetLocationsGroup {
 
 	private void handleRemove() {
 		TreeItem[] items = fTreeViewer.getTree().getSelection();
-		boolean result = MessageDialog.openConfirm(fRemoveButton.getShell(), "Remove",
-				"Remove will remove the object from Tree. Do you still want to Continue?");
+		boolean result = MessageDialog
+				.openConfirm(fRemoveButton.getShell(), "Remove",
+						"Remove will remove the object from Tree. Do you still want to Continue?");
 		if (!result) {
 			return;
 		}
@@ -631,7 +697,8 @@ public class TargetLocationsGroup {
 	}
 
 	private void updateButtons() {
-		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) this.fTreeViewer
+				.getSelection();
 		Boolean removeEnabled = true;
 		Boolean filterEnabled = false;
 		if (this.locationPaths == null || this.locationPaths.size() < 1) {
@@ -640,10 +707,13 @@ public class TargetLocationsGroup {
 		if (!this.locationPaths.contains(sel.getFirstElement())) {
 			removeEnabled = false;
 		}
-		if (sel.size() == 1 && (sel.getFirstElement() instanceof TreeParent
-				&& ((TreeParent) sel.getFirstElement()).getCorpusClass() != null)) {
-			CMDataType corpusDataType = ((TreeParent) sel.getFirstElement()).getCorpusClass().getParent().getDatatype();
-			if (corpusDataType == CMDataType.JSON || corpusDataType == CMDataType.TWITTER_JSON
+		if (sel.size() == 1
+				&& (sel.getFirstElement() instanceof TreeParent && ((TreeParent) sel
+						.getFirstElement()).getCorpusClass() != null)) {
+			CMDataType corpusDataType = ((TreeParent) sel.getFirstElement())
+					.getCorpusClass().getParent().getDatatype();
+			if (corpusDataType == CMDataType.JSON
+					|| corpusDataType == CMDataType.TWITTER_JSON
 					|| corpusDataType == CMDataType.REDDIT_JSON) {
 				filterEnabled = true;
 			}
@@ -656,8 +726,10 @@ public class TargetLocationsGroup {
 
 	public static int getButtonWidthHint(Button button) {
 		PixelConverter converter = new PixelConverter(button);
-		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		int widthHint = converter
+				.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		return Math.max(widthHint,
+				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
 }
