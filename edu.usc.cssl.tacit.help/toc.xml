@@ -2,41 +2,61 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="Help Files">
-	<topic label="Crawlers"  href="html/maintopic.html"> 
+   <topic href="html/TACITOverview.html" label="Overview">
+   </topic>
+   <topic href="html/corpusmanage/corpusmanage.html" label="Corpus Management">
+   </topic>
+ <topic href="html/corpusmanage/preprocess.html" label="Preprocessing">
+ </topic>
+	<topic label="Crawlers"  href="html/maintopic.html">
+    <topic href="html/Crawlers/crawler.html" label="Crawler Overview">
+    </topic> 
 		<topic label="Latin Crawler" href="html/Crawlers/latincrawler.html"/>
-  <topic href="html/Crawlers/senatecrawler.html" label="Senate Crawler">
-  </topic>
   <topic href="html/Crawlers/supremecourtcrawler.html" label="Supreme Court Crawler">
+  </topic>
+  <topic href="html/Crawlers/senatecrawler.html" label="U.S. Congress Crawler">
+  </topic>
+  <topic href="html/Crawlers/redditcrawl.html" label="Reddit Crawler">
+  </topic>
+  <topic href="html/Crawlers/twittercrawl.html" label="Twitter Crawler">
   </topic> 
 	</topic>
  <topic label="Word Count">
-    <topic href="html/wordcount/liwcstylewc.html" label="LIWC-style Word Count">
+    <topic href="html/wordcount/wcoverview.html" label="Word Count Overview">
     </topic>
-    <topic href="html/wordcount/weightedwc.html" label="Weighted Word Count">
+    <topic href="html/wordcount/liwc_wwc.html" label="LIWC-style Word Count">
     </topic>
     <topic href="html/wordcount/cooccurence.html" label="Co-Occurrence Analysis">
     </topic>
-    <topic href="html/wordcount/wordcount.html" label="Word Count">
+    <topic href="html/wordcount/wordcount.html" label="TACIT Word Count">
+    </topic>
+    <topic href="html/wordcount/dictionary.html" label="Dictionary Creation">
+    </topic>
+    <topic href="html/wordcount/liwcstylewc.html" label="LIWC/TACIT LIWC-Style Word Count Differences">
     </topic>
  </topic>
  <topic href="html/Classify/classify.html" label="Classifiers">
+    <topic href="html/Classify/classify.html" label="Classifier Overview">
+    </topic>
     <topic href="html/Classify/naivebayes.html" label="Naive Bayes Classification">
     </topic>
     <topic href="html/Classify/svm.html" label="SVM (Support Vector Machine)">
     </topic>
  </topic>
  <topic label="Topic Modelling">
+    <topic href="html/topicmodel/topicmodel.html" label="Topic Modelling Overview">
+    </topic>
     <topic href="html/topicmodel/lda.html" label="LDA">
     </topic>
     <topic href="html/topicmodel/zlabellda.html" label="Z-Label LDA">
     </topic>
  </topic>
  <topic label="Clustering">
+    <topic href="html/clustering/cluster.html" label="Clustering Overview">
+    </topic>
     <topic href="html/clustering/hierarchicalcluster.html" label="Hierarchical Clustering">
     </topic>
     <topic href="html/clustering/kmeanscluster.html" label="K-Means Clustering">
     </topic>
- </topic>
- <topic href="html/preprocess.html" label="Preprocessing">
  </topic>
 </toc>
