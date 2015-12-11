@@ -100,7 +100,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		inputLayoutData = TacitFormComposite.createTableSection(client,
 				toolkit, layout, "Input Details",
 				"Add File(s) and Folder(s) to include in analysis.", true,
-				true, true, false);
+				true, true, true);
 
 		Composite compInput;
 		compInput = toolkit.createComposite(form.getBody());
