@@ -260,7 +260,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 		ITreeSelection classSelection = (ITreeSelection)selection;
 					 		ICorpusClass selectedClass = (ICorpusClass) selection.getFirstElement();
 			     			Corpus parentCorpus = (Corpus)classSelection.getPaths()[0].getParentPath().getLastSegment();
-			            	parentCorpus.removeClass(selectedClass);					
+			            	parentCorpus.removeClass(selectedClass);	
 			            	ManageCorpora.removeCorpus(parentCorpus, false);
 					 	}
 					 	corpusViewer.refresh();

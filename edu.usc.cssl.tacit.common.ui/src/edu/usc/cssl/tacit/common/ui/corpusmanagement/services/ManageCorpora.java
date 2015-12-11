@@ -292,7 +292,10 @@ public class ManageCorpora {
 
 		File[] classes = new File(corpusLocation).listFiles();
 		HashMap<String, Boolean> oldClasses = new HashMap<String, Boolean>();
-
+        if(classes == null) {  // corpus is not created yet
+        	// so dont do anything, just return
+        	return;
+        }
 		for (File f : classes) {
 			if (f.isDirectory()) {
 				oldClasses.put(f.getAbsolutePath(), false);
