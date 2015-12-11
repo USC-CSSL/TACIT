@@ -1,10 +1,14 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -13,6 +17,8 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
+import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
 
 public class CorpusManagementView extends ViewPart {
 
@@ -52,12 +58,34 @@ public class CorpusManagementView extends ViewPart {
 		blocksc.setExpandHorizontal(true);
 		blocksc.setExpandVertical(true);
 		IManagedForm managedForm = new ManagedForm(toolkit, blocksc);
+		IToolBarManager mgr = form.getToolBarManager();
 		try {
 			block = new MasterDetailsPage(form, getViewSite());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		block.createContent(managedForm, corpusClient);
+		Action helpAction = new Action() {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return (IconRegistry.getImageIconFactory().getImageDescriptor(INlpCommonUiConstants.IMAGE_HELP_CO));
+			}
+
+			@Override
+			public String getToolTipText() {
+				return "Help";
+			}
+
+			@Override
+			public void run() {
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.common.ui.corpusmanagement");
+			};
+		};
+		mgr.add(helpAction);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.common.ui.corpusmanagement");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.common.ui.corpusmanagement");
+		form.getToolBarManager().update(true);
+		toolkit.paintBordersFor(form.getBody());
 	}
 
 
