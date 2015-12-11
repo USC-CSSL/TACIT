@@ -35,13 +35,19 @@
 						<td class = "subtitle">Specifying Input Files for Classification</td>
 					</tr>
 					<tr>
-						<td> All input data files must be saved as a classes in a corpus using <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or as .txt format files to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						<td> All input data files must be saved as a classes in a corpus using <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a> or as .txt format files separated into different folders for each group to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
 						 	<br><br>
 						 	The tool has two panels for class inputs (<b>Class 1</b> and <b>Class 2</b>. For each class, users must enter a label for the group (e.g., Democrat) and specify the files which reflect that group. 
-							The <b>Add Folder</b> and <b>Add File(s)</b> buttons permit users to assign corpora, folders, or files to each class. 
+							The <b>Add Folder</b>, <b>Add Corpus</b>, <b>Add Corpus Class</b> and <b>Add File(s)</b> buttons permit users to assign corpora, folders, or files to each class. 
 							<br>
-							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
-							<br>
+							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included classes and files for analysis. To expand the corpus and view the classes included, click on the arrow to the left of the corpus name in the input panel.  
+							<br><b>Add Corpus Class:</b> The Add Corpus Class button will allow you to add a single class from a corpus instead of the full corpus.
+							<br><br> <b>Filter Corpus: </b> For corpora with pre-determined attributes that have not been pre-sorted into classes, you can also analyze a subset of a corpus by clicking on the <b> Filter Corpus</b> button.  
+							<b>Filter Corpus</b> allows you to restrict the analysis to only those texts in your corpus that meet certain specifications.  For example if you have a JSON corpus with an attribute specifying author age, you
+							you can indicate that you only want authors that are older than 60 by clicking on the <b>Filter Corpus</b> button, selecting 
+							the age attribute, selecting the <b>">"</b> function and entering 60 in the text box.  In the same way, if you want to filter for posts by specific authors,
+							the filter function can be used with the <b>"="</b> sign and you can enter a string variable (such as author name) into the text box. 
+							<br><br>
 							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
 							<br>
 							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.

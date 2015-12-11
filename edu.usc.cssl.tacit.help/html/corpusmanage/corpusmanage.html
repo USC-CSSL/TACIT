@@ -7,7 +7,7 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">Corpus Management</td>
+			<center><td class = "header">TACIT Corpus Management</td></center>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -16,10 +16,11 @@
 					</tr>
 					<tr>
 						<td>A text or document refers to the unit of analysis for text analysis, and a corpus is a collection of these documents. A document can refer to any length of text from a single tweet to an entire book. 
-						<br><br> TACIT's Corpus Management tool aims to provide a simple user interface to provide an easy and efficient way to manage different types of corpora (or sets of documents/text). The <b>Corpus Management</b> tool can be accessed under <b>View</b> in the main toolbar.  
-						Corpus Management allows users' corpora (documents/sets of text) to be compiled in TACIT at the beginning of a project so that the process of loading and managing the data need not to be repeated multiple times. 
-						The corpus management tool can import user data in multiple formats such as JSON, Microsoft Word and CSV files. After creating a corpus in TACIT, the program will automatically record and provide a summary log of how and when the data was collected as well as all analyses performed on that corpus (e.g. type of analysis, date and time of analysis). 
-						When such corpora are used for any analysis, users have the ability to filter their data on the basis of various parameters including tweet/comment data, keywords and associated hashtags (called metadata). 
+							<br><br> TACIT's Corpus Management tool aims to provide a simple user interface to provide an easy and efficient way to manage different types of corpora (or sets of documents/text). The <b>Corpus Management</b> tool can be accessed under <b>View</b> in the main toolbar.  
+							Corpus Management allows users' corpora (documents/sets of text) to be compiled in TACIT at the beginning of a project so that the process of loading and managing the data need not to be repeated multiple times. 
+							The corpus management tool can import user data in multiple formats such as JSON, Microsoft Word and CSV files. After creating a corpus in TACIT, the program will automatically record and provide a summary log of how and when the data was collected as well as all analyses performed on that corpus (e.g. type of analysis, date and time of analysis). 
+							When such corpora are used for any analysis, users have the ability to filter their data on the basis of various parameters including tweet/comment data, keywords and associated hashtags (called metadata). 
+							<br><br>
 						</td>
 					</tr>
 				</table>
@@ -35,64 +36,56 @@
 					<tr>
 						<td> To create a new corpus, click <b>Add Corpus</b> under the <b>Corpora</b> panel. This will open a new <b>Corpus Details</b> section to the right of the list of corpora. 
 							Enter the name for this corpus in the <b>Corpus ID</b> text box, and specify the file format of the text/documents that will be in this corpus. TACIT currently supports Plain text, Twitter JSON, and Reddit JSON file formats. 
-							You can change both the name of the corpus and the file format settings at any time by selecting the newly created corpus under <b>Corpora</b>.
-							If you no longer need a corpus/class, you can remove it by selecting it under <b>Corpora</b> and clicking the <b>Remove</b> button. Removing a corpus will remove all classes underneath it.
-							<br><br> If you are creating a corpus of a JSON file or another file with multiple attributes, you will need to specify which attribute/section contains the text to be analyzed.  
+							You can change both the name of the corpus and the file format settings at any time by selecting the newly created corpus under <b>Corpora</b>. 
+							 <br><br>If you no longer need a corpus/class, you can remove it by selecting it under <b>Corpora</b> and clicking the <b>Remove</b> button. Removing a corpus will remove all classes underneath it.
+							<br><br> 
 						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Adding Classes to a Corpus</td>
 					</tr>
 					<tr>
-						<td> After creating a corpus, it needs to be populated with documents. To add documents to a new corpus, select the corpus under
-						<b> Corpora </b> and click the <b> Add Class </b> button. This will open a <b> Class Details </b> section that contains two fields:
-						<b> Class Name </b> and <b> Class Path </b>. To create the new class, specify a Class Name and use the <b>Browse</b> button to select the
-						directory that contains the documents to be imported to the new class. After specifying the Class Name and Class Path, select the corpus 
-						under <b> Corpora </b> and click the <b> Save Corpus </b> button in the <b> Corpus Details </b> section. This will save the new class
-						and the documents contained in the Class Path to the corpus for later use. To populate a corpus with multiple classes, repeat these steps
-						for each desired class. 
-						<br>
-						<br>
-						 <b>Note:</b> TACIT can implement a range of text analysis tools. Some of these tools require at least 2 classes of documents 
-						 (e.g. the Support Vector Machines tool and the naive Bayes tool) and some of these tools can be implemented with documents that
-						 have not been assigned to any classes at all (e.g. Hierarchical and KMeans Clustering). The Corpus Management tool can be used for both of these cases. 
-						 To create a corpus for documents that have no class labels, all documents can simply be entered into a single class. 
+						<td> After creating a corpus, you need to specify the documents/files you would like to include. To add documents to a new corpus,
+							click on <b> Class 1 </b> under the newly created corpus. This will open a <b> Class Details </b> section that contains three fields:
+							<b> Class Name </b>, <b> Class Path </b>, and <b>analysis fields</b>. To create the new group of documents, specify a Class Name and use the <b>Browse</b> button to select the
+							directory that contains the documents to be imported. If you are creating a corpus for a JSON file or another file with multiple attributes, you will then need to specify which attribute/section contains the text to be analyzed in the <b>Analysis Fields</b> text box.
+							If your corpus is made up of documents that only contain the text to be analyzed without additional specifications, leave this field blank.
+							<br><br>If you have multiple subsets to your data (e.g., one set of files for democrats and one for republicans) and would like to be able to analyze these sets of data separately, select the corpus 
+							under <b> Corpora </b> and click the <b> Add Class </b> to create a second data subset.  To populate a corpus with multiple classes, repeat these steps
+							for each desired class. 
+							<br>
+							<br>
+						 	<b>Note:</b> TACIT can implement a range of text analysis tools. Some of these tools require at least 2 classes of documents 
+						 	(e.g. the Support Vector Machines tool and the naive Bayes tool) and some of these tools can be implemented with documents that
+						 	have not been assigned to any classes at all (e.g. Hierarchical and KMeans Clustering). The Corpus Management tool can be used for both of these cases. 
+						 	To create a corpus for documents that have no class labels, all documents can simply be entered into a single class. 
 						</td>
 					</tr>	
-					
-					</tr>
 					<tr>
 						<td class = "subtitle">Using Corpora with TACIT's Tools </td>
 					</tr>
 					<tr>
 						<td> To analyze documents contained in a TACIT corpus use the <b> Add Corpus </b> button to 
-						specify the corpus for analysis. A corpus is structured like a single directory with classes contained
-						in the directory. After specifying a corpus with the <b> Add Corpus</b> button, the corpus directory can be
-						expanded using the grey arrow next to the corpus name (See <i>Image 1</i>) and specific classes within the 
-						corpus can be excluded or included in the analysis. 
-						<br><br> You can also analyze a subset of a corpus by using the filter function for corpora with pre-determined attributes.  
-						For any corpus with pre-determined attributes you can click on <b>Filter Corpus</b> to restrict the analysis to only those 
-						texts that meet your specifications.  For example if you have a JSON corpus with an attribute specifying author age, you
-						you can indicate that you only want authors that are older than 60 by clicking on the <b>Filter Corpus</b> button, selecting 
-						the <b>></b>function and entering 60 in the text box.  In the same way, if you want to filter for posts by specific authors,
-						the filter function can be used with the <b>=</b> sign and you can enter a string variable (such as author name) into the text box.
+							specify the corpus for analysis. A corpus is structured like a single directory with classes contained
+							in the directory. After specifying a corpus with the <b> Add Corpus</b> button, the corpus directory can be
+							expanded using the plus sign next to the corpus name and specific classes within the 
+							corpus can be excluded or included in the analysis. To add a single class from a corpus instead of the full corpus, click on <b>Add Corpus Class </b>. 
+							<br><br> For corpora with pre-determined attributes that have not been pre-sorted into classes, you can also analyze a subset of a corpus by clicking on the <b> Filter Corpus</b> button.  
+							<b>Filter Corpus</b> allows you to restrict the analysis to only those 
+							texts in your corpus that meet certain specifications.  For example if you have a JSON corpus with an attribute specifying author age, you
+							you can indicate that you only want authors that are older than 60 by clicking on the <b>Filter Corpus</b> button, selecting 
+							the <b>></b>function and entering 60 in the text box.  In the same way, if you want to filter for posts by specific authors,
+							the filter function can be used with the <b>=</b> sign and you can enter a string variable (such as author name) into the text box.
 						
-						<br><br>	
- 							<i>Image 1.</i> Corpus and Class Specification<br>
-							<img class="image" src="../Images/CorpusManagement.png" 
-							alt="Run Button"  height="114" width="800" align="left">
-						<br> <br><br><br><br><br><br><br>
-						
-						To implement a classification tool such as naive Bayes or SVM on a corpus, the same corpus can be used for each 
-						of <i>N</i> classification classes as long as the corpus has <i>N</i> classes within it. To use the same corpus 
-						for multiple classification classes select the corpus for each classification class and then select/exclude the 
-						corpus classes within each classification class according to the analysis goals (see <i>Image 1</i>). 
-						<br><br>
-						To implement tools that do not require classes (such as cluster analysis) simply specify the desired corpus/corpora
-						and and select the desired classes within the corpus/corpora. 
-							
+							<br><br>To implement a classification tool such as naive Bayes or SVM on a corpus, the same corpus can be used for each 
+							of your classification classes as long as the corpus has that number of classes within it. To use the same corpus 
+							for multiple classification classes, select the <b>Add Corpus Class</b> button. Alternatively, you can select the full corpus using <b> Add Corpus </b> and then select/exclude the 
+							corpus classes within each classification class according to the analysis goals. 
+							<br><br>
+							To implement tools that do not require classes (such as cluster analysis) simply specify the desired corpus/corpora
+							and select the desired classes within the corpus/corpora. 
 						</td>
-					</tr>	
+					</tr>									
 				</table>
 			</tr>	
 		</table>

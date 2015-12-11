@@ -7,7 +7,7 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">TACIT Word Count Tool</td>
+			<center><td class = "header">TACIT Word Count Tool</td></center>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -51,13 +51,19 @@
 						<td class = "subtitle">Specifying Input Text for Analysis</td>
 					</tr>
 					<tr>
-						<td> All input data files must be in .txt file format to be compatible with TACIT. See the <b>Corpus Management Help Section</b> if you need to convert files to compatible formats.
+						<td> All input data files must be in .txt file format or compiled as a part of a TACIT corpus to be compatible with TACIT. See the <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management Help Section</a></b> if you need to convert files to compatible formats or create a corpus.
 						 	<br><br>
-						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files and folders added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder or file, uncheck the box next to its name. 
+						 	To specify which files you would like to analyze, select <b>Add Corpus</b>,<b>Add Corpus Class</b>, <b>Add Folder</b>, or <b>Add File(s)</b> under the Input panel. All files, folders, and corpora added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the corpus/file/folder name. The number of files selected for analysis is indicated at the bottom of the input panel. To de-select an unwanted folder, file, or corpus class uncheck the box next to its name. 
 						 	To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.  Note: Files within folders/corpora cannot be removed from the tool without removing the entire folder or corpus, but de-selecting files using the check boxes will remove them from analysis.
 							<br><br> 
-							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included sub-groups and fies for analysis. To expand the corpus and view the subgroups/files included, click on the arrow to the left of the corpus name in the input panel.   
-							<br>
+							<b> Add Corpus: </b> The Add Corpus button will allow you to add a stored corpus from <a href = "../corpusmanage/corpusmanage.html" target="_blank">Corpus Management</a></b> and all included classes and files for analysis. To expand the corpus and view the classes included, click on the arrow to the left of the corpus name in the input panel.  
+							<br><b>Add Corpus Class:</b> The Add Corpus Class button will allow you to add a single class from a corpus instead of the full corpus.
+							<br><br> <b>Filter Corpus: </b> For corpora with pre-determined attributes that have not been pre-sorted into classes, you can also analyze a subset of a corpus by clicking on the <b> Filter Corpus</b> button.  
+							<b>Filter Corpus</b> allows you to restrict the analysis to only those texts in your corpus that meet certain specifications.  For example if you have a JSON corpus with an attribute specifying author age, you
+							you can indicate that you only want authors that are older than 60 by clicking on the <b>Filter Corpus</b> button, selecting 
+							the age attribute, selecting the <b>">"</b> function and entering 60 in the text box.  In the same way, if you want to filter for posts by specific authors,
+							the filter function can be used with the <b>"="</b> sign and you can enter a string variable (such as author name) into the text box. 
+							<br><br>
 							<b> Add Folder: </b> The Add Folder button will allow you to add a folder and all included subfolders and files for analysis. To expand the folder and view the subfolders/files included, click on the arrow to the left of the folder name in the input panel.   
 							<br>
 							<b> Add File(s): </b>  The Add Files button will allow you to add .txt files to be included for analysis. Multiple files within the same folder can be selected at the same time using standard multi-select functions.
@@ -80,8 +86,7 @@
 					</tr>
 					<tr>
 						<td> All dictionary files must be in .txt format to be compatible with TACIT. Standard word count requires that the dictionary specify the words for each topic. Weighted word count requires that you also provide the weights assigned to each word of interest.  For dictionary specifications, see the <a href = "./dictionary.html" target="_blank">Dictionary Help Page</a>.  
-						
-						<br><br>To add a dictionary to be used for word count analysis, click the <b>Add Files</b> button on the right side of the Dictionary panel. All files added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the dictionary file name. The number of files selected for analysis is indicated at the bottom of the dictionary panel. To de-select an unwanted file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.
+							<br><br>To add a dictionary to be used for word count analysis, click the <b>Add Files</b> button on the right side of the Dictionary panel. All files added to the input panel are automatically selected to be included in analysis by the check mark box to the left of the dictionary file name. The number of files selected for analysis is indicated at the bottom of the dictionary panel. To de-select an unwanted file, uncheck the box next to its name. To remove a file completely from the program list, click on the file name to highlight it, and then click the "Remove" button.
 							<br>
 						</td>
 					</tr>	
@@ -90,14 +95,15 @@
 					</tr>
 					<tr>
 						<td> TACIT allows users to analyze text using multiple dictionaries simultaneously. However, category number assignment must be consistent across all included dictionaries. Specifically, if category 2 is pronoun in Dictionary_1, the program will assume that category 2 is also pronoun for Dictionary_2. However, both dictionaries do not require that all categories be present. You may introduce additional set of categories in the second dictionary file, as long as the category numbers used are unique from those found in the first dictionary file.
-					</td>
+						</td>
 					</tr>
 					<tr>
 						<td class = "section">Additional Dictionary Options</td>
 					</tr>
 					<tr>
 						<td> Selecting the <b>Stem Dictionary</b> checkbox will allow you to apply either <a href = "http://tartarus.org/martin/PorterStemmer/" target="_blank">Porter Stemming</a> or LIWC-Style Stemming to the words in the dictionary before conducting the word count analysis. Porter stemming reduces words to their root form (e.g., “running”, “runs” and “ran” would all reduce to “run”) so that they are counted as the same word during analysis. Porter Stemming places an * at the end of each word so that variations of that word are also included in the word count (e.g., "run" becomes "run*" so that "runs" and "running" would also be counted). 
-						<br><br>						</td>
+							<br><br>						
+						</td>
 					</tr>
 					<tr>
 						<td class = "subtitle">Specifying Output Path</td>
@@ -111,7 +117,6 @@
 					</tr>
 					<tr>
 						<td>The data output will be in .csv file format. The file name includes the type of technique used for analysis and the time stamp for when the analysis was completed. 
-
 						</td>
 					</tr>									
 				</table>
