@@ -18,6 +18,8 @@ import java.util.List;
 import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.Tika;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.pdf.PDFParser;
@@ -122,14 +124,18 @@ public class Preprocessor {
 		return outputFiles;
 	}
 
-	private String checkfiletype(String inputFilePath) {
+	private String checkfiletype(String inputFilePath) throws TikaException {
 		File inputFile = new File(inputFilePath);
 		Tika tika = new Tika();
 		String mediaType = null;
 		String fileName = inputFile.getName();
 		String filePath = tempPPFileLoc + System.getProperty("file.separator") + fileName.replace('.', '_') + ".txt";
 		try {
-			mediaType = tika.detect(inputFile);
+			TikaConfig config = new TikaConfig();
+			Metadata metadata = new Metadata();
+			metadata.set(Metadata.RESOURCE_NAME_KEY, inputFile.getAbsolutePath());
+			mediaType = config.getDetector().detect(null, metadata).toString();
+			//mediaType = tika.detect(inputFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -177,8 +183,9 @@ public class Preprocessor {
 	 * appropriate action
 	 * 
 	 * @param dirpath
+	 * @throws TikaException 
 	 */
-	private void processDirectory(String dirpath) {
+	private void processDirectory(String dirpath) throws TikaException {
 		File[] files = new File(dirpath).listFiles();
 
 		if (doPreprocessing) {
@@ -219,8 +226,9 @@ public class Preprocessor {
 	 *            If this is empty, the temp file will have the same name as the
 	 *            inFile
 	 * @return
+	 * @throws TikaException 
 	 */
-	private String processFile(String inFileBefore, String outName) {
+	private String processFile(String inFileBefore, String outName) throws TikaException {
 
 		String inFile = checkfiletype(inFileBefore);
 		String outFile;
@@ -425,8 +433,9 @@ public class Preprocessor {
 	 * support for Generic JSON files.
 	 * 
 	 * @param corpusClass
+	 * @throws TikaException 
 	 */
-	private void processTwitter(CorpusClass corpusClass) {
+	private void processTwitter(CorpusClass corpusClass) throws TikaException {
 		/*** read from file ***/
 		JSONParser jParser;
 		String corpusClassPath = corpusClass.getTacitLocation();
