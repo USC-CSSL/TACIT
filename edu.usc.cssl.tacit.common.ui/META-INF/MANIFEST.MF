@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help.webapp,
  org.eclipse.ui.forms,
  org.jsoup;bundle-version="1.7.2",
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.ui.views.log;bundle-version="1.0.500"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.common.queryprocess,

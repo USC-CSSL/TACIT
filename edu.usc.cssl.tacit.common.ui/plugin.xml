@@ -86,6 +86,25 @@
              restorable="true">
        </view>
     </extension>
+    <!-- Error log View -->
+     <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:view">
+        
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="Error View"
+                  style="push">
+               <parameter
+                     name="org.eclipse.ui.views.showView.viewId"
+                     value="org.eclipse.pde.runtime.LogView">
+               </parameter>
+            </command>
+        
+      </menuContribution>
+   </extension>
+   <!-- error log view ends -->
     
     <!-- preference page -->
     <extension
