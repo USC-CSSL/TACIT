@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -44,30 +45,10 @@ public class NaiveBayesClassifierWeka {
 		filter = new StringToWordVector();
 		filter.setInputFormat(dataRaw);
 		dataFiltered = Filter.useFilter(dataRaw, filter);
-		 nbc = createClassifier(dataFiltered);
+		nbc = createClassifier(dataFiltered);
 	}
-//	public static void main(String[] args) throws Exception {
-//		String[] classes = {
-//				"F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Train\\Ham",
-//				"F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Train\\Spam" };
-//	//	DirectoryToArff.createTrainInstances(classes);
-//
-//		Instances dataRaw =null;// DirectoryToArff.loadArff();
-//		StringToWordVector filter = new StringToWordVector();
-//		filter.setInputFormat(dataRaw);
-//		Instances dataFiltered = Filter.useFilter(dataRaw, filter);
-//
-//		final Classifier nbc = createClassifier(dataFiltered);
-//		crossValidate(nbc, dataFiltered, 2);
-//
-////		classify(
-////				nbc,
-////				"F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Classify\\Input",
-////				dataFiltered, filter);
-//	}
 
 	public boolean doCrossValidate(int k, IProgressMonitor monitor, Date dateObj)throws Exception  {
-		
 		crossValidate(nbc, dataFiltered, k);		
 		return true;
 	}
@@ -76,22 +57,21 @@ public class NaiveBayesClassifierWeka {
 			IProgressMonitor monitor,Date dateObj) throws Exception {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		ConsoleView.printlInConsoleln("Classification starts ..");
-		String outputPath = classificationOutputDir
-				+ System.getProperty("file.separator") +"Naive_Bayes_classification_results"
-				+ "-" + df.format(dateObj);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-				outputPath + "-output.csv")));
 		Instances rawTestData = new DirectoryToArff().createTestInstances(classificationInputDir);
 		Instances filteredTestData = Filter.useFilter(rawTestData, filter);
 		Evaluation testEval = new Evaluation(dataFiltered);
 		testEval.evaluateModel(nbc, filteredTestData);
 		FastVector predictions = testEval.predictions();
+		
+		String outputPath = classificationOutputDir + System.getProperty("file.separator") +"Naive_Bayes_classification_results" + "-" + df.format(dateObj);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "-output.csv")));
+		bw.write("Filename,Predicted Class\n");
 		for (int i = 0; i < predictions.size(); i++) {
 			NominalPrediction np = (NominalPrediction) predictions.elementAt(i);
 			int pred = (int) np.predicted();
-			bw.write(DirectoryToArff.instanceIdNameMap.get(i) + "\t"
-					+ dataFiltered.classAttribute().value(pred) +"\n");
+			bw.write(DirectoryToArff.instanceIdNameMap.get(i) + "," + getClassName(dataFiltered.classAttribute().value(pred)) +"\n");
 		}
+		bw.close();
 		return true;
 	}
 
@@ -102,18 +82,63 @@ public class NaiveBayesClassifierWeka {
 		return classifier;
 	}
 
-	private static void crossValidate(Classifier nbc, Instances dataFiltered,
-			int k) throws Exception {
+	private static void crossValidate(Classifier nbc, Instances dataFiltered, int k) throws Exception {
+		ConsoleView.printlInConsoleln("Cross Validating...");
 		Evaluation eval = new Evaluation(dataFiltered);
 		eval.crossValidateModel(nbc, dataFiltered, k, new Random(1));
-		ConsoleView.printlInConsoleln(eval.toSummaryString("\nResults\n======\n", false));
-		double[][] confusion = eval.confusionMatrix();
+		ConsoleView.printlInConsoleln(eval.toSummaryString("\nK-fold Cross Validation Results\n", false));
+		
+		//printConfusionMatrix(eval.confusionMatrix()); //Not required
+		
+		String[] attributes = {"TP Rate", "FP Rate", "Precision", "Recall", "F-Measure", "ROC Area"};
+		HashMap<String, HashMap<String, String>> detailedResults = new HashMap<String, HashMap<String, String>>();
+		String[] temp = eval.toClassDetailsString().toString().split("\\n");
+		for(int i = 3; i<temp.length-1; i++) {
+			String[] tmp = temp[i].split("\\s+");
+			String cName = getClassName(tmp[tmp.length-1]);
+			HashMap<String, String> classDetails = new HashMap<String, String>();
+			int index = 0;
+			for(String val : tmp) {
+				val = val.replaceAll("\\s", "");
+				if(val.length() != 0) {
+					classDetails.put(attributes[index], val);
+					index++;
+				}
+				if(index == attributes.length) break;
+			}
+			detailedResults.put(cName, classDetails);
+		}
+		
+		StringBuilder header = new StringBuilder();
+		header.append("Class" + "\t");
+		for(String attr : attributes) 
+			header.append(attr + "\t");
+		ConsoleView.printlInConsoleln(new String(header));
+		
+		for(String cName : detailedResults.keySet()) {
+			StringBuilder cDetails = new StringBuilder();
+			cDetails.append(cName + "\t");
+			for(String attr : attributes) {
+				cDetails.append(detailedResults.get(cName).get(attr) + "\t");
+			}
+			ConsoleView.printlInConsoleln(new String(cDetails));
+		}
+		ConsoleView.printlInConsoleln();
+		ConsoleView.printlInConsoleln("\nAccuracy: " + calculateAccuracy(eval.predictions()));
+	}
+
+	private static void printConfusionMatrix(double[][] confusionMatrix) {		
+		double[][] confusion = confusionMatrix;
 		for (int i = 0; i < confusion.length; i++) {
 			for (int j = 0; j < confusion[0].length; j++)
 				ConsoleView.printlInConsole(confusion[i][j] + "\t");
 			ConsoleView.printlInConsoleln();
-		}
-		ConsoleView.printlInConsoleln("Accuracy:" + calculateAccuracy(eval.predictions()));
+		}		
+	}
+
+	private static String getClassName(String path) {
+		String[] temp = path.split("\\\\");
+		return temp[temp.length-1];
 	}
 
 	public static double calculateAccuracy(FastVector predictions) {

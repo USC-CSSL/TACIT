@@ -35,9 +35,6 @@ public class NaiveBayesClassifier {
 			new File(tempoutputDir).mkdir();
 		}
 		this.currTime = System.currentTimeMillis();
-		// this.tmpLocation =
-		// "F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\preprocess\\NB_Classifier";
-
 		String outputDir = this.outputDir;
 		if (!new File(outputDir).exists()) {
 			new File(outputDir).mkdirs();

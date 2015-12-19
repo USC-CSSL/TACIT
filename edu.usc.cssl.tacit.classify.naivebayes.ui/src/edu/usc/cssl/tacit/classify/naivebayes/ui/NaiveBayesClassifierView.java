@@ -528,6 +528,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 						int kValue = Integer.parseInt(tempkValue);
 						monitor.worked(1); // done with the validation
 						if (isPreprocessEnabled) {
+							ConsoleView.printlInConsole("Preprocessing input data...");
 							monitor.subTask("Preprocessing...");
 							try {
 								preprocessTask = new Preprocess("NB_Classifier");
@@ -699,6 +700,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					job.schedule(); // schedule the job
 					job.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite
@@ -793,6 +795,12 @@ public class NaiveBayesClassifierView extends ViewPart implements
 					"Provide valid K-Value for cross validation", null,
 					IMessageProvider.ERROR);
 			return false;
+			
+		} else if(Integer.parseInt(kValueText.getText())<2) {
+			form.getMessageManager().addMessage("kvalue",
+					"K-Value must be atleast 2", null,
+					IMessageProvider.ERROR);
+			return false;			
 		} else {
 			form.getMessageManager().removeMessage("kvalue");
 		}
