@@ -363,7 +363,6 @@ public class Preprocessor {
 			break;
 		case JSON:
 			processGenericJSON(corpus);
-
 		default:
 			break;
 		}

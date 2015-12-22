@@ -59,7 +59,7 @@ public class ManageCorpora {
 			jsonObj.put("corpus_id", corpus.getCorpusId());
 			jsonObj.put("data_type", corpus.getDatatype().toString());
 			jsonObj.put("num_classes", corpus.getClasses().size());
-
+		
 			int numClasses = corpus.getClasses().size();
 			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus
 					.getClasses();
@@ -187,8 +187,7 @@ public class ManageCorpora {
 
 		for (File corpus : corpora) {
 			if (corpus.isDirectory()) {
-				String metaDataFilePath = corpus.getAbsolutePath()
-						+ File.separator + "meta.txt";
+				String metaDataFilePath = corpus.getAbsolutePath() + File.separator + "meta.txt";
 
 				FileReader metaDataFile;
 				try {
@@ -196,9 +195,6 @@ public class ManageCorpora {
 				} catch (FileNotFoundException e) {
 					continue;
 				}
-
-				if (null == metaDataFile)
-					continue; // if there is no metadata file inside the folder
 
 				JSONParser jsonParser = new JSONParser();
 				JSONObject oldJsonObject;
@@ -212,19 +208,14 @@ public class ManageCorpora {
 				if (null == oldJsonObject)
 					continue;
 
-				newJsonObject.put("corpus_name",
-						oldJsonObject.get("corpus_name"));
+				newJsonObject.put("corpus_name",oldJsonObject.get("corpus_name"));
 				newJsonObject.put("corpus_id", oldJsonObject.get("corpus_id"));
 				newJsonObject.put("data_type", oldJsonObject.get("data_type"));
-				newJsonObject.put("num_classes",
-						oldJsonObject.get("num_classes"));
-				newJsonObject.put("num_analysis",
-						oldJsonObject.get("num_analysis"));
+				newJsonObject.put("num_classes", oldJsonObject.get("num_classes"));
+				newJsonObject.put("num_analysis", oldJsonObject.get("num_analysis"));
 				long numClasses = (Long) oldJsonObject.get("num_classes");
 				if (numClasses > 0) {
-
-					JSONArray oldClasses = (JSONArray) oldJsonObject
-							.get("class_details");
+					JSONArray oldClasses = (JSONArray) oldJsonObject.get("class_details");
 					JSONArray newClasses = new JSONArray();
 
 					Iterator<JSONObject> classItr = oldClasses.iterator();

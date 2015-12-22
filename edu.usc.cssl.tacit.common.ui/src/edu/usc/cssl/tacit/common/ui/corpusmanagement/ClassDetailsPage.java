@@ -183,9 +183,7 @@ public class ClassDetailsPage implements IDetailsPage {
 		keyFieldTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-
 				selectedCorpusClass.setKeyTextFields(keyFieldTxt.getText());
-
 			}
 
 			@Override
@@ -248,7 +246,12 @@ public class ClassDetailsPage implements IDetailsPage {
 			keyFields.setVisible(true);
 			keyFieldTxt.setVisible(true);
 			keyFieldTxt.setText(selectedCorpusClass.getKeyTextFields());
-
+			if(keyFieldTxt.getText().isEmpty()) {					
+				if(selectedCorpusClass.getParent().getDatatype() == CMDataType.REDDIT_JSON)
+					keyFieldTxt.setText("post.selftext,comments.body");
+				else if(selectedCorpusClass.getParent().getDatatype() == CMDataType.TWITTER_JSON)
+					keyFieldTxt.setText("Text");		
+			}
 		}
 	}
 
