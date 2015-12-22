@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
-import org.apache.tika.Tika;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -68,8 +67,7 @@ public class Preprocessor {
 	DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 	private String currTime = df.format(new Date());
 	private String latinStemLocation;
-	private String tempPPFileLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
-			+ "tacit_temp_files" + System.getProperty("file.separator");
+	private String tempPPFileLoc = System.getProperty("user.dir") + System.getProperty("file.separator") + "tacit_temp_files" + System.getProperty("file.separator");
 	private boolean doPreprocessing;
 
 	public Preprocessor(String ppDirLocation, boolean doPreprocessing) throws IOException {
@@ -103,11 +101,9 @@ public class Preprocessor {
 				File inputFile = new File((String) obj);
 				if (inputFile.isDirectory()) {
 					continue;
-					// processDirectory(inputFile.getAbsolutePath());
 				} else {
 					if (inputFile.getName().contains("DS_Store"))
 						continue;
-
 					if (doPreprocessing) {
 						String ppFile = processFile(inputFile.getAbsolutePath(), "");
 						if (ppFile != "")
@@ -126,7 +122,6 @@ public class Preprocessor {
 
 	private String checkfiletype(String inputFilePath) throws TikaException {
 		File inputFile = new File(inputFilePath);
-		Tika tika = new Tika();
 		String mediaType = null;
 		String fileName = inputFile.getName();
 		String filePath = tempPPFileLoc + System.getProperty("file.separator") + fileName.replace('.', '_') + ".txt";
@@ -363,9 +358,9 @@ public class Preprocessor {
 			break;
 
 		case TWITTER_JSON:
-			processTwitter(corpus);
+			//processTwitter(corpus);
+			processGenericJSON(corpus);
 			break;
-
 		case JSON:
 			processGenericJSON(corpus);
 
@@ -403,15 +398,12 @@ public class Preprocessor {
 		int k = 0;
 		for (File f : fileList) {
 			QueryProcesser qp = new QueryProcesser();
-			// qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(),
-			// corpusClass.getKeyTextFields());
-			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body");
+			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), corpusClass.getKeyTextFields());
 			for (String str : outputs) {
 				if (doPreprocessing) {
 					FileWriter fw = new FileWriter(tempFile);
 					fw.write(str);
 					fw.close();
-
 					outputFiles.add(processFile(tempFile, "json_file_" + k + ".txt"));
 					k++;
 					new File(tempFile).delete();
@@ -424,7 +416,6 @@ public class Preprocessor {
 					k++;
 				}
 			}
-
 		}
 	}
 
