@@ -33,7 +33,7 @@ public class Filter {
 		return targetName;
 	}
 
-	public void setTargetType(String targetName) {
+	public void setTargetName(String targetName) {
 		this.targetName = targetName;
 	}
 
