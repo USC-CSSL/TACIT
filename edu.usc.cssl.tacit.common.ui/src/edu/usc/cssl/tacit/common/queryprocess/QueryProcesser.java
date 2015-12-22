@@ -45,15 +45,26 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 	
 	private List<String> applySmartFilters(List<Filter> filters, String jsonFilePath, String operator, String keyFields, CMDataType corpusType ) throws FileNotFoundException, IOException, ParseException {
-		HashMap<String, List<String>> keys = processKeyfields(keyFields);
-		
+		HashMap<String, List<String>> keys = null;
 		List<String> resultText = new ArrayList<String>();
 		Set<JSONObject> filteredResults = new HashSet<JSONObject>();
-		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
+		
 		JSONParser parser = new JSONParser();
 		Object obj = parser.parse(new FileReader(jsonFilePath));
-		JSONObject jsonObject = (JSONObject) obj;
-		Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
+		Object document = null;
+		JSONObject jsonObject = new JSONObject();
+		if(!(obj instanceof JSONObject)) {
+			jsonObject.put("contents", obj);
+			for(Filter f : filters)
+				f.setTargetName("contents."+f.getTargetName());
+			keyFields = reconstructKeyfields(keyFields, "contents");
+		} else  {
+			jsonObject = (JSONObject) obj;
+		}
+		keys = processKeyfields(keyFields);
+		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
+
+		document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
 		
 		for (String parentFilters : groupedFilters.keySet()) {
 			try {	
@@ -95,6 +106,14 @@ public class QueryProcesser implements IQueryProcessor {
 	
 
 
+	private String reconstructKeyfields(String keyFields, String string) {
+		StringBuilder result = new StringBuilder();
+		for(String key : keyFields.split("\\,")) {
+			result.append("contents." + key + ",");
+		}
+		return new String(result.substring(0, result.length()-1));
+	}		
+
 	private List<String> processedResult(List<String> resultText) {
 		StringBuilder sb = new StringBuilder();
 		for(String s : resultText)
@@ -119,7 +138,6 @@ public class QueryProcesser implements IQueryProcessor {
 				tempKey.append(temp[i]);
 				if(i != temp.length-1) tempKey.append(".");
 			}
-			
 			keyChilds.add(new String(tempKey));
 			keyAttr.put(temp[0], keyChilds);
 		}
@@ -209,7 +227,7 @@ public class QueryProcesser implements IQueryProcessor {
 		return filePath;
 	}
 
-	private static void createParentFilters(List<Filter> filters, List<String> parentKeys) {
+	private static void createParentFilters(List<Filter> filters, Set<String> parentKeys) {
 		//if(null == filters) return;
 //		if(null == filters)
 //			filters = new ArrayList<Filter>();
@@ -239,7 +257,7 @@ public class QueryProcesser implements IQueryProcessor {
 	public List<String> processJson(CorpusClass corpusClass, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException {
 		List<Filter> corpusFilters = corpusClass.getFilters();
 		if(null == corpusFilters) corpusFilters = new ArrayList<Filter>();
-		List<String> parentKeys = JsonParser.getParentKeys(jsonFilepath);
+		Set<String> parentKeys = JsonParser.getParentKeys(jsonFilepath);
 		createParentFilters(corpusFilters, parentKeys);	
 		return applySmartFilters(corpusFilters, jsonFilepath, "&&", keyFields, corpusClass.getParent().getDatatype());
 	}

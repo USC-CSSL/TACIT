@@ -3,10 +3,8 @@ package edu.usc.cssl.tacit.common.queryprocess;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,10 +87,10 @@ public class JsonParser {
 		collectAllTheKeys(things, resultAttr, null, keyLevel);
 	}
 
-	public static List<String> getParentKeys(String jsonFileName)
+	public static Set<String> getParentKeys(String jsonFileName)
 			throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 
-		List<String> parentKeys = new ArrayList<String>();
+		Set<String> parentKeys = new HashSet<String>();
 
 		Object jsonData = new Gson().fromJson(new FileReader(jsonFileName),
 				Object.class);
@@ -103,7 +101,13 @@ public class JsonParser {
 			}
 		} else if (jsonData instanceof Collection) {
 			for (Object key : ((Collection<?>) jsonData)) {
-				parentKeys.add(key.toString());
+				if(key instanceof Map) {
+					Map<?, ?> map = (Map<?, ?>) key;
+					for (Object k : map.keySet()) {
+						parentKeys.add(k.toString());
+					}				
+				}
+				else parentKeys.add(key.toString());
 			}
 		} else {
 			// TODO: ??
