@@ -214,6 +214,7 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 							CorpusClass twitterCorpusClass = new CorpusClass();
 							twitterCorpusClass.setClassName(corpusName + "_class1");
 							twitterCorpusClass.setClassPath(outputDir);
+							twitterCorpusClass.setKeyTextFields("Text");
 							List<ICorpusClass> corpusList = new ArrayList<ICorpusClass>();
 							corpusList.add(twitterCorpusClass);
 							twitterCorpus.setClasses(corpusList);
@@ -238,6 +239,7 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 					job.schedule();
 					job.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Twitter Crawler  ");

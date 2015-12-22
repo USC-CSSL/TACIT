@@ -43,6 +43,7 @@ public class RedditCrawler {
 		if(!new File(outputPath).exists())
 			new File(outputPath).mkdir();							
 		CorpusClass corpusClass = new CorpusClass(trendType, outputPath);
+		corpusClass.setKeyTextFields("post.selftext,comments.body");
 		corpusClass.setParent(corpus);
 		corpus.addClass(corpusClass);
 		
@@ -66,6 +67,7 @@ public class RedditCrawler {
 				// Create corpus class
 				CorpusClass cc = new CorpusClass(subreddit , subRedditPath);
 				cc.setParent(corpus);
+				cc.setKeyTextFields("post.selftext,comments.body");
 				corpus.addClass(cc);
 				
 				if(monitor.isCanceled()) {
@@ -99,6 +101,7 @@ public class RedditCrawler {
 				new File(outputPath).mkdir(); 
 			}			
 			CorpusClass cc = new CorpusClass(corpusClassName , outputPath);
+			cc.setKeyTextFields("post.selftext,comments.body");
 			cc.setParent(corpus);
 			corpus.addClass(cc);
 			rp.updateOutputDirectory(outputPath); // to store results in the sub folder
@@ -141,6 +144,7 @@ public class RedditCrawler {
 		if(!new File(outputPath).exists())
 			new File(outputPath).mkdir();							
 		CorpusClass corpusClass = new CorpusClass(label, outputPath);
+		corpusClass.setKeyTextFields("post.selftext,comments.body");
 		corpusClass.setParent(corpus);
 		corpus.addClass(corpusClass);
 		rp.updateOutputDirectory(outputPath); // stores the result in subfolder
