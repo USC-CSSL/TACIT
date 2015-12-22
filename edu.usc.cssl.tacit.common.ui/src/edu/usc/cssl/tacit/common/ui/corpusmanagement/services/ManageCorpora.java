@@ -74,7 +74,8 @@ public class ManageCorpora {
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator")
 								+ currClass.getClassName());
-				classObj.put("data_key", currClass.getKeyTextFields());
+				if(!currClass.getKeyTextFields().isEmpty())
+					classObj.put("data_key", currClass.getKeyTextFields());
 				classArray.add(classObj);
 			}
 
@@ -140,7 +141,8 @@ public class ManageCorpora {
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator")
 								+ currClass.getClassName());
-				classObj.put("data_key", currClass.getKeyTextFields());
+				if(!currClass.getKeyTextFields().isEmpty())
+					classObj.put("data_key", currClass.getKeyTextFields());				
 				classArray.add(classObj);
 			}
 
@@ -363,7 +365,8 @@ public class ManageCorpora {
 			classObj.put("tacit_loc",
 					corpusLocation + System.getProperty("file.separator")
 							+ currClass.getClassName());
-			classObj.put("data_key", currClass.getKeyTextFields());
+			if(!currClass.getKeyTextFields().isEmpty())
+				classObj.put("data_key", currClass.getKeyTextFields());
 			classArray.add(classObj);
 		}
 

@@ -242,7 +242,7 @@ public class ClassDetailsPage implements IDetailsPage {
 				.getParent().getDatatype() != CMDataType.TWITTER_JSON)) {
 			keyFields.setVisible(false);
 			keyFieldTxt.setVisible(false);
-
+			selectedCorpusClass.setKeyTextFields("");
 		} else {
 			keyFields.setVisible(true);
 			keyFieldTxt.setVisible(true);
@@ -253,6 +253,7 @@ public class ClassDetailsPage implements IDetailsPage {
 				else if(selectedCorpusClass.getParent().getDatatype() == CMDataType.TWITTER_JSON)
 					keyFieldTxt.setText(QueryProcessorConstants.DEFAULT_TWITTER_DATA_FIELDS);		
 			}
+			selectedCorpusClass.setKeyTextFields(keyFieldTxt.getText());
 		}
 	}
 
