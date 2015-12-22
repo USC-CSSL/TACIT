@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
+import edu.usc.cssl.tacit.common.queryprocess.QueryProcessorConstants;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusMangementValidation;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
@@ -248,9 +249,9 @@ public class ClassDetailsPage implements IDetailsPage {
 			keyFieldTxt.setText(selectedCorpusClass.getKeyTextFields());
 			if(keyFieldTxt.getText().isEmpty()) {					
 				if(selectedCorpusClass.getParent().getDatatype() == CMDataType.REDDIT_JSON)
-					keyFieldTxt.setText("post.selftext,comments.body");
+					keyFieldTxt.setText(QueryProcessorConstants.DEFAULT_REDDIT_DATA_FIELDS);
 				else if(selectedCorpusClass.getParent().getDatatype() == CMDataType.TWITTER_JSON)
-					keyFieldTxt.setText("Text");		
+					keyFieldTxt.setText(QueryProcessorConstants.DEFAULT_TWITTER_DATA_FIELDS);		
 			}
 		}
 	}

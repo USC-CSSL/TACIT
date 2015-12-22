@@ -44,6 +44,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.tacit.common.queryprocess.QueryProcessorConstants;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
@@ -214,7 +215,7 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 							CorpusClass twitterCorpusClass = new CorpusClass();
 							twitterCorpusClass.setClassName(corpusName + "_class1");
 							twitterCorpusClass.setClassPath(outputDir);
-							twitterCorpusClass.setKeyTextFields("Text");
+							twitterCorpusClass.setKeyTextFields(QueryProcessorConstants.DEFAULT_TWITTER_DATA_FIELDS);
 							List<ICorpusClass> corpusList = new ArrayList<ICorpusClass>();
 							corpusList.add(twitterCorpusClass);
 							twitterCorpus.setClasses(corpusList);

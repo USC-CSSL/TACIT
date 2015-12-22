@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import com.github.jreddit.utils.restclient.HttpRestClient;
 import com.github.jreddit.utils.restclient.RestClient;
 
+import edu.usc.cssl.tacit.common.queryprocess.QueryProcessorConstants;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 
@@ -43,7 +44,7 @@ public class RedditCrawler {
 		if(!new File(outputPath).exists())
 			new File(outputPath).mkdir();							
 		CorpusClass corpusClass = new CorpusClass(trendType, outputPath);
-		corpusClass.setKeyTextFields("post.selftext,comments.body");
+		corpusClass.setKeyTextFields(QueryProcessorConstants.DEFAULT_REDDIT_DATA_FIELDS);
 		corpusClass.setParent(corpus);
 		corpus.addClass(corpusClass);
 		
@@ -67,7 +68,7 @@ public class RedditCrawler {
 				// Create corpus class
 				CorpusClass cc = new CorpusClass(subreddit , subRedditPath);
 				cc.setParent(corpus);
-				cc.setKeyTextFields("post.selftext,comments.body");
+				cc.setKeyTextFields(QueryProcessorConstants.DEFAULT_REDDIT_DATA_FIELDS);
 				corpus.addClass(cc);
 				
 				if(monitor.isCanceled()) {
@@ -101,7 +102,7 @@ public class RedditCrawler {
 				new File(outputPath).mkdir(); 
 			}			
 			CorpusClass cc = new CorpusClass(corpusClassName , outputPath);
-			cc.setKeyTextFields("post.selftext,comments.body");
+			cc.setKeyTextFields(QueryProcessorConstants.DEFAULT_REDDIT_DATA_FIELDS);
 			cc.setParent(corpus);
 			corpus.addClass(cc);
 			rp.updateOutputDirectory(outputPath); // to store results in the sub folder
@@ -144,7 +145,7 @@ public class RedditCrawler {
 		if(!new File(outputPath).exists())
 			new File(outputPath).mkdir();							
 		CorpusClass corpusClass = new CorpusClass(label, outputPath);
-		corpusClass.setKeyTextFields("post.selftext,comments.body");
+		corpusClass.setKeyTextFields(QueryProcessorConstants.DEFAULT_REDDIT_DATA_FIELDS);
 		corpusClass.setParent(corpus);
 		corpus.addClass(corpusClass);
 		rp.updateOutputDirectory(outputPath); // stores the result in subfolder
