@@ -162,7 +162,10 @@ public class LdaAnalysis {
 			while ((currentLine = br.readLine()) != null) {
 				currentLine = currentLine.replace('\t', ',');
 				List<String> wordList = Arrays.asList(currentLine.split(","));
-				bw.write(wordList.get(0) + "," + wordList.get(2));
+				if(wordList.size()>0) 
+					bw.append(wordList.get(0));
+				if(wordList.size()>2) 
+					bw.append("," + wordList.get(2));
 				bw.newLine();
 			}
 			br.close();
