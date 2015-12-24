@@ -113,7 +113,8 @@ public class Preprocessor {
 						if (ppFile != "")
 							outputFiles.add(ppFile);
 					} else {
-						outputFiles.add(checkfiletype(inputFile.getAbsolutePath()));
+						//outputFiles.add(checkfiletype(inputFile.getAbsolutePath()));
+						outputFiles.add(inputFile.getAbsolutePath());
 					}
 				}
 			} else {
@@ -209,8 +210,9 @@ public class Preprocessor {
 				if (file.isDirectory())
 					processDirectory(file.getAbsolutePath());
 				else {
-					File file2 = new File(checkfiletype(file.getAbsolutePath()));
-					outputFiles.add(file2.getAbsolutePath());
+					//File file2 = new File(checkfiletype(file.getAbsolutePath()));
+					//outputFiles.add(file2.getAbsolutePath());
+					outputFiles.add(file.getAbsolutePath());
 				}
 			}
 		}
@@ -228,9 +230,9 @@ public class Preprocessor {
 	 * @return
 	 * @throws TikaException 
 	 */
-	private String processFile(String inFileBefore, String outName) throws TikaException {
+	private String processFile(String inFile, String outName) throws TikaException {
 
-		String inFile = checkfiletype(inFileBefore);
+		//String inFile = checkfiletype(inFileBefore);
 		String outFile;
 		if (outName == "" || outName == null) {
 			outFile = ppFilesLoc + System.getProperty("file.separator") + (new File(inFile).getName());
@@ -420,7 +422,8 @@ public class Preprocessor {
 					FileWriter fw = new FileWriter(outFile);
 					fw.write(str);
 					fw.close();
-					outputFiles.add(checkfiletype(outFile));
+					//outputFiles.add(checkfiletype(outFile));
+					outputFiles.add(outFile);
 					k++;
 				}
 			}
@@ -489,7 +492,8 @@ public class Preprocessor {
 					if (doPreprocessing) {
 						outputFiles.add(processFile(tempFile, "twitter_" + j + "-" + df.format(dateobj)));
 					} else {
-						outputFiles.add(checkfiletype(file.getAbsolutePath()));
+						//outputFiles.add(checkfiletype(file.getAbsolutePath()));
+						outputFiles.add(file.getAbsolutePath());
 					}
 					j++;
 
@@ -576,7 +580,8 @@ public class Preprocessor {
 							processFile(tempFile, postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "")
 									+ "-" + dateObj.getTime() + ".txt"));
 				else
-					outputFiles.add(checkfiletype(file.getAbsolutePath()));
+					outputFiles.add(file.getAbsolutePath());
+					//outputFiles.add(checkfiletype(file.getAbsolutePath()));
 			} catch (ClassCastException e) {
 				// ignore consolidated json file
 			} catch (Exception e) {
