@@ -24,6 +24,4 @@ Bundle-ClassPath: jsoup-1.7.3.jar,
  json-path-2.0.0.jar,
  json-path-assert-2.0.0.jar,
  json-smart-2.1.1.jar,
- org.annolab.tt4j-1.2.1.jar,
- tika-app-1.12-SNAPSHOT.jar,
- tika-server-1.12-SNAPSHOT.jar
+ org.annolab.tt4j-1.2.1.jar

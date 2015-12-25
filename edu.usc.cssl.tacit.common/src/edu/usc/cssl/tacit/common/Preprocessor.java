@@ -17,14 +17,6 @@ import java.util.List;
 
 import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
-import org.apache.tika.Tika;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.pdf.PDFParser;
-import org.apache.tika.parser.rtf.RTFParser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -125,60 +117,6 @@ public class Preprocessor {
 		return outputFiles;
 	}
 
-	private String checkfiletype(String inputFilePath) throws TikaException {
-		File inputFile = new File(inputFilePath);
-		Tika tika = new Tika();
-		String mediaType = null;
-		String fileName = inputFile.getName();
-		String filePath = tempPPFileLoc + System.getProperty("file.separator") + fileName.replace('.', '_') + ".txt";
-		try {
-			TikaConfig config = new TikaConfig();
-			Metadata metadata = new Metadata();
-			metadata.set(Metadata.RESOURCE_NAME_KEY, inputFile.getAbsolutePath());
-			mediaType = config.getDetector().detect(null, metadata).toString();
-			//mediaType = tika.detect(inputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (mediaType.equals("application/pdf")) {
-			BodyContentHandler handler = new BodyContentHandler();
-			Metadata metadata = new Metadata();
-			ParseContext pcontext = new ParseContext();
-			PDFParser pdfparser = new PDFParser();
-			FileInputStream inputstream = null;
-			try {
-				inputstream = new FileInputStream(inputFile);
-				pdfparser.parse(inputstream, handler, metadata, pcontext);
-				BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
-				bw.write(handler.toString());
-				bw.close();
-				inputstream.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return filePath;
-		} else if (mediaType.equals("application/rtf")) {
-			BodyContentHandler handler = new BodyContentHandler();
-			Metadata metadata = new Metadata();
-			ParseContext pcontext = new ParseContext();
-			RTFParser pdfparser = new RTFParser();
-			FileInputStream inputstream = null;
-			try {
-				inputstream = new FileInputStream(inputFile);
-				pdfparser.parse(inputstream, handler, metadata, pcontext);
-				BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
-				bw.write(handler.toString());
-				bw.close();
-				inputstream.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return filePath;
-		} else {
-		}
-		return inputFilePath;
-	}
-
 	/**
 	 * Recursive function to loop over directory structure and take the
 	 * appropriate action
@@ -186,7 +124,7 @@ public class Preprocessor {
 	 * @param dirpath
 	 * @throws TikaException 
 	 */
-	private void processDirectory(String dirpath) throws TikaException {
+	private void processDirectory(String dirpath) {
 		File[] files = new File(dirpath).listFiles();
 
 		if (doPreprocessing) {
@@ -230,7 +168,7 @@ public class Preprocessor {
 	 * @return
 	 * @throws TikaException 
 	 */
-	private String processFile(String inFile, String outName) throws TikaException {
+	private String processFile(String inFile, String outName) {
 
 		//String inFile = checkfiletype(inFileBefore);
 		String outFile;
@@ -438,7 +376,7 @@ public class Preprocessor {
 	 * @param corpusClass
 	 * @throws TikaException 
 	 */
-	private void processTwitter(CorpusClass corpusClass) throws TikaException {
+	private void processTwitter(CorpusClass corpusClass) {
 		/*** read from file ***/
 		JSONParser jParser;
 		String corpusClassPath = corpusClass.getTacitLocation();
