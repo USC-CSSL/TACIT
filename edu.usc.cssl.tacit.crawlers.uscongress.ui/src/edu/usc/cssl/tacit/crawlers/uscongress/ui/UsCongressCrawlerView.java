@@ -921,6 +921,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							
 							@Override
 							public void run() {
+								if(null == selectedRepresentatives)
+									selectedRepresentatives = new ArrayList<String>();		
+								if(null == selectedSenators)
+									selectedSenators = new ArrayList<String>();
 								if(senatorButton.getSelection()) {
 									if(congresses[sCmbCongress.getSelectionIndex()].indexOf("All")!=-1) {
 										congressNum = "-1";
@@ -1040,6 +1044,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					job.schedule(); // schedule the job
 					job.addJobChangeListener(new JobChangeAdapter() {
 
+						@Override
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite
@@ -1116,6 +1121,12 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				return false;
 			} else
 				form.getMessageManager().removeMessage("section");
+			if(senatorTable.getItemCount() == 0) {
+				form.getMessageManager().addMessage("list", "Senator list cannot be empty", null, IMessageProvider.ERROR);
+				return false;
+			}
+			else
+				form.getMessageManager().removeMessage("list");
 		}
 		if(representativeButton.getSelection()) {
 			if(!senateBtn.getSelection() && !extensionBtn.getSelection() && !dailyDigestBtn.getSelection()) {
@@ -1123,6 +1134,11 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				return false;
 			} else
 				form.getMessageManager().removeMessage("section");
+			if(representativeTable.getItemCount() == 0) {
+				form.getMessageManager().addMessage("list", "Representatives list cannot be empty", null, IMessageProvider.ERROR);
+				return false;
+			} else
+				form.getMessageManager().removeMessage("list");			
 		}
 		if(limitRecords.getSelection()) {
 			if(limitText.getText().isEmpty()) {
