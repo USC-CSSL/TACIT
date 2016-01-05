@@ -605,7 +605,7 @@ public class WordCountApi {
 					String[] words = currentLine.split("\\s+");
 					String currPhrase = words[0];
 					String condPhrase = words[0];
-					for (int i = initialize(); i < words.length-1; i = increment(i)) {
+					for (int i = initialize(); i < words.length; i = increment(i)) {
 						if (!words[i].matches("\\d+")) {
 							if (words[i].contains("/")) {
 								String[] splits = words[i].split("/");
@@ -636,7 +636,8 @@ public class WordCountApi {
 										.parseDouble(words[i + 1]));
 							}
 						} catch(Exception e) {
-							String a = e.getMessage();
+							logger.warning("The dictionary file " + dFile + " is not suitable for weighted wordcount");
+							appendLog("The dictionary file " + dFile + " is not suitable for weighted wordcount");
 						}
 						categories.add(Integer.parseInt(words[i]));
 					}
