@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -338,13 +339,18 @@ public class Preprocessor {
 			tempDir = ppFilesLoc + System.getProperty("file.separator") + "json_data_" + dateobj.getTime();
 			new File(tempDir).mkdir();
 		}
-
-		File[] fileList = new File(corpusClassPath).listFiles();
+		FilenameFilter jsonFileFilter = new FilenameFilter() {
+		    public boolean accept(File dir, String filename) {
+		        return filename.toLowerCase().endsWith(".json");
+		    }
+		};
+		File[] fileList = new File(corpusClassPath).listFiles(jsonFileFilter);
 		int k = 0;
 		for (File f : fileList) {
 			QueryProcesser qp = new QueryProcesser();
 			// qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(),
 			// corpusClass.getKeyTextFields());
+			
 			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body");
 			for (String str : outputs) {
 				if (doPreprocessing) {
