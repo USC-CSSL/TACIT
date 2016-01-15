@@ -774,7 +774,7 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		if (classPaths.size() < 2
 				&& classLayoutData.getTree().getItemCount() < 2) {
 			form.getMessageManager().addMessage("classes",
-					"Provide atleast 2 valid class paths", null,
+					"Provide at least 2 valid class paths", null,
 					IMessageProvider.ERROR);
 			return false;
 		} else if (classLayoutData.getTree().getItemCount() > 1
