@@ -12,7 +12,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -39,6 +41,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.uc.cssl.tacit.wordcount.weighted.services.WordCountApi;
+import edu.usc.cssl.tacit.common.DictionaryInvalidException;
 import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
@@ -47,6 +50,7 @@ import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.wordcount.weighted.ui.internal.IWeightedWordCountViewConstants;
 import edu.usc.cssl.tacit.wordcount.weighted.ui.internal.WeightedWordCountImageRegistry;
 
@@ -375,16 +379,14 @@ public class WeightedWordCountView extends ViewPart implements
 							ppObj.clean();
 						} catch (IOException e) {
 							e.printStackTrace();
+						} catch (DictionaryInvalidException die) {
+							die.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 
-						TacitFormComposite.updateStatusMessage(getViewSite(),
-								"Word count analysis completed", IStatus.OK,
-								form);
 						monitor.subTask("Cleaning Preprocessed Files...");
-						TacitFormComposite
-								.writeConsoleHeaderBegining("<terminated> Word count analysis");
 						monitor.done();
 						return Status.OK_STATUS;
 					}
@@ -392,6 +394,28 @@ public class WeightedWordCountView extends ViewPart implements
 				wordCountJob.setUser(true);
 				if (canProceed()) {
 					wordCountJob.schedule();
+					wordCountJob.addJobChangeListener(new JobChangeAdapter() {
+
+						@Override
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> LIWC-Style Word count analysis");
+								ConsoleView
+										.printlInConsoleln("LIWC-Style Word count analysis met with error.");
+								ConsoleView
+										.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
+							} else {
+								TacitFormComposite.updateStatusMessage(
+										getViewSite(),
+										"LIWC-Style Word count analysis completed",
+										IStatus.OK, form);
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> LIWC-Style Word count analysis");
+
+							}
+						}
+					});
 				}
 			};
 		});

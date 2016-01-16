@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
+import edu.usc.cssl.tacit.common.DictionaryInvalidException;
 import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -91,7 +92,7 @@ public class WordCountApi {
 			boolean doLower, boolean doLiwcStemming,
 			boolean doSnowBallStemming, boolean doSpss,
 			boolean doWordDistribution, boolean stemDictionary, File oFile,
-			File sFile, Date dateObj, Map<String, String[]> fileCorpuses) throws IOException {
+			File sFile, Date dateObj, Map<String, String[]> fileCorpuses) throws IOException, DictionaryInvalidException {
 		if (delimiters == null || delimiters.equals(""))
 			this.delimiters = " ";
 		else
@@ -564,7 +565,7 @@ public class WordCountApi {
 		appendLog("CSV File Updated Successfully");
 	}
 
-	public void buildCategorizer(List<String> dictFiles) throws IOException {
+	public void buildCategorizer(List<String> dictFiles) throws IOException, DictionaryInvalidException {
 
 		for (String dFile : dictFiles) {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
@@ -636,8 +637,11 @@ public class WordCountApi {
 										.parseDouble(words[i + 1]));
 							}
 						} catch(Exception e) {
-							logger.warning("The dictionary file " + dFile + " is not suitable for weighted wordcount");
-							appendLog("The dictionary file " + dFile + " is not suitable for weighted wordcount");
+							String errMessage = "The dictionary file " + dFile + " is not suitable for weighted wordcount";
+							logger.warning(errMessage);
+							appendLog(errMessage);
+							br.close();
+							throw new DictionaryInvalidException(errMessage);
 						}
 						categories.add(Integer.parseInt(words[i]));
 					}
