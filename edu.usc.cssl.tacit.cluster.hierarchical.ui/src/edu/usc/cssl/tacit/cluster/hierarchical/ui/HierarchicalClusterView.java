@@ -252,8 +252,10 @@ public class HierarchicalClusterView extends ViewPart implements
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 
 						// Hierarchical processing

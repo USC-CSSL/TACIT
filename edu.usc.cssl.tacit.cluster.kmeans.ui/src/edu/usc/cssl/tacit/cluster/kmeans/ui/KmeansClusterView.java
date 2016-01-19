@@ -211,8 +211,10 @@ public class KmeansClusterView extends ViewPart implements
 							monitor.worked(10);
 						} catch (IOException e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 
 						// kmeans processsing

@@ -379,11 +379,13 @@ public class WeightedWordCountView extends ViewPart implements
 							ppObj.clean();
 						} catch (IOException e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (DictionaryInvalidException die) {
 							die.printStackTrace();
 							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 
 						monitor.subTask("Cleaning Preprocessed Files...");

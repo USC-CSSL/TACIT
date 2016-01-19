@@ -258,8 +258,10 @@ public class LdaTopicModelView extends ViewPart implements
 							}
 						} catch (IOException e1) {
 							e1.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e1) {
 							e1.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 
 						lda.initialize(topicModelDirPath, noOfTopics,

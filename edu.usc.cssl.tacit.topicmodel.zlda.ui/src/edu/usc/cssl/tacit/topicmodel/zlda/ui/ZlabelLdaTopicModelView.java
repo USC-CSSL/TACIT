@@ -274,8 +274,10 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 									selectedFiles);
 						} catch (IOException e1) {
 							e1.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 
 						new File(topicModelDirPath).mkdir();

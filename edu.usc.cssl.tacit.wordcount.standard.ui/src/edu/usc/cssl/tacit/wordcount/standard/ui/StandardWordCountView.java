@@ -332,8 +332,10 @@ public class StandardWordCountView extends ViewPart implements
 							monitor.worked(1);
 						} catch (IOException e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
 							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 						monitor.done();
 						return Status.OK_STATUS;

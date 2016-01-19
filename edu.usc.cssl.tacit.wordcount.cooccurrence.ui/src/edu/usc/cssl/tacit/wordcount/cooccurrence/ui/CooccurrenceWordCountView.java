@@ -293,9 +293,9 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							seedList = ppObj
 									.processData("seed_files", seedObjs);
 						} catch (IOException e) {
-							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						} catch (Exception e) {
-							e.printStackTrace();
+							return Status.CANCEL_STATUS;
 						}
 						;
 
