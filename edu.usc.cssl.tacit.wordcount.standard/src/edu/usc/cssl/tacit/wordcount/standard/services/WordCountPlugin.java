@@ -689,18 +689,23 @@ public class WordCountPlugin {
 					dFile)));
 
 			String currentLine = br.readLine().trim();
-			if (currentLine == null) {
+			if (currentLine == null || currentLine.isEmpty()) {
 				ConsoleView.printlInConsoleln("The dictionary file " + dFile
 						+ " is empty.");
+				br.close();
+				continue;
 			}
 
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null
-						&& !currentLine.equals("%"))
+						&& !currentLine.equals("%")) {
+					if (currentLine.equals(""))
+						continue;
 					categoryID.put(
 							Integer.parseInt(currentLine.split("\\s+")[0]
 									.trim()), currentLine.split("\\s+")[1]
 									.trim());
+				}
 
 			if (currentLine == null) {
 				ConsoleView.printlInConsoleln("The dictionary file " + dFile

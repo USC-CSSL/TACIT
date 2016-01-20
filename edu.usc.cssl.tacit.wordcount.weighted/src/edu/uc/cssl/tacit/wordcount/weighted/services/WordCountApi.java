@@ -571,18 +571,23 @@ public class WordCountApi {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					dFile)));
 			String currentLine = br.readLine().trim();
-			if (currentLine == null) {
+			if (currentLine == null || currentLine.isEmpty()) {
 				logger.warning("The dictionary file " + dFile + " is empty");
 				appendLog("The dictionary file " + dFile + " is empty");
+				br.close();
+				continue;
 			}
 
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null
-						&& !currentLine.equals("%"))
+						&& !currentLine.equals("%")) {
+					if (currentLine.equals(""))
+						continue;
 					categories.put(
 							Integer.parseInt(currentLine.split("\\s+")[0]
 									.trim()), currentLine.split("\\s+")[1]
 									.trim());
+				}
 
 			if (currentLine == null) {
 				logger.warning("The dictionary file " + dFile
