@@ -283,6 +283,8 @@ public class UsCongressCrawler {
 		this.crawlExtension = (crawlExtension) ? "4" : "0";
 		this.crawlDailyDigest = (crawlDailyDigest) ? "8" : "0";
 		
+		totalFilesDownloaded = 0;
+		
 		if(null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
 			return;
