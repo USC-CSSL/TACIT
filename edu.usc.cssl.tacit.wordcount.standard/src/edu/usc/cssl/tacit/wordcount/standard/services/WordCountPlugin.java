@@ -712,6 +712,8 @@ public class WordCountPlugin {
 						+ " does not have any categorized words.");
 			} else {
 				while ((currentLine = br.readLine()) != null) {
+					if (currentLine.trim().equals(""))
+						continue;
 					String[] words = currentLine.split("\\s+");
 
 					// If word not in the maps, add it
