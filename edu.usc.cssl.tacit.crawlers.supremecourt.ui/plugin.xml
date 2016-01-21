@@ -30,13 +30,13 @@
             name="Supreme Court Crawler">
       </command>
    </extension>
-   <extension
+   <!--<extension
          point="org.eclipse.ui.handlers">
       <handler
             class="edu.usc.cssl.tacit.crawlers.supremecourt.ui.handlers.OpenSupremeCrawlerViewHandler"
             commandId="usc.edu.cssl.crawlers.supreme.crawler.command1">
       </handler>
-   </extension>
+   </extension> -->
 
 
 </plugin>
