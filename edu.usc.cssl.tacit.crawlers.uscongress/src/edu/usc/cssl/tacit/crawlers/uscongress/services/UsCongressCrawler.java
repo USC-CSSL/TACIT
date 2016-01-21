@@ -40,6 +40,7 @@ public class UsCongressCrawler {
 	String crawlHouseRepRecords;
 	String crawlDailyDigest;
 	String crawlExtension;	
+	public HashSet<String> filesDownload;
 	
 	HashMap<String, HashMap<String, String>> congressSenatorMap = AvailableRecords.getCongressSenatorMap(); 
 	HashMap<String, String> senatorDetails = SenatorDetails.getSenatorDetails(); // to populate all senator details
@@ -271,6 +272,7 @@ public class UsCongressCrawler {
 		this.maxDocs = maxDocs;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
+		filesDownload = new HashSet<String>();
 		this.congressMembers = congressMemberDetails;
 		this.congressNum = congressNum;
 		this.sortType = sortType;
@@ -282,8 +284,6 @@ public class UsCongressCrawler {
 		this.crawlHouseRepRecords = (crawlHouseRepRecords) ? "2" : "0";
 		this.crawlExtension = (crawlExtension) ? "4" : "0";
 		this.crawlDailyDigest = (crawlDailyDigest) ? "8" : "0";
-		
-		totalFilesDownloaded = 0;
 		
 		if(null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
@@ -446,6 +446,10 @@ public class UsCongressCrawler {
 	private void writeToFile(String senatorOutputDir, String fileName, String[] contents) throws IOException {
 		//ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
 		fileName = fileName.replaceAll("[\\/:*?\"<>|]+", "");
+		String name = fileName.substring(0, fileName.lastIndexOf("-"));
+		if(filesDownload.contains(name))
+			return;
+		filesDownload.add(name);
 		ConsoleView.printlInConsoleln("Writing "+ senatorOutputDir + File.separator + fileName);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(senatorOutputDir+System.getProperty("file.separator")+fileName)));
 		bw.write(contents[0]);
@@ -458,6 +462,7 @@ public class UsCongressCrawler {
 
 	private String[] extract(String extractLink, String lastName) throws IOException {
 		Document page = Jsoup.connect("http://thomas.loc.gov"+extractLink).timeout(10*1000).get();
+		
 		String title = page.getElementById("container").select("b").text();
 		StringBuilder content = new StringBuilder();
 		/* Elements lines = page.getElementById("container").select("p");

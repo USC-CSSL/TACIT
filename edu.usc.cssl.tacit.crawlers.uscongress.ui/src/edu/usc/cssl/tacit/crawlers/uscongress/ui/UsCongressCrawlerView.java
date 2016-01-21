@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -117,6 +119,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Button extensionBtn;
 	private Button dailyDigestBtn;
 	private Composite limitRecordsClient;
+	private boolean crawlAgain;
+	
 	final UsCongressCrawler sc = new UsCongressCrawler();
 	
 	@Override
@@ -909,6 +913,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			boolean crawlHouseRepRecords = false;
 			boolean crawlDailyDigest = false;
 			boolean crawlExtension = false;
+			
 			@Override
 			public void run() {
 
@@ -1021,11 +1026,15 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							if(monitor.isCanceled()) {
 								return handledCancelRequest("Cancelled");
 							}
-							sc.crawl();
+							IStatus status = crawl(monitor);
+							
 							if(monitor.isCanceled()) {
 								return handledCancelRequest("Cancelled");
 							}
 							monitor.worked(10);
+							if(status != Status.OK_STATUS){
+								return status;
+							}
 						} catch (NumberFormatException e) {						
 							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						} catch (IOException e) {							
@@ -1033,6 +1042,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						} catch(Exception e) {
 							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						}
+						
 						monitor.worked(100);
 						monitor.done();
 						return Status.OK_STATUS;
@@ -1105,10 +1115,50 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		return Status.CANCEL_STATUS;
 	}
 	
+	private IStatus crawl(final IProgressMonitor monitor){
+		
+		try {
+			sc.crawl();
+		} catch (Exception e) {
+			
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					// create a dialog with ok and cancel buttons and a question icon
+					MessageBox dialog = 
+					  new MessageBox(Display.getDefault().getActiveShell(), SWT.ICON_INFORMATION | SWT.OK| SWT.CANCEL);
+					dialog.setText("Time Out");
+					dialog.setMessage("You must've lost internet connection, re-establish connection and try again!");
+					// open dialog and await user selection
+					 int returnCode = dialog.open();
+					if(returnCode == SWT.OK){
+						crawlAgain = true;												
+					}
+					else{
+						crawlAgain= false;
+					}
+					
+				}				
+		});
+			if(crawlAgain){
+				crawlAgain = false;
+				crawl(monitor);
+			}
+			else{
+			return handleException(monitor, e, "Crawling failed. Provide valid data");
+			}
+		}
+		monitor.worked(100);
+		monitor.done();
+		return Status.OK_STATUS;
+		
+	}
+	
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("US Congress crawler cancelled.");
 		ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
+		sc.filesDownload = new HashSet<String>();
 		TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 		return Status.CANCEL_STATUS;
 		
