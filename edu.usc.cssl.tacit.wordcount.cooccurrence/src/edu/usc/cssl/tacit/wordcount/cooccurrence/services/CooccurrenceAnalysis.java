@@ -26,8 +26,7 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class CooccurrenceAnalysis {
 
-	private static Pattern delimiters = Pattern
-			.compile("[\\\\.,;\"!-\\)\\(\\]\\[\\{\\}:\\?'/\\`~$%#@&*_=\\+<>]");
+	private static Pattern delimiters = Pattern.compile("[\\\\.,;\"!-\\)\\(\\]\\[\\{\\}:\\?'/\\`~$%#@&*_=\\+<>]");
 	private boolean doPhrases;
 	private Map<String, ArrayList<Integer>> seedWords;
 	private HashMap<Set<String>, Integer> seedCombos;
@@ -56,13 +55,13 @@ public class CooccurrenceAnalysis {
 		String[] seeds = null;
 		String currentLine = null;
 
-		BufferedReader br = new BufferedReader(new FileReader(
-				new File(seedFile)));
+		BufferedReader br = new BufferedReader(new FileReader(new File(seedFile)));
 		while ((currentLine = br.readLine()) != null) {
 			seeds = currentLine.trim().toLowerCase().split(" ");
 			for (String seed : seeds) {
 				seed = seed.trim();
-				if (seed.isEmpty() || seed.equals("")) continue;
+				if (seed.isEmpty() || seed.equals(""))
+					continue;
 				if (!seedWords.containsKey(seed)) {
 					seedWords.put(seed, new ArrayList<Integer>());
 				}
@@ -127,9 +126,8 @@ public class CooccurrenceAnalysis {
 		this.threshold = threshold;
 	}
 
-	public boolean calculateCooccurrences(List<String> selectedFiles,
-			String seedFile, int windowSize, String outputPath, int threshold,
-			boolean buildMatrix, IProgressMonitor monitor) {
+	public boolean calculateCooccurrences(List<String> selectedFiles, String seedFile, int windowSize,
+			String outputPath, int threshold, boolean buildMatrix, IProgressMonitor monitor) {
 
 		String currentLine = null;
 		List<String> phrase = new ArrayList<String>();
@@ -148,8 +146,7 @@ public class CooccurrenceAnalysis {
 				buildSeedCombos();
 			}
 
-			String[] listOfFiles = (String[]) selectedFiles
-					.toArray(new String[selectedFiles.size()]);
+			String[] listOfFiles = (String[]) selectedFiles.toArray(new String[selectedFiles.size()]);
 			for (String fname : listOfFiles) {
 				File f = new File(fname);
 				monitor.subTask("Processing input file " + f.getName());
@@ -163,14 +160,11 @@ public class CooccurrenceAnalysis {
 				int line_no = 0;
 				try {
 					while ((currentLine = br.readLine()) != null) {
-						ArrayList<String> words = new ArrayList<String>(
-								Arrays.asList(delimiters.matcher(currentLine)
-										.replaceAll(" ").toLowerCase().trim()
-										.split("\\s+")));
+						ArrayList<String> words = new ArrayList<String>(Arrays.asList(
+								delimiters.matcher(currentLine).replaceAll(" ").toLowerCase().trim().split("\\s+")));
 						line_no++;
 						int windowend = Math.min(windowSize, words.size()) - 1;
-						List<String> window = new ArrayList<String>(
-								words.subList(0, windowend));
+						List<String> window = new ArrayList<String>(words.subList(0, windowend));
 
 						String pprev_word = null;
 						String prev_word = null;
@@ -196,8 +190,7 @@ public class CooccurrenceAnalysis {
 									} else {
 										vec.put(nextWord, 1);
 									}
-									Map<String, Integer> revVec = wordMat
-											.get(nextWord);
+									Map<String, Integer> revVec = wordMat.get(nextWord);
 									if (revVec == null) {
 										revVec = new HashMap<String, Integer>();
 										wordMat.put(nextWord, revVec);
@@ -212,39 +205,33 @@ public class CooccurrenceAnalysis {
 							}
 
 							if (doPhrases) {
-								if (!seedWords.containsKey(word))
-									continue;
-								for (Set<String> combo : seedCombos.keySet()) {
+								if (seedWords.containsKey(word)) {
+									for (Set<String> combo : seedCombos.keySet()) {
 
-									boolean flag = true;
-									for (String seedWord : combo) {
-										if (!window.contains(seedWord)
-												&& !word.equals(seedWord)) {
-											flag = false;
-											break;
+										boolean flag = true;
+										String comboStr = StringUtils.join(combo, ' ');
+										if (!comboStr.contains(word))
+											continue;
+										for (String seedWord : combo) {
+											if (!window.contains(seedWord) && !word.equals(seedWord)) {
+												flag = false;
+												break;
+											}
 										}
-									}
-									if (flag == true) {
-										ArrayList<String> context = new ArrayList<String>();
+										if (flag == true) {
+											ArrayList<String> context = new ArrayList<String>();
 
-										context.addAll(Arrays.asList(
-												pprev_word, prev_word, word));
-										context.addAll(window);
-										if (wi + 1 < words.size())
-											context.add(words.get(wi + 1));
+											context.addAll(Arrays.asList(pprev_word, prev_word, word));
+											context.addAll(window);
+											if (wi + window.size() + 1 < words.size())
+												context.add(words.get(wi + window.size() + 1));
 
-										phrase.add(StringUtils.join(combo, ' ')
-												+ ","
-												+ f.getName()
-												+ ","
-												+ line_no
-												+ ","
-												+ StringUtils
-														.join(context, ' '));
+											phrase.add(StringUtils.join(combo, ' ') + "," + f.getName() + "," + line_no
+													+ "," + StringUtils.join(context, ' '));
 
-										int phrase_count = seedCombos
-												.get(combo) + 1;
-										seedCombos.put(combo, phrase_count);
+											int phrase_count = seedCombos.get(combo) + 1;
+											seedCombos.put(combo, phrase_count);
+										}
 									}
 								}
 							}
@@ -264,26 +251,22 @@ public class CooccurrenceAnalysis {
 			try {
 				if (buildMatrix) {
 					monitor.subTask("Writing Word Matrix");
-					String filename = new SimpleDateFormat(
-							"'co-occur_wordmatrix_'yyyyMMddhhmm'.csv'")
-							.format(currTime);
+					String filename = new SimpleDateFormat("'co-occur_wordmatrix_'yyyyMMddhhmm'.csv'").format(currTime);
 					writeWordMatrix(filename);
 
 				}
 				monitor.worked(10);
 				if (ret && phrase.size() > 0) {
 					monitor.subTask("Writing Phrases");
-					String phraseFilename = new SimpleDateFormat(
-							"'co-occur_phrases_'yyyyMMddhhmm'.csv'")
+					String phraseFilename = new SimpleDateFormat("'co-occur_phrases_'yyyyMMddhhmm'.csv'")
 							.format(currTime);
-					String freqFilename = new SimpleDateFormat(
-							"'co-occur_seedfrequencies_'yyyyMMddhhmm'.csv'")
+					String freqFilename = new SimpleDateFormat("'co-occur_seedfrequencies_'yyyyMMddhhmm'.csv'")
 							.format(currTime);
 					writePhrases(phrase, phraseFilename);
 					writeSeedComboStats(freqFilename);
-				}
-				else {
-					appendLog("None of the seed combinations occured in the input files for the given window size and threshold");
+				} else {
+					appendLog(
+							"None of the seed combinations occured in the input files for the given window size and threshold");
 					appendLog("Phrase and frequency files not created");
 				}
 			} catch (OutOfMemoryError e) {
@@ -294,8 +277,7 @@ public class CooccurrenceAnalysis {
 			monitor.worked(10);
 			appendLog(String.valueOf(phrase.size()));
 			Date dateObj = new Date();
-			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis",
-					dateObj);
+			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis", dateObj);
 			return true;
 		} catch (Exception e) {
 			appendLog("Exception occurred in Cooccurrence Analysis " + e);
@@ -306,19 +288,15 @@ public class CooccurrenceAnalysis {
 
 	private void writeSeedComboStats(String filename) {
 		try {
-			FileWriter fw = new FileWriter(new File(outputPath + File.separator
-					+ filename));
+			FileWriter fw = new FileWriter(new File(outputPath + File.separator + filename));
 			fw.write("seed combination, count\n");
 			for (Set<String> combo : seedCombos.keySet()) {
-				fw.write(StringUtils.join(combo, ' ') + ","
-						+ seedCombos.get(combo) + "\n");
+				fw.write(StringUtils.join(combo, ' ') + "," + seedCombos.get(combo) + "\n");
 			}
-			appendLog("Writing frequencies of seed combinations at "
-					+ outputPath + File.separator + filename);
+			appendLog("Writing frequencies of seed combinations at " + outputPath + File.separator + filename);
 			fw.close();
-			appendLog("Seed combination frequencies stored in " + outputPath + File.separator
-					+ filename);
-		
+			appendLog("Seed combination frequencies stored in " + outputPath + File.separator + filename);
+
 		} catch (IOException e) {
 			appendLog("Error writing seed frequencies to file " + filename + e);
 		}
@@ -332,18 +310,15 @@ public class CooccurrenceAnalysis {
 	 */
 	private void writePhrases(List<String> phrases, String filename) {
 		try {
-			FileWriter fw = new FileWriter(new File(outputPath + File.separator
-					+ filename));
+			FileWriter fw = new FileWriter(new File(outputPath + File.separator + filename));
 			fw.write("seed combination, file name, line no., phrase\n");
 			for (String p : phrases) {
 				fw.write(p + "\n");
 			}
-			appendLog("Writing phrases at " + outputPath + File.separator
-					+ filename);
+			appendLog("Writing phrases at " + outputPath + File.separator + filename);
 			fw.close();
-			appendLog("Phrases stored in " + outputPath + File.separator
-					+ filename);
-		
+			appendLog("Phrases stored in " + outputPath + File.separator + filename);
+
 		} catch (IOException e) {
 			appendLog("Error writing phrases to file " + filename + e);
 		}
@@ -371,8 +346,7 @@ public class CooccurrenceAnalysis {
 		Map<String, Integer> vec = null;
 
 		try {
-			FileWriter fw = new FileWriter(new File(outputPath + File.separator
-					+ filename));
+			FileWriter fw = new FileWriter(new File(outputPath + File.separator + filename));
 			fw.write(" ,");
 			for (String key : keys) {
 				fw.write(key + ",");
@@ -393,17 +367,15 @@ public class CooccurrenceAnalysis {
 			}
 			appendLog("Writng Word Matrix into " + filename);
 			fw.close();
-			appendLog("Word to word matrix stored in " + outputPath
-					+ File.separator + filename);
-			
+			appendLog("Word to word matrix stored in " + outputPath + File.separator + filename);
+
 		} catch (IOException e) {
 			appendLog("Error writing word matrix " + e);
 		}
 	}
 
-	public boolean invokeCooccurrence(List<String> selectedFiles,
-			String seedFileLocation, String fOutputDir, String numTopics,
-			String ftxtThreshold, boolean fOption, IProgressMonitor monitor) {
+	public boolean invokeCooccurrence(List<String> selectedFiles, String seedFileLocation, String fOutputDir,
+			String numTopics, String ftxtThreshold, boolean fOption, IProgressMonitor monitor) {
 
 		int windowSize = 0;
 		if (!numTopics.equals(""))
@@ -419,11 +391,11 @@ public class CooccurrenceAnalysis {
 
 		// ConsoleView.writeInConsole("Running Co-occurrence Analysis...");
 		appendLog("Running Co-occurrence Analysis...");
-		boolean isSuccess = calculateCooccurrences(selectedFiles,
-				seedFileLocation, windowSize, fOutputDir, threshold,
+		boolean isSuccess = calculateCooccurrences(selectedFiles, seedFileLocation, windowSize, fOutputDir, threshold,
 				buildMatrix, monitor);
 		if (isSuccess == false) {
-			appendLog("Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
+			appendLog(
+					"Sorry. Something went wrong with Co-occurrence Analysis. Please check your input and try again.\n");
 			return isSuccess;
 		}
 
