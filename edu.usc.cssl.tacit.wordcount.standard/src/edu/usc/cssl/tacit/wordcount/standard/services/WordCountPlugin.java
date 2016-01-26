@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -74,6 +75,8 @@ public class WordCountPlugin {
 	private BufferedWriter pennCSVbw = null;
 	private BufferedWriter datbw = null;
 
+	private HashMap<Integer, Integer> oldCategoryMap = new HashMap<Integer, Integer>();
+	private int clashWordCount = 2147483647;
 	// Variables to compute the overall counts
 	private int numWords = 0;
 	private int numDictWords = 0;
@@ -685,26 +688,36 @@ public class WordCountPlugin {
 		monitor.subTask("Building Dictionary Maps");
 
 		for (String dFile : dictionaryFiles) {
+			clashWordCount = 2147483647;
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					dFile)));
 
 			String currentLine = br.readLine().trim();
-			if (currentLine == null || currentLine.isEmpty()) {
+			
+			if (currentLine == null) {
 				ConsoleView.printlInConsoleln("The dictionary file " + dFile
 						+ " is empty.");
-				br.close();
-				continue;
 			}
 
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null
 						&& !currentLine.equals("%")) {
-					if (currentLine.equals(""))
-						continue;
-					categoryID.put(
-							Integer.parseInt(currentLine.split("\\s+")[0]
-									.trim()), currentLine.split("\\s+")[1]
-									.trim());
+					int key = Integer.parseInt(currentLine.split("\\s+")[0]
+							.trim());
+					String value = currentLine.split("\\s+")[1]
+							.trim();
+
+					if(categoryID.containsKey(key) && !((categoryID.get(key)).equals(value)))
+					{
+
+						addConflictingCategory(key, value);
+						
+					}
+					else
+					{
+						categoryID.put(key, value);
+					}
+					
 				}
 
 			if (currentLine == null) {
@@ -712,8 +725,7 @@ public class WordCountPlugin {
 						+ " does not have any categorized words.");
 			} else {
 				while ((currentLine = br.readLine()) != null) {
-					if (currentLine.trim().equals(""))
-						continue;
+
 					String[] words = currentLine.split("\\s+");
 
 					// If word not in the maps, add it
@@ -740,17 +752,28 @@ public class WordCountPlugin {
 						pennOverallCount.put(words[0],
 								new HashMap<String, Double>());
 					}
-
+					/*parsing the file to change category ID's
+					 * 
+					 */
 					for (int i = 1; i < words.length; i = increment(i)) {
+						
+						
 						// Add a category to the maps if it was not added
 						// earlier
+						if(oldCategoryMap.containsKey(Integer.parseInt(words[i]))){
+							words[i] = oldCategoryMap.get(Integer.parseInt(words[i]))+"";
+						}
+						
+					
 						if (!wordDictionary.get(words[0]).containsKey(
 								Integer.parseInt(words[i]))) {
+							
 							if (weighted) {
 								wordDictionary.get(words[0]).put(
 										Integer.parseInt(words[i]),
 										Double.parseDouble(words[i + 1]));
 							} else {
+								
 								wordDictionary.get(words[0]).put(
 										Integer.parseInt(words[i]), 1.0);
 							}
@@ -768,7 +791,16 @@ public class WordCountPlugin {
 
 		monitor.worked(2);
 	}
-
+	
+	private void addConflictingCategory(int key,String value){
+		
+		while(categoryID.containsKey(clashWordCount)){
+				clashWordCount--;
+		}
+		categoryID.put(clashWordCount, value);
+		oldCategoryMap.put(key, clashWordCount);
+		clashWordCount--;
+	}
 	/**
 	 * Call this function after completing the counts for individual files to
 	 * set the file counts back to 0.

@@ -27,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-import edu.usc.cssl.tacit.common.DictionaryInvalidException;
 import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -35,7 +34,7 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class WordCountApi {
 
 	private Trie categorizer = new Trie();
-	//private Trie phrazer = new Trie();
+	// private Trie phrazer = new Trie();
 	private boolean phraseDetect = false;
 	private HashMap<String, HashMap<String, Double>> weightMap = new HashMap<String, HashMap<String, Double>>();
 	private HashMap<String, List<Integer>> phraseLookup = new HashMap<String, List<Integer>>();
@@ -44,7 +43,9 @@ public class WordCountApi {
 	private String delimiters;
 	private boolean doLower;
 	private boolean doStopWords;
-	//private boolean noDictionary = false;
+	private int clashWordCount = 2147483647;
+	private HashMap<Integer, Integer> oldCategoryMap = new HashMap<Integer, Integer>();
+	// private boolean noDictionary = false;
 	private HashSet<String> stopWordSet = new HashSet<String>();
 	private boolean doLiwcStemming = true;
 	private boolean doSpss = true;
@@ -55,8 +56,7 @@ public class WordCountApi {
 	private int weirdDashCount = 0;
 	private String punctuations = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
 	// counting numbers - // 5.7, .7 , 5., 567, -25.9, +45
-	Pattern pattern = Pattern
-			.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
+	Pattern pattern = Pattern.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
 	// Pattern pattern =
 	// Pattern.compile("\\s+[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.,\\s]+");
 
@@ -71,28 +71,21 @@ public class WordCountApi {
 	// Regular word
 	Pattern regularPattern = Pattern.compile("[\\w\\d]+");
 
-	
-
 	// for calculating punctuation ratios
-	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro,
-			parenth, otherP, allPct;
+	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro, parenth, otherP, allPct;
 	private boolean weighted;
 
-	private static Logger logger = Logger.getLogger(WordCountApi.class
-			.getName());
+	private static Logger logger = Logger.getLogger(WordCountApi.class.getName());
 
 	public WordCountApi(boolean weighted) {
 		this.weighted = weighted;
 	}
 
 	// Updated function that can handle multiple input files
-	public void wordCount(IProgressMonitor monitor,
-			List<File> inputFiles, List<String> dictionaryFile,
-			String stopWordsFile, String outputFile, String delimiters,
-			boolean doLower, boolean doLiwcStemming,
-			boolean doSnowBallStemming, boolean doSpss,
-			boolean doWordDistribution, boolean stemDictionary, File oFile,
-			File sFile, Date dateObj, Map<String, String[]> fileCorpuses) throws IOException, DictionaryInvalidException {
+	public void wordCount(IProgressMonitor monitor, List<File> inputFiles, List<String> dictionaryFile,
+			String stopWordsFile, String outputFile, String delimiters, boolean doLower, boolean doLiwcStemming,
+			boolean doSnowBallStemming, boolean doSpss, boolean doWordDistribution, boolean stemDictionary, File oFile,
+			File sFile, Date dateObj, Map<String, String[]> fileCorpuses) throws IOException {
 		if (delimiters == null || delimiters.equals(""))
 			this.delimiters = " ";
 		else
@@ -104,7 +97,8 @@ public class WordCountApi {
 		this.doSnowballStemming = doSnowBallStemming;
 		this.stemDictionary = stemDictionary;
 
-		if (!this.weighted) this.doLiwcStemming = true;
+		if (!this.weighted)
+			this.doLiwcStemming = true;
 		appendLog("Processing...");
 
 		if (stopWordsFile.equals(null) || stopWordsFile.equals("") || !this.weighted)
@@ -123,10 +117,10 @@ public class WordCountApi {
 		}
 		monitor.subTask("Building Category...");
 		buildCategorizer(dictionaryFile);
-		logger.info("Finished building the dictionary trie in "
-				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
-		appendLog("Finished building the dictionary trie in "
-				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+		logger.info("Finished building the dictionary trie in " + (System.currentTimeMillis() - startTime)
+				+ " milliseconds.");
+		appendLog("Finished building the dictionary trie in " + (System.currentTimeMillis() - startTime)
+				+ " milliseconds.");
 		monitor.worked(10);
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -137,11 +131,9 @@ public class WordCountApi {
 			startTime = System.currentTimeMillis();
 			monitor.subTask("Removing Stop words...");
 			stopWordSetBuild(new File(stopWordsFile));
-			logger.info("Finished building the Stop Words Set in "
-					+ (System.currentTimeMillis() - startTime)
+			logger.info("Finished building the Stop Words Set in " + (System.currentTimeMillis() - startTime)
 					+ " milliseconds.");
-			appendLog("Finished building the Stop Words Set in "
-					+ (System.currentTimeMillis() - startTime)
+			appendLog("Finished building the Stop Words Set in " + (System.currentTimeMillis() - startTime)
 					+ " milliseconds.");
 		}
 		monitor.worked(10);
@@ -158,12 +150,11 @@ public class WordCountApi {
 
 		}
 		// Write the SPSS file
-		if (doSpss){
-			monitor.subTask("Writing File "+sFile.getName() + "...");
+		if (doSpss) {
+			monitor.subTask("Writing File " + sFile.getName() + "...");
 			buildSpssFile(sFile);
 		}
 		monitor.worked(10);
-			
 
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -173,14 +164,14 @@ public class WordCountApi {
 		for (File inputFile : inputFiles) {
 
 			// Mac cache file filtering
-			String absoluteFilePath = inputFile.getAbsolutePath(); 
+			String absoluteFilePath = inputFile.getAbsolutePath();
 			if (absoluteFilePath.contains("DS_Store"))
 				continue;
-			monitor.subTask("Counting Words at " + inputFile );
+			monitor.subTask("Counting Words at " + inputFile);
 			String corpus = "NIL";
 			if (fileCorpuses.containsKey(absoluteFilePath))
-					corpus = fileCorpuses.get(absoluteFilePath)[0] +"\\" + fileCorpuses.get(absoluteFilePath)[1]; 
-			countWords(inputFile, oFile, sFile,dateObj, corpus);
+				corpus = fileCorpuses.get(absoluteFilePath)[0] + "\\" + fileCorpuses.get(absoluteFilePath)[1];
+			countWords(inputFile, oFile, sFile, dateObj, corpus);
 			monitor.worked(1);
 		}
 		if (monitor.isCanceled()) {
@@ -188,7 +179,6 @@ public class WordCountApi {
 
 		}
 
-		
 		monitor.worked(10);
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -196,9 +186,11 @@ public class WordCountApi {
 		}
 		// No errors
 		monitor.subTask("Writing Read Me File...");
-		if(this.weighted) TacitUtility.createRunReport(outputFile, "Weighted Word Count",dateObj);
-		else TacitUtility.createRunReport(outputFile, "LIWC Word Count",dateObj);
-		
+		if (this.weighted)
+			TacitUtility.createRunReport(outputFile, "Weighted Word Count", dateObj);
+		else
+			TacitUtility.createRunReport(outputFile, "LIWC Word Count", dateObj);
+
 		monitor.worked(5);
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -206,9 +198,8 @@ public class WordCountApi {
 		}
 	}
 
-	public void countWords(File iFile, File oFile, File spssFile, Date dateObj, String corpus)
-			throws IOException {
-	
+	public void countWords(File iFile, File oFile, File spssFile, Date dateObj, String corpus) throws IOException {
+
 		if (iFile.isDirectory()) {
 			return;
 		}
@@ -252,13 +243,10 @@ public class WordCountApi {
 			parenth = parenth + StringUtils.countMatches(currentLine, "[");
 			parenth = parenth + StringUtils.countMatches(currentLine, "]");
 
-			
 			for (char c : "#$%&*+=/\\<>@_^`~|".toCharArray()) {
-				otherP = otherP
-						+ StringUtils.countMatches(currentLine,
-								String.valueOf(c));
+				otherP = otherP + StringUtils.countMatches(currentLine, String.valueOf(c));
 			}
-			
+
 			System.out.println();
 
 			int[] i = process(currentLine, map);
@@ -266,16 +254,13 @@ public class WordCountApi {
 			sixltr = sixltr + i[1];
 			numerals = numerals + i[2];
 		}
-		allPct = allPct + period + comma + colon + semiC + qMark + exclam
-				+ dash + quote + apostro + parenth + otherP;
+		allPct = allPct + period + comma + colon + semiC + qMark + exclam + dash + quote + apostro + parenth + otherP;
 
 		br.close();
 		logger.info("Total number of words - " + totalWords);
-		logger.info("Finished building hashmap in "
-				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+		logger.info("Finished building hashmap in " + (System.currentTimeMillis() - startTime) + " milliseconds.");
 		appendLog("Total number of words - " + totalWords);
-		appendLog("Finished building hashmap in "
-				+ (System.currentTimeMillis() - startTime) + " milliseconds.");
+		appendLog("Finished building hashmap in " + (System.currentTimeMillis() - startTime) + " milliseconds.");
 
 		// Calculate Category-wise count
 		HashMap<String, Double> catCount = new HashMap<String, Double>();
@@ -310,33 +295,28 @@ public class WordCountApi {
 						// Add map.get(currWord), i.e, the num of each word to
 						// count total number of words in the category
 						double currWordWeight = 1.0;
-						if(null != this.weightMap.get(currWord)) {
+						if (null != this.weightMap.get(currWord)) {
 							currWordWeight = this.weightMap.get(currWord).get(currCategoryName);
 						}
-						if(this.weighted)
-						catCount.put(
-								currCategoryName,
-								catCount.get(currCategoryName) + (map.get(currWord)* currWordWeight));
-						else 
-							catCount.put(
-									currCategoryName,
-									catCount.get(currCategoryName)
-											+ map.get(currWord));
+						if (this.weighted)
+							catCount.put(currCategoryName,
+									catCount.get(currCategoryName) + (map.get(currWord) * currWordWeight));
+						else
+							catCount.put(currCategoryName, catCount.get(currCategoryName) + map.get(currWord));
 					} else {
 						double currWordWeight = 1.0;
-						if(null != this.weightMap.get(currWord)) {
+						if (null != this.weightMap.get(currWord)) {
 							currWordWeight = this.weightMap.get(currWord).get(currCategoryName);
 						}
-						
-						if(this.weighted)
+
+						if (this.weighted)
 							catCount.put(currCategoryName, (map.get(currWord) * currWordWeight));
 						else
-						catCount.put(currCategoryName, (double) map.get(currWord));
+							catCount.put(currCategoryName, (double) map.get(currWord));
 					}
 
 					// Populate the Category Set for each Word
-					HashSet<String> currWordCategories = wordCategories
-							.get(currWord);
+					HashSet<String> currWordCategories = wordCategories.get(currWord);
 					if (currWordCategories != null) {
 						wordCategories.get(currWord).add(currCategoryName);
 					} else {
@@ -351,44 +331,42 @@ public class WordCountApi {
 			}
 		}
 		// If Word Distribution output is enabled, calculate the values
-		if (doWordDistribution){
-			
-			calculateWordDistribution(map, catCount, wordCategories, iFile.getAbsolutePath(),
-					oFile,dateObj);
+		if (doWordDistribution) {
+
+			calculateWordDistribution(map, catCount, wordCategories, iFile.getAbsolutePath(), oFile, dateObj);
 		}
 
 		// If there are no punctuation marks, minimum number of lines = 1
 		if (noOfLines == 0)
 			noOfLines = 1;
 
-		writeToFile(oFile, iFile.getName(), corpus, totalWords, totalWords
-				/ (double) noOfLines, (sixltr * 100) / (double) totalWords,
-				(dicCount * 100) / (float) totalWords, (numerals * 100)
-						/ (double) totalWords, catCount);
+		writeToFile(oFile, iFile.getName(), corpus, totalWords, totalWords / (double) noOfLines,
+				(sixltr * 100) / (double) totalWords, (dicCount * 100) / (float) totalWords,
+				(numerals * 100) / (double) totalWords, catCount);
 		if (doSpss)
-			writeToSpss(spssFile, iFile.getName(), corpus, totalWords, totalWords
-					/ (float) noOfLines, (sixltr * 100) / (float) totalWords,
-					(dicCount * 100) / (double) totalWords, catCount);
+			writeToSpss(spssFile, iFile.getName(), corpus, totalWords, totalWords / (float) noOfLines,
+					(sixltr * 100) / (float) totalWords, (dicCount * 100) / (double) totalWords, catCount);
 	}
 
-	public void calculateWordDistribution(HashMap<String, Integer> map,
-			HashMap<String, Double> catCount,
-			HashMap<String, HashSet<String>> wordCategories, String inputFile,
-			File oFile, Date dateobj) throws IOException {
+	public void calculateWordDistribution(HashMap<String, Integer> map, HashMap<String, Double> catCount,
+			HashMap<String, HashSet<String>> wordCategories, String inputFile, File oFile, Date dateobj)
+					throws IOException {
 		File outputDir = oFile.getParentFile();
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
-		
-		//Create output directory for word distributions
-		String wordDistributionDir = outputDir+System.getProperty("file.separator");
-		if (this.weighted) wordDistributionDir = wordDistributionDir+"weighted-word-distribution-"+df.format(dateobj);
-		else wordDistributionDir = wordDistributionDir+"LIWC-word-distribution-"+df.format(dateobj);
-		if (!(new File(wordDistributionDir).exists())) new File(wordDistributionDir).mkdir();
-		
-		String iFilename = inputFile.substring(inputFile.lastIndexOf(System
-				.getProperty("file.separator")));
-		String outputPath = wordDistributionDir+ System.getProperty("file.separator") + iFilename
+
+		// Create output directory for word distributions
+		String wordDistributionDir = outputDir + System.getProperty("file.separator");
+		if (this.weighted)
+			wordDistributionDir = wordDistributionDir + "weighted-word-distribution-" + df.format(dateobj);
+		else
+			wordDistributionDir = wordDistributionDir + "LIWC-word-distribution-" + df.format(dateobj);
+		if (!(new File(wordDistributionDir).exists()))
+			new File(wordDistributionDir).mkdir();
+
+		String iFilename = inputFile.substring(inputFile.lastIndexOf(System.getProperty("file.separator")));
+		String outputPath = wordDistributionDir + System.getProperty("file.separator") + iFilename
 				+ "-wordDistribution.csv";
-		
+
 		File wdFile = new File(outputPath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
 		bw.write("Word,Count,");
@@ -421,12 +399,10 @@ public class WordCountApi {
 					// dictionary and weight map
 					String rootWord = categorizer.root(currWord);
 					if (this.weighted) {
-						row.append((multiplier * map.get(currWord) * weightMap
-								.get(rootWord).get(currCat) * weightMap.get(rootWord).get(currCat))
-								/ catCount.get(currCat) + ",");
+						row.append((multiplier * map.get(currWord) * weightMap.get(rootWord).get(currCat)
+								* weightMap.get(rootWord).get(currCat)) / catCount.get(currCat) + ",");
 					} else {
-						row.append(multiplier * map.get(currWord)
-								/ catCount.get(currCat) + ",");
+						row.append(multiplier * map.get(currWord) / catCount.get(currCat) + ",");
 					}
 				}
 			}
@@ -477,14 +453,11 @@ public class WordCountApi {
 		// logger.info("Created the SPSS output File.");
 	}
 
-
-
-	public void writeToSpss(File spssFile, String docName, String docCorpus, int totalCount,
-			float wps, float sixltr, double d, HashMap<String, Double> catCount)
-			throws IOException {
+	public void writeToSpss(File spssFile, String docName, String docCorpus, int totalCount, float wps, float sixltr,
+			double d, HashMap<String, Double> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
-		row.append("\"" + docName + "\"" + " "+ "\"" + docCorpus + "\"" + " " + totalCount + " " + wps + " "
-				+ sixltr + " " + d + " ");
+		row.append("\"" + docName + "\"" + " " + "\"" + docCorpus + "\"" + " " + totalCount + " " + wps + " " + sixltr
+				+ " " + d + " ");
 		double currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
 		// string
@@ -505,13 +478,11 @@ public class WordCountApi {
 		ConsoleView.printlInConsole("DAT File Updated Successfully");
 	}
 
-	public void writeToFile(File oFile, String docName, String docCorpus, int totalCount,
-			double wps, double d, double dic, double numerals,
-			HashMap<String, Double> catCount) throws IOException {
+	public void writeToFile(File oFile, String docName, String docCorpus, int totalCount, double wps, double d,
+			double dic, double numerals, HashMap<String, Double> catCount) throws IOException {
 		StringBuilder row = new StringBuilder();
-		row.append(docName + "," + docCorpus + ",1," + totalCount + "," + wps + ","
-				+ d + "," + dic + ","
-				+ numerals + ",");
+		row.append(docName + "," + docCorpus + ",1," + totalCount + "," + wps + "," + d + "," + dic + "," + numerals
+				+ ",");
 
 		double currCatCount = 0;
 		// Get the category-wise word count and create the comma-separated row
@@ -521,8 +492,7 @@ public class WordCountApi {
 				currCatCount = 0;
 			else
 				currCatCount = catCount.get(title);
-			row.append((((currCatCount * 100) / totalCount))
-					+ ",");
+			row.append((((currCatCount * 100) / totalCount)) + ",");
 		}
 
 		// Period, Comma, Colon, SemiC, QMark, Exclam, Dash, Quote, Apostro,
@@ -540,17 +510,17 @@ public class WordCountApi {
 		row.append((((quote * 100) / (float) totalCount)) + ",");
 		row.append((((apostro * 100) / (float) totalCount)) + ",");
 		row.append((((parenth * 50) / (float) totalCount)) + ","); // multiply
-																			// by
-																			// 50
-																			// =
-																			// dividing
-																			// by
-																			// two.
-																			// parantheses
-																			// are
-																			// counted
-																			// as
-																			// pairs
+																	// by
+																	// 50
+																	// =
+																	// dividing
+																	// by
+																	// two.
+																	// parantheses
+																	// are
+																	// counted
+																	// as
+																	// pairs
 		row.append((((otherP * 100) / (float) totalCount)) + ",");
 		row.append((((allPct * 100) / (float) totalCount)) + ",");
 
@@ -564,36 +534,38 @@ public class WordCountApi {
 		logger.info("CSV File Updated Successfully");
 		appendLog("CSV File Updated Successfully");
 	}
-
-	public void buildCategorizer(List<String> dictFiles) throws IOException, DictionaryInvalidException {
+	private void addConflictingCategory(int key, String value){
+		while(categories.containsKey(clashWordCount)){
+				clashWordCount--;
+		}
+		categories.put(clashWordCount, value);
+		oldCategoryMap.put(key, clashWordCount);
+		clashWordCount--;
+	}
+	public void buildCategorizer(List<String> dictFiles) throws IOException {
 
 		for (String dFile : dictFiles) {
-			BufferedReader br = new BufferedReader(new FileReader(new File(
-					dFile)));
+			BufferedReader br = new BufferedReader(new FileReader(new File(dFile)));
 			String currentLine = br.readLine().trim();
-			if (currentLine == null || currentLine.isEmpty()) {
+			if (currentLine == null) {
 				logger.warning("The dictionary file " + dFile + " is empty");
 				appendLog("The dictionary file " + dFile + " is empty");
-				br.close();
-				continue;
 			}
 
 			if (currentLine.equals("%"))
-				while ((currentLine = br.readLine().trim().toLowerCase()) != null
-						&& !currentLine.equals("%")) {
-					if (currentLine.equals(""))
-						continue;
-					categories.put(
-							Integer.parseInt(currentLine.split("\\s+")[0]
-									.trim()), currentLine.split("\\s+")[1]
-									.trim());
+				while ((currentLine = br.readLine().trim().toLowerCase()) != null && !currentLine.equals("%")) {
+					int categoryId = Integer.parseInt(currentLine.split("\\s+")[0].trim());
+					String categoryName = currentLine.split("\\s+")[1].trim();
+					if (categories.containsKey(categoryId) && !((categories.get(categoryId)).equals(categoryName))) {
+						addConflictingCategory(categoryId, categoryName);
+					} else {
+						categories.put(categoryId, categoryName);
+					}
 				}
 
 			if (currentLine == null) {
-				logger.warning("The dictionary file " + dFile
-						+ " does not have categorized words");
-				appendLog("The dictionary file " + dFile
-						+ " does not have categorized words");
+				logger.warning("The dictionary file " + dFile + " does not have categorized words");
+				appendLog("The dictionary file " + dFile + " does not have categorized words");
 			} else {
 				while ((currentLine = br.readLine()) != null) {
 					ArrayList<Integer> categories = new ArrayList<Integer>();
@@ -612,21 +584,22 @@ public class WordCountApi {
 					String currPhrase = words[0];
 					String condPhrase = words[0];
 					for (int i = initialize(); i < words.length; i = increment(i)) {
+						// Add a category to the maps if it was not added
+						// earlier
+						if(i >0 && oldCategoryMap.containsKey(Integer.parseInt(words[i]))){
+							words[i] = oldCategoryMap.get(Integer.parseInt(words[i]))+"";
+						}
+						
 						if (!words[i].matches("\\d+")) {
 							if (words[i].contains("/")) {
 								String[] splits = words[i].split("/");
 								categories.add(Integer.parseInt(splits[1]));
 								if (splits[0].contains(">")) {
 									conditional = true;
-									condCategories.add(Integer
-											.parseInt(splits[0].split(">")[1]));
-									condPhrase = words[0]
-											+ " "
-											+ splits[0].split(">")[0].replace(
-													"<", "");
+									condCategories.add(Integer.parseInt(splits[0].split(">")[1]));
+									condPhrase = words[0] + " " + splits[0].split(">")[0].replace("<", "");
 								}
-							} else if (words[i].contains(")")
-									|| words[i].contains("("))
+							} else if (words[i].contains(")") || words[i].contains("("))
 								continue;
 							else {
 								currPhrase = currPhrase + " " + words[i];
@@ -634,19 +607,15 @@ public class WordCountApi {
 							}
 							continue;
 						}
-						
-						try{
+
+						try {
 							if (this.weighted) {
-								weights.put(this.categories.get(Integer
-										.parseInt(words[i])), Double
-										.parseDouble(words[i + 1]));
+								weights.put(this.categories.get(Integer.parseInt(words[i])),
+										Double.parseDouble(words[i + 1]));
 							}
-						} catch(Exception e) {
-							String errMessage = "The dictionary file " + dFile + " is not suitable for weighted wordcount";
-							logger.warning(errMessage);
-							appendLog(errMessage);
-							br.close();
-							throw new DictionaryInvalidException(errMessage);
+						} catch (Exception e) {
+							logger.warning("The dictionary file " + dFile + " is not suitable for weighted wordcount");
+							appendLog("The dictionary file " + dFile + " is not suitable for weighted wordcount");
 						}
 						categories.add(Integer.parseInt(words[i]));
 					}
@@ -691,11 +660,9 @@ public class WordCountApi {
 
 	private int initialize() {
 		return 1;
-		/*if (this.weighted)
-			return 2;
-		else
-			return 1;
-		*/
+		/*
+		 * if (this.weighted) return 2; else return 1;
+		 */
 	}
 
 	private int increment(int val) {
@@ -777,8 +744,7 @@ public class WordCountApi {
 				for (int i = 0; i < indexes.size(); i = i + 2) {
 					// phrases and replacements would be rare. No need for a
 					// StringBuilder
-					line = line.substring(0, indexes.get(i))
-							+ line.substring(indexes.get(i + 1));
+					line = line.substring(0, indexes.get(i)) + line.substring(indexes.get(i + 1));
 					int diff = indexes.get(i + 1) - indexes.get(i);
 					for (int j = 0; j < indexes.size(); j++)
 						indexes.set(j, indexes.get(j) - diff);
@@ -808,8 +774,7 @@ public class WordCountApi {
 				for (int i = 0; i < indexes.size(); i = i + 2) {
 					// phrases and replacements would be rare. No need for a
 					// StringBuilder
-					line = line.substring(0, indexes.get(i))
-							+ line.substring(indexes.get(i + 1));
+					line = line.substring(0, indexes.get(i)) + line.substring(indexes.get(i + 1));
 					int diff = indexes.get(i + 1) - indexes.get(i);
 					for (int j = 0; j < indexes.size(); j++)
 						indexes.set(j, indexes.get(j) - diff);
@@ -831,7 +796,7 @@ public class WordCountApi {
 				nextWord = trimChars(st.nextToken(), punctuations);
 			// String currentWord = st.nextToken();
 
-			if (currentWord == null || currentWord.equals("")){
+			if (currentWord == null || currentWord.equals("")) {
 				currentWord = nextWord;
 				continue;
 			}
@@ -870,7 +835,8 @@ public class WordCountApi {
 
 			/*
 			 * numWords = numWords + 1; if (currentWord.length()>6){ sixltr =
-			 * sixltr + 1; //ConsoleView.writeInConsole(currentWord+" "+sixltr); }
+			 * sixltr + 1; //ConsoleView.writeInConsole(currentWord+" "+sixltr);
+			 * }
 			 */
 
 			boolean treatAsOne = true;
@@ -880,11 +846,11 @@ public class WordCountApi {
 			// word in the lookup
 			if (dh.find()) {
 				currentWord = currentWord.replaceFirst("--", "-").toLowerCase();
-				if (categorizer.query(currentWord) != null
-						&& !categorizer.checkHyphen(currentWord)) {
+				if (categorizer.query(currentWord) != null && !categorizer.checkHyphen(currentWord)) {
 					// treat as one word.
 					// numWords = numWords; already 1 added above
-					// ConsoleView.writeInConsole("Treating as one - "+currentWord);
+					// ConsoleView.writeInConsole("Treating as one -
+					// "+currentWord);
 					Object value = map.get(currentWord);
 					if (value != null) {
 						int i = ((Integer) value).intValue();
@@ -892,18 +858,16 @@ public class WordCountApi {
 					} else {
 						map.put(currentWord, 1);
 					}
-					String[] words = currentWord.split("-",2);
+					String[] words = currentWord.split("-", 2);
 					int hyphened = words.length;
 					// boolean allFound = true;
-					
 
 					weirdDashCount = weirdDashCount + hyphened; // twice if two
 																// dashes
 				} else {
-					String[] words = currentWord.split("-",2);
-					int hyphened = words.length-1;
+					String[] words = currentWord.split("-", 2);
+					int hyphened = words.length - 1;
 					// boolean allFound = true;
-					
 
 					if (categorizer.query(currentWord) != null) {
 						Object value = map.get(currentWord);
