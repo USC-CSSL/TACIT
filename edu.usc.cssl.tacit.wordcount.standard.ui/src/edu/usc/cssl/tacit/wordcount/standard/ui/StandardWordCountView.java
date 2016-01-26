@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -331,6 +332,9 @@ public class StandardWordCountView extends ViewPart implements
 							ppObj.clean();
 							monitor.worked(1);
 						} catch (IOException e) {
+							e.printStackTrace();
+							return Status.CANCEL_STATUS;
+						} catch (OperationCanceledException e){
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						} catch (Exception e) {

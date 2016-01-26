@@ -29,6 +29,7 @@ import opennlp.tools.util.InvalidFormatException;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
 import edu.usc.cssl.tacit.common.TacitUtility;
@@ -131,11 +132,11 @@ public class WordCountPlugin {
 		ConsoleView.printlInConsoleln("Counting Words.");
 		monitor.subTask("Counting Words");
 		if (monitor.isCanceled())
-			return;
+			throw new OperationCanceledException();
 
 		for (String iFile : inputFiles) {
 			if (monitor.isCanceled())
-				return;
+				throw new OperationCanceledException();
 			do_countWords(iFile);
 			if (doWordDistribution)
 				createWordDistribution(iFile);

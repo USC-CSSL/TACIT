@@ -162,7 +162,11 @@ public class WordCountApi {
 		}
 		// for each inputFile,
 		for (File inputFile : inputFiles) {
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
 
+			}
+			
 			// Mac cache file filtering
 			String absoluteFilePath = inputFile.getAbsolutePath();
 			if (absoluteFilePath.contains("DS_Store"))
