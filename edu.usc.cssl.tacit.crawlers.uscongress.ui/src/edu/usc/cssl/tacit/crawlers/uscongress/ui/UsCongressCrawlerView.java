@@ -90,7 +90,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	
 	private int totalSenators;
 	private int totalRepresentatives;
-	private int progressSize = 100;
+	private int progressSize;
 	private Button sortByDateYes;
 	private Button sortByDateNo;
 	private Table senatorTable;
@@ -969,18 +969,18 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 								outputDir = outputLayout.getOutputLabel().getText();	
 							}
 						});
-						
+						//This part will set the progress count for the progress bar			
 						if((congressMemberDetails.contains("All Senators") || congressMemberDetails.contains("All Representatives")) && congressNum.equals("-1")) { // all senators and all congresses
 							progressSize = congressMemberDetails.contains("All Senators") ? (totalSenators * congresses.length) + 50 : (totalRepresentatives * congresses.length) + 50;
 						} else {
 							if(congressNum.equals("-1")) { // All congresses
 								if(congressMemberDetails.contains("All Democrats") || congressMemberDetails.contains("All Republicans") || congressMemberDetails.contains("All Independents")) {
 									if(congressMemberDetails.contains("All Democrats")) 
-										progressSize= (20 * congresses.length) + 50; // on an average of 20 democrats
+										progressSize= (50 * congresses.length) + 50; // on an average of 50 democrats
 									if(congressMemberDetails.contains("All Republicans")) 
-										progressSize+= (20 * congresses.length) + 50; // on an average of 20 democrats
+										progressSize+= (50 * congresses.length) + 50; // on an average of 50 democrats
 									if(congressMemberDetails.contains("All Independents")) 
-										progressSize+= (20 * congresses.length) + 50; // on an average of 20 democrats
+										progressSize+= (50 * congresses.length) + 50; // on an average of 50 democrats
 								} else
 									progressSize = ((congressMemberDetails.size()+1) * congresses.length) + 50; // considering none of "All" selected
 							} else { // some congress selected
@@ -988,11 +988,11 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 									progressSize = congressMemberDetails.contains("All Senators") ? (totalSenators * 20) + 50 : (totalRepresentatives * 20) + 50;
 								} else if(congressMemberDetails.contains("All Democrats") || congressMemberDetails.contains("All Republicans") || congressMemberDetails.contains("All Independents")) {
 									if(congressMemberDetails.contains("All Democrats"))
-										progressSize = 100 + 50; // on an average of 20 democrats
+										progressSize = 500 + 50; // on an average of 50 democrats
 									if(congressMemberDetails.contains("All Republicans"))
-										progressSize+= 100 + 50;
+										progressSize+= 500 + 50;
 									if(congressMemberDetails.contains("All Independents"))
-										progressSize+= 100 + 50;								
+										progressSize+= 500 + 50;								
 								} else {
 									progressSize = ((congressMemberDetails.size()+1) * 10) + 50; // considering none of "All" selected
 								}

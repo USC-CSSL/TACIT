@@ -197,31 +197,34 @@ public class UsCongressCrawler {
 		csvWriter.close();
 	}
 
-	int currentProgress = 0;
-	float changeProgress = 0;
-	int republican,democrat,independent;
+	int currentProgress = 0; // stores the progress to be updated for the
+								// current iteration
+	float changeProgress = 0; // used in case the current progress value is less
+								// than 1 for the current iteration
+	int republican, democrat, independent; // store the count of all democrats,
+											// republicans and independents for
+											// a current congress.
+
 	public void getAllSenators(int congressNum, String senText, int maxProgressLimit) throws IOException {
 		boolean foundSenator = false;
 		republican = 0;
-		democrat =0;
+		democrat = 0;
 		independent = 0;
-		for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
-			String senatorName = senator;
-			if (null != monitor && monitor.isCanceled())
-				return;
-			if (senText.contains("All Republicans")) {
+		//counts the total number of democrats, republics and independents
+		if(senText.contains("All Republicans") || senText.contains("All Democrats") || senText.contains("All Independents")){
+			for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
+				String senatorName = senator;
+				if (null != monitor && monitor.isCanceled())
+					return;
 				if (senatorName.contains("(R-") || senatorName.contains("R/"))
 					republican++;
-			}
-			if (senText.contains("All Democrats")) {
 				if (senatorName.contains("(D-") || senatorName.contains("D/"))
 					democrat++;
-			}
-			if (senText.contains("All Independents")) {
 				if (senatorName.contains("(I-") || senatorName.contains("I/"))
 					independent++;
 			}
 		}
+		
 		for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
 			String senatorName = senator;
 			if (null != monitor && monitor.isCanceled())
@@ -249,27 +252,33 @@ public class UsCongressCrawler {
 				else
 					politicalAffiliation = senatorDetails.get(senatorName).split("-")[0];
 			}
+			//update the current progress
 			if (null != congressSenatorMap.get(String.valueOf(congressNum)).get(senator)) {
-				if(senText.contains("All Democrats")){
-					currentProgress = maxProgressLimit/democrat;
-				}
-				else if(senText.contains("All Republicans")){
-					currentProgress = maxProgressLimit/republican;
-				}
-				else if(senText.contains("All Independents")){
-					currentProgress = maxProgressLimit/independent;
-				}else{
-					
+				if (senText.contains("All Democrats")) {
+					if (democrat != 0)
+						currentProgress = maxProgressLimit / democrat;
+					else
+						currentProgress = 0;
+				} else if (senText.contains("All Republicans")) {
+					if (republican != 0)
+						currentProgress = maxProgressLimit / republican;
+					else
+						currentProgress = 0;
+				} else if (senText.contains("All Independents")) {
+					if (independent != 0)
+						currentProgress = maxProgressLimit / independent;
+					else
+						currentProgress = 0;
+				} else {
+
 					int val = congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
 					if (maxProgressLimit / congressSenatorMap.get(String.valueOf(congressNum)).keySet().size() < 1) {
-						// check this statement
-						changeProgress += (float) (maxProgressLimit)
-								/ congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
+						changeProgress += (float) (maxProgressLimit)/ congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
 						if (changeProgress > 1) {
 							currentProgress = (int) changeProgress;
 							changeProgress -= currentProgress;
 						}
-						
+
 					} else {
 						currentProgress = (maxProgressLimit) / val;
 					}
@@ -295,24 +304,20 @@ public class UsCongressCrawler {
 	public void getAllRepresentatives(int congressNum, String repText, int maxProgressLimit) throws IOException {
 		boolean foundRep = false;
 		republican = 0;
-		democrat =0;
+		democrat = 0;
 		independent = 0;
-		for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
-			String senatorName = senator;
+		if(repText.contains("All Republicans") || repText.contains("All Democrats") || repText.contains("All Independents")){
+		for (String representative : congressRepresentativeMap.get(String.valueOf(congressNum)).keySet()) {
+			String repName = representative;
 			if (null != monitor && monitor.isCanceled())
 				return;
-			if (repText.contains("All Republicans")) {
-				if (senatorName.contains("(R-") || senatorName.contains("R/"))
-					republican++;
-			}
-			if (repText.contains("All Democrats")) {
-				if (senatorName.contains("(D-")|| senatorName.contains("D/"))
-					democrat++;
-			}
-			if (repText.contains("All Independents")) {
-				if (senatorName.contains("(I-") || senatorName.contains("I/"))
-					independent++;
-			}
+			if (repName.contains("(R-") || repName.contains("R/"))
+				republican++;
+			if (repName.contains("(D-") || repName.contains("D/"))
+				democrat++;
+			if (repName.contains("(I-") || repName.contains("I/"))
+				independent++;
+		}
 		}
 		for (String rep : congressRepresentativeMap.get(String.valueOf(congressNum)).keySet()) {
 			String repName = rep;
@@ -322,15 +327,15 @@ public class UsCongressCrawler {
 													// names
 				continue;
 			if (repText.contains("All Republicans")) {
-				if (repName.contains("(R-") && repName.contains("R/"))
+				if (!repName.contains("(R-") && !repName.contains("R/"))
 					continue;
 			}
 			if (repText.contains("All Democrats")) {
-				if (repName.contains("(D-") && repName.contains("D/"))
+				if (!repName.contains("(D-") && !repName.contains("D/"))
 					continue;
 			}
 			if (repText.contains("All Independents")) {
-				if (repName.contains("(I-") && repName.contains("I/"))
+				if (!repName.contains("(I-") && !repName.contains("I/"))
 					continue;
 			}
 			String politicalAffiliation = "";
@@ -342,25 +347,30 @@ public class UsCongressCrawler {
 					politicalAffiliation = representativeDetails.get(repName).split("-")[0];
 			}
 			if (null != congressRepresentativeMap.get(String.valueOf(congressNum)).get(rep)) {
-				if(repText.contains("All Democrats")){
-					currentProgress = maxProgressLimit/democrat;
-				}
-				else if(repText.contains("All Republicans")){
-					currentProgress = maxProgressLimit/republican;
-				}
-				else if(repText.contains("All Independents")){
-					currentProgress = maxProgressLimit/independent;
-				}else{
-					int val = congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
-					if (maxProgressLimit / congressSenatorMap.get(String.valueOf(congressNum)).keySet().size() < 1) {
-						// check this statement
-						changeProgress += (float) (maxProgressLimit)
-								/ congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
+				if (repText.contains("All Democrats")) {
+					if (democrat != 0)
+						currentProgress = maxProgressLimit / democrat;
+					else
+						currentProgress = 0;
+				} else if (repText.contains("All Republicans")) {
+					if (republican != 0)
+						currentProgress = maxProgressLimit / republican;
+					else
+						currentProgress = 0;
+				} else if (repText.contains("All Independents")) {
+					if (independent != 0)
+						currentProgress = maxProgressLimit / independent;
+					else
+						currentProgress = 0;
+				} else {
+					int val = congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size();
+					if (maxProgressLimit/ congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size() < 1) {
+						changeProgress += (float) (maxProgressLimit)/ congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size();
 						if (changeProgress > 1) {
 							currentProgress = (int) changeProgress;
 							changeProgress -= currentProgress;
 						}
-						
+
 					} else {
 						currentProgress = (maxProgressLimit) / val;
 					}
@@ -403,6 +413,7 @@ public class UsCongressCrawler {
 		this.crawlHouseRepRecords = (crawlHouseRepRecords) ? "2" : "0";
 		this.crawlExtension = (crawlExtension) ? "4" : "0";
 		this.crawlDailyDigest = (crawlDailyDigest) ? "8" : "0";
+		totalFilesDownloaded = 0;
 
 		if (null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
@@ -589,18 +600,10 @@ public class UsCongressCrawler {
 	private int updateWork(int maxDocs, int totalLinks, int progressSize, int tempCount) {
 		int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;
 		int numDocs2Download = tempMaxDocs > totalLinks ? totalLinks : tempMaxDocs;
-		if (numDocs2Download > progressSize && 0 != progressSize) { // worked
-																	// should be
-																	// 1
-			int totalCount = numDocs2Download / progressSize;
-			totalCount++;
-			if (tempCount % totalCount == 0) {
+			if (tempCount == numDocs2Download) {
 				tempCount = 0;
 				monitor.worked(progressSize);
 			}
-		} else {
-			monitor.worked(progressSize);
-		}
 		return tempCount;
 	}
 
