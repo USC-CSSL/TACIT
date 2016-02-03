@@ -10,10 +10,12 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -174,11 +176,12 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
 		
-		/*// Not needed as add class is always selected
+		
 		corpusViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(spart, event.getSelection());
+				/* // Not needed as add class is always selected
 				 try {
 					 	//corpusMgmtViewform.getMessageManager().removeAllMessages(); // removes all error messages
 					 	IStructuredSelection selection  = (IStructuredSelection) event.getSelection();
@@ -189,10 +192,11 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					 		addClass.setEnabled(false);
 					 	}
 		         } catch(Exception exp) { //exception means item selected is not a corpus but a class.
-		         }				
+		         }	
+		         */			
 			}
 		});
-		*/
+		
 		
 		corpusViewer.setContentProvider(new MasterContentProvider());
 		corpusViewer.setLabelProvider(new MasterLabelProvider());
