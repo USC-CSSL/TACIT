@@ -588,11 +588,7 @@ public class WordCountApi {
 					String currPhrase = words[0];
 					String condPhrase = words[0];
 					for (int i = initialize(); i < words.length; i = increment(i)) {
-						// Add a category to the maps if it was not added
-						// earlier
-						if(i >0 && oldCategoryMap.containsKey(Integer.parseInt(words[i]))){
-							words[i] = oldCategoryMap.get(Integer.parseInt(words[i]))+"";
-						}
+
 						
 						if (!words[i].matches("\\d+")) {
 							if (words[i].contains("/")) {
@@ -611,7 +607,6 @@ public class WordCountApi {
 							}
 							continue;
 						}
-
 						try {
 							if (this.weighted) {
 								weights.put(this.categories.get(Integer.parseInt(words[i])),
@@ -620,6 +615,11 @@ public class WordCountApi {
 						} catch (Exception e) {
 							logger.warning("The dictionary file " + dFile + " is not suitable for weighted wordcount");
 							appendLog("The dictionary file " + dFile + " is not suitable for weighted wordcount");
+						}
+						// Add a category to the maps if it was not added
+						// earlier
+						if(i >0 && oldCategoryMap.containsKey(Integer.parseInt(words[i]))){
+							words[i] = oldCategoryMap.get(Integer.parseInt(words[i]))+"";
 						}
 						categories.add(Integer.parseInt(words[i]));
 					}
