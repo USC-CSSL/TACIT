@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -377,7 +378,10 @@ public class WeightedWordCountView extends ViewPart implements
 									oFile, sFile, dateobj, fileCorpusMap);
 
 							ppObj.clean();
-						} catch (IOException e) {
+						}catch (OperationCanceledException e){
+							e.printStackTrace();
+							return Status.CANCEL_STATUS;
+						}catch (IOException e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						} catch (DictionaryInvalidException die) {

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -230,7 +231,11 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							monitor.worked(2);
 
-						} catch (IOException e) {
+						}catch (OperationCanceledException e){
+							e.printStackTrace();
+							return Status.CANCEL_STATUS;
+						}
+						catch (IOException e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						} catch (Exception e) {

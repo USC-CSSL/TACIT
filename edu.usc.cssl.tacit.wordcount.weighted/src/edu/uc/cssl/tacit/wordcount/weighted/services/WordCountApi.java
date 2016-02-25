@@ -161,6 +161,7 @@ public class WordCountApi {
 
 		}
 		// for each inputFile,
+		monitor.subTask("Counting Words...");
 		for (File inputFile : inputFiles) {
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
@@ -171,7 +172,7 @@ public class WordCountApi {
 			String absoluteFilePath = inputFile.getAbsolutePath();
 			if (absoluteFilePath.contains("DS_Store"))
 				continue;
-			monitor.subTask("Counting Words at " + inputFile);
+			//monitor.subTask("Counting Words at " + inputFile);
 			String corpus = "NIL";
 			if (fileCorpuses.containsKey(absoluteFilePath))
 				corpus = fileCorpuses.get(absoluteFilePath)[0] + "\\" + fileCorpuses.get(absoluteFilePath)[1];
@@ -207,8 +208,8 @@ public class WordCountApi {
 		if (iFile.isDirectory()) {
 			return;
 		}
-		logger.info("Current input file - " + iFile.getName());
-		appendLog("Current input file - " + iFile.getAbsolutePath());
+		//logger.info("Current input file - " + iFile.getName());
+		//appendLog("Current input file - " + iFile.getAbsolutePath());
 		// For calculating Category wise distribution of each word.
 		HashMap<String, HashSet<String>> wordCategories = new HashMap<String, HashSet<String>>();
 
@@ -261,10 +262,10 @@ public class WordCountApi {
 		allPct = allPct + period + comma + colon + semiC + qMark + exclam + dash + quote + apostro + parenth + otherP;
 
 		br.close();
-		logger.info("Total number of words - " + totalWords);
-		logger.info("Finished building hashmap in " + (System.currentTimeMillis() - startTime) + " milliseconds.");
-		appendLog("Total number of words - " + totalWords);
-		appendLog("Finished building hashmap in " + (System.currentTimeMillis() - startTime) + " milliseconds.");
+		//logger.info("Total number of words - " + totalWords);
+		//logger.info("Finished building hashmap in " + (System.currentTimeMillis() - startTime) + " milliseconds.");
+		//appendLog("Total number of words - " + totalWords);
+		//appendLog("Finished building hashmap in " + (System.currentTimeMillis() - startTime) + " milliseconds.");
 
 		// Calculate Category-wise count
 		HashMap<String, Double> catCount = new HashMap<String, Double>();
@@ -535,8 +536,8 @@ public class WordCountApi {
 		bw.write(row.toString());
 		bw.newLine();
 		bw.close();
-		logger.info("CSV File Updated Successfully");
-		appendLog("CSV File Updated Successfully");
+		//logger.info("CSV File Updated Successfully");
+		//appendLog("CSV File Updated Successfully");
 	}
 	private void addConflictingCategory(int key, String value){
 		while(categories.containsKey(clashWordCount)){

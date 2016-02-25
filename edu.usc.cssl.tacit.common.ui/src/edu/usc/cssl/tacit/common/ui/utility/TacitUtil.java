@@ -26,6 +26,7 @@ public class TacitUtil {
 		Pattern corpusDetector = Pattern
 				.compile(".* [(]Tacit Internal Class Path: (.*)[)]");
 		TwitterReadJsonData twitterParser = new TwitterReadJsonData();
+		boolean isTwitterParsed = false;
 		for (Object input : selectedInputs) {
 			String corpusName = "NIL", corpusClassName = "";
 			Boolean isCorpus = false;
@@ -41,6 +42,7 @@ public class TacitUtil {
 				if (corpusType.equals(CMDataType.TWITTER_JSON)) {
 					input = twitterParser.retrieveTwitterData(corpusClassPath);
 					summaryFile = twitterParser.getSummaryFile();
+					isTwitterParsed = true;
 				} else if (corpusType.equals(CMDataType.REDDIT_JSON)) {
 					input = new RedditJsonHandler()
 							.retrieveRedditData(corpusClassPath);
@@ -68,7 +70,11 @@ public class TacitUtil {
 				}
 			}
 		}
-		twitterParser.summaryFileClose();
+		
+		if (isTwitterParsed){
+			twitterParser.summaryFileClose();
+		}
+		
 		return new ArrayList<String>(refinedInputList);
 	}
 

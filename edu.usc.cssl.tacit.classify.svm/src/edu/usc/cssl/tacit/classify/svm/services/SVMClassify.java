@@ -30,10 +30,15 @@ public class SVMClassify {
 	private HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	private int noOfDocuments = 0;
+	private String class1Label = "";
+	private String class2Label = "";
+	
 
 	public SVMClassify(String class1Name, String class2Name, String outputFolder) {
 		this.intermediatePath = outputFolder
 				+ System.getProperty("file.separator") + "SVM-Classification";
+		class1Label = class1Name.toString();
+		class2Label = class2Name.toString();
 	}
 
 	public void buildDfMap(File inputFile) throws IOException {
@@ -271,11 +276,19 @@ public class SVMClassify {
 			// HashMap<Integer,Double> weightsMap =
 			// pw.computePredictiveWeights(modelFile);
 			HashMap<Integer, Double> weightsMap = computePredictiveWeights(modelFile);
-			weightsWriter.write("Word,ID,Weight\n");
+			weightsWriter.write("Word,ID,Weight,Class\n");
 			for (Integer i : weightsMap.keySet()) {
 				// System.out.print(i+" ");
-				weightsWriter.write(reverseMap.get(i) + "," + i + ","
-						+ weightsMap.get(i) + "\n");
+				if (weightsMap.get(i) < 0){
+					weightsWriter.write(reverseMap.get(i) + "," + i + ","+ weightsMap.get(i) +","+class1Label+"\n");
+				}
+				else if (weightsMap.get(i) > 0){
+					weightsWriter.write(reverseMap.get(i) + "," + i + ","+ weightsMap.get(i) +","+class2Label+"\n");
+				}
+				else {
+					weightsWriter.write(reverseMap.get(i) + "," + i + ","+ weightsMap.get(i) +"\n");
+				}
+				
 			}
 			ConsoleView.printlInConsoleln("Created Predictive Weights file - "
 					+ weightsFile.getAbsolutePath());
