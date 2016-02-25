@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.classify.naivebayes.ui.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.forms;bundle-version="3.6.100",
+ org.eclipse.ui.forms,
  edu.usc.cssl.tacit.common.ui,
  edu.usc.cssl.tacit.classify.naivebayes,
  edu.usc.cssl.tacit.common,
