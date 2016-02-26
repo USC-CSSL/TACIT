@@ -1,15 +1,10 @@
 package edu.usc.cssl.tacit.crawlers.stackexchange.services;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.nio.charset.Charset;
 
-import org.json.simple.JSONObject;
+import retrofit2.Call;
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Item;
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.User;
 
 public class StackExchangeCrawler {
 	
@@ -26,32 +21,32 @@ public class StackExchangeCrawler {
 //	}
 	
 	static StackExchangeApi api;
-	private static String API_KEY = "";// enter key here
-	private static String AUTH_TOKEN = "";// enter auth toker here
 	static StackExchangeCrawler cr;
 
 	public static void main(String args[]) {
 		cr = new StackExchangeCrawler();
-		cr.returnUsers(null);
+		cr.returnUsers(cr.stackoverflow(new StackExchangeApi(), null));
 		
 	}
 
-	public  void initiateCrawler(String[] parameters) {
-		// enter auth token here
-		api = new StackExchangeApi(API_KEY);// enter key here
-		returnUsers(cr.stackoverflow(api, ""));
-		// api.authorize(AUTH_TOKEN);
-
-	}
-
 	public  StackExchangeSite stackoverflow(StackExchangeApi api, String site) {
-		// site can be configured to access other sites as well
 		StackExchangeSite siteService = api.getSiteService(StackExchangeSite.STACK_OVERFLOW);
 		return siteService;
 	}
 
 	// to obtain all users
 	public void returnUsers(StackExchangeSite siteService) {
+		try {
+			Call<Item> call = siteService.getUsers();
+			Item i = call.execute().body();
+			for(User user: i.items){
+				System.out.println(user.id);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		
 	}
 

@@ -4,14 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class ShallowUser {
 
-    protected int acceptRate;
-    protected BadgeCount badgeCounts;
-    protected String displayName;
+    protected int accept_rate;
+    protected BadgeCount badge_counts;
+    protected String display_name;
     protected String link;
-    protected String profileImage;
+    protected String profile_image;
     protected int reputation;
-    protected int userId;
-    protected Type userType;
+    protected int user_id;
+    protected Type user_type;
 
     public enum Type {
         @SerializedName("unregistered")     UNREGISTERED,

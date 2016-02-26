@@ -1,7 +1,9 @@
 package edu.usc.cssl.tacit.crawlers.stackexchange.services;
 
+import retrofit2.Call;
+import retrofit2.http.GET;
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Item;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.User;
-import retrofit.http.GET;
 
 public interface StackExchangeSite {
 
@@ -245,7 +247,7 @@ public interface StackExchangeSite {
      */
 
     @GET("/users")
-    Response<User> getUsers();
+    Call<Item> getUsers();
 
     @GET("/me")
     Response<User> getUser();
