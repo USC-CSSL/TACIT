@@ -46,16 +46,16 @@ public class WordCountPlugin {
 	private TokenizerME tokenize;
 	private POSTaggerME posTagger;
 
-	private boolean weighted;
+	protected boolean weighted;
 	private boolean stemDictionary;
 	private boolean doPennCounts;
 	private boolean doWordDistribution;
 	private boolean createDATFile;
 	private boolean createPOSTags;
-	private Date dateObj;
-	private String outputPath;
-	private String wordDistributionDir;
-	private String posTagsDir;
+	protected Date dateObj;
+	protected String outputPath;
+	protected String wordDistributionDir;
+	protected String posTagsDir;
 
 	PorterStemmer stemmer = new PorterStemmer();
 
@@ -101,19 +101,29 @@ public class WordCountPlugin {
 		// Create folder for word distribution files
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		if (doWordDistribution) {
-			wordDistributionDir = outputPath
-					+ System.getProperty("file.separator")
-					+ "TACIT-word-distribution-" + df.format(dateObj);
+			createWordDistributionDir(df);
 		}
 
 		if (createPOSTags) {
-			posTagsDir = outputPath + System.getProperty("file.separator")
-					+ "TACIT-POS-Tags-" + df.format(dateObj);
-
-			new File(posTagsDir).mkdir();
+			createPosTagsDir(df);
 		}
 	}
-
+	protected void createPosTagsDir(DateFormat df){
+		posTagsDir = outputPath + System.getProperty("file.separator")
+		+ "TACIT-POS-Tags-" + df.format(dateObj);
+		new File(posTagsDir).mkdir();
+	}
+	protected BufferedWriter createPosTagsFile(String inputFile) throws IOException{
+		return new BufferedWriter(new FileWriter(posTagsDir
+				+ System.getProperty("file.separator")
+				+ inputFile.substring(inputFile.lastIndexOf(System
+						.getProperty("file.separator")) + 1)));
+	}
+	protected void createWordDistributionDir(DateFormat df){
+		wordDistributionDir = outputPath
+				+ System.getProperty("file.separator")
+				+ "TACIT-word-distribution-" + df.format(dateObj);
+	}
 	public void countWords(List<String> inputFiles, List<String> dictionaryFiles) {
 
 		ConsoleView.printlInConsoleln("Loading models.");
@@ -152,16 +162,29 @@ public class WordCountPlugin {
 		monitor.worked(5);
 		closeWriters();
 
+		generateRunReport();
+		monitor.worked(1);
+		return;
+	}
+	protected void generateRunReport(){
 		if (weighted)
 			TacitUtility.createRunReport(outputPath,
 					"TACIT Weighted Word Count", dateObj);
 		else
 			TacitUtility.createRunReport(outputPath,
 					"TACIT Standard Word Count", dateObj);
-		monitor.worked(1);
-		return;
 	}
-
+	
+	protected BufferedWriter createWordDistributionFile(String inputFile) throws IOException{
+		return new BufferedWriter(new FileWriter(new File(
+				wordDistributionDir
+				+ System.getProperty("file.separator")
+				+ inputFile.substring(inputFile.lastIndexOf(System
+						.getProperty("file.separator")) + 1)
+				+ "_word_distribution.csv")));
+		
+		
+	}
 	/**
 	 * Generate word distribution file for the given input file. Make sure to
 	 * call this before refreshing the file counts.
@@ -176,12 +199,7 @@ public class WordCountPlugin {
 				new File(wordDistributionDir).mkdir();
 			}
 
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-					wordDistributionDir
-							+ System.getProperty("file.separator")
-							+ inputFile.substring(inputFile.lastIndexOf(System
-									.getProperty("file.separator")) + 1)
-							+ "_word_distribution.csv")));
+			BufferedWriter bw = createWordDistributionFile(inputFile);
 
 			List<Integer> keyList = new ArrayList<Integer>();
 			keyList.addAll(categoryID.keySet());
@@ -306,10 +324,7 @@ public class WordCountPlugin {
 			BufferedWriter posBW = null;
 
 			if (createPOSTags) {
-				posBW = new BufferedWriter(new FileWriter(posTagsDir
-						+ System.getProperty("file.separator")
-						+ inputFile.substring(inputFile.lastIndexOf(System
-								.getProperty("file.separator")) + 1)));
+				posBW = createPosTagsFile(inputFile);
 			}
 
 			while ((currentLine = br.readLine()) != null) {
@@ -392,7 +407,27 @@ public class WordCountPlugin {
 			e.printStackTrace();
 		}
 	}
-
+	protected String createFileName(){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		String type = "";
+		if (weighted)
+			type = "TACIT-Weighted-Wordcount-UserTags-";
+		else
+			type = "TACIT-Standard-Wordcount-UserTags-";
+		String filePath =  type
+				+ df.format(dateObj) + ".csv";
+		return filePath;
+	}
+	protected String createDATFilePath(){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		String type = "";
+		if (weighted)
+			type = "TACIT-Weighted-Wordcount-UserTags-";
+		else
+			type = "TACIT-Standard-Wordcount-UserTags-";		
+		return outputPath + System.getProperty("file.separator") + type + df.format(dateObj) + ".dat";
+		
+	}
 	/**
 	 * Add a line to CSV with the counts for the given input file
 	 * 
@@ -413,28 +448,28 @@ public class WordCountPlugin {
 
 			// Set up result CSV file when calling this function the first time
 			if (resultCSVbw == null) {
+				
 				String type = "";
-				DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 				if (weighted)
 					type = "TACIT-Weighted-Wordcount-UserTags-";
 				else
 					type = "TACIT-Standard-Wordcount-UserTags-";
-
+				
+				DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+				String filePath = outputPath
+						+ System.getProperty("file.separator") +createFileName();
+				
 				ConsoleView.printlInConsoleln("Created file " + outputPath
 						+ System.getProperty("file.separator") + type
 						+ df.format(dateObj)
 						+ ".csv for storing counts for user tags.");
-				resultCSVbw = new BufferedWriter(new FileWriter(outputPath
-						+ System.getProperty("file.separator") + type
-						+ df.format(dateObj) + ".csv"));
+				resultCSVbw = new BufferedWriter(new FileWriter(filePath));
 
 				if (createDATFile) {
 					ConsoleView.printlInConsoleln("Created file " + outputPath
 							+ System.getProperty("file.separator") + type
 							+ df.format(dateObj) + ".dat.");
-					datbw = new BufferedWriter(new FileWriter(outputPath
-							+ System.getProperty("file.separator") + type
-							+ df.format(dateObj) + ".dat"));
+					datbw = new BufferedWriter(new FileWriter(createDATFilePath()));
 				}
 
 				resultCSVbw.write("Filename,WC,WPS,Dic,");
@@ -840,7 +875,12 @@ public class WordCountPlugin {
 		} else
 			return val + 1;
 	}
-
+	protected File getSetupFile(String bundleEntry) throws IOException{
+		File setupFile = new File(FileLocator.toFileURL(
+				Platform.getBundle(Activator.PLUGIN_ID).getEntry(
+						bundleEntry)).getPath());
+		return setupFile;
+	}
 	/**
 	 * Sets all the models for OpenNLP
 	 * 
@@ -850,17 +890,12 @@ public class WordCountPlugin {
 		monitor.subTask("Setting Models");
 		InputStream sentenceIs = null, tokenIs = null, posIs = null;
 		try {
-			File setupFile = new File(FileLocator.toFileURL(
-					Platform.getBundle(Activator.PLUGIN_ID).getEntry(
-							"en-sent.bin")).getPath());
+			File setupFile = getSetupFile("en-sent.bin");
+			
 			sentenceIs = new FileInputStream(setupFile.toString());
-			setupFile = new File(FileLocator.toFileURL(
-					Platform.getBundle(Activator.PLUGIN_ID).getEntry(
-							"en-token.bin")).getPath());
+			setupFile = getSetupFile("en-token.bin");
 			tokenIs = new FileInputStream(setupFile.toString());
-			setupFile = new File(FileLocator.toFileURL(
-					Platform.getBundle(Activator.PLUGIN_ID).getEntry(
-							"en-pos-maxent.bin")).getPath());
+			setupFile = getSetupFile("en-pos-maxent.bin");
 			posIs = new FileInputStream(setupFile.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
