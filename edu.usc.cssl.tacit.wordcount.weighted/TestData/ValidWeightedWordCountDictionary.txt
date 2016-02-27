@@ -1,0 +1,15 @@
+%
+1	story
+2	pronoun
+%
+he	2	10
+she	2	16
+they	2	1
+you	2	7
+we	2	89
+it	2	0
+our	2	9
+ours	2	18
+fable	1	45
+interesting	1	2
+short	1	9

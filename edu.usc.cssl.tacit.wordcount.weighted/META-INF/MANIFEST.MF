@@ -21,3 +21,4 @@ Export-Package: edu.uc.cssl.tacit.wordcount.weighted.services;
  org.apache.commons.lang3
 Bundle-ClassPath: commons-lang3-3.3.2.jar,
  .
+Import-Package: edu.usc.cssl.tacit.wordcount.standard.services
