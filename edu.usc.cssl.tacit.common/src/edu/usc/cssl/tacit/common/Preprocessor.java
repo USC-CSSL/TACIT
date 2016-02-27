@@ -16,8 +16,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.text.Document;
+import javax.swing.text.rtf.RTFEditorKit;
+
 import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -71,6 +76,65 @@ public class Preprocessor {
 		setupParams();
 	}
 
+	private String checkfiletype(String inputFilePath) {
+		File inputFile = new File(inputFilePath);
+		PDDocument document = null;
+		// Tika tika = new Tika();
+//		String mediaType = null;
+		String fileName = inputFile.getName();
+		String filePath = tempPPFileLoc + System.getProperty("file.separator") + fileName.replace('.', '_') + ".txt";
+		/*
+		 * try { mediaType = tika.detect(inputFile); } catch (IOException e) {
+		 * e.printStackTrace(); }
+		 */
+		if (inputFilePath.endsWith(".pdf")) {
+			try {
+				document = PDDocument.load(inputFile);
+				PDFTextStripper stripper = new PDFTextStripper();
+				String data = stripper.getText(document);
+				createTempFile(filePath);
+
+				BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+				bw.write(data);
+				bw.close();
+				if (document != null) {
+					document.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return filePath;
+		} 
+		else if(inputFilePath.endsWith(".rtf")){
+			RTFEditorKit rtfParser = new RTFEditorKit();
+			Document documentFromRTF = rtfParser.createDefaultDocument();
+			try {
+				FileInputStream stream = new FileInputStream(inputFile);
+				rtfParser.read(stream, documentFromRTF, 0);
+				String data = documentFromRTF.getText(0, documentFromRTF.getLength());
+				createTempFile(filePath);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+				bw.write(data);
+				bw.close();
+				stream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return filePath;
+		}
+		return inputFilePath;
+	}
+
+	void createTempFile(String filePath) {
+		final File file = new File(filePath);
+		final File parent_directory = file.getParentFile();
+
+		if (null != parent_directory)
+		{
+		    parent_directory.mkdirs();
+		}
+	}
+	
 	/**
 	 * Public API to process the input data. Loops over all the Input objects
 	 * and processes them accordingly. Returns a list of absolute paths to files
@@ -106,8 +170,8 @@ public class Preprocessor {
 						if (ppFile != "")
 							outputFiles.add(ppFile);
 					} else {
-						//outputFiles.add(checkfiletype(inputFile.getAbsolutePath()));
-						outputFiles.add(inputFile.getAbsolutePath());
+//						outputFiles.add(inputFile.getAbsolutePath());
+						outputFiles.add(checkfiletype(inputFile.getAbsolutePath()));
 					}
 				}
 			} else {
@@ -123,7 +187,7 @@ public class Preprocessor {
 	 * appropriate action
 	 * 
 	 * @param dirpath
-	 * @throws TikaException 
+	 * @throws TikaException
 	 */
 	private void processDirectory(String dirpath) {
 		File[] files = new File(dirpath).listFiles();
@@ -149,9 +213,9 @@ public class Preprocessor {
 				if (file.isDirectory())
 					processDirectory(file.getAbsolutePath());
 				else {
-					//File file2 = new File(checkfiletype(file.getAbsolutePath()));
-					//outputFiles.add(file2.getAbsolutePath());
-					outputFiles.add(file.getAbsolutePath());
+					File file2 = new File(checkfiletype(file.getAbsolutePath()));
+					outputFiles.add(file2.getAbsolutePath());
+//					outputFiles.add(file.getAbsolutePath());
 				}
 			}
 		}
@@ -167,11 +231,11 @@ public class Preprocessor {
 	 *            If this is empty, the temp file will have the same name as the
 	 *            inFile
 	 * @return
-	 * @throws TikaException 
+	 * @throws TikaException
 	 */
-	private String processFile(String inFile, String outName) {
+	private String processFile(String inFileBefore, String outName) {
 
-		//String inFile = checkfiletype(inFileBefore);
+		 String inFile = checkfiletype(inFileBefore);
 		String outFile;
 		if (outName == "" || outName == null) {
 			outFile = ppFilesLoc + System.getProperty("file.separator") + (new File(inFile).getName());
@@ -340,9 +404,9 @@ public class Preprocessor {
 			new File(tempDir).mkdir();
 		}
 		FilenameFilter jsonFileFilter = new FilenameFilter() {
-		    public boolean accept(File dir, String filename) {
-		        return filename.toLowerCase().endsWith(".json");
-		    }
+			public boolean accept(File dir, String filename) {
+				return filename.toLowerCase().endsWith(".json");
+			}
 		};
 		File[] fileList = new File(corpusClassPath).listFiles(jsonFileFilter);
 		int k = 0;
@@ -350,7 +414,7 @@ public class Preprocessor {
 			QueryProcesser qp = new QueryProcesser();
 			// qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(),
 			// corpusClass.getKeyTextFields());
-			
+
 			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body");
 			for (String str : outputs) {
 				if (doPreprocessing) {
@@ -366,8 +430,8 @@ public class Preprocessor {
 					FileWriter fw = new FileWriter(outFile);
 					fw.write(str);
 					fw.close();
-					//outputFiles.add(checkfiletype(outFile));
-					outputFiles.add(outFile);
+					 outputFiles.add(checkfiletype(outFile));
+//					outputFiles.add(outFile);
 					k++;
 				}
 			}
@@ -380,7 +444,7 @@ public class Preprocessor {
 	 * support for Generic JSON files.
 	 * 
 	 * @param corpusClass
-	 * @throws TikaException 
+	 * @throws TikaException
 	 */
 	private void processTwitter(CorpusClass corpusClass) {
 		/*** read from file ***/
@@ -436,8 +500,8 @@ public class Preprocessor {
 					if (doPreprocessing) {
 						outputFiles.add(processFile(tempFile, "twitter_" + j + "-" + df.format(dateobj)));
 					} else {
-						//outputFiles.add(checkfiletype(file.getAbsolutePath()));
-						outputFiles.add(file.getAbsolutePath());
+						 outputFiles.add(checkfiletype(file.getAbsolutePath()));
+//						outputFiles.add(file.getAbsolutePath());
 					}
 					j++;
 
@@ -524,8 +588,8 @@ public class Preprocessor {
 							processFile(tempFile, postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "")
 									+ "-" + dateObj.getTime() + ".txt"));
 				else
-					outputFiles.add(file.getAbsolutePath());
-					//outputFiles.add(checkfiletype(file.getAbsolutePath()));
+//					outputFiles.add(file.getAbsolutePath());
+				 outputFiles.add(checkfiletype(file.getAbsolutePath()));
 			} catch (ClassCastException e) {
 				// ignore consolidated json file
 			} catch (Exception e) {
