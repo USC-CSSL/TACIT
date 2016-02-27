@@ -209,7 +209,7 @@ public class WordCountApi {
 			return;
 		}
 		//logger.info("Current input file - " + iFile.getName());
-		//appendLog("Current input file - " + iFile.getAbsolutePath());
+		appendLog("Current input file - " + iFile.getAbsolutePath());
 		// For calculating Category wise distribution of each word.
 		HashMap<String, HashSet<String>> wordCategories = new HashMap<String, HashSet<String>>();
 
