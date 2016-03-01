@@ -1,0 +1,239 @@
+
+> On Jan 19, 2016, at 11:42 AM, Sagar Bharat Makwana <smakwana@usc.edu> wrote:
+> 
+> Ya all of us will be there.
+> 
+> On Jan 19, 2016 11:28 AM, "Morteza Dehghani" <mdehghan@usc.edu> wrote:
+> guys,
+> make sure you come back to the lab after you are done in the business office. Linda is here to meet with you.
+> 
+> Thanks
+> > On Jan 18, 2016, at 5:10 PM, Nishant Loyola Dsouza <ndsouza@usc.edu> wrote:
+> >
+> > Hi Professor,
+> > I tried it with the settings you said but the progress starts at 0% and increases as it should. I also tried a number of other possibilities but couldn't get the bug. I might be missing something, so now I'll start working on the bug you assigned us all to do together and fix this bug after I meet you tomorrow.
+> >
+> > Thanks,
+> > Nishant
+> >
+> > On Mon, Jan 18, 2016 at 3:56 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> > Yes, SVM will not file with two files. Follow these steps. use the senate crawler to get two sets of data, then use the SVM plugin to classify them.
+> >
+> > <Screen Shot 2016-01-18 at 3.57.26 PM.png>
+> >
+> >> On Jan 18, 2016, at 2:34 PM, Anish Kanchan <akanchan@u<Screen Shot 2016-01-18 at 3.57.44 PM.png>sc.edu> wrote:
+> >>
+> >> Hi Morteza,
+> >>
+> >> All of us have updated the wiki pages.
+> >> I need more information on the bug assigned to me. I attached two files and ran the SVN classifier but, it didn't give any results. Maybe, my input format was incorrect. So some sample test data would help a lot.
+> >>
+> >> Thanks,
+> >>
+> >> Anish
+> >>
+> > <Screen Shot 2016-01-18 at 3.57.16 PM.png>
+> >> On Mon, Jan 18, 2016 at 2:29 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> Guys,
+> >> Any update on the issues, or the wiki?
+> >>
+> >> Thanks
+> >> > On Jan 17, 2016, at 10:23 PM, Nishant Loyola Dsouza <ndsouza@usc.edu> wrote:
+> >> >
+> >> > We already tried the reset password link today and now we can only try 24 hours later.
+> >> >
+> >> > Thanks
+> >> >
+> >> > On Sun, Jan 17, 2016 at 10:06 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > Can you guys please try again and let me know if it works?
+> >> >
+> >> > Thanks
+> >> >
+> >> > > On Jan 17, 2016, at 5:27 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >
+> >> > > yup, problems with the smtp server. working it
+> >> > >
+> >> > >
+> >> > > -Queue ID- --Size-- ----Arrival Time---- -Sender/Recipient-------
+> >> > > 1A1F46FBE7B      737 Sun Jan 17 11:02:54  _www@cssl.usc.edu
+> >> > >     (connect to smtp.gmail.com[2607:f8b0:400e:c05::6d]:587: No route to host)
+> >> > >                                         akanchan@usc.edu
+> >> > >
+> >> > > 3954E6FE8F1      746 Sun Jan 17 16:53:54  _www@cssl.usc.edu
+> >> > > (SASL authentication failed; server smtp.gmail.com[74.125.25.108] said: 535-5.7.8 Username and Password not accepted. Learn more at?535 5.7.8  https://support.google.com/mail/answer/14257 tv6sm29625051pab.4 - gsmtp)
+> >> > >                                         mdehghani@gmail.com
+> >> > >
+> >> > > 6F17D6F647E     1027 Sat Jan 16 22:30:13  _www@cssl.usc.edu
+> >> > >     (connect to smtp.gmail.com[2607:f8b0:400e:c04::6d]:587: No route to host)
+> >> > >                                         ndsouza@usc.edu
+> >> > >
+> >> > > 71F676F66E6      742 Sat Jan 16 22:49:04  _www@cssl.usc.edu
+> >> > > (SASL authentication failed; server smtp.gmail.com[173.194.202.109] said: 535-5.7.8 Username and Password not accepted. Learn more at?535 5.7.8  https://support.google.com/mail/answer/14257 q136sm29419415pfq.66 - gsmtp)
+> >> > >                                         ndsouza@usc.edu
+> >> > >
+> >> > > 8D5356FC8DE     1040 Sun Jan 17 12:28:34  _www@cssl.usc.edu
+> >> > >     (connect to smtp.gmail.com[2607:f8b0:400e:c04::6c]:587: No route to host)
+> >> > >                                         akanchan@usc.edu
+> >> > >
+> >> > > 9CC4F6FE8E3     1030 Sun Jan 17 16:53:24  _www@cssl.usc.edu
+> >> > > (SASL authentication failed; server smtp.gmail.com[74.125.28.109] said: 535-5.7.8 Username and Password not accepted. Learn more at?535 5.7.8  https://support.google.com/mail/answer/14257 fi16sm29611188pac.12 - gsmtp)
+> >> > >                                         mdehghani@gmail.com
+> >> > >
+> >> > > A4BF66E7DCA      755 Fri Jan 15 13:53:13  _www@cssl.usc.edu
+> >> > > (SASL authentication failed; server smtp.gmail.com[74.125.28.108] said: 535-5.7.8 Username and Password not accepted. Learn more at?535 5.7.8  https://support.google.com/mail/answer/14257 v2sm29296148pfi.93 - gsmtp)
+> >> > >                                         smakwana@usc.edu
+> >> > >
+> >> > > B215D6E7BE0     1042 Fri Jan 15 13:38:03  _www@cssl.usc.edu
+> >> > >     (connect to smtp.gmail.com[2607:f8b0:400e:c04::6d]:587: No route to host)
+> >> > >                                         smakwana@usc.edu
+> >> > >
+> >> > > BDA526FC90A     1045 Sun Jan 17 12:28:50  _www@cssl.usc.edu
+> >> > > (SASL authentication failed; server smtp.gmail.com[74.125.20.109] said: 535-5.7.8 Username and Password not accepted. Learn more at?535 5.7.8  https://support.google.com/mail/answer/14257 x23sm11638120pfi.42 - gsmtp)
+> >> > >                                         ndsouza@usc.edu
+> >> > >
+> >> > > E23076FC327     1059 Sun Jan 17 11:41:01  _www@cssl.usc.edu
+> >> > >     (connect to smtp.gmail.com[2607:f8b0:400e:c04::6c]:587: No route to host)
+> >> > >                                         smakwana@usc.edu
+> >> > >
+> >> > > E64076F6F32     1022 Sat Jan 16 23:58:18  _www@cssl.usc.edu
+> >> > > (SASL authentication failed; server smtp.gmail.com[74.125.25.108] said: 535-5.7.8 Username and Password not accepted. Learn more at?535 5.7.8  https://support.google.com/mail/answer/14257 l14sm29425255pfb.73 - gsmtp)
+> >> > >                                         akanchan@usc.edu
+> >> > >
+> >> > >> On Jan 17, 2016, at 5:04 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>
+> >> > >> then there might be something wrong with our wiki system. I will check it
+> >> > >>
+> >> > >>
+> >> > >>> On Jan 17, 2016, at 4:50 PM, Sagar Bharat Makwana <smakwana@usc.edu> wrote:
+> >> > >>>
+> >> > >>> Ya even I haven't received an email regarding wiki page access.
+> >> > >>>
+> >> > >>> On Jan 17, 2016 4:49 PM, "Nishant Loyola Dsouza" <ndsouza@usc.edu> wrote:
+> >> > >>> Hi Professor,
+> >> > >>> It isn't in the spam folder, and I just checked with Anish, he hasn't received it either.
+> >> > >>>
+> >> > >>> On Sun, Jan 17, 2016 at 4:32 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>> Hi Nishnat,
+> >> > >>> It looks like a password change email has already been sent to you. Did you check your spam folder?
+> >> > >>>
+> >> > >>>
+> >> > >>>> On Jan 17, 2016, at 3:06 PM, Nishant Loyola Dsouza <ndsouza@usc.edu> wrote:
+> >> > >>>>
+> >> > >>>> Hi Professor,
+> >> > >>>>
+> >> > >>>> I am unable to login to the Wiki page because I don't have my password and no email had been sent to my email ID when I clicked on the forgot password link.
+> >> > >>>>
+> >> > >>>> Thanks,
+> >> > >>>> Nishant
+> >> > >>>>
+> >> > >>>> On Sun, Jan 17, 2016 at 11:12 AM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>>> Thank you guys. Make sure you go through the wiki pages on TACIT:
+> >> > >>>> http://cssl.usc.edu/wiki/index.php/TACIT
+> >> > >>>>
+> >> > >>>> Create a page for yourself here:
+> >> > >>>> http://cssl.usc.edu/wiki/index.php/Lab_Members
+> >> > >>>>
+> >> > >>>> Then, for you weekly reports, you would need to follow this type of template:
+> >> > >>>> http://cssl.usc.edu/wiki/index.php/Eunkyung%27s_research_progress_report:_2015
+> >> > >>>>
+> >> > >>>> You report what issues/tasks you worked on, some details about your work, and how many hours you spent on it. For the tasks that you’ve already worked on, I expect to see it in your last week’s report.
+> >> > >>>>
+> >> > >>>>
+> >> > >>>> Here are three other issues that are move involved:
+> >> > >>>> Anish: https://github.com/USC-CSSL/TACIT/issues/416
+> >> > >>>> Nishnat: https://github.com/USC-CSSL/TACIT/issues/409
+> >> > >>>> Sagar: https://github.com/USC-CSSL/TACIT/issues/425
+> >> > >>>>
+> >> > >>>> And here is one that requires some researching. So you all need to work on it together:
+> >> > >>>> https://github.com/USC-CSSL/TACIT/issues/334
+> >> > >>>>
+> >> > >>>> Please let me know if there are any issues that you face with these. I will be working very closely with you guys until you become familiar both with the code, and with the lab’s routines.
+> >> > >>>>
+> >> > >>>> Morteza
+> >> > >>>>
+> >> > >>>>
+> >> > >>>>> On Jan 17, 2016, at 12:29 AM, Nishant Loyola Dsouza <ndsouza@usc.edu> wrote:
+> >> > >>>>>
+> >> > >>>>> Hi Professor,
+> >> > >>>>>
+> >> > >>>>> We have sent the bug fixes to Linda aswell and are done with the account requests.
+> >> > >>>>>
+> >> > >>>>> Thanks,
+> >> > >>>>> Nishant
+> >> > >>>>>
+> >> > >>>>>
+> >> > >>>>> On Sat, Jan 16, 2016 at 11:19 PM, Sagar Bharat Makwana <smakwana@usc.edu> wrote:
+> >> > >>>>> I have fixed the bug assigned to me and have sent the code to Linda.
+> >> > >>>>>
+> >> > >>>>> Thanks,
+> >> > >>>>> Sagar Makwana
+> >> > >>>>>
+> >> > >>>>> On Jan 16, 2016 10:31 PM, "Nishant Loyola Dsouza" <ndsouza@usc.edu> wrote:
+> >> > >>>>> Sorry forgot to mention that,
+> >> > >>>>> Nishant - dnishant
+> >> > >>>>> Anish - anishgkanchan
+> >> > >>>>>
+> >> > >>>>> On Sat, Jan 16, 2016 at 10:29 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>>>> And you’ll send me your github accounts, right? :)
+> >> > >>>>>
+> >> > >>>>>> On Jan 16, 2016, at 10:24 PM, Nishant Loyola Dsouza <ndsouza@usc.edu> wrote:
+> >> > >>>>>>
+> >> > >>>>>> No Professor, no problem.
+> >> > >>>>>> We'll request access tonight and send the code for the bug fixes to Linda.
+> >> > >>>>>>
+> >> > >>>>>> Thanks,
+> >> > >>>>>> Nishant
+> >> > >>>>>>
+> >> > >>>>>> On Sat, Jan 16, 2016 at 10:12 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>>>>> @Anish and @Nishant: I need your github account, and I need the two you to request an account on our wiki. This is the third time I’m asking this. Is there a problem?
+> >> > >>>>>>
+> >> > >>>>>> Did the three of you fix the bugs assigned to you, and if so, did you send your code to Linda? Do you want me to assign more tasks to you?
+> >> > >>>>>>
+> >> > >>>>>> Thanks,
+> >> > >>>>>> Morteza
+> >> > >>>>>>
+> >> > >>>>>>> On Jan 15, 2016, at 1:42 PM, Sagar Bharat Makwana <smakwana@usc.edu> wrote:
+> >> > >>>>>>>
+> >> > >>>>>>> Okay I will be there at your office in few minutes.
+> >> > >>>>>>> Also I have sent the request for access.
+> >> > >>>>>>>
+> >> > >>>>>>> On Fri, Jan 15, 2016 at 1:34 PM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>>>>>> Guys,
+> >> > >>>>>>> When on a group email, please “reply all”. I don’t want to keep emailing you guys individually.
+> >> > >>>>>>>
+> >> > >>>>>>> I need your github IDs, and also I need you to request access on the wiki page
+> >> > >>>>>>>
+> >> > >>>>>>>
+> >> > >>>>>>>> On Jan 15, 2016, at 9:51 AM, Morteza Dehghani <mdehghan@usc.edu> wrote:
+> >> > >>>>>>>>
+> >> > >>>>>>>> Guys,
+> >> > >>>>>>>> I need your student IDs.
+> >> > >>>>>>>>
+> >> > >>>>>>>> Also, please go to http://cssl.usc.edu/wiki/index.php/Main_Page
+> >> > >>>>>>>> and request access
+> >> > >>>>>>>>
+> >> > >>>>>>>> Please also send me your github IDs
+> >> > >>>>>>>>
+> >> > >>>>>>>> Thanks,
+> >> > >>>>>>>> Morteza
+> >> > >>>>>>>
+> >> > >>>>>>>
+> >> > >>>>>>
+> >> > >>>>>>
+> >> > >>>>>
+> >> > >>>>>
+> >> > >>>>>
+> >> > >>>>
+> >> > >>>>
+> >> > >>>
+> >> > >>>
+> >> > >>
+> >> > >
+> >> >
+> >> >
+> >>
+> >>
+> >
+> >
+> 
+

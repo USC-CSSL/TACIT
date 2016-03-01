@@ -191,18 +191,19 @@ public class WordCountApi {
 		}
 		// No errors
 		monitor.subTask("Writing Read Me File...");
+		generateRunReport(outputFile, dateObj);
+		monitor.worked(5);
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
+	}
+	protected void generateRunReport(String outputFile, Date dateObj){
 		if (this.weighted)
 			TacitUtility.createRunReport(outputFile, "Weighted Word Count", dateObj);
 		else
 			TacitUtility.createRunReport(outputFile, "LIWC Word Count", dateObj);
-
-		monitor.worked(5);
-		if (monitor.isCanceled()) {
-			throw new OperationCanceledException();
-
-		}
 	}
-
+	
 	public void countWords(File iFile, File oFile, File spssFile, Date dateObj, String corpus) throws IOException {
 
 		if (iFile.isDirectory()) {

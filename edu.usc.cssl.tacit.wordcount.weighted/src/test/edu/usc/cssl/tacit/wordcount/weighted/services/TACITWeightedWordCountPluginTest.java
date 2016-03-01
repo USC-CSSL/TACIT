@@ -1,4 +1,4 @@
-package test.edu.usc.cssl.tacit.wordcount.standard.services;
+package test.edu.usc.cssl.tacit.wordcount.weighted.services;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,21 +11,23 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Test;
 
 import edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin;
 
-public class StandardWordCountPluginTest{
+public class TACITWeightedWordCountPluginTest{
 	
-	 // NOTE: Tacit Utility run reports have been disabled for the tests
+	 // TODO: Tacit Utility run report has been disabled for all the tests
 
 	@Test
-	public void standardWordCountTest() throws IOException {
+	public void weightedWordCountPluginTest() throws IOException {
 		String directoryPath = new File("TestData").getAbsolutePath();
-		WordCountPlugin wc = new WordCountPlugin(false, Calendar.getInstance().getTime(), false, false, false,
+		WordCountPlugin wc = new WordCountPlugin(true, Calendar.getInstance().getTime(), false, false, false,
 						false, false, directoryPath, new NullProgressMonitor()){
 			@Override
 			protected File getSetupFile(String bundleEntry) throws IOException{
@@ -42,10 +44,10 @@ public class StandardWordCountPluginTest{
 		List<String> inputFiles = new ArrayList<String>();
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
-		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
+		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidWeightedWordCountDictionary.txt");
 		wc.countWords(inputFiles, dictionary);
 		File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WordCountOutput.csv");
-		File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"StandardWordCountTestExpectedOutput.csv");
+		File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountTestExpectedOutput.csv");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
 		String line = "";
 		reader.readLine();
@@ -72,12 +74,11 @@ public class StandardWordCountPluginTest{
 		assertEquals("Comparing the output for dic", generatedDic, expectedDic);
 		assertEquals("Comparing the count of story", generatedStoryCount, expectedStoryCount);
 		
-	}
-
+}
 	@Test
-	public void standardWordCountPluginPOSTagsTest() throws IOException {
+	public void weightedWordCountPluginPOSTagsTest() throws IOException {
 		String directoryPath = new File("TestData").getAbsolutePath();
-		WordCountPlugin wc = new WordCountPlugin(false, Calendar.getInstance().getTime(), false, false, false,
+		WordCountPlugin wc = new WordCountPlugin(true, Calendar.getInstance().getTime(), false, false, false,
 						false, true, directoryPath, new NullProgressMonitor()){
 			
 			@Override
@@ -102,11 +103,10 @@ public class StandardWordCountPluginTest{
 						+ "POS-Tags-Generated-Output.txt"));
 			}
 		};
-
 		List<String> inputFiles = new ArrayList<String>();
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
-		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
+		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidWeightedWordCountDictionary.txt");
 		wc.countWords(inputFiles, dictionary);
 		File generatedPOSTagsFile = new File(directoryPath + System.getProperty("file.separator") +"POS-Tags-Generated-Output.txt");
 		File expectedPOSTagsFile = new File(directoryPath + System.getProperty("file.separator") +"POS-Tags-Expected-Output.txt");
@@ -126,12 +126,10 @@ public class StandardWordCountPluginTest{
 		assertEquals("Comparing the POS Tag outputs", generatedPOSTags, expectedPOSTags);
 		
 }
-	//There is no way to set the word distribution flag on the UI of standard and weighted word count plugins
-
 	@Test
-	public void standardWordCountPluginWordDistributionTest() throws IOException {
+	public void weightedWordCountPluginWordDistributionTest() throws IOException {
 		String directoryPath = new File("TestData").getAbsolutePath();
-		WordCountPlugin wc = new WordCountPlugin(false, Calendar.getInstance().getTime(), false, false, true,
+		WordCountPlugin wc = new WordCountPlugin(true, Calendar.getInstance().getTime(), false, false, true,
 						false, false, directoryPath, new NullProgressMonitor()){
 			@Override
 			protected void createWordDistributionDir(DateFormat df){
@@ -140,7 +138,7 @@ public class StandardWordCountPluginTest{
 			@Override
 			protected BufferedWriter createWordDistributionFile(String inputFile) throws IOException{
 				return new BufferedWriter(new FileWriter(new File(
-						outputPath+ System.getProperty("file.separator") +"WordDistributionOutput.csv")));
+						outputPath + System.getProperty("file.separator") + "WordDistributionOutput.csv")));
 			}
 			@Override
 			protected File getSetupFile(String bundleEntry) throws IOException{
@@ -154,14 +152,13 @@ public class StandardWordCountPluginTest{
 				return "WordCountOutput.csv";
 			}
 		};
-
 		List<String> inputFiles = new ArrayList<String>();
-		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
+		inputFiles.add(directoryPath + System.getProperty("file.separator") + "Data.txt");
 		List<String> dictionary = new ArrayList<String>();
-		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
+		dictionary.add(directoryPath + System.getProperty("file.separator") + "ValidWeightedWordCountDictionary.txt");
 		wc.countWords(inputFiles, dictionary);
-		File generatedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") +"WordDistributionOutput.csv");
-		File expectedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") +"WordDistributionExpectedOutput.csv");
+		File generatedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") + "WordDistributionOutput.csv");
+		File expectedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") + "WordDistributionExpectedOutput.csv");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedWordDistributionOutput));
 		String line = "";
 		String generatedDistribution = "";
@@ -175,14 +172,15 @@ public class StandardWordCountPluginTest{
 		reader.readLine();
 		line = reader.readLine();
 		reader.close();
-		assertEquals("Comparing the word distribution outputs", generatedDistribution, expectedDistribution);
+		assertEquals("Comparing the POS Tag outputs", generatedDistribution, expectedDistribution);
 		
 }
 	
 	@Test
-	public void standardWordCountPluginStemDictionaryTest() throws IOException {
+	public void weightedWordCountPluginStemDictionaryTest() throws IOException {
+
 			String directoryPath = new File("TestData").getAbsolutePath();
-			WordCountPlugin wc = new WordCountPlugin(false, Calendar.getInstance().getTime(), true, false, false,
+			WordCountPlugin wc = new WordCountPlugin(true, Calendar.getInstance().getTime(), true, false, false,
 							false, false, directoryPath, new NullProgressMonitor()){
 				
 				@Override
@@ -194,17 +192,16 @@ public class StandardWordCountPluginTest{
 				protected void generateRunReport(){}
 				@Override
 				protected String createFileName(){
-					return "StandardWordCountStemmedGeneratedOutput.csv";
+					return "WeightedWordCountStemmedGeneratedOutput.csv";
 				}
 			};
-
 			List<String> inputFiles = new ArrayList<String>();
-			inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
+			inputFiles.add(directoryPath + System.getProperty("file.separator") + "Data.txt");
 			List<String> dictionary = new ArrayList<String>();
-			dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
+			dictionary.add(directoryPath + System.getProperty("file.separator") + "ValidWeightedWordCountDictionary.txt");
 			wc.countWords(inputFiles, dictionary);
-			File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"StandardWordCountStemmedGeneratedOutput.csv");
-			File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"StandardWordCountStemmedExpectedOutput.csv");
+			File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountStemmedGeneratedOutput.csv");
+			File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountStemmedExpectedOutput.csv");
 			BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
 			String line = "";
 			reader.readLine();
@@ -233,9 +230,9 @@ public class StandardWordCountPluginTest{
 			
 	}
 	@Test
-	public void standardWordCountPluginDATTest() throws IOException {
+	public void weightedWordCountPluginDATTest() throws IOException {
 		String directoryPath = new File("TestData").getAbsolutePath();
-		WordCountPlugin wc = new WordCountPlugin(false, Calendar.getInstance().getTime(), false, false, false,
+		WordCountPlugin wc = new WordCountPlugin(true, Calendar.getInstance().getTime(), false, false, false,
 						true, false, directoryPath, new NullProgressMonitor()){
 			@Override
 			protected File getSetupFile(String bundleEntry) throws IOException{
@@ -246,7 +243,7 @@ public class StandardWordCountPluginTest{
 			protected void generateRunReport(){}
 			@Override
 			protected String createDATFilePath(){
-				return outputPath + System.getProperty("file.separator") +"WordCountOutput.dat";
+				return outputPath + "/WordCountOutput.dat";
 			}@Override
 			protected String createFileName(){
 				return "WordCountOutput.csv";
@@ -255,9 +252,8 @@ public class StandardWordCountPluginTest{
 		List<String> inputFiles = new ArrayList<String>();
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
-		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
+		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidWeightedWordCountDictionary.txt");
 		wc.countWords(inputFiles, dictionary);
-
 		File expectedDATOutput = new File(directoryPath + System.getProperty("file.separator") +"ExpectedWordCountOutput.dat");
 		File generatedDATOutput = new File(directoryPath + System.getProperty("file.separator") +"WordCountOutput.dat");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedDATOutput));
@@ -290,6 +286,5 @@ public class StandardWordCountPluginTest{
 		assertEquals("Comparing the DAT output for dic", generatedDic, expectedDic);
 		assertEquals("Comparing the DAT count of story", generatedStoryCount, expectedStoryCount);
 
-}
-
+	}
 }
