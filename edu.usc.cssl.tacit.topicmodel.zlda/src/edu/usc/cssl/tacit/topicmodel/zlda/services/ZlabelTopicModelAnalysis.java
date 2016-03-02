@@ -220,7 +220,7 @@ public class ZlabelTopicModelAnalysis {
 			}
 			fw.flush();
 			fw.close();
-			TacitUtility.createRunReport(outputdir, "Z-Label LDA", dateObj);
+			TacitUtility.createRunReport(outputdir, "Z-Label LDA", dateObj,null);
 		} catch (
 
 		Exception e)

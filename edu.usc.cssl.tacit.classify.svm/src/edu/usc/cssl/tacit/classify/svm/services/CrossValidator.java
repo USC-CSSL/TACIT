@@ -142,7 +142,7 @@ public class CrossValidator {
 
 		clearFiles(kValue, outputPath);
 		writeToCSV(accuracies, outputPath,dateObj);
-		TacitUtility.createRunReport(outputPath, "SVM Classification",dateObj);
+		TacitUtility.createRunReport(outputPath, "SVM Classification",dateObj,null);
 	}
 
 	private void clearFiles(int kValue, String outputPath) {

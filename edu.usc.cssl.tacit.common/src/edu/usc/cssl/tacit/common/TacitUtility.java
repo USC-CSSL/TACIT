@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -18,7 +19,7 @@ import edu.usc.cssl.tacit.repository.Activator;
 public class TacitUtility {
 
 	
-	public static void createRunReport (String location, String title, Date dateObj) {
+	public static void createRunReport (String location, String title, Date dateObj, List<String> reportParams) {
 		
 		Boolean createReadMe;
 		String readMeStr = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CREATE_RUNREPORT);
@@ -40,6 +41,19 @@ public class TacitUtility {
 			bw.newLine();
 			bw.write("--------------------------");
 			bw.newLine();
+			
+			if (reportParams != null){
+				for (String param: reportParams){
+					bw.write(param);
+					bw.newLine();
+				}				
+			}
+
+			if (reportParams != null){
+			bw.write("--------------------------");
+			bw.newLine();
+			}
+			
 			bw.newLine();
 			bw.write("Application: "+ appV );
 			bw.newLine();

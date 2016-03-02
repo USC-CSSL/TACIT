@@ -94,7 +94,7 @@ public class LdaAnalysis {
 		monitor.worked(5);
 
 		deleteFiles(outputPath);
-		TacitUtility.createRunReport(outputDir, "LDA Analysis", dateObj);
+		TacitUtility.createRunReport(outputDir, "LDA Analysis", dateObj,null);
 		monitor.worked(5);
 	}
 

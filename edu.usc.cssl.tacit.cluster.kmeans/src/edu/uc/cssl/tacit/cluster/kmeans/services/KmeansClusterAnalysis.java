@@ -122,7 +122,7 @@ public class KmeansClusterAnalysis {
 				ConsoleView.printlInConsoleln("");
 			}
 			fw.close();
-			TacitUtility.createRunReport(fOutputDir, "K Means Clustering", dateObj);
+			TacitUtility.createRunReport(fOutputDir, "K Means Clustering", dateObj,null);
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to files" + e);
 			return false;

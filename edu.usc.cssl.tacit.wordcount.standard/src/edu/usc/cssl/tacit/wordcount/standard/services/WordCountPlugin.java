@@ -169,10 +169,10 @@ public class WordCountPlugin {
 	protected void generateRunReport(){
 		if (weighted)
 			TacitUtility.createRunReport(outputPath,
-					"TACIT Weighted Word Count", dateObj);
+					"TACIT Weighted Word Count", dateObj,null);
 		else
 			TacitUtility.createRunReport(outputPath,
-					"TACIT Standard Word Count", dateObj);
+					"TACIT Standard Word Count", dateObj,null);
 	}
 	
 	protected BufferedWriter createWordDistributionFile(String inputFile) throws IOException{

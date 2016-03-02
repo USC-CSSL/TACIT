@@ -205,7 +205,7 @@ public class HierarchicalClusterAnalysis {
 		ConsoleView.printlInConsoleln("Saving the output to hierarchical-cluster-"+df.format(dateObj)+".txt");
 		subProgressMonitor.subTask("Saving the output to hierarchical-cluster-"+df.format(dateObj)+".txt");
 		ConsoleView.printlInConsoleln("\nDone Hierarchical Clustering...");
-		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj);
+		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj,null);
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return true;

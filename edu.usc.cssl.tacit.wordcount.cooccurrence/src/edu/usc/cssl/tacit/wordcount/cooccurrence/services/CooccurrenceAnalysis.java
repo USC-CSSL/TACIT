@@ -277,7 +277,7 @@ public class CooccurrenceAnalysis {
 			monitor.worked(10);
 			appendLog(String.valueOf(phrase.size()));
 			Date dateObj = new Date();
-			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis", dateObj);
+			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis", dateObj,null);
 			return true;
 		} catch (Exception e) {
 			appendLog("Exception occurred in Cooccurrence Analysis " + e);

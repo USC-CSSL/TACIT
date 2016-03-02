@@ -199,9 +199,9 @@ public class WordCountApi {
 	}
 	protected void generateRunReport(String outputFile, Date dateObj){
 		if (this.weighted)
-			TacitUtility.createRunReport(outputFile, "Weighted Word Count", dateObj);
+			TacitUtility.createRunReport(outputFile, "Weighted Word Count", dateObj,null);
 		else
-			TacitUtility.createRunReport(outputFile, "LIWC Word Count", dateObj);
+			TacitUtility.createRunReport(outputFile, "LIWC Word Count", dateObj,null);
 	}
 	
 	public void countWords(File iFile, File oFile, File spssFile, Date dateObj, String corpus) throws IOException {

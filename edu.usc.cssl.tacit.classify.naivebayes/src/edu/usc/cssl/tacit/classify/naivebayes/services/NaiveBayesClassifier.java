@@ -127,7 +127,7 @@ public class NaiveBayesClassifier {
 		ConsoleView.printlInConsoleln("\nCreated classifier output file "
 				+ tempoutputPath + ".out");
 		System.out.println(result.get(0));
-		TacitUtility.createRunReport(outputDirectory, "Naive Bayes's", dateObj);
+		TacitUtility.createRunReport(outputDirectory, "Naive Bayes's", dateObj,null);
 
 		return result.get(0);
 	}
@@ -208,7 +208,7 @@ public class NaiveBayesClassifier {
 		ConsoleView.printlInConsoleln("Created prediction CSV file "
 				+ outputPath + "_output.csv");
 		TacitUtility.createRunReport(classificationOutputDir, "Naive Bayes's",
-				dateObj);
+				dateObj,null);
 	}
 
 	public void purgeDirectory(File dir) {
