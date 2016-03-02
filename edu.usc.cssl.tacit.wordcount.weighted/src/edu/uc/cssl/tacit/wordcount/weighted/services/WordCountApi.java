@@ -353,28 +353,30 @@ public class WordCountApi {
 			writeToSpss(spssFile, iFile.getName(), corpus, totalWords, totalWords / (float) noOfLines,
 					(sixltr * 100) / (float) totalWords, (dicCount * 100) / (double) totalWords, catCount);
 	}
-
-	public void calculateWordDistribution(HashMap<String, Integer> map, HashMap<String, Double> catCount,
-			HashMap<String, HashSet<String>> wordCategories, String inputFile, File oFile, Date dateobj)
-					throws IOException {
-		File outputDir = oFile.getParentFile();
-		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
-
-		// Create output directory for word distributions
-		String wordDistributionDir = outputDir + System.getProperty("file.separator");
+	
+	protected BufferedWriter createWordDistributionFile(String inputFile, File oFile, String dateFormat) throws IOException{
+		String wordDistributionDir = oFile.getParentFile() + System.getProperty("file.separator");
 		if (this.weighted)
-			wordDistributionDir = wordDistributionDir + "weighted-word-distribution-" + df.format(dateobj);
+			wordDistributionDir = wordDistributionDir + "weighted-word-distribution-" + dateFormat;
 		else
-			wordDistributionDir = wordDistributionDir + "LIWC-word-distribution-" + df.format(dateobj);
+			wordDistributionDir = wordDistributionDir + "LIWC-word-distribution-" + dateFormat;
 		if (!(new File(wordDistributionDir).exists()))
 			new File(wordDistributionDir).mkdir();
-
 		String iFilename = inputFile.substring(inputFile.lastIndexOf(System.getProperty("file.separator")));
 		String outputPath = wordDistributionDir + System.getProperty("file.separator") + iFilename
 				+ "-wordDistribution.csv";
 
 		File wdFile = new File(outputPath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
+		return bw;
+		
+		
+	}
+	public void calculateWordDistribution(HashMap<String, Integer> map, HashMap<String, Double> catCount,
+			HashMap<String, HashSet<String>> wordCategories, String inputFile, File oFile, Date dateobj)
+					throws IOException {
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		BufferedWriter bw = createWordDistributionFile(inputFile, oFile, df.format(dateobj));
 		bw.write("Word,Count,");
 		StringBuilder toWrite = new StringBuilder();
 
