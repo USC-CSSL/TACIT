@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -476,10 +477,17 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 			form.getMessageManager().addMessage("corpusName", "Provide corpus name", null, IMessageProvider.ERROR);
 			return false;
 		} else {
+			String outputDir = IRedditCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+			if(new File(outputDir).exists()){
+				form.getMessageManager().addMessage("corpusName", "Corpus already exists", null, IMessageProvider.ERROR);
+				return false;
+			}
+			else{
 			form.getMessageManager().removeMessage("corpusName");
-		}		
-		return true;
-	}
+			return true;
+			}
+			}		
+		}
 	
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
@@ -530,10 +538,11 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 								limitComments = Integer.parseInt(numCommentsText.getText());						
 								//outputDir = outputLayout.getOutputLabel().getText();
 								Date dateObj = new Date();
-								corpusName+= "_" + dateObj.getTime();
+//								corpusName+= "_" + dateObj.getTime();
 								outputDir = IRedditCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
-								if(!new File(outputDir).exists())
-									new File(outputDir).mkdir();
+								if(!new File(outputDir).exists()){
+									new File(outputDir).mkdir();									
+								}
 						}
 						});
 						int progressSize = limitLinks+30;
