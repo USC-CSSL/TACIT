@@ -59,7 +59,6 @@ public class MainPreferencePage extends PreferencePage implements
 				.applyTo(dummy);
 
 		readMe = createReadMeSection(sectionClient);
-		corpusLocation = createCorpusLocation(sectionClient);
 
 		initializeDefaultValues();
 		loadValues();
@@ -85,23 +84,23 @@ public class MainPreferencePage extends PreferencePage implements
 	private void initializeDefaultValues() {
 		getPreferenceStore().setDefault(INITIAL, "true");
 		getPreferenceStore().setDefault(CREATE_RUNREPORT, "true");
-		oldCorpusLocation = System.getProperty("user.dir")
-				+ System.getProperty("file.separator") + "tacit_corpora";
-		getPreferenceStore().setDefault(CORPUS_LOCATION, oldCorpusLocation);
+//		oldCorpusLocation = System.getProperty("user.dir")
+//				+ System.getProperty("file.separator") + "tacit_corpora";
+//		getPreferenceStore().setDefault(CORPUS_LOCATION, oldCorpusLocation);
 	}
 
 	private void setDefaultValues() {
 		readMe.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(CREATE_RUNREPORT)));
-		oldCorpusLocation = getPreferenceStore().getDefaultString(
-				CORPUS_LOCATION);
-		corpusLocation.setText(oldCorpusLocation);
+//		oldCorpusLocation = getPreferenceStore().getDefaultString(
+//				CORPUS_LOCATION);
+//		corpusLocation.setText(oldCorpusLocation);
 	}
 
 	private void loadValues() {
 		readMe.setSelection(Boolean.valueOf(load(CREATE_RUNREPORT)));
-		corpusLocation.setText(load(CORPUS_LOCATION));
-		oldCorpusLocation = load(CORPUS_LOCATION);
+//		corpusLocation.setText(load(CORPUS_LOCATION));
+//		oldCorpusLocation = load(CORPUS_LOCATION);
 	}
 
 	private String load(String name) {

@@ -101,6 +101,12 @@
              id="edu.usc.cssl.tacit.common.ui.prepocessorsettings"
              name="Prepocessor Settings">
        </page>
+       <page
+             category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
+             class="edu.usc.cssl.tacit.common.ui.preferencepage.CorpusLocation"
+             id="edu.usc.cssl.tacit.common.ui.corpuslocation"
+             name="Corpus Management">
+       </page>
     </extension>
     <!-- Console View -->
        <!--  Progress View -->
