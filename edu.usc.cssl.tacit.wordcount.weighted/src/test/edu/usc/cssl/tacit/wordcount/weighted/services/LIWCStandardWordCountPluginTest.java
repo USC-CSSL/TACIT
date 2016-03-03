@@ -9,10 +9,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Test;
 
@@ -165,4 +168,88 @@ public class LIWCStandardWordCountPluginTest{
 		reader.close();
 		assertEquals("Comparing the output for word count", generatedWD, expectedWD);
 	}
+	@Test
+	public void standardLIWCCountWordsTest() throws IOException {
+		final File generatedOutputFile = new File(directoryPath + File.separator
+				+ "LIWCStandardWordCountGeneratedOutput.csv");
+		final File generatedDATFile = new File(directoryPath + File.separator
+				+ "LIWCStandardWordCountGeneratedOutput.dat");
+
+		WordCountApi wca = new WordCountApi(false){
+			@Override
+			protected void generateRunReport(String outputFile, Date dateObj){}
+			@Override
+			protected BufferedWriter createWordDistributionFile(String inputFile, File oFile, String dateFormat) throws IOException{
+				File wdFile = new File(directoryPath + System.getProperty("file.separator") + "LIWCStandardWordDistributionGeneratedOutput.csv");
+				System.out.println(wdFile.getAbsolutePath());
+				BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
+				return bw;
+			}
+		};
+		
+		List<File> inputDataFiles = new ArrayList<File>();
+		inputDataFiles.add(new File(directoryPath + System.getProperty("file.separator") +"LIWCData.txt"));	
+		List<String> inputDictionaryFiles = new ArrayList<String>();
+		inputDictionaryFiles.add(directoryPath + System.getProperty("file.separator") +"LIWCStandardWordCountDictionary.dic");	
+		TacitUtil tacitHelper = new TacitUtil();
+		final Map<String, String[]> fileCorpusMap = tacitHelper
+				.getFileCorpusMembership();
+		String absoluteFilePath = inputDataFiles.get(0).getAbsolutePath();
+		if (absoluteFilePath.contains("DS_Store")) {
+			System.out.println("absoluteFilePath.contains(DS_Store)");
+			return;
+		}
+		String corpus = "NIL";
+		if (fileCorpusMap.containsKey(absoluteFilePath))
+			corpus = fileCorpusMap.get(absoluteFilePath)[0] + "\\" + fileCorpusMap.get(absoluteFilePath)[1];
+		wca.countWords(inputDataFiles.get(0), generatedOutputFile, generatedDATFile, Calendar.getInstance().getTime(), corpus);
+		File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"LIWCStandardWordCountExpectedOutput.csv");
+		BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
+		String line = "";
+		reader.readLine();
+		line = reader.readLine();
+		reader.close();
+		String values[] = line.split(",");
+		String generatedWC = values[1];
+		String generatedWPS = values[2];
+		String generatedDic = values[3];
+		String generatedStoryCount = values[4];
+	
+		reader = new BufferedReader(new FileReader(expectedOutputFile));
+		reader.readLine();
+		line = reader.readLine();
+		reader.close();
+		values = line.split(",");
+		String expectedWC = values[1];
+		String expectedWPS = values[2];
+		String expectedDic = values[3];
+		String expectedStoryCount = values[4];
+		
+		assertEquals("Comparing the output for word count", generatedWC, expectedWC);
+		assertEquals("Comparing the output for wps", generatedWPS, expectedWPS);
+		assertEquals("Comparing the output for dic", generatedDic, expectedDic);
+		assertEquals("Comparing the count of story", generatedStoryCount, expectedStoryCount);	
+	}
+	
+	@Test
+	public void standardLIWCProcessTest() throws IOException {
+		String line = "> On Jan 19, 2016 11:28 AM, \"Morteza Dehghani\" <mdehghan@usc.edu> wrote:";
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		WordCountApi wca = new WordCountApi(false){
+			@Override
+			protected void generateRunReport(String outputFile, Date dateObj){}
+			@Override
+			protected BufferedWriter createWordDistributionFile(String inputFile, File oFile, String dateFormat) throws IOException{
+				File wdFile = new File(directoryPath + System.getProperty("file.separator") + "LIWCStandardWordDistributionGeneratedOutput.csv");
+				System.out.println(wdFile.getAbsolutePath());
+				BufferedWriter bw = new BufferedWriter(new FileWriter(wdFile));
+				return bw;
+			}
+		};
+		
+		int generatedOutputArray[] = wca.process(line, map);
+		int expectedOutputArray[] = {10, 3, 2};
+		assertEquals("Comparing the output array of process method", Arrays.toString(generatedOutputArray), Arrays.toString(expectedOutputArray));
+	}
 }
+

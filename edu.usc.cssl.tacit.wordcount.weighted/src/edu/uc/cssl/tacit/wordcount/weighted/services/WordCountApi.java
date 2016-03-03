@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class WordCountApi {
 	private HashMap<String, List<Integer>> phraseLookup = new HashMap<String, List<Integer>>();
 	private HashMap<String, List<Integer>> conditionalCategory = new HashMap<String, List<Integer>>();
 	private TreeMap<Integer, String> categories = new TreeMap<Integer, String>();
-	private String delimiters;
+	protected String delimiters = " ";
 	private boolean doLower;
 	private boolean doStopWords;
 	private int clashWordCount = 2147483647;
@@ -352,6 +353,7 @@ public class WordCountApi {
 		if (doSpss)
 			writeToSpss(spssFile, iFile.getName(), corpus, totalWords, totalWords / (float) noOfLines,
 					(sixltr * 100) / (float) totalWords, (dicCount * 100) / (double) totalWords, catCount);
+
 	}
 	
 	protected BufferedWriter createWordDistributionFile(String inputFile, File oFile, String dateFormat) throws IOException{
@@ -794,6 +796,7 @@ public class WordCountApi {
 		}
 
 		StringTokenizer st = new StringTokenizer(line, delimiters);
+		
 		String currentWord = null;
 		if (st.hasMoreTokens())
 			currentWord = trimChars(st.nextToken(), punctuations);
@@ -967,7 +970,7 @@ public class WordCountApi {
 																// it will not
 																// process the
 																// last word
-
+		
 		ret[0] = numWords;
 		ret[1] = sixltr;
 		ret[2] = numerals;
