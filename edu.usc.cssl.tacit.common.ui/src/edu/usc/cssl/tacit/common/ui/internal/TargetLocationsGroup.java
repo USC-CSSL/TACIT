@@ -76,6 +76,8 @@ public class TargetLocationsGroup {
 	private TreeParent node;
 	private Button fAddCorpusClassButton;
 	private static Composite cmp;
+	
+	private static String inputFilterPath = ""; 
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -327,6 +329,15 @@ public class TargetLocationsGroup {
 				public void widgetSelected(SelectionEvent e) {
 					DirectoryDialog dlg = new DirectoryDialog(fAddButton
 							.getShell(), SWT.OPEN);
+					if (!inputFilterPath.isEmpty()){
+						if (inputFilterPath.indexOf(File.separator) != -1 && !(inputFilterPath.substring(0, inputFilterPath.lastIndexOf(File.separator))).isEmpty()){
+							dlg.setFilterPath(inputFilterPath.substring(0, inputFilterPath.lastIndexOf(File.separator)));
+						}
+						else{
+							dlg.setFilterPath(inputFilterPath);
+						}
+						
+					}
 					dlg.setText("Select Folder");
 					String path = null;
 					String message = "";
@@ -346,6 +357,7 @@ public class TargetLocationsGroup {
 											message));
 						} else {
 							canExit = true;
+							inputFilterPath = path.toString();
 						}
 
 					}
@@ -501,6 +513,7 @@ public class TargetLocationsGroup {
 												message));
 							} else {
 								canExit = true;
+								inputFilterPath = dlg.getFilterPath();
 							}
 						}
 					}

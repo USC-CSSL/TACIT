@@ -61,6 +61,8 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class TacitFormComposite {
 
 	private static TargetLocationsGroup targetLocationContent;
+	
+	private static String outputFilterPath = "";
 
 	public static void createEmptyRow(FormToolkit toolkit,
 			Composite sectionClient) {
@@ -189,11 +191,15 @@ public class TacitFormComposite {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dlg = new DirectoryDialog(browseBtn.getShell(),
 						SWT.OPEN);
+				if (!outputFilterPath.isEmpty()){
+					dlg.setFilterPath(outputFilterPath);
+				}
 				dlg.setText("Open");
 				String path = dlg.open();
 				if (path == null)
 					return;
 				outputLocationTxt.setText(path);
+				outputFilterPath = path.toString();
 			}
 
 			@Override
