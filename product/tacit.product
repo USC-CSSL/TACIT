@@ -21,8 +21,8 @@ This software may be reproduced and used for non-commercial purposes only, so lo
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
 -Xdock:icon=tacit.icns
 -XstartOnFirstThread
--Xms40m
--Xmx256m
+-Xms1024m
+-Xmx4g
 -Dorg.eclipse.swt.internal.carbon.smallFonts
 -Dorg.eclipse.swt.internal.carbon.noFocusRing
       </vmArgsMac>
@@ -44,7 +44,6 @@ This software may be reproduced and used for non-commercial purposes only, so lo
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
