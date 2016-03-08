@@ -254,8 +254,6 @@ public class WordCountApi {
 				otherP = otherP + StringUtils.countMatches(currentLine, String.valueOf(c));
 			}
 
-			System.out.println();
-
 			int[] i = process(currentLine, map);
 			totalWords = totalWords + i[0];
 			sixltr = sixltr + i[1];
@@ -331,7 +329,6 @@ public class WordCountApi {
 						currWordCategories.add(currCategoryName);
 						wordCategories.put(currWord, currWordCategories);
 					}
-
 				}
 			} else {
 				// ConsoleView.writeInConsole("No category -> "+currWord);
@@ -978,6 +975,7 @@ public class WordCountApi {
 	}
 
 	private int bigWords(String group) {
+		System.out.println("inside BigWords");
 		int bigs = 0;
 		for (String word : group.split("\\s+"))
 			if (word.length() > 6)

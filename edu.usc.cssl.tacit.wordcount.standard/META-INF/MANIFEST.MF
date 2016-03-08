@@ -25,4 +25,5 @@ Bundle-ClassPath: .,
  opennlp-maxent-3.0.3.jar,
  opennlp-tools-1.5.3.jar,
  opennlp-uima-1.5.3.jar,
- commons-lang3-3.3.2.jar
+ commons-lang3-3.3.2.jar,
+ junit.jar
