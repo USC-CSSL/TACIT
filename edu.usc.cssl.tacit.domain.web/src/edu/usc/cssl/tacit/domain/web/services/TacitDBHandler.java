@@ -37,6 +37,7 @@ public class TacitDBHandler extends HttpServlet {
 			Document doc = new Document("organization", org).append("emailid",
 					emailid).append("orgtype", orgType).append("createdDate", date);
 			collection.insertOne(doc);
+			mongoClient.close();
 			}
 			// Set response content type
 			response.setContentType("text/html");

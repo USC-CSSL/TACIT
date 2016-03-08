@@ -4,12 +4,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
     http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  
   <servlet>
     <servlet-name>Hello</servlet-name>
     <servlet-class>edu.usc.cssl.tacit.domain.web.services.TacitDBHandler</servlet-class>
   </servlet>
+  
   <servlet-mapping>
     <servlet-name>Hello</servlet-name>
     <url-pattern>/Hello</url-pattern>
   </servlet-mapping>
+  
 </web-app>
