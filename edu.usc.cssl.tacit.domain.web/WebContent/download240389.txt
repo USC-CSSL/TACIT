@@ -111,11 +111,11 @@
 				<b><i>Citation - </i></b>
 				 Dehghani, M., Johnson, K., M., Garten, J., Boghrati, R., Hoover, J.,
 				 Balasubramanian, V., Singh, A., Shankar, Y., Pulickal, L., Rajkumar, A., and Parmar, N. J. (2016).
-				 <b><a href="https://urldefense.proofpoint.com/v2/url?u=http-3A__morteza-2Ddehghani.net_wp-2Dcontent_uploads_TACIT.pdf&d=CwIFAg&c=clK7kQUTWtAVEOVIgvi0NU5BOUHhpN0H8p7CSfnc_gI&r=W53wzaXBX4pEetOm0RZ60Q&m=k315cBQ_CVW90AVhLWwSwZ-A9nxquFYj6ts0l5gkrco&s=tl7BkkNJfmBDiPVCY4A4eKK1hen8YCRTuEr9OraHMVw&e="  
+				 <b><a href="http://morteza-dehghani.net/wp-content/uploads/TACIT.pdf"  
 				 target="_blank">TACIT: An Open-Source Text Analysis, Crawling and Interpretation Tool.</a></b>
 				  <i> Behavior Research Methods</i>,
 				   DOI 
-				   <b><a href="https://urldefense.proofpoint.com/v2/url?u=http-3A__link.springer.com_article_10.3758_s13428-2D016-2D0722-2D4&d=CwIFAg&c=clK7kQUTWtAVEOVIgvi0NU5BOUHhpN0H8p7CSfnc_gI&r=W53wzaXBX4pEetOm0RZ60Q&m=k315cBQ_CVW90AVhLWwSwZ-A9nxquFYj6ts0l5gkrco&s=Im19kGm2u6c2yUOF28WUGONFy3Wf_bh3Ite3XhChJjo&e="
+				   <b><a href="http://link.springer.com/article/10.3758/s13428-016-0722-4"
 					style="color: #261e58" target="_blank">10.3758/s13428-016-0722-4</a></b>.
 					<br />
 			</p>
