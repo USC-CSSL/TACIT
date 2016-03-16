@@ -37,7 +37,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Text location;
 	private Text delimeters;
 	private Text output;
-	//private Text LatinStemmerLocation;
+	private Text LatinStemmerLocation;
 
 	public PrepocessorSettings() {
 	}
@@ -167,7 +167,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		cleanup.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(PRE_PROCESSED)));
 		output.setText(getPreferenceStore().getDefaultString(OUTPUT_PATH));
-		//LatinStemmerLocation.setText(getPreferenceStore().getDefaultString(LATIN_STEMMER));
+		LatinStemmerLocation.setText(getPreferenceStore().getDefaultString(LATIN_STEMMER));
 		language.setEnabled(false);
 	}
 
@@ -184,7 +184,7 @@ public class PrepocessorSettings extends PreferencePage implements
 			language.setEnabled(true);
 		}
 		output.setText(load(OUTPUT_PATH));
-		//LatinStemmerLocation.setText(load(LATIN_STEMMER));
+		LatinStemmerLocation.setText(load(LATIN_STEMMER));
 
 	}
 
@@ -215,16 +215,16 @@ public class PrepocessorSettings extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				if (stemming.getSelection()) {
 					language.setEnabled(true);
-					//LatinStemmerLocation.setEnabled(true);
+					LatinStemmerLocation.setEnabled(true);
 					language.select(0);
 				} else {
 					language.setEnabled(false);
-					//LatinStemmerLocation.setEnabled(false);
+					LatinStemmerLocation.setEnabled(false);
 				}
 			}
 		});
 		
-		/*Label locationLbl = new Label(sectionClient, SWT.NONE);
+		Label locationLbl = new Label(sectionClient, SWT.NONE);
 		locationLbl.setText("Latin Stemmer Location:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(locationLbl);
@@ -251,7 +251,7 @@ public class PrepocessorSettings extends PreferencePage implements
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
-		});*/
+		});
 		
 		return stemming;
 	}
@@ -381,7 +381,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(STEMMING, Boolean.toString(stemming.getSelection()));
 		store(LANGUAGE, language.getText());
 		store(OUTPUT_PATH, output.getText());
-		//store(LATIN_STEMMER,LatinStemmerLocation.getText());
+		store(LATIN_STEMMER,LatinStemmerLocation.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
 		super.performApply();
 		return super.performOk();

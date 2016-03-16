@@ -13,7 +13,7 @@ public enum ELanguageType {
 	HU,
 	NO,
 	TR,
-	//LATIN
+	LATIN
 	;
 	private String text;
 
