@@ -281,7 +281,7 @@ public class Preprocessor {
 								ConsoleView.printlInConsole("Error stemming the line: " + currLine);
 								ConsoleView.printlInConsole("Skipping the line and continuing.");
 							}
-							// latinStemmer.destroyTT();
+							 latinStemmer.destroyTT();
 						} else {
 							currLine = stemLine(currLine);
 						}
@@ -404,6 +404,7 @@ public class Preprocessor {
 			new File(tempDir).mkdir();
 		}
 		FilenameFilter jsonFileFilter = new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String filename) {
 				return filename.toLowerCase().endsWith(".json");
 			}
