@@ -18,14 +18,13 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xms512m
--Xmx1024m
+      <vmArgs>-Xms100m
+         <argsX86>-Xmx1g</argsX86>
+         <argsX86_64>-Xmx4g</argsX86_64>
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
 -Xdock:icon=tacit.icns
 -XstartOnFirstThread
--Xms1024m
--Xmx4g
 -Dorg.eclipse.swt.internal.carbon.smallFonts
 -Dorg.eclipse.swt.internal.carbon.noFocusRing
       </vmArgsMac>
@@ -91,6 +90,10 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configurations>
 
    <repositories>
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
       <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
    </repositories>
 
