@@ -23,7 +23,7 @@ import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class KmeansClusterAnalysis {
-	private static int[] doClustering(List<File> inputFiles, int numOfClusters) {
+	public static int[] doClustering(List<File> inputFiles, int numOfClusters) {
 		try {
 
 			StringToWordVector filter = new StringToWordVector();
@@ -33,7 +33,6 @@ public class KmeansClusterAnalysis {
 			atts.addElement(new Attribute("text", (FastVector) null));
 
 			Instances docs = new Instances("text_files", atts, 0);
-
 			for (int i = 0; i < inputFiles.size(); i++) {
 
 				try {
@@ -68,7 +67,7 @@ public class KmeansClusterAnalysis {
 		return null;
 	}
 
-	public static boolean runClustering(int fNumClusters, List<File> listOfFiles, String fOutputDir, Date dateObj) {
+	public static boolean runClustering(int fNumClusters, List<File> listOfFiles, String fOutputDir, Date dateObj, boolean junitTest) {
 
 		List<File> inputFiles = new ArrayList<File>();
 		for (File f : listOfFiles) {
@@ -83,10 +82,12 @@ public class KmeansClusterAnalysis {
 
 		int[] clusters = doClustering(inputFiles, fNumClusters);
 		if (clusters == null) {
+
 			ConsoleView.printlInConsoleln(
 					"Sorry. Something went wrong with KMeans Clustering. Please check your input and try again.\n");
 			return false;
 		}
+
 		int i = 0;
 		ConsoleView.printlInConsoleln("Output for KMeans Clustering");
 		ConsoleView.printlInConsoleln("Clusters formed: \n");
@@ -106,7 +107,7 @@ public class KmeansClusterAnalysis {
 		}
 
 		try {
-			String op = fOutputDir + File.separator + "KMeansClusters-" + df.format(dateObj) + ".txt";
+			String op = generateKMeansClustersFileName(fOutputDir, df.format(dateObj), junitTest);
 			ConsoleView.printlInConsoleln("Saving the output for Kmeans clustering in " + op);
 			FileWriter fw = new FileWriter(new File(op));
 			for (int c : outputClusters.keySet()) {
@@ -122,12 +123,23 @@ public class KmeansClusterAnalysis {
 				ConsoleView.printlInConsoleln("");
 			}
 			fw.close();
-			TacitUtility.createRunReport(fOutputDir, "K Means Clustering", dateObj,null);
+			generateRunReport(fOutputDir, dateObj, junitTest);
 		} catch (IOException e) {
 			ConsoleView.printlInConsoleln("Error writing output to files" + e);
 			return false;
 		}
 		return true;
+	}
+	protected static void generateRunReport(String fOutputDir, Date dateObj, boolean junitTest){
+		if (!junitTest)
+			TacitUtility.createRunReport(fOutputDir, "K Means Clustering", dateObj, null);
+	}
+	protected static String generateKMeansClustersFileName(String fOutputDir, String formattedDate, boolean junitTest){
+		if (junitTest)
+			return fOutputDir + File.separator + "GeneratedKMeansClustersOutput.txt";
+		else
+			return fOutputDir + File.separator + "KMeansClusters-" + formattedDate + ".txt";
+			
 	}
 
 }

@@ -16,4 +16,5 @@ Export-Package: edu.uc.cssl.tacit.cluster.kmeans.services,
  weka.clusterers,
  weka.core
 Bundle-ClassPath: weka.jar,
- .
+ .,
+ junit.jar

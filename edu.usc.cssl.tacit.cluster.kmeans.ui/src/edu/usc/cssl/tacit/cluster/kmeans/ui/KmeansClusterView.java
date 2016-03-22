@@ -223,7 +223,7 @@ public class KmeansClusterView extends ViewPart implements
 						Date dateObj = new Date();
 						boolean isSuccessful = KmeansClusterAnalysis
 								.runClustering(noOfClusters, inputFiles,
-										outputPath, dateObj);
+										outputPath, dateObj, false);
 						if (!isSuccessful)
 							return Status.CANCEL_STATUS;
 
