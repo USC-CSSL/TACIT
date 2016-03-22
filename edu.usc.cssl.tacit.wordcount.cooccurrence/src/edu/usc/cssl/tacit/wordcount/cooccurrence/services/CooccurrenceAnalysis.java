@@ -128,7 +128,6 @@ public class CooccurrenceAnalysis {
 
 	public boolean calculateCooccurrences(List<String> selectedFiles, String seedFile, int windowSize,
 			String outputPath, int threshold, boolean buildMatrix, IProgressMonitor monitor) {
-
 		String currentLine = null;
 		List<String> phrase = new ArrayList<String>();
 		Date currTime = new Date();
@@ -149,6 +148,7 @@ public class CooccurrenceAnalysis {
 			String[] listOfFiles = (String[]) selectedFiles.toArray(new String[selectedFiles.size()]);
 			for (String fname : listOfFiles) {
 				File f = new File(fname);
+
 				monitor.subTask("Processing input file " + f.getName());
 				appendLog("Processing input file " + f.getName());
 				if (f.getAbsolutePath().contains("DS_Store"))
@@ -251,19 +251,13 @@ public class CooccurrenceAnalysis {
 			try {
 				if (buildMatrix) {
 					monitor.subTask("Writing Word Matrix");
-					String filename = new SimpleDateFormat("'co-occur_wordmatrix_'yyyyMMddhhmm'.csv'").format(currTime);
-					writeWordMatrix(filename);
-
+					writeWordMatrix(generateMatrixFileName(currTime));
 				}
 				monitor.worked(10);
 				if (ret && phrase.size() > 0) {
 					monitor.subTask("Writing Phrases");
-					String phraseFilename = new SimpleDateFormat("'co-occur_phrases_'yyyyMMddhhmm'.csv'")
-							.format(currTime);
-					String freqFilename = new SimpleDateFormat("'co-occur_seedfrequencies_'yyyyMMddhhmm'.csv'")
-							.format(currTime);
-					writePhrases(phrase, phraseFilename);
-					writeSeedComboStats(freqFilename);
+					writePhrases(phrase, generatePhrasesFileName(currTime));
+					writeSeedComboStats(generateSeedComboStatsFileName(currTime));
 				} else {
 					appendLog(
 							"None of the seed combinations occured in the input files for the given window size and threshold");
@@ -276,8 +270,7 @@ public class CooccurrenceAnalysis {
 			}
 			monitor.worked(10);
 			appendLog(String.valueOf(phrase.size()));
-			Date dateObj = new Date();
-			TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis", dateObj,null);
+			generateRunReport();
 			return true;
 		} catch (Exception e) {
 			appendLog("Exception occurred in Cooccurrence Analysis " + e);
@@ -286,6 +279,23 @@ public class CooccurrenceAnalysis {
 		return false;
 	}
 
+	protected void generateRunReport(){
+		Date dateObj = new Date();
+		TacitUtility.createRunReport(outputPath, "Cooccurrence Analysis", dateObj, null);
+	}
+	protected String generateSeedComboStatsFileName(Date currTime){
+		String freqFilename = new SimpleDateFormat("'co-occur_seedfrequencies_'yyyyMMddhhmm'.csv'")
+				.format(currTime);
+		return freqFilename;
+	}
+	protected String generatePhrasesFileName(Date currTime){
+		String phraseFilename = new SimpleDateFormat("'co-occur_phrases_'yyyyMMddhhmm'.csv'")
+				.format(currTime);
+		return phraseFilename;
+	}
+	protected String generateMatrixFileName(Date currTime){
+		return new SimpleDateFormat("'co-Date currTime'yyyyMMddhhmm'.csv'").format(currTime);
+	}
 	private void writeSeedComboStats(String filename) {
 		try {
 			FileWriter fw = new FileWriter(new File(outputPath + File.separator + filename));

@@ -1,0 +1,20 @@
+seed combination, file name, line no., phrase
+quick,CooccurenceInputFile1.txt,1, the quick brown fox jumps over the
+quick fox,CooccurenceInputFile1.txt,1, the quick brown fox jumps over the
+fox,CooccurenceInputFile1.txt,1,quick brown fox jumps over the lazy dog
+dog,CooccurenceInputFile1.txt,1,the lazy dog is an english-language pangram—a phrase
+alphabet,CooccurenceInputFile1.txt,1,of the alphabet it is commonly used for
+practice,CooccurenceInputFile1.txt,1,for touch-typing practice it is also used to
+computer,CooccurenceInputFile1.txt,1,typewriters and computer keyboards show fonts and other
+computer keyboards,CooccurenceInputFile1.txt,1,typewriters and computer keyboards show fonts and other
+keyboards,CooccurenceInputFile1.txt,1,and computer keyboards show fonts and other applications
+english alphabet,CooccurenceInputFile1.txt,1,in the english alphabet owing to its brevity
+english,CooccurenceInputFile1.txt,1,in the english alphabet owing to its brevity
+alphabet,CooccurenceInputFile1.txt,1,the english alphabet owing to its brevity and
+alphabet brevity,CooccurenceInputFile1.txt,1,the english alphabet owing to its brevity and
+brevity,CooccurenceInputFile1.txt,1,to its brevity and coherence it has become
+font,CooccurenceInputFile2.txt,1,to display font samples and for testing computer
+computer,CooccurenceInputFile2.txt,1,for testing computer keyboards in cryptography it is
+computer keyboards,CooccurenceInputFile2.txt,1,for testing computer keyboards in cryptography it is
+keyboards,CooccurenceInputFile2.txt,1,testing computer keyboards in cryptography it is commonly
+character,CooccurenceInputFile2.txt,1,ensure alphabetic character set compatibility
