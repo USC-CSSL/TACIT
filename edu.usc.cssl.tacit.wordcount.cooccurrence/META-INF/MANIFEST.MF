@@ -19,5 +19,6 @@ Export-Package: edu.usc.cssl.tacit.wordcount.cooccurrence.services;
    edu.usc.tacit.common.crawlers,
    snowballstemmer"
 Bundle-ClassPath: .,
- stanford-corenlp-3.2.0.jar
+ stanford-corenlp-3.2.0.jar,
+ junit.jar
 Import-Package: org.apache.commons.lang3
