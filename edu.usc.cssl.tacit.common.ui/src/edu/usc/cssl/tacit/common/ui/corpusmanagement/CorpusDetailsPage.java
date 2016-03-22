@@ -144,14 +144,12 @@ public class CorpusDetailsPage implements IDetailsPage{
 									MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info", "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully");
 								}
 							});
-							
 							return Status.OK_STATUS;
 						}
 					};
+					
 					saveCorpus.schedule();
-					
 					//corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
-					
 					
 				}
 			}

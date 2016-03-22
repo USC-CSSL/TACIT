@@ -1,9 +1,11 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -19,6 +21,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -37,6 +41,13 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.json.simple.parser.ParseException;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
+import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
+import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
+import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
+import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusManagementConstants;
@@ -44,6 +55,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
+import edu.usc.cssl.tacit.common.ui.internal.TreeParent;
 import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
 
@@ -106,9 +118,15 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		@Override
 		public String getText(Object element) {
 			if(element instanceof ICorpus)
-				return ((ICorpus) element).getCorpusName();
+				if(((ICorpus) element).getNoOfFiles()!=null) 
+					return ((ICorpus) element).getCorpusName() + " (Total "+((ICorpus) element).getNoOfFiles()+" files)";
+				else
+					return ((ICorpus) element).getCorpusName();
 			else if(element instanceof ICorpusClass)
-				return ((ICorpusClass) element).getClassName();
+				if (((ICorpusClass) element).getNoOfFiles()!=null)
+					return ((ICorpusClass) element).getClassName() + " ("+((ICorpusClass) element).getNoOfFiles()+" files)";
+				else
+					return ((ICorpusClass) element).getClassName();
 			else if(element instanceof String) {
 				File tacitLocationFiles = new File((String) element);
 				if(tacitLocationFiles.exists()) 
@@ -170,7 +188,10 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addClass);
 		
 		Button remove = toolkit.createButton(buttonComposite, "Remove", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(remove);		
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(remove);	
+		
+		final Button export = toolkit.createButton(buttonComposite, "Export", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(export);
 		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
@@ -204,9 +225,43 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			((Corpus)corpus).setViewer(corpusViewer);
 			for(ICorpusClass cc: corpus.getClasses()){
 				((CorpusClass)cc).setViewer(corpusViewer);
+				System.out.println(cc.getClassName()+" "+cc.getNoOfFiles()+"----------");
 			}
 		}
 		corpusViewer.setInput(corpusList);
+		
+		export.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final TacitCorpusFilterDialog filterDialog = new TacitCorpusFilterDialog(
+						export.getShell());
+				CorpusClass cls = (CorpusClass) ((IStructuredSelection) corpusViewer
+						.getSelection()).getFirstElement();
+				IQueryProcessor qp = new QueryProcesser(cls);
+				Map<String, QueryDataType> keys = null;
+				try {
+					keys = qp.getJsonKeys();
+					filterDialog.setFilterDetails(keys);
+					filterDialog.addExistingFilters(cls.getFilters());
+					// set the already existing filters
+
+				} catch (JsonSyntaxException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (JsonIOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if (filterDialog.open() == Window.OK) {
+					cls.refreshFilters(filterDialog.getSelectionObjects());
+				}
+
+			}
+
+		});
 		
 		addCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -268,7 +323,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			            	parentCorpus.removeClass(selectedClass);	
 			            	ManageCorpora.removeCorpus(parentCorpus, false);
 					 	}
-					 	corpusViewer.refresh();
+					 	corpusViewer.refresh();		
+					 	Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								corpusViewer.refresh();
+							};
+						});
 		         } catch(Exception exp) { //exception means item selected is not a corpus but a class.
 		         }
 			}

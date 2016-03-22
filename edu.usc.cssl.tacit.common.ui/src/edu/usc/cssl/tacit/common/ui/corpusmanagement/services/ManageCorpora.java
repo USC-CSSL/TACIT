@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,10 +33,10 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 public class ManageCorpora {
 	private static boolean stop;
 	private static String printDot = ".";
-	private static String rootDir = CommonUiActivator.getDefault()
-			.getPreferenceStore().getString(ICommonUiConstants.CORPUS_LOCATION)
-			+ System.getProperty("file.separator");
+	private static String rootDir = CommonUiActivator.getDefault().getPreferenceStore()
+			.getString(ICommonUiConstants.CORPUS_LOCATION) + System.getProperty("file.separator");
 	private static String oldLoc = rootDir;
+	private static Long fCount;
 
 	public static void saveCorpora(ArrayList<Corpus> corporaList) {
 		for (Corpus corpus : corporaList) {
@@ -43,14 +45,14 @@ public class ManageCorpora {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void saveCorpus(Corpus corpus) {
+	public static void saveCorpus(final Corpus corpus) {
 		String corpusName = corpus.getCorpusName();
+		long fileCorpusCount = 0;
 		String corpusLocation = rootDir + corpusName;
 		if (!(new File(corpusLocation).exists())) {
 			// Add code for everything
 			new File(corpusLocation).mkdir();
-			String metaFile = corpusLocation
-					+ System.getProperty("file.separator") + "meta.txt";
+			String metaFile = corpusLocation + System.getProperty("file.separator") + "meta.txt";
 
 			File metaFp = new File(metaFile);
 
@@ -61,24 +63,33 @@ public class ManageCorpora {
 			jsonObj.put("num_classes", corpus.getClasses().size());
 
 			int numClasses = corpus.getClasses().size();
-			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus
-					.getClasses();
+			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus.getClasses();
 
 			JSONArray classArray = new JSONArray();
 
 			for (int i = 0; i < numClasses; i++) {
 				CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
+
+				
+				File dir = new File(currClass.getClassPath());
+				fCount = 0L;
+				fCount = getFileCount(dir);
+				
+				fileCorpusCount += fCount-1;
+				currClass.setNoOfFiles(fCount-1);					
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
 				classObj.put("original_loc", currClass.getClassPath());
 				classObj.put("tacit_loc",
-						corpusLocation + System.getProperty("file.separator")
-								+ currClass.getClassName());
+						corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 				classObj.put("data_key", currClass.getKeyTextFields());
+				classObj.put("no_of_files", fCount-1);
 				classArray.add(classObj);
 			}
-
+			corpus.setNoOfFiles(fileCorpusCount);
+			System.out.println("Total files"+ fileCorpusCount);
 			jsonObj.put("class_details", classArray);
+			jsonObj.put("total_no_of_files", fileCorpusCount);
 			jsonObj.put("num_analysis", 0);
 			JSONArray analysisArray = new JSONArray();
 			jsonObj.put("prev_analysis", analysisArray);
@@ -97,19 +108,15 @@ public class ManageCorpora {
 		} else {
 			// corpus already exits, check what has changed
 
-			String metaFile = corpusLocation
-					+ System.getProperty("file.separator") + "meta.txt";
+			String metaFile = corpusLocation + System.getProperty("file.separator") + "meta.txt";
 			JSONArray analysisArray = new JSONArray();
 			int numAnalysis = 0;
 			if (!new File(metaFile).exists()) {
 				JSONParser parser = new JSONParser();
 				try {
-					analysisArray = (JSONArray) ((JSONObject) parser
-							.parse(new FileReader(metaFile)))
+					analysisArray = (JSONArray) ((JSONObject) parser.parse(new FileReader(metaFile)))
 							.get("prev_analysis");
-					numAnalysis = (Integer) ((JSONObject) parser
-							.parse(new FileReader(metaFile)))
-							.get("num_analysis");
+					numAnalysis = (Integer) ((JSONObject) parser.parse(new FileReader(metaFile))).get("num_analysis");
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -128,22 +135,31 @@ public class ManageCorpora {
 			jsonObj.put("num_classes", corpus.getClasses().size());
 
 			int numClasses = corpus.getClasses().size();
-			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus
-					.getClasses();
+			ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus.getClasses();
 			JSONArray classArray = new JSONArray();
 
 			for (int i = 0; i < numClasses; i++) {
 				CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
+				
+				File dir = new File(currClass.getClassPath());
+				fCount = 0L;
+				fCount = getFileCount(dir);
+				
+				fileCorpusCount += fCount-1;
+				currClass.setNoOfFiles(fCount-1);	
+				
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
 				classObj.put("original_loc", currClass.getClassPath());
 				classObj.put("tacit_loc",
-						corpusLocation + System.getProperty("file.separator")
-								+ currClass.getClassName());
+						corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 				classObj.put("data_key", currClass.getKeyTextFields());
+				classObj.put("no_of_files", fCount-1);
 				classArray.add(classObj);
 			}
-
+			corpus.setNoOfFiles(fileCorpusCount);
+			System.out.println(fileCorpusCount);
+			jsonObj.put("total_no_of_files", fileCorpusCount);
 			jsonObj.put("class_details", classArray);
 			jsonObj.put("num_analysis", numAnalysis);
 			jsonObj.put("prev_analysis", analysisArray);
@@ -159,18 +175,39 @@ public class ManageCorpora {
 			copyCorpus(jsonObj);
 			removeCorpus(corpus, false);
 		}
-
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				corpus.getViewer().refresh();
+			};
+		});
 	}
 	
+	public static Long getFileCount(File dir){
+		File[] files = dir.listFiles();
+		if (files != null) {
+			for (File obj : files) {
+				if (!obj.isDirectory())
+					fCount++;
+				else{
+					fCount += getFileCount(obj);
+				}
+			}
+		}
+		return fCount;
+		
+	}
+
 	public static boolean isCorpusLocChanged(String newPath) {
-		if (rootDir.equals(newPath+System.getProperty("file.separator"))) return false;
+		if (rootDir.equals(newPath + System.getProperty("file.separator")))
+			return false;
 		return true;
 	}
 
 	public static void moveCorpora() {
 		oldLoc = rootDir;
-		rootDir = CommonUiActivator.getDefault().getPreferenceStore()
-				.getString(ICommonUiConstants.CORPUS_LOCATION)
+		rootDir = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CORPUS_LOCATION)
 				+ System.getProperty("file.separator");
 
 		if (rootDir.equals(oldLoc))
@@ -187,8 +224,7 @@ public class ManageCorpora {
 
 		for (File corpus : corpora) {
 			if (corpus.isDirectory()) {
-				String metaDataFilePath = corpus.getAbsolutePath()
-						+ File.separator + "meta.txt";
+				String metaDataFilePath = corpus.getAbsolutePath() + File.separator + "meta.txt";
 
 				FileReader metaDataFile;
 				try {
@@ -212,19 +248,15 @@ public class ManageCorpora {
 				if (null == oldJsonObject)
 					continue;
 
-				newJsonObject.put("corpus_name",
-						oldJsonObject.get("corpus_name"));
+				newJsonObject.put("corpus_name", oldJsonObject.get("corpus_name"));
 				newJsonObject.put("corpus_id", oldJsonObject.get("corpus_id"));
 				newJsonObject.put("data_type", oldJsonObject.get("data_type"));
-				newJsonObject.put("num_classes",
-						oldJsonObject.get("num_classes"));
-				newJsonObject.put("num_analysis",
-						oldJsonObject.get("num_analysis"));
+				newJsonObject.put("num_classes", oldJsonObject.get("num_classes"));
+				newJsonObject.put("num_analysis", oldJsonObject.get("num_analysis"));
 				long numClasses = (Long) oldJsonObject.get("num_classes");
 				if (numClasses > 0) {
 
-					JSONArray oldClasses = (JSONArray) oldJsonObject
-							.get("class_details");
+					JSONArray oldClasses = (JSONArray) oldJsonObject.get("class_details");
 					JSONArray newClasses = new JSONArray();
 
 					Iterator<JSONObject> classItr = oldClasses.iterator();
@@ -235,12 +267,8 @@ public class ManageCorpora {
 							continue;
 
 						String oldTacitLoc = (String) oldCC.get("tacit_loc");
-						String newTacitLoc = corpus.getAbsolutePath()
-								+ File.separator
-								+ oldTacitLoc
-										.substring(oldTacitLoc
-												.lastIndexOf(File.separator),
-												oldTacitLoc.length());
+						String newTacitLoc = corpus.getAbsolutePath() + File.separator
+								+ oldTacitLoc.substring(oldTacitLoc.lastIndexOf(File.separator), oldTacitLoc.length());
 
 						newCC.put("class_name", oldCC.get("class_name"));
 						newCC.put("original_loc", oldCC.get("original_loc"));
@@ -276,12 +304,11 @@ public class ManageCorpora {
 	// }
 
 	@SuppressWarnings("unchecked")
-	public static void removeCorpus(Corpus corpus, Boolean isCorpus) {
+	public static void removeCorpus(final Corpus corpus, Boolean isCorpus) {
 		String corpusLocation = rootDir + corpus.getCorpusName();
 		if (isCorpus) {
 			try {
-				new File(corpusLocation + System.getProperty("file.separator")
-						+ "meta.txt").delete();
+				new File(corpusLocation + System.getProperty("file.separator") + "meta.txt").delete();
 				FileUtils.deleteDirectory(new File(corpusLocation));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -292,10 +319,10 @@ public class ManageCorpora {
 
 		File[] classes = new File(corpusLocation).listFiles();
 		HashMap<String, Boolean> oldClasses = new HashMap<String, Boolean>();
-        if(classes == null) {  // corpus is not created yet
-        	// so dont do anything, just return
-        	return;
-        }
+		if (classes == null) { // corpus is not created yet
+			// so dont do anything, just return
+			return;
+		}
 		for (File f : classes) {
 			if (f.isDirectory()) {
 				oldClasses.put(f.getAbsolutePath(), false);
@@ -331,17 +358,14 @@ public class ManageCorpora {
 		}
 
 		// Save the new meta file
-		String metaFile = corpusLocation + System.getProperty("file.separator")
-				+ "meta.txt";
+		String metaFile = corpusLocation + System.getProperty("file.separator") + "meta.txt";
 		JSONArray analysisArray = new JSONArray();
 		int numAnalysis = 0;
 		if (!new File(metaFile).exists()) {
 			JSONParser parser = new JSONParser();
 			try {
-				analysisArray = (JSONArray) ((JSONObject) parser
-						.parse(new FileReader(metaFile))).get("prev_analysis");
-				numAnalysis = (Integer) ((JSONObject) parser
-						.parse(new FileReader(metaFile))).get("num_analysis");
+				analysisArray = (JSONArray) ((JSONObject) parser.parse(new FileReader(metaFile))).get("prev_analysis");
+				numAnalysis = (Integer) ((JSONObject) parser.parse(new FileReader(metaFile))).get("num_analysis");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -360,22 +384,21 @@ public class ManageCorpora {
 		jsonObj.put("num_classes", corpus.getClasses().size());
 
 		int numClasses = corpus.getClasses().size();
-		ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus
-				.getClasses();
+		ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus.getClasses();
 		JSONArray classArray = new JSONArray();
-
+		Long totalNum = 0L;
 		for (int i = 0; i < numClasses; i++) {
 			CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
 			JSONObject classObj = new JSONObject();
 			classObj.put("class_name", currClass.getClassName());
 			classObj.put("original_loc", currClass.getClassPath());
-			classObj.put("tacit_loc",
-					corpusLocation + System.getProperty("file.separator")
-							+ currClass.getClassName());
+			classObj.put("no_of_files", currClass.getNoOfFiles());
+			totalNum+=currClass.getNoOfFiles();
+			classObj.put("tacit_loc", corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 			classObj.put("data_key", currClass.getKeyTextFields());
 			classArray.add(classObj);
 		}
-
+		jsonObj.put("total_no_of_files", totalNum);
 		jsonObj.put("class_details", classArray);
 		jsonObj.put("num_analysis", numAnalysis);
 		jsonObj.put("prev_analysis", analysisArray);
@@ -385,6 +408,12 @@ public class ManageCorpora {
 			bw.write(jsonObj.toString().getBytes());
 			bw.flush();
 			bw.close();
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					corpus.getViewer().refresh();
+				};
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -395,10 +424,8 @@ public class ManageCorpora {
 		JSONArray classArray = (JSONArray) jsonObj.get("class_details");
 
 		for (int i = 0; i < numClasses; i++) {
-			String originalLoc = (String) ((JSONObject) classArray.get(i))
-					.get("original_loc");
-			String tacitLoc = (String) ((JSONObject) classArray.get(i))
-					.get("tacit_loc");
+			String originalLoc = (String) ((JSONObject) classArray.get(i)).get("original_loc");
+			String tacitLoc = (String) ((JSONObject) classArray.get(i)).get("tacit_loc");
 
 			if (!(new File(tacitLoc).exists())) {
 				new File(tacitLoc).mkdir();
@@ -429,8 +456,7 @@ public class ManageCorpora {
 						}
 					};
 					pr.schedule();
-					FileUtils.copyDirectory(new File(originalLoc), new File(
-							tacitLoc));
+					FileUtils.copyDirectory(new File(originalLoc), new File(tacitLoc));
 					stop = false;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -448,8 +474,7 @@ public class ManageCorpora {
 		for (File corpusClass : classses) {
 			if (corpusClass.isDirectory()) { // class
 				Corpus corpora = new Corpus();
-				String metaDataFilePath = corpusClass.getAbsolutePath()
-						+ File.separator + "meta.txt";
+				String metaDataFilePath = corpusClass.getAbsolutePath() + File.separator + "meta.txt";
 				FileReader metaDataFile;
 				try {
 					metaDataFile = new FileReader(metaDataFilePath); // get the
@@ -471,14 +496,13 @@ public class ManageCorpora {
 				}
 				if (null == jsonObject)
 					continue;
+				corpora.setNoOfFiles((Long)jsonObject.get("total_no_of_files"));
 				corpora.setCorpusName((String) jsonObject.get("corpus_name"));
 				corpora.setCorpusId((String) jsonObject.get("corpus_id"));
-				corpora.setDataType(CMDataType.get((String) jsonObject
-						.get("data_type")));
+				corpora.setDataType(CMDataType.get((String) jsonObject.get("data_type")));
 				long numClasses = (Long) jsonObject.get("num_classes");
 				if (numClasses > 0)
-					parseClassDetails(corpora,
-							(JSONArray) jsonObject.get("class_details"));
+					parseClassDetails(corpora, (JSONArray) jsonObject.get("class_details"));
 				corpuses.add(corpora);
 				try {
 					metaDataFile.close();
@@ -501,6 +525,7 @@ public class ManageCorpora {
 			CorpusClass cc = new CorpusClass();
 			cc.setClassName((String) corpusClassObj.get("class_name"));
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
+			cc.setNoOfFiles((Long)corpusClassObj.get("no_of_files"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
 			if (corpusClassObj.containsKey("data_key")) {
 				cc.setKeyTextFields((String) corpusClassObj.get("data_key"));
@@ -542,8 +567,7 @@ public class ManageCorpora {
 
 	public CMDataType getCorpusDataType(String location) {
 
-		String metaDataFilePath = new File(location).getParent()
-				+ File.separator + "meta.txt";
+		String metaDataFilePath = new File(location).getParent() + File.separator + "meta.txt";
 		FileReader metaDataFile;
 		try {
 			metaDataFile = new FileReader(metaDataFilePath); // get the meta

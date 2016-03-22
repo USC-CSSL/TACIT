@@ -17,6 +17,15 @@ public class CorpusClass implements ICorpusClass {
 	private String tacitLocation;
 	private Corpus parent;
 	private String id;
+	private Long noOfFiles;
+	public Long getNoOfFiles() {
+		return noOfFiles;
+	}
+
+	public void setNoOfFiles(Long noOfFiles) {
+		this.noOfFiles = noOfFiles;
+	}
+
 	private Set<Filter> filters;
 	private String keyTextFields = "";
 

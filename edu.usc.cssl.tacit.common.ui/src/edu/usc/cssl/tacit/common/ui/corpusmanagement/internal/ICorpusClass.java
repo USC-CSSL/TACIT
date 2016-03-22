@@ -6,6 +6,8 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 public interface ICorpusClass {
 	public String getClassName();
 	
+	public Long getNoOfFiles();
+	
 	public String getClassPath();
 	
 	public String getTacitLocation();

@@ -15,6 +15,15 @@ public class Corpus implements ICorpus {
 	private CMDataType dataType;
 	private List<ICorpusClass> classes;
 	private TreeViewer viewer;
+	private Long noOfFiles;
+
+	public Long getNoOfFiles() {
+		return noOfFiles;
+	}
+
+	public void setNoOfFiles(Long long1) {
+		this.noOfFiles = long1;
+	}
 
 	public Corpus(String corpusName, CMDataType dataType) {
 		this.corpusName = corpusName;
@@ -102,4 +111,5 @@ public class Corpus implements ICorpus {
 		// TODO Auto-generated method stub
 		return corpusName;
 	}
+
 }
