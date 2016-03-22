@@ -20,6 +20,8 @@
 
 		<module>../edu.usc.cssl.tacit.crawlers.latin.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.latin</module>
+		
+		<module>../edu.usc.cssl.tacit.crawlers.stackexchange</module>
 
 		<module>../edu.usc.cssl.tacit.crawlers.uscongress.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.uscongress</module>
