@@ -22,6 +22,8 @@ import javax.swing.JScrollPane;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import edu.usc.cssl.tacit.common.TacitUtility;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import weka.clusterers.HierarchicalClusterer;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -30,14 +32,13 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
-import edu.usc.cssl.tacit.common.TacitUtility;
-import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
 
 public class HierarchicalClusterAnalysis {
 	public static String doClustering(List<File> inputFiles, String outputPath,
-			boolean saveImg, SubProgressMonitor subProgressMonitor, Date dateObj) {
+			boolean saveImg, SubProgressMonitor subProgressMonitor, Date dateObj, boolean junitTest) {
+		System.out.println("doClustering");
 		try {
-
 			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 			StringToWordVector filter = new StringToWordVector();
 			HierarchicalClusterer aggHierarchical = new HierarchicalClusterer();
@@ -63,7 +64,6 @@ public class HierarchicalClusterAnalysis {
 							+ e);
 				}
 			}
-
 			filter.setInputFormat(docs);
 			Instances filteredData = Filter.useFilter(docs, filter);
 
@@ -74,9 +74,11 @@ public class HierarchicalClusterAnalysis {
 			subProgressMonitor.worked(20);
 			String g = aggHierarchical.graph();
 			String output = formatGraph(g, inputFiles);
+			System.out.println(output);
 			ConsoleView.printlInConsoleln("Network " + output);
 			subProgressMonitor.subTask("Formating Image");
 			aggHierarchical.linkTypeTipText();
+
 			subProgressMonitor.worked(15);
 			HierarchyVisualizer tv = new HierarchyVisualizer(output);
 
@@ -94,6 +96,7 @@ public class HierarchicalClusterAnalysis {
 			f.setVisible(true);
 			tv.fitToScreen();
 
+			System.out.println("Checkpoint 4");
 			if (saveImg) {
 				try {
 					BufferedImage image = new BufferedImage(
@@ -115,9 +118,13 @@ public class HierarchicalClusterAnalysis {
 									+ e);
 				}
 			}
-
-			BufferedWriter buf = new BufferedWriter(new FileWriter(new File(
-					outputPath + File.separator + "hierarchical-cluster-"+df.format(dateObj)+".txt")));
+			File outputFile = null;
+			if (junitTest)
+				outputFile = new File(outputPath + File.separator + "GeneratedHierarchicalClustersOutput.txt");
+			else
+				outputFile = new File(
+						outputPath + File.separator + "hierarchical-cluster-"+df.format(dateObj)+".txt");
+			BufferedWriter buf = new BufferedWriter(new FileWriter(outputFile));
 			buf.write("Mapping of document ID to actual names\n");
 			for (int i = 0; i < inputFiles.size(); i++) {
 				buf.write((i + 1) + " " + inputFiles.get(i).getName() + "\n");
@@ -126,12 +133,14 @@ public class HierarchicalClusterAnalysis {
 			buf.close();
 			
 			subProgressMonitor.done();
+			System.out.println("doClustering ending successfully");
 			return output;
 		} catch (Exception e) {
 			System.out
 					.println("Exception occurred in Hierarchical Clustering  "
 							+ e);
 		}
+		System.out.println("doClustering ending unsuccessfully");
 		return null;
 	}
 
@@ -171,7 +180,7 @@ public class HierarchicalClusterAnalysis {
 
 	public static boolean runClustering(List<File> listOfFiles,
 			String fOutputDir, boolean fSaveImg,
-			SubProgressMonitor subProgressMonitor, Date dateObj) {
+			SubProgressMonitor subProgressMonitor, Date dateObj, boolean junitTest) {
 
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		List<File> inputFiles = new ArrayList<File>();
@@ -185,7 +194,7 @@ public class HierarchicalClusterAnalysis {
 		subProgressMonitor.subTask("Running Hierarchical Clustering...");
 		ConsoleView.printlInConsoleln("Running Hierarchical Clustering...");
 		String clusters = doClustering(inputFiles, fOutputDir, fSaveImg,
-				new SubProgressMonitor(subProgressMonitor, 45), dateObj);
+				new SubProgressMonitor(subProgressMonitor, 45), dateObj, junitTest);
 		if (subProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -200,12 +209,13 @@ public class HierarchicalClusterAnalysis {
 		}
 		subProgressMonitor.worked(5);
 		ConsoleView.printlInConsoleln("Clusters formed: \n");
-
+		System.out.println("clusters are "+clusters);
 		ConsoleView.printlInConsoleln(clusters);
 		ConsoleView.printlInConsoleln("Saving the output to hierarchical-cluster-"+df.format(dateObj)+".txt");
 		subProgressMonitor.subTask("Saving the output to hierarchical-cluster-"+df.format(dateObj)+".txt");
 		ConsoleView.printlInConsoleln("\nDone Hierarchical Clustering...");
-		TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj,null);
+		if (!junitTest)
+			TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj,null);
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		return true;

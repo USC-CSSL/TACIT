@@ -263,7 +263,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						boolean isSuccessful = HierarchicalClusterAnalysis
 								.runClustering(inputFiles, outputPath,
 										isSaveImage, new SubProgressMonitor(
-												monitor, 50), dateObj);
+												monitor, 50), dateObj, false);
 
 						if (!isSuccessful)
 							return Status.CANCEL_STATUS;
