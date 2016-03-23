@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="converter-gson-2.0.0-beta3.jar"/>
+	<classpathentry kind="lib" path="gson-2.6.1.jar"/>
+	<classpathentry kind="lib" path="httpclient-4.3.3.jar"/>
+	<classpathentry kind="lib" path="json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="okhttp-3.0.1.jar"/>
+	<classpathentry kind="lib" path="okio-1.6.0.jar"/>
+	<classpathentry kind="lib" path="retrofit-2.0.0-beta3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
