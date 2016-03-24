@@ -28,7 +28,41 @@ public class AvailableRecords {
 		return congressRepMap;
 	}	
 	
-	public static HashMap<String, String> getAllCongresses() throws IOException {		
+	/*
+	 * @brief: This will resolve the website change issue, Only this link is broken "http://thomas.loc.gov/home/faqlist.html#10". Other links that we use is stable and working!
+	 * @author: Yuva
+	 */
+	public static HashMap<String, String> getAllCongresses() throws IOException {	
+		HashMap<String, String> map =  new LinkedHashMap<String, String>();
+		map.put("All", "None");
+		Document doc = Jsoup.connect("https://www.congress.gov/browse#browse_legislation").timeout(10*1000).get(); // new link which gives what we look
+		Element congElt = doc.getElementById("congresses");
+		Elements selectOptions = congElt.children();
+		
+		// Patterns to locate the congress number and its respective years
+		String keyPattern = "(\\d+)";
+		String valuePattern = "(\\d+-\\d+)";
+		Pattern keyPatternObj = Pattern.compile(keyPattern);
+		Pattern valuePatternObj = Pattern.compile(valuePattern);
+		int minYear = Integer.MAX_VALUE;
+		int maxYear = Integer.MIN_VALUE;
+		
+		for(Element elt : selectOptions) {
+			String text = elt.text();
+			Matcher keyMatcher = keyPatternObj.matcher(text);
+			Matcher valueMatcher = valuePatternObj.matcher(text);
+			if(keyMatcher.find() && valueMatcher.find()) {
+				map.put(keyMatcher.group(0), valueMatcher.group(0));
+				String tempYear[] = valueMatcher.group(0).split("-");
+				minYear = Math.min(minYear, Integer.parseInt(tempYear[0]));
+				maxYear = Math.max(maxYear, Integer.parseInt(tempYear[1]));
+			}
+		}
+		map.put("All", minYear+"-"+maxYear);
+		return map;
+	}
+	
+	public static HashMap<String, String> getAllCongresses_old() throws IOException {		
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/faqlist.html#10").timeout(10*1000).get();
 		Elements congList = doc.select("blockquote");
 		String temp[] = congList.text().split(" ");
