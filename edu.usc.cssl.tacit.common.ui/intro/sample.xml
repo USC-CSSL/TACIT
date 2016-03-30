@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+  	<extensionContent id="eduusccssltacitcommonui-introExtension" style="css/sample.css" name="Sample Extension" path="whatsnew/@">
+		<group style-id="content-group" id="eduusccssltacitcommonui-introLink-group">
+       		<link label="New Features" url="http://cssl.usc.edu/wiki/index.php/New_Features" id="eduusccssltacitcommonui-introLink" style-id="content-link">
+          		<text>This site provides you helpful information on new features implemented in TACIT compared to previous version</text>
+       		</link>
+       		
+       		<link label="Latest News" url="http://cssl.usc.edu/wiki/index.php/Informations" id="eduusccssltacitnews" style-id="content-link">
+          		<text>This site provides you Latest News related to Tacit Features and Updates</text>
+       		</link>
+       		
+       	</group>
+  	</extensionContent>
+</introContent>

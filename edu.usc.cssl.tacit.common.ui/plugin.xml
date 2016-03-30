@@ -225,5 +225,12 @@
             commandId="edu.usc.cssl.tacit.common.ui.corpusmanagement.view1">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/sample.xml">
+      </configExtension>
+   </extension>
    
 </plugin>
