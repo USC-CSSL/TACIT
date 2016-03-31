@@ -69,7 +69,7 @@ public class UsCongressCrawler {
 				// remove all the remaining democrats
 				for (Iterator<String> it = tempMembers.iterator(); it.hasNext();) {
 					String s = it.next();
-					if (s.contains("(D-") || s.contains("D/")) {
+					if (s.contains("(D-") || s.contains("D/") || s.contains("[D-")) {
 						it.remove();
 					}
 				}
@@ -77,7 +77,7 @@ public class UsCongressCrawler {
 			if (tempMembers.contains("All Republicans")) {
 				for (Iterator<String> it = tempMembers.iterator(); it.hasNext();) {
 					String s = it.next();
-					if (s.contains("(R-") || s.contains("R/")) {
+					if (s.contains("(R-") || s.contains("R/") || s.contains("([R-")) {
 						it.remove();
 					}
 				}
@@ -85,7 +85,7 @@ public class UsCongressCrawler {
 			if (tempMembers.contains("All Independents")) {
 				for (Iterator<String> it = tempMembers.iterator(); it.hasNext();) {
 					String s = it.next();
-					if (s.contains("(I-") || s.contains("I/")) {
+					if (s.contains("(I-") || s.contains("I/") || s.contains("[I-")) {
 						it.remove();
 					}
 				}
@@ -216,11 +216,11 @@ public class UsCongressCrawler {
 				String senatorName = senator;
 				if (null != monitor && monitor.isCanceled())
 					return;
-				if (senatorName.contains("(R-") || senatorName.contains("R/"))
+				if (senatorName.contains("(R-") || senatorName.contains("R/") || (senatorName.contains("[R-")))
 					republican++;
-				if (senatorName.contains("(D-") || senatorName.contains("D/"))
+				if (senatorName.contains("(D-") || senatorName.contains("D/") || (senatorName.contains("[D-")))
 					democrat++;
-				if (senatorName.contains("(I-") || senatorName.contains("I/"))
+				if (senatorName.contains("(I-") || senatorName.contains("I/") || (senatorName.contains("[I-")))
 					independent++;
 			}
 		}
@@ -233,15 +233,15 @@ public class UsCongressCrawler {
 													// names
 				continue;
 			if (senText.contains("All Republicans")) {
-				if (!senatorName.contains("(R-") && !senatorName.contains("R/"))
+				if (!senatorName.contains("(R-") && !senatorName.contains("R/") && !senatorName.contains("[R-"))
 					continue;
 			}
 			if (senText.contains("All Democrats")) {
-				if (!senatorName.contains("(D-") && !senatorName.contains("D/"))
+				if (!senatorName.contains("(D-") && !senatorName.contains("D/") && !senatorName.contains("[D-"))
 					continue;
 			}
 			if (senText.contains("All Independents")) {
-				if (!senatorName.contains("(I-") && !senatorName.contains("I/"))
+				if (!senatorName.contains("(I-") && !senatorName.contains("I/") && !senatorName.contains("[I-"))
 					continue;
 			}
 			String politicalAffiliation = "";
@@ -311,11 +311,11 @@ public class UsCongressCrawler {
 			String repName = representative;
 			if (null != monitor && monitor.isCanceled())
 				return;
-			if (repName.contains("(R-") || repName.contains("R/"))
+			if (repName.contains("(R-") || repName.contains("R/") || repName.contains("[R-"))
 				republican++;
-			if (repName.contains("(D-") || repName.contains("D/"))
+			if (repName.contains("(D-") || repName.contains("D/") || repName.contains("[D-"))
 				democrat++;
-			if (repName.contains("(I-") || repName.contains("I/"))
+			if (repName.contains("(I-") || repName.contains("I/") || repName.contains("[I-"))
 				independent++;
 		}
 		}
@@ -327,15 +327,15 @@ public class UsCongressCrawler {
 													// names
 				continue;
 			if (repText.contains("All Republicans")) {
-				if (!repName.contains("(R-") && !repName.contains("R/"))
+				if (!repName.contains("(R-") && !repName.contains("R/") && !repName.contains("[R-"))
 					continue;
 			}
 			if (repText.contains("All Democrats")) {
-				if (!repName.contains("(D-") && !repName.contains("D/"))
+				if (!repName.contains("(D-") && !repName.contains("D/") &&  !repName.contains("[D-"))
 					continue;
 			}
 			if (repText.contains("All Independents")) {
-				if (!repName.contains("(I-") && !repName.contains("I/"))
+				if (!repName.contains("(I-") && !repName.contains("I/") &&  !repName.contains("[I-"))
 					continue;
 			}
 			String politicalAffiliation = "";
@@ -427,10 +427,7 @@ public class UsCongressCrawler {
 			return;
 		String memText = (null == senText || senText.isEmpty()) ? repText : senText;
 		ConsoleView.printlInConsoleln("Current Congress Member - " + memText);
-		String memberDir = this.outputDir + File.separator + memText.replaceAll("[\\/:*?\"<>|]+", ""); // replace
-																										// all
-																										// invalid
-																										// characters;
+		String memberDir = this.outputDir + File.separator + memText.replaceAll("[\\/:*?\"<>|]+", ""); 
 		if (!new File(memberDir).exists()) {
 			new File(memberDir).mkdir();
 		}
@@ -438,49 +435,26 @@ public class UsCongressCrawler {
 		if (null != monitor && !monitor.isCanceled()) {
 			monitor.subTask("Crawling data for " + memText + "...");
 		}
-		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2").data("xss", "query") // Important.
-																									// If
-																									// removed,
-																									// "301
-																									// Moved
-																									// permanently"
-																									// error
-				.data("queryr" + congress, "") // Important. 113 - congress
-												// number. Make this auto? If
-												// removed, "Database Missing"
-												// error
+		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2").data("xss", "query") // Important. If removed, "301 Moved Permanently" error																				// If
+				.data("queryr" + congress, "") // Important. 113 - congress number. Make this auto? if removed, "Database Missing" error
 				.data("MaxDocs", "2000") // Doesn't seem to be working
-				.data("Stemming", "No").data("HSpeaker", repText).data("SSpeaker", senText).data("member", "speaking") // speaking
-																														// |
-																														// all
-																														// --
-																														// all
-																														// occurrences
-				.data("relation", "or") // or | and -- when there are multiple
-										// speakers in the query
+				.data("Stemming", "No").data("HSpeaker", repText).data("SSpeaker", senText).data("member", "speaking") 
+				.data("relation", "or") // or | and -- when there are multiple speakers in the query
 				.data("SenateSection", crawlSenateRecords).data("HouseSection", crawlHouseRepRecords)
-				.data("ExSection", crawlExtension).data("DigestSection", crawlDailyDigest).data("LBDateSel", "Thru") // ""
-																														// |
-																														// 1st
-																														// |
-																														// 2nd
-																														// |
-																														// Thru
-																														// --
-																														// all
-																														// sessions,
-																														// 1st
-																														// session,
-																														// 2nd
-																														// session,
-																														// range
-				.data("DateFrom", dateFrom).data("DateTo", dateTo).data("sort", sortType) // Default
-																							// |
-																							// Date
+				.data("ExSection", crawlExtension).data("DigestSection", crawlDailyDigest).data("LBDateSel", "Thru")
+				.data("DateFrom", dateFrom).data("DateTo", dateTo).data("sort", sortType) 
 				.data("submit", "SEARCH").userAgent("Mozilla").timeout(10 * 1000).post();
-
-		Elements links = doc.getElementById("content").getElementsByTag("a");
-
+		Elements links;
+		try {
+			links = doc.getElementById("content").getElementsByTag("a");
+		} catch(NullPointerException ne) {
+			if(null != senText || !senText.isEmpty())
+				ConsoleView.printlInConsoleln("*** No data found for " + senText);
+			else
+				ConsoleView.printlInConsoleln("*** No data found for " + repText);
+			return;
+		}
+ 
 		// Extracting the relevant links
 		Elements relevantLinks = new Elements();
 		for (Element link : links) {

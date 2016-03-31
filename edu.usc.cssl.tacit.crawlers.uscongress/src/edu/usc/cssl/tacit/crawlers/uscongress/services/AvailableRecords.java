@@ -3,8 +3,10 @@ package edu.usc.cssl.tacit.crawlers.uscongress.services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +53,7 @@ public class AvailableRecords {
 			String text = elt.text();
 			Matcher keyMatcher = keyPatternObj.matcher(text);
 			Matcher valueMatcher = valuePatternObj.matcher(text);
-			if(keyMatcher.find() && valueMatcher.find()) {
+			if(keyMatcher.find() && valueMatcher.find() && Integer.parseInt(keyMatcher.group(0))>100) {
 				map.put(keyMatcher.group(0), valueMatcher.group(0));
 				String tempYear[] = valueMatcher.group(0).split("-");
 				minYear = Math.min(minYear, Integer.parseInt(tempYear[0]));
@@ -107,41 +109,55 @@ public class AvailableRecords {
 		return map;
 	}
 	
-	public static String[] getSenators(String congressString) throws IOException {
+	public static List<String> getSenatorNames(String congressString) throws IOException {
+		congressString = congressString.replace("\u00A0", "");
+		int congress = Integer.parseInt(congressString);
+		System.out.println("Extracting Senators of Congress "+congress);
+		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&c="+congress).timeout(10*1000).get();
+		Elements senList = doc.getElementsByAttributeValue("name", "SMEMB").select("option");
+		List<String> senNames = new ArrayList<String>();
+		if(senList.size() == 0) return new ArrayList<String>();
+		for (Element senItem : senList){
+			String senText = senItem.text().replace("\u00A0", " ");
+			if (senText.equals("Any Senator"))
+				continue;
+			senNames.add(senText);
+		}
+		return senNames;
+	}
+	
+	public static List<String> getSenators(String congressString) throws IOException {
 		congressString = congressString.replace("\u00A0", "");
 		int congress = Integer.parseInt(congressString);
 		System.out.println("Extracting Senators of Congress "+congress);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
 		Elements senList = doc.getElementsByAttributeValue("name", "SSpeaker").select("option");
-		String[] senArray = new String[senList.size()-1];
-		int index = 0;
+		List<String> senators = new ArrayList<String>();
+		if(senList.size() == 0) return senators;
 		for (Element senItem : senList){
 			String senText = senItem.text().replace("\u00A0", " ");
 			if (senText.equals("Any Senator"))
 				continue;
-			senArray[index++] = senText;
+			senators.add(senText);
 		}
-		senatorDet = SenatorDetails.getSenatorDetails(); // to populate all senator details
-		HashMap<String, String> newSenMap = new HashMap<String, String>();
-		for(String s : senArray) {
+		senatorDet = SenatorDetails.getSenatorDetails();
+		HashMap<String, String> senMap = new HashMap<String, String>();
+		for(String s : senators) {
 			String temp = new String();
 			String tempSenateName = s.substring(0, s.lastIndexOf('(')-1);	
-			if(null == newSenMap.get(tempSenateName)) {
-				if(null != senatorDet.get(tempSenateName)) {				
+			if(null == senMap.get(tempSenateName)) {
+				if(null != senatorDet.get(tempSenateName))			
 					temp =  tempSenateName + " (" + senatorDet.get(tempSenateName) + ")";
-				} else {
+				else 
 					temp = s;
-				}
-				newSenMap.put(temp, s); // new value, old value
 			}
+			senMap.put(temp, s);
 		}
-		congressSenatorMap.put(congressString, newSenMap);
-		// return only unique values from here
+		congressSenatorMap.put(congressString, senMap);
 		ArrayList<String> uniqueSenators = new ArrayList<String>();
-		uniqueSenators.addAll(newSenMap.keySet());
-		String[] tempSenators =  uniqueSenators.toArray(new String[uniqueSenators.size()]);
-		Arrays.sort(tempSenators);
-		return tempSenators;
+		uniqueSenators.addAll(senMap.keySet());
+		Collections.sort(uniqueSenators);
+		return uniqueSenators;
 	}
 	
 	public static String[] getAllSenators(String[] congresses) throws IOException{
@@ -150,7 +166,7 @@ public class AvailableRecords {
 			if (cong.trim().equals("All"))
 				continue;
 			
-			String[] tempSenators =  getSenators(cong.trim());
+			List<String> tempSenators =  getSenators(cong.trim());
 			for (String senator : tempSenators) {
 				if (senator.equals("Any Senator") || senators.contains(senator)) {
 					continue;
@@ -187,8 +203,9 @@ public class AvailableRecords {
 		int congress = Integer.parseInt(congressString);
 		System.out.println("Extracting Representatives of Congress "+congress);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
-		Elements repList = doc.getElementsByAttributeValue("name", "HSpeaker").select("option");
-		String[] repArray = new String[repList.size()-1];
+		Elements repList = doc.getElementsByAttributeValue("name", "HMEMB").select("option");
+		if(repList.size() == 0) return new String[0];
+		String[] repArray = new String[repList.size()];
 		int index = 0;
 		for (Element repItem : repList) {
 			String repText = repItem.text().replace("\u00A0", " ");
@@ -208,16 +225,17 @@ public class AvailableRecords {
 				if(null != representativeDet.get(tempRepName)) {
 					temp =  tempRepName + " (" + representativeDet.get(tempRepName) + ")";
 				} else {
-					/*int start = s.lastIndexOf('(')+1;
+					/*
+					int start = s.lastIndexOf('(')+1;
 					int end = s.lastIndexOf(')');
 					if(end>start) {
-						//representativeDet.put("Young, Todd", "R-IN");
 						System.out.println(s+" representativeDet.put(\""+tempRepName + "\", \"" + s.substring(start, end) +"\");");
-					}*/
+					}
+					*/
 					temp = s;
 				}
-				newRepMap.put(temp, s); // new value, old value
 			}
+			newRepMap.put(temp, s); // new value, old value
 		}
 		congressRepMap.put(congressString, newRepMap);
 		// return only unique values from here

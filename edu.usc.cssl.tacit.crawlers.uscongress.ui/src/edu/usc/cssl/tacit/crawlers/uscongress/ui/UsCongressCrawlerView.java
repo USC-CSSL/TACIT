@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -103,7 +104,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Button addSenatorBtn;
 	
 	String previousSelectedCongress = "";
-	String[] availabileSenators;
+	List<String> availabileSenators;
 	String[] availableRepresentatives;
 	private Button senatorButton;
 	private Button representativeButton;
@@ -808,7 +809,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						for(String s : allSenators) 
 							temp.add(s);					
 					} else {
-						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress) || null == availabileSenators || availabileSenators.length == 0) {
+						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress) || null == availabileSenators || availabileSenators.size() == 0) {
 							availabileSenators = AvailableRecords.getSenators(selectedCongress);
 							Display.getDefault().asyncExec(new Runnable() {
 								@Override
