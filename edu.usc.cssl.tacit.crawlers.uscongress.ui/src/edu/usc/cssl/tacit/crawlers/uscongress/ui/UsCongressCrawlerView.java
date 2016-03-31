@@ -105,7 +105,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	
 	String previousSelectedCongress = "";
 	List<String> availabileSenators;
-	String[] availableRepresentatives;
+	List<String> availableRepresentatives;
 	private Button senatorButton;
 	private Button representativeButton;
 	private Composite senatorComposite;
@@ -714,7 +714,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						for(String s : allRepresentatives) 
 							temp.add(s);					
 					} else {
-						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress) || null == availableRepresentatives || availableRepresentatives.length == 0) {
+						if(previousSelectedCongress.isEmpty() || !previousSelectedCongress.equals(selectedCongress) || null == availableRepresentatives || availableRepresentatives.size() == 0) {
 							availableRepresentatives = AvailableRecords.getRepresentatives(selectedCongress);
 							
 							Display.getDefault().asyncExec(new Runnable() {

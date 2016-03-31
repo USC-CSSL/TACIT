@@ -185,7 +185,7 @@ public class AvailableRecords {
 			if (cong.trim().equals("All"))
 				continue;
 			
-			String[] tempReps =  getRepresentatives(cong.trim());
+			List<String> tempReps =  getRepresentatives(cong.trim());
 			for (String rep : tempReps) {
 				if (rep.equals("Any Representative") || representatives.contains(rep)) {
 					continue;
@@ -198,25 +198,24 @@ public class AvailableRecords {
 		return tempReps;
 	}	
 	
-	public static String[] getRepresentatives(String congressString) throws IOException {
+	public static List<String> getRepresentatives(String congressString) throws IOException {
 		congressString = congressString.replace("\u00A0", "");
 		int congress = Integer.parseInt(congressString);
 		System.out.println("Extracting Representatives of Congress "+congress);
 		Document doc = Jsoup.connect("http://thomas.loc.gov/home/LegislativeData.php?&n=Record&c="+congress).timeout(10*1000).get();
-		Elements repList = doc.getElementsByAttributeValue("name", "HMEMB").select("option");
-		if(repList.size() == 0) return new String[0];
-		String[] repArray = new String[repList.size()];
-		int index = 0;
+		Elements repList = doc.getElementsByAttributeValue("name", "HSpeaker").select("option");
+		List<String> representatives = new ArrayList<String>();
+		if(repList.size() == 0) return representatives;
 		for (Element repItem : repList) {
 			String repText = repItem.text().replace("\u00A0", " ");
 			if (repText.equals("Any Representative"))
 				continue;
-			repArray[index++] = repText;
+			representatives.add(repText);
 		}
 		
 		representativeDet = RepresentativeDetails.getRepersentativeDetails(); // to populate all representative details
 		HashMap<String, String> newRepMap = new HashMap<String, String>();
-		for(String s : repArray) {
+		for(String s : representatives) {
 			String temp = new String();
 			String tempRepName = (s.lastIndexOf('(')!=-1) ? s.substring(0, s.lastIndexOf('(')) : s;
 			if(tempRepName.charAt(tempRepName.length()-1) == ' ')
@@ -224,26 +223,16 @@ public class AvailableRecords {
 			if(null == newRepMap.get(tempRepName)) {
 				if(null != representativeDet.get(tempRepName)) {
 					temp =  tempRepName + " (" + representativeDet.get(tempRepName) + ")";
-				} else {
-					/*
-					int start = s.lastIndexOf('(')+1;
-					int end = s.lastIndexOf(')');
-					if(end>start) {
-						System.out.println(s+" representativeDet.put(\""+tempRepName + "\", \"" + s.substring(start, end) +"\");");
-					}
-					*/
+				} else
 					temp = s;
-				}
 			}
 			newRepMap.put(temp, s); // new value, old value
 		}
 		congressRepMap.put(congressString, newRepMap);
-		// return only unique values from here
 		ArrayList<String> uniqueReps = new ArrayList<String>();
 		uniqueReps.addAll(newRepMap.keySet());
-		String[] tempReps =  uniqueReps.toArray(new String[uniqueReps.size()]);
-		Arrays.sort(tempReps);
-		return tempReps;
+		Collections.sort(uniqueReps);
+		return uniqueReps;
 	}
 	
 	public static String[] getActiveCongresses() throws IOException{
