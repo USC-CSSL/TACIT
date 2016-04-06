@@ -76,14 +76,14 @@
 	<properties>
 		<tycho.version>0.21.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
+		<luna-repo.url>http://download.eclipse.org/releases/mars</luna-repo.url>
 
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>luna</id>
-			<url>${luna-repo.url}</url>
+			<id>mars</id>
+			<url>${mars-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 
