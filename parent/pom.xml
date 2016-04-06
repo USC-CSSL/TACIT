@@ -76,7 +76,7 @@
 	<properties>
 		<tycho.version>0.21.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<luna-repo.url>http://download.eclipse.org/releases/mars</luna-repo.url>
+		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
 
 	</properties>
 
