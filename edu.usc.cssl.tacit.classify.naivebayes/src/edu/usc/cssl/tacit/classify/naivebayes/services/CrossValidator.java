@@ -18,7 +18,7 @@ public class CrossValidator {
 	
 	public HashMap<Integer, String> doCross(NaiveBayesClassifier nbc, HashMap<String, List<String>> classPaths, int kValue, IProgressMonitor monitor, String outputDir, Date dateObj) throws IOException, EvalError{
 		
-		HashMap<Integer, String> performance = new HashMap<>();
+		HashMap<Integer, String> performance = new HashMap<Integer, String>();
 		
 		int[] index = new int[classPaths.size()];
 		String tmpLocation = nbc.getTmpLocation();
