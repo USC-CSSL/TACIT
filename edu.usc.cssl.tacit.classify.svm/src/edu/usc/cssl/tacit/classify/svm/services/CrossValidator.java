@@ -139,12 +139,14 @@ public class CrossValidator {
 		ConsoleView.printlInConsoleln("");
 		ConsoleView.printlInConsoleln("Average accuracy over " + kValue
 				+ " folds = " + averageAccuracy / accuracies.length + "%");
-
+		createRunReport(outputPath, dateObj);
 		clearFiles(kValue, outputPath);
 		writeToCSV(accuracies, outputPath,dateObj);
-		TacitUtility.createRunReport(outputPath, "SVM Classification",dateObj,null);
 	}
+	protected void createRunReport(String outputPath, Date dateObj){
 
+		TacitUtility.createRunReport(outputPath, "SVM Classification", dateObj,null);
+	}
 	private void clearFiles(int kValue, String outputPath) {
 		ConsoleView.printlInConsoleln("Clearing temporary files");
 		for (int i = 0; i < kValue; i++) {
@@ -174,7 +176,12 @@ public class CrossValidator {
 			toDelete.delete();
 		}
 	}
+	protected String createOutputFileName(String output, Date dateObj){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
+		return output + System.getProperty("file.separator")
+				+ "SVM-Classification-" + df.format(dateObj) + ".csv";
+	}
 	private void writeToCSV(double[] accuracies, String output, Date dateObj) {
 		double averageAccuracy = 0;
 
@@ -182,11 +189,7 @@ public class CrossValidator {
 			averageAccuracy = averageAccuracy + accuracies[j];
 		}
 
-		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
-
-		String outputPath = output + System.getProperty("file.separator")
-				+ "SVM-Classification-" + df.format(dateObj) + ".csv";
-
+		String outputPath = createOutputFileName(output, dateObj);
 		File outFile = new File(outputPath);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));

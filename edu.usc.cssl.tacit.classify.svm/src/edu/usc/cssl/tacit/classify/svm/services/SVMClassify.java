@@ -24,15 +24,15 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class SVMClassify {
 	private String intermediatePath;
 	private File modelFile;
-	private boolean doTfidf;
+	protected boolean doTfidf;
 	private int featureMapIndex;
-	private HashMap<String, Integer> featureMap = new HashMap<String, Integer>();
-	private HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
+	protected HashMap<String, Integer> featureMap = new HashMap<String, Integer>();
+	protected HashMap<String, Integer> dfMap = new HashMap<String, Integer>();
 	private String delimiters = " .,;'\"!-()[]{}:?";
-	private int noOfDocuments = 0;
+	protected int noOfDocuments = 0;
 	private String class1Label = "";
 	private String class2Label = "";
-	
+
 
 	public SVMClassify(String class1Name, String class2Name, String outputFolder) {
 		this.intermediatePath = outputFolder
@@ -42,6 +42,7 @@ public class SVMClassify {
 	}
 
 	public void buildDfMap(File inputFile) throws IOException {
+		
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
 
 		// ConsoleView.writeInConsole("Building map for: "+inputFile.getAbsolutePath());
@@ -66,8 +67,12 @@ public class SVMClassify {
 		}
 		br.close();
 	}
-
+	protected void testMethod()
+	{
+		
+	}
 	public HashMap<String, Double> fileToBow(File inputFile) throws IOException {
+		testMethod();
 		HashMap<String, Double> hashMap = new HashMap<String, Double>();
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
 		String currentLine;
@@ -115,6 +120,7 @@ public class SVMClassify {
 	}
 
 	public String BowToString(HashMap<String, Double> bow) {
+		testMethod();
 		TreeMap<Integer, Double> integerMap = new TreeMap<Integer, Double>();
 		for (String word : bow.keySet()) {
 			if (featureMap.containsKey(word)) {
@@ -134,8 +140,9 @@ public class SVMClassify {
 		// ConsoleView.writeInConsole(sb.toString().trim());
 		return sb.toString().trim();
 	}
-
+	
 	public String BowToTestString(HashMap<String, Double> bow) {
+		testMethod();
 		TreeMap<Integer, Double> integerMap = new TreeMap<Integer, Double>();
 		for (String word : bow.keySet()) {
 			if (featureMap.containsKey(word)) {
@@ -150,7 +157,6 @@ public class SVMClassify {
 		}
 		return sb.toString().trim();
 	}
-
 	public HashMap<Integer, Double> computePredictiveWeights(File modelFile)
 			throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(modelFile));
@@ -269,8 +275,7 @@ public class SVMClassify {
 
 		if (doPredictiveWeights) {
 			// PredictiveWeights pw = new PredictiveWeights();
-			File weightsFile = new File(intermediatePath + "-weights" + "-"
-					+ kVal +"-"+df.format(dateObj)+".csv");
+			File weightsFile = new File(createSVMWeightFileName(df, kVal, intermediatePath, dateObj));
 			BufferedWriter weightsWriter = new BufferedWriter(new FileWriter(
 					weightsFile));
 			// HashMap<Integer,Double> weightsMap =
@@ -297,7 +302,10 @@ public class SVMClassify {
 
 		return ret;
 	}
-
+	protected String createSVMWeightFileName(DateFormat df, String kVal, String intermediatePath, Date dateObj){
+		return intermediatePath + "-weights" + "-"
+				+ kVal +"-"+df.format(dateObj)+".csv";
+	}
 	public double cross_predict(String kVal, String label1, File[] testFiles1,
 			String label2, File[] testFiles2) throws IOException {
 
@@ -366,7 +374,7 @@ public class SVMClassify {
 			if (pvalue > 0.5)
 				pvalue = Math.abs(pvalue - 1);
 		}
-
+		double x = (double) correct / total * 100;
 		return (double) correct / total * 100;
 	}
 
