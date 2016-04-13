@@ -94,10 +94,12 @@ public class LdaAnalysis {
 		monitor.worked(5);
 
 		deleteFiles(outputPath);
-		TacitUtility.createRunReport(outputDir, "LDA Analysis", dateObj,null);
+		createRunReport(dateObj);
 		monitor.worked(5);
 	}
-
+	protected void createRunReport(Date dateObj) {
+		TacitUtility.createRunReport(outputDir, "LDA Analysis", dateObj,null);
+	}
 	private void deleteFiles(String outputPath) {
 		File toDel = new File(outputPath + ".topic-state.gz");
 		toDel.delete();
@@ -112,7 +114,11 @@ public class LdaAnalysis {
 		toDel = new File(outputPath + ".mallet");
 		toDel.delete();
 	}
-
+	protected String generateFileName(String fileName, Date dateObj){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		return fileName + "-"
+				+ df.format(dateObj) + ".csv";
+	}
 	private void convertWeights2csv(String fileName, Date dateObj) {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
@@ -120,8 +126,7 @@ public class LdaAnalysis {
 		BufferedWriter bw;
 		try {
 			br = new BufferedReader(new FileReader(new File(fileName + ".txt")));
-			bw = new BufferedWriter(new FileWriter(new File(fileName + "-"
-					+ df.format(dateObj) + ".csv")));
+			bw = new BufferedWriter(new FileWriter(new File(generateFileName(fileName, dateObj))));
 
 			String currentLine = "Topic,Word,Weight";
 			bw.write(currentLine);
@@ -145,7 +150,11 @@ public class LdaAnalysis {
 		}
 
 	}
-
+	protected String generateKeysFileName(String fileName, Date dateObj){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		return fileName + "-"
+				+ df.format(dateObj) + ".csv";
+	}
 	private void convertKeys2csv(String fileName, Date dateObj) {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
@@ -153,8 +162,7 @@ public class LdaAnalysis {
 		BufferedWriter bw;
 		try {
 			br = new BufferedReader(new FileReader(new File(fileName + ".txt")));
-			bw = new BufferedWriter(new FileWriter(new File(fileName + "-"
-					+ df.format(dateObj) + ".csv")));
+			bw = new BufferedWriter(new FileWriter(new File(generateKeysFileName(fileName, dateObj))));
 
 			String currentLine = "Topic,Keywords";
 			bw.write(currentLine);
@@ -176,7 +184,11 @@ public class LdaAnalysis {
 		}
 
 	}
-
+	protected String generateCompositionFileName(String fileName, Date dateObj){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		return fileName + "-"
+				+ df.format(dateObj) + ".csv";
+	}
 	private void convertComposition2csv(String fileName, Date dateObj) {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 
@@ -184,8 +196,7 @@ public class LdaAnalysis {
 		BufferedWriter bw;
 		try {
 			br = new BufferedReader(new FileReader(new File(fileName + ".txt")));
-			bw = new BufferedWriter(new FileWriter(new File(fileName + "-"
-					+ df.format(dateObj) + ".csv")));
+			bw = new BufferedWriter(new FileWriter(new File(generateCompositionFileName(fileName, dateObj))));
 
 			String currentLine = br.readLine();
 			currentLine = "Number,File Name";
