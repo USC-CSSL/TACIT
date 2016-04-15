@@ -23,7 +23,7 @@ public class SVMTest {
 	HashMap<String, Double> expectedHashMap;
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
-	public void SVMSansFeatureFileTest() throws IOException {
+	public void svmSansFeaturesTest() throws IOException {
 		int kValueInt = 2;
 		Date dateObj = Calendar.getInstance().getTime();
 		String class1NameStr = "Data1";
@@ -61,11 +61,12 @@ public class SVMTest {
 		while((line = reader.readLine())!= null)
 			expectedOutput += line;
 		reader.close();
+		
 		assertEquals("Comparing svm output", expectedOutput, generatedOutput);
 	}
 	
 	@Test
-	public void SVMWithFeaturesTest() throws IOException {
+	public void svmWithFeaturesTest() throws IOException {
 
 		int kValueInt = 2;
 		Date dateObj = Calendar.getInstance().getTime();
@@ -144,7 +145,7 @@ public class SVMTest {
 		assertEquals("Checking set contents", true, flag);
 	}
 	@Test
-	public void SVMFileToBowTest() throws IOException {
+	public void svmFileToBowTest() throws IOException {
 
 		String class1NameStr = "Data1";
 		String class2NameStr = "Data2";
@@ -187,7 +188,7 @@ public class SVMTest {
 	}
 	
 	@Test
-	public void SVMBowToStringTest() throws IOException {
+	public void svmBowToStringTest() throws IOException {
 
 		String class1NameStr = "Data1";
 		String class2NameStr = "Data2";
@@ -205,7 +206,7 @@ public class SVMTest {
 		assertEquals("Checking set contents", output, "1:0.3010299956639812 2:0.3010299956639812 3:0.3010299956639812 4:0.3010299956639812 5:0.3010299956639812 6:0.0 7:0.6020599913279624 8:0.0 9:0.0 10:0.3010299956639812 11:0.0 12:0.3010299956639812 13:0.9030899869919435 14:0.9030899869919435 15:0.3010299956639812 16:0.0 17:0.9030899869919435 18:0.6020599913279624 19:0.3010299956639812 20:0.3010299956639812 21:0.3010299956639812 22:0.3010299956639812 23:0.3010299956639812 24:0.3010299956639812 25:0.6020599913279624 26:0.3010299956639812 27:0.3010299956639812 28:0.3010299956639812 29:0.3010299956639812 30:0.0 31:0.3010299956639812 32:0.3010299956639812 33:0.0 34:0.3010299956639812 35:0.3010299956639812 36:0.3010299956639812 37:0.6020599913279624 38:0.3010299956639812 39:0.3010299956639812 40:0.6020599913279624 41:0.9030899869919435 42:0.0 43:0.3010299956639812 44:0.0 45:0.3010299956639812 46:0.3010299956639812 47:0.9030899869919435 48:0.0 49:0.3010299956639812 50:0.3010299956639812 51:0.3010299956639812 52:0.6020599913279624 53:0.6020599913279624 54:0.0 55:0.0 56:0.0 57:0.6020599913279624 58:0.3010299956639812 59:0.3010299956639812 60:0.3010299956639812 61:0.3010299956639812 62:0.3010299956639812 63:0.3010299956639812 64:0.3010299956639812 65:0.6020599913279624 66:0.0 67:0.3010299956639812 68:0.3010299956639812 69:0.3010299956639812 70:0.6020599913279624 71:0.0 72:0.3010299956639812 73:0.6020599913279624 74:0.0 75:0.3010299956639812 76:0.3010299956639812 77:0.3010299956639812 78:0.0 79:0.3010299956639812");
 	}
 	@Test
-	public void SVMBowToTestStringTest() throws IOException {
+	public void svmBowToTestStringTest() throws IOException {
 
 		String class1NameStr = "Data1";
 		String class2NameStr = "Data2";
@@ -222,7 +223,7 @@ public class SVMTest {
 		}
 
 	@Test
-	public void SVMcomputePredictiveWeightsTest() throws IOException {
+	public void svmComputePredictiveWeightsTest() throws IOException {
 
 		String class1NameStr = "Data1";
 		String class2NameStr = "Data2";

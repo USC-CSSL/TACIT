@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="edu.usc.cssl.tacit.classify.svm">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../../eclipse/"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="edu.usc.cssl.tacit.common.ui.location" value="../edu.usc.cssl.tacit.common.ui"/>
+    <property name="edu.usc.cssl.tacit.common.location" value="../edu.usc.cssl.tacit.common"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="Plug-in Dependencies.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.ui_3.107.0.v20150507-1945.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.swt_3.104.0.v20150528-0211.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.swt.win32.win32.x86_3.104.0.v20150528-0211.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.jface_3.11.0.v20150602-1400.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.core.commands_3.7.0.v20150422-0725.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.ui.workbench_3.107.0.v20150510-1732.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.e4.ui.workbench3_0.13.0.v20150422-0725.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.core.runtime_3.11.0.v20150405-1723.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/javax.annotation_1.2.0.v201401042248.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/javax.inject_1.0.0.v20091030.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.osgi_3.10.100.v20150529-1857.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.osgi.compatibility.state_1.0.100.v20150402-1551.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.equinox.common_3.7.0.v20150402-1709.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.core.jobs_3.7.0.v20150330-2103.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.core.runtime.compatibility.registry_3.6.0.v20150318-1505/runtime_registry_compatibility.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.equinox.registry_3.6.0.v20150318-1503.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.equinox.preferences_3.5.300.v20150408-1437.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.core.contenttype_3.5.0.v20150421-2214.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.equinox.app_1.3.300.v20150423-1356.jar"/>
+        <pathelement location="../../../../edu.usc.cssl.tacit.common"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.jsoup_1.7.2.v201411291515.jar"/>
+        <pathelement location="../../../../edu.usc.cssl.tacit.common.ui"/>
+    </path>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+    </path>
+    <path id="edu.usc.cssl.tacit.common.classpath">
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/pdfbox-app-2.0.0-RC3.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/org.annolab.tt4j-1.2.1.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/jackson-core-2.5.0.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/json-path-2.0.0.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/json-path-assert-2.0.0.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/json-smart-2.1.1.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/json-simple-1.1.1.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/langdetect.jar"/>
+        <path refid="Plug-in Dependencies.libraryclasspath"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/bin"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/hamcrest-core-1.3.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/hamcrest-library-1.3.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/slf4j-api-1.7.5.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/slf4j-simple-1.7.5.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.location}/asm-1.0.2.jar"/>
+    </path>
+    <path id="edu.usc.cssl.tacit.common.ui.classpath">
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/asm-1.0.2.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/json-simple-1.1.1.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/gson-2.3.1.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/jackson-core-2.5.0.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/json-path-2.0.0.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/json-path-assert-2.0.0.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/json-smart-2.1.1.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/commons-io-2.4.jar"/>
+        <path refid="Plug-in Dependencies.libraryclasspath"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/bin"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/slf4j-api-1.7.5.jar"/>
+        <pathelement location="${edu.usc.cssl.tacit.common.ui.location}/slf4j-simple-1.7.5.jar"/>
+    </path>
+    <path id="edu.usc.cssl.tacit.classify.svm.classpath">
+        <pathelement location="hamcrest-all-1.3.jar"/>
+        <pathelement location="junit.jar"/>
+        <pathelement location="libsvm.jar"/>
+        <pathelement location="commons-math3-3.3.jar"/>
+        <path refid="Plug-in Dependencies.libraryclasspath"/>
+        <pathelement location="bin"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <path refid="edu.usc.cssl.tacit.common.classpath"/>
+        <path refid="edu.usc.cssl.tacit.common.ui.classpath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall">
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.common.ui.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.common.location}" inheritAll="false" target="clean"/>
+    </target>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects">
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.common.ui.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.common.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+    </target>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac fork="true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="edu.usc.cssl.tacit.classify.svm.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="SVMTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.edu.usc.cssl.tacit.classify.svm.services.SVMTest" todir="${junit.output.dir}"/>
+            <classpath refid="edu.usc.cssl.tacit.classify.svm.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
