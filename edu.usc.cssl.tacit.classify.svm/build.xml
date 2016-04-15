@@ -131,11 +131,11 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="SVMTest">
+    <target name="svmTest">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="test.edu.usc.cssl.tacit.classify.svm.services.SVMTest" todir="${junit.output.dir}"/>
+            <test name="test.edu.usc.cssl.tacit.classify.svm.services.Svm_Test" todir="${junit.output.dir}"/>
             <classpath refid="edu.usc.cssl.tacit.classify.svm.classpath"/>
         </junit>
     </target>

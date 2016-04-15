@@ -19,7 +19,7 @@ import org.junit.Test;
 import edu.usc.cssl.tacit.classify.svm.services.CrossValidator;
 import edu.usc.cssl.tacit.classify.svm.services.SVMClassify;
 
-public class SVMTest {
+public class Svm_Test {
 	HashMap<String, Double> expectedHashMap;
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
