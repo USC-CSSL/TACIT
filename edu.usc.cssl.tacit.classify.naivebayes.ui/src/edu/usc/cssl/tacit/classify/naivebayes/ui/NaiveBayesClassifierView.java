@@ -788,9 +788,9 @@ public class NaiveBayesClassifierView extends ViewPart implements
 		}
 
 		// K-Vlaue
-		if (kValueText.getText().isEmpty()) {
+		if (kValueText.getText().isEmpty() || Integer.parseInt(kValueText.getText()) < 2) {
 			form.getMessageManager().addMessage("kvalue",
-					"Provide valid K-Value for cross validation", null,
+					"Provide valid K-Value for cross validation, K must be atleast 2", null,
 					IMessageProvider.ERROR);
 			return false;
 		} else {
