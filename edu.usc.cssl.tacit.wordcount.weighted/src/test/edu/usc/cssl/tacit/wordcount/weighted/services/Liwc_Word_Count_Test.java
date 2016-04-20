@@ -22,7 +22,7 @@ import org.junit.Test;
 import edu.uc.cssl.tacit.wordcount.weighted.services.WordCountApi;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 
-public class LIWCWordCountPluginTest{
+public class Liwc_Word_Count_Test{
 	
 	// TODO: Tacit Utility run report has been disabled for all the tests
 	// NOTE: Only an empty string is passed to the doStopWords parameter from the UI which translates to the respective flag becoming false 

@@ -602,7 +602,8 @@ public class WordCountApi {
 									condCategories.add(Integer.parseInt(splits[0].split(">")[1]));
 									condPhrase = words[0] + " " + splits[0].split(">")[0].replace("<", "");
 								}
-							} else if (words[i].contains(")") || words[i].contains("("))
+							} 
+							else if (words[i].contains(")") || words[i].contains("("))
 								continue;
 							else {
 								currPhrase = currPhrase + " " + words[i];
