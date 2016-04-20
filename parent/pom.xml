@@ -20,9 +20,11 @@
 
 		<module>../edu.usc.cssl.tacit.crawlers.latin.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.latin</module>
-		
+
 		<module>../edu.usc.cssl.tacit.crawlers.stackexchange</module>
 
+		<module>../edu.usc.cssl.tacit.crawlers.stackexchange.ui</module>
+		
 		<module>../edu.usc.cssl.tacit.crawlers.uscongress.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.uscongress</module>
 
@@ -129,7 +131,7 @@
 							<ws>cocoa</ws>
 							<arch>x86_64</arch>
 						</environment>
-						
+
 					</environments>
 				</configuration>
 			</plugin>
