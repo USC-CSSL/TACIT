@@ -7,6 +7,8 @@
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../../../eclipse/"/>
     <property name="edu.usc.cssl.tacit.classify.svm.location" value="../edu.usc.cssl.tacit.classify.svm"/>
+    <property name="edu.usc.cssl.tacit.cluster.hierarchical.location" value="../edu.usc.cssl.tacit.cluster.hierarchical"/>
+    <property name="edu.usc.cssl.tacit.wordcount.cooccurrence.location" value="../edu.usc.cssl.tacit.wordcount.cooccurrence"/>
     <property name="edu.usc.cssl.tacit.wordcount.standard.location" value="../edu.usc.cssl.tacit.wordcount.standard"/>
     <property name="edu.usc.cssl.tacit.wordcount.weighted.location" value="../edu.usc.cssl.tacit.wordcount.weighted"/>
     <property name="debuglevel" value="source,lines,vars"/>
@@ -69,7 +71,7 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac fork = "true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac fork="true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="edu.usc.cssl.tacit.common.classpath"/>
         </javac>
@@ -77,6 +79,18 @@
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.classify.svm.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.classify.svm.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.hierarchical.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.hierarchical.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.wordcount.cooccurrence.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.wordcount.cooccurrence.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>

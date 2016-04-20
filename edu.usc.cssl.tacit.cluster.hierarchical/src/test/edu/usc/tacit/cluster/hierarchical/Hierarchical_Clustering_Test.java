@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import edu.usc.cssl.tacit.cluster.hierarchical.services.HierarchicalClusterAnalysis;
 
-public class HierarchicalClusteringTest {
+public class Hierarchical_Clustering_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
 	public void invokeCooccurrenceTest() throws IOException {

@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import edu.usc.cssl.tacit.wordcount.cooccurrence.services.CooccurrenceAnalysis;
 
-public class CooccurenceTest {
+public class Cooccurence_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
 	public void invokeCooccurrenceTest() throws IOException {
