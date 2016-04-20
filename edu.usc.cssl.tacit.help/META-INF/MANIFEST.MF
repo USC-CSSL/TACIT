@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nlptoolshelp
+Bundle-Name: Tacit help
 Bundle-SymbolicName: edu.usc.cssl.tacit.help;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.help.Activator

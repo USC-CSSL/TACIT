@@ -75,15 +75,15 @@ public class ManageCorpora {
 				fCount = 0L;
 				fCount = getFileCount(dir);
 				
-				fileCorpusCount += fCount-1;
-				currClass.setNoOfFiles(fCount-1);					
+				fileCorpusCount += fCount;
+				currClass.setNoOfFiles(fCount);					
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
 				classObj.put("original_loc", currClass.getClassPath());
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 				classObj.put("data_key", currClass.getKeyTextFields());
-				classObj.put("no_of_files", fCount-1);
+				classObj.put("no_of_files", fCount);
 				classArray.add(classObj);
 			}
 			corpus.setNoOfFiles(fileCorpusCount);
@@ -145,8 +145,8 @@ public class ManageCorpora {
 				fCount = 0L;
 				fCount = getFileCount(dir);
 				
-				fileCorpusCount += fCount-1;
-				currClass.setNoOfFiles(fCount-1);	
+				fileCorpusCount += fCount;
+				currClass.setNoOfFiles(fCount);	
 				
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
@@ -154,7 +154,7 @@ public class ManageCorpora {
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 				classObj.put("data_key", currClass.getKeyTextFields());
-				classObj.put("no_of_files", fCount-1);
+				classObj.put("no_of_files", fCount);
 				classArray.add(classObj);
 			}
 			corpus.setNoOfFiles(fileCorpusCount);

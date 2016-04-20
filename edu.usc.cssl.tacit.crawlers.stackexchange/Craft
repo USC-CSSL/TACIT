@@ -1,0 +1,1107 @@
+[ {
+  "Question" : {
+    "Question Id" : "36414207",
+    "Question Title" : "Should Java automatically detect IPv4/IPv6?",
+    "Question Body" : "I have a built-in PHP HTTP server started as php -S localhost:8080\n It apparently uses IPv6 for listening: tcp6   0   0  ::1:8080    :::*    LISTEN      2642/php\n Using java.net.HttpURLConnection I try connect to it. However I get the exception java.net.ConnectException: Connection refused. Once I do System.setProperty(\"java.net.preferIPv6Addresses\", \"true\"); everything works, of course. This seems to be a hack to me, though. Java implemenation should have worked with default settings. Question: Why Java hasn't detected proper Internet protocol? Is it a bug or is misconfiguration of my OS (Linux)?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "1008481",
+      "User Name" : "Beginner",
+      "User Reputation" : "3631",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "What are the DNS records involved with this host? Could it be that it has an A record to a nonfunctional IP4 address?", "hmm. Strange. Gist: This program seems to work fine for me on the Mac (the server is using IPv6). And the said property is null.", "This is a great question, I'd love to know why Java doesn't follow the existing conventions more faithfully. It seems like these are reimplemented on each platform as rough approximates cr.openjdk.java.net/~michaelm/7120875/webrev.3/src/macosx/…" ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "36414207",
+    "Answer Body" : "Java (at least Oracle or OpenJDK up to Java 8) does not correctly implement address selection. I brought this up a while back on the net-dev mailinglist, but there was not much traction. The default mode is to prefer dualstack/IPv6 address families but preferable connect to IPv4 addresses. This is what you can influence with the preferIPv6Addresses=true. According to the (old) IPV6 guide for Java this was a decision for compatibility reason. In your case you could connect to \"::1\" IPv6 literal or add a now localhost6 alias (as it will also work with address entries which have no ipv4 address). Especially for \"localhost\" a lot of missconfigured systems are out there, anyway.",
+    "User" : {
+      "User Id" : "13189",
+      "User Name" : "eckes",
+      "User Reputation" : "5175",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "I sent a reminder to net-dev mail.openjdk.java.net/pipermail/net-dev/2016-April/009680.html" ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36548337",
+    "Question Title" : "RESTHeart 1.1.7 configuration IPv4",
+    "Question Body" : "Please, how to configure RESTHeart 1.1.7 for use IPv4? After normal installation listen on tcp6 (netstat -tanl) on ports 8080 and 4443.",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "6187773",
+      "User Name" : "Miroslav Nejedl&#253;",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "The word \"Please\" is an often used word for being lazy? .. Please do offer some current configuration details on what your current setup is." ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "36294031",
+    "Question Title" : "Get visitors ipv4 behind cloudflare",
+    "Question Body" : "I just have the problem that I want to get the visitors IP Address. Everythings fine but one user just give me the IPv6. This is the code I can give you, moreover I just had installed the cloudflare apache2 Mod.  $_SERVER['REMOTE_ADDR'] = $_SERVER[\"HTTP_CF_CONNECTING_IP\"] ? $_SERVER[\"HTTP_CF_CONNECTING_IP\"] : $_SERVER[\"REMOTE_ADDR\"];\n $ip = $_SERVER['REMOTE_ADDR'];\n\n if(isset($_SERVER['HTTP_CF_CONNECTING_IP'])){\n     $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];\n }",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "6025077",
+      "User Name" : "WLFCRK",
+      "User Reputation" : "15",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "I know that this is the users address. Okay, I've got a websocket connection where I got a IPv4 from the same User, so I need to compare these two values.", "The IPv6 address is the user's address. Why do you assume they have an IPv4 address?" ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "36294031",
+    "Answer Body" : "The only way to do this would be to disable IPv6 support in CloudFlare by: 1) In DNS removing all AAAA records (leaving only A records). 2) Going into the Network on the CloudFlare dashboard and turning off \"IPv6 Compatibility\". I would not recommend this though; you might soon find yourself with people unable to connect to your site. Instead it is a better idea to make sure your platform fully supports IPv6.",
+    "User" : {
+      "User Id" : "1070329",
+      "User Name" : "mjsa",
+      "User Reputation" : "1276",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36288241",
+    "Question Title" : "How to convert a string '010101010' into a real binary string, in PHP",
+    "Question Body" : "I want to store IP addresses into MySQL VARBINARY(16). I've got the binary address as a string '01001010010100101001010010100101'. When I insert it into MySQL. I realize this will not be converted automatically. After searching PHP manual, I'm surprised that there is no function for this. Need your help on how to convert the binary string to VARBINARY.",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "3146734",
+      "User Name" : "Walkinraven",
+      "User Reputation" : "21",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "36288241",
+    "Answer Body" : "Thanks you all! But I think I've found a better solution: someone posted at PHP manual page 6 years ago: http://php.net/manual/en/function.pack.php#93085 <?php\nfunction bin2bstr($input)\n// Convert a binary expression (e.g., \"100111\") into a binary-string\n{\n  if (!is_string($input)) return null; // Sanity check\n\n  // Pack into a string\n  return pack('H*', base_convert($input, 2, 16));\n}\n\nfunction bstr2bin($input)\n// Binary representation of a binary-string\n{\n  if (!is_string($input)) return null; // Sanity check\n\n  // Unpack as a hexadecimal string\n  $value = unpack('H*', $input);\n\n  // Output binary representation\n  return base_convert($value[1], 16, 2);\n}\n\n// Returns string(3) \"ABC\"\nvar_dump(bin2bstr('01000001 01000010 01000011'));\n\n// Returns string(24) \"010000010100001001000011\"\nvar_dump(bstr2bin('ABC'));\n?>",
+    "User" : {
+      "User Id" : "3146734",
+      "User Name" : "Walkinraven",
+      "User Reputation" : "21",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "I'm sorry. Content is copied from original URL.", "Please don't add \"thank you\" as an answer. Instead, accept the answer that you found most helpful. - From Review", "While this link may answer the question, it is better to include the essential parts of the answer here and provide the link for reference. Link-only answers can become invalid if the linked page changes. - From Review" ]
+  }, {
+    "Answer Id" : "36288241",
+    "Answer Body" : "In PHP you can use bindec and long2ip to convert binary string to IPv4 address: bindec - Returns the decimal equivalent of the binary number represented by the binary_string argument. long2ip - Converts an long integer address into a string in (IPv4) Internet standard dotted format $ip_as_int = bindec('01001010010100101001010010100101');\n$ipv4 = long2ip ( $ip_as_int );\necho $ipv4;\n\n74.82.148.165",
+    "User" : {
+      "User Id" : "524743",
+      "User Name" : "Samuel",
+      "User Reputation" : "747",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "36288241",
+    "Answer Body" : "You can accomplish this by combining funtions inet_ntoa and conv. mysql> select inet_ntoa(conv('01001010010100101001010010100101',2,10));\n+----------------------------------------------------------+\n| inet_ntoa(conv('01001010010100101001010010100101',2,10)) |\n+----------------------------------------------------------+\n| 74.82.148.165                                            |\n+----------------------------------------------------------+\n1 row in set (0.00 sec)\n More over, the string result can be converted to BINARY: mysql> select CAST(inet_ntoa(conv('01001010010100101001010010100101',2,10)) AS BINARY);\n+--------------------------------------------------------------------------+\n| CAST(inet_ntoa(conv('01001010010100101001010010100101',2,10)) AS BINARY) |\n+--------------------------------------------------------------------------+\n| 74.82.148.165                                                            |\n+--------------------------------------------------------------------------+\n1 row in set (0.00 sec)\n Also this BINARY string can be easily put into VARBINARY(16) column using a UPDATE or INSERT.",
+    "User" : {
+      "User Id" : "5875887",
+      "User Name" : "Dylan Su",
+      "User Reputation" : "4098",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "is the result the binary representation of the IP address? is the result a varbinary value?" ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36467233",
+    "Question Title" : "How to read correct IP address?",
+    "Question Body" : "I want to read IP address of client machine, I am using below line of code for this - UserIP = Dns.GetHostAddresses(Dns.GetHostName())[1].ToString();\n For some machines it is returning correct IP address like - 10.50.207.154 but for some machine it is returning IP address like - fe80::25ab:4248:c134:23c6%29 How to get IP address like(Ex - 10.50.207.154) first one?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "2318170",
+      "User Name" : "user2318170",
+      "User Reputation" : "81",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "... and an unroutable IPv4 address.", "That's an IPv6 address. It's a valid IP address." ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "36467233",
+    "Answer Body" : "Get IP address of client machine, try this its work for me, private string GetIPAddress()\n        {\n            string IpAddress;\n            IpAddress = Request.ServerVariables[\"HTTP_X_FORWARDED_FOR\"];\n\n            if (IpAddress == \"\" || IpAddress == null)\n            {\n                IpAddress = Request.ServerVariables[\"REMOTE_ADDR\"];\n\n                if (IpAddress == \"::1\" || IpAddress == \"localhost\")\n                {\n                    IPAddress[] ipArray = Dns.GetHostAddresses(Dns.GetHostName());\n                    foreach (IPAddress ip in ipArray)\n                    {\n                        //InterNetwork for IPV4\n                        if (ip.AddressFamily == AddressFamily.InterNetwork)\n                        {\n                            IpAddress = ip.ToString();\n                            break;\n                        }\n                    }\n                }\n            }\n\n            return IpAddress;\n        }",
+    "User" : {
+      "User Id" : "6019515",
+      "User Name" : "Prabhat Sinha",
+      "User Reputation" : "572",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "36467233",
+    "Answer Body" : "They're both IP addresses. The 'correct' one is IPv4. The longer one is IPv6. You can write a simple regex to detect IPv4, but I have a feeling you're incorrectly dismissing IPv6 addresses as not being IP addresses, when they very much are so.",
+    "User" : {
+      "User Id" : "563532",
+      "User Name" : "Rob",
+      "User Reputation" : "12586",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "6841334",
+    "Question Title" : "Best practice to support IPv6 for already running site?",
+    "Question Body" : "Recently a friend of mine moved his site to new hosting, and it was Linode (at Newark), which offered IPv6 as well as IPv4. As we all know the latest fashion is to support IPv6, so he enabled it on server and added corresponding AAAA-records, and then we both got a discussion on whether IPv6 site should be \"tied\" to the same hostname (URL) as IPv4 one. Simple to say, should the site be available under www.domain.tld both via IPv4 and IPv6, or there should better be different subdomain for IPv6 (like use www.domain.tld for IPv4 and something like ipv6.domain.tld for IPv6 version)? If you ask me, I'd like to see both version under the same name, plus it weaves the risk of Google ban one version for \"copy content from another site\". But then, I also believe that IPv6 not always run as fast as IPv4 (so far), so establish different names may help. What you say? What would you do if it was your site? And are there any best-practice guides of how to implement IPv6 on sites? Thank you in advance! This is my first question I ask here so home I won't break the rules, but I can't find much info on subject.",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "864857",
+      "User Name" : "Alexander",
+      "User Reputation" : "203",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "There's no programming aspect to this question, so I think it is more appropriate for serverfault.com. I've voted to migrate it there, if enough others agree it will be moved automatically." ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "6841334",
+    "Answer Body" : "The end result should be to run the site on the same hostname for both IPv4 and IPv6. Offering IPv6 only under a separate name will make the site unreachable for future IPv6-only users. They will not explicitly type ipv6.example.com to reach the IPv6 version of the site, and all links to the site will point to www.example.com, not ipv6.example.com. The same goes for people that have bad (Carrier Grade NAT/NAT444) IPv4 connectivity and good IPv6 connectivity. They won't be able to benefit from IPv6. Testing the IPv6 setup with a separate hostname is ok, but just for testing. If the ISP that provides the connection to the web server offers IPv6 connectivity it should be as good and as fast as the IPv4 connectivity. If it is not they are not doing their job properly ;-) And yes: I run all my websites with both IPv4 and IPv6 on one hostname :-)",
+    "User" : {
+      "User Id" : "813192",
+      "User Name" : "Sander Steffann",
+      "User Reputation" : "4306",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "True... Recent data shows that problems related to IPv6 brokenness are becoming less frequent, and World IPv6 Day has shown that it's not a huge problem. But if you are worried about this you can add some tests to your website that load 1x1 transparent pixel images from ipv4-only hostnames, ipv6-only hostnames and dual-stack hostnames. Then look at your log files or use javascript to measure the results and possibly warn the user about it.", "Glad to see someone to prove mu point of view. If it only be possible to warn user who uses broken IPv6 support to inspect his/her connectivity (so user won't blame his IPv6 problems on site) :)" ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36392711",
+    "Question Title" : "How can I generate a range of IP addresses in python?",
+    "Question Body" : "I need to generate a list of IP-addresses (IPv4) in Python. I have start and end addresses, for example 74.133.2.1 and 76.10.2.30. How can I write all the addresses between into a text file? (I know the result of this example is going to be a lot, so just show me the solution, thank you.)",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "5768941",
+      "User Name" : "J. Koushyar",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "@jDo Thanks for the time you spent.", "@J.Koushyar I googled the title of your question and this working example was the top result. If the duplicate SO questions didn't already answer your question, this will.", "by the way I found these question : stackoverflow.com/questions/2279756/… it is exactly like what I said", "I'm not a native English speaker, these are misunderstandings.", "It looks like you want us to write some code for you. While many users are willing to produce code for a coder in distress, they usually only help when the poster has already tried to solve the problem on their own. A good way to demonstrate this effort is to include the code you've written so far, example input (if there is any), the expected output, and the output you actually get (console output, tracebacks, etc.). The more detail you provide, the more answers you are likely to receive. Check the FAQ and How to Ask.", "\"just show me the solution\" I suspect this phrase will make your reader feel like doing the opposite - particularly considering how easy it is to find what you're looking for via google or SO's search function" ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "26032931",
+    "Question Title" : "List Network Adapter name with IPv4 address",
+    "Question Body" : "Im trying to list the only ACTIVE network adapter with its IPv4 addresses on one computer. i have this code but it will list every network card either its connected or not.   Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load\n    ListView1.View = View.Details\n    ListView1.GridLines = True\n    ListView1.FullRowSelect = True\n    ListView1.Columns.Add(\"Interface Name\", 100)\n    ListView1.Columns.Add(\"MAC address\", 100)\n    ListView1.Columns.Add(\"IPv4 address\", 100)\n    ListView1.Columns.Add(\"Network Mask\", 100)\n    ListView1.Columns.Add(\"IPv6 Address\", 100)\n    ListView1.Columns.Add(\"Link Local Address\", 100)\n    ListView1.Columns.Add(\"IPv5 Address\", 100)\nEnd Sub\n\nPrivate Sub getinterface()\n    'get all network interface available in system\n    Dim nics As NetworkInterface() = NetworkInterface.GetAllNetworkInterfaces()\n    If nics.Length < 0 Or nics Is Nothing Then\n        MsgBox(\"No network interfaces found\")\n        Exit Sub\n    End If\n\n\n    'if interfaces are found let list them. first clear the listview items\n    ListView1.Items.Clear()\n\n\n    For Each netadapter As NetworkInterface In nics\n        'next lets set variable to get interface properties for later use\n        Dim intproperties As IPInterfaceProperties = netadapter.GetIPProperties()\n        'now add the network adaptername to the list\n        ListView1.Items.Add(netadapter.Name)\n\n\n        'now get the mac address of this interface\n        Dim paddress As PhysicalAddress = netadapter.GetPhysicalAddress()\n        Dim addbyte As Byte() = paddress.GetAddressBytes()\n        Dim macaddress As String = \"\"\n\n\n        'now loop through the bytes value and change it to hex\n        For i = 0 To addbyte.Length - 1\n            macaddress &= addbyte(i).ToString(\"X2\") 'change string to hex\n            'now let separate hex value with -except last one\n            If i <> addbyte.Length - 1 Then\n                macaddress &= \"-\"\n            End If\n\n        Next\n\n        'ount item in listview\n        Dim icount As Integer = ListView1.Items.Count\n\n        'use try\n        Try\n            With ListView1.Items(icount - 1).SubItems\n                .Add(macaddress)\n                '.Add(intproperties.UnicastAddresses(2).Address.ToString)\n                .Add(intproperties.AnycastAddresses(2).Address.ToString)\n\n                .Add(intproperties.UnicastAddresses(2).IPv4Mask.ToString)\n\n                .Add(intproperties.UnicastAddresses(0).Address.ToString)\n                .Add(intproperties.UnicastAddresses(1).Address.ToString)\n                '.Add( IPAddress.Parse(a).AddressFamily == AddressFamily.InterNetwork )\n            End With\n\n        Catch ex As Exception\n\n        End Try\n\n    Next\n    'now lets make auto size columns\n    ListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)\nEnd Sub\n Is there a better way to do this? list the only connected network adapter with IPv4 address. i already try WMI code editor but not sure which one to take for generate adapter name and IP address",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "2364790",
+      "User Name" : "user2364790",
+      "User Reputation" : "17",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "26032931",
+    "Answer Body" : "Use netadapter.OperationalStatus == OperationalStatus.Up to select the adapters that are active. (Sorry, that's C#, but the equivalent in VB should be easy.)",
+    "User" : {
+      "User Id" : "3062923",
+      "User Name" : "JohnT",
+      "User Reputation" : "26",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "26032931",
+    "Answer Body" : "Here's the solution I found. For Each netadapter As NetworkInterface In nics\n        'next lets set variable to get interface properties for later use\n        Dim intproperties As IPInterfaceProperties = netadapter.GetIPProperties()\n\n        'get first number of IP address.\n        Dim firstnum As String\n        Try\n            firstnum = intproperties.UnicastAddresses(1).Address.ToString()\n            firstnum = firstnum.Substring(0, firstnum.IndexOf(\".\"))\n        Catch ex As Exception\n            'If not IPv4 then\n            firstnum = \"NOPE\"\n        End Try\n\n        'check if first number if valid IPv4 address\n        If Val(firstnum) > 0 And Not Val(firstnum) = 169 And Not Val(firstnum) = 127 Then\n\n\n            'now add the network adaptername to the list\n            ListView1.Items.Add(netadapter.Name)",
+    "User" : {
+      "User Id" : "5547846",
+      "User Name" : "Carver Felcut",
+      "User Reputation" : "1",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36277761",
+    "Question Title" : "Do NATs rewrite ipAddress in payload of ICMP packets?",
+    "Question Body" : "Today when I test running a \"tracert\" command (windows + Wireshark) I see a outbound ICMP_ECHO_REQUEST packet that has sourceIP as \"192.168.1.55\" - my local IPAddress. It is followed by a ICMP_TTL_EXCEEDED packet sent from an internet wild host as reply to me that my EchoRequest packet died halfway. The reply-packet \"quotes\" first 28 byte of my \"original packet\" in the payload section where I can see the sourceIP staying \"192.168.1.55\" - my local ipAddress. A question immediately pops out of my head: \"The NAT did not rewrite the \"local\" sourceIP in IP-Header or did him rewrite it in payload \"? AFAIK in case of TCP or UDP packets, the NAT will replace the local \"ip:port\" with external \"IP:PORT\" in the IP-Header of the packet. So I am wondering: 1 - Whether NATs are replacing them in the payload section of packets? (Or just do that with ICMP packet of type TTL_Exceeded only?) 2 - If 1 is not true, is this a kind of security threat?",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "804799",
+      "User Name" : "vantrung -cuncon",
+      "User Reputation" : "2700",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "@vantrung-cuncon, If you have to write some code to solve your problem, and not just configure settings, then it belongs on StackOverflow.", "@Jcl Do you mean \"coding\" & \"algorithm\" while saying \"programming\" ?", "@vantrung-cuncon if it is a programming-related question (network programming is ok), then it goes here... but this question isn't related to programming at all", "@jbm if wrong place was the reason, I've just posted my question to serverfault. But I need to tell you this: 1 of my networking question has been moved from network.stackexchange to stackoverflow so now I'm not sure about where to post networking questions. Thanks", "I did not, nor plan to, \" vote to close the question\", yet yes, this may happen, because \"You would better ask this on serverfault.com or networkengineering.stackexchange.com. You can use your stackoverflow.com account for this, linking it to these communities too. Go to the site, upper right click on \"join this community\". The historical root of the stackechange network, SO (StackOverflow), is for programming questions.\"", "@jbm I understand the background of IP/TCP/UDP/ICMP protocol. Im just wondering the behaviors of NATs regarding ICMP's payload.", "ICMP is a protocol on its own, that operate at the same level as (but is different from) IP. Noticeably, it has no src/dst ports, which is a base for NATing. Also, you might want to look at: superuser.com/questions/135094/…", "Who is going to vote to close the question please leave a comment which explains why?" ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "27420500",
+    "Question Title" : "How to know the IP address for interfaces in C using IPv6",
+    "Question Body" : "Suppose I'd like a list of all IP addresses on my Linux machine by their interface names, using both IPv6 and IPv4. The best advice I could find is to use getifaddrs() that should support IPv6, similarly to a post from here. However, the getifaddrs() uses struct ifaddrs which uses struct sockaddr which is incompatible with IPv6. Instead, it should be a pointer to a union with struct in6_addr as well. How is this handled? How does getifaddrs() support IPv6? Is the documentation obsolete?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "4349164",
+      "User Name" : "eyalore",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "sockaddr should be used as the pointer whilst sockaddr_storage should be used for the storage and cast or made a union with sockaddr_in and sockaddr_in6.", "No, sockaddr is platform-independent. IPv6 does require different structures than IPv4 (sockaddr_in6 instead of sockaddr_in). But both of those are compatible with sockaddr.", "Those are indeed confusing. I unserstood from here that 'sockaddr' is very platform dependent, and that generally ipv6 requires distinct structures", "What makes you think sockaddr is incompatible with IPv6? Are you confusing it with sockaddr_in?" ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "27420500",
+    "Answer Body" : "My C is terribly rusty, and structs with members containing unions (like struct sockaddr_in6) no longer fit in my brain, so in the best cut and paste traditions I adapted chrisaycock's answer to use getnameinfo() instead, with some help from the getifaddrs() man page (which has a better example): #define _GNU_SOURCE    # required for NI_NUMERICHOST\n#include <arpa/inet.h>\n#include <sys/socket.h>\n#include <ifaddrs.h>\n#include <stdio.h>\n#include <netdb.h>\n\nint main ()\n{\n  struct ifaddrs *ifap, *ifa;\n  struct sockaddr_in6 *sa;\n  char addr[INET6_ADDRSTRLEN];\n\n  getifaddrs (&ifap);\n  for (ifa = ifap; ifa; ifa = ifa->ifa_next) {\n    if (ifa->ifa_addr->sa_family==AF_INET6) {\n      sa = (struct sockaddr_in6 *) ifa->ifa_addr;\n      getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6), addr,\n                  sizeof(addr), NULL, 0, NI_NUMERICHOST);\n      printf(\"Interface: %s\\tAddress: %s\\n\", ifa->ifa_name, addr);\n    }\n  }\n\n  freeifaddrs(ifap);\n  return 0;\n}\n The output on my system: Interface: lo   Address: ::1\nInterface: br0  Address: fdbf:e684:d5fb:6:6e62:6dff:fed1:dfad\nInterface: br0  Address: 2001:db8:1f80:81c6:6e62:6dff:fed1:dfad\nInterface: br0  Address: fe80::6e62:6dff:fed1:dfad%br0\nInterface: virbr1       Address: fe80::5054:ff:fece:bfec%virbr1\nInterface: virbr0       Address: fe80::5054:ff:fef9:c92e%virbr0\nInterface: virbr2       Address: fe80::5054:ff:fedd:ea18%virbr2\nInterface: vnet0        Address: fe80::fc54:ff:fe90:de19%vnet0\nInterface: vnet1        Address: fe80::fc54:ff:fede:b69c%vnet1\n Remember to add error checking to everything; it has been omitted from this example.",
+    "User" : {
+      "User Id" : "1068283",
+      "User Name" : "Michael Hampton",
+      "User Reputation" : "4182",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36213185",
+    "Question Title" : "UDP over IPv4 Expected Packet Transmission",
+    "Question Body" : "I'm not quite understanding expected total of packets sent and was wondering if i'm on the right path. I have 4 computers, A, B, C, D and they relay the message from A, so A->B->C->D and I don't count transmitting back from D. And they have a packet loss of 3%. UDP on ipv4 and message must arrive for the expected destination Say if i was to send 1000mb along a 350 byte payload = 1000mb = 1024*1024*1000 bytes = 1048576000 bytes / 350 = 2995931.4286 packets sent If i also had a 3% packet loss for every 100 packets 2995931.42857 * .03/100 = 8987.7943 packet loss Does that mean i'd compute, 2995931.42857 + 8987.7943 * 3 for each transmission by each computer for extra resubmitted packets? -Thanks heaps",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "2416223",
+      "User Name" : "Jackson Collins",
+      "User Reputation" : "44",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "From engineering point of view, yes you can stop at 1 packet, if you are doing serious research, it has to be derivative.", "Retransmission included, but how would you know when to stop? When you hit one packet?", "UDP does not retry, so unless your application retransmit then the calculation does not make sense, if that's the case, failure rate affect the retransmission as well, like 10,000 packet transmitted, 300 will be re-transmitted, however, within those 300 packets, there will be 9 re-transmitted, and so on." ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "1059526",
+    "Question Title" : "Get IPv4 addresses from Dns.GetHostEntry()",
+    "Question Body" : "I've got some code here that works great on IPv4 machines, but on our build server (an IPv6) it fails. In a nutshell: IPHostEntry ipHostEntry = Dns.GetHostEntry(string.Empty);\n The documentation for GetHostEntry says that passing in string.Empty will get you the IPv4 address of the localhost. This is what I want. The problem is that it's returning the string \"::1:\" on our IPv6 machine, which I believe is the IPv6 address. Pinging the machine from any other IPv4 machine gives a good IPv4 address... and doing a \"ping -4 machinename\" from itself gives the correct IPv4 address.... but pinging it regularly from itself gives \"::1:\". How can I get the IPv4 for this machine, from itself?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "81205",
+      "User Name" : "zombat",
+      "User Reputation" : "57987",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "1059526",
+    "Answer Body" : "IPHostEntry ipHostInfo = Dns.GetHostEntry(serverName);\nIPAddress ipAddress = ipHostInfo.AddressList\n    .FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);",
+    "User" : {
+      "User Id" : "3473718",
+      "User Name" : "Milan Švec",
+      "User Reputation" : "298",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1059526",
+    "Answer Body" : "IPv6 lblIP.Text = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName).AddressList(0).ToString() IPv4 lblIP.Text = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName).AddressList(1).ToString()",
+    "User" : {
+      "User Id" : "4585783",
+      "User Name" : "not nor",
+      "User Reputation" : "1",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ "System.Net.Dns.GetHostName is a method, not a property." ]
+  }, {
+    "Answer Id" : "1059526",
+    "Answer Body" : "public static string GetIPAddress(string hostname)\n    {\n        IPHostEntry host;\n        host = Dns.GetHostEntry(hostname);\n\n        foreach (IPAddress ip in host.AddressList)\n        {\n            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)\n            {\n                //System.Diagnostics.Debug.WriteLine(\"LocalIPadress: \" + ip);\n                return ip.ToString();\n            }\n        }\n        return string.Empty;\n    }",
+    "User" : {
+      "User Id" : "4534844",
+      "User Name" : "Ronald van Zoelen",
+      "User Reputation" : "11",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1059526",
+    "Answer Body" : "To find all valid address list this is the code I have used public static IEnumerable<string> GetAddresses()\n{\n      var host = Dns.GetHostEntry(Dns.GetHostName());\n      return (from ip in host.AddressList where ip.AddressFamily == AddressFamily.lo select ip.ToString()).ToList();\n}",
+    "User" : {
+      "User Id" : "485008",
+      "User Name" : "Ravi Shankar",
+      "User Reputation" : "77",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1059526",
+    "Answer Body" : "public Form1()\n    {\n        InitializeComponent();\n\n        string myHost = System.Net.Dns.GetHostName();\n        string myIP = null;\n\n        for (int i = 0; i <= System.Net.Dns.GetHostEntry(myHost).AddressList.Length - 1; i++)\n        {\n            if (System.Net.Dns.GetHostEntry(myHost).AddressList[i].IsIPv6LinkLocal == false)\n            {\n                myIP = System.Net.Dns.GetHostEntry(myHost).AddressList[i].ToString();\n            }\n        }\n    }\n Declare myIP and myHost in public Variable and use in any function of the form.",
+    "User" : {
+      "User Id" : "476676",
+      "User Name" : "Naveen Desosha",
+      "User Reputation" : "61",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1059526",
+    "Answer Body" : "To find all local IPv4 addresses: IPAddress[] ipv4Addresses = Array.FindAll(\n    Dns.GetHostEntry(string.Empty).AddressList,\n    a => a.AddressFamily == AddressFamily.InterNetwork);\n or use Array.Find or Array.FindLast if you just want one.",
+    "User" : {
+      "User Id" : "236365",
+      "User Name" : "Gary",
+      "User Reputation" : "1445",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "@lukazoid ita not. I might have meant lambda expression", "@NahumLitvin But this isn't linq?", "+1 for using linq" ]
+  }, {
+    "Answer Id" : "1059526",
+    "Answer Body" : "Have you looked at all the addresses in the return, discard the ones of family InterNetworkV6 and retain only the IPv4 ones?",
+    "User" : {
+      "User Id" : "105929",
+      "User Name" : "Remus Rusanu",
+      "User Reputation" : "195651",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "It's due to Direct Access on my corporate PC. Disregard.", "@subkamran please ask that as a separate question, not as a comment", "My call is only returning ipv6, no ipv4 entries. If I do Resolve-DnsName -Type A in PowerShell I get the IPv4 back (default type it returns in this case is AAAA).", "+1: Thanks - I was about to ask this same question :)", "Ahhhh... of course. A lightbulb moment. Thanks!" ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "36121213",
+    "Question Title" : "List of all possible IPv4 formats / encodings",
+    "Question Body" : "I'm building a tool that allows fetching user-supplied URLs, as well as following any HTTP redirects. I am securing the tool against being tricked into fetching anything from private network addresses (127.0.0.0/8, 10.0.0.0/8, 192.168.0.0/16, plus all the other reserved ranges). Note that I am already resolving all hostnames to IPs to catch DNS records pointing to these reserved IPs. I'll get to IPv6 later which will be a woozy; for the purpose of this post we'll focus on IPv4. To make the security foolproof, I need to be able to parse all possible formats/encodings of IPv4 addresses. Security does not exist if http://10.0.0.1/ is detected as private and rejected, but http://0x0A000001/ is allowed to pass. The formats I am aware of and handling: Quad: 10.0.0.1 (and 10.0.00.001, etc.) Decimal: 167772161 Octal Quad: 0012.0000.0000.0001 (and 012.0.00.1, etc.) Octal: 01200000001 Hex quad: 0x0A.0x00.0x00.0x01 Hex: 0x0A000001 I haven't found an HTTP client (including my language's functions) that seems to allow IPv4 in its binary form so am not explicitly handling it. Are they any other possible formats for an IPv4 address I need to be aware of? Thanks!",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "2609094",
+      "User Name" : "Nate",
+      "User Reputation" : "1073",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "@Nate If what you are writing is the parsing then you already know the IP address that results from the parse: simply reject the ones you don't want.", "@tfb What I'm writing is the parsing. What else is going to do it for me? gethostbyname() handles some including the octal, but it doesn't handle hex formats for example.", "Also this is off-topic on serverfault.", "Surely the answer to this is, rather than trying to second-guess whatever parses the URL, to intervene after it's parsed, when you know what the IP address is." ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "461742",
+    "Question Title" : "How to convert an IPv4 address into a integer in C#?",
+    "Question Body" : "I'm looking for a function that will convert a standard IPv4 address into an Integer. Bonus points available for a function that will do the opposite. Solution should be in C#.",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "383",
+      "User Name" : "GateKiller",
+      "User Reputation" : "25261",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "WARNING: the integers resulting from the accepted answer will be wrong, because IP addresses are in network order (big-endian), while ints are little-endian on most systems. So you must reverse the bytes before converting. See my answer for correct conversions. Also, even for IPv4, an int can't hold addresses bigger than 127.255.255.255, e.g. the broadcast address, so use a uint." ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "461742",
+    "Answer Body" : "var address = IPAddress.Parse(\"10.0.11.174\").GetAddressBytes();\nlong m_Address = ((address[3] << 24 | address[2] << 16 | address[1] << 8 | address[0]) & 0x0FFFFFFFF);",
+    "User" : {
+      "User Id" : "2288797",
+      "User Name" : "shzy2012",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "To convert from IPv4 to correct integer: IPAddress address = IPAddress.Parse(\"255.255.255.255\");\nbyte[] bytes = address.GetAddressBytes();\nArray.Reverse(bytes); // flip big-endian(network order) to little-endian\nuint intAddress = BitConverter.ToUInt32(bytes, 0);\n And to convert back: byte[] bytes = BitConverter.GetBytes(4294967295);\nArray.Reverse(bytes); // flip little-endian to big-endian(network order)\nstring ipAddress = new IPAddress(bytes).ToString();\n Explanation: IP addresses are in network order (big-endian), while ints are little-endian on Windows, so to get a correct value, you must reverse the bytes before converting. Also, even for IPv4, an int can't hold addresses bigger than 127.255.255.255, e.g. the broadcast address (255.255.255.255), so use a uint.",
+    "User" : {
+      "User Id" : "68080",
+      "User Name" : "Saeb Amini",
+      "User Reputation" : "7354",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "var ipAddress = \"10.101.5.56\";\n\nvar longAddress = long.Parse(string.Join(\"\", ipAddress.Split('.').Select(x => x.PadLeft(3, '0'))));\n\nConsole.WriteLine(longAddress);\n Output: 10101005056",
+    "User" : {
+      "User Id" : "384464",
+      "User Name" : "xagyg",
+      "User Reputation" : "5607",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "Assembled several of the above answers into an extension method that handles the Endianness of the machine and handles IPv4 addresses that were mapped to IPv6. public static class IPAddressExtensions\n{\n    /// <summary>\n    /// Converts IPv4 and IPv4 mapped to IPv6 addresses to an unsigned integer.\n    /// </summary>\n    /// <param name=\"address\">The address to conver</param>\n    /// <returns>An unsigned integer that represents an IPv4 address.</returns>\n    public static uint ToUint(this IPAddress address)\n    {\n        if (address.AddressFamily == AddressFamily.InterNetwork || address.IsIPv4MappedToIPv6)\n        {\n            var bytes = address.GetAddressBytes();\n            if (BitConverter.IsLittleEndian)\n                Array.Reverse(bytes);\n\n            return BitConverter.ToUInt32(bytes, 0);\n        }\n        throw new ArgumentOutOfRangeException(\"address\", \"Address must be IPv4 or IPv4 mapped to IPv6\");\n    }\n}\n Unit tests: [TestClass]\npublic class IPAddressExtensionsTests\n{\n    [TestMethod]\n    public void SimpleIp1()\n    {\n        var ip = IPAddress.Parse(\"0.0.0.15\");\n        uint expected = GetExpected(0, 0, 0, 15);\n        Assert.AreEqual(expected, ip.ToUint());\n    }\n    [TestMethod]\n    public void SimpleIp2()\n    {\n        var ip = IPAddress.Parse(\"0.0.1.15\");\n        uint expected = GetExpected(0, 0, 1, 15);\n        Assert.AreEqual(expected, ip.ToUint());\n    }\n    [TestMethod]\n    public void SimpleIpSix1()\n    {\n        var ip = IPAddress.Parse(\"0.0.0.15\").MapToIPv6();\n        uint expected = GetExpected(0, 0, 0, 15);\n        Assert.AreEqual(expected, ip.ToUint());\n    }\n    [TestMethod]\n    public void SimpleIpSix2()\n    {\n        var ip = IPAddress.Parse(\"0.0.1.15\").MapToIPv6();\n        uint expected = GetExpected(0, 0, 1, 15);\n        Assert.AreEqual(expected, ip.ToUint());\n    }\n    [TestMethod]\n    public void HighBits()\n    {\n        var ip = IPAddress.Parse(\"200.12.1.15\").MapToIPv6();\n        uint expected = GetExpected(200, 12, 1, 15);\n        Assert.AreEqual(expected, ip.ToUint());\n    }\n    uint GetExpected(uint a, uint b, uint c, uint d)\n    {\n        return\n            (a * 256u * 256u * 256u) +\n            (b * 256u * 256u) +\n            (c * 256u) +\n            (d);\n    }\n}",
+    "User" : {
+      "User Id" : "340568",
+      "User Name" : "Doug Clutter",
+      "User Reputation" : "1889",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "Assuming you have an IP Address in string format (eg. 254.254.254.254) string[] vals = inVal.Split('.');\nuint output = 0;\nfor (byte i = 0; i < vals.Length; i++) output += (uint)(byte.Parse(vals[i]) << 8 * (vals.GetUpperBound(0) - i));",
+    "User" : {
+      "User Id" : "3713429",
+      "User Name" : "Andrew",
+      "User Reputation" : "1",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "public static Int32 getLongIPAddress(string ipAddress)\n    {\n        return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(IPAddress.Parse(ipAddress).GetAddressBytes(), 0));\n    }\n The above example would be the way I go.. Only thing you might have to do is convert to a UInt32 for display purposes, or string purposes including using it as a long address in string form. Which is what is needed when using the IPAddress.Parse(String) function. Sigh.",
+    "User" : {
+      "User Id" : "1331672",
+      "User Name" : "Gerard ONeill",
+      "User Reputation" : "1064",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "The reverse of Davy Landman's function string IntToIp(int d)\n{\n  int v1 = d & 0xff;\n  int v2 = (d >> 8) & 0xff;\n  int v3 = (d >> 16) & 0xff;\n  int v4 = (d >> 24);\n  return v4 + \".\" + v3 + \".\" + v2 + \".\" + v1;\n}",
+    "User" : {
+      "User Id" : "3125881",
+      "User Name" : "Aris Schizas",
+      "User Reputation" : "21",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "could you explain more about this?" ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "public bool TryParseIPv4Address(string value, out uint result)\n{\n    IPAddress ipAddress;\n\n    if (!IPAddress.TryParse(value, out ipAddress) ||\n        (ipAddress.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork))\n    {\n        result = 0;\n        return false;\n    }\n\n    result = BitConverter.ToUInt32(ipAddress.GetAddressBytes().Reverse().ToArray(), 0);\n    return true;\n}",
+    "User" : {
+      "User Id" : "1189087",
+      "User Name" : "xadd",
+      "User Reputation" : "11",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "My question was closed, I have no idea why . The accepted answer here is not the same as what I need. This gives me the correct integer value for an IP.. public double IPAddressToNumber(string IPaddress)\n{\n    int i;\n    string [] arrDec;\n    double num = 0;\n    if (IPaddress == \"\")\n    {\n        return 0;\n    }\n    else\n    {\n        arrDec = IPaddress.Split('.');\n        for(i = arrDec.Length - 1; i >= 0 ; i = i -1)\n            {\n                num += ((int.Parse(arrDec[i])%256) * Math.Pow(256 ,(3 - i )));\n            }\n        return num;\n    }\n}",
+    "User" : {
+      "User Id" : "42434",
+      "User Name" : "Coolcoder",
+      "User Reputation" : "1870",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Depends on what you want to use the number for. You cant use the other conversion for doing a >= and <= query to find an IP..", "As long as you can do the conversion both way, I don't see why the output number has to be correct just as long as it's consistent." ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "As noone posted the code that uses BitConverter and actually checks the endianness, here goes: byte[] ip = address.Split('.').Select(s => Byte.Parse(s)).ToArray();\nif (BitConverter.IsLittleEndian) {\n  Array.Reverse(ip);\n}\nint num = BitConverter.ToInt32(ip, 0);\n and back: byte[] ip = BitConverter.GetBytes(num);\nif (BitConverter.IsLittleEndian) {\n  Array.Reverse(ip);\n}\nstring address = String.Join(\".\", ip.Select(n => n.ToString()));",
+    "User" : {
+      "User Id" : "69083",
+      "User Name" : "Guffa",
+      "User Reputation" : "419057",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "@RubberDuck: That's not an uint, that's the text representation of an uint.", "Uhhh... Yes you can. 1089059683", "@RubberDuck: In the form of an uint you can't type it in the address bar either, you first have to convert it into text form to do that. Just because using the simplest form of turning an int into text doesn't produce a working IP address is not a good argument for not using it.", "A uint is a better representation IMO. A signed int needs a bit for the sign, so you lose addresses at the very top of the range. Yes, it can hold the same data, but it will be output as a negative number, which isn't a valid IP if you type it in the address bar.", "@RubberDuck: You only need to use an uint if you want the 32 bits of data as an unsigned number, an int is capable of holding the same information. If you want to store it in a database an int is better suited, you need a bigint to be able to store it in the unsigned form.", "You need to use a uint, but this is the most correct answer here." ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "With the UInt32 in the proper little-endian format, here are two simple conversion functions: public uint GetIpAsUInt32(string ipString)\n{\n    IPAddress address = IPAddress.Parse(ipString);\n\n    byte[] ipBytes = address.GetAddressBytes();\n\n    Array.Reverse(ipBytes);\n\n    return BitConverter.ToUInt32(ipBytes, 0);\n}\n\npublic string GetIpAsString(uint ipVal)\n{\n    byte[] ipBytes = BitConverter.GetBytes(ipVal);\n\n    Array.Reverse(ipBytes);\n\n    return new IPAddress(ipBytes).ToString();\n}",
+    "User" : {
+      "User Id" : "1387518",
+      "User Name" : "DanM7",
+      "User Reputation" : "1503",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "I have encountered some problems with the described solutions, when facing IP Adresses with a very large value. The result would be, that the byte[0] * 16777216 thingy would overflow and become a negative int value. what fixed it for me, is the a simple type casting operation. public static long ConvertIPToLong(string ipAddress)\n{\n    System.Net.IPAddress ip;\n\n    if (System.Net.IPAddress.TryParse(ipAddress, out ip))\n    {\n        byte[] bytes = ip.GetAddressBytes();\n\n        return (long)\n            (\n            16777216 * (long)bytes[0] +\n            65536 * (long)bytes[1] +\n            256 * (long)bytes[2] +\n            (long)bytes[3]\n            )\n            ;\n    }\n    else\n        return 0;\n}",
+    "User" : {
+      "User Id" : "493726",
+      "User Name" : "Qiong Wu",
+      "User Reputation" : "162",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "@Davy Ladman your solution with shift are corrent but only for ip starting with number less or equal 99, infact first octect must be cast up to long. Anyway convert back with long type is quite difficult because store 64 bit (not 32 for Ip) and fill 4 bytes with zeroes static uint ToInt(string addr)\n{\n   return BitConverter.ToUInt32(IPAddress.Parse(addr).GetAddressBytes(), 0);\n}\n\nstatic string ToAddr(uint address)\n{\n    return new IPAddress(address).ToString();\n}\n Enjoy! Massimo",
+    "User" : {
+      "User Id" : "662923",
+      "User Name" : "Massimo",
+      "User Reputation" : "9",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "// IPv4\nint intAddress = BitConverter.ToInt32(IPAddress.Parse(address).GetAddressBytes(), 0);\nstring ipAddress = new IPAddress(BitConverter.GetBytes(intAddress)).ToString();\n EDIT: As noted in other answers, when running this snippet on a little endian machine, it'll give out the bytes in the reverse order as defined by the standard. However, the question asks for a mapping between an integer and an IP address, not converting to the standard integer format. To do so, you have to consider the endian-ness of the machine you're running on.",
+    "User" : {
+      "User Id" : "33708",
+      "User Name" : "Mehrdad Afshari",
+      "User Reputation" : "262449",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "The accepted answer doesn't work. For example, 106.39.255.255 returns a negative number. @Rubens Farias' method down below works for me every time. Also, using BitConverter.ToUInt32 as suggested above doesn't work either for some IPs. goo.gl/q4W0ld", "I had to use BitConverter.ToUInt32 or some IPs were failing.", "Thank you! I was using IPAddress.address but now with your solution I don't have to use the obsoleted property.", "I assumed he means IPv4, as an IPv6 is not likely to fit in a 32 bit integer. I specifically mentioned it in a comment for the code.", "The IPv6 colon-hexadecimal format returned by ToString() is compressed (variable length), so two strings can't be compared directly (see RFCs 2373 and 2732). Better to store/compare GetBytes() results.", "Thank you very much :-)" ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "I think this is wrong: \"65536\" ==> 0.0.255.255\" Should be: \"65535\" ==> 0.0.255.255\" or \"65536\" ==> 0.1.0.0\"",
+    "User" : {
+      "User Id" : "0",
+      "User Name" : "Marian",
+      "User Reputation" : "0",
+      "User Type" : "DOES_NOT_EXIST"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "Try this ones: private int IpToInt32(string ipAddress)\n{\n   return BitConverter.ToInt32(IPAddress.Parse(ipAddress).GetAddressBytes().Reverse().ToArray(), 0);\n}\n\nprivate string Int32ToIp(int ipAddress)\n{\n   return new IPAddress(BitConverter.GetBytes(ipAddress).Reverse().ToArray()).ToString();\n}",
+    "User" : {
+      "User Id" : "113794",
+      "User Name" : "Rubens Farias",
+      "User Reputation" : "39893",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "This method yields negative numbers for certain IPs (e.g. 140.117.0.0)", "Reverse() is extension method of IEnumerable. Above code is perfectly ok.", "Reverse() returns void, so you cannot call ToArray() on it (for future readers). Instead, assign a value to the reversed bytes, then you can call ToArray()." ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "here's a solution that I worked out today (should've googled first!):     private static string IpToDecimal2(string ipAddress)\n    {\n        // need a shift counter\n        int shift = 3;\n\n        // loop through the octets and compute the decimal version\n        var octets = ipAddress.Split('.').Select(p => long.Parse(p));\n        return octets.Aggregate(0L, (total, octet) => (total + (octet << (shift-- * 8)))).ToString();\n    }\n i'm using LINQ, lambda and some of the extensions on generics, so while it produces the same result it uses some of the new language features and you can do it in three lines of code. i have the explanation on my blog if you're interested. cheers, -jc",
+    "User" : {
+      "User Id" : "0",
+      "User Name" : "James Chambers",
+      "User Reputation" : "0",
+      "User Type" : "DOES_NOT_EXIST"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "Take a look at some of the crazy parsing examples in .Net's IPAddress.Parse: (MSDN) \"65536\" ==> 0.0.255.255 \"20.2\" ==> 20.0.0.2 \"20.65535\" ==> 20.0.255.255 \"128.1.2\" ==> 128.1.0.2",
+    "User" : {
+      "User Id" : "34824",
+      "User Name" : "abelenky",
+      "User Reputation" : "35509",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "This isn't really an answer. Why not put it as a comment on one of the top answers?" ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "32-bit unsigned integers are IPv4 addresses. Meanwhile, the IPAddress.Address property, while deprecated, is an Int64 that returns the unsigned 32-bit value of the IPv4 address (the catch is, it's in network byte order, so you need to swap it around). For example, my local google.com is at 64.233.187.99. That's equivalent to: 64*2^24 + 233*2^16 + 187*2^8 + 99\n= 1089059683\n And indeed, http://1089059683/ works as expected (at least in Windows, tested with IE, Firefox and Chrome; doesn't work on iPhone though). Here's a test program to show both conversions, including the network/host byte swapping: using System;\nusing System.Net;\n\nclass App\n{\n    static long ToInt(string addr)\n    {\n        // careful of sign extension: convert to uint first;\n        // unsigned NetworkToHostOrder ought to be provided.\n        return (long) (uint) IPAddress.NetworkToHostOrder(\n             (int) IPAddress.Parse(addr).Address);\n    }\n\n    static string ToAddr(long address)\n    {\n        return IPAddress.Parse(address.ToString()).ToString();\n        // This also works:\n        // return new IPAddress((uint) IPAddress.HostToNetworkOrder(\n        //    (int) address)).ToString();\n    }\n\n    static void Main()\n    {\n        Console.WriteLine(ToInt(\"64.233.187.99\"));\n        Console.WriteLine(ToAddr(1089059683));\n    }\n}",
+    "User" : {
+      "User Id" : "3712",
+      "User Name" : "Barry Kelly",
+      "User Reputation" : "33094",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "That's an architectural decision. It has it's pros and cons, and comments are not the best location to discussion that specific issue.", "@ErikPhilips Does that matter if you only use IPv4?", "IPAddress.Address is obsolete as of .Net 4.0.", "for fun: you can also do 0xAABBCCDD ie hex addresses too ;)", "Confirmed in Opera 11 on Ubuntu Linux 10.04: it converts the int back to the familiar w.x.y.z form, and It Works.", "+! with the http://[int] I've never seen that! Nifty" ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "@Barry Kelly and @Andrew Hare, actually, I don't think multiplying is the most clear way to do this (alltough correct). An Int32 \"formatted\" IP address can be seen as the following structure [StructLayout(LayoutKind.Sequential, Pack = 1)] \nstruct IPv4Address\n{\n   public Byte A;\n   public Byte B;\n   public Byte C;\n   public Byte D;\n} \n// to actually cast it from or to an int32 I think you \n// need to reverse the fields due to little endian\n So to convert the ip address 64.233.187.99 you could do: (64  = 0x40) << 24 == 0x40000000\n(233 = 0xE9) << 16 == 0x00E90000\n(187 = 0xBB) << 8  == 0x0000BB00\n(99  = 0x63)       == 0x00000063\n                      ---------- =|\n                      0x40E9BB63\n so you could add them up using + or you could binairy or them together. Resulting in 0x40E9BB63 which is 1089059683. (In my opinion looking in hex it's much easier to see the bytes) So you could write the function as: int ipToInt(int first, int second, \n    int third, int fourth)\n{\n    return (first << 24) | (second << 16) | (third << 8) | (fourth);\n}",
+    "User" : {
+      "User Id" : "11098",
+      "User Name" : "Davy Landman",
+      "User Reputation" : "10751",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Instead of bit shifting, you can use LayoutKind.Explicit and FieldOffset to reverse the order in which the bytes are stored. Of course, that only works for little endian architecture. Example on github.", "@Ape-inago multiplications by constant powers of two are normally optimized into bit shifts, fwiw.", "I believe that ip's were speced that way to specifically allow for such behavior... bit shifts are much more efficient on most microprocessors than muls and adds." ]
+  }, {
+    "Answer Id" : "461742",
+    "Answer Body" : "If you were interested in the function not just the answer here is how it is done: int ipToInt(int first, int second, \n    int third, int fourth)\n{\n    return Convert.ToInt32((first * Math.Pow(256, 3))\n        + (second * Math.Pow(256, 2)) + (third * 256) + fourth);\n}\n with first through fourth being the segments of the IPv4 address.",
+    "User" : {
+      "User Id" : "34211",
+      "User Name" : "Andrew Hare",
+      "User Reputation" : "201632",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "This will throw an overflow exception if first is > 127. Davy Landman's answer is the best way to do this.", "I think it would be more clear if you'd used shift instead of Math.Pow." ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "35986861",
+    "Question Title" : "Specific attacks on mobile ipv4 and ipv6 protocols",
+    "Question Body" : "I tired searching for attack done on ipv4 and ipv6, but was unable to find any. I found attacks like spoofing, man in the middle and so on but i was looking into attacks which has made extensive use of and exploited spoofing, man in the middle etc.",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "4867249",
+      "User Name" : "Naveen",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "This question should be asked on networkengineering.stackexchange.com or serverfault.com", "From the help center: \"Questions asking us to recommend or find a book, tool, software library, tutorial or other off-site resource are off-topic for Stack Overflow as they tend to attract opinionated answers and spam. Instead, describe the problem and what has been done so far to solve it.\"" ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "35761982",
+    "Question Title" : "Fastest way to check IP address version",
+    "Question Body" : "I have a large set of strings which I already know it holds an IP address and I want to determine if it's IPv4 or IPv6. Currently I'm checking whether the string contains a colon: version = 4\nif ':' in ip_string:\n    version = 6\n Is there a faster way to determine the IP version, given that we already know it's an IP address. Is there any possibility that the above simple check can return the wrong result (for example is it possible to have an IPv6 address without a colon)?",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "260108",
+      "User Name" : "Vasilis",
+      "User Reputation" : "668",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "@MatthiasWimmer, you could be right. My background is enterprise networking, and the big vendors have single commands for these things, but separate configuration commands. For instance, you can use ping for IPv4, IPX, IPv6, etc. on Cisco devices. It figures out which to use by the address.", "@RonMaupin Thanks for the information. I didn't know that. Havn't used Windows for a long time. Interesting point of view anyway. For me it seems normal to have different tools as what the tools are doing is quite different. I guess it's the Unix philosophy of a tool doing only one thing but doing that right.", "@MatthiasWimmer, You only use the tracert and ping commands in Windows for either IPv4 or IPv6. Also, most enterprise-grade network equipment uses traceroute and ping for both. I always found it disconcerting that you need to specifically distinguish between these sorts of commands on some OSes. Heck, if Microsoft can figure it out, surely the Linux guys can, too. I would have thought it would be the other way around where the smart Linux programmers had the single commands, and you had to use separate commands on Windows because Microsoft couldn't figure it out.", "@Vasilis Are there any operating systems where you don't use different tools for tracerouting IPv6 and IPv4 paths!? When you are tracerouting an IPv4 path you always get (only) IPv4 addresses. And when you are tracrouting an IPv6 path you always get (only) IPv6 addresses. The routing between these two internet protocols is separated from each other, you will always only have the one or the other.", "@MatthiasWimmer that's interesting, can such an address appear in a traceroute?", "IPv6 addresses will always contain a colon, so no worries … but as what do you want to interpret the following address: “::ffff:192.0.2.123”? Actually this is the address of a IPv4 peer but in IPv6 notation. You get them, when you accept a IPv4 connection on a dual stack socket. When you just check for the colon your code would detect this as an IPv6 address.", "@Vasilis I don't disagree with that. Read this. Might lead to something or give you some more hints. stackoverflow.com/a/3462840/1832539", "@idjaw I'll try to do a benchmark using IPv4 regex and I'll update the question, although I'd imagine that regex should be slower", "Practice makes perfect. :)", "Off the top of my head, there is surely regex patterns to do a simple match to check for one or the other. The reason why I asked for your version, was because Python 3 has ipaddress which might be able to help you with your validation.", "@RonMaupin Thanks, I edited the question. English isn't my mother tongue and I mix some things up!", "@idjaw python 2.7, I also edited the tags to add it", "IPv6 addresses use colons :, not semicolons ;. A string representation of an IPv6 address will contain a colon.", "What version of Python are you using?" ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "35768959",
+    "Question Title" : "Options to connect remotely on local Database without Static IPV4 Address",
+    "Question Body" : "I have a SQL Server database located on my pc that I need to connect to remotely. I enabled the remote access and adjusted my firewall settings and used my public IP address. But when I turn my pc off and then on, my public IP will change so I have to get my new IP every time. I read the a solution is to get a static IPv4, but they are really expensive, so is there any other solution? Like a way I can get automatically the public IP of my pc from another pc?",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "6012503",
+      "User Name" : "bTestingTest",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "This is off-topic here. Google for \"dynamic DNS service\" and if you need more help try on superuser.com" ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "35768959",
+    "Answer Body" : "Public IP you get is for just identify your machine on global network and it changes dynamically from time to time. Static IP provides your machine to identify on global network. You can use your machine on LAN without static IP. And for internet you need machine with static IP or use global server as your machine.",
+    "User" : {
+      "User Id" : "6015428",
+      "User Name" : "Dev Kumar",
+      "User Reputation" : "72",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "35660388",
+    "Question Title" : "Get user ipv4 when client supports dual stack ipv4+ipv6",
+    "Question Body" : "So I have a NGINX web server with php and I need a way to force all clients to connect over IPv4 if they have Dual Stack IPv4+IPv6, and still be able to connect if they support only IPv6 OR only IPv4. How would I go about this? If not possible, is there anyway I could use java script to get a client's IPv4 (when connecting through IPv6) and post it to a url?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "5056569",
+      "User Name" : "Shadow",
+      "User Reputation" : "53",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "35660388",
+    "Answer Body" : "To get the user's IPv4 address let an embedded JavaScript script query something that is only accessible by IPv4. The script can check whether this request worked or not. … But you really should think many times is this is really what you want to do. Why not let your users use IPv6?",
+    "User" : {
+      "User Id" : "4453678",
+      "User Name" : "Matthias Wimmer",
+      "User Reputation" : "1116",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "35660388",
+    "Answer Body" : "You can't control client behaviour and pushing a client to a specific IP address is a bad idea. And clients might even change between protocols during a single session. Either because their mobile device connected to a different network or because how browsers implement the happy eyeballs standard. There are so many different technologies that are used to connect users to the IPv4 and IPv6 internets that second guessing what they choose is going to end in tears. Just make your service equally accessible over both protocols and implement it so that the protocol doesn't matter. That's the only sustainable solution.",
+    "User" : {
+      "User Id" : "813192",
+      "User Name" : "Sander Steffann",
+      "User Reputation" : "4306",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "35707715",
+    "Question Title" : "reading ipv6 instead of IPv4 in PHP",
+    "Question Body" : "When my PHP website reads my visitor IP address it shows in the IPv4 format. However when I go to a third party site (such as https://www.whatismyip.com/) my visitor address shows an IPv6 format. How do I get my PHP website to read/listen for/display the longer IPv6 format of the visitor IP address?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "2624129",
+      "User Name" : "Adam Wright",
+      "User Reputation" : "42",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "Thanks, Marc. That makes sense.", "because you connected to the \"mine\" site with ipv4 for whatever reason, and ipv6 with the whatismyip one. even if your server is configured for ipv6, all of the routers between you and that server have to support ipv6 as well, or be using an ipv6-over-v4 tunnel", "Here is what I see: imgur.com/ZGQtKv5", "So...someone visiting my site needs to be connected using ipv6. That makes sense. So why do I see two different IP addresses if I go to two sites (mine and whatismyip.com) and one gives me an ipv4 address and the other gives ipv6?", "To build on what @MarcB said, that's why its $_SERVER['REMOTE_ADDR'] instead of something like: $_SERVER['REMOTE_IPV4']", "you'd only get that if someone visited your site using ipv6. if they're connecting with ipv4, there will be NO ipv6 address to capture, and vice versa. just because YOU are capable of using ipv6 doesn't mean THEY are as well..." ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "35707715",
+    "Answer Body" : "If you get IPv4 addresses in IPv6 format this is probably because your webserver is listening for all requests (IPv4 and IPv6) on a single IPv6 interface. In that case when it reads the peer address it always gets an address in IPv6 format resulting IPv4 addresses to be mapped by prepending ::ffff: to the IPv4 address. So this is a configuration of your webserver and not of PHP. If you want to have the IPv4 addresses in that format, you can just prepend the IPv4 address with the fixed string \"::ffff:\". But why would you want to do this? Also you will always get the IP address for the IP version you used to connect to the server. So when you wonder why you don't get a real (not a mapped) IPv6 address it's probably because your browser connected to the server using IPv4. Either because your server is not able to listen to IPv6 requests or because its IPv6 connectivity is much slower than the IPv4 connectivity. In that case browsers often fall back to use IPv4 to provide better performance to their user.",
+    "User" : {
+      "User Id" : "4453678",
+      "User Name" : "Matthias Wimmer",
+      "User Reputation" : "1116",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Thank you! Holy cow. This is what I have been looking for: • \"update your server to support connections by IPv6\" • \"IPv6 connectivity\" • \"an AAAA entry for your domain in the DNS\". • \"To make sure dual users connect by IPv6 you can also use a subdomain only accessible via IPv6 and connect to this using a JavaScript snippet in your page.\" I knew there was a way.", "If you want the IPv6 addresses of your users: update your server to support connections by IPv6. Therefore you need IPv6 connectivity and an AAAA entry for your domain in the DNS. To make sure dual users connect by IPv6 you can also use a subdomain only accessible via IPv6 and connect to this using a JavaScript snippet in your page.", "I'm starting to understand. I thought if you were connected via IPv6, then all websites would be able to see the IPv6 address. Note: I wanted the true IPv6 if available because it would give me a more accurate reading of the end users location." ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "1098897",
+    "Question Title" : "What is the largest Safe UDP Packet Size on the Internet",
+    "Question Body" : "I've read a number of articles about UDP packet sizes but have been unable to come to a conclusion on whats correct. A number of services restrict the largest UDP packet to 512 bytes (like dns) Given the minimum MTU on the internet is 576 , and the size of the IPv4 header is 20 bytes, and the UDP header 8 bytes. This leaves 548 bytes available for user data Would I be able to use packets up to the size of 548 without packet fragmentation? Or is there something the creators of DNS knew about, and that why they restricted it to 512 bytes. Could I even go higher than 548 bytes safely?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "114272",
+      "User Name" : "docflabby",
+      "User Reputation" : "1009",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "You can't eliminate the possibility of fragmentation, but this doesn't make things less safe. If a fragment is dropped, it's the same as if the whole packet was dropped, which happens with UDP anyway. Unsafe would be if a packet exceeded the minimum size that routers were required to support, and was thus not guaranteed to be deliverable (versus guaranteed to be delivered). This is where the 512-byte figure comes in.", "shouldn't this be on ServerFault?", "Its a slighlty different question. I'm asking what is the largest packet I can send over the internet (without any knowledge of the other networks, or probing) which is not going to have fragmentation. Essentially the maximum safe size, that will work on evereything without having to worry about probing the connection.", "Duplicate, see stackoverflow.com/questions/900697/…" ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "1098897",
+    "Answer Body" : "The maximum safe UDP payload is 508 bytes. This is a packet size of 576, minus the maximum 60-byte IP header and the 8-byte UDP header. Any UDP payload this size or smaller is guaranteed to be deliverable over IP (though not guaranteed to be delivered). Anything larger is allowed to be outright dropped by any router for any reason. Except on an IPv6-only route, where the maximum payload is 1,212 bytes. As others have mentioned, additional protocol headers could be added in some circumstances. A more conservative value of around 300-400 bytes may be preferred instead. Any UDP packet may be fragmented. But this isn't too important, because losing a fragment has the same effect as losing an unfragmented packet: the entire packet is dropped. With UDP, this is going to happen either way. Interestingly, the maximum theoretical packet size is around 30 MB (1,500 ethernet MTU - 60 IP header x 65,536 maximum number of fragments), though the likelihood of it getting through would be infinitesimal. Sources: RFC 791, RFC 2460",
+    "User" : {
+      "User Id" : "3672465",
+      "User Name" : "Beejor",
+      "User Reputation" : "543",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "It is true that a typical IPv4 header is 20 bytes, and the UDP header is 8 bytes. However it is possible to include IP options which can increase the size of the IP header to as much as 60 bytes. In addition, sometimes it is necessary for intermediate nodes to encapsulate datagrams inside of another protocol such as IPsec (used for VPNs and the like) in order to route the packet to its destination. So if you do not know the MTU on your particular network path, it is best to leave a reasonable margin for other header information that you may not have anticipated. A 512-byte UDP payload is generally considered to do that, although even that does not leave quite enough space for a maximum size IP header.",
+    "User" : {
+      "User Id" : "112212",
+      "User Name" : "mark4o",
+      "User Reputation" : "30364",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Just to be clear: having a small size to avoid fragmentation does not make delivery of the packet \"Safe\", there are still an infinite amount of possibilities making delivery unreliable such as dog ate my network cable. That said; having less fragments makes delivery \"safer\" because if there were more than one and any one of those never made it - the whole packet (datagram) is dropped by UDP." ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "576 is the minimum maximum reassembly buffer size, i.e. each implementation must be able to reassemble packets of at least that size. See IETF RFC 1122 for details.",
+    "User" : {
+      "User Id" : "607811",
+      "User Name" : "user607811",
+      "User Reputation" : "281",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "This article describes maximum transmission unit (MTU) http://en.wikipedia.org/wiki/Maximum_transmission_unit. It states that IP hosts must be able to process 576 bytes for an IP packet. However, it notes the minumum is 68. RFC 791: \"Every internet module must be able to forward a datagram of 68 octets without further fragmentation. This is because an internet header may be up to 60 octets, and the minimum fragment is 8 octets.\" Thus, you can be fairly certain that most if not all packets received will be received at the generally accepted 512 bytes, but are not guaranteed that they will not be fragmented by other network layers; the article mentions tunneling as an example.",
+    "User" : {
+      "User Id" : "1812942",
+      "User Name" : "edW",
+      "User Reputation" : "369",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "IPv4 maximum reassembly buffer size is 576, IPv6 has it at 1500. Subtract header sizes from here. See UNIX Network Programming by W. Richard Stevens :)",
+    "User" : {
+      "User Id" : "106671",
+      "User Name" : "Nikolai N Fetissov",
+      "User Reputation" : "59691",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "Given that IPV6 has a size of 1500, I would assert that carriers would not provide separate paths for IPV4 and IPV6 (they are both IP with different types), forcing them to equipment for ipv4 that would be old, redundant, more costly to maintain and less reliable. It wouldn't make any sense. Besides, doing so might easily be considered providing preferential treatment for some traffic -- a no no under rules they probably don't care much about (unless they get caught). So 1472 should be safe for external use (though that doesn't mean an app like DNS that doesn't know about EDNS will accept it), and if you are talking internal nets, you can more likely know your network layout in which case jumbo packet sizes apply for for non-fragmented packets so for 4096 - 4068 bytes, and for intel's cards with 9014 byte buffers, a package size of ... wait...8086 bytes, would be the max...coincidence? snicker",
+    "User" : {
+      "User Id" : "1345497",
+      "User Name" : "Astara",
+      "User Reputation" : "144",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "@rogerdpack I think he means that because IPv4 and IPv6 are likely to share a lot of infrastructure, and that IPv6 is getting relatively popular, it should be safe to assume IPv6 limits (thus the 1500). How valid this reasoning is, however, I cannot tell.", "how are you calculating 1472? ethernet has an MTU of 1500, is that what you're referring to?" ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "The theoretical limit (on Windows) for the maximum size of a UDP packet is 65507 bytes. This is documented here: The correct maximum UDP message size is 65507, as determined by the following formula: 0xffff - (sizeof(IP Header) + sizeof(UDP Header)) = 65535-(20+8) = 65507 That being said, most protocols limit to a much smaller size - usually either 512 or occasionally 8192. You can often go higher than 548 safely if you are on a reliable network - but if you're broadcasting across the internet at large, the larger you go, the more likely you'll be to run into packet transmission problems and loss.",
+    "User" : {
+      "User Id" : "65358",
+      "User Name" : "Reed Copsey",
+      "User Reputation" : "377091",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Just because MS allows it doesn't mean it's always a good idea, since intermediate routers, etc. might be forced to fragment larger packet sizes (as you mentioned).", "A Microsoft link is not a normative reference. The RFCs are the normative reference; and what you have quoted applies to IPv4 only." ]
+  }, {
+    "Answer Id" : "1098897",
+    "Answer Body" : "512 is your best bet. It's used elsewhere and is a nice even number (half of 1024).",
+    "User" : {
+      "User Id" : "84651",
+      "User Name" : "Justin Niessner",
+      "User Reputation" : "171791",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "21671706",
+    "Question Title" : "Configure git to use IPv4 instead of IPv6 by default",
+    "Question Body" : "Checking the environment variables and also HTTP configuration options does not reveal something. Is there a way to do this?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "248082",
+      "User Name" : "nobeh",
+      "User Reputation" : "4920",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "Note: with git 2.8, you will be able to force ip4 on remote operations like fetch/push/clone. See my answer below" ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "21671706",
+    "Answer Body" : "With git 2.8 (March 2016), you can force git fetch/push/clone to use IPV4 or IPV6. See commit c915f11 (03 Feb 2016) by Eric Wong (ele828). (Merged by Junio C Hamano -- gitster -- in commit e84d5e9, 24 Feb 2016) connect & http: support -4 and -6 switches for remote operations Sometimes it is necessary to force IPv4-only or IPv6-only operation on networks where name lookups may return a non-routable address and stall remote operations.  -4, --ipv4:\n Use IPv4 addresses only, ignoring IPv6 addresses.  -6; --ipv6:\n Use IPv6 addresses only, ignoring IPv4 addresses.",
+    "User" : {
+      "User Id" : "6309",
+      "User Name" : "VonC",
+      "User Reputation" : "578175",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "@nobeh Yes, I just compiled and tested git 2.8-rc0 in my ubuntu. That seems to work just fine.", "It is indeed now listed here lkml.org/lkml/2016/2/26/1089. Thanks!" ]
+  }, {
+    "Answer Id" : "21671706",
+    "Answer Body" : "The more generic solution that also works for BSD too is edit the global /etc/ssh/ssh_config or per-user ~/.ssh/config and add/replace the entry: AddressFamily any \n with AddressFamily inet",
+    "User" : {
+      "User Id" : "1604441",
+      "User Name" : "Anthony C Howe",
+      "User Reputation" : "11",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "21671706",
+    "Answer Body" : "In 99% of cases, you should not be doing this. The real answer to the question is fix your IPv6 connection. Failing that, you can edit /etc/gai.conf to prefer IPv4 over IPv6. gai.conf modifies the behaviour of getaddrinfo(), which almost all IPv6–supporting applications use to resolve hostnames. Almost all systems ship with a copy of /etc/gai.conf within their glibc or libc package. If it is missing from /etc, usually I find a template copy is lurking somewhere within /usr/share/doc, for you to copy into /etc and modify accordingly.",
+    "User" : {
+      "User Id" : "10839",
+      "User Name" : "Jeremy Visser",
+      "User Reputation" : "2262",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "It's not MY connection that needs fixing, but the WIFI-du-jour that I happen to sit on..." ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "35625394",
+    "Question Title" : "How to get IPv4 address from wcf endpoint",
+    "Question Body" : "I am using below code to get ip adress of client but iam getting ipv6 address. How i can get ipv4 address. OperationContext context = OperationContext.Current;\nMessageProperties myprop = context.IncomingMessageProperties;\nRemoteEndpointMessageProperty endpoint = myprop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;\nstring ip = endpoint.Address;",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "1844634",
+      "User Name" : "user1844634",
+      "User Reputation" : "90",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "Possible duplicate of IPv4 remote address in WCF" ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "35593639",
+    "Question Title" : "ethernet ipv4 total length field does not match overall length of frame",
+    "Question Body" : "what will happen when Total Length field value in IPv4 header is smaller than length of ethernet frame? How will behave a device when receive that kind of frame? Device recognized frame as invalid due to inconsistency and rejected it? Second situation, max ethernet frame length is 1518 bytes - what will happen when I extend this frame and add additional 2 bytes. Assuming that IPv4 total length match length of extended frame. Thanks.",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "2921643",
+      "User Name" : "user2921643",
+      "User Reputation" : "11",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "35593639",
+    "Answer Body" : "The value of the Total Length field in an IPv4 header must be smaller than the frame length; anything else is a sign of corruption. The IPv4 packet is the payload of the frame, so the frame length is the total packet length plus the frame header and trailer.",
+    "User" : {
+      "User Id" : "3745413",
+      "User Name" : "Ron Maupin",
+      "User Reputation" : "1680",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "That depends on the layer-4 protocol. UDP has the equivalent of the Total Length field in its header, TCP, has a Data Offset field which points to the first data byte in its header, or, read another way, gives you the total header size. UDP should be OK, but TCP may read beyond its data into uninitialized memory. Some OSes and drivers may get heartburn over that, and it wouldn't match the Checksum field. Other layer-4 protocols do it differently. I'm not sure which layer-4 protocol you are using for encryption, but it would make sense to look at the layer-4 header for it.", "last short question: If I use Total Length field greater than IPv4 header + IPv4 data, how will behave a device when receive this kind of packet? Rejected it?", "Jumbo frames are valid if everything supports them. That is commonly used in data centers for server replication and such.", "Thanks for you answer. I appriciate your help. The problem appeared when I try to expand my frame. I'm implemanting high speed AES encryption system for 10Gbps Ethernet IPv4. The payload that I use to encryption starts after ETH and IPv4 header (256 + 16b), and AES output is always 128b and always valid. When the frame in ETH IPv4 standard has maximum length I can't expand my frame (the last 16b from AES module would exceed max frame length). Maybe I try use for output frame different ethertype, for example Jumbo Frame. What you think about that?", "Ethernet is not the only layer-2 protocol over which IP may be transmitted. The point of the layers is that each layer is independent of the others. When IP and ethernet were being developed, neither was a sure thing. IP was originally used over WAN circuits, and it wasn't at all clear that either protocol would survive. IP can be used with just about any layer-2 protocol, and each have different maximum lengths. For instance Wi-Fi has a different maximum length than ethernet. Frame Relay can have much larger maximum frame sizes than either of those.", "Ok, It's clear now. So, if I want to extend my frame I have to modify both Total Length and Checksum. I've got last question: max ETH frame length is 1518B but my max IP Total Length is 65535B. It's not clear for me how to create such packet which has more bytes in IP frame than in Ethernet (ETH contains IPv4 header and payload).", "First, you would need to get past the sender not doing that at all since it violates the standard. If it happens in transit, the CRC would probably be incorrect, and the packet is discarded. If you somehow manage to purposely create this situation, what happens will depend on the OS and drivers. This could cause a buffer-overflow, which would be considered an attack. Modern OSes and drivers will probably look for this exact situation and discard the packet.", "Ok, I understand. But, if the value of the Total Length field in an IPv4 header is smaller than length of ipv4 header and ipv4 data together, what will happen? Not including ETH header." ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "35588288",
+    "Question Title" : "Getting the local end point a connection will pass through",
+    "Question Body" : "I've found a few answers that involve a lot of lines of code and math with gateways and masks, and I have these two kludges: Endpoint via UdpClient: IPEndPoint lp = null;\nusing (UdpClient client = new UdpClient(\"192.168.1.2\", 62020))\n{\n    lp = client.Client.LocalEndPoint as IPEndPoint;\n}\n Endpoint via socket: Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);\nsock.Connect(new IPEndPoint(IPAddress.Parse(\"192.168.1.2\"), 62020));\nlp = sock.LocalEndPoint as IPEndPoint;\n Is there really nothing more straightforward? Seems like there should be a system.net.TraceRoute or something...",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "2091951",
+      "User Name" : "Denise Skidmore",
+      "User Reputation" : "1363",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "35543104",
+    "Question Title" : "Accessibility for servers with IPv6 and without IPv4",
+    "Question Body" : "I have a server that hosts many websites with Apache's vhosts function. Currently all sites have the same IP address as expected. I'm wondering if I can do something with IPv6 to give every website a unique IP address and stop IPv4 so that each website cant be seen as running on the same server. And how will the internet service provider handle requests to a website that does not have IPv4.",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "3710502",
+      "User Name" : "CProetti",
+      "User Reputation" : "13",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "You can do that with IPv6 for IPv6 clients since IPv6 can have many addresses on a single interface, but having different IPv4 addresses requires IPv4 addresses. IPv4 and IPv6 are different protocols, and translation is problematic. If a client only has IPv4 how would you expect the client to be able to connect to separate IPv6 addresses, or any IPv6 at all, since the client computer doesn't understand IPv6. An IPv4 client doing a trace or nslookup will still end up with the single IPv4 address. That doesn't excuse the fact that you don't have IPv6 today.", "The goal is to have every website with its own unique IP address; With the lost cost and availability of IPv6 I though that would be a good place to start. Do you know of any kind of service or configuration that will enable met to have many IPv6 pointing to the same webserver and can handle IPv4 requests. Id like the fact that all these websites are running on the same server to be hidden. If somebody were to tracert or nslookup they will not see the same IP from one website to another.", "If the users of the websites don't have IPv6, you are looking at something fairly complex. You should, at least by now, already be dual-stacking your web servers. You could then provide separate IPv6 addresses for those servers which have users who have IPv6, and you may be surprised at how large that number is." ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "5284147",
+    "Question Title" : "Validating IPv4 addresses with regexp",
+    "Question Body" : "I've been trying to get an efficient regex for IPv4 validation, but without much luck. It seemed at one point I had had it with (25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.|$)){4}, but it produces some strange results: [chris@helios bashscripts]$ grep --version\ngrep (GNU grep) 2.7\n\n\n[chris@helios bashscripts]$ grep -E '\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.|$)){4}\\b' <<< 192.168.1.1\n192.168.1.1\n[chris@helios bashscripts]$ grep -E '\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.|$)){4}\\b' <<< 192.168.1.255\n192.168.1.255\n[chris@helios bashscripts]$ grep -E '\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.|$)){4}\\b' <<< 192.168.255.255\n[chris@helios bashscripts]$ grep -E '\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?(\\.|$)){4}\\b' <<< 192.168.1.2555\n192.168.1.2555\n I did a search to see if this had already been asked and answered, but other answers appear to simply show how to determine 4 groups of 1-3 numbers, or do not work for me. Any ideas? Thanks!",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "551119",
+      "User Name" : "Matthieu Cartier",
+      "User Reputation" : "198",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "My variant online regexr.com/39hqf", "Don't forget that A, and A.B, and A.B.C are valid forms of IP address as well as A.B.C.D. Seriously. Try ping 2130706433 and ping 127.1 for a giggle." ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "5284147",
+    "Answer Body" : "-bash-3.2$ echo \"191.191.191.39\" | egrep '(^|[^0-9])((2([6-9]|5[0-5]?|[0-4][0-9]?)?|1([0-9][0-9]?)?|[3-9][0-9]?|0).){3}(2([6-9]|5[0-5]?|[0-4][0-9]?)?|1([0-9][0-9]?)?|[3-9][0-9]?|0)($|[^0-9])' 191.191.191.39 (This is a DFA that matches the entire addr space (including broadcasts, etc.) an nothing else.",
+    "User" : {
+      "User Id" : "5958398",
+      "User Name" : "Jonathzen",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "I was in search of something similar for IPv4 addresses - a regex that also stopped commonly used private ip addresses from being validated (192.168.x.y, 10.x.y.z, 172.16.x.y) so used negative look aheads to accomplish this: (?!(10\\.|172\\.(1[6-9]|2\\d|3[01])\\.|192\\.168\\.).*)(?!255\\.255\\.255\\.255)(25[0-5]|2[0-4]\\d|[1]\\d\\d|[1-9]\\d|[1-9])(\\.(25[0-5]|2[0-4]\\d|[1]\\d\\d|[1-9]\\d|\\d)){3}\n Debuggex Demo It may not be optimised for speed, but works well when only looking for 'real' internet addresses. Things that will (and should) fail: 0.1.2.3         (0.0.0.0/8 is reserved for some broadcasts)\n10.1.2.3        (10.0.0.0/8 is considered private)\n172.16.1.2      (172.16.0.0/12 is considered private)\n172.31.1.2      (same as previous, but near the end of that range)\n192.168.1.2     (192.168.0.0/16 is considered private)\n255.255.255.255 (reserved broadcast is not an IP)\n.2.3.4\n1.2.3.\n1.2.3.256\n1.2.256.4\n1.256.3.4\n256.2.3.4\n1.2.3.4.5\n1..3.4\n IPs that will (and should) work: 1.0.1.0         (China)\n8.8.8.8         (Google DNS in USA)\n100.1.2.3       (USA)\n172.15.1.2      (USA)\n172.32.1.2      (USA)\n192.167.1.2     (Italy)\n Provided in case anybody else is looking for validating 'Internet IP addresses not including the common private addresses'",
+    "User" : {
+      "User Id" : "4027462",
+      "User Name" : "PhillipHolmes",
+      "User Reputation" : "713",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ Accept: 127.0.0.1\n192.168.1.1\n192.168.1.255\n255.255.255.255\n0.0.0.0\n1.1.1.01\n Reject: 30.168.1.255.1\n127.1\n192.168.1.256\n-1.2.3.4\n3...3\n Try online with unit tests: https://www.debuggex.com/r/-EDZOqxTxhiTncN6/1",
+    "User" : {
+      "User Id" : "975169",
+      "User Name" : "Sllouyssgort",
+      "User Reputation" : "516",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "by the way ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}$ get same result debuggex.com/r/mz_-0dEm3wseIKqK, pretty similar with @Mark Byers answer", "this regexp 1.1.1.01 consider as VALID IPv4 address. Online unit tests debuggex.com/r/-EDZOqxTxhiTncN6/1", "What about 1.1.1.01? Is it considered a valid IPv4 address? Thanks.", "I test it on regexr.com/39kqr, and 3...3 rejected", "what about \"3...3\" ip address ? 3...3 is accepted using this regex", "Take a look at debuggex.com You could add a graphic of your regex!" ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "I managed to construct a regex from all other answers. (25[0-5]|2[0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[1][0-9][0-9]|[1-9][0-9]|[0-9]?)){3}",
+    "User" : {
+      "User Id" : "5426364",
+      "User Name" : "Vicky",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "const char*ipv4_regexp = \"\\\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.\"\n    \"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.\"\n    \"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.\"\n    \"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\b\";\n I adapted the regular expression taken from JGsoft RegexBuddy library to C language (regcomp/regexec) and I found out it works but there's a little problem in some OS like Linux. That regular expression accepts ipv4 address like 192.168.100.009 where 009 in Linux is considered an octal value so the address is not the one you thought. I changed that regular expression as follow:     const char* ipv4_regex = \"\\\\b(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\\\.\"\n           \"(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\\\.\"\n           \"(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\\\.\"\n           \"(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\\\b\";\n using that regular expressione now 192.168.100.009 is not a valid ipv4 address while 192.168.100.9 is ok. I modified a regular expression for multicast address too and it is the following:     const char* mcast_ipv4_regex = \"\\\\b(22[4-9]|23[0-9])\\\\.\"\n                        \"(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\\\.\"\n                        \"(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]?)\\\\.\"\n                        \"(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\\\b\";\n I think you have to adapt the regular expression to the language you're using to develop your application I put an example in java:     package utility;\n\n    import java.util.regex.Matcher;\n    import java.util.regex.Pattern;\n\n    public class NetworkUtility {\n\n        private static String ipv4RegExp = \"\\\\b(?:(?:25[0-5]|2[0-4]\\\\d|1\\\\d\\\\d|[1-9]?\\\\d?)\\\\.){3}(?:25[0-5]|2[0-4]\\\\d|1\\\\d\\\\d|[1-9]?\\\\d?)\\\\b\";\n\n        private static String ipv4MulticastRegExp = \"2(?:2[4-9]|3\\\\d)(?:\\\\.(?:25[0-5]|2[0-4]\\\\d|1\\\\d\\\\d|[1-9]\\\\d?|0)){3}\";\n\n        public NetworkUtility() {\n\n        }\n\n        public static boolean isIpv4Address(String address) {\n            Pattern pattern = Pattern.compile(ipv4RegExp);\n            Matcher matcher = pattern.matcher(address);\n\n            return matcher.matches();\n        }\n\n        public static boolean isIpv4MulticastAddress(String address) {\n             Pattern pattern = Pattern.compile(ipv4MulticastRegExp);\n             Matcher matcher = pattern.matcher(address);\n\n             return matcher.matches();\n        }\n    }",
+    "User" : {
+      "User Id" : "3926584",
+      "User Name" : "Fabio Stafforte",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "mysql> select ip from foo where ip regexp '^\\\\s*[0-9]+\\\\.[0-9]+\\\\.[0-9]+\\\\.[0-9]\\\\s*';",
+    "User" : {
+      "User Id" : "1165530",
+      "User Name" : "Grant",
+      "User Reputation" : "1",
+      "User Type" : "UNREGISTERED"
+    },
+    "a_comments" : [ "This would match 0987654.3.2.1 too." ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "You've already got a working answer but just in case you are curious what was wrong with your original approach, the answer is that you need parentheses around your alternation otherwise the (\\.|$) is only required if the number is less than 200. '\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b'\n    ^                                    ^",
+    "User" : {
+      "User Id" : "61974",
+      "User Name" : "Mark Byers",
+      "User Reputation" : "417041",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "^ My test case didn't match that, but did match \"192.168.1.1.\" One possible fix would be instead of using word boundaries, start the regex with ^(?!.*\\.$) and end with $. Or you could keep the boundaries with this lookahead (?!(.+\\.){4}", "this appears to also validate things like 192.168.1.1.1" ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "IPv4 address (accurate capture) Matches 0.0.0.0 through 255.255.255.255 Use this regex to match IP numbers with accurracy. Each of the 4 numbers is stored into a capturing group, so you can access them for further processing. \\b\n(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.\n(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.\n(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.\n(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\n\\b\n taken from JGsoft RegexBuddy library Edit: this (\\.|$) part seems wierd",
+    "User" : {
+      "User Id" : "382736",
+      "User Name" : "Valerij",
+      "User Reputation" : "14566",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Nice! I did a more efficient modification of that which seems to work: \"\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$){4}\\b -- thanks!" ]
+  }, {
+    "Answer Id" : "5284147",
+    "Answer Body" : "Regex is not the tool for this job. It would be better to write a parser that separates the four numbers and checks that they are in the range [0,255]. The non-functional regex is already unreadable!",
+    "User" : {
+      "User Id" : "403390",
+      "User Name" : "Tim",
+      "User Reputation" : "8250",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ "Raymond Chen has a good article on this topic: blogs.msdn.com/b/oldnewthing/archive/2006/05/22/603788.aspx", "@Spudley: I thought it was a malformed eye. Sorry ;-)", "note the winking smiley... I wasn't being serious with 'all regex is unreadable'. I still think IP address is a reasonable use case for regex, but we'll have to agree to differ on that.", "@Spudley: There are perfectly readable regexes, e.g. /\\w+/. The reason that regex doesn't fit is that this problem concerns itself with the meaning of the strings. Regexes are meant to recognize the form and not to compare numbers.", "all regex is unreadable ;-) but that alone doesn't make it the wrong tool for the job. in fact I'd say regex is a perfectly good tool for an IP address validator.", "And something like awk -F'.' 'NF==4 && $1 > 0 && $1<256 && $2<256 && $3<256 && $4<256 && !/\\.\\./' is more readable? :P" ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "35405317",
+    "Question Title" : "postgresql do not listening 0.0.0.0:5432 in window10",
+    "Question Body" : "Could someone help take a look this weird problem? After a week's day off I found my postgresql only listening [::]5432.There's no other process using port 5432.When I try to restart postgresql,it still don't listening 0.0.0.0:5432. So I try to modify the listen_address=\"*\" to \"0.0.0.0\" and try again. Unluckly,the postgresql could not start again. I check the system service's log,it tells me postgresql creat IPV4 socket failed. Is there anyway to solve it?",
+    "isAnswered" : "false",
+    "User" : {
+      "User Id" : "5928930",
+      "User Name" : "Bingo",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ ]
+}, {
+  "Question" : {
+    "Question Id" : "35326065",
+    "Question Title" : "Would NAT be eliminated transformed in ipv6?",
+    "Question Body" : "NAT is a wonderful concept used in ipv4. It is the major reason for the existence on internet, in my concerns. There are no networks in the world that doesn't work without employing NAT. All I seek to know is that, would NAT be required if after ipv6 is implemented, would NAT be eliminated or be used in a different way(Transformed or Upgraded into a new version with some added abilities to tackle any situations or problems that the network specialists or researchers foresee).",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "2666642",
+      "User Name" : "Guha Prasaanth",
+      "User Reputation" : "1",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ "This isn't really a programming question so much as it is about general networking and as such, is off-topic here." ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "35326065",
+    "Answer Body" : "NAT is a kludge in IPv4 to get around the IPv4 address shortage while waiting for IPv6 to become ubiquitous. I certainly wouldn't use the word wonderful. NAT breaks the original IP paradigm of end-to-end connectivity, and many workarounds have been needed due to NAT. IPv6 doesn't have an address shortage problem, and there is currently no NAT for IPv6, although there is an experimental RFC for people who just can't give it up.",
+    "User" : {
+      "User Id" : "3745413",
+      "User Name" : "Ron Maupin",
+      "User Reputation" : "1680",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  } ]
+}, {
+  "Question" : {
+    "Question Id" : "10278461",
+    "Question Title" : "How to configue a static IP address, netmask, gateway programmatically on Android 3.x or 4.x",
+    "Question Body" : "I have checked in Stack Overflow question API for configuring static IP addresses in an Android application. It works until Android 2.3. However, there is no luck on a higher API level. For example, I put the setting android.provider.Settings.System.putString(getContentResolver(), android.provider.Settings.System.WIFI_USE_STATIC_IP, \"1\");        \nandroid.provider.Settings.System.putString(getContentResolver(), android.provider.Settings.System.WIFI_STATIC_IP, \"192.168.0.100\");\nandroid.provider.Settings.System.putString(getContentResolver(), android.provider.Settings.System.WIFI_STATIC_NETMASK, \"255.255.255.0\");\nandroid.provider.Settings.System.putString(getContentResolver(), android.provider.Settings.System.WIFI_STATIC_DNS1, \"192.168.0.254\");\nandroid.provider.Settings.System.putString(getContentResolver(), android.provider.Settings.System.WIFI_STATIC_GATEWAY, \"192.168.0.254\");\n But I go back to check by: Setting --> Wi-Fi --> Long Press Access Point SSID --> Modify Network --> check Show advanced options\n The IP Settings field is still stated DHCP but not Static. It is true that I can use android.provider.Settings.System.getString() to get back what I set. It prove that the setting is saved somewhere but the system just ignore it. The system uses the setting other than android.provider.Settings.System on Android 3.x and 4.x as the setting is set per Access Point SSID. Can I modify the setting on one SSID just like how it works on Android 2.3?",
+    "isAnswered" : "true",
+    "User" : {
+      "User Id" : "1099884",
+      "User Name" : "Yeung",
+      "User Reputation" : "1034",
+      "User Type" : "REGISTERED"
+    },
+    "q_comments" : [ ]
+  },
+  "AnswersDets" : [ {
+    "Answer Id" : "10278461",
+    "Answer Body" : "For Android 5.1.0       WifiConfiguration GetCurrentWifiConfiguration(WifiManager manager)\n    {\n    if (!manager.isWifiEnabled())\n        return null;\n\n    List<WifiConfiguration> configurationList = manager.getConfiguredNetworks();\n    WifiConfiguration configuration = null;\n    int cur = manager.getConnectionInfo().getNetworkId();\n    for (int i = 0; i < configurationList.size(); ++i)\n    {\n        WifiConfiguration wifiConfiguration = configurationList.get(i);\n        if (wifiConfiguration.networkId == cur)\n            configuration = wifiConfiguration;\n    }\n\n    return configuration;\n}\n\n\n\n@TargetApi(Build.VERSION_CODES.LOLLIPOP)\npublic void setWifiProxySettings5()\n{\n    //get the current wifi configuration\n    WifiManager manager = (WifiManager)getSystemService(Context.WIFI_SERVICE);\n    WifiConfiguration config = GetCurrentWifiConfiguration(manager);\n    if(null == config)\n        return;\n\n    try\n    {\n        //linkProperties is no longer in WifiConfiguration\n        Class proxyInfoClass = Class.forName(\"android.net.ProxyInfo\");\n        Class[] setHttpProxyParams = new Class[1];\n        setHttpProxyParams[0] = proxyInfoClass;\n        Class wifiConfigClass = Class.forName(\"android.net.wifi.WifiConfiguration\");\n        Method setHttpProxy = wifiConfigClass.getDeclaredMethod(\"setHttpProxy\", setHttpProxyParams);\n        setHttpProxy.setAccessible(true);\n\n        //Method 1 to get the ENUM ProxySettings in IpConfiguration\n        Class ipConfigClass = Class.forName(\"android.net.IpConfiguration\");\n        Field f = ipConfigClass.getField(\"proxySettings\");\n        Class proxySettingsClass = f.getType();\n\n        //Method 2 to get the ENUM ProxySettings in IpConfiguration\n        //Note the $ between the class and ENUM\n        //Class proxySettingsClass = Class.forName(\"android.net.IpConfiguration$ProxySettings\");\n\n        Class[] setProxySettingsParams = new Class[1];\n        setProxySettingsParams[0] = proxySettingsClass;\n        Method setProxySettings = wifiConfigClass.getDeclaredMethod(\"setProxySettings\", setProxySettingsParams);\n        setProxySettings.setAccessible(true);\n\n\n        ProxyInfo pi = ProxyInfo.buildDirectProxy(\"127.0.0.1\", 8118);\n        //Android 5 supports a PAC file\n        //ENUM value is \"PAC\"\n        //ProxyInfo pacInfo = ProxyInfo.buildPacProxy(Uri.parse(\"http://localhost/pac\"));\n\n        //pass the new object to setHttpProxy\n        Object[] params_SetHttpProxy = new Object[1];\n        params_SetHttpProxy[0] = pi;\n        setHttpProxy.invoke(config, params_SetHttpProxy);\n\n        //pass the enum to setProxySettings\n        Object[] params_setProxySettings = new Object[1];\n        params_setProxySettings[0] = Enum.valueOf((Class<Enum>) proxySettingsClass, \"STATIC\");\n        setProxySettings.invoke(config, params_setProxySettings);\n\n        //save the settings\n        manager.updateNetwork(config);\n        manager.disconnect();\n        manager.reconnect();\n    }\n    catch(Exception e)\n    {\n        Log.v(\"wifiProxy\", e.toString());\n    }\n}",
+    "User" : {
+      "User Id" : "1129205",
+      "User Name" : "Jackson Chengalai",
+      "User Reputation" : "2704",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "10278461",
+    "Answer Body" : "For Android 5.0+ a WIP solution. It does not yet work for some reason. Comments welcome. void changeWifiConfiguration(boolean dhcp, String ip, int prefix, String dns1, String gateway) {\n    WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);\n    if(!wm.isWifiEnabled()) {\n        // wifi is disabled\n        return;\n    }\n    // get the current wifi configuration\n    WifiConfiguration wifiConf = null;\n    WifiInfo connectionInfo = wm.getConnectionInfo();\n    List<WifiConfiguration> configuredNetworks = wm.getConfiguredNetworks();   \n    if(configuredNetworks != null) {\n        for (WifiConfiguration conf : configuredNetworks){\n            if (conf.networkId == connectionInfo.getNetworkId()){\n                wifiConf = conf;\n                break;              \n            }\n        }\n    }\n    if(wifiConf == null) {\n        // wifi is not connected\n        return;\n    }\n    try {\n        Class<?> ipAssignment = wifiConf.getClass().getMethod(\"getIpAssignment\").invoke(wifiConf).getClass();\n        Object staticConf = wifiConf.getClass().getMethod(\"getStaticIpConfiguration\").invoke(wifiConf);\n        if(dhcp) {\n            wifiConf.getClass().getMethod(\"setIpAssignment\", ipAssignment).invoke(wifiConf, Enum.valueOf((Class<Enum>) ipAssignment, \"DHCP\"));\n            if(staticConf != null) {\n                staticConf.getClass().getMethod(\"clear\").invoke(staticConf);\n            }\n        } else {\n            wifiConf.getClass().getMethod(\"setIpAssignment\", ipAssignment).invoke(wifiConf, Enum.valueOf((Class<Enum>) ipAssignment, \"STATIC\"));\n            if(staticConf == null) {\n                Class<?> staticConfigClass = Class.forName(\"android.net.StaticIpConfiguration\");\n                staticConf = staticConfigClass.newInstance();\n            }\n            // STATIC IP AND MASK PREFIX\n            Constructor<?> laConstructor = LinkAddress.class.getConstructor(InetAddress.class, int.class);\n            LinkAddress linkAddress = (LinkAddress) laConstructor.newInstance(\n                    InetAddress.getByName(ip), \n                    prefix);\n            staticConf.getClass().getField(\"ipAddress\").set(staticConf, linkAddress);\n            // GATEWAY\n            staticConf.getClass().getField(\"gateway\").set(staticConf, InetAddress.getByName(gateway));\n            // DNS\n            List<InetAddress> dnsServers = (List<InetAddress>) staticConf.getClass().getField(\"dnsServers\").get(staticConf);\n            dnsServers.clear();\n            dnsServers.add(InetAddress.getByName(dns1)); \n            dnsServers.add(InetAddress.getByName(\"8.8.8.8\")); // Google DNS as DNS2 for safety\n            // apply the new static configuration\n            wifiConf.getClass().getMethod(\"setStaticIpConfiguration\", staticConf.getClass()).invoke(wifiConf, staticConf);\n        }\n        // apply the configuration change\n        boolean result = wm.updateNetwork(wifiConf) != -1; //apply the setting\n        if(result) result = wm.saveConfiguration(); //Save it\n        if(result) wm.reassociate(); // reconnect with the new static IP\n    } catch(Exception e) {\n        e.printStackTrace();\n    }\n}",
+    "User" : {
+      "User Id" : "1257591",
+      "User Name" : "Robin Gawenda",
+      "User Reputation" : "388",
+      "User Type" : "REGISTERED"
+    },
+    "a_comments" : [ ]
+  }, {
+    "Answer Id" : "10278461",
+    "Answer Body" : "I realise that there is no API on 3.x or 4.x for those setting per SSID. Therefore, I checked out the source code and found out that the configuration of one SSID is stored in android.net.wifi.WifiConfiguration, get from android.net.wifi.WifiManager. Where IpAssignment is an Enum, either STAIC, DHCP or NONE. and linkProperties is the object store IP address, gateway, DNS, etc... linkAddress is IP address and its netmask as prefixLength (how many bit 1 in netmask). mRoutes is ArrayList of RouteInfo that can indicate gateway. mDnses is ArrayList of InetAddress for DNS. Firstly, get the current using SSID WifiConfiguration WifiConfiguration wifiConf = null;\nWifiManager wifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);\nWifiInfo connectionInfo = wifiManager.getConnectionInfo();\n        List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();        \n        for (WifiConfiguration conf : configuredNetworks){\n            if (conf.networkId == connectionInfo.getNetworkId()){\n                wifiConf = conf;\n                break;              \n            }\n        }\n As the IpAssignment and linkProperties are hidden, the object can be got from reflection. The following method can set the declared IP address setting on SSID WifiConfiguration:     public static void setIpAssignment(String assign , WifiConfiguration wifiConf)\n    throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException{\n        setEnumField(wifiConf, assign, \"ipAssignment\");     \n    }\n\n    public static void setIpAddress(InetAddress addr, int prefixLength, WifiConfiguration wifiConf)\n    throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException,\n    NoSuchMethodException, ClassNotFoundException, InstantiationException, InvocationTargetException{\n        Object linkProperties = getField(wifiConf, \"linkProperties\");\n        if(linkProperties == null)return;\n        Class laClass = Class.forName(\"android.net.LinkAddress\");\n        Constructor laConstructor = laClass.getConstructor(new Class[]{InetAddress.class, int.class});\n        Object linkAddress = laConstructor.newInstance(addr, prefixLength);\n\n        ArrayList mLinkAddresses = (ArrayList)getDeclaredField(linkProperties, \"mLinkAddresses\");\n        mLinkAddresses.clear();\n        mLinkAddresses.add(linkAddress);        \n    }\n\n    public static void setGateway(InetAddress gateway, WifiConfiguration wifiConf)\n    throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, \n    ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException{\n        Object linkProperties = getField(wifiConf, \"linkProperties\");\n        if(linkProperties == null)return;\n        Class routeInfoClass = Class.forName(\"android.net.RouteInfo\");\n        Constructor routeInfoConstructor = routeInfoClass.getConstructor(new Class[]{InetAddress.class});\n        Object routeInfo = routeInfoConstructor.newInstance(gateway);\n\n        ArrayList mRoutes = (ArrayList)getDeclaredField(linkProperties, \"mRoutes\");\n        mRoutes.clear();\n        mRoutes.add(routeInfo);\n    }\n\n    public static void setDNS(InetAddress dns, WifiConfiguration wifiConf)\n    throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException{\n        Object linkProperties = getField(wifiConf, \"linkProperties\");\n        if(linkProperties == null)return;\n\n        ArrayList<InetAddress> mDnses = (ArrayList<InetAddress>)getDeclaredField(linkProperties, \"mDnses\");\n        mDnses.clear(); //or add a new dns address , here I just want to replace DNS1\n        mDnses.add(dns); \n    }\n\n    public static Object getField(Object obj, String name)\n    throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException{\n        Field f = obj.getClass().getField(name);\n        Object out = f.get(obj);\n        return out;\n    }\n\n    public static Object getDeclaredField(Object obj, String name)

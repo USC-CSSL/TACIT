@@ -1,9 +1,13 @@
 package edu.usc.cssl.tacit.crawlers.stackexchange.services;
 
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.AnswerItem;
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.CommentItem;
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Item;
+import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.QuestionItem;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Item;
-import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.User;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface StackExchangeSite {
 
@@ -242,14 +246,82 @@ public interface StackExchangeSite {
     public static final String MATHEMATICS_EDUCATORS                    = "matheducators";
     public static final String MATHEMATICS_EDUCATORS_META               = "meta.matheducators";
 
+    
+    /* 
+     * Filters in parameters for the url are obtained from the stack exchanges site" 
+     */
+    
     /**
      * Users
      */
-
+    //get all users
     @GET("/users")
-    Call<Item> getUsers();
+    Call<Item> getUsers(@Query("page") int page, @Query("key") String key, @Query("site") String site);
+    
+    /**
+     * Answers
+     */
+    //get all answers
+    @GET("/answers?filter=!-*f(6rzfcVz5")
+    Call<AnswerItem> getAnswers(@Query("page") int page, @Query("key") String key, @Query("site") String site);
+    
+    @GET("/answers?filter=!-*f(6rzfcVz5")
+    Call<AnswerItem> getAnswersByDate(@Query("page") int page, @Query("key") String key, @Query("site") String site, @Query("fromdate") Long from, @Query("todate") Long to);
+    
+    //get answer by id
+    @GET("/answers/{id}?filter=!9YdnSMKKT")
+    Call<AnswerItem> getAnswerById(@Path("id") int answerId, @Query("key") String key, @Query("site") String site);
+    
+    //get answers for question
+    @GET("/questions/{id}/answers?filter=!9YdnSMKKT")
+    Call<AnswerItem> getAnswersbyQuestionId(@Path("id") int questionId, @Query("key") String key, @Query("site") String site);
 
-    @GET("/me")
-    Response<User> getUser();
+    /**
+     * Questions
+     */
+    
+    //get all questions
+    @GET("/questions?filter=!9YdnSIN18")
+    Call<QuestionItem> getQuestions(@Query("page") int page, @Query("key") String key, @Query("site") String site);
+    
+    @GET("/questions?filter=!9YdnSIN18")
+    Call<QuestionItem> getQuestionsByDate(@Query("page") int page, @Query("key") String key, @Query("site") String site, @Query("fromdate") Long from, @Query("todate") Long to);
+    
+    //get questions by id
+    @GET("/questions/{id}?filter=!-*f(6rc.lFba")
+    Call<QuestionItem> getQuestionsById(@Path("id") int questionId, @Query("key") String key, @Query("site") String site);
+    
+    /**
+     * Comments
+     */
+    
+    //get all comments
+    @GET("/comments?filter=!9YdnSNaN(")
+    Call<CommentItem> getCommentsByDate(@Query("page") int page, @Query("key") String key, @Query("site") String site, @Query("fromdate") Long from, @Query("todate") Long to);
+    
+    @GET("/comments?filter=!9YdnSNaN(")
+    Call<CommentItem> getComments(@Query("page") int page, @Query("key") String key, @Query("site") String site);
+    
+    @GET("/comments/{id}?filter=!9YdnSNaN(")
+    Call<CommentItem> getCommentById(@Path("id") int commentId, @Query("key") String key, @Query("site") String site);
+    
+    @GET("/questions/{id}/comments?filter=!9YdnSNaN(")
+    Call<CommentItem> getCommentsbyQuestionId(@Path("id") int questionId, @Query("key") String key, @Query("site") String site);
+    
+    @GET("answers/{id}/comments?filter=!9YdnSNaN(")
+    Call<CommentItem> getCommentsbyAnswerId(@Path("id") int answerId, @Query("key") String key, @Query("site") String site);
+    
+    //get tagged searches
+    
+    @GET("/search?filter=!9YdnSIN18")
+    Call<QuestionItem> getSearchTags(@Query("page") int page, @Query("tagged") String tag, @Query("key") String key, @Query("site") String site);
+    
+    @GET("/search?filter=!9YdnSIN18")
+    Call<QuestionItem> getSearchTagsByDate(@Query("page") int page, @Query("tagged") String tag, @Query("key") String key,@Query("site") String site, @Query("fromdate") Long fromdate, @Query("todate") Long todate);
+    
+    
+    
+    
+    
 
 }
