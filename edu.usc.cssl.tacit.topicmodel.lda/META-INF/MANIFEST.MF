@@ -17,4 +17,5 @@ Export-Package: bsh,
 Bundle-ClassPath: .,
  mallet.jar,
  mallet-deps.jar,
- junit.jar
+ junit.jar,
+ hamcrest-all-1.3.jar

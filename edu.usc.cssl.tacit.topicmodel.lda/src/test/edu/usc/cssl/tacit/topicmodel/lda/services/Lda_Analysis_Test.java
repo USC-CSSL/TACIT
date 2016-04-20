@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import edu.usc.cssl.tacit.topicmodel.lda.services.LdaAnalysis;
 //This class just checks if the LDA tool finishes running successfully. If an exception is generated, it indicates that the test failed.
-public class LdaAnalysisTest {
+public class Lda_Analysis_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
 	public void doLDATest() {
