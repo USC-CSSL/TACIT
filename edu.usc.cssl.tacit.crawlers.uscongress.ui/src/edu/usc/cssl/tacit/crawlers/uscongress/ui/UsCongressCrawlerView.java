@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.crawlers.uscongress.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,8 +59,10 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
-import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.uscongress.services.AvailableRecords;
 import edu.usc.cssl.tacit.crawlers.uscongress.services.UsCongressCrawler;
@@ -71,7 +74,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	
-	private OutputLayoutData outputLayout;
+//	private OutputLayoutData outputLayout;
 	private Combo sCmbCongress;
 	
 	private String[] allSenators;
@@ -121,6 +124,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Button dailyDigestBtn;
 	private Composite limitRecordsClient;
 	private boolean crawlAgain;
+	private Text corpusNameTxt;
 	
 	final UsCongressCrawler sc = new UsCongressCrawler();
 	
@@ -149,7 +153,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		
 		createSenateInputParameters(client);
 		//TacitFormComposite.createEmptyRow(toolkit, client);
-		outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
+//		outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
+		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
@@ -967,7 +972,14 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 									maxDocs = -1;
 									sortType = "Date";
 								}
-								outputDir = outputLayout.getOutputLabel().getText();	
+//								outputDir = outputLayout.getOutputLabel().getText();
+								String corpusName = corpusNameTxt.getText();
+								if(!new File(IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION).exists())
+									new File(IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION).mkdir();
+								outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+								if(!new File(outputDir).exists()){
+									new File(outputDir).mkdir();									
+								}
 							}
 						});
 						//This part will set the progress count for the progress bar			
@@ -1044,11 +1056,32 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							return handleException(monitor, e, "Crawling failed. Provide valid data");
 						}
 						
+						Display.getDefault().syncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								Corpus corpus = new Corpus(corpusNameTxt.getText(), CMDataType.PLAIN_TEXT);
+								File dir = new File(outputDir);
+								File[] directoryListing = dir.listFiles();
+								for(File child : directoryListing){
+									if(child.isDirectory()){
+										CorpusClass cc= new CorpusClass(child.getName(), child.getAbsolutePath());
+										cc.setParent(corpus);
+										corpus.addClass(cc);
+									}
+								}
+								ManageCorpora.saveCorpus(corpus);
+								
+							}});
+						
 						monitor.worked(100);
 						monitor.done();
 						return Status.OK_STATUS;
 					}					
-				};	
+				};
+				
+				
+				
 				job.setUser(true);
 				canProceed = canItProceed();
 				if(canProceed) {
@@ -1198,16 +1231,29 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			}
 		}
 		
-		String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
+		String corpusName = corpusNameTxt.getText();
+		/*String message = OutputPathValidation.getInstance().validateOutputDirectory(outputLayout.getOutputLabel().getText(), "Output");
 		if (message != null) {
 			message = outputLayout.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("output", message, null,IMessageProvider.ERROR);
 			return false;
 		} else {
 			form.getMessageManager().removeMessage("output");
-		}
-		
-		return true;
+		}*/
+		if(null == corpusName || corpusName.isEmpty()) {
+			form.getMessageManager().addMessage("corpusName", "Provide corpus name", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			String outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+			if(new File(outputDir).exists()){
+				form.getMessageManager().addMessage("corpusName", "Corpus already exists", null, IMessageProvider.ERROR);
+				return false;
+			}
+			else{
+			form.getMessageManager().removeMessage("corpusName");
+			return true;
+			}
+			}		
 	};
 	
 	@Override

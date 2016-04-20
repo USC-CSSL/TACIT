@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class UsCongressCrawler {
@@ -113,6 +114,8 @@ public class UsCongressCrawler {
 			csvWriter.write(
 					"Congress,Date,Representative,Political Affiliation,Congressional Section,State,District,Title,File");
 		csvWriter.newLine();
+		
+		
 		for (String memberText : congressMembers) {
 			int tempProgressSize = progressSize / congressMembers.size();
 			if (memberText.equals("All Representatives") || memberText.equals("All Senators")
@@ -165,6 +168,7 @@ public class UsCongressCrawler {
 								? congressSenatorMap.get(String.valueOf(congress)).get(memberText)
 								: congressRepresentativeMap.get(String.valueOf(congress)).get(memberText);
 						if (null != memberName) {
+							//Data can be added here for corpus
 							if (isSenate)
 								searchRecords(congress, memberName, "", tempProgressSize / congresses.size(),
 										politicalAffiliation);
