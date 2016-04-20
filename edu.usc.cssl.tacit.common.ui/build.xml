@@ -8,6 +8,7 @@
     <property name="ECLIPSE_HOME" value="../../../../eclipse/"/>
     <property name="edu.usc.cssl.tacit.classify.svm.location" value="../edu.usc.cssl.tacit.classify.svm"/>
     <property name="edu.usc.cssl.tacit.wordcount.standard.location" value="../edu.usc.cssl.tacit.wordcount.standard"/>
+    <property name="edu.usc.cssl.tacit.wordcount.weighted.location" value="../edu.usc.cssl.tacit.wordcount.weighted"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
@@ -91,6 +92,12 @@
         </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.wordcount.standard.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.wordcount.standard.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.wordcount.weighted.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.wordcount.weighted.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>

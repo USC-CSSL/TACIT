@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites>
-  <testsuite errors="10" failures="0" hostname="DESKTOP-CK8NHLD" id="0" name="Tacit_Word_Count_Test" package="test.edu.usc.cssl.tacit.wordcount.standard.services" skipped="0" tests="10" time="0.046" timestamp="2016-04-20T01:29:36">
+  <testsuite errors="0" failures="0" hostname="DESKTOP-CK8NHLD" id="0" name="Tacit_Word_Count_Test" package="test.edu.usc.cssl.tacit.wordcount.standard.services" skipped="0" tests="10" time="7.093" timestamp="2016-04-20T01:50:39">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -31,6 +31,8 @@
           <property name="ant.home" value="C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020" />
 
           <property name="java.runtime.version" value="1.8.0_77-b03" />
+
+          <property name="edu.usc.cssl.tacit.common.location" value="../edu.usc.cssl.tacit.common" />
 
           <property name="env.HOMEPATH" value="\Users\Sharan" />
 
@@ -106,9 +108,9 @@
 
           <property name="java.vm.version" value="25.77-b03" />
 
-          <property name="user.variant" value="" />
-
           <property name="env.USERPROFILE" value="C:\Users\Sharan" />
+
+          <property name="user.variant" value="" />
 
           <property name="ant.library.dir" value="C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib" />
 
@@ -142,11 +144,11 @@
 
           <property name="java.specification.vendor" value="Oracle Corporation" />
 
-          <property name="java.vendor.url" value="http://java.oracle.com/" />
-
           <property name="java.library.path" value="C:\Program Files (x86)\Java\jre1.8.0_77\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:/Program Files (x86)/Java/jre1.8.0_77/bin/client;C:/Program Files (x86)/Java/jre1.8.0_77/bin;C:/Program Files (x86)/Java/jre1.8.0_77/lib/i386;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\TortoiseSVN\bin;C:\Users\Sharan\Desktop\maven\apache-maven-3.3.9\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Python27\;C:\Python27;C:\eclipse;;." />
 
           <property name="env.NUMBER_OF_PROCESSORS" value="8" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
 
           <property name="java.vm.vendor" value="Oracle Corporation" />
 
@@ -154,15 +156,15 @@
 
           <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on April 29 2014" />
 
-          <property name="java.class.path" value="C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junit.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\commons-lang3-3.3.2.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\jwnl-1.3.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\opennlp-maxent-3.0.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\opennlp-tools-1.5.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\opennlp-uima-1.5.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\stanford-corenlp-3.2.0.jar;C:\eclipse\plugins\org.eclipse.ui_3.107.0.v20150507-1945.jar;C:\eclipse\plugins\org.eclipse.swt_3.104.0.v20150528-0211.jar;C:\eclipse\plugins\org.eclipse.swt.win32.win32.x86_3.104.0.v20150528-0211.jar;C:\eclipse\plugins\org.eclipse.jface_3.11.0.v20150602-1400.jar;C:\eclipse\plugins\org.eclipse.core.commands_3.7.0.v20150422-0725.jar;C:\eclipse\plugins\org.eclipse.ui.workbench_3.107.0.v20150510-1732.jar;C:\eclipse\plugins\org.eclipse.e4.ui.workbench3_0.13.0.v20150422-0725.jar;C:\eclipse\plugins\org.eclipse.core.runtime_3.11.0.v20150405-1723.jar;C:\eclipse\plugins\javax.annotation_1.2.0.v201401042248.jar;C:\eclipse\plugins\javax.inject_1.0.0.v20091030.jar;C:\eclipse\plugins\org.eclipse.osgi_3.10.100.v20150529-1857.jar;C:\eclipse\plugins\org.eclipse.osgi.compatibility.state_1.0.100.v20150402-1551.jar;C:\eclipse\plugins\org.eclipse.equinox.common_3.7.0.v20150402-1709.jar;C:\eclipse\plugins\org.eclipse.core.jobs_3.7.0.v20150330-2103.jar;C:\eclipse\plugins\org.eclipse.core.runtime.compatibility.registry_3.6.0.v20150318-1505\runtime_registry_compatibility.jar;C:\eclipse\plugins\org.eclipse.equinox.registry_3.6.0.v20150318-1503.jar;C:\eclipse\plugins\org.eclipse.equinox.preferences_3.5.300.v20150408-1437.jar;C:\eclipse\plugins\org.eclipse.core.contenttype_3.5.0.v20150421-2214.jar;C:\eclipse\plugins\org.eclipse.equinox.app_1.3.300.v20150423-1356.jar;C:\eclipse\plugins\org.jsoup_1.7.2.v201411291515.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\bin;C:\eclipse\plugins\org.junit_4.12.0.v201504281640\junit.jar;C:\eclipse\plugins\org.hamcrest.core_1.3.0.v201303031735.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.classify.svm\hamcrest-all-1.3.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-launcher.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit4.jar" />
+          <property name="java.class.path" value="C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junit.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\commons-lang3-3.3.2.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\jwnl-1.3.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\opennlp-maxent-3.0.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\opennlp-tools-1.5.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\opennlp-uima-1.5.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\stanford-corenlp-3.2.0.jar;C:\eclipse\plugins\org.eclipse.ui_3.107.0.v20150507-1945.jar;C:\eclipse\plugins\org.eclipse.swt_3.104.0.v20150528-0211.jar;C:\eclipse\plugins\org.eclipse.swt.win32.win32.x86_3.104.0.v20150528-0211.jar;C:\eclipse\plugins\org.eclipse.jface_3.11.0.v20150602-1400.jar;C:\eclipse\plugins\org.eclipse.core.commands_3.7.0.v20150422-0725.jar;C:\eclipse\plugins\org.eclipse.ui.workbench_3.107.0.v20150510-1732.jar;C:\eclipse\plugins\org.eclipse.e4.ui.workbench3_0.13.0.v20150422-0725.jar;C:\eclipse\plugins\org.eclipse.core.runtime_3.11.0.v20150405-1723.jar;C:\eclipse\plugins\javax.annotation_1.2.0.v201401042248.jar;C:\eclipse\plugins\javax.inject_1.0.0.v20091030.jar;C:\eclipse\plugins\org.eclipse.osgi_3.10.100.v20150529-1857.jar;C:\eclipse\plugins\org.eclipse.osgi.compatibility.state_1.0.100.v20150402-1551.jar;C:\eclipse\plugins\org.eclipse.equinox.common_3.7.0.v20150402-1709.jar;C:\eclipse\plugins\org.eclipse.core.jobs_3.7.0.v20150330-2103.jar;C:\eclipse\plugins\org.eclipse.core.runtime.compatibility.registry_3.6.0.v20150318-1505\runtime_registry_compatibility.jar;C:\eclipse\plugins\org.eclipse.equinox.registry_3.6.0.v20150318-1503.jar;C:\eclipse\plugins\org.eclipse.equinox.preferences_3.5.300.v20150408-1437.jar;C:\eclipse\plugins\org.eclipse.core.contenttype_3.5.0.v20150421-2214.jar;C:\eclipse\plugins\org.eclipse.equinox.app_1.3.300.v20150423-1356.jar;C:\eclipse\plugins\org.jsoup_1.7.2.v201411291515.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\bin;C:\eclipse\plugins\org.junit_4.12.0.v201504281640\junit.jar;C:\eclipse\plugins\org.hamcrest.core_1.3.0.v201303031735.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.classify.svm\hamcrest-all-1.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\pdfbox-app-2.0.0-RC3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\org.annolab.tt4j-1.2.1.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\jackson-core-2.5.0.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\json-path-2.0.0.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\json-path-assert-2.0.0.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\json-smart-2.1.1.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\json-simple-1.1.1.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\langdetect.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\bin;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\hamcrest-core-1.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\hamcrest-library-1.3.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\slf4j-api-1.7.5.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\slf4j-simple-1.7.5.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common\asm-1.0.2.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\asm-1.0.2.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\json-simple-1.1.1.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\gson-2.3.1.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\jackson-core-2.5.0.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\json-path-2.0.0.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\json-path-assert-2.0.0.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\json-smart-2.1.1.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\commons-io-2.4.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\bin;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\slf4j-api-1.7.5.jar;C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.common.ui\slf4j-simple-1.7.5.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-launcher.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit.jar;C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit4.jar" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junit\TEST-test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.xml crashfile=C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junitvmwatcher3023358489617580903.properties propsfile=C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junit7865584469114552968.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junit\TEST-test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.xml crashfile=C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junitvmwatcher1510583533001491227.properties propsfile=C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard\junit3280602541073063902.properties" />
 
           <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
 
-          <property name="env.windir" value="C:\WINDOWS" />
-
           <property name="env.LOGONSERVER" value="\\MicrosoftAccount" />
+
+          <property name="env.windir" value="C:\WINDOWS" />
 
           <property name="env.PROCESSOR_ARCHITECTURE" value="x86" />
 
@@ -178,11 +180,11 @@
 
           <property name="env.ANT_HOME" value="C:\eclipse\plugins\org.apache.ant_1.9.4.v201504302020" />
 
+          <property name="java.io.tmpdir" value="C:\Users\Sharan\AppData\Local\Temp\" />
+
           <property name="env.PROCESSOR_REVISION" value="5e03" />
 
           <property name="eclipse.pdebuild.home" value="/C:/eclipse/plugins/org.eclipse.pde.build_3.9.100.v20150521-1524/./" />
-
-          <property name="java.io.tmpdir" value="C:\Users\Sharan\AppData\Local\Temp\" />
 
           <property name="env.CommonProgramFiles(x86)" value="C:\Program Files (x86)\Common Files" />
 
@@ -190,9 +192,9 @@
 
           <property name="env.SystemRoot" value="C:\WINDOWS" />
 
-          <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment" />
-
           <property name="os.arch" value="x86" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment" />
 
           <property name="java.ext.dirs" value="C:\Program Files (x86)\Java\jre1.8.0_77\lib\ext;C:\WINDOWS\Sun\Java\lib\ext" />
 
@@ -206,9 +208,9 @@
 
           <property name="env.PATHEXT" value=".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC" />
 
-          <property name="org.apache.tools.ant.taskdefs.optional.junit.AggregateTransformer0" value="C:\Users\Sharan\AppData\Local\Temp\null2132726725" />
-
           <property name="env.Path" value="C:/Program Files (x86)/Java/jre1.8.0_77/bin/client;C:/Program Files (x86)/Java/jre1.8.0_77/bin;C:/Program Files (x86)/Java/jre1.8.0_77/lib/i386;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\TortoiseSVN\bin;C:\Users\Sharan\Desktop\maven\apache-maven-3.3.9\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Python27\;C:\Python27;C:\eclipse;" />
+
+          <property name="org.apache.tools.ant.taskdefs.optional.junit.AggregateTransformer0" value="C:\Users\Sharan\AppData\Local\Temp\null806776390" />
 
           <property name="basedir" value="C:\Anish&apos;s Work\Eclipse Workspace\TACIT\edu.usc.cssl.tacit.wordcount.standard" />
 
@@ -218,9 +220,11 @@
 
           <property name="env.USERNAME" value="Sharan" />
 
-          <property name="source" value="1.6" />
+          <property name="edu.usc.cssl.tacit.common.ui.location" value="../edu.usc.cssl.tacit.common.ui" />
 
           <property name="env.SystemDrive" value="C:" />
+
+          <property name="source" value="1.6" />
 
           <property name="file.encoding" value="Cp1252" />
 
@@ -234,102 +238,31 @@
 
       </properties>
 
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginStemDictionaryTest" time="0.006">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$9.&lt;init&gt;(Tacit_Word_Count_Test.java:451)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.weightedWordCountPluginStemDictionaryTest(Tacit_Word_Count_Test.java:451)
-Caused by: java.lang.ClassNotFoundException: edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer
-	at java.net.URLClassLoader.findClass(Unknown Source)
-	at java.lang.ClassLoader.loadClass(Unknown Source)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
-	at java.lang.ClassLoader.loadClass(Unknown Source)
-</error>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginStemDictionaryTest" time="0.875" />
 
-      </testcase>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginDATTest" time="0.719" />
 
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginDATTest" time="0.001">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$10.&lt;init&gt;(Tacit_Word_Count_Test.java:503)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.weightedWordCountPluginDATTest(Tacit_Word_Count_Test.java:503)
-</error>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginWordDistributionTest" time="0.688" />
 
-      </testcase>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginPOSTagsTest" time="0.688" />
 
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginWordDistributionTest" time="0.001">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$3.&lt;init&gt;(Tacit_Word_Count_Test.java:134)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.standardWordCountPluginWordDistributionTest(Tacit_Word_Count_Test.java:134)
-</error>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginDATTest" time="0.674" />
 
-      </testcase>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginPOSTagsTest" time="0.668" />
 
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginPOSTagsTest" time="0.0">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$2.&lt;init&gt;(Tacit_Word_Count_Test.java:80)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.standardWordCountPluginPOSTagsTest(Tacit_Word_Count_Test.java:80)
-</error>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountTest" time="0.697" />
 
-      </testcase>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginStemDictionaryTest" time="0.694" />
 
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginDATTest" time="0.0">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$5.&lt;init&gt;(Tacit_Word_Count_Test.java:238)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.standardWordCountPluginDATTest(Tacit_Word_Count_Test.java:238)
-</error>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginTest" time="0.688" />
 
-      </testcase>
+      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginWordDistributionTest" time="0.666" />
 
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginPOSTagsTest" time="0.001">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$7.&lt;init&gt;(Tacit_Word_Count_Test.java:349)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.weightedWordCountPluginPOSTagsTest(Tacit_Word_Count_Test.java:349)
-</error>
-
-      </testcase>
-
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountTest" time="0.0">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$1.&lt;init&gt;(Tacit_Word_Count_Test.java:28)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.standardWordCountTest(Tacit_Word_Count_Test.java:28)
-</error>
-
-      </testcase>
-
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="standardWordCountPluginStemDictionaryTest" time="0.0">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$4.&lt;init&gt;(Tacit_Word_Count_Test.java:185)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.standardWordCountPluginStemDictionaryTest(Tacit_Word_Count_Test.java:185)
-</error>
-
-      </testcase>
-
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginTest" time="0.001">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$6.&lt;init&gt;(Tacit_Word_Count_Test.java:298)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.weightedWordCountPluginTest(Tacit_Word_Count_Test.java:298)
-</error>
-
-      </testcase>
-
-      <testcase classname="test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test" name="weightedWordCountPluginWordDistributionTest" time="0.0">
-          <error message="edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer" type="java.lang.NoClassDefFoundError">java.lang.NoClassDefFoundError: edu/usc/cssl/tacit/common/snowballstemmer/PorterStemmer
-	at edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin.&lt;init&gt;(WordCountPlugin.java:60)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test$8.&lt;init&gt;(Tacit_Word_Count_Test.java:400)
-	at test.edu.usc.cssl.tacit.wordcount.standard.services.Tacit_Word_Count_Test.weightedWordCountPluginWordDistributionTest(Tacit_Word_Count_Test.java:400)
-</error>
-
-      </testcase>
-
-      <system-out><![CDATA[]]></system-out>
+      <system-out><![CDATA[ata.txt" 161 6.44 1.8633540372670807 25.0 75.0 
+[Ljava.lang.String;@1c20538
+ata.txt" 161 6.44 1.8633540372670807 33.333333333333336 66.66666666666667 
+[Ljava.lang.String;@f41634
+]]></system-out>
 
       <system-err><![CDATA[]]></system-err>
 
