@@ -2,6 +2,7 @@ package edu.usc.cssl.tacit.crawlers.uscongress.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.Reference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +22,11 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -40,6 +45,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -81,7 +87,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private String[] allRepresentatives;
 	private String[] congresses;
 	private String[] congressYears;
-	
+	private boolean retryFlag = false;
 	private Date maxDate;
 	private Date minDate;
 	private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -846,8 +852,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 						@Override
 						public void run() {
 							ErrorDialog.openError(Display.getDefault()
-									.getActiveShell(), "Problem Occurred",
-									"Please Check your connectivity to server",
+									.getActiveShell(), "Problem Occurred","Please Check your connectivity to server",
 									new Status(IStatus.ERROR,
 											CommonUiActivator.PLUGIN_ID,
 											"Network is not reachable"));
@@ -1149,6 +1154,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		return Status.CANCEL_STATUS;
 	}
 	
+	int returnCode = 0;	
+	int counter = 0 ;
 	private IStatus crawl(final IProgressMonitor monitor){
 		
 		try {
@@ -1158,18 +1165,28 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					// create a dialog with ok and cancel buttons and a question icon
-					MessageBox dialog = 
-					  new MessageBox(Display.getDefault().getActiveShell(), SWT.ICON_INFORMATION | SWT.OK| SWT.CANCEL);
-					dialog.setText("Time Out");
-					dialog.setMessage("You must've lost internet connection, re-establish connection and try again!");
-					// open dialog and await user selection
-					 int returnCode = dialog.open();
-					if(returnCode == SWT.OK){
-						crawlAgain = true;												
+										
+					String []labels = new String[]{IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL };
+					if(!retryFlag){		
+					MessageDialogWithToggle dialog = new MessageDialogWithToggle(Display.getDefault().getActiveShell(), "Time out", null,
+							"You must've lost internet connection, re-establish connection and try again!", MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
+					returnCode = dialog.open();
+					
+					returnCode = dialog.getReturnCode();
+					retryFlag = dialog.getToggleState();
+					
+					}
+					if(!retryFlag && returnCode == SWT.CANCEL){
+						crawlAgain = false;												
 					}
 					else{
-						crawlAgain= false;
+						crawlAgain= true;
+					}
+					
+					if(retryFlag){
+						counter+=1;
+						if(counter>500)
+							retryFlag = false;
 					}
 					
 				}				
