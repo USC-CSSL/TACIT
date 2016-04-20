@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry exported="true" kind="lib" path="jackson-core-2.5.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="gson-2.6.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="commons-io-2.4.jar"/>
@@ -14,5 +13,6 @@
 	<classpathentry kind="lib" path="okio-1.6.0.jar"/>
 	<classpathentry kind="lib" path="retrofit-2.0.0-beta3.jar"/>
 	<classpathentry kind="lib" path="jsoup-1.7.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
