@@ -11,5 +11,8 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/edu.usc.cssl.tacit.classify.svm/hamcrest-all-1.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/edu.usc.cssl.tacit.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/edu.usc.cssl.tacit.common.ui"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

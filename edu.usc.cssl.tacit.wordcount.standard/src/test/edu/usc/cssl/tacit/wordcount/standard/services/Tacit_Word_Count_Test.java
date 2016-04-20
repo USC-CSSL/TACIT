@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin;
 
-public class TACITWordCountPluginTest{
+public class Tacit_Word_Count_Test{
 	
 	 // NOTE: Tacit Utility run reports have been disabled for the tests
 
