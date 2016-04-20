@@ -115,8 +115,7 @@ public class ZlabelTopicModelAnalysis {
 		System.out.println("\nTopic and its corresponding words and phi values stored in " + outputdir + File.separator
 				+ "topicwords-" + df.format(dateObj) + ".csv"); 
 		try {
-			FileWriter fw = new FileWriter(
-					new File(outputdir + File.separator + "topicwords-" + df.format(dateObj) + ".csv"));
+			FileWriter fw = new FileWriter(new File(generateTopicWordsFileName(outputdir, df.format(dateObj))));
 			StringBuilder row = new StringBuilder();
 			StringBuilder rowValues = new StringBuilder();
 			for (int i = 0; i < T; i++) {
@@ -168,8 +167,7 @@ public class ZlabelTopicModelAnalysis {
 					.subTask("writing Phi values for each stopic in wordsinTopics(Phi)-" + df.format(dateObj) + ".csv");
 			ConsoleView.printlInConsoleln("\nPhi values for each stopic stored in " + outputdir + File.separator
 					+ "wordsinTopics(Phi)-" + df.format(dateObj) + ".csv");
-			fw = new FileWriter(
-					new File(outputdir + File.separator + "wordsinTopics(Phi)-" + df.format(dateObj) + ".csv"));
+			fw = new FileWriter(new File(generateWordsInTopicFileName(outputdir, df.format(dateObj))));
 			fw.write("Topic/Words,");
 			for (int j = 0; j < revDict.size(); j++)
 				fw.write(revDict.get(j) + ",");
@@ -200,8 +198,7 @@ public class ZlabelTopicModelAnalysis {
 					"writing Theta values for each stopic in topicsPerDocument(theta)-" + df.format(dateObj) + ".csv");
 			ConsoleView.printlInConsoleln("\nTheta values for each document stored in " + outputdir + File.separator
 					+ "topicsPerDocument(theta)-" + df.format(dateObj) + ".csv");
-			fw = new FileWriter(
-					new File(outputdir + File.separator + "topicsPerDocument(theta)-" + df.format(dateObj) + ".csv"));
+			fw = new FileWriter(new File(generateTopicsPerDocumentFileName(outputdir, df.format(dateObj))));
 			fw.write("Document/Topic,");
 			for (int i = 0; i < T; i++) {
 				fw.write("Topic" + i + ",");
@@ -220,7 +217,7 @@ public class ZlabelTopicModelAnalysis {
 			}
 			fw.flush();
 			fw.close();
-			TacitUtility.createRunReport(outputdir, "Z-Label LDA", dateObj,null);
+			createRunReport(outputdir, dateObj);
 		} catch (
 
 		Exception e)
@@ -233,7 +230,18 @@ public class ZlabelTopicModelAnalysis {
 		this.monitor.done();
 
 	}
-
+	protected String generateTopicWordsFileName(String outputdir, String date){
+		return outputdir + File.separator + "topicwords-" + date + ".csv";	
+	} 
+	protected String generateTopicsPerDocumentFileName(String outputdir, String date){
+		return outputdir + File.separator + "topicsPerDocument(theta)-" + date + ".csv";	
+	} 
+	protected String generateWordsInTopicFileName(String outputdir, String date){
+		return outputdir + File.separator + "wordsinTopics(Phi)-" + date + ".csv";	
+	} 
+	protected void createRunReport(String outputdir, Date dateObj) {
+		TacitUtility.createRunReport(outputdir, "Z-Label LDA", dateObj, null);
+	}
 	public void invokeLDA(String inputDir, String seedFileName, int numTopics, String outputDir, Date dateObj) {
 		File dir = new File(inputDir);
 

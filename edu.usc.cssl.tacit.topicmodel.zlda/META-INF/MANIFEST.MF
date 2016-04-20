@@ -14,4 +14,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: edu.stanford.nlp.process,
  edu.usc.cssl.tacit.topicmodel.zlda.services
 Bundle-ClassPath: .,
- stanford-corenlp-3.2.0.jar
+ stanford-corenlp-3.2.0.jar,
+ junit.jar
