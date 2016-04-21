@@ -179,7 +179,8 @@ public class ManageCorpora {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				corpus.getViewer().refresh();
+				if(null!=corpus.getViewer())
+					corpus.getViewer().refresh();
 			};
 		});
 	}
