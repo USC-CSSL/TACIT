@@ -21,9 +21,12 @@ import weka.core.Instances;
 import weka.core.converters.ArffLoader.ArffReader;
 import weka.core.converters.ArffSaver;
 
+/**
+ * Class that converts given directory to attribute file required for Weka
+ */
 public class DirectoryToArff {
-	static String resultsDirs = "F:\\Weka_temp";
-	static String arffFilename = resultsDirs + File.separator + "rawData.arff";
+	// Attribute file
+	static String arffFilename = System.getProperty("user.dir") + File.separator + "rawData.arff";
 	
 	// Training
 	static FastVector trainAtts;
@@ -35,6 +38,10 @@ public class DirectoryToArff {
 	static public HashMap<Integer, String> instanceIdNameMap;
 	static int instanceId;
 	
+	/**
+	 * Initialize training instances/classes
+	 * @param classes - set of training classes
+	 */
 	private  static void initailizeTrainInstances(Set<String> classes) {
 		FastVector cNames = new FastVector(classes.size());
 		for(String c: classes)
@@ -45,6 +52,9 @@ public class DirectoryToArff {
 		trainData = new Instances("text_files", trainAtts, 0);	
 	}
 	
+	/**
+	 * Initialize testing instances/classes
+	 */
 	private  void initializeTestInstances() {
 		instanceId = 0;
 		instanceIdNameMap = new HashMap<Integer, String>();
@@ -55,12 +65,15 @@ public class DirectoryToArff {
 		testAtts.addElement(new Attribute("class", cNames));
 		testData = new Instances("text_files", testAtts, 0);	
 	}	
-	
-	private  String getClassName(String directoryPath) {
-		String[] segments = directoryPath.split("\\\\");
-		return segments[segments.length - 1];
-	}
 
+	/***
+	 * Converts the file to instance format and add it to the given instance
+	 * @param filename
+	 * @param className
+	 * @param data
+	 * @param isTestData
+	 * @throws IOException
+	 */
 	private static void createInstance(String filename, String className, Instances data, boolean isTestData) throws IOException {
 		File txt = new File(filename);
 		if (txt.isDirectory()) { // process sub folders
@@ -84,20 +97,27 @@ public class DirectoryToArff {
 	}
 
 	public  static void createDataset(List<String> files, String className, Instances data, boolean isTestData) throws Exception {
-	
 		for(String file : files) {
 			createInstance(file, className, data, isTestData);
 		}
 	}
 	
+	/***
+	 * Create instance from the given directory path
+	 */
 	public  void createDataset(String directoryPath, String className, Instances data, boolean isTestData) throws Exception {
 		File dir = new File(directoryPath);
 		String[] files = dir.list();
 		for (int i = 0; i < files.length; i++) {
+			System.out.println(directoryPath + File.separator + files[i]);
 			createInstance(directoryPath + File.separator + files[i], className, data, isTestData);
 		}
 	}
 	
+	/**
+	 * Save the instance as an attribute file
+	 * @throws IOException
+	 */
 	public static void saveInstance() throws IOException {
 		ArffSaver saver = new ArffSaver();
 		saver.setInstances(trainData);
@@ -105,23 +125,37 @@ public class DirectoryToArff {
 		saver.writeBatch();	
 	}
 	
-	
-	public   void createTrainInstances(Map<String,List<String>> classes) throws Exception {
+	/**
+	 * Create an instance from given list of strings
+	 * @param classes - maps the directory and its files 
+	 * @throws Exception
+	 */
+	public void createTrainInstances(Map<String,List<String>> classes) throws Exception {
 		initailizeTrainInstances(classes.keySet());
 		for(String c : classes.keySet()) {
+			System.out.println("Training dir :" + c);
 			createDataset(classes.get(c), c, trainData, false);
 		}
 		saveInstance();
 	}
 
-	public  Instances createTestInstances(String input) throws Exception {
+	/**
+	 * Creates an instance out of the given input directory
+	 * @param input - input directory path
+	 * @return - Instance
+	 * @throws Exception
+	 */
+	public Instances createTestInstances(String input) throws Exception {
 		initializeTestInstances();
 		createDataset(input, "?", testData, true);
 		return testData;
 	}
-	
-	
 
+	/**
+	 * Loads attribute file as an instance for Weka
+	 * @return - Instance
+	 * @throws IOException
+	 */
 	public  Instances loadArff() throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(arffFilename));
 		ArffReader arff = new ArffReader(reader);
@@ -130,14 +164,4 @@ public class DirectoryToArff {
 		reader.close();
 		return data;
 	}
-
-	
-	/* Testing //
-	public static void main(String[] args) throws Exception {
-		String dir = "F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Test\\Ham";
-		DirectoryToArff tdta = new DirectoryToArff();
-		tdta.createDataset(dir);
-		System.out.println("Done!");
-	}
-	*/
 }

@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -29,58 +30,57 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
  * http://www.programcreek.com/2013/01/a-simple-machine-learning-example-in-java/
  */
 public class NaiveBayesClassifierWeka {
-	private Map<String,List<String>>clasPaths;
+	private Map<String, List<String>> classPaths;
 	private Classifier nbc;
 	private Instances dataFiltered;
 	private StringToWordVector filter;
-	public NaiveBayesClassifierWeka(Map<String,List<String>>clasPaths) {
-		this.clasPaths = clasPaths;
+
+	public NaiveBayesClassifierWeka(Map<String, List<String>> classPaths) {
+		this.classPaths = classPaths;
 	}
 	
-	public  void initializeInstances() throws Exception{
+	/**
+	 * Initializes instances
+	 * @throws Exception
+	 */
+	public void initializeInstances() throws Exception {
 		DirectoryToArff ref = new DirectoryToArff();
-		ref.createTrainInstances(clasPaths);
+		ref.createTrainInstances(classPaths);
 		Instances dataRaw = ref.loadArff();
 		filter = new StringToWordVector();
 		filter.setInputFormat(dataRaw);
 		dataFiltered = Filter.useFilter(dataRaw, filter);
-		 nbc = createClassifier(dataFiltered);
+		nbc = createClassifier(dataFiltered);
 	}
-//	public static void main(String[] args) throws Exception {
-//		String[] classes = {
-//				"F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Train\\Ham",
-//				"F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Train\\Spam" };
-//	//	DirectoryToArff.createTrainInstances(classes);
-//
-//		Instances dataRaw =null;// DirectoryToArff.loadArff();
-//		StringToWordVector filter = new StringToWordVector();
-//		filter.setInputFormat(dataRaw);
-//		Instances dataFiltered = Filter.useFilter(dataRaw, filter);
-//
-//		final Classifier nbc = createClassifier(dataFiltered);
-//		crossValidate(nbc, dataFiltered, 2);
-//
-////		classify(
-////				nbc,
-////				"F:\\NLP\\Naive Bayes Classifier\\2 Class Analysis\\Classify\\Input",
-////				dataFiltered, filter);
-//	}
 
-	public boolean doCrossValidate(int k, IProgressMonitor monitor, Date dateObj)throws Exception  {
-		
-		crossValidate(nbc, dataFiltered, k);		
+	/**
+	 * Cross validation helper function
+	 * @param k
+	 * @param monitor
+	 * @param dateObj
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean doCrossValidate(int k, IProgressMonitor monitor, Date dateObj) throws Exception {
+		crossValidate(nbc, dataFiltered, k);
 		return true;
 	}
 
-	public boolean  doClassify(String classificationInputDir, String classificationOutputDir,
-			IProgressMonitor monitor,Date dateObj) throws Exception {
+	/**
+	 * Classifies the given directory and stores the result in given output directory
+	 * @param classificationInputDir
+	 * @param classificationOutputDir
+	 * @param monitor - progress montior
+	 * @param dateObj
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean doClassify(String classificationInputDir, String classificationOutputDir, IProgressMonitor monitor,
+			Date dateObj) throws Exception {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		ConsoleView.printlInConsoleln("Classification starts ..");
-		String outputPath = classificationOutputDir
-				+ System.getProperty("file.separator") +"Naive_Bayes_classification_results"
-				+ "-" + df.format(dateObj);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-				outputPath + "-output.csv")));
+		String outputPath = classificationOutputDir + System.getProperty("file.separator") + "Naive_Bayes_classification_results" + "-" + df.format(dateObj);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "-output.csv")));
 		Instances rawTestData = new DirectoryToArff().createTestInstances(classificationInputDir);
 		Instances filteredTestData = Filter.useFilter(rawTestData, filter);
 		Evaluation testEval = new Evaluation(dataFiltered);
@@ -89,21 +89,34 @@ public class NaiveBayesClassifierWeka {
 		for (int i = 0; i < predictions.size(); i++) {
 			NominalPrediction np = (NominalPrediction) predictions.elementAt(i);
 			int pred = (int) np.predicted();
-			bw.write(DirectoryToArff.instanceIdNameMap.get(i) + "\t"
-					+ dataFiltered.classAttribute().value(pred) +"\n");
+			String fileName = DirectoryToArff.instanceIdNameMap.get(i).replaceAll("[,:*?\"<>|]+", ""); 
+			String predictedClass = dataFiltered.classAttribute().value(pred).replaceAll("[,:*?\"<>|]+", ""); 
+			bw.write(fileName + "," + predictedClass + "\n");
 		}
+		bw.close();
 		return true;
 	}
 
-	private static Classifier createClassifier(Instances dataFiltered)
-			throws Exception {
+	/**
+	 * Creates a classifier using the given data
+	 * @param dataFiltered
+	 * @return Classifier (Naive bayes)
+	 * @throws Exception
+	 */
+	private static Classifier createClassifier(Instances dataFiltered) throws Exception {
 		Classifier classifier = new NaiveBayes();
 		classifier.buildClassifier(dataFiltered);
 		return classifier;
 	}
 
-	private static void crossValidate(Classifier nbc, Instances dataFiltered,
-			int k) throws Exception {
+	/**
+	 * Performs cross validation using Weka
+	 * @param nbc - Classifier (naive bayes)
+	 * @param dataFiltered - Data in required format (instance)
+	 * @param k - K value for cross validation
+	 * @throws Exception
+	 */
+	private static void crossValidate(Classifier nbc, Instances dataFiltered, int k) throws Exception {
 		Evaluation eval = new Evaluation(dataFiltered);
 		eval.crossValidateModel(nbc, dataFiltered, k, new Random(1));
 		ConsoleView.printlInConsoleln(eval.toSummaryString("\nResults\n======\n", false));
@@ -116,6 +129,11 @@ public class NaiveBayesClassifierWeka {
 		ConsoleView.printlInConsoleln("Accuracy:" + calculateAccuracy(eval.predictions()));
 	}
 
+	/**
+	 * Calculates accuracy based on the predictions
+	 * @param predictions
+	 * @return accuracy
+	 */
 	public static double calculateAccuracy(FastVector predictions) {
 		double correct = 0;
 		for (int i = 0; i < predictions.size(); i++) {
