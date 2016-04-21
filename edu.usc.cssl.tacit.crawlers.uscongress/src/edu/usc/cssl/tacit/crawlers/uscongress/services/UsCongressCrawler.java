@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.swt.widgets.Display;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,7 +47,8 @@ public class UsCongressCrawler {
 	String crawlDailyDigest;
 	String crawlExtension;
 	public HashSet<String> filesDownload;
-
+	boolean retryFlag, crawlAgain;
+	int returnCode, counter;
 	HashMap<String, HashMap<String, String>> congressSenatorMap = AvailableRecords.getCongressSenatorMap();
 	HashMap<String, String> senatorDetails = SenatorDetails.getSenatorDetails(); // to
 																					// populate
@@ -100,6 +106,7 @@ public class UsCongressCrawler {
 			monitor.subTask("Cancelling.. ");
 			return;
 		}
+		returnCode =0;
 
 		formatMembersList();
 
@@ -114,9 +121,11 @@ public class UsCongressCrawler {
 			csvWriter.write(
 					"Congress,Date,Representative,Political Affiliation,Congressional Section,State,District,Title,File");
 		csvWriter.newLine();
-		
-		
-		for (String memberText : congressMembers) {
+
+		for (int i = 0; i < congressMembers.size(); i++) {
+			String memberText = congressMembers.get(i);
+			System.out.println(memberText + i);
+			// try{
 			int tempProgressSize = progressSize / congressMembers.size();
 			if (memberText.equals("All Representatives") || memberText.equals("All Senators")
 					|| memberText.equals("All Republicans") || memberText.equals("All Democrats")
@@ -168,13 +177,51 @@ public class UsCongressCrawler {
 								? congressSenatorMap.get(String.valueOf(congress)).get(memberText)
 								: congressRepresentativeMap.get(String.valueOf(congress)).get(memberText);
 						if (null != memberName) {
-							//Data can be added here for corpus
-							if (isSenate)
-								searchRecords(congress, memberName, "", tempProgressSize / congresses.size(),
-										politicalAffiliation);
-							else
-								searchRecords(congress, "", memberName, tempProgressSize / congresses.size(),
-										politicalAffiliation);
+							// Data can be added here for corpus
+							while (true) {
+								try {
+									if(returnCode ==1)
+										break;
+									if (isSenate) {
+										searchRecords(congress, memberName, "", tempProgressSize / congresses.size(),
+												politicalAffiliation);
+										break;
+									} else {
+										searchRecords(congress, "", memberName, tempProgressSize / congresses.size(),
+												politicalAffiliation);
+										break;
+									}
+								} catch (Exception e) {
+									System.out.println(e.getMessage() + " ");
+									Display.getDefault().syncExec(new Runnable() {
+										@Override
+										public void run() {
+											String[] labels = new String[] { IDialogConstants.OK_LABEL,
+													IDialogConstants.CANCEL_LABEL };
+											if (!retryFlag) {
+												MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+														Display.getDefault().getActiveShell(), "Time out", null,
+														"You must've lost internet connection, re-establish connection and try again!",
+														MessageDialog.INFORMATION, labels, 0, "Retry Automatically",
+														false);
+												returnCode = dialog.open();
+												retryFlag = dialog.getToggleState();
+
+											}
+											if (!retryFlag && returnCode == 1) {
+												monitor.setCanceled(true);
+											} else {
+												crawlAgain = true;
+											}
+											if (retryFlag) {
+												counter += 1;
+												if (counter > 500)
+													retryFlag = false;
+											}
+										}
+									});
+								}
+							}
 						}
 					}
 				} else {
@@ -186,10 +233,48 @@ public class UsCongressCrawler {
 					String memberName = (isSenate) ? congressSenatorMap.get(String.valueOf(congressNum)).get(memberText)
 							: congressRepresentativeMap.get(String.valueOf(congressNum)).get(memberText);
 					if (null != memberName) {
-						if (isSenate)
+						while (true) {
+							try {
+								if(returnCode ==1)
+									break;
+						if (isSenate){
 							searchRecords(congressNum, memberName, "", tempProgressSize, politicalAffiliation);
-						else
+							break;}
+						else{
 							searchRecords(congressNum, "", memberName, tempProgressSize, politicalAffiliation);
+							break;}
+							}
+							catch (Exception e) {
+								System.out.println(e.getMessage() + " ");
+								Display.getDefault().syncExec(new Runnable() {
+									@Override
+									public void run() {
+										String[] labels = new String[] { IDialogConstants.OK_LABEL,
+												IDialogConstants.CANCEL_LABEL };
+										if (!retryFlag) {
+											MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+													Display.getDefault().getActiveShell(), "Time out", null,
+													"You must've lost internet connection, re-establish connection and try again!",
+													MessageDialog.INFORMATION, labels, 0, "Retry Automatically",
+													false);
+											returnCode = dialog.open();
+											retryFlag = dialog.getToggleState();
+
+										}
+										if (!retryFlag && returnCode == 1) {
+											monitor.setCanceled(true);
+										} else {
+											crawlAgain = true;
+										}
+										if (retryFlag) {
+											counter += 1;
+											if (counter > 500)
+												retryFlag = false;
+										}
+									}
+								});
+							}
+						}
 					}
 				}
 				if (null != monitor && monitor.isCanceled()) {
@@ -198,7 +283,9 @@ public class UsCongressCrawler {
 				}
 			}
 		}
+
 		csvWriter.close();
+
 	}
 
 	int currentProgress = 0; // stores the progress to be updated for the
@@ -214,8 +301,9 @@ public class UsCongressCrawler {
 		republican = 0;
 		democrat = 0;
 		independent = 0;
-		//counts the total number of democrats, republics and independents
-		if(senText.contains("All Republicans") || senText.contains("All Democrats") || senText.contains("All Independents")){
+		// counts the total number of democrats, republics and independents
+		if (senText.contains("All Republicans") || senText.contains("All Democrats")
+				|| senText.contains("All Independents")) {
 			for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
 				String senatorName = senator;
 				if (null != monitor && monitor.isCanceled())
@@ -228,7 +316,7 @@ public class UsCongressCrawler {
 					independent++;
 			}
 		}
-		
+
 		for (String senator : congressSenatorMap.get(String.valueOf(congressNum)).keySet()) {
 			String senatorName = senator;
 			if (null != monitor && monitor.isCanceled())
@@ -256,7 +344,7 @@ public class UsCongressCrawler {
 				else
 					politicalAffiliation = senatorDetails.get(senatorName).split("-")[0];
 			}
-			//update the current progress
+			// update the current progress
 			if (null != congressSenatorMap.get(String.valueOf(congressNum)).get(senator)) {
 				if (senText.contains("All Democrats")) {
 					if (democrat != 0)
@@ -277,7 +365,8 @@ public class UsCongressCrawler {
 
 					int val = congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
 					if (maxProgressLimit / congressSenatorMap.get(String.valueOf(congressNum)).keySet().size() < 1) {
-						changeProgress += (float) (maxProgressLimit)/ congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
+						changeProgress += (float) (maxProgressLimit)
+								/ congressSenatorMap.get(String.valueOf(congressNum)).keySet().size();
 						if (changeProgress > 1) {
 							currentProgress = (int) changeProgress;
 							changeProgress -= currentProgress;
@@ -287,8 +376,44 @@ public class UsCongressCrawler {
 						currentProgress = (maxProgressLimit) / val;
 					}
 				}
-				searchRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), "",
-						currentProgress, politicalAffiliation);
+				while (true) {
+					try {
+						if(returnCode ==1)
+							break;
+						searchRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), "",
+								currentProgress, politicalAffiliation);
+						break;
+					} catch (Exception e) {
+						System.out.println(e.getMessage() + " ");
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								String[] labels = new String[] { IDialogConstants.OK_LABEL,
+										IDialogConstants.CANCEL_LABEL };
+								if (!retryFlag) {
+									MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+											Display.getDefault().getActiveShell(), "Time out", null,
+											"You must've lost internet connection, re-establish connection and try again!",
+											MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
+									returnCode = dialog.open();
+									retryFlag = dialog.getToggleState();
+
+								}
+								if (!retryFlag && returnCode == 1) {
+									monitor.setCanceled(true);
+									
+								} else {
+									crawlAgain = true;
+								}
+								if (retryFlag) {
+									counter += 1;
+									if (counter > 500)
+										retryFlag = false;
+								}
+							}
+						});
+					}
+				}
 				foundSenator = true;
 			}
 		}
@@ -310,18 +435,19 @@ public class UsCongressCrawler {
 		republican = 0;
 		democrat = 0;
 		independent = 0;
-		if(repText.contains("All Republicans") || repText.contains("All Democrats") || repText.contains("All Independents")){
-		for (String representative : congressRepresentativeMap.get(String.valueOf(congressNum)).keySet()) {
-			String repName = representative;
-			if (null != monitor && monitor.isCanceled())
-				return;
-			if (repName.contains("(R-") || repName.contains("R/") || repName.contains("[R-"))
-				republican++;
-			if (repName.contains("(D-") || repName.contains("D/") || repName.contains("[D-"))
-				democrat++;
-			if (repName.contains("(I-") || repName.contains("I/") || repName.contains("[I-"))
-				independent++;
-		}
+		if (repText.contains("All Republicans") || repText.contains("All Democrats")
+				|| repText.contains("All Independents")) {
+			for (String representative : congressRepresentativeMap.get(String.valueOf(congressNum)).keySet()) {
+				String repName = representative;
+				if (null != monitor && monitor.isCanceled())
+					return;
+				if (repName.contains("(R-") || repName.contains("R/") || repName.contains("[R-"))
+					republican++;
+				if (repName.contains("(D-") || repName.contains("D/") || repName.contains("[D-"))
+					democrat++;
+				if (repName.contains("(I-") || repName.contains("I/") || repName.contains("[I-"))
+					independent++;
+			}
 		}
 		for (String rep : congressRepresentativeMap.get(String.valueOf(congressNum)).keySet()) {
 			String repName = rep;
@@ -335,11 +461,11 @@ public class UsCongressCrawler {
 					continue;
 			}
 			if (repText.contains("All Democrats")) {
-				if (!repName.contains("(D-") && !repName.contains("D/") &&  !repName.contains("[D-"))
+				if (!repName.contains("(D-") && !repName.contains("D/") && !repName.contains("[D-"))
 					continue;
 			}
 			if (repText.contains("All Independents")) {
-				if (!repName.contains("(I-") && !repName.contains("I/") &&  !repName.contains("[I-"))
+				if (!repName.contains("(I-") && !repName.contains("I/") && !repName.contains("[I-"))
 					continue;
 			}
 			String politicalAffiliation = "";
@@ -368,8 +494,10 @@ public class UsCongressCrawler {
 						currentProgress = 0;
 				} else {
 					int val = congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size();
-					if (maxProgressLimit/ congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size() < 1) {
-						changeProgress += (float) (maxProgressLimit)/ congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size();
+					if (maxProgressLimit
+							/ congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size() < 1) {
+						changeProgress += (float) (maxProgressLimit)
+								/ congressRepresentativeMap.get(String.valueOf(congressNum)).keySet().size();
 						if (changeProgress > 1) {
 							currentProgress = (int) changeProgress;
 							changeProgress -= currentProgress;
@@ -379,10 +507,48 @@ public class UsCongressCrawler {
 						currentProgress = (maxProgressLimit) / val;
 					}
 				}
-				searchRecords(congressNum, "", congressRepresentativeMap.get(String.valueOf(congressNum)).get(rep),
-						currentProgress, politicalAffiliation);
+				while (true) {
+					try {
+						if(returnCode ==1)
+							break;
+						searchRecords(congressNum, "",
+								congressRepresentativeMap.get(String.valueOf(congressNum)).get(rep), currentProgress,
+								politicalAffiliation);
+						break;
+					} catch (Exception e) {
+						System.out.println(e.getMessage() + " ");
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								String[] labels = new String[] { IDialogConstants.OK_LABEL,
+										IDialogConstants.CANCEL_LABEL };
+								if (!retryFlag) {
+									MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+											Display.getDefault().getActiveShell(), "Time out", null,
+											"You must've lost internet connection, re-establish connection and try again!",
+											MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
+									returnCode = dialog.open();
+									retryFlag = dialog.getToggleState();
+									System.out.println(returnCode + "+++++++++++++++");
+
+								}
+								if (!retryFlag && returnCode == 1) {
+									monitor.setCanceled(true);
+								} else {
+									crawlAgain = true;
+								}
+								if (retryFlag) {
+									counter += 1;
+									if (counter > 500)
+										retryFlag = false;
+								}
+							}
+						});
+					}
+				}
 				foundRep = true;
 			}
+
 		}
 		if (!foundRep) {
 			if (repText.contains("All Republicans")) {
@@ -431,7 +597,7 @@ public class UsCongressCrawler {
 			return;
 		String memText = (null == senText || senText.isEmpty()) ? repText : senText;
 		ConsoleView.printlInConsoleln("Current Congress Member - " + memText);
-		String memberDir = this.outputDir + File.separator + memText.replaceAll("[\\/:*?\"<>|]+", ""); 
+		String memberDir = this.outputDir + File.separator + memText.replaceAll("[\\/:*?\"<>|]+", "");
 		if (!new File(memberDir).exists()) {
 			new File(memberDir).mkdir();
 		}
@@ -439,26 +605,38 @@ public class UsCongressCrawler {
 		if (null != monitor && !monitor.isCanceled()) {
 			monitor.subTask("Crawling data for " + memText + "...");
 		}
-		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2").data("xss", "query") // Important. If removed, "301 Moved Permanently" error																				// If
-				.data("queryr" + congress, "") // Important. 113 - congress number. Make this auto? if removed, "Database Missing" error
+		Document doc = Jsoup.connect("http://thomas.loc.gov/cgi-bin/thomas2").data("xss", "query") // Important.
+																									// If
+																									// removed,
+																									// "301
+																									// Moved
+																									// Permanently"
+																									// error
+																									// //
+																									// If
+				.data("queryr" + congress, "") // Important. 113 - congress
+												// number. Make this auto? if
+												// removed, "Database Missing"
+												// error
 				.data("MaxDocs", "2000") // Doesn't seem to be working
-				.data("Stemming", "No").data("HSpeaker", repText).data("SSpeaker", senText).data("member", "speaking") 
-				.data("relation", "or") // or | and -- when there are multiple speakers in the query
+				.data("Stemming", "No").data("HSpeaker", repText).data("SSpeaker", senText).data("member", "speaking")
+				.data("relation", "or") // or | and -- when there are multiple
+										// speakers in the query
 				.data("SenateSection", crawlSenateRecords).data("HouseSection", crawlHouseRepRecords)
 				.data("ExSection", crawlExtension).data("DigestSection", crawlDailyDigest).data("LBDateSel", "Thru")
-				.data("DateFrom", dateFrom).data("DateTo", dateTo).data("sort", sortType) 
-				.data("submit", "SEARCH").userAgent("Mozilla").timeout(10 * 1000).post();
+				.data("DateFrom", dateFrom).data("DateTo", dateTo).data("sort", sortType).data("submit", "SEARCH")
+				.userAgent("Mozilla").timeout(15 * 1000).post();
 		Elements links;
 		try {
 			links = doc.getElementById("content").getElementsByTag("a");
-		} catch(NullPointerException ne) {
-			if(null != senText || !senText.isEmpty())
+		} catch (NullPointerException ne) {
+			if (null != senText || !senText.isEmpty())
 				ConsoleView.printlInConsoleln("*** No data found for " + senText);
 			else
 				ConsoleView.printlInConsoleln("*** No data found for " + repText);
 			return;
 		}
- 
+
 		// Extracting the relevant links
 		Elements relevantLinks = new Elements();
 		for (Element link : links) {
@@ -578,10 +756,10 @@ public class UsCongressCrawler {
 	private int updateWork(int maxDocs, int totalLinks, int progressSize, int tempCount) {
 		int tempMaxDocs = maxDocs == -1 ? 2000 : maxDocs;
 		int numDocs2Download = tempMaxDocs > totalLinks ? totalLinks : tempMaxDocs;
-			if (tempCount == numDocs2Download) {
-				tempCount = 0;
-				monitor.worked(progressSize);
-			}
+		if (tempCount == numDocs2Download) {
+			tempCount = 0;
+			monitor.worked(progressSize);
+		}
 		return tempCount;
 	}
 

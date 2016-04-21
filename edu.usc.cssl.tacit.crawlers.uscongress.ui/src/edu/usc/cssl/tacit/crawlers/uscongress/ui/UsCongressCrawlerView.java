@@ -1157,46 +1157,49 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	int returnCode = 0;	
 	int counter = 0 ;
 	private IStatus crawl(final IProgressMonitor monitor){
-		
-		try {
-			sc.crawl();
-		} catch (Exception e) {
-			
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-										
-					String []labels = new String[]{IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL };
-					if(!retryFlag){		
-					MessageDialogWithToggle dialog = new MessageDialogWithToggle(Display.getDefault().getActiveShell(), "Time out", null,
-							"You must've lost internet connection, re-establish connection and try again!", MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
-					returnCode = dialog.open();
-					retryFlag = dialog.getToggleState();
-					
-					}
-					if(!retryFlag && returnCode == 1){
-						crawlAgain = false;												
-					}
-					else{
-						crawlAgain= true;
-					}
-					
-					if(retryFlag){
-						counter+=1;
-						if(counter>500)
-							retryFlag = false;
-					}
-					
-				}				
-		});
-			if(crawlAgain){
-				crawlAgain = false;
-				crawl(monitor);
+
+			try {
+				sc.crawl();
+			} catch (IOException e) {
+				return handleException(monitor, e, "Crawling failed. Provide valid data");
 			}
-			else{
-			return handleException(monitor, e, "Crawling failed. Provide valid data");
-			}
-		}
+//		} catch (Exception e) {
+//			
+//			Display.getDefault().syncExec(new Runnable() {
+//				@Override
+//				public void run() {
+//										
+//					String []labels = new String[]{IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL };
+//					if(!retryFlag){		
+//					MessageDialogWithToggle dialog = new MessageDialogWithToggle(Display.getDefault().getActiveShell(), "Time out", null,
+//							"You must've lost internet connection, re-establish connection and try again!", MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
+//					returnCode = dialog.open();
+//					retryFlag = dialog.getToggleState();
+//					
+//					}
+//					if(!retryFlag && returnCode == 1){
+//						crawlAgain = false;												
+//					}
+//					else{
+//						crawlAgain= true;
+//					}
+//					
+//					if(retryFlag){
+//						counter+=1;
+//						if(counter>500)
+//							retryFlag = false;
+//					}
+//					
+//				}				
+//		});
+//			if(crawlAgain){
+//				crawlAgain = false;
+//				crawl(monitor);
+//			}
+//			else{
+//			return handleException(monitor, e, "Crawling failed. Provide valid data");
+//			}
+//		}
 		monitor.worked(100);
 		monitor.done();
 		return Status.OK_STATUS;
