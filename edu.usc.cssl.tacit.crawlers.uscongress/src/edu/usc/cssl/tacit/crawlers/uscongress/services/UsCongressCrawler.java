@@ -215,8 +215,10 @@ public class UsCongressCrawler {
 											}
 											if (retryFlag) {
 												counter += 1;
-												if (counter > 500)
+												if (counter > 500){
+													counter =0;
 													retryFlag = false;
+												}
 											}
 										}
 									});
@@ -268,8 +270,10 @@ public class UsCongressCrawler {
 										}
 										if (retryFlag) {
 											counter += 1;
-											if (counter > 500)
+											if (counter > 500){
+												counter = 0;
 												retryFlag = false;
+											}
 										}
 									}
 								});
@@ -407,8 +411,10 @@ public class UsCongressCrawler {
 								}
 								if (retryFlag) {
 									counter += 1;
-									if (counter > 500)
+									if (counter > 500){
+										counter = 0;
 										retryFlag = false;
+									}
 								}
 							}
 						});
@@ -539,8 +545,10 @@ public class UsCongressCrawler {
 								}
 								if (retryFlag) {
 									counter += 1;
-									if (counter > 500)
+									if (counter > 500){
+										counter = 0;
 										retryFlag = false;
+									}
 								}
 							}
 						});
