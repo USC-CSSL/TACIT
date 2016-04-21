@@ -17,4 +17,5 @@ Export-Package: edu.uc.cssl.tacit.cluster.kmeans.services,
  weka.core
 Bundle-ClassPath: weka.jar,
  .,
- junit.jar
+ junit.jar,
+ hamcrest-all-1.3.jar

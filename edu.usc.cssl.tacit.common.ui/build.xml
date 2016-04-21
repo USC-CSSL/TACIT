@@ -8,6 +8,7 @@
     <property name="ECLIPSE_HOME" value="../../../../eclipse/"/>
     <property name="edu.usc.cssl.tacit.classify.svm.location" value="../edu.usc.cssl.tacit.classify.svm"/>
     <property name="edu.usc.cssl.tacit.cluster.hierarchical.location" value="../edu.usc.cssl.tacit.cluster.hierarchical"/>
+    <property name="edu.usc.cssl.tacit.cluster.kmeans.location" value="../edu.usc.cssl.tacit.cluster.kmeans"/>
     <property name="edu.usc.cssl.tacit.topicmodel.lda.location" value="../edu.usc.cssl.tacit.topicmodel.lda"/>
     <property name="edu.usc.cssl.tacit.topicmodel.zlda.location" value="../edu.usc.cssl.tacit.topicmodel.zlda"/>
     <property name="edu.usc.cssl.tacit.wordcount.cooccurrence.location" value="../edu.usc.cssl.tacit.wordcount.cooccurrence"/>
@@ -96,6 +97,12 @@
         </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.hierarchical.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.hierarchical.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.kmeans.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.kmeans.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>

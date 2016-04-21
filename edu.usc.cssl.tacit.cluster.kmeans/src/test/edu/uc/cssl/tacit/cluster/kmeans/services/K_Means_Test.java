@@ -16,7 +16,7 @@ import org.junit.Test;
 import edu.uc.cssl.tacit.cluster.kmeans.services.KmeansClusterAnalysis;
 
 
-public class KMeansTest {
+public class K_Means_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
 	public void runClusteringTest() throws IOException {
