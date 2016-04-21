@@ -548,9 +548,14 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 							} else {
 								cv = new NaiveBayesClassifierWeka(tempClassPaths);
 							}
-							cv.initializeInstances();
-							cv.doCrossValidate(kValue, monitor, dateObj);
-
+							
+							try {
+								cv.initializeInstances();
+								cv.doCrossValidate(kValue, monitor, dateObj);
+							} catch(IllegalArgumentException iae) {
+								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
+								return handleException(monitor, iae, "Naive Bayes Classifier failed. Provide valid data.");
+							}
 							monitor.worked(40);
 
 							if (monitor.isCanceled()) {
@@ -562,7 +567,12 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 							if (isClassificationEnabled) {
 								monitor.subTask("Classifying...");
 								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
-								cv.doClassify(classificationInputDir, outputDir, monitor, dateObj);
+								try {
+									cv.doClassify(classificationInputDir, outputDir, monitor, dateObj);
+								} catch(IllegalArgumentException iae) {
+									TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
+									return handleException(monitor, iae, "Naive Bayes Classifier failed. Provide valid data.");
+								}
 								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 							}
 							monitor.worked(15);
@@ -583,7 +593,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								return handledCancelRequest("Cancelled");
 							}
 						} catch (IOException e) {
-							TacitFormComposite.writeConsoleHeaderBegining("Erro: <Terminated> Naive Bayes Classifier ");
+							TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
 							return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
 						} catch (EvalError e) {
 							TacitFormComposite
@@ -740,7 +750,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 		monitor.done();
 		System.out.println(message);
 		e.printStackTrace();
-		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), message + e.getMessage(), IStatus.ERROR, form);
 		return Status.CANCEL_STATUS;
 	}
 
