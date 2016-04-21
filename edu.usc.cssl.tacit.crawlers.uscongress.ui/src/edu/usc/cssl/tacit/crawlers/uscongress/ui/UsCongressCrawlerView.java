@@ -1171,12 +1171,10 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					MessageDialogWithToggle dialog = new MessageDialogWithToggle(Display.getDefault().getActiveShell(), "Time out", null,
 							"You must've lost internet connection, re-establish connection and try again!", MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
 					returnCode = dialog.open();
-					
-					returnCode = dialog.getReturnCode();
 					retryFlag = dialog.getToggleState();
 					
 					}
-					if(!retryFlag && returnCode == SWT.CANCEL){
+					if(!retryFlag && returnCode == 1){
 						crawlAgain = false;												
 					}
 					else{
