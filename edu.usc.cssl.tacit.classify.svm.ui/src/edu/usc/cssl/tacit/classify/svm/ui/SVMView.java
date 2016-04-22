@@ -155,7 +155,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
-
+		try{
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -272,7 +272,10 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				});
 			};
 		});
-
+		}catch(OutOfMemoryError e){
+			throw new Error("Your system seems to be running out of space.");
+			
+		}
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {

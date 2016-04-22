@@ -346,7 +346,22 @@ public class TargetLocationsGroup {
 						path = dlg.open();
 						if (path == null)
 							return;
+						
+					MessageDialog msgDialog = null;
 
+					try {
+						//Count the number of files in the directory selected.
+						long fileCount = getFilesCount(new File(path),0);
+
+						//If the number of files in the directory is larger than file check threshold value then show a show message dialog. 
+						if (fileCount >= FILE_CHECK_THRESHOLD){
+							msgDialog = new MessageDialog(null, "Notification",null, "Adding large number of files may take a while....\nPress OK to proceed.", MessageDialog.INFORMATION, new String[]{"Cancel","OK"}, 1);
+							int result = msgDialog.open();
+								
+							//If user selects the cancel button then return
+								msgDialog.close();
+								return;
+							}
 						message = updateLocationTree(new String[] { path });
 						if (!message.equals("")) {
 							ErrorDialog.openError(dlg.getParent(),
@@ -745,5 +760,7 @@ public class TargetLocationsGroup {
 		return Math.max(widthHint,
 				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
+					return FILE_CHECK_THRESHOLD;
+				}
 
 }
