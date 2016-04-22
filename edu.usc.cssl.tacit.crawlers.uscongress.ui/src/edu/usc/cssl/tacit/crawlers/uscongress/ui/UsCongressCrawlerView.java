@@ -6,6 +6,7 @@ import java.lang.ref.Reference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -589,6 +590,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 				congressYears = tempCongressYears.toArray(new String[0]);
 				try {
 					allSenators = AvailableRecords.getAllSenators(congresses);
+					System.out.println(Arrays.toString(congresses)+"----congresses");
 					totalSenators = allSenators.length + 5;
 					allRepresentatives = AvailableRecords.getAllRepresentatives(congresses);
 					totalRepresentatives = allRepresentatives.length + 5;

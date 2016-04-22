@@ -549,9 +549,9 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 						if(content.size()>0)
 							progressSize = (content.size()*limitLinks)+30;
 						monitor.beginTask("Running Reddit Crawler..." , progressSize);
-						TacitFormComposite.writeConsoleHeaderBegining("Reddit Crawler started");						
+						TacitFormComposite.writeConsoleHeaderBegining("Reddit Crawler started");
 						final RedditCrawler rc = new RedditCrawler(outputDir, limitLinks, limitComments, monitor); // initialize all the common parameters	
-						
+
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if(monitor.isCanceled())
