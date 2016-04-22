@@ -44,7 +44,7 @@ class Attribute {
 }
 
 public class JsonParser {
-	final int keyLevel = 3;
+	final int keyLevel = 8;
 
 	public JsonParser(String[] keyList) {
 		for (int i = 0; i < keyList.length; i++) {

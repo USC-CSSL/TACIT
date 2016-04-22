@@ -727,7 +727,8 @@ public class TargetLocationsGroup {
 					.getCorpusClass().getParent().getDatatype();
 			if (corpusDataType == CMDataType.JSON
 					|| corpusDataType == CMDataType.TWITTER_JSON
-					|| corpusDataType == CMDataType.REDDIT_JSON) {
+					|| corpusDataType == CMDataType.REDDIT_JSON
+					|| corpusDataType == CMDataType.STACKEXCHANGE_JSON) {
 				filterEnabled = true;
 			}
 		}

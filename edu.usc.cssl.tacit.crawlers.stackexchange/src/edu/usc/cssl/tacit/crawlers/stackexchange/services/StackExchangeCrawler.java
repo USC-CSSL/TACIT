@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Answer;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.AnswerItem;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Comment;
@@ -29,13 +30,16 @@ public class StackExchangeCrawler {
 	private boolean[] filter;
 
 	public StackExchangeCrawler() {
-
+		String k = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
+		if(k!=null && !k.equals("")){
+			key = k;
+		}
 	}
 
 	public void setDir(String fileName) {
 		// TODO Auto-generated constructor stub
 		// Instantiate JSON writer
-		String output = fileName + File.separator + "stackexchange.txt";
+		String output = fileName + File.separator + "stackexchange.json";
 		File streamFile = new File(output);
 		jsonfactory = new JsonFactory();
 		try {
@@ -133,17 +137,17 @@ public class StackExchangeCrawler {
 
 				for (Answer answer : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Answer Id", Integer.toString(answer.getId()));
+					jsonGenerator.writeStringField("answer_id", Integer.toString(answer.getId()));
 					if (filter[1])
-						jsonGenerator.writeStringField("Answer Body", Jsoup.parse(answer.getBody()).text());
-					jsonGenerator.writeStringField("Question Id", Integer.toString(answer.getQuestion_id()));
+						jsonGenerator.writeStringField("answer_body", Jsoup.parse(answer.getBody()).text());
+					jsonGenerator.writeStringField("question_id", Integer.toString(answer.getQuestion_id()));
 					if (filter[0]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(answer.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", answer.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(answer.getOwner().user_id));
+						jsonGenerator.writeStringField("username", answer.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",
 								Integer.toString(answer.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", answer.getOwner().user_type.toString());
+						jsonGenerator.writeStringField("user_type", answer.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 
@@ -171,17 +175,17 @@ public class StackExchangeCrawler {
 
 				for (Answer answer : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Answer Id", Integer.toString(answer.getId()));
+					jsonGenerator.writeStringField("answer_id", Integer.toString(answer.getId()));
 					if (filter[1])
-						jsonGenerator.writeStringField("Answer Body", Jsoup.parse(answer.getBody()).text());
-					jsonGenerator.writeStringField("Question Id", Integer.toString(answer.getQuestion_id()));
+						jsonGenerator.writeStringField("answer_body", Jsoup.parse(answer.getBody()).text());
+					jsonGenerator.writeStringField("question_id", Integer.toString(answer.getQuestion_id()));
 					if (filter[0]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(answer.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", answer.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(answer.getOwner().user_id));
+						jsonGenerator.writeStringField("username", answer.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",
 								Integer.toString(answer.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", answer.getOwner().user_type.toString());
+						jsonGenerator.writeStringField("user_type", answer.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 
@@ -222,20 +226,20 @@ public class StackExchangeCrawler {
 
 				for (Question question : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Question Id", Integer.toString(question.getQuestion_id()));
+					jsonGenerator.writeStringField("question_id", Integer.toString(question.getQuestion_id()));
 					if (filter[2])
-						jsonGenerator.writeStringField("Question Title", Jsoup.parse(question.getTitle()).text());
+						jsonGenerator.writeStringField("question_title", Jsoup.parse(question.getTitle()).text());
 					if (filter[3])
-						jsonGenerator.writeStringField("Question Body", Jsoup.parse(question.getBody()).text());
+						jsonGenerator.writeStringField("question_body", Jsoup.parse(question.getBody()).text());
 					if (filter[5])
-						jsonGenerator.writeStringField("isAnswered", question.isIs_answered() + "");
+						jsonGenerator.writeStringField("is_answered", question.isIs_answered() + "");
 					if (filter[4]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(question.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", question.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(question.getOwner().user_id));
+						jsonGenerator.writeStringField("username", question.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",
 								Integer.toString(question.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", question.getOwner().user_type.toString());
+						jsonGenerator.writeStringField("user_type", question.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					jsonGenerator.writeEndObject();
@@ -263,20 +267,20 @@ public class StackExchangeCrawler {
 
 				for (Question question : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Question Id", Integer.toString(question.getQuestion_id()));
+					jsonGenerator.writeStringField("question_id", Integer.toString(question.getQuestion_id()));
 					if (filter[2])
-						jsonGenerator.writeStringField("Question Title", Jsoup.parse(question.getTitle()).text());
+						jsonGenerator.writeStringField("question_title", Jsoup.parse(question.getTitle()).text());
 					if (filter[3])
-						jsonGenerator.writeStringField("Question Body", Jsoup.parse(question.getBody()).text());
+						jsonGenerator.writeStringField("question_body", Jsoup.parse(question.getBody()).text());
 					if (filter[5])
-						jsonGenerator.writeStringField("isAnswered", question.isIs_answered() + "");
+						jsonGenerator.writeStringField("is_answered", question.isIs_answered() + "");
 					if (filter[4]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(question.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", question.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(question.getOwner().user_id));
+						jsonGenerator.writeStringField("username", question.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",
 								Integer.toString(question.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", question.getOwner().user_type.toString());
+						jsonGenerator.writeStringField("user_type", question.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 
@@ -320,16 +324,16 @@ public class StackExchangeCrawler {
 
 				for (Comment comments : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Comment Id", Integer.toString(comments.getComment_id()));
+					jsonGenerator.writeStringField("comment_id", Integer.toString(comments.getComment_id()));
 					if (filter[6])
-						jsonGenerator.writeStringField("Comment Body", Jsoup.parse(comments.getBody()).text());
+						jsonGenerator.writeStringField("comment_body", Jsoup.parse(comments.getBody()).text());
 					if (filter[7]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(comments.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", comments.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(comments.getOwner().user_id));
+						jsonGenerator.writeStringField("username", comments.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",
 								Integer.toString(comments.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", comments.getOwner().user_type.toString());
+						jsonGenerator.writeStringField("user_type", comments.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					jsonGenerator.writeEndObject();
@@ -353,16 +357,16 @@ public class StackExchangeCrawler {
 
 				for (Comment comments : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Comment Id", Integer.toString(comments.getComment_id()));
+					jsonGenerator.writeStringField("comment_id", Integer.toString(comments.getComment_id()));
 					if (filter[6])
-						jsonGenerator.writeStringField("Comment Body", Jsoup.parse(comments.getBody()).text());
+						jsonGenerator.writeStringField("comment_body", Jsoup.parse(comments.getBody()).text());
 					if (filter[7]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(comments.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", comments.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(comments.getOwner().user_id));
+						jsonGenerator.writeStringField("username", comments.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",
 								Integer.toString(comments.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", comments.getOwner().user_type.toString());
+						jsonGenerator.writeStringField("user_type", comments.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					jsonGenerator.writeEndObject();
@@ -401,21 +405,21 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeObjectFieldStart("Question");
-					jsonGenerator.writeStringField("Question Id", Integer.toString(search.getQuestion_id()));
+					jsonGenerator.writeObjectFieldStart("question");
+					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
 					if (filter[2])
-					jsonGenerator.writeStringField("Question Title", Jsoup.parse(search.getTitle()).text());
+					jsonGenerator.writeStringField("question_title", Jsoup.parse(search.getTitle()).text());
 					if (filter[3])
-					jsonGenerator.writeStringField("Question Body", Jsoup.parse(search.getBody()).text());
+					jsonGenerator.writeStringField("question_body", Jsoup.parse(search.getBody()).text());
 					if (filter[5])
-					jsonGenerator.writeStringField("isAnswered", search.isIs_answered() + "");
+					jsonGenerator.writeStringField("is_answered", search.isIs_answered() + "");
 					// User details
 					if (filter[4]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(search.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", search.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation", Integer.toString(search.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", search.getOwner().user_type.toString());
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(search.getOwner().user_id));
+						jsonGenerator.writeStringField("username", search.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation", Integer.toString(search.getOwner().reputation));
+						jsonGenerator.writeStringField("user_type", search.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					// get Comments for question
@@ -447,20 +451,20 @@ public class StackExchangeCrawler {
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("Question");
-					jsonGenerator.writeStringField("Question Id", Integer.toString(search.getQuestion_id()));
+					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
 					if (filter[2])
-						jsonGenerator.writeStringField("Question Title", Jsoup.parse(search.getTitle()).text());
+						jsonGenerator.writeStringField("question_title", Jsoup.parse(search.getTitle()).text());
 					if (filter[3])
-						jsonGenerator.writeStringField("Question Body", Jsoup.parse(search.getBody()).text());
+						jsonGenerator.writeStringField("question_body", Jsoup.parse(search.getBody()).text());
 					if (filter[5])
 						jsonGenerator.writeStringField("isAnswered", search.isIs_answered() + "");
 					// User details
 					if (filter[4]) {
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(search.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", search.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation",Integer.toString(search.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", search.getOwner().user_type.toString());
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(search.getOwner().user_id));
+						jsonGenerator.writeStringField("username", search.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation",Integer.toString(search.getOwner().reputation));
+						jsonGenerator.writeStringField("user_type", search.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					// get Comments for question
@@ -489,13 +493,13 @@ public class StackExchangeCrawler {
 				for (Comment comments : i.items) {
 					jsonGenerator.writeStartObject();
 					if(filter[6])
-					jsonGenerator.writeStringField("CommentBody", Jsoup.parse(comments.getBody()).text());
+					jsonGenerator.writeStringField("comment_body", Jsoup.parse(comments.getBody()).text());
 					if(filter[7]){
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(comments.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", comments.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation", Integer.toString(comments.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", comments.getOwner().user_type.toString());
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(comments.getOwner().user_id));
+						jsonGenerator.writeStringField("username", comments.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation", Integer.toString(comments.getOwner().reputation));
+						jsonGenerator.writeStringField("user_type", comments.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					jsonGenerator.writeEndObject();
@@ -514,19 +518,19 @@ public class StackExchangeCrawler {
 			while (true) {
 				Call<AnswerItem> call = siteService.getAnswersbyQuestionId(questionId, key, site);
 				AnswerItem i = call.execute().body();
-				jsonGenerator.writeArrayFieldStart("AnswersDets");
+				jsonGenerator.writeArrayFieldStart("answers_dets");
 				for (Answer answer : i.items) {
 					jsonGenerator.writeStartObject();
-					jsonGenerator.writeStringField("Answer Id", Integer.toString(answer.getQuestion_id()));
+					jsonGenerator.writeStringField("answer_id", Integer.toString(answer.getQuestion_id()));
 					if(filter[1])
-					jsonGenerator.writeStringField("Answer Body", Jsoup.parse(answer.getBody()).text());
+					jsonGenerator.writeStringField("answer_body", Jsoup.parse(answer.getBody()).text());
 					// user details
 					if(filter[0]){
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(answer.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", answer.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation", Integer.toString(answer.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", answer.getOwner().user_type.toString());
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(answer.getOwner().user_id));
+						jsonGenerator.writeStringField("username", answer.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation", Integer.toString(answer.getOwner().reputation));
+						jsonGenerator.writeStringField("user_type", answer.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 
@@ -551,13 +555,13 @@ public class StackExchangeCrawler {
 				for (Comment comment : i.items) {
 					jsonGenerator.writeStartObject();
 					if(filter[6])
-					jsonGenerator.writeStringField("CommentBody", Jsoup.parse(comment.getBody()).text());
+					jsonGenerator.writeStringField("comment_body", Jsoup.parse(comment.getBody()).text());
 					if(filter[7]){
-						jsonGenerator.writeObjectFieldStart("User");
-						jsonGenerator.writeStringField("User Id", Integer.toString(comment.getOwner().user_id));
-						jsonGenerator.writeStringField("User Name", comment.getOwner().display_name);
-						jsonGenerator.writeStringField("User Reputation", Integer.toString(comment.getOwner().reputation));
-						jsonGenerator.writeStringField("User Type", comment.getOwner().user_type.toString());
+						jsonGenerator.writeObjectFieldStart("user");
+						jsonGenerator.writeStringField("user_id", Integer.toString(comment.getOwner().user_id));
+						jsonGenerator.writeStringField("username", comment.getOwner().display_name);
+						jsonGenerator.writeStringField("user_reputation", Integer.toString(comment.getOwner().reputation));
+						jsonGenerator.writeStringField("user_type", comment.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
 					jsonGenerator.writeEndObject();

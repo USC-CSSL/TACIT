@@ -531,7 +531,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 								@Override
 								public void run() {
-									Corpus corpus = new Corpus(corpusName, CMDataType.TWITTER_JSON);
+									Corpus corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
 									CorpusClass cc= new CorpusClass(domain, outputDir);
 									cc.setParent(corpus);
 									corpus.addClass(cc);
