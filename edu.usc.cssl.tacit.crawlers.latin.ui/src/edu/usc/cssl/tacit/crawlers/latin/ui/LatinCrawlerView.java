@@ -185,6 +185,7 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 						int totalWork = 1;
 						try {
 							authorItr = selectedAuthors.iterator();
+							System.out.println(selectedAuthors);
 							totalWork = selectedAuthors.size();
 							monitor.beginTask("TACIT started crawling...", totalWork);
 							int totalFilesCreated = 0;

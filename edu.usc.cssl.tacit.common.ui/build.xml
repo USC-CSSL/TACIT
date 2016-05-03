@@ -6,9 +6,11 @@
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="edu.usc.cssl.tacit.common.ui">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../../../eclipse/"/>
+    <property name="edu.usc.cssl.tacit.classify.naivebayes.location" value="../edu.usc.cssl.tacit.classify.naivebayes"/>
     <property name="edu.usc.cssl.tacit.classify.svm.location" value="../edu.usc.cssl.tacit.classify.svm"/>
     <property name="edu.usc.cssl.tacit.cluster.hierarchical.location" value="../edu.usc.cssl.tacit.cluster.hierarchical"/>
     <property name="edu.usc.cssl.tacit.cluster.kmeans.location" value="../edu.usc.cssl.tacit.cluster.kmeans"/>
+    <property name="edu.usc.cssl.tacit.crawlers.latin.location" value="../edu.usc.cssl.tacit.crawlers.latin"/>
     <property name="edu.usc.cssl.tacit.crawlers.reddit.location" value="../edu.usc.cssl.tacit.crawlers.reddit"/>
     <property name="edu.usc.cssl.tacit.crawlers.uscongress.location" value="../edu.usc.cssl.tacit.crawlers.uscongress"/>
     <property name="edu.usc.cssl.tacit.topicmodel.lda.location" value="../edu.usc.cssl.tacit.topicmodel.lda"/>
@@ -84,13 +86,19 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac fork="true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac fork="true"  debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <src path="html"/>
             <classpath refid="edu.usc.cssl.tacit.common.ui.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.classify.naivebayes.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.classify.naivebayes.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.classify.svm.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.classify.svm.location}" inheritAll="false" target="build">
             <propertyset>
@@ -105,6 +113,12 @@
         </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.kmeans.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.cluster.kmeans.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.latin.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.latin.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>
