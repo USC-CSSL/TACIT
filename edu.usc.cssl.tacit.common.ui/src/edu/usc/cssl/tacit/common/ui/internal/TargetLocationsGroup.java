@@ -2,6 +2,9 @@ package edu.usc.cssl.tacit.common.ui.internal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -68,7 +71,7 @@ public class TargetLocationsGroup {
 	private Button fRemoveButton;
 	private Button fFilterCorpusButton;
 	private Set<TreeParent> locationPaths;
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused")	
 	private FormToolkit toolKit;
 	private Label dummy;
 	private Label dummyCorpus;
@@ -78,6 +81,7 @@ public class TargetLocationsGroup {
 	private static Composite cmp;
 	
 	private static String inputFilterPath = ""; 
+	public static long FILE_CHECK_THRESHOLD = 20000;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -346,8 +350,33 @@ public class TargetLocationsGroup {
 						path = dlg.open();
 						if (path == null)
 							return;
+						
+					MessageDialog msgDialog = null;
 
+					try {
+						//Count the number of files in the directory selected.
+						long fileCount = getFilesCount(new File(path),0);
+
+						//If the number of files in the directory is larger than file check threshold value then show a show message dialog. 
+						if (fileCount >= FILE_CHECK_THRESHOLD){
+							msgDialog = new MessageDialog(null, "Notification",null, "Adding large number of files may take a while....\nPress OK to proceed.", MessageDialog.INFORMATION, new String[]{"Cancel","OK"}, 1);
+
+							int result = msgDialog.open();
+								
+							//If user selects the cancel button then return
+							if (result <= 0){
+								msgDialog.close();
+								return;
+							}
+						}
+							
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}	
+					
+						
 						message = updateLocationTree(new String[] { path });
+
 						if (!message.equals("")) {
 							ErrorDialog.openError(dlg.getParent(),
 									"Select Different Folder",
@@ -727,7 +756,8 @@ public class TargetLocationsGroup {
 					.getCorpusClass().getParent().getDatatype();
 			if (corpusDataType == CMDataType.JSON
 					|| corpusDataType == CMDataType.TWITTER_JSON
-					|| corpusDataType == CMDataType.REDDIT_JSON) {
+					|| corpusDataType == CMDataType.REDDIT_JSON
+					|| corpusDataType == CMDataType.STACKEXCHANGE_JSON) {
 				filterEnabled = true;
 			}
 		}
@@ -744,5 +774,35 @@ public class TargetLocationsGroup {
 		return Math.max(widthHint,
 				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
+	
+	/*
+	 * Calculates the number of files in the given input directory.
+	 * Returns number of files if the number is less than the file check threshold else returns the threshold number 
+	 */
+	public static long getFilesCount(File file, long parentCount) throws Exception{
+		
+		if (parentCount >= FILE_CHECK_THRESHOLD){
+			return FILE_CHECK_THRESHOLD;
+		}
+		
+		File[] files = file.listFiles();
+		long count = 0;
+		for (File f : files)
+			if (f.isDirectory()){
+				count += getFilesCount(f,count);
+				if (parentCount+count >= FILE_CHECK_THRESHOLD){
+					return FILE_CHECK_THRESHOLD;
+				}
+			}				
+			else{
+				count++;
+				if (parentCount+count > FILE_CHECK_THRESHOLD){
+					return FILE_CHECK_THRESHOLD;
+				}
+			}
+				
+		files = null;
+		return count;
+		}
 
 }

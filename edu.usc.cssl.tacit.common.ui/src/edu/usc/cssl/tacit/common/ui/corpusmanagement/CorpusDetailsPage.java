@@ -41,7 +41,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
-public class CorpusDetailsPage implements IDetailsPage{
+public class CorpusDetailsPage implements IDetailsPage {
 	private IManagedForm mform;
 	private Text corpusNameTxt;
 	private Corpus selectedCorpus;
@@ -50,12 +50,14 @@ public class CorpusDetailsPage implements IDetailsPage{
 	private Button plainText = null;
 	private Button twitterJSON = null;
 	private Button redditJSON = null;
+	private Button stackExchangeJSON = null;
 	private Button xmlData = null;
 	private Button wordData = null;
 	private IViewSite viewSite;
-	
+
 	ManageCorpora corpusManagement;
 	List<ICorpus> corpusList;
+
 	public CorpusDetailsPage(ScrolledForm corpusMgmtViewform, List<ICorpus> corpusList, IViewSite viewSite) {
 		this.corpusMgmtViewform = corpusMgmtViewform;
 		corpusManagement = new ManageCorpora();
@@ -72,11 +74,12 @@ public class CorpusDetailsPage implements IDetailsPage{
 	public void createContents(Composite parent) {
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(parent);
 		toolkit = mform.getToolkit();
-		//form = toolkit.createScrolledForm(parent);
-		//toolkit.decorateFormHeading(form.getForm());
-		//GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
-		//GridDataFactory.fillDefaults().grab(true, true).span(1, 1).applyTo(form.getBody());
-		
+		// form = toolkit.createScrolledForm(parent);
+		// toolkit.decorateFormHeading(form.getForm());
+		// GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(form.getBody());
+		// GridDataFactory.fillDefaults().grab(true, true).span(1,
+		// 1).applyTo(form.getBody());
+
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION | Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
@@ -101,180 +104,214 @@ public class CorpusDetailsPage implements IDetailsPage{
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(corpusNameLbl);
 		corpusNameTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(corpusNameTxt);
-		if(null != selectedCorpus) corpusNameTxt.setText(selectedCorpus.getCorpusName());
+		if (null != selectedCorpus)
+			corpusNameTxt.setText(selectedCorpus.getCorpusName());
 
 		Group dataTypes = new Group(sectionClient, SWT.LEFT);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dataTypes);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(dataTypes);
 		dataTypes.setText("Data Type");
-		
+
 		createDataTypeOptions(dataTypes);
-		if(null != selectedCorpus) {
+		if (null != selectedCorpus) {
 			corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		}
-		
-		//Add save button
+
+		// Add save button
 		Composite buttonComposite = new Composite(sectionClient, SWT.NONE);
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = buttonLayout.marginHeight = 0;
 		buttonComposite.setLayout(buttonLayout);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(buttonComposite);
-		
+
 		Button saveCorpus = new Button(buttonComposite, SWT.PUSH);
 		saveCorpus.setText("Save Corpus");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(saveCorpus);		
-		
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(saveCorpus);
+
 		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(CorpusMangementValidation.validateCorpus(selectedCorpus, true, corpusMgmtViewform, corpusManagement)) {
-					//corpusMgmtViewform.getMessageManager().addMessage("saveCorpus", "Creating corpus...", null, IMessageProvider.INFORMATION);
-					
-					if(null != selectedCorpus) selectedCorpus.getViewer().refresh();
-					Job saveCorpus = new Job("Creating corpus...") {						
+				if (CorpusMangementValidation.validateCorpus(selectedCorpus, true, corpusMgmtViewform,
+						corpusManagement)) {
+					// corpusMgmtViewform.getMessageManager().addMessage("saveCorpus",
+					// "Creating corpus...", null,
+					// IMessageProvider.INFORMATION);
+
+					if (null != selectedCorpus)
+						selectedCorpus.getViewer().refresh();
+					Job saveCorpus = new Job("Creating corpus...") {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
-							TacitFormComposite.updateStatusMessage(viewSite, "Creating corpus \""+selectedCorpus.getCorpusName()+"\"", IStatus.INFO, corpusMgmtViewform);
+							TacitFormComposite.updateStatusMessage(viewSite,
+									"Creating corpus \"" + selectedCorpus.getCorpusName() + "\"", IStatus.INFO,
+									corpusMgmtViewform);
 							ManageCorpora.saveCorpus(selectedCorpus);
-							TacitFormComposite.updateStatusMessage(viewSite, "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully", IStatus.OK, corpusMgmtViewform);
-							
+							TacitFormComposite.updateStatusMessage(viewSite,
+									"Corpus \"" + selectedCorpus.getCorpusName() + "\" created successfully",
+									IStatus.OK, corpusMgmtViewform);
+
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
-									MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info", "Corpus \""+selectedCorpus.getCorpusName()+"\" created successfully");
+									MessageDialog.openInformation(corpusMgmtViewform.getShell(), "Info",
+											"Corpus \"" + selectedCorpus.getCorpusName() + "\" created successfully");
 								}
 							});
 							return Status.OK_STATUS;
 						}
 					};
-					
+
 					saveCorpus.schedule();
-					//corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
-					
+					// corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
+
 				}
 			}
-		});	
+		});
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
-		
+
 		corpusNameTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(CorpusMangementValidation.isCorpusNameValid(corpusNameTxt.getText(), selectedCorpus.getCorpusId(), corpusMgmtViewform, corpusManagement)){
+				if (CorpusMangementValidation.isCorpusNameValid(corpusNameTxt.getText(), selectedCorpus.getCorpusId(),
+						corpusMgmtViewform, corpusManagement)) {
 					selectedCorpus.setCorpusName(corpusNameTxt.getText());
 					selectedCorpus.getViewer().refresh();
 				}
-				
-				if(!corpusNameTxt.getText().isEmpty())
+
+				if (!corpusNameTxt.getText().isEmpty())
 					corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 			}
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(CorpusMangementValidation.isCorpusNameValid(corpusNameTxt.getText(), selectedCorpus.getCorpusId(), corpusMgmtViewform, corpusManagement)){
+				if (CorpusMangementValidation.isCorpusNameValid(corpusNameTxt.getText(), selectedCorpus.getCorpusId(),
+						corpusMgmtViewform, corpusManagement)) {
 					selectedCorpus.setCorpusName(corpusNameTxt.getText());
 					selectedCorpus.getViewer().refresh();
 				}
-				
-				if(!corpusNameTxt.getText().isEmpty())
+
+				if (!corpusNameTxt.getText().isEmpty())
 					corpusMgmtViewform.getMessageManager().removeMessage("corpusNameEmpty");
 			}
 		});
-		
-	}
 
+	}
 
 	public void printCorpusDetails() {
 		System.out.println("Corupus Name :" + selectedCorpus.getCorpusName());
-		for(ICorpusClass cc : selectedCorpus.getClasses()) {
+		for (ICorpusClass cc : selectedCorpus.getClasses()) {
 			System.out.println("Classes " + cc.getClassName() + "," + cc.getClassPath());
 		}
 	}
 
 	private void createDataTypeOptions(Composite dataTypeGroup) {
 		plainText = toolkit.createButton(dataTypeGroup, "Plain Text", SWT.RADIO);
-		plainText.addSelectionListener(new SelectionAdapter(){
-		    @Override
-			public void widgetSelected(final SelectionEvent e){
-		        super.widgetSelected(e);
-		        if(plainText.getSelection()){
-		            selectedCorpus.setDataType(CMDataType.PLAIN_TEXT);
-		        }
-		    }
+		plainText.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				super.widgetSelected(e);
+				if (plainText.getSelection()) {
+					selectedCorpus.setDataType(CMDataType.PLAIN_TEXT);
+				}
+			}
 		});
 		plainText.setSelection(true);
 
 		twitterJSON = toolkit.createButton(dataTypeGroup, "Twitter JSON", SWT.RADIO);
-		twitterJSON.addSelectionListener(new SelectionAdapter(){
-		    @Override
-			public void widgetSelected(final SelectionEvent e){
-		        super.widgetSelected(e);
-		        if(twitterJSON.getSelection()){
-		            selectedCorpus.setDataType(CMDataType.TWITTER_JSON);
-		        }
-		    }
+		twitterJSON.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				super.widgetSelected(e);
+				if (twitterJSON.getSelection()) {
+					selectedCorpus.setDataType(CMDataType.TWITTER_JSON);
+				}
+			}
 		});
 		twitterJSON.setSelection(false);
-		
+
 		redditJSON = toolkit.createButton(dataTypeGroup, "Reddit JSON", SWT.RADIO);
 		redditJSON.setSelection(false);
-		redditJSON.addSelectionListener(new SelectionAdapter(){
-		    @Override
-			public void widgetSelected(final SelectionEvent e){
-		        super.widgetSelected(e);
-		        if(redditJSON.getSelection()){
-		            selectedCorpus.setDataType(CMDataType.REDDIT_JSON);
-		        }
-		    }
+		redditJSON.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				super.widgetSelected(e);
+				if (redditJSON.getSelection()) {
+					selectedCorpus.setDataType(CMDataType.REDDIT_JSON);
+				}
+			}
 		});
-		
+
+		stackExchangeJSON = toolkit.createButton(dataTypeGroup, "JSON", SWT.RADIO);
+		stackExchangeJSON.setSelection(false);
+		stackExchangeJSON.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				super.widgetSelected(e);
+				if (stackExchangeJSON.getSelection()) {
+					selectedCorpus.setDataType(CMDataType.STACKEXCHANGE_JSON);
+				}
+			}
+		});
+
 		xmlData = toolkit.createButton(dataTypeGroup, "XML", SWT.RADIO);
 		xmlData.setSelection(false);
-		xmlData.addSelectionListener(new SelectionAdapter(){
-		    @Override
-			public void widgetSelected(final SelectionEvent e){
-		        super.widgetSelected(e);
-		        if(xmlData.getSelection()){
-		            selectedCorpus.setDataType(CMDataType.XML);
-		        }
-		    }
+		xmlData.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				super.widgetSelected(e);
+				if (xmlData.getSelection()) {
+					selectedCorpus.setDataType(CMDataType.XML);
+				}
+			}
 		});
 		xmlData.setEnabled(false);
-		
+
 		wordData = toolkit.createButton(dataTypeGroup, "Microsoft Word", SWT.RADIO);
 		wordData.setSelection(false);
-		wordData.addSelectionListener(new SelectionAdapter(){
-		    @Override
-			public void widgetSelected(final SelectionEvent e){
-		        super.widgetSelected(e);
-		        if(wordData.getSelection()){
-		            selectedCorpus.setDataType(CMDataType.MICROSOFT_WORD);
-		        }
-		    }
+		wordData.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				super.widgetSelected(e);
+				if (wordData.getSelection()) {
+					selectedCorpus.setDataType(CMDataType.MICROSOFT_WORD);
+				}
+			}
 		});
 		wordData.setEnabled(false);
-		
+
 	}
-	
+
 	private void setDataTypeOption(CMDataType type) {
 		plainText.setSelection(false);
+		stackExchangeJSON.setSelection(false);
 		twitterJSON.setSelection(false);
 		redditJSON.setSelection(false);
 		xmlData.setSelection(false);
 		wordData.setSelection(false);
-		if(null == type) return;
-		switch(type) { 
-				case PLAIN_TEXT: plainText.setSelection(true);
-								 break;
-				case TWITTER_JSON: twitterJSON.setSelection(true);
-								 break;
-				case REDDIT_JSON: redditJSON.setSelection(true);
-								 break;
-				case XML: xmlData.setSelection(true);
-								 break;
-				case MICROSOFT_WORD: wordData.setSelection(true);
-								 break;
+		if (null == type)
+			return;
+		switch (type) {
+		case PLAIN_TEXT:
+			plainText.setSelection(true);
+			break;
+		case TWITTER_JSON:
+			twitterJSON.setSelection(true);
+			break;
+		case REDDIT_JSON:
+			redditJSON.setSelection(true);
+			break;
+		case XML:
+			xmlData.setSelection(true);
+			break;
+		case MICROSOFT_WORD:
+			wordData.setSelection(true);
+			break;
+		case STACKEXCHANGE_JSON:
+			stackExchangeJSON.setSelection(true);
+			break;
 		}
 	}
+
 	@Override
 	public void dispose() {
 
@@ -313,11 +350,10 @@ public class CorpusDetailsPage implements IDetailsPage{
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		corpusMgmtViewform.getMessageManager().removeAllMessages();
-		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();	
+		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();
 		corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		setDataTypeOption(selectedCorpus.getDatatype());
 		CorpusMangementValidation.validateCorpus(selectedCorpus, false, corpusMgmtViewform, corpusManagement);
 	}
-
 
 }

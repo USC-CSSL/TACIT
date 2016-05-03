@@ -32,14 +32,14 @@ public class Cooccurence_Test {
 		boolean result = new CooccurrenceAnalysis() {
 			@Override
 			protected void generateRunReport(){}
-			@Override
+			/*@Override
 			protected String generateSeedComboStatsFileName(Date currTime){
 				return "GeneratedCooccurenceSeedFrequenciesOutput.csv";
 			}
 			@Override
 			protected String generatePhrasesFileName(Date currTime){
 				return "GeneratedCooccurencePhrasesOutput.csv";
-			}
+			}*/
 			@Override
 			protected String generateMatrixFileName(Date currTime){
 				return "GeneratedCooccurenceMatrixOutput.csv";
