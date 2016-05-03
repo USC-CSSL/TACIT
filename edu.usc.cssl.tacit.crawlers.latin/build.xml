@@ -35,10 +35,6 @@
         <pathelement location="${ECLIPSE_HOME}plugins/org.jsoup_1.7.2.v201411291515.jar"/>
         <pathelement location="../../../../edu.usc.cssl.tacit.common.ui"/>
     </path>
-    <path id="JUnit 4.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
-        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
-    </path>
     <path id="edu.usc.cssl.tacit.common.classpath">
         <pathelement location="${edu.usc.cssl.tacit.common.location}/pdfbox-app-2.0.0-RC3.jar"/>
         <pathelement location="${edu.usc.cssl.tacit.common.location}/org.annolab.tt4j-1.2.1.jar"/>

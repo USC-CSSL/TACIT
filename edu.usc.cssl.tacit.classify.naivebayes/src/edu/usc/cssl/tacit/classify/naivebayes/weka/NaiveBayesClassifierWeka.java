@@ -77,10 +77,8 @@ public class NaiveBayesClassifierWeka {
 	 */
 	public boolean doClassify(String classificationInputDir, String classificationOutputDir, IProgressMonitor monitor,
 			Date dateObj) throws Exception {
-		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		ConsoleView.printlInConsoleln("Classification starts ..");
-		String outputPath = classificationOutputDir + System.getProperty("file.separator") + "Naive_Bayes_classification_results" + "-" + df.format(dateObj);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputPath + "-output.csv")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(generateOutputFileName(classificationOutputDir, dateObj))));
 		Instances rawTestData = new DirectoryToArff().createTestInstances(classificationInputDir);
 		Instances filteredTestData = Filter.useFilter(rawTestData, filter);
 		Evaluation testEval = new Evaluation(dataFiltered);
@@ -96,7 +94,11 @@ public class NaiveBayesClassifierWeka {
 		bw.close();
 		return true;
 	}
-
+	protected String generateOutputFileName(String classificationOutputDir, Date dateObj){
+		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
+		String outputFileName = classificationOutputDir + System.getProperty("file.separator") + "Naive_Bayes_classification_results" + "-" + df.format(dateObj)+"-output.csv";
+		return outputFileName;
+	}
 	/**
 	 * Creates a classifier using the given data
 	 * @param dataFiltered
