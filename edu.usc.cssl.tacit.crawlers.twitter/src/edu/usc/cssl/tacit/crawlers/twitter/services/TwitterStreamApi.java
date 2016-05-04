@@ -20,6 +20,7 @@ import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import com.fasterxml.jackson.core.JsonEncoding;
@@ -39,22 +40,13 @@ public class TwitterStreamApi {
 	private final Object lock = new Object();
 	private TwitterStream twitterStream;
 	private StatusListener listener;
-
-	public void stream(String fileName, final boolean isNum, final long numTweet, final boolean isTime,
-			final long deadLine, final boolean noWord, String keyWords[], final boolean noLocation,
-			double[][] locations, final boolean att[], final IProgressMonitor monitor, final Job job)
-					throws IOException {
-
-		final long startTime = System.currentTimeMillis();
-
+	
+	protected Configuration twitterConfigurationGenerator(){
 		ConfigurationBuilder cb = new ConfigurationBuilder();
-
 		String consumerKey;
 		String consumerSecret;
 		String accessToken;
 		String accessTokenSecret;
-		terminate = false;
-		monitor.subTask("Accessing User Information to authenticate...");
 		consumerKey = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
 		consumerSecret = CommonUiActivator.getDefault().getPreferenceStore().getString("csecret");
 		accessToken = CommonUiActivator.getDefault().getPreferenceStore().getString("accesstoken");
@@ -62,7 +54,16 @@ public class TwitterStreamApi {
 
 		cb.setDebugEnabled(true).setOAuthConsumerKey(consumerKey).setOAuthConsumerSecret(consumerSecret)
 				.setOAuthAccessToken(accessToken).setOAuthAccessTokenSecret(accessTokenSecret);
-		twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+		return cb.build();
+	}
+	public void stream(String fileName, final boolean isNum, final long numTweet, final boolean isTime,
+			final long deadLine, final boolean noWord, String keyWords[], final boolean noLocation,
+			double[][] locations, final boolean att[], final IProgressMonitor monitor, final Job job)
+					throws IOException {
+
+		final long startTime = System.currentTimeMillis();
+		terminate = false;
+		twitterStream = new TwitterStreamFactory(twitterConfigurationGenerator()).getInstance();
 		monitor.subTask("User Information is Verified");
 		monitor.worked(2);
 		monitor.subTask("Started Streaming your request...");

@@ -12,6 +12,7 @@
     <property name="edu.usc.cssl.tacit.cluster.kmeans.location" value="../edu.usc.cssl.tacit.cluster.kmeans"/>
     <property name="edu.usc.cssl.tacit.crawlers.latin.location" value="../edu.usc.cssl.tacit.crawlers.latin"/>
     <property name="edu.usc.cssl.tacit.crawlers.reddit.location" value="../edu.usc.cssl.tacit.crawlers.reddit"/>
+    <property name="edu.usc.cssl.tacit.crawlers.twitter.location" value="../edu.usc.cssl.tacit.crawlers.twitter"/>
     <property name="edu.usc.cssl.tacit.crawlers.uscongress.location" value="../edu.usc.cssl.tacit.crawlers.uscongress"/>
     <property name="edu.usc.cssl.tacit.topicmodel.lda.location" value="../edu.usc.cssl.tacit.topicmodel.lda"/>
     <property name="edu.usc.cssl.tacit.topicmodel.zlda.location" value="../edu.usc.cssl.tacit.topicmodel.zlda"/>
@@ -78,7 +79,7 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac fork="true"  debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac fork="true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="edu.usc.cssl.tacit.common.classpath"/>
         </javac>
@@ -116,6 +117,12 @@
         </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.reddit.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.reddit.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.twitter.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.twitter.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>

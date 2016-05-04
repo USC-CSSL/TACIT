@@ -203,8 +203,32 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 							}
 							monitor.beginTask("Crawling Twitter ...", (int) totalJobWork);
 							TacitFormComposite.writeConsoleHeaderBegining("Twitter Crawling Started... ");
+					
 							ttStream.stream(outputFile, maxLimitEnabled, maxTweetLimit, timeLimit, finishTime,
 									noWordFilter, keyWords, noLocationFilter, geoLocations, storedAtts, monitor, job);
+							System.out.println(outputFile);
+							System.out.println(maxLimitEnabled);
+							System.out.println(maxTweetLimit);
+							System.out.println(timeLimit);
+							System.out.println(finishTime);
+							System.out.println(noWordFilter);
+							System.out.println(keyWords);
+							System.out.println(noLocationFilter);
+							System.out.println(geoLocations);
+							System.out.println(storedAtts);
+							/*
+							  C:\eclipse\json_corpuses\twitter\Bamboozle\Twitter_Stream_05-03-2016-17-37-04.json
+								true
+								10
+								true
+								60000
+								false
+								[Ljava.lang.String;@1c523e6
+								true
+								null
+								[Z@1d69fff
+								Total files1
+							 */
 							monitor.done();
 							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
 							TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
