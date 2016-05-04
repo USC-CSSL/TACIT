@@ -98,6 +98,7 @@ public class CooccurrenceAnalysis {
 				ret = setSeedWords(seedFile); // build the seed word dictionary
 			}else{
 				appendLog("Window size is zero.Cannot be processed..");
+				fw.close();
 				return false;
 			}
 
@@ -117,39 +118,49 @@ public class CooccurrenceAnalysis {
 				
 				//Finding the cooccurrence window in each line 
 				try {
-					int line_no = 0;
+
 					while ((currentLine = br.readLine()) != null) {
 						ArrayList<String> lineWords = new ArrayList<String>(Arrays.asList(delimiters.matcher(currentLine).replaceAll(" ").toLowerCase().trim().split("\\s+")));
-						
-						
+						boolean isFirstWindow = true;
+						List<String> window = null;
+						int windowSeedWordCount = 0;
 						int windowstart = 0;
 						int windowend = Math.min(windowSize, lineWords.size())-1;
-						List<String> window = null;
+						window = new ArrayList<String>(lineWords.subList(windowstart, windowend+1));
 						
-						
+							
 						while (windowend < lineWords.size()){
 							//Check if the window contains at least as many as threshold number of seed words.
 							//If yes then print the window else don't.
-							window = new ArrayList<String>(lineWords.subList(windowstart, windowend+1));
-							int seedWordsCount = 0;
-							boolean printWindow = false;
-							for (String word: window){
-								if (seedWordsCount >= threshold){
-									printWindow = true;
-									break;
-								}else{
+							if (isFirstWindow){
+								for (String word: window){
 									if (seedWords.contains(word)){
-										seedWordsCount++;
+										windowSeedWordCount++;
 									}
 								}
-							}
-							
-							if(seedWordsCount >= threshold){
-								printWindow = true;
-							}
-							
-							if (printWindow){
-								fw.write(StringUtils.join(window, " ") + ","+f.getName()+"\n");
+								
+								if(windowSeedWordCount >= threshold){
+									fw.write(StringUtils.join(window, " ") + ","+f.getName()+"\n");
+								}
+
+								isFirstWindow = false;
+								windowend++;
+								
+							}else{
+								String oldWord = window.remove(0);
+								String newWord = lineWords.get(windowend);
+								window.add(newWord);
+								
+								if (seedWords.contains(oldWord)){
+									windowSeedWordCount--;
+								}
+								if (seedWords.contains(newWord)){
+									windowSeedWordCount++;
+								}
+								if (windowSeedWordCount >= threshold){
+									fw.write(StringUtils.join(window, " ") + ","+f.getName()+"\n");
+								}
+								windowend++;
 							}
 							
 							if (buildMatrix) {
@@ -160,7 +171,8 @@ public class CooccurrenceAnalysis {
 									wordMat.put(firstWord, vec);
 								}
 								window.remove(0);
-								for (String nextWord : window) {
+								for (int i=1;i<window.size();i++) {
+									String nextWord =window.get(i);
 									if (vec.containsKey(nextWord)) {
 										vec.put(nextWord, vec.get(nextWord) + 1);
 									} else {
@@ -180,9 +192,9 @@ public class CooccurrenceAnalysis {
 								}
 							}
 							
-							windowstart++;
-							windowend++;
+							
 						}//each window
+		
 					}//each line
 					
 				} catch (OutOfMemoryError e) {
@@ -194,6 +206,13 @@ public class CooccurrenceAnalysis {
 				}
 				br.close();
 				monitor.worked(1);
+				
+				if (monitor.isCanceled()){
+					fw.close();
+					appendLog("operation cancelled by user..");
+					return false;
+				}
+			
 			}//each file
 			
 			
