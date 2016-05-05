@@ -191,7 +191,7 @@ public class UsCongressCrawler {
 												politicalAffiliation);
 										break;
 									}
-								} catch (Exception e) {
+								} catch (SocketTimeoutException e) {
 									System.out.println(e.getMessage() + " ");
 									Display.getDefault().syncExec(new Runnable() {
 										@Override
@@ -246,7 +246,7 @@ public class UsCongressCrawler {
 							searchRecords(congressNum, "", memberName, tempProgressSize, politicalAffiliation);
 							break;}
 							}
-							catch (Exception e) {
+							catch (SocketTimeoutException e) {
 								System.out.println(e.getMessage() + " ");
 								Display.getDefault().syncExec(new Runnable() {
 									@Override
@@ -387,7 +387,7 @@ public class UsCongressCrawler {
 						searchRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), "",
 								currentProgress, politicalAffiliation);
 						break;
-					} catch (Exception e) {
+					} catch (SocketTimeoutException e) {
 						System.out.println(e.getMessage() + " ");
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
@@ -521,7 +521,7 @@ public class UsCongressCrawler {
 								congressRepresentativeMap.get(String.valueOf(congressNum)).get(rep), currentProgress,
 								politicalAffiliation);
 						break;
-					} catch (Exception e) {
+					} catch (SocketTimeoutException e) {
 						System.out.println(e.getMessage() + " ");
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
@@ -668,8 +668,12 @@ public class UsCongressCrawler {
 		String lastName = memText.split(",")[0];
 		String[] tempName = (memText.lastIndexOf('(') != -1) ? memText.substring(0, memText.lastIndexOf('(')).split(",")
 				: lastName.split(",");
+		String tempRepName;
 		// String tempRepName = StringUtil.join(Arrays.asList(tempName),";");
-		String tempRepName = tempName[1] + " " + tempName[0];
+		if(tempName.length == 2)
+			tempRepName = tempName[1] + " " + tempName[0];
+		else
+			tempRepName = tempName[0]; 
 
 		if (relevantLinks.size() == 0) {
 			ConsoleView.printlInConsoleln("No Records Found.");
