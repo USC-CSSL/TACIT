@@ -18,76 +18,63 @@ public class Cooccurence_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
 	@Test
 	public void invokeCooccurrenceTest() throws IOException {
-
+		
+		//Files to be tested on
 		List<String> files = new ArrayList<String>();
-		files.add(directoryPath + File.separator
-				+ "CooccurenceInputFile1.txt");
+		files.add(directoryPath + File.separator + "CooccurenceInputFile1.txt");
 		files.add(directoryPath + File.separator + "CooccurenceInputFile2.txt");
+		
+		//Seed File
 		List<String> seedList = new ArrayList<String>();
-		seedList.add(directoryPath + File.separator
-				+ "CooccurenceSeedFileInput.txt");
+		seedList.add(directoryPath + File.separator + "CooccurenceSeedFileInput.txt");
+		
+		//Threshold and window size and build matrix flag
 		String windowSizeStr = "5";
-		String thresholdLimit = "1";
+		String thresholdLimit = "2";
 		boolean isBuildMatrix = true;
-		boolean result = new CooccurrenceAnalysis() {
+		
+	
+		CooccurrenceAnalysis cooccurrenceAnalysis  = new CooccurrenceAnalysis() {
+			
 			@Override
 			protected void generateRunReport(){}
-			/*@Override
-			protected String generateSeedComboStatsFileName(Date currTime){
-				return "GeneratedCooccurenceSeedFrequenciesOutput.csv";
-			}
+			
 			@Override
-			protected String generatePhrasesFileName(Date currTime){
-				return "GeneratedCooccurencePhrasesOutput.csv";
-			}*/
+			protected String generateWindowFileName(Date currTime){
+				return "GeneratedWindowOutput.csv";
+			}
+
 			@Override
 			protected String generateMatrixFileName(Date currTime){
 				return "GeneratedCooccurenceMatrixOutput.csv";
 			}
-		}
-				.invokeCooccurrence(files, seedList.get(0),
-						directoryPath, windowSizeStr,
+		};
+		boolean result = cooccurrenceAnalysis.invokeCooccurrence(files, seedList.get(0),directoryPath, windowSizeStr,
 						thresholdLimit, isBuildMatrix, new NullProgressMonitor());
-
+		//Test Case 1
 		assertEquals("Checking if the test ran successfully", true, result);
-		File generatedCooccurenceSeedFrequenciesOutput = new File(directoryPath + File.separator
-				+ "GeneratedCooccurenceSeedFrequenciesOutput.csv");
-		File generatedCooccurencePhrasesOutput = new File(directoryPath + File.separator
-				+ "GeneratedCooccurencePhrasesOutput.csv");
-		File generatedCooccurenceMatrixOutput = new File(directoryPath + File.separator
-				+ "GeneratedCooccurenceMatrixOutput.csv");
-		File expectedCooccurenceSeedFrequenciesOutput = new File(directoryPath + File.separator
-				+ "ExpectedCooccurenceSeedFrequenciesOutput.csv");
-		File expectedCooccurencePhrasesOutput = new File(directoryPath + File.separator
-				+ "ExpectedCooccurencePhrasesOutput.csv");
-		File expectedCooccurenceMatrixOutput = new File(directoryPath + File.separator
-				+ "ExpectedCooccurenceMatrixOutput.csv");
-		BufferedReader reader = new BufferedReader(new FileReader(generatedCooccurenceSeedFrequenciesOutput));
+		
+		//Checking generated and expected output files.
+		File generatedWindowOutput = new File(directoryPath + File.separator + "GeneratedWindowOutput.csv");
+		File generatedCooccurenceMatrixOutput = new File(directoryPath + File.separator + "GeneratedCooccurenceMatrixOutput.csv");
+		File expectedWindowOutput = new File(directoryPath + File.separator + "ExpectedWindowOutput.csv");
+		File expectedCooccurenceMatrixOutput = new File(directoryPath + File.separator + "ExpectedCooccurenceMatrixOutput.csv");
+		
+		BufferedReader reader = new BufferedReader(new FileReader(generatedWindowOutput));
 		String line = "";
 		String generatedOutput = "";
 		String expectedOutput = "";
 		while((line = reader.readLine())!= null)
 			generatedOutput += line;
 		reader.close();
-		reader = new BufferedReader(new FileReader(expectedCooccurenceSeedFrequenciesOutput));
+		reader = new BufferedReader(new FileReader(expectedWindowOutput));
 		while((line = reader.readLine())!= null)
 			expectedOutput += line;
 		reader.close();
 
-		assertEquals("Comparing frequencies", expectedOutput, generatedOutput);
-		reader = new BufferedReader(new FileReader(generatedCooccurencePhrasesOutput));
-		line = "";
-		generatedOutput = "";
-		expectedOutput = "";
-		while((line = reader.readLine())!= null)
-			generatedOutput += line;
-		reader.close();
-		reader = new BufferedReader(new FileReader(expectedCooccurencePhrasesOutput));
-		while((line = reader.readLine())!= null)
-			expectedOutput += line;
-		reader.close();
+		//Test case 2
+		assertEquals("Comparing Window Output", expectedOutput, generatedOutput);
 
-		assertEquals("Comparing cooccurence phrases", expectedOutput, generatedOutput);
 		
 		reader = new BufferedReader(new FileReader(generatedCooccurenceMatrixOutput));
 		line = "";
@@ -100,7 +87,8 @@ public class Cooccurence_Test {
 		while((line = reader.readLine())!= null)
 			expectedOutput += line;
 		reader.close();
-
+		
+		//Test case 3
 		assertEquals("Comparing cooccurence matrix", expectedOutput, generatedOutput);
 	}
 }

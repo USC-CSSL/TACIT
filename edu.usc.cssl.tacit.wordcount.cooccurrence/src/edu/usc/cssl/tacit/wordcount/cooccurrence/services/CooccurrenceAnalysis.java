@@ -91,7 +91,7 @@ public class CooccurrenceAnalysis {
 
 		try {
 			FileWriter fw = new FileWriter(new File(outputPath + File.separator + generateWindowFileName(currTime)));
-			fw.write("Cooccurrence window,Filename\n");
+			fw.write("Cooccurrence window,Seed Occurrences,Filename\n");
 			boolean ret = false;
 			//TODO: Handle the case where it outputs only if the window size is greater than 0
 			if (windowSize > 0) {
@@ -115,14 +115,14 @@ public class CooccurrenceAnalysis {
 					continue;
 
 				BufferedReader br = new BufferedReader(new FileReader(f));
-				
+				List<String> window = null;
 				//Finding the cooccurrence window in each line 
 				try {
 
-					while ((currentLine = br.readLine()) != null) {
+					while ((currentLine = br.readLine()) != null && !currentLine.equals("")) {
 						ArrayList<String> lineWords = new ArrayList<String>(Arrays.asList(delimiters.matcher(currentLine).replaceAll(" ").toLowerCase().trim().split("\\s+")));
 						boolean isFirstWindow = true;
-						List<String> window = null;
+						
 						int windowSeedWordCount = 0;
 						int windowstart = 0;
 						int windowend = Math.min(windowSize, lineWords.size())-1;
@@ -132,6 +132,7 @@ public class CooccurrenceAnalysis {
 						while (windowend < lineWords.size()){
 							//Check if the window contains at least as many as threshold number of seed words.
 							//If yes then print the window else don't.
+							
 							if (isFirstWindow){
 								for (String word: window){
 									if (seedWords.contains(word)){
@@ -140,7 +141,7 @@ public class CooccurrenceAnalysis {
 								}
 								
 								if(windowSeedWordCount >= threshold){
-									fw.write(StringUtils.join(window, " ") + ","+f.getName()+"\n");
+									fw.write(StringUtils.join(window, " ") + ","+windowSeedWordCount+","+f.getName()+"\n");
 								}
 
 								isFirstWindow = false;
@@ -158,44 +159,83 @@ public class CooccurrenceAnalysis {
 									windowSeedWordCount++;
 								}
 								if (windowSeedWordCount >= threshold){
-									fw.write(StringUtils.join(window, " ") + ","+f.getName()+"\n");
+									fw.write(StringUtils.join(window, " ") + ","+windowSeedWordCount+","+f.getName()+"\n");
 								}
 								windowend++;
 							}
 							
 							if (buildMatrix) {
-								String firstWord = window.get(0);
-								Map<String, Integer> vec = wordMat.get(firstWord);
-								if (vec == null) {
-									vec = new HashMap<String, Integer>();
-									wordMat.put(firstWord, vec);
-								}
-								window.remove(0);
-								for (int i=1;i<window.size();i++) {
-									String nextWord =window.get(i);
-									if (vec.containsKey(nextWord)) {
-										vec.put(nextWord, vec.get(nextWord) + 1);
-									} else {
-										vec.put(nextWord, 1);
+								if (window.size() >= 2 ){
+									String firstWord = window.get(0);
+									Map<String, Integer> vec = wordMat.get(firstWord);
+									if (vec == null) {
+										vec = new HashMap<String, Integer>();
+										wordMat.put(firstWord, vec);
 									}
-									Map<String, Integer> revVec = wordMat.get(nextWord);
-									if (revVec == null) {
-										revVec = new HashMap<String, Integer>();
-										wordMat.put(nextWord, revVec);
-									}
-									if (revVec.containsKey(firstWord)) {
-										revVec.put(firstWord, revVec.get(firstWord) + 1);
-									} else {
-										revVec.put(firstWord, 1);
-									}
+								
+									for (int i=1;i<window.size();i++) {
+										String nextWord =window.get(i);
+										if (vec.containsKey(nextWord)) {
+											vec.put(nextWord, vec.get(nextWord) + 1);
+										} else {
+											vec.put(nextWord, 1);
+										}
+										Map<String, Integer> revVec = wordMat.get(nextWord);
+										if (revVec == null) {
+											revVec = new HashMap<String, Integer>();
+											wordMat.put(nextWord, revVec);
+										}
+										if (revVec.containsKey(firstWord)) {
+											revVec.put(firstWord, revVec.get(firstWord) + 1);
+										} else {
+											revVec.put(firstWord, 1);
+										}
 
+									}	
 								}
+								
 							}
 							
 							
 						}//each window
 		
 					}//each line
+					
+					//Building the left out matrix after the last window  
+					if (buildMatrix){
+						if (window != null && window.size() >= 0){
+							window.remove(0);
+						}
+						while (window != null && window.size() > 0){
+							String firstWord = window.remove(0);
+							
+							Map<String, Integer> vec = wordMat.get(firstWord);
+							if (vec == null) {
+								vec = new HashMap<String, Integer>();
+								wordMat.put(firstWord, vec);
+							}
+							
+							for(String nextWord : window){
+								if (vec.containsKey(nextWord)) {
+									vec.put(nextWord, vec.get(nextWord) + 1);
+								} else {
+									vec.put(nextWord, 1);
+								}
+								Map<String, Integer> revVec = wordMat.get(nextWord);
+								if (revVec == null) {
+									revVec = new HashMap<String, Integer>();
+									wordMat.put(nextWord, revVec);
+								}
+								if (revVec.containsKey(firstWord)) {
+									revVec.put(firstWord, revVec.get(firstWord) + 1);
+								} else {
+									revVec.put(firstWord, 1);
+								}
+							}
+							
+						}
+					}
+					
 					
 				} catch (OutOfMemoryError e) {
 					br.close();
