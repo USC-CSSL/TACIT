@@ -49,26 +49,26 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class Preprocessor {
 
-	private String ppDir = "";
-	private String ppFilesLoc = "";
-	private boolean doLowercase = false;
-	private boolean doStemming = false;
-	private boolean doStopWords = false;
-	private boolean doCleanUp = true;
-	private boolean isLatin = false;
-	private String delimiters = " .,;'\"!-()[]{}:?";
+	protected String ppDir = "";
+	protected String ppFilesLoc = "";
+	protected boolean doLowercase = false;
+	protected boolean doStemming = false;
+	protected boolean doStopWords = false;
+	protected boolean doCleanUp = true;
+	protected boolean isLatin = false;
+	protected String delimiters = " .,;'\"!-()[]{}:?";
 	private String ppOutputPath;
-	private HashSet<String> stopWordsSet = new HashSet<String>();
+	protected HashSet<String> stopWordsSet = new HashSet<String>();
 	private ArrayList<String> outputFiles;
-	SnowballStemmer stemmer = null;
+	protected SnowballStemmer stemmer = null;
 	LatinStemFilter latinStemmer = null;
-	private String stemLang;
+	protected String stemLang;
 	DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
-	private String currTime = df.format(new Date());
+	protected String currTime = df.format(new Date());
 	private String latinStemLocation;
 	private String tempPPFileLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
 			+ "tacit_temp_files" + System.getProperty("file.separator");
-	private boolean doPreprocessing;
+	protected boolean doPreprocessing;
 
 	public Preprocessor(String ppDirLocation, boolean doPreprocessing) throws IOException {
 		createppDir(ppDirLocation);
@@ -220,7 +220,16 @@ public class Preprocessor {
 			}
 		}
 	}
-
+	protected String generateProcessedFileName(String inFileBefore, String outName){
+		String outFile;
+		if (outName == "" || outName == null) {
+			outFile = ppFilesLoc + System.getProperty("file.separator") + (new File(inFileBefore).getName());
+		} else {
+			outFile = ppFilesLoc + System.getProperty("file.separator") + outName;
+		}	System.out.println("Hello lo l o");
+		return outFile;
+	}
+	
 	/**
 	 * Function to perform all the preprocessing steps on inFile
 	 * 
@@ -235,13 +244,9 @@ public class Preprocessor {
 	 */
 	private String processFile(String inFileBefore, String outName) {
 
-		 String inFile = checkfiletype(inFileBefore);
-		String outFile;
-		if (outName == "" || outName == null) {
-			outFile = ppFilesLoc + System.getProperty("file.separator") + (new File(inFile).getName());
-		} else {
-			outFile = ppFilesLoc + System.getProperty("file.separator") + outName;
-		}
+		String inFile = checkfiletype(inFileBefore);
+		
+		String outFile = generateProcessedFileName(inFileBefore, outName);
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(inFile));
@@ -255,6 +260,7 @@ public class Preprocessor {
 					}
 				}
 			}
+
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 
 			String currLine = "";
@@ -641,7 +647,7 @@ public class Preprocessor {
 	 * 
 	 * @throws IOException
 	 */
-	private void setupParams() throws IOException {
+	protected void setupParams() throws IOException {
 		if (doPreprocessing) {
 			// Setup global parameters
 			String stopwordsFile = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
@@ -693,7 +699,7 @@ public class Preprocessor {
 	 * 
 	 * @param caller
 	 */
-	private void createppDir(String caller) {
+	protected void createppDir(String caller) {
 		ppOutputPath = CommonUiActivator.getDefault().getPreferenceStore().getString("pp_output_path");
 		if (ppOutputPath == null || ppOutputPath.trim().length() == 0) {
 			String tempOutputPath = System.getProperty("user.dir") + System.getProperty("file.separator") + "ppFiles";
@@ -716,7 +722,7 @@ public class Preprocessor {
 	 * @param stemLang
 	 * @return Stemmer Object
 	 */
-	private SnowballStemmer stemSelect(String stemLang) {
+	protected SnowballStemmer stemSelect(String stemLang) {
 		if (stemLang.toUpperCase().equals("EN")) {
 			return new EnglishStemmer();
 		} else if (stemLang.toUpperCase().equals("DE")) {
