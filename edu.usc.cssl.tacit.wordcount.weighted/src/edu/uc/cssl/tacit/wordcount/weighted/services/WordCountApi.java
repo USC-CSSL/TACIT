@@ -18,8 +18,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -371,6 +374,7 @@ public class WordCountApi {
 		
 		
 	}
+
 	public void calculateWordDistribution(HashMap<String, Integer> map, HashMap<String, Double> catCount,
 			HashMap<String, HashSet<String>> wordCategories, String inputFile, File oFile, Date dateobj)
 					throws IOException {
@@ -379,7 +383,7 @@ public class WordCountApi {
 		bw.write("Word,Count,");
 		StringBuilder toWrite = new StringBuilder();
 
-		for (String currCat : catCount.keySet()) {
+		for (String currCat : new TreeSet<String>(catCount.keySet())) {
 			toWrite.append(currCat + ",");
 		}
 		bw.write(toWrite.toString());
@@ -387,7 +391,7 @@ public class WordCountApi {
 
 		// check for words in wordCategories instead of map because
 		// wordCategories has the words that are present in the dictionary
-		for (String currWord : wordCategories.keySet()) {
+		for (String currWord : new TreeSet<String>(wordCategories.keySet())) {
 			StringBuilder row = new StringBuilder();
 			int currWC = map.get(currWord);
 			row.append(currWord + "," + currWC + ",");

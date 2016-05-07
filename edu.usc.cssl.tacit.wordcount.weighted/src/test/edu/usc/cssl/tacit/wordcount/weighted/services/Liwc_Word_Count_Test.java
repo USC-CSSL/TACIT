@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Test;
@@ -165,6 +167,7 @@ public class Liwc_Word_Count_Test{
 				+ "LIWCStandardWordCountGeneratedOutput.dat");
 
 		WordCountApi wca = new WordCountApi(false){
+
 			@Override
 			protected void generateRunReport(String outputFile, Date dateObj){}
 			@Override

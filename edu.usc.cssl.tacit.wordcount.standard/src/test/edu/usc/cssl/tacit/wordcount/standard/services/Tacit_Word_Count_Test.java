@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -162,20 +163,24 @@ public class Tacit_Word_Count_Test{
 		wc.countWords(inputFiles, dictionary);
 		File generatedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") +"WordDistributionOutput.csv");
 		File expectedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") +"WordDistributionExpectedOutput.csv");
+		HashSet<String> temp = new HashSet<String>();
 		BufferedReader reader = new BufferedReader(new FileReader(generatedWordDistributionOutput));
 		String line = "";
-		String generatedDistribution = "";
-		String expectedDistribution = "";
 		while((line = reader.readLine())!=null)
-			generatedDistribution = generatedDistribution + line;
+			temp.add(line);
 		reader.close();
+		boolean flag = true;
 		reader = new BufferedReader(new FileReader(expectedWordDistributionOutput));
 		while((line = reader.readLine())!=null)
-			expectedDistribution = expectedDistribution + line;
+			if (temp.contains(line))
+				temp.remove(line);
+			else
+				flag = false;
 		reader.readLine();
-		line = reader.readLine();
 		reader.close();
-		assertEquals("Comparing the word distribution outputs", generatedDistribution, expectedDistribution);
+		if(!temp.isEmpty())
+			flag = false;
+		assertEquals("Comparing the word distribution outputs", flag, true);
 		
 }
 	
@@ -427,20 +432,24 @@ public class Tacit_Word_Count_Test{
 		wc.countWords(inputFiles, dictionary);
 		File generatedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") + "WeightedWordDistributionOutput.csv");
 		File expectedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") + "WeightedWordDistributionExpectedOutput.csv");
+		HashSet<String> temp = new HashSet<String>();
 		BufferedReader reader = new BufferedReader(new FileReader(generatedWordDistributionOutput));
 		String line = "";
-		String generatedDistribution = "";
-		String expectedDistribution = "";
 		while((line = reader.readLine())!=null)
-			generatedDistribution = generatedDistribution + line;
+			temp.add(line);
 		reader.close();
+		boolean flag = true;
 		reader = new BufferedReader(new FileReader(expectedWordDistributionOutput));
 		while((line = reader.readLine())!=null)
-			expectedDistribution = expectedDistribution + line;
+			if (temp.contains(line))
+				temp.remove(line);
+			else
+				flag = false;
 		reader.readLine();
-		line = reader.readLine();
 		reader.close();
-		assertEquals("Comparing the word distribution outputs outputs", generatedDistribution, expectedDistribution);
+		if(!temp.isEmpty())
+			flag = false;
+		assertEquals("Comparing the word distribution outputs", flag, true);
 		
 }
 	
