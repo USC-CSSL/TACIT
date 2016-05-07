@@ -18,6 +18,7 @@
 <link
 	href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300italic,700,300'
 	rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="css/custom.css">
 <link rel="stylesheet" href="css/font-awesome.min.css">
 <style>
 #left_contactdiv {
@@ -127,70 +128,66 @@ input[type="text"], textarea {
 
 	<div id="body_wrapper">
 		<h1 class="page_title">Contact Us</h1>
-		<div id="left_contactdiv">
-			<ul class="contact-address">
+		<div class="simple">
+
+
+			<div class="col-xs-24">
+				<div class="panel panel-default">
+					<!-- Default panel contents -->
+					<div class="panel-heading">Need to contact someone at TACIT?</div>
+
+
+					<!-- List group -->
+					<ul class="list-group">
+						<li class="list-group-item"><strong>Report a bug</strong><br>
+							Click <a href="https://github.com/USC-CSSL/TACIT/issues">here</a>
+							to report a bug</li>
+						<li class="list-group-item"><strong>Technical
+								questions / Support </strong><br> Register and join the <a
+							href="https://groups.google.com/forum/#!forum/usc-tacit">Forum</a></li>
+
+						<li class="list-group-item"><strong>GitHub
+								Repository </strong><br> Click<a
+							src="https://github.com/USC-CSSL/TACIT"> here</a> to view</li>
+
+					</ul>
+				</div>
+			</div>
+
+
+			&nbsp;&nbsp;&nbsp;
+			<h2>Directions</h2>
+			<br>
+			<div class="hidden-xs col-sm-11">
+
+				<iframe
+					src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3306.8386682022497!2d-118.285117!3d34.02235190000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c7e49c71a5ed%3A0xaa905a5bb427a2c4!2sUniversity+of+Southern+California!5e0!3m2!1sen!2sus!4v1442097166800"
+					width="400" height="300" frameborder="0" style="border: 0"
+					scrolling="no" marginheight="0" marginwidth="0"></iframe>
+			</div>
+			<div class="col-sm-13">
+			<ul style="padding-left: 2em;">
 				<li class="address" align="justify"><font color="#861520">Address:</font>
 					<br /> The Computational Social Science Lab - University of
 					Southern California, <br /> Seeley G. Mudd Building, USC <br />
-					Los Angeles, CA 90089, USA <br /> <br /> <iframe
-						src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3306.8386682022497!2d-118.285117!3d34.02235190000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c7e49c71a5ed%3A0xaa905a5bb427a2c4!2sUniversity+of+Southern+California!5e0!3m2!1sen!2sus!4v1442097166800"
-						width="300" height="300" frameborder="0" style="border: 0"
-						scrolling="no" marginheight="0" marginwidth="0"></iframe></li>
-				<li class="website"><font color="#861520">Website:</font> <br />
-					<a href="http://www.dornsife.usc.edu/labs/cssl" target="_blank">www.dornsife.usc.edu/labs/cssl</a>
-				</li>
-				<li class="email"><font color="#861520">Email:</font> <br />
-					mdehghan(at)usc(dot)edu</li>
-				<li class="email"><font color="#861520">Twitter:</font> <br />
-					<a href="https://twitter.com/USC_CSSL"
-					class="twitter-follow-button" data-show-count="false"
-					data-dnt="true">Follow @USC_CSSL</a></li>
-			</ul>
-		</div>
-		<div id="right_contactdiv">
+					Los Angeles, CA 90089, USA <br /> </li>
+				
+					<li class="website"><font color="#861520">Website:</font> <br />
+						<a href="http://www.dornsife.usc.edu/labs/cssl" target="_blank"><font
+							color="#be1a78">www.dornsife.usc.edu/labs/cssl</font></a></li>
+					<li class="email"><font color="#861520">Email:</font> <br />
+						mdehghan(at)usc(dot)edu</li>
+					<li class="email"><font color="#861520">Twitter:</font> <br />
+						<a href="https://twitter.com/USC_CSSL"
+						class="twitter-follow-button" data-show-count="false"
+						data-dnt="true">Follow @USC_CSSL</a></li>
+				</ul>
 
-			<p>
-				We would love to hear from you! If you want to file a bug follow
-				this link <a href="https://github.com/USC-CSSL/TACIT/issues"><b>Report
-						a Bug.</b></a>
-			</p>
-			<p>For anything else, please fill out the form below. *All fields
-				are required.</p>
-			<div class="success hidden purple">We received your message. We
-				will look into it and respond at the earliest. Thank you!</div>
-			<p>
-			<div class="error hidden red" align="center"
-				style="font-weight: bold"></div>
-			</p>
-			<form action="Contact" class="contact_form" id="contact_form"
-				onsubmit="return validateForm()">
-				<p>
-					<label for="name">Name</label> <input type="text" name="name"
-						style="width: 100%;" required><br />
-				</p>
-				<p>
-					<label for="email">E-mail</label> <input type="text" name="email"
-						style="width: 100%;" required><br />
-				</p>
-				<p>
-					<label for="orgname" style="text-align: left;">Organization
-						Name</label> <input type="text" name="orgname" style="width: 100%;"
-						required><br />
-				</p>
-				<p>
-					<label for="message">Message</label>
-					<textarea style="width: 100%; height: 100px" cols="100" rows="10"
-						name="message" required></textarea>
-				</p>
-				<div align="center">Your information is used strictly for
-					internal purposes, and will not be shared or sold to others.</div>
+			</div>
 
-				<p class="submit" style="text-align: right">
-					<button name="send" id="send_button" class="btn btn_large"
-						style="background-color: #861520" type="submit" value="Send">Send</button>
-				</p>
-			</form>
 		</div>
 	</div>
+
+
 </body>
 </html>
