@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -23,6 +24,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -155,7 +157,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
-		try{
+
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -212,7 +214,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 									class2NameStr, class2Files);
 							class1FilesL = new File[c1Files.size()];
 							class2FilesL = new File[c2Files.size()];
-
+							
+							Long availableSpace = 0l; 
 							for (int k = 0; k < c1Files.size(); k++) {
 								class1FilesL[k] = new File(c1Files.get(k));
 							}
@@ -221,6 +224,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								class2FilesL[k] = new File(c2Files.get(k));
 							}
 
+							
 							monitor.worked(2);
 
 							cv.doCross(svm, class1NameStr, class1FilesL,
@@ -231,7 +235,19 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 
 							monitor.worked(2);
 
-						}catch (OperationCanceledException e){
+						}catch (OutOfMemoryError e ){
+							
+							//throw new Error();
+							Display.getDefault().asyncExec(new Runnable() {
+								
+								@Override
+								public void run() {
+									ErrorDialog.openError(form.getShell(), "System Error", "Out of Memory Error", new Status(Status.ERROR, "1", "The data is too large to handle. There is not enough memory in the system to process the data."));
+								}
+							});
+							return Status.CANCEL_STATUS;
+						}
+						catch (OperationCanceledException e){
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						}
@@ -272,10 +288,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				});
 			};
 		});
-		}catch(OutOfMemoryError e){
-			throw new Error("Your system seems to be running out of space.");
-			
-		}
+
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
