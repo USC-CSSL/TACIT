@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -19,14 +20,18 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
@@ -34,8 +39,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -58,40 +66,22 @@ import edu.usc.cssl.tacit.crawlers.stackexchange.ui.internal.StackExchangeCrawle
 public class StackExchangeCrawlerView extends ViewPart implements IStackExchangeCrawlerUIConstants {
 	public static String ID = "edu.usc.cssl.tacit.crawlers.stackexchange.ui.view1";
 
-	private Button crawlTrendingDataButton;
+
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private StackExchangeCrawler crawler = new StackExchangeCrawler();
-	private StackExchangeSite sc = crawler.stackoverflow(new StackExchangeApi(), null);
-	private Button crawlLabeledButton;
-	private Button crawlSearchResultsButton;
-	private Combo cmbTrendType;
-	private Combo cmbLabelType;
-	private Combo cmbTimeFrames;
-	private Text numLinksText;
-	private Text numCommentsText;
-	private Composite labeledDataComposite;
-	private Composite trendingDataComposite;
-	private Label timeFrame;
-	private Composite searchComposite;
-	private Text titleText;
-	private Text authorText;
-	private Text siteText;
-	private Composite searchComposite1;
-	private Composite searchComposite2;
-	private Text linkText;
+	private StackExchangeSite scs = crawler.stackoverflow(new StackExchangeApi(), null);
 	private Text queryText;
 	private Text pageText;
-	private Composite commonsearchComposite;
-	private Combo cmbSortType;
-	private Text subreddits;
 	private Text corpusNameTxt;
 	private static Button btnAnswer;
 	private boolean[] jsonFilter = new boolean[8];
-	
-
+	private Table senatorTable;
+	private Button addSenatorBtn;
+	private ElementListSelectionDialog listDialog;
+	private List<String> selectedRepresentatives;
 	private static Button btnQuestion;
-
+	private Button removeSenatorButton;
 	private static Button btnComment;
 	String subredditText;
 	int redditCount = 1;
@@ -145,17 +135,66 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		inputSection.setClient(InputSectionClient);
 
 		Label sortType = new Label(InputSectionClient, SWT.NONE);
-		sortType.setText("Select Domain:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sortType);
-		cmbSortType = new Combo(InputSectionClient, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(cmbSortType);
-		cmbSortType.setItems(StackConstants.sortTypes);
-		cmbSortType.select(0);
+		sortType.setText("Select Domains:");
+		senatorTable = new Table(InputSectionClient, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).hint(90, 50).applyTo(senatorTable);
 
-		Label textLabel = new Label(InputSectionClient, SWT.NONE);
+		Composite buttonComp = new Composite(InputSectionClient, SWT.NONE);
+		GridLayout btnLayout = new GridLayout();
+		btnLayout.marginWidth = btnLayout.marginHeight = 0;
+		btnLayout.makeColumnsEqualWidth = false;
+		buttonComp.setLayout(btnLayout);
+		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
+		addSenatorBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
+		addSenatorBtn.setText("Add...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSenatorBtn);
+
+		addSenatorBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final String mainArray[] = StackConstants.sortTypes; 
+				ILabelProvider lp = new ArrayLabelProvider();
+				listDialog = new ElementListSelectionDialog(addSenatorBtn.getShell(), lp);
+				listDialog.setTitle("Select domain");
+				listDialog.setMessage("Type the name of the domain");
+				listDialog.setMultipleSelection(true);
+				listDialog.setElements(mainArray);
+				if(listDialog.open() == Window.OK){
+					updateTable(listDialog.getResult());
+				}
+			}
+
+		});
+		addSenatorBtn.setEnabled(true);
+
+		removeSenatorButton = new Button(buttonComp,SWT.PUSH);
+		removeSenatorButton.setText("Remove...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSenatorButton);
+		removeSenatorButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (TableItem item : senatorTable.getSelection()) {
+					selectedRepresentatives.remove(item.getText());
+					item.dispose();
+				}
+				if(selectedRepresentatives.size() == 0) {
+					removeSenatorButton.setEnabled(false);
+				}
+			}
+		});
+		removeSenatorButton.setEnabled(false);
+		
+
+		Composite inputSec = new Composite(InputSectionClient, SWT.None);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).indent(0, 0).applyTo(inputSec);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(inputSec);
+		
+		Label textLabel = new Label(inputSec, SWT.NONE);
 		textLabel.setText("Search:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(textLabel);
-		queryText = new Text(InputSectionClient, SWT.BORDER);
+		
+		queryText = new Text(inputSec, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(queryText);
 		queryText.setMessage("Search by \"tags\", seperate multiple tags by ;");
 		queryText.addModifyListener(new ModifyListener() {
@@ -183,18 +222,19 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 				
 			}
 		});
-		Label limitPages = new Label(InputSectionClient, SWT.NONE);
+		
+		Label limitPages = new Label(inputSec, SWT.NONE);
 		limitPages.setText("Limit Pages:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitPages);
-		pageText = new Text(InputSectionClient, SWT.BORDER);
+		pageText = new Text(inputSec, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(pageText);
 		pageText.setMessage("Enter the number pages");
-
-		Label queryLabel = new Label(InputSectionClient, SWT.NONE);
+		
+		Label queryLabel = new Label(inputSec, SWT.NONE);
 		queryLabel.setText("Search for answers, questions and comments");
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(queryLabel);
 
-		btnAnswer = new Button(InputSectionClient, SWT.CHECK);
+		btnAnswer = new Button(inputSec, SWT.CHECK);
 		btnAnswer.setText("Answers");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(btnAnswer);
 		btnAnswer.setSelection(false);
@@ -211,7 +251,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			}
 		});
 
-		btnQuestion = new Button(InputSectionClient, SWT.CHECK);
+		btnQuestion = new Button(inputSec, SWT.CHECK);
 		btnQuestion.setText("Questions");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(btnQuestion);
 		btnQuestion.setSelection(false);
@@ -233,7 +273,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			}
 		});
 
-		btnComment = new Button(InputSectionClient, SWT.CHECK);
+		btnComment = new Button(inputSec, SWT.CHECK);
 		btnComment.setText("Comments");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(btnComment);
 		btnComment.setSelection(false);
@@ -372,7 +412,34 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	@Override
 	public void setFocus() {
 		form.setFocus();
+	}
+	
+	public void updateTable(Object[] result){	
+		if (selectedRepresentatives == null) {
+			selectedRepresentatives = new ArrayList<String>();
+		}
 
+		for (Object object : result) {
+			if(!selectedRepresentatives.contains((String)object))
+				selectedRepresentatives.add((String) object);
+		}
+		//Collections.sort(selectedSenators);
+		senatorTable.removeAll();
+		for (String itemName : selectedRepresentatives) {
+			TableItem item = new TableItem(senatorTable, 0);
+			item.setText(itemName);
+			if(!removeSenatorButton.isEnabled()) {
+				removeSenatorButton.setEnabled(true);
+			}
+		}
+
+	}	
+	
+	static class ArrayLabelProvider extends LabelProvider {
+		@Override
+		public String getText(Object element) {
+			return (String) element;
+		}
 	}
 
 	private boolean canItProceed() {
@@ -451,8 +518,8 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 			String outputDir;
 			String corpusName;
+			Corpus corpus;
 			int pages;
-			String domain;
 			boolean question, answer, comment;
 			String tags;
 			boolean canProceed;
@@ -468,8 +535,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
-
-								domain = cmbSortType.getText();
 								tags = queryText.getText();
 								pages = Integer.parseInt(pageText.getText());
 								question = btnQuestion.getSelection();
@@ -486,7 +551,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 								jsonFilter[6] = commentBodyBtn.getSelection();
 								jsonFilter[7] = commentUserBtn.getSelection();
 								
-								System.out.println(isDate);
 								if(isDate){
 									System.out.print("_____________________________");
 									Calendar cal = Calendar.getInstance();
@@ -494,11 +558,10 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 									from = cal.getTimeInMillis()/1000;
 									cal.set(toDate.getYear(),toDate.getMonth(),toDate.getDay());
 									to = cal.getTimeInMillis()/1000;
-									
 									System.out.println(from+"   "+to);
 								}
 								outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
-										+ corpusName;
+										+ corpusName.trim();
 								if (!new File(outputDir).exists()) {
 									new File(outputDir).mkdir();
 								}
@@ -513,14 +576,23 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						monitor.worked(10);
 						if (monitor.isCanceled())
 							handledCancelRequest("Cancelled");
+						corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
+						for (final String domain : selectedRepresentatives){
+							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
+									+ corpusName;
+							outputDir += File.separator + domain;
+							if (!new File(outputDir).exists()) {
+								new File(outputDir).mkdir();
+							}
+							crawler.setDir(outputDir);
 						try {
 							monitor.subTask("Crawling...");
 							if (monitor.isCanceled())
 								return handledCancelRequest("Cancelled");
 							if(!isDate)
-								crawler.search(tags,pages,question,answer,comment,corpusName,sc,StackConstants.domainList.get(domain), jsonFilter);
+								crawler.search(tags,pages,question,answer,comment,corpusName,scs,StackConstants.domainList.get(domain), jsonFilter);
 							else
-								crawler.search(tags,pages,question,answer,comment,corpusName,sc,StackConstants.domainList.get(domain), from, to, jsonFilter);
+								crawler.search(tags,pages,question,answer,comment,corpusName,scs,StackConstants.domainList.get(domain), from, to, jsonFilter);
 							if (monitor.isCanceled())
 								return handledCancelRequest("Cancelled");
 						} catch (Exception e) {
@@ -531,17 +603,18 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 								@Override
 								public void run() {
-									Corpus corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
+									
 									CorpusClass cc= new CorpusClass(domain, outputDir);
 									cc.setParent(corpus);
 									corpus.addClass(cc);
-									ManageCorpora.saveCorpus(corpus);
 									
 								}});
 						} catch (Exception e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						}
+						}
+						ManageCorpora.saveCorpus(corpus);
 						if (monitor.isCanceled())
 							return handledCancelRequest("Cancelled");
 
