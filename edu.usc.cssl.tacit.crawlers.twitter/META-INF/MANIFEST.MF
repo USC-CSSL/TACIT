@@ -18,5 +18,7 @@ Bundle-ClassPath: .,
  json-path-assert-2.0.0.jar,
  json-smart-2.1.1.jar,
  twitter4j-core-4.0.4.jar,
- twitter4j-stream-4.0.4.jar
+ twitter4j-stream-4.0.4.jar,
+ hamcrest-all-1.3.jar,
+ junit.jar
 Export-Package: edu.usc.cssl.tacit.crawlers.twitter.services

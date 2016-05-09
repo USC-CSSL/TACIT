@@ -35,14 +35,14 @@ public class Twitter_Crawler_Test{
 	@Test
 	public void twitterGeoFilterCrawlTest(){
 		
-		String fileName = "Test";
+		String fileName = "Test.txt";
 		
 		String outputFile = directoryPath + System.getProperty("file.separator") +  fileName;
 		Exception exceptionObj = null;
 		double geoLocations[][] = {{-118.442, 33.72}, {-117.86, 34.12}};
 		boolean attributes[] = {true, true, true, true, true, true, true, true};
 		try {
-			ttStream.stream(outputFile, true, 10, true, 60000,
+			ttStream.stream(outputFile, true, 5, true, 60000,
 					true, null, false, geoLocations, attributes, new NullProgressMonitor(), null);
 			new File(outputFile).delete(); 
 		}
@@ -54,13 +54,13 @@ public class Twitter_Crawler_Test{
 	@Test
 	public void twitterRandomFilterCrawlTest(){
 		
-		String fileName = "Test";
+		String fileName = "Test.txt";
 		
 		String outputFile = directoryPath + System.getProperty("file.separator") +  fileName;
 		Exception exceptionObj = null;
 		boolean attributes[] = {true, true, true, true, false, true, true, true};
 		try {
-			ttStream.stream(outputFile, true, 10, false, 0,
+			ttStream.stream(outputFile, true, 5, false, 0,
 					true, null, true, null, attributes, new NullProgressMonitor(), null);
 			 new File(outputFile).delete(); 
 		}
@@ -68,17 +68,18 @@ public class Twitter_Crawler_Test{
 			exceptionObj = e;
 		}
 		assertEquals("Checking if the crawling completed successfully", exceptionObj, null);
-	}	@Test
+	}	
+	@Test
 	public void twitterWordFilterCrawlTest(){
 		
-		String fileName = "Test";
+		String fileName = "Test.txt";
 
 		String outputFile = directoryPath + System.getProperty("file.separator") +  fileName;
 		Exception exceptionObj = null;
 		boolean attributes[] = {true, true, true, true, true, true, true, true};
 		String keyWords[] = {"NLP"};
 		try {
-			ttStream.stream(outputFile, true, 10, false, 0,
+			ttStream.stream(outputFile, true, 5, true, 6000,
 					false, keyWords, true, null, attributes, new NullProgressMonitor(), null);
 			new File(outputFile).delete(); 
 		}
