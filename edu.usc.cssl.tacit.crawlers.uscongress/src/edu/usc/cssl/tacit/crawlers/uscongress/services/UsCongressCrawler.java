@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,12 +23,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class UsCongressCrawler {
 	public int totalFilesDownloaded = 0;
 	ArrayList<Integer> congresses = new ArrayList<Integer>();
+	JsonGenerator jsonGenerator;
+	JsonFactory jsonfactory;
 	String dateFrom, dateTo;
 	int maxDocs = 10;
 	String outputDir;
@@ -40,8 +43,10 @@ public class UsCongressCrawler {
 	private ArrayList<String> congressMembers;
 	private int congressNum;
 	IProgressMonitor monitor;
+	File streamFile;
 	int progressSize;
 	boolean isSenate;
+	boolean allSen;
 	String crawlSenateRecords;
 	String crawlHouseRepRecords;
 	String crawlDailyDigest;
@@ -106,7 +111,7 @@ public class UsCongressCrawler {
 			monitor.subTask("Cancelling.. ");
 			return;
 		}
-		returnCode =0;
+		returnCode = 0;
 
 		formatMembersList();
 
@@ -135,20 +140,61 @@ public class UsCongressCrawler {
 						monitor.subTask("Cancelling.. ");
 						return;
 					}
+					allSen = true;
+					memberDir = this.outputDir + File.separator + memberText;
+					if (!new File(memberDir).exists()) {
+						new File(memberDir).mkdir();
+					}
+					streamFile = new File(memberDir + File.separator + memberText + ".json");
+					try {
+						jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
+						jsonGenerator.useDefaultPrettyPrinter();
+						jsonGenerator.writeStartArray();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					if (isSenate)
 						getAllSenators(congressNum, memberText, tempProgressSize);
 					else
 						getAllRepresentatives(congressNum, memberText, tempProgressSize);
+					allSen = false;
+					try {
+						jsonGenerator.writeEndArray();
+						jsonGenerator.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				} else {
+					allSen = true;
+					memberDir = this.outputDir + File.separator + memberText;
+					if (!new File(memberDir).exists()) {
+						new File(memberDir).mkdir();
+					}
+					streamFile = new File(memberDir + File.separator + memberText + ".json");
+					try {
+						jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
+						jsonGenerator.useDefaultPrettyPrinter();
+						jsonGenerator.writeStartArray();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					for (int congress : congresses) {
 						if (null != monitor && monitor.isCanceled()) {
 							monitor.subTask("Cancelling.. ");
 							return;
 						}
+
 						if (isSenate)
 							getAllSenators(congress, memberText, tempProgressSize / congresses.size());
 						else
 							getAllRepresentatives(congress, memberText, tempProgressSize / congresses.size());
+					}
+					allSen = false;
+					try {
+						jsonGenerator.writeEndArray();
+						jsonGenerator.close();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 				if (null != monitor && monitor.isCanceled()) {
@@ -180,7 +226,7 @@ public class UsCongressCrawler {
 							// Data can be added here for corpus
 							while (true) {
 								try {
-									if(returnCode ==1)
+									if (returnCode == 1)
 										break;
 									if (isSenate) {
 										searchRecords(congress, memberName, "", tempProgressSize / congresses.size(),
@@ -191,7 +237,7 @@ public class UsCongressCrawler {
 												politicalAffiliation);
 										break;
 									}
-								} catch (SocketTimeoutException e) {
+								} catch (Exception e) {
 									System.out.println(e.getMessage() + " ");
 									Display.getDefault().syncExec(new Runnable() {
 										@Override
@@ -215,8 +261,8 @@ public class UsCongressCrawler {
 											}
 											if (retryFlag) {
 												counter += 1;
-												if (counter > 500){
-													counter =0;
+												if (counter > 500) {
+													counter = 0;
 													retryFlag = false;
 												}
 											}
@@ -237,16 +283,16 @@ public class UsCongressCrawler {
 					if (null != memberName) {
 						while (true) {
 							try {
-								if(returnCode ==1)
+								if (returnCode == 1)
 									break;
-						if (isSenate){
-							searchRecords(congressNum, memberName, "", tempProgressSize, politicalAffiliation);
-							break;}
-						else{
-							searchRecords(congressNum, "", memberName, tempProgressSize, politicalAffiliation);
-							break;}
-							}
-							catch (SocketTimeoutException e) {
+								if (isSenate) {
+									searchRecords(congressNum, memberName, "", tempProgressSize, politicalAffiliation);
+									break;
+								} else {
+									searchRecords(congressNum, "", memberName, tempProgressSize, politicalAffiliation);
+									break;
+								}
+							} catch (Exception e) {
 								System.out.println(e.getMessage() + " ");
 								Display.getDefault().syncExec(new Runnable() {
 									@Override
@@ -257,8 +303,7 @@ public class UsCongressCrawler {
 											MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 													Display.getDefault().getActiveShell(), "Time out", null,
 													"You must've lost internet connection, re-establish connection and try again!",
-													MessageDialog.INFORMATION, labels, 0, "Retry Automatically",
-													false);
+													MessageDialog.INFORMATION, labels, 0, "Retry Automatically", false);
 											returnCode = dialog.open();
 											retryFlag = dialog.getToggleState();
 
@@ -270,7 +315,7 @@ public class UsCongressCrawler {
 										}
 										if (retryFlag) {
 											counter += 1;
-											if (counter > 500){
+											if (counter > 500) {
 												counter = 0;
 												retryFlag = false;
 											}
@@ -382,12 +427,12 @@ public class UsCongressCrawler {
 				}
 				while (true) {
 					try {
-						if(returnCode ==1)
+						if (returnCode == 1)
 							break;
 						searchRecords(congressNum, congressSenatorMap.get(String.valueOf(congressNum)).get(senator), "",
 								currentProgress, politicalAffiliation);
 						break;
-					} catch (SocketTimeoutException e) {
+					} catch (Exception e) {
 						System.out.println(e.getMessage() + " ");
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
@@ -405,13 +450,13 @@ public class UsCongressCrawler {
 								}
 								if (!retryFlag && returnCode == 1) {
 									monitor.setCanceled(true);
-									
+
 								} else {
 									crawlAgain = true;
 								}
 								if (retryFlag) {
 									counter += 1;
-									if (counter > 500){
+									if (counter > 500) {
 										counter = 0;
 										retryFlag = false;
 									}
@@ -515,13 +560,13 @@ public class UsCongressCrawler {
 				}
 				while (true) {
 					try {
-						if(returnCode ==1)
+						if (returnCode == 1)
 							break;
 						searchRecords(congressNum, "",
 								congressRepresentativeMap.get(String.valueOf(congressNum)).get(rep), currentProgress,
 								politicalAffiliation);
 						break;
-					} catch (SocketTimeoutException e) {
+					} catch (Exception e) {
 						System.out.println(e.getMessage() + " ");
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
@@ -545,7 +590,7 @@ public class UsCongressCrawler {
 								}
 								if (retryFlag) {
 									counter += 1;
-									if (counter > 500){
+									if (counter > 500) {
 										counter = 0;
 										retryFlag = false;
 									}
@@ -592,6 +637,7 @@ public class UsCongressCrawler {
 		this.crawlExtension = (crawlExtension) ? "4" : "0";
 		this.crawlDailyDigest = (crawlDailyDigest) ? "8" : "0";
 		totalFilesDownloaded = 0;
+		jsonfactory = new JsonFactory();
 
 		if (null != monitor && monitor.isCanceled()) {
 			monitor.subTask("Cancelling.. ");
@@ -599,13 +645,17 @@ public class UsCongressCrawler {
 		}
 	}
 
+	String memberDir;
+
 	public void searchRecords(int congress, String senText, String repText, int progressSize,
 			String politicalAffiliation) throws IOException, NullPointerException {
 		if ((null == senText || senText.isEmpty()) && (null == repText || repText.isEmpty()))
 			return;
 		String memText = (null == senText || senText.isEmpty()) ? repText : senText;
 		ConsoleView.printlInConsoleln("Current Congress Member - " + memText);
-		String memberDir = this.outputDir + File.separator + memText.replaceAll("[\\/:*?\"<>|]+", "");
+		if (!allSen) {
+			memberDir = this.outputDir + File.separator + memText.replaceAll("[\\/:*?\"<>|]+", "");
+		}
 		if (!new File(memberDir).exists()) {
 			new File(memberDir).mkdir();
 		}
@@ -669,11 +719,12 @@ public class UsCongressCrawler {
 		String[] tempName = (memText.lastIndexOf('(') != -1) ? memText.substring(0, memText.lastIndexOf('(')).split(",")
 				: lastName.split(",");
 		String tempRepName;
-		// String tempRepName = StringUtil.join(Arrays.asList(tempName),";");
-		if(tempName.length == 2)
+		if (tempName.length == 2) {
 			tempRepName = tempName[1] + " " + tempName[0];
-		else
-			tempRepName = tempName[0]; 
+		} else {
+			tempRepName = tempName[0];
+		}
+		// String tempRepName = StringUtil.join(Arrays.asList(tempName),";");
 
 		if (relevantLinks.size() == 0) {
 			ConsoleView.printlInConsoleln("No Records Found.");
@@ -693,6 +744,17 @@ public class UsCongressCrawler {
 		int count = 0;
 		int tempCount = 0;
 		// Process each search result
+		String fileName = congress + "-" + tempRepName + "-" + memberAttribs + ".json";
+		if (!allSen) {
+			streamFile = new File(memberDir + File.separator + fileName);
+			try {
+				jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
+				jsonGenerator.useDefaultPrettyPrinter();
+				jsonGenerator.writeStartArray();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		for (Element link : links) {
 			if (null != monitor && monitor.isCanceled()) {
 				monitor.subTask("Cancelling.. ");
@@ -747,21 +809,39 @@ public class UsCongressCrawler {
 																				// all
 																				// special
 																				// characters
-				String fileName = congress + "-" + tempRepName + "-" + memberAttribs + "-" + recordDate + "-"
+				String nameCheck = congress + "-" + tempRepName + "-" + memberAttribs + "-" + recordDate + "-"
 						+ shortTitle + "-" + (System.currentTimeMillis() % 1000) + ".txt";
-				writeToFile(memberDir, fileName, contents);
-				if (isSenate)
+				String jsonData;
+				if (isSenate) {
 					csvWriter.write(congress + "," + recordDate + "," + tempRepName + "," + politicalAffiliation + ","
 							+ recordType + "," + memberState + "," + title + "," + fileName);
-				else
+					jsonData = congress + "," + recordDate + "," + tempRepName + "," + politicalAffiliation + ","
+							+ recordType + "," + memberState + "," + title + "," + fileName;
+				}
+
+				else {
 					csvWriter.write(congress + "," + recordDate + "," + tempRepName + "," + politicalAffiliation + ","
 							+ recordType + "," + memberState + "," + district + "," + title + "," + fileName);
+					jsonData = congress + "," + recordDate + "," + tempRepName + "," + politicalAffiliation + ","
+							+ recordType + "," + memberState + "," + district + "," + title + "," + fileName;
+				}
+
+				writeToFile(memberDir, fileName, contents, jsonData, nameCheck);
+
 				csvWriter.newLine();
 				csvWriter.flush();
 			}
 
 			tempCount++;
 			tempCount = updateWork(maxDocs, links.size(), progressSize, tempCount);
+		}
+		if (!allSen) {
+			try {
+				jsonGenerator.writeEndArray();
+				jsonGenerator.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -775,21 +855,37 @@ public class UsCongressCrawler {
 		return tempCount;
 	}
 
-	private void writeToFile(String senatorOutputDir, String fileName, String[] contents) throws IOException {
+	private void writeToFile(String senatorOutputDir, String fileName, String[] contents, String jsonData,
+			String nameCheck) throws IOException {
 		// ConsoleView.printlInConsoleln("Writing senator data - "+fileName);
 		fileName = fileName.replaceAll("[\\/:*?\"<>|]+", "");
-		String name = fileName.substring(0, fileName.lastIndexOf("-"));
+		String[] jsonFields = jsonData.split(",");
+		String name = nameCheck.substring(0, nameCheck.lastIndexOf("-"));
 		if (filesDownload.contains(name))
 			return;
 		filesDownload.add(name);
-		ConsoleView.printlInConsoleln("Writing " + senatorOutputDir + File.separator + fileName);
-		BufferedWriter bw = new BufferedWriter(
-				new FileWriter(new File(senatorOutputDir + System.getProperty("file.separator") + fileName)));
-		bw.write(contents[0]);
-		bw.newLine();
-		bw.newLine();
-		bw.write(contents[1]);
-		bw.close();
+
+		ConsoleView.printlInConsoleln("Writing " + senatorOutputDir + File.separator + nameCheck);
+		jsonGenerator.writeStartObject();
+		jsonGenerator.writeStringField("congress_num", jsonFields[0]);
+		jsonGenerator.writeStringField("date", jsonFields[1]);
+		jsonGenerator.writeStringField("senator", jsonFields[2]);
+		jsonGenerator.writeStringField("political_affiliation", jsonFields[3]);
+		jsonGenerator.writeStringField("congressional_section", jsonFields[4]);
+		jsonGenerator.writeStringField("state", jsonFields[5]);
+		jsonGenerator.writeStringField("district", jsonFields[6]);
+		jsonGenerator.writeStringField("title", contents[0]);
+		jsonGenerator.writeStringField("data", contents[1]);
+		jsonGenerator.writeEndObject();
+
+		// BufferedWriter bw = new BufferedWriter(
+		// new FileWriter(new File(senatorOutputDir +
+		// System.getProperty("file.separator") + fileName)));
+		// bw.write(contents[0]);
+		// bw.newLine();
+		// bw.newLine();
+		// bw.write(contents[1]);
+		// bw.close();
 		totalFilesDownloaded++;
 	}
 
