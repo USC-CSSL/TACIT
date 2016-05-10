@@ -214,8 +214,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 									class2NameStr, class2Files);
 							class1FilesL = new File[c1Files.size()];
 							class2FilesL = new File[c2Files.size()];
-							
-							Long availableSpace = 0l; 
 							for (int k = 0; k < c1Files.size(); k++) {
 								class1FilesL[k] = new File(c1Files.get(k));
 							}
