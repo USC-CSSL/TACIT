@@ -1,0 +1,753 @@
+0 The 2:14 1:1 0:1
+1 history 1:1 0:1
+2 of 2:81 1:3
+3 NLP 1:10 2:1
+4 generally 1:2 0:1
+5 starts 1:1
+6 in 2:41
+7 the 2:103 1:3
+8 s 2:20 0:2 1:1
+9 although 1:1 0:1
+10 work 1:2
+11 can 0:2 1:1
+12 be 0:3 2:1
+13 found 1:1
+14 from 2:9
+15 earlier 2:1
+16 periods 1:1
+17 In 0:9
+18 Alan 2:1
+19 Turing 2:1 1:1
+20 published 0:2 2:1
+21 an 2:5 1:4
+22 article 1:1
+23 titled 1:1
+24 Computing 1:1
+25 Machinery 1:1
+26 and 2:69
+27 Intelligence 2:1
+28 which 2:19
+29 proposed 1:1
+30 what 1:1 0:1
+31 is 2:13 1:8 0:1
+32 now 1:2
+33 called 2:1
+34 test 1:1
+35 as 2:19
+36 a 2:38
+37 criterion 1:1
+38 intelligence 1:2
+39 Up 1:1
+40 to 2:25 0:6 1:4
+41 most 2:5
+42 systems 1:2 2:1
+43 were 0:4 2:1
+44 based 2:4
+45 on 2:9 0:1
+46 complex 1:1 0:1
+47 sets 1:1
+48 hand 2:2
+49 written 1:1 2:1
+50 rules 1:3
+51 Starting 1:1
+52 late 2:2 1:1
+53 however 1:2
+54 there 0:2 2:1
+55 was 0:6 2:4
+56 revolution 1:1
+57 with 2:9 0:2 1:1
+58 introduction 2:2
+59 machine 1:3
+60 learning 1:2 2:1
+61 algorithms 1:2
+62 for 2:7 1:2
+63 language 1:6
+64 processing 1:3
+65 This 0:2 1:1
+66 due 1:1 0:1
+67 both 1:1 2:1
+68 steady 1:1
+69 increase 1:1
+70 computational 2:1
+71 power 1:1 2:1
+72 see 2:1
+73 Moore 1:1
+74 Law 1:1
+75 gradual 2:1
+76 lessening 1:1
+77 dominance 1:2
+78 Chomskyan 1:1
+79 theories 1:1
+80 linguistics 2:2
+81 e 1:1
+82 g 1:1
+83 transformational 1:1
+84 grammar 2:1
+85 whose 1:1 0:1
+86 theoretical 1:1
+87 underpinnings 1:1
+88 discouraged 1:1
+89 sort 1:1
+90 corpus 1:1
+91 that 2:7 1:1
+92 underlies 2:1
+93 approach 1:1
+94 Some 1:1
+95 earliest 1:1 0:1
+96 used 0:5 2:2
+97 such 2:7
+98 decision 2:1
+99 trees 1:1
+100 produced 2:2
+101 hard 2:2
+102 if 1:2 0:1
+103 then 1:1
+104 similar 1:1 2:1
+105 existing 1:1
+106 However 2:2
+107 Part 1:1
+108 speech 1:2
+109 tagging 1:1
+110 introduced 2:1
+111 use 2:7
+112 Hidden 1:1
+113 Markov 1:1
+114 Models 1:1
+115 increasingly 1:1
+116 research 1:2
+117 has 2:6 0:2 1:1
+118 focused 1:1
+119 statistical 1:2
+120 models 1:4
+121 make 1:2 2:1
+122 soft 1:1
+123 probabilistic 2:1
+124 decisions 2:1
+125 attaching 2:1
+126 real 1:2
+127 valued 1:1
+128 weights 1:1
+129 features 1:1 2:1
+130 making 1:2
+131 up 1:1
+132 input 1:3
+133 data 1:3
+134 cache 2:1
+135 upon 1:1
+136 many 1:1 2:1
+137 recognition 1:1
+138 rely 2:1
+139 are 2:12
+140 examples 2:2
+141 Such 1:1
+142 more 1:3 2:1 0:1
+143 robust 1:1
+144 when 2:1 1:1
+145 given 1:2
+146 unfamiliar 1:1
+147 especially 1:1 0:1
+148 contains 1:1
+149 errors 1:1
+150 very 1:1
+151 common 1:1
+152 world 1:1 2:1
+153 produce 2:2
+154 reliable 1:1
+155 results 2:1
+156 integrated 1:1 0:1
+157 into 2:4 1:1 0:1
+158 larger 1:1
+159 system 1:4 0:2
+160 comprising 2:1
+161 multiple 1:1
+162 subtasks 2:1
+163 goal 1:1 2:1
+164 evaluation 1:6 0:1
+165 measure 1:1
+166 one 1:2 2:1
+167 or 2:11 0:2 1:1
+168 qualities 1:1
+169 algorithm 1:2
+170 order 1:1
+171 determine 1:1
+172 whether 1:1
+173 answers 1:1
+174 goals 1:1
+175 its 2:4 0:1
+176 designers 1:1
+177 meets 2:1
+178 needs 1:1
+179 users 1:1
+180 Research 1:1
+181 received 1:1
+182 considerable 1:1
+183 attention 1:1
+184 because 1:1
+185 definition 1:1
+186 proper 0:1
+187 criteria 1:2
+188 way 1:1
+189 specify 1:1
+190 precisely 1:1
+191 problem 1:4
+192 metric 1:1
+193 algorithmic 1:1
+194 allows 1:1
+195 integration 1:1
+196 understanding 2:1 1:1
+197 generation 1:1
+198 A 1:1
+199 precise 1:1
+200 set 2:1
+201 include 2:1 1:1 0:1
+202 mainly 2:1
+203 metrics 1:1
+204 enable 1:1
+205 several 2:1
+206 teams 1:1
+207 compare 1:1
+208 their 2:2 0:1
+209 solutions 1:1
+210 gradually 1:1
+211 shifting 1:1
+212 lexical 1:1
+213 semantics 1:2
+214 compositional 1:1
+215 further 1:1
+216 narrative 2:1
+217 Human 1:1
+218 level 1:1
+219 natural 1:1
+220 AI 1:2 0:1
+221 complete 1:1
+222 That 1:1
+223 it 2:2 0:1
+224 equivalent 1:1
+225 solving 1:1
+226 central 1:1
+227 artificial 1:1
+228 computers 1:1
+229 intelligent 1:1
+230 people 1:1
+231 strong 2:1
+232 future 2:1
+233 therefore 1:1
+234 tied 1:1
+235 closely 1:1
+236 development 1:2
+237 general 2:2
+238 Rock 2:5
+239 music 2:18
+240 genre 2:4 0:1
+241 popular 2:1
+242 originated 2:2
+243 rock 2:32
+244 roll 2:4
+245 United 2:4
+246 States 2:3
+247 developed 2:3
+248 range 2:2
+249 different 2:1 0:1
+250 styles 2:1 1:1
+251 later 2:1
+252 particularly 2:1
+253 Kingdom 2:1
+254 It 2:1
+255 roots 2:1
+256 itself 2:1
+257 heavily 2:1
+258 influenced 2:3
+259 by 2:7 0:1
+260 blues 2:6
+261 rhythm 2:4
+262 country 2:3
+263 also 2:4
+264 drew 2:1
+265 strongly 1:1
+266 number 2:2 0:2
+267 other 2:6
+268 genres 2:4
+269 electric 2:7
+270 folk 2:2
+271 incorporated 2:1
+272 influences 2:1
+273 jazz 2:3
+274 classical 2:1
+275 musical 1:1 2:1
+276 sources 1:1 2:1
+277 sound 2:4
+278 traditionally 2:1
+279 centered 2:1
+280 guitar 2:10
+281 emerged 2:4
+282 modern 0:2 2:1
+283 form 2:5
+284 popularization 2:1
+285 sounds 2:1
+286 guitarists 2:5
+287 typically 2:1
+288 supported 2:1
+289 bass 2:7
+290 pioneered 1:1
+291 same 2:1
+292 era 2:1
+293 percussion 2:1
+294 drum 2:1
+295 kit 2:1
+296 combines 2:1
+297 drums 2:2
+298 cymbals 2:1
+299 Typically 2:1
+300 song 2:2
+301 usually 2:4
+302 time 2:2
+303 signature 2:1
+304 using 2:1 0:1
+305 verse 2:1
+306 chorus 2:2
+307 but 2:2
+308 become 2:2
+309 extremely 2:1
+310 diverse 2:2
+311 Like 2:1
+312 pop 2:4
+313 lyrics 2:1
+314 often 2:5 0:5
+315 stress 2:1
+316 romantic 2:1
+317 love 2:1
+318 address 2:1
+319 wide 2:1
+320 variety 0:2 2:1
+321 themes 2:2
+322 frequently 2:1
+323 social 2:2
+324 political 2:1
+325 emphasis 2:2
+326 white 2:1
+327 male 2:1
+328 musicians 2:1
+329 been 0:5
+330 seen 2:1
+331 key 2:1
+332 factors 2:1
+333 shaping 2:1
+334 explored 1:1
+335 places 2:1
+336 higher 2:1
+337 degree 1:1
+338 musicianship 2:1
+339 live 2:1
+340 performance 2:1
+341 ideology 2:1
+342 authenticity 2:1
+343 than 2:2
+344 dramatic 2:1
+345 amplified 2:1
+346 solo 2:3 1:1
+347 characteristic 2:1 0:1
+348 part 0:4
+349 Guitar 1:1
+350 solos 2:7
+351 defining 2:1
+352 feature 2:2
+353 heavy 2:3
+354 metal 2:5
+355 songs 2:2
+356 Metal 2:1
+357 showcase 2:1
+358 virtuosity 2:1
+359 shred 2:1
+360 techniques 2:3
+361 rapid 2:1
+362 playing 2:2
+363 scales 2:1
+364 arpeggios 2:1
+365 Since 2:1
+366 have 2:3 0:3
+367 altered 2:1
+368 timbre 2:1
+369 adding 1:1
+370 electronic 2:1
+371 effects 2:3
+372 reverb 1:1
+373 distortion 2:2
+374 delay 2:1
+375 fuller 2:1
+376 add 2:1
+377 harmonic 2:1
+378 overtones 2:1
+379 Other 2:1
+380 wah 2:5
+381 pedal 1:1
+382 talk 2:1
+383 box 2:1
+384 When 2:2
+385 bassists 2:1
+386 sometimes 2:2
+387 fuzz 2:1
+388 pedals 2:1
+389 pronounced 2:1
+390 Notably 2:1
+391 Cliff 2:1
+392 Burton 2:1
+393 Metallica 2:1
+394 Due 2:1
+395 lower 2:1
+396 much 2:4
+397 lighter 2:1
+398 accompaniment 0:1
+399 instruments 2:1
+400 some 2:4 0:1
+401 cases 2:2
+402 unaccompanied 2:1
+403 accompanied 2:1
+404 only 2:1
+405 bands 1:1
+406 two 2:2 1:1
+407 designated 0:1
+408 lead 2:3
+409 player 2:2
+410 performing 2:1
+411 instrumental 2:1 1:1
+412 melody 1:1
+413 lines 2:1
+414 while 2:1
+415 accompanies 2:1
+416 chords 2:1
+417 riffs 2:1
+418 where 2:1
+419 will 2:1
+420 share 2:1
+421 role 2:2
+422 Most 2:1
+423 around 2:1
+424 traditional 2:2 0:2
+425 forms 2:1
+426 main 2:1
+427 formal 2:1
+428 verses 2:1
+429 choruses 2:1
+430 bridges 2:1
+431 significant 2:2
+432 section 0:1
+433 mainstream 2:2
+434 related 2:1
+435 dance 2:1
+436 synthesizer 2:1
+437 plays 2:1
+438 this 0:6 2:1
+439 foundations 2:1
+440 during 0:3 1:1
+441 early 0:2
+442 quickly 2:1
+443 spread 2:2
+444 rest 2:1
+445 Its 2:1
+446 immediate 2:1
+447 origins 2:1
+448 lay 2:1
+449 melding 2:1
+450 various 0:1
+451 black 2:1
+452 including 2:5
+453 gospel 2:1
+454 western 2:1
+455 By 1:1
+456 referred 2:1
+457 golden 0:1
+458 age 1:1
+459 classic 2:1
+460 period 0:3 1:1
+461 distinct 1:1
+462 subgenres 2:2
+463 had 2:3
+464 hybrids 2:1
+465 like 2:1 0:1
+466 raga 2:1
+467 fusion 2:2
+468 contributed 2:1
+469 psychedelic 2:2
+470 countercultural 2:1
+471 scene 2:2
+472 New 2:1
+473 included 1:1 0:1
+474 progressive 2:1
+475 extended 2:1
+476 artistic 2:1
+477 elements 2:1
+478 glam 2:1
+479 highlighted 1:1
+480 showmanship 2:1
+481 visual 2:1
+482 style 2:1
+483 enduring 2:1
+484 subgenre 2:1
+485 emphasized 2:1
+486 volume 2:1
+487 speed 1:1
+488 From 2:1
+489 alternative 2:1
+490 began 2:1 0:1
+491 dominate 2:1
+492 break 0:1
+493 through 0:2
+494 grunge 2:1
+495 Britpop 2:1
+496 indie 2:1
+497 Further 2:1
+498 since 2:2
+499 punk 2:3
+500 rap 2:2
+501 well 2:2 0:1
+502 conscious 2:1
+503 attempts 2:1
+504 revisit 2:1
+505 garage 1:1
+506 post 2:1
+507 synthpop 2:1
+508 revivals 2:1
+509 at 2:1
+510 beginning 2:1
+511 new 2:1
+512 millennium 1:1
+513 embodied 2:1
+514 served 1:1
+515 vehicle 1:1
+516 cultural 2:1
+517 movements 2:1
+518 leading 2:1
+519 major 2:1
+520 sub 2:1
+521 cultures 2:1
+522 mods 2:1
+523 rockers 2:1
+524 UK 2:1
+525 hippie 2:1
+526 counterculture 2:1
+527 out 2:1
+528 San 0:1
+529 Francisco 2:1
+530 US 0:1
+531 Similarly 2:1
+532 culture 0:4 2:1
+533 spawned 2:1
+534 visually 2:1
+535 distinctive 1:1
+536 goth 1:1
+537 emo 1:1
+538 subcultures 2:1
+539 Origami 2:2
+540 ori 0:1
+541 meaning 0:2
+542 folding 0:9
+543 kami 0:2
+544 paper 0:7 2:3
+545 changes 0:1
+546 gami 0:1
+547 rendaku 0:1
+548 art 2:2
+549 associated 0:2
+550 Japanese 0:7
+551 usage 0:1
+552 word 0:2
+553 origami 0:4 2:3
+554 inclusive 0:1
+555 term 0:1
+556 all 2:1
+557 practices 0:3
+558 regardless 0:1
+559 origin 0:1
+560 transform 2:1
+561 flat 0:1
+562 sheet 0:2
+563 square 0:3
+564 finished 0:1
+565 sculpture 2:1
+566 sculpting 0:1
+567 Modern 0:1
+568 practitioners 0:1
+569 discourage 0:1
+570 cuts 0:4
+571 glue 0:1
+572 markings 0:2
+573 folders 0:1
+574 kirigami 0:1
+575 refer 0:1
+576 designs 0:4
+577 cutting 0:2
+578 Chinese 0:3
+579 papercrafts 0:1
+580 small 0:1
+581 basic 0:1
+582 folds 2:2
+583 combined 2:1
+584 ways 0:1
+585 intricate 2:1
+586 best 0:1
+587 known 0:1
+588 model 0:3
+589 crane 0:1
+590 these 0:3 2:1
+591 begin 0:1
+592 sides 0:1
+593 may 0:1
+594 colors 0:1
+595 prints 0:1
+596 patterns 0:1
+597 Traditional 2:2
+598 practiced 0:1
+599 Edo 0:2
+600 less 0:1
+601 strict 0:1
+602 about 0:3
+603 conventions 0:1
+604 nonsquare 2:1
+605 shapes 0:2
+606 start 2:1
+607 principles 0:1
+608 stents 2:1
+609 packaging 0:1
+610 engineering 2:1
+611 applications 0:1
+612 Distinct 2:1
+613 paperfolding 0:3
+614 traditions 0:2
+615 arose 0:1
+616 Europe 0:2
+617 China 0:2
+618 Japan 0:4
+619 documented 2:1
+620 historians 0:1
+621 These 0:2
+622 seem 0:1
+623 mostly 0:2
+624 separate 0:1
+625 until 0:1
+626 th 0:2 2:1
+627 century 0:1
+628 funerals 0:1
+629 burning 0:1 2:1
+630 folded 0:2
+631 representations 0:2
+632 gold 0:1
+633 nuggets 2:1
+634 yuanbao 0:1
+635 practice 0:1
+636 instead 0:1
+637 full 2:1
+638 scale 0:1
+639 wood 0:1
+640 clay 2:1
+641 replicas 0:1
+642 dates 0:1
+643 Sung 0:1
+644 Dynasty 0:1
+645 though 0:1
+646 not 0:1
+647 clear 0:1
+648 how 0:1
+649 involved 0:1
+650 funeral 2:1
+651 banned 2:1
+652 Cultural 0:1
+653 Revolution 2:1
+654 so 0:1
+655 we 2:1
+656 know 0:1
+657 comes 2:1
+658 day 0:1
+659 continuation 0:1
+660 Taiwan 0:1
+661 unambiguous 0:1
+662 reference 0:1
+663 short 0:1
+664 poem 0:1
+665 Ihara 2:1
+666 Saikaku 2:1
+667 mentions 0:1
+668 butterfly 0:1
+669 design 2:1
+670 Shinto 0:1
+671 weddings 2:1
+672 Folding 2:1
+673 filled 0:1
+674 ceremonial 0:1
+675 functions 0:1
+676 noshi 0:1
+677 attached 2:1
+678 gifts 0:1
+679 greeting 0:1
+680 cards 2:1
+681 today 2:1
+682 entertainment 2:1
+683 first 2:1
+684 instructional 0:1
+685 books 0:1
+686 clearly 0:1
+687 recreational 2:1
+688 napkin 0:3
+689 flourished 0:1
+690 centuries 2:1
+691 After 0:1
+692 declined 0:1
+693 forgotten 0:1
+694 historian 0:1
+695 Joan 0:1
+696 Sallas 0:1
+697 attributes 0:1
+698 porcelain 2:1
+699 replaced 0:1
+700 dinner 0:1
+701 table 0:1
+702 status 0:1
+703 symbol 0:1
+704 among 0:1
+705 nobility 2:1
+706 bases 2:1
+707 tradition 0:2
+708 continued 0:1
+709 European 0:2
+710 Friedrich 2:1
+711 Froebel 0:2
+712 Kindergarten 0:2
+713 method 0:1
+714 connection 0:1
+715 his 0:2
+716 curriculum 2:1
+717 stylistically 2:1
+718 fold 0:1
+719 repertoire 0:2
+720 opened 0:1
+721 borders 2:1
+722 modernization 0:1
+723 strategy 0:1
+724 they 0:2
+725 imported 2:1
+726 German 0:1
+727 ideas 0:2
+728 ban 0:1
+729 starting 0:2
+730 shape 0:1
+731 bicolored 0:1
+732 Before 0:1
+733 color 2:1
+734 added 0:1
+735 after 0:1
+736 Akira 0:2
+737 Yoshizawa 0:2 2:1
+738 Kosho 0:1
+739 Uchiyama 0:1
+740 others 2:1
+741 creating 0:1
+742 recording 0:1
+743 original 0:1
+744 works 0:1
+745 particular 0:1
+746 responsible 0:1
+747 innovations 2:1
+748 wet 0:1
+749 Randlett 0:1
+750 diagramming 0:1
+751 inspired 0:1
+752 renaissance 2:1

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Us_Congress_Crawler_Test
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.uscongress.test
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: edu.usc.cssl.tacit.crawlers.uscongress;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

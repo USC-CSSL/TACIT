@@ -1,0 +1,4 @@
+#doc name topic proportion ...
+0	file:/C:/Anish's%20Work/EclipseWorkspace/edu.usc.cssl.tacit.topicmodel.lda.test/TestData/InputFiles/LDAData1.txt	1	0.5902999026786516	2	0.388030275144693	0	0.02166982217665545	
+1	file:/C:/Anish's%20Work/EclipseWorkspace/edu.usc.cssl.tacit.topicmodel.lda.test/TestData/InputFiles/LDAData2.txt	2	0.9306519179471661	1	0.044435383299080804	0	0.024912698753753182	
+2	file:/C:/Anish's%20Work/EclipseWorkspace/edu.usc.cssl.tacit.topicmodel.lda.test/TestData/InputFiles/LDAData3.txt	0	0.5712917553479908	2	0.42321305273891663	1	0.005495191913092588	
