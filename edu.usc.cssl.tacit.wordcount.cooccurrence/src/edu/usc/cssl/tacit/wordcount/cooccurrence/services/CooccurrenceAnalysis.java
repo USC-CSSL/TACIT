@@ -106,9 +106,8 @@ public class CooccurrenceAnalysis {
 			String[] listOfFiles = (String[]) selectedFiles.toArray(new String[selectedFiles.size()]);
 			for (String fname : listOfFiles) {
 				File f = new File(fname);
-
-				monitor.subTask("Processing input file " + f.getName());
-				appendLog("Processing input file " + f.getName());
+				//monitor.subTask("Processing input file " + f.getName());
+				//appendLog("Processing input file " + f.getName());
 				if (f.getAbsolutePath().contains("DS_Store"))
 					continue;
 				if (!f.exists() || f.isDirectory())
@@ -119,7 +118,7 @@ public class CooccurrenceAnalysis {
 				//Finding the cooccurrence window in each line 
 				try {
 
-					while ((currentLine = br.readLine()) != null && !currentLine.equals("")) {
+					while ((currentLine = br.readLine()) != null) {
 						ArrayList<String> lineWords = new ArrayList<String>(Arrays.asList(delimiters.matcher(currentLine).replaceAll(" ").toLowerCase().trim().split("\\s+")));
 						boolean isFirstWindow = true;
 						
@@ -146,7 +145,7 @@ public class CooccurrenceAnalysis {
 
 								isFirstWindow = false;
 								windowend++;
-								
+										
 							}else{
 								String oldWord = window.remove(0);
 								String newWord = lineWords.get(windowend);
