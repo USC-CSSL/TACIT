@@ -1,6 +1,0 @@
-Mapping of document ID to actual names
-1 HierarchicalClusteringData1.txt
-2 HierarchicalClusteringData2.txt
-3 HierarchicalClusteringData3.txt
-4 HierarchicalClusteringData4.txt
-Newick:(((1:17.80449,2:17.80449):2.22049,3:20.02498):1.18822,4:21.2132)

@@ -16,6 +16,4 @@ Export-Package: edu.usc.cssl.tacit.cluster.hierarchical.services,
  weka.clusterers,
  weka.core
 Bundle-ClassPath: weka.jar,
- .,
- junit.jar,
- hamcrest-all-1.3.jar
+ .

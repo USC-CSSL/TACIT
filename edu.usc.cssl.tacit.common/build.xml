@@ -12,13 +12,16 @@
     <property name="edu.usc.cssl.tacit.cluster.kmeans.location" value="../edu.usc.cssl.tacit.cluster.kmeans"/>
     <property name="edu.usc.cssl.tacit.crawlers.latin.location" value="../edu.usc.cssl.tacit.crawlers.latin"/>
     <property name="edu.usc.cssl.tacit.crawlers.reddit.location" value="../edu.usc.cssl.tacit.crawlers.reddit"/>
+    <property name="edu.usc.cssl.tacit.crawlers.stackexchange.location" value="../edu.usc.cssl.tacit.crawlers.stackexchange"/>
     <property name="edu.usc.cssl.tacit.crawlers.twitter.location" value="../edu.usc.cssl.tacit.crawlers.twitter"/>
     <property name="edu.usc.cssl.tacit.crawlers.uscongress.location" value="../edu.usc.cssl.tacit.crawlers.uscongress"/>
+    <property name="edu.usc.cssl.tacit.test.location" value="../../edu.usc.cssl.tacit.test"/>
     <property name="edu.usc.cssl.tacit.topicmodel.lda.location" value="../edu.usc.cssl.tacit.topicmodel.lda"/>
     <property name="edu.usc.cssl.tacit.topicmodel.zlda.location" value="../edu.usc.cssl.tacit.topicmodel.zlda"/>
     <property name="edu.usc.cssl.tacit.wordcount.cooccurrence.location" value="../edu.usc.cssl.tacit.wordcount.cooccurrence"/>
     <property name="edu.usc.cssl.tacit.wordcount.standard.location" value="../edu.usc.cssl.tacit.wordcount.standard"/>
     <property name="edu.usc.cssl.tacit.wordcount.weighted.location" value="../edu.usc.cssl.tacit.wordcount.weighted"/>
+    <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
@@ -45,8 +48,10 @@
         <pathelement location="${ECLIPSE_HOME}plugins/org.jsoup_1.7.2.v201411291515.jar"/>
         <pathelement location="../../../../edu.usc.cssl.tacit.common.ui"/>
         <pathelement location="../../../../edu.usc.cssl.tacit.repository"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
     </path>
     <path id="edu.usc.cssl.tacit.common.classpath">
+        <pathelement location="bin"/>
         <pathelement location="pdfbox-app-2.0.0-RC3.jar"/>
         <pathelement location="org.annolab.tt4j-1.2.1.jar"/>
         <pathelement location="jackson-core-2.5.0.jar"/>
@@ -56,7 +61,6 @@
         <pathelement location="json-simple-1.1.1.jar"/>
         <pathelement location="langdetect.jar"/>
         <path refid="Plug-in Dependencies.libraryclasspath"/>
-        <pathelement location="bin"/>
         <pathelement location="hamcrest-core-1.3.jar"/>
         <pathelement location="hamcrest-library-1.3.jar"/>
         <pathelement location="slf4j-api-1.7.5.jar"/>
@@ -79,7 +83,7 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac fork="true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac fork = "true" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="edu.usc.cssl.tacit.common.classpath"/>
         </javac>
@@ -121,6 +125,12 @@
                 <propertyref name="build.compiler"/>
             </propertyset>
         </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.stackexchange.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.stackexchange.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.twitter.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.twitter.location}" inheritAll="false" target="build">
             <propertyset>
@@ -129,6 +139,12 @@
         </ant>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.uscongress.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.crawlers.uscongress.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.test.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${edu.usc.cssl.tacit.test.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>
@@ -176,5 +192,29 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="Common_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.edu.usc.cssl.tacit.common.Common_Test" todir="${junit.output.dir}"/>
+            <classpath refid="edu.usc.cssl.tacit.common.classpath"/>
+        </junit>
+    </target>
+    <target name="test.edu.usc.cssl.tacit.common (1)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.edu.usc.cssl.tacit.common.Common_Test" todir="${junit.output.dir}"/>
+            <classpath refid="edu.usc.cssl.tacit.common.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
     </target>
 </project>

@@ -44,13 +44,21 @@ public class NaiveBayesClassifierWeka {
 	 * @throws Exception
 	 */
 	public void initializeInstances() throws Exception {
+		System.out.println("----a");
 		DirectoryToArff ref = new DirectoryToArff();
+		System.out.println("----b");
 		ref.createTrainInstances(classPaths);
+		System.out.println("----c");
 		Instances dataRaw = ref.loadArff();
+		System.out.println("----d");
 		filter = new StringToWordVector();
+		System.out.println("----e");
 		filter.setInputFormat(dataRaw);
+		System.out.println("----f");
 		dataFiltered = Filter.useFilter(dataRaw, filter);
+		System.out.println("----g");
 		nbc = createClassifier(dataFiltered);
+		System.out.println("----h");
 	}
 
 	/**

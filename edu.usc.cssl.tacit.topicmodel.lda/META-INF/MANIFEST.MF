@@ -16,6 +16,4 @@ Export-Package: bsh,
  edu.usc.cssl.tacit.topicmodel.lda.services
 Bundle-ClassPath: .,
  mallet.jar,
- mallet-deps.jar,
- junit.jar,
- hamcrest-all-1.3.jar
+ mallet-deps.jar
