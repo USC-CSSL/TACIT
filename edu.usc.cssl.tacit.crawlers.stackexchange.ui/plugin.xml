@@ -37,5 +37,14 @@
             commandId="edu.usc.cssl.tacit.crawlers.stackexchange.view.command1">
       </handler>
    </extension>
+   <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
+             class="edu.usc.cssl.tacit.crawlers.stackexchange.ui.preferencepage.StackExchangeConfiguration"
+             id="edu.usc.cssl.tacit.crawlers.stackexchange.ui.config"
+             name="StackExchange Configuration">
+       </page>
+    </extension>
 
 </plugin>

@@ -145,8 +145,7 @@ public class StackExchangeCrawler {
 						jsonGenerator.writeObjectFieldStart("user");
 						jsonGenerator.writeStringField("user_id", Integer.toString(answer.getOwner().user_id));
 						jsonGenerator.writeStringField("username", answer.getOwner().display_name);
-						jsonGenerator.writeStringField("user_reputation",
-								Integer.toString(answer.getOwner().reputation));
+						jsonGenerator.writeStringField("user_reputation",Integer.toString(answer.getOwner().reputation));
 						jsonGenerator.writeStringField("user_type", answer.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}
