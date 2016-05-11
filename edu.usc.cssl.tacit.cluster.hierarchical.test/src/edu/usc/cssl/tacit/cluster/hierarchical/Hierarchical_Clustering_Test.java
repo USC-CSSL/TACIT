@@ -1,4 +1,5 @@
-package edu.usc.cssl.tacit.cluster.hierarchical.test;
+package edu.usc.cssl.tacit.cluster.hierarchical;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;

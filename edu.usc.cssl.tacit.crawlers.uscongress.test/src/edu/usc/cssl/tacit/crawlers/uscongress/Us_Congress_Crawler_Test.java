@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.uscongress.test;
+package edu.usc.cssl.tacit.crawlers.uscongress;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,12 +12,11 @@ import org.junit.Test;
 import edu.usc.cssl.tacit.crawlers.uscongress.services.AvailableRecords;
 import edu.usc.cssl.tacit.crawlers.uscongress.services.UsCongressCrawler;
 
-public class Us_Congress_Crawler_Test{
-
+public class Us_Congress_Crawler_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
-	
+
 	@Test
-	public void usCongressCrawlerTest(){
+	public void usCongressCrawlerTest() {
 		ArrayList<String> congressMemberDetails = new ArrayList<String>();
 		congressMemberDetails.add("Alexander, Lamar (R-TN)");
 		ArrayList<Integer> allCongresses = new ArrayList<Integer>();
@@ -37,21 +36,21 @@ public class Us_Congress_Crawler_Test{
 		allCongresses.add(101);
 		String corpusName = "Test";
 		UsCongressCrawler sc = new UsCongressCrawler();
-		String outputDir = directoryPath + System.getProperty("file.separator") +  corpusName;
+		String outputDir = directoryPath + System.getProperty("file.separator") + corpusName;
 		File temp = new File(outputDir);
 		temp.mkdir();
 		Exception exceptionObj = null;
 		try {
-			String s[] = {"All", "114", "113", "112", "111", "110", "109", "108", "107", "106", "105", "104", "103", "102", "101"};
+			String s[] = { "All", "114", "113", "112", "111", "110", "109", "108", "107", "106", "105", "104", "103",
+					"102", "101" };
 			AvailableRecords.getAllSenators(s);
-			sc.initialize("Date", 1, 114, congressMemberDetails, "", "", outputDir, allCongresses, new NullProgressMonitor(), 40, true, true, false, true, true);
+			sc.initialize("Date", 1, 114, congressMemberDetails, "", "", outputDir, allCongresses,
+					new NullProgressMonitor(), 40, true, true, false, true, true);
 			sc.crawl();
 			FileUtils.deleteDirectory(new File(outputDir));
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			exceptionObj = e;
 		}
 		assertEquals("Checking if the crawling completed successfully", exceptionObj, null);
 	}
-
 }

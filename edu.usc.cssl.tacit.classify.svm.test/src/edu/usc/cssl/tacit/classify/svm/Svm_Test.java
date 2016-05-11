@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.classify.svm.test;
+package edu.usc.cssl.tacit.classify.svm;
 
 import static org.junit.Assert.assertEquals;
 

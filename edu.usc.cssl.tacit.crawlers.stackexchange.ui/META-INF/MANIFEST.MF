@@ -7,12 +7,11 @@ Bundle-Activator: edu.usc.cssl.tacit.crawlers.stackexchange.ui.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
- edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0",
  edu.usc.cssl.tacit.help;bundle-version="1.0.0",
  org.eclipse.help;bundle-version="3.6.0",
- org.eclipse.ui,
- org.eclipse.core.runtime,
- edu.usc.cssl.tacit.crawlers.stackexchange
+ edu.usc.cssl.tacit.crawlers.stackexchange,
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
+Import-Package: edu.usc.cssl.tacit.common.ui

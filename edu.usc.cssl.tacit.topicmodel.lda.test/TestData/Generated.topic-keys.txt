@@ -1,3 +1,3 @@
-0	1.41274	folding In Japanese paper this was to been often used Japan designs cuts origami culture part were napkin paperfolding 
-1	1.40906	NLP is evaluation language problem system models to an more data input processing machine rules the of development AI 
-2	8.54903	the of and in a rock to s as which music The is are or guitar with on from 
+0	3.92631	the and of in rock a s music as which The guitar to is has by are solos bass 
+1	0.81332	of a to the paper folding origami and Japanese or was often use used with is which In Japan 
+2	0.58013	of to NLP evaluation is language an problem system models based as the AI or more data input processing 

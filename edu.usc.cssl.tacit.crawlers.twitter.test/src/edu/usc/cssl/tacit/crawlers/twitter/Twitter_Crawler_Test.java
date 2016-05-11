@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.twitter.test;
+package edu.usc.cssl.tacit.crawlers.twitter;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.cluster.kmeans.test;
+package edu.usc.cssl.tacit.cluster.kmeans;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;

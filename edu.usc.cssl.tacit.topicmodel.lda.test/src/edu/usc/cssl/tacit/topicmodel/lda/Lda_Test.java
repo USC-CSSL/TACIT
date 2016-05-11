@@ -1,4 +1,5 @@
-package edu.usc.cssl.tacit.topicmodel.lda.test;
+package edu.usc.cssl.tacit.topicmodel.lda;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;

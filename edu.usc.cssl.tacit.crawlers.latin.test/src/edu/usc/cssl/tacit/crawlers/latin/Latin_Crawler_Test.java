@@ -1,5 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.latin.test;
-
+package edu.usc.cssl.tacit.crawlers.latin;
 
 import static org.junit.Assert.assertEquals;
 

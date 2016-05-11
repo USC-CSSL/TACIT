@@ -1,4 +1,4 @@
-package edu.usc.cssl.tacit.crawlers.reddit.test;
+package edu.usc.cssl.tacit.crawlers.reddit;
 
 import static org.junit.Assert.assertEquals;
 

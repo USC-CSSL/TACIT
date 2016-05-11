@@ -1,5 +1,4 @@
-package edu.usc.cssl.tacit.classify.naivebayes.test;
-
+package edu.usc.cssl.tacit.classify.naivebayes;
 
 import static org.junit.Assert.assertEquals;
 
@@ -108,3 +107,4 @@ public class Naive_Bayes_Test {
 		assertEquals("Comparing naive bayes output", expectedOutput, generatedOutput);
 	}
 }
+

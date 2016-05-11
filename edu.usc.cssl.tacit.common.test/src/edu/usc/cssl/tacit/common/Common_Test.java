@@ -1,4 +1,5 @@
-package edu.usc.cssl.tacit.common.test;
+package edu.usc.cssl.tacit.common;
+
 
 import static org.junit.Assert.assertEquals;
 
