@@ -5,3 +5,5 @@ Bundle-SymbolicName: edu.usc.cssl.tacit.classify.naivebayes.test
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: edu.usc.cssl.tacit.classify.naivebayes;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: junit.jar,
+ .

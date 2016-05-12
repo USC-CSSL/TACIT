@@ -562,7 +562,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 								outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
 										+ corpusName.trim();
 								if (!new File(outputDir).exists()) {
-									new File(outputDir).mkdir();
+									new File(outputDir).mkdirs();
 								}
 							}
 						});
@@ -581,7 +581,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 									+ corpusName;
 							outputDir += File.separator + domain;
 							if (!new File(outputDir).exists()) {
-								new File(outputDir).mkdir();
+								new File(outputDir).mkdirs();
 							}
 							crawler.setDir(outputDir);
 						try {
