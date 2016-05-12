@@ -35,6 +35,9 @@ public class StackExchangeCrawler {
 			key = k;
 		}
 	}
+	public StackExchangeCrawler(String k) {
+		key = k;
+	}
 
 	public void setDir(String fileName) {
 		// TODO Auto-generated constructor stub

@@ -36,6 +36,8 @@
         <pathelement location="${ECLIPSE_HOME}plugins/org.eclipse.equinox.app_1.3.300.v20150423-1356.jar"/>
         <pathelement location="../../../../edu.usc.cssl.tacit.common.ui"/>
         <pathelement location="../../../../edu.usc.cssl.tacit.common"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
     </path>
     <path id="edu.usc.cssl.tacit.common.classpath">
         <pathelement location="${edu.usc.cssl.tacit.common.location}/pdfbox-app-2.0.0-RC3.jar"/>
@@ -78,7 +80,6 @@
         <path refid="edu.usc.cssl.tacit.common.ui.classpath"/>
     </path>
     <path id="edu.usc.cssl.tacit.classify.naivebayes.test.classpath">
-        <pathelement location="junit.jar"/>
         <path refid="Plug-in Dependencies.libraryclasspath"/>
         <pathelement location="bin"/>
         <path refid="edu.usc.cssl.tacit.classify.naivebayes.classpath"/>
@@ -144,6 +145,14 @@
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
             <test name="edu.usc.cssl.tacit.classify.naivebayes.Naive_Bayes_Test" todir="${junit.output.dir}"/>
+            <classpath refid="edu.usc.cssl.tacit.classify.naivebayes.test.classpath"/>
+        </junit>
+    </target>
+    <target name="AllTests (1)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="edu.usc.cssl.tacit.classify.naivebayes.AllTests" todir="${junit.output.dir}"/>
             <classpath refid="edu.usc.cssl.tacit.classify.naivebayes.test.classpath"/>
         </junit>
     </target>
