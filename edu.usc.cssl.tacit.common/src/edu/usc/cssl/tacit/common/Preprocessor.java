@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.text.Document;
 import javax.swing.text.rtf.RTFEditorKit;
@@ -30,6 +32,8 @@ import org.json.simple.parser.ParseException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
+import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
+import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
 import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.snowballstemmer.DanishStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.DutchStemmer;
@@ -369,7 +373,6 @@ public class Preprocessor {
 			break;
 
 		case REDDIT_JSON:
-			// processReddit(corpus);
 			processGenericJSON(corpus);
 			break;
 
@@ -377,17 +380,76 @@ public class Preprocessor {
 			processTwitter(corpus);
 			break;
 
-		case JSON:
-			processGenericJSON(corpus);
+		case CONGRESS_JSON:
+			processTwitter(corpus);
+			break;
+
+		case STACKEXCHANGE_JSON:
+			processTwitter(corpus);
 
 		default:
 			break;
 		}
 	}
 
-	private boolean processQuery(CorpusClass corpusClass, JSONObject obj) throws ParseException {
-		// return QueryProcesser.canProcessQuery(corpusClass.getFilters(), obj);
-		return false;
+	private List<String> processQuery(CorpusClass corpusClass, JSONObject obj) throws ParseException {
+		String tempDir = tempPPFileLoc + "testData";
+		CMDataType corpusType = corpusClass.getParent().getDatatype();
+		if (!new File(tempDir).exists())
+			new File(tempDir).mkdir();
+		QueryProcesser qp = new QueryProcesser();
+		String tempFile = tempDir + File.separator + "temp_json_" + System.currentTimeMillis() + ".json";
+		File f = new File(tempFile);
+		FileWriter writer;
+		List<String> ans = null;
+		try {
+			writer = new FileWriter(f);
+			// writer.write("{\"data\":"+obj.toJSONString()+"}");
+			// writer.write(obj.toJSONString());
+			// writer.close();
+			if (corpusType == CMDataType.TWITTER_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Text", true);
+			}
+			if (corpusType == CMDataType.CONGRESS_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
+			}
+			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
+				IQueryProcessor iqp = new QueryProcesser(corpusClass);
+				Map<String, QueryDataType> keys = iqp.getJsonKeys();
+				Set<String> k = keys.keySet();
+				String keyFields = "";
+				if (k.contains("answer_body"))
+					keyFields += "data.answer_body,";
+				if (k.contains("question_body"))
+					keyFields += "data.question_body,";
+				if (k.contains("comment_body"))
+					keyFields += "data.comment_body,";
+				if (k.contains("question.question_body"))
+					keyFields += "question.question_body,";
+				if (k.contains("answers_dets.answer_body"))
+					keyFields += "answers_dets.answer_body,";
+				if (k.contains("question_body") || k.contains("comment_body") || k.contains("answer_body")) {
+					writer.write("{\"data\":" + obj.toJSONString() + "}");
+					writer.close();
+					ans = qp.processJson(corpusClass, f.getAbsolutePath(),
+							keyFields.substring(0, keyFields.length() - 1), true);
+				} else {
+					writer.write(obj.toJSONString());
+					writer.close();
+					ans = qp.processJson(corpusClass, f.getAbsolutePath(),
+							keyFields.substring(0, keyFields.length() - 1), false);
+				}
+
+			}
+			f.delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ans;
 	}
 
 	/**
@@ -462,9 +524,9 @@ public class Preprocessor {
 		Date dateobj = new Date();
 
 		if (doPreprocessing)
-			tempFile = tempPPFileLoc + "temp_twitter_" + System.currentTimeMillis() + ".txt";
+			tempFile = tempPPFileLoc + corpusClass.getClassName() + System.currentTimeMillis() + ".txt";
 		else {
-			tempDir = ppFilesLoc + System.getProperty("file.separator") + "twitter_data_" + dateobj.getTime();
+			tempDir = ppFilesLoc + System.getProperty("file.separator") + corpusClass.getClassName() + dateobj.getTime();
 			new File(tempDir).mkdir();
 		}
 
@@ -483,14 +545,14 @@ public class Preprocessor {
 				int j = 0;
 				for (Object obj : objects) {
 					JSONObject twitterStream = (JSONObject) obj;
-					if (!processQuery(corpusClass, twitterStream))
-						continue;
+					List<String> outputs = processQuery(corpusClass, twitterStream);
+					if (!outputs.isEmpty() && outputs.get(0) != null && !outputs.get(0).equals("")) {
 					dateobj = new Date();
 					File file;
 					if (doPreprocessing) {
 						file = new File(tempFile);
 					} else {
-						file = new File(tempDir + System.getProperty("file.separator") + "twitter_" + j + "-"
+						file = new File(tempDir + System.getProperty("file.separator") + corpusClass.getClassName() + j + "-"
 								+ df.format(dateobj));
 					}
 					if (file.exists()) {
@@ -499,7 +561,7 @@ public class Preprocessor {
 
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
-					String tweet = twitterStream.get("Text").toString();
+					String tweet = outputs.get(0);
 					bw.write(tweet);
 					// addContentsToSummary(file.getName(),tweet);
 					bw.close();
@@ -512,6 +574,7 @@ public class Preprocessor {
 					}
 					j++;
 
+				}
 				}
 
 			} catch (JsonParseException e) {
@@ -558,8 +621,8 @@ public class Preprocessor {
 					continue;
 
 				JSONObject redditStream = (JSONObject) jParser.parse(new FileReader(fileName));
-				if (!processQuery(corpusClass, redditStream))
-					continue;
+//				if (!processQuery(corpusClass, redditStream))
+//					continue;
 
 				String postTitle = RedditGetPostTitle(redditStream);
 				String[] postComments = RedditGetPostComments(redditStream);
