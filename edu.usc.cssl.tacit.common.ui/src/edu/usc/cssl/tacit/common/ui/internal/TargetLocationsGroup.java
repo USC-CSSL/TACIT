@@ -753,7 +753,8 @@ public class TargetLocationsGroup {
 			if (corpusDataType == CMDataType.JSON
 					|| corpusDataType == CMDataType.TWITTER_JSON
 					|| corpusDataType == CMDataType.REDDIT_JSON
-					|| corpusDataType == CMDataType.STACKEXCHANGE_JSON) {
+					|| corpusDataType == CMDataType.STACKEXCHANGE_JSON
+					|| corpusDataType == CMDataType.CONGRESS_JSON) {
 				filterEnabled = true;
 			}
 		}

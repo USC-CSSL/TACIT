@@ -446,6 +446,7 @@ public class Preprocessor {
 				}
 
 			}
+			f.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

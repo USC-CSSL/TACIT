@@ -297,9 +297,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					List<String> inFiles = null;
 					List<Object> inputFiles = new ArrayList<Object>();
 					inputFiles.add(cls);
+					File delFile = null;
 					try {
 						ppObj = new Preprocessor("Liwc", true);
 						inFiles = ppObj.processData("tempData", inputFiles, seperateFiles);
+						if(!inFiles.isEmpty()){
+							delFile = new File(inFiles.get(0));
+						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -321,6 +325,14 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 							} catch (IOException e1) {
 								e1.printStackTrace();
 							}
+							
+					}
+					if(!inFiles.isEmpty()){
+						try {
+							FileUtils.deleteDirectory(delFile.getParentFile().getParentFile());
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}
 
 				} else {
