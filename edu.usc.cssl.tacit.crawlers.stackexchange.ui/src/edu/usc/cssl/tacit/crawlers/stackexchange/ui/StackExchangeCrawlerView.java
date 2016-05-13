@@ -231,7 +231,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		});
 		
 		Label limitPages = new Label(inputSec, SWT.NONE);
-		limitPages.setText("Limit Pages:");
+		limitPages.setText("Number of Pages:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitPages);
 		pageText = new Text(inputSec, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(pageText);
@@ -480,13 +480,13 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		try {
 			int pages = Integer.parseInt(pageText.getText());
 			if (pages < 1) {
-				form.getMessageManager().addMessage("pageLimit", "Limit the number of pages to be crawled", null,
+				form.getMessageManager().addMessage("pageLimit", "Enter the number of pages to be crawled", null,
 						IMessageProvider.ERROR);
 				return false;
 			} else
 				form.getMessageManager().removeMessage("pageLimit");
 		} catch (Exception e) {
-			form.getMessageManager().addMessage("pageLimit", "Limit the number of pages to be crawled", null,
+			form.getMessageManager().addMessage("pageLimit", "Enter the number of pages to be crawled", null,
 					IMessageProvider.ERROR);
 			return false;
 		}
