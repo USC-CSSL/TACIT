@@ -49,6 +49,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
+
+import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
@@ -466,6 +468,15 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						IMessageProvider.ERROR);
 				return false;
 			}
+		String k = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
+		if(k == null || k.equals("")){
+			form.getMessageManager().addMessage("KeyError", "You have not entered a key for crawling", null,
+					IMessageProvider.ERROR);
+			return false;
+		}
+		else{
+			form.getMessageManager().removeMessage("KeyError");
+		}
 		try {
 			int pages = Integer.parseInt(pageText.getText());
 			if (pages < 1) {
