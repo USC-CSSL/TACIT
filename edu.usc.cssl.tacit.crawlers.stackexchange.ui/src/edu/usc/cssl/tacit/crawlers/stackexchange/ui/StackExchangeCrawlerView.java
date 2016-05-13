@@ -208,6 +208,9 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 					isAnsweredBtn.setEnabled(true);
 					commentBodyBtn.setEnabled(true);
 					commentUserBtn.setEnabled(true);
+					btnAnswer.setEnabled(false);
+					btnQuestion.setEnabled(false);
+					btnComment.setEnabled(false);
 				}else{
 					ansUserBtn.setEnabled(false);
 					answerBodyBtn.setEnabled(false);
@@ -217,6 +220,9 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 					isAnsweredBtn.setEnabled(false);
 					commentBodyBtn.setEnabled(false);
 					commentUserBtn.setEnabled(false);
+					btnAnswer.setEnabled(true);
+					btnQuestion.setEnabled(true);
+					btnComment.setEnabled(true);
 				}
 				
 			}
@@ -463,13 +469,13 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		try {
 			int pages = Integer.parseInt(pageText.getText());
 			if (pages < 1) {
-				form.getMessageManager().addMessage("pageLimit", "Provide valid no.of.Pages to crawl", null,
+				form.getMessageManager().addMessage("pageLimit", "Limit the number of pages to be crawled", null,
 						IMessageProvider.ERROR);
 				return false;
 			} else
 				form.getMessageManager().removeMessage("pageLimit");
 		} catch (Exception e) {
-			form.getMessageManager().addMessage("pageLimit", "Provide valid no.of.Pages to crawl", null,
+			form.getMessageManager().addMessage("pageLimit", "Limit the number of pages to be crawled", null,
 					IMessageProvider.ERROR);
 			return false;
 		}
