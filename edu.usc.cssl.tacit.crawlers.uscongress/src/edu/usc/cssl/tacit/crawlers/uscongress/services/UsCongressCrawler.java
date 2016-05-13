@@ -875,7 +875,7 @@ public class UsCongressCrawler {
 		jsonGenerator.writeStringField("state", jsonFields[5]);
 		jsonGenerator.writeStringField("district", jsonFields[6]);
 		jsonGenerator.writeStringField("title", contents[0]);
-		jsonGenerator.writeStringField("data", contents[1]);
+		jsonGenerator.writeStringField("body", contents[1]);
 		jsonGenerator.writeEndObject();
 
 		// BufferedWriter bw = new BufferedWriter(

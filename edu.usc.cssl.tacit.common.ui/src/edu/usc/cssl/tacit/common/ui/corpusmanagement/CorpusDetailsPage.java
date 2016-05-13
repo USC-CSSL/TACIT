@@ -306,6 +306,9 @@ public class CorpusDetailsPage implements IDetailsPage {
 		case MICROSOFT_WORD:
 			wordData.setSelection(true);
 			break;
+		case JSON:
+			stackExchangeJSON.setSelection(true);
+			break;
 		case STACKEXCHANGE_JSON:
 			stackExchangeJSON.setSelection(true);
 			break;

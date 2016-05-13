@@ -2,9 +2,6 @@ package edu.usc.cssl.tacit.common.ui.internal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -506,7 +503,6 @@ public class TargetLocationsGroup {
 					if (filterDialog.open() == Window.OK) {
 						cls.refreshFilters(filterDialog.getSelectionObjects());
 					}
-
 				}
 			});
 		}

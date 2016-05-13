@@ -1060,7 +1060,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 
 							@Override
 							public void run() {
-								Corpus corpus = new Corpus(corpusNameTxt.getText(), CMDataType.PLAIN_TEXT);
+								Corpus corpus = new Corpus(corpusNameTxt.getText(), CMDataType.CONGRESS_JSON);
 								File dir = new File(outputDir);
 								File[] directoryListing = dir.listFiles();
 								for(File child : directoryListing){

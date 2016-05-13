@@ -422,7 +422,7 @@ public class Preprocessor {
 			// qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(),
 			// corpusClass.getKeyTextFields());
 
-			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body");
+			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body", false);
 			for (String str : outputs) {
 				if (doPreprocessing) {
 					FileWriter fw = new FileWriter(tempFile);

@@ -38,27 +38,35 @@ public class QueryProcesser implements IQueryProcessor {
 
 	public QueryProcesser() {
 	}
-	
+
 	/* Instantiate corpus class */
 	public QueryProcesser(CorpusClass corpusClass) {
 		this.corpusClass = corpusClass;
 	}
-	
-	private List<String> applySmartFilters(List<Filter> filters, String jsonFilePath, String operator, String keyFields, CMDataType corpusType ) throws FileNotFoundException, IOException, ParseException {
+
+	private List<String> applySmartFilters(List<Filter> filters, String jsonFilePath, String operator, String keyFields,
+			CMDataType corpusType) throws FileNotFoundException, IOException, ParseException {
 		HashMap<String, List<String>> keys = processKeyfields(keyFields);
-		
+
 		List<String> resultText = new ArrayList<String>();
 		Set<JSONObject> filteredResults = new HashSet<JSONObject>();
 		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
+		for (Filter f : filters) {
+			if (f == null) {
+				System.out.println("Null PP");
+				continue;
+			}
+			System.out.println(f.getTargetName());
+		}
 		JSONParser parser = new JSONParser();
 		Object obj = parser.parse(new FileReader(jsonFilePath));
 		JSONObject jsonObject = (JSONObject) obj;
 		Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonObject.toJSONString());
-		
+
 		for (String parentFilters : groupedFilters.keySet()) {
-			try {	
+			try {
 				String smartQuery;
-				smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);				
+				smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);
 				System.out.println(parentFilters + ":" + smartQuery);
 				Object result = JsonPath.parse(document).read(smartQuery);
 				if (result instanceof LinkedHashMap<?, ?>) {
@@ -66,38 +74,48 @@ public class QueryProcesser implements IQueryProcessor {
 					JSONObject temp = new JSONObject();
 					temp.put(parentFilters, records);
 					filteredResults.add(temp);
-					if(keys.containsKey(parentFilters)) {//fetchdata
-						for(String k : keys.get(parentFilters)) 
-							resultText.add((String) ((LinkedHashMap) result).get(k));
+					if (keys.containsKey(parentFilters)) {// fetchdata
+						for (String k : keys.get(parentFilters)) {
+							try {
+								resultText.add((String) ((LinkedHashMap) result).get(k) + "\n");
+								System.out.println((String) ((LinkedHashMap) result).get(k));
+							} catch (ClassCastException e) {
+								continue;
+							}
+						}
 					}
 				} else if (result instanceof JSONArray) {
 					JSONArray records = (JSONArray) result;
 					for (Object ob : records) {
 						LinkedHashMap<?, ?> res = (LinkedHashMap<?, ?>) ob;
-						//temp.put(key, value)
-						//filteredResults.add((LinkedHashMap<?, ?>)ob);
-						if(keys.containsKey(parentFilters)) {
-							for(String k: keys.get(parentFilters))
-								resultText.add((String) ((LinkedHashMap) res).get(k));
+						// temp.put(key, value)
+						// filteredResults.add((LinkedHashMap<?, ?>)ob);
+						if (keys.containsKey(parentFilters)) {
+							for (String k : keys.get(parentFilters)) {
+								try {
+									resultText.add((String) ((LinkedHashMap) res).get(k) + "\n");
+									System.out.println((String) ((LinkedHashMap) result).get(k) + "\n");
+								} catch (ClassCastException e) {
+									continue;
+								}
+							}
 						}
 					}
 				}
-			} catch(ClassCastException e) {
+			} catch (ClassCastException e) {
 				continue; // incase if one key fails, continue with others
 			}
 		}
-		
-		if(!corpusType.equals(CMDataType.TWITTER_JSON))
+
+		if (!corpusType.equals(CMDataType.TWITTER_JSON))
 			return processedResult(resultText);
 		return resultText;
-		//return writeToFile(jsonFilePath, filteredResults);
+		// return writeToFile(jsonFilePath, filteredResults);
 	}
-	
-
 
 	private List<String> processedResult(List<String> resultText) {
 		StringBuilder sb = new StringBuilder();
-		for(String s : resultText)
+		for (String s : resultText)
 			sb.append(s);
 		resultText.clear();
 		resultText.add(new String(sb));
@@ -106,20 +124,21 @@ public class QueryProcesser implements IQueryProcessor {
 
 	private HashMap<String, List<String>> processKeyfields(String keyFields) {
 		HashMap<String, List<String>> keyAttr = new HashMap<String, List<String>>();
-		for(String key : keyFields.split("\\,")) {
+		for (String key : keyFields.split("\\,")) {
 			String[] temp = key.split("\\.");
 			List<String> keyChilds;
-			if(keyAttr.containsKey(temp[0])) 
+			if (keyAttr.containsKey(temp[0]))
 				keyChilds = keyAttr.get(temp[0]);
 			else
 				keyChilds = new ArrayList<String>();
-			
+
 			StringBuilder tempKey = new StringBuilder();
-			for(int i = 1; i<temp.length; i++) {
+			for (int i = 1; i < temp.length; i++) {
 				tempKey.append(temp[i]);
-				if(i != temp.length-1) tempKey.append(".");
+				if (i != temp.length - 1)
+					tempKey.append(".");
 			}
-			
+
 			keyChilds.add(new String(tempKey));
 			keyAttr.put(temp[0], keyChilds);
 		}
@@ -131,13 +150,14 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 
 	/* Create smart queries and apply them on JSON document */
-	private static String createSmartFilters(String parentFilters, HashMap<String, List<Filter>> groupedFilters, String condition) {
+	private static String createSmartFilters(String parentFilters, HashMap<String, List<Filter>> groupedFilters,
+			String condition) {
 		StringBuilder query = new StringBuilder();
 		query.append("$.");
 		query.append(parentFilters);
 		List<String> predicates = new ArrayList<String>();
 		for (Filter f : groupedFilters.get(parentFilters)) {
-			if(f.getFilterValue() != null) // only if there is a proper filter
+			if (f.getFilterValue() != null) // only if there is a proper filter
 				predicates.add(constructSmartQuery(f));
 		}
 		if (predicates.size() > 0) {
@@ -155,7 +175,8 @@ public class QueryProcesser implements IQueryProcessor {
 			return groupedFilters;
 		for (Filter filter : filters) {
 			String targetName = filter.getTargetName();
-			String parentAttr = (targetName.indexOf('.') == -1) ? targetName : targetName.substring(0, targetName.lastIndexOf('.'));
+			String parentAttr = (targetName.indexOf('.') == -1) ? targetName
+					: targetName.substring(0, targetName.lastIndexOf('.'));
 			List<Filter> filterList;
 			if (groupedFilters.containsKey(parentAttr))
 				filterList = groupedFilters.get(parentAttr);
@@ -173,11 +194,14 @@ public class QueryProcesser implements IQueryProcessor {
 			return new String(query);
 		String queryAttr = f.getTargetName().substring(f.getTargetName().lastIndexOf('.') + 1);
 		if (f.getTargetType() == QueryDataType.INTEGER || f.getTargetType() == QueryDataType.DOUBLE) {
-			if (f.getOperationType().equals(QueryOperatorType.INTEGER_EQUALS) || f.getOperationType().equals(QueryOperatorType.DOUBLE_EQUALS))
+			if (f.getOperationType().equals(QueryOperatorType.INTEGER_EQUALS)
+					|| f.getOperationType().equals(QueryOperatorType.DOUBLE_EQUALS))
 				query.append("@." + queryAttr + " == '" + f.getFilterValue() + "'");
-			else if (f.getOperationType().equals(QueryOperatorType.INTEGER_GREATER_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_GREATER_THAN))
+			else if (f.getOperationType().equals(QueryOperatorType.INTEGER_GREATER_THAN)
+					|| f.getOperationType().equals(QueryOperatorType.DOUBLE_GREATER_THAN))
 				query.append("@." + queryAttr + " > '" + f.getFilterValue() + "'");
-			else if (f.getOperationType().equals(QueryOperatorType.INTEGER_LESS_THAN) || f.getOperationType().equals(QueryOperatorType.DOUBLE_LESS_THAN))
+			else if (f.getOperationType().equals(QueryOperatorType.INTEGER_LESS_THAN)
+					|| f.getOperationType().equals(QueryOperatorType.DOUBLE_LESS_THAN))
 				query.append("@." + queryAttr + " < '" + f.getFilterValue() + "'");
 		} else if (f.getTargetType() == QueryDataType.STRING) {
 			if (f.getOperationType().equals(QueryOperatorType.STRING_EQUALS))
@@ -192,8 +216,9 @@ public class QueryProcesser implements IQueryProcessor {
 		return new String(query);
 	}
 
-	private String writeToFile(String jsonFilePath, Set<JSONObject> filteredResults) throws IOException {		
-		String filePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_processing.temp.json";
+	private String writeToFile(String jsonFilePath, Set<JSONObject> filteredResults) throws IOException {
+		String filePath = System.getProperty("user.dir") + System.getProperty("file.separator")
+				+ "json_processing.temp.json";
 		JSONArray results = new JSONArray(); // convert JSON objects to array
 		for (Object ob : filteredResults)
 			results.add(ob);
@@ -210,37 +235,47 @@ public class QueryProcesser implements IQueryProcessor {
 	}
 
 	private static void createParentFilters(List<Filter> filters, List<String> parentKeys) {
-		//if(null == filters) return;
-//		if(null == filters)
-//			filters = new ArrayList<Filter>();
-		
+		// if(null == filters) return;
+		// if(null == filters)
+		// filters = new ArrayList<Filter>();
+
 		List<String> parentFilters = new ArrayList<String>();
 		for (Filter f : filters)
 			parentFilters.add(f.getTargetName().split("\\.")[0]);
-		
+
 		parentKeys.removeAll(parentFilters);
 		for (String key : parentKeys) {
 			filters.add(new Filter(key, null, null, null));
 		}
 	}
-	
+
 	@Override
 	public Map<String, QueryDataType> getJsonKeys() throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		if (this.jsonKeys == null) {
 			this.jsonKeys = new TreeMap<String, QueryDataType>();
 			Set<Attribute> jsonKeys = new JsonParser().findJsonStructure(this.corpusClass.getTacitLocation());
-			for (Attribute attr : jsonKeys) 
+			for (Attribute attr : jsonKeys)
 				this.jsonKeys.put(attr.key, attr.dataType);
 		}
 		return this.jsonKeys;
 	}
-	
 
-	public List<String> processJson(CorpusClass corpusClass, String jsonFilepath, String keyFields) throws JsonSyntaxException, JsonIOException, IOException, ParseException {
+	// data.Text for twitter and all the other // Start from here tomorrow
+
+	public List<String> processJson(CorpusClass corpusClass, String jsonFilepath, String keyFields,
+			boolean addDataField) throws JsonSyntaxException, JsonIOException, IOException, ParseException {
 		List<Filter> corpusFilters = corpusClass.getFilters();
-		if(null == corpusFilters) corpusFilters = new ArrayList<Filter>();
+		if (addDataField && corpusFilters!=null) {
+			for (Filter i : corpusFilters) {
+				if (!i.getTargetName().contains("data")) {
+					i.setTargetType("data." + i.getTargetName());
+				}
+			}
+		}
+		if (null == corpusFilters)
+			corpusFilters = new ArrayList<Filter>();
 		List<String> parentKeys = JsonParser.getParentKeys(jsonFilepath);
-		createParentFilters(corpusFilters, parentKeys);	
+		createParentFilters(corpusFilters, parentKeys);
 		return applySmartFilters(corpusFilters, jsonFilepath, "&&", keyFields, corpusClass.getParent().getDatatype());
 	}
 
