@@ -144,7 +144,7 @@
 					<li>2 GB of main memory</li>
 					<li>At least 512 MB of free space on the hard drive for
 						extraction</li>
-					<li>JRE version 6 (or later)</li>
+					<li>JRE version 7 (or later)</li>
 				</ul>
 
 				<h2>
@@ -205,10 +205,8 @@
 				</p>
 				<p>
 					<i class="fa fa-download dark_blue"></i> <a
-						href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86.zip">Mac
-						32 Bit</a>/<a
-						href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86_64.zip">64
-						Bit</a>
+						href="http://tacit.usc.edu/tacit/downloads/product/tacit-macosx.cocoa.x86_64.zip">Mac
+						64 Bit</a>
 				</p>
 
 
