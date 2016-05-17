@@ -9,7 +9,7 @@
 				<text>Find out more details about Stack Exchange Crawler</text>
 			</link>
 			<link label="Export Corpus" url="http://cssl.usc.edu/wiki/index.php/ExportCorpus"
-				id="eduusccssltacitcorpus" style-id="content-link">
+				id="eduusccssltacitexport" style-id="content-link">
 				<text>Find out more details on how to export corpus into text files
 				</text>
 			</link>
