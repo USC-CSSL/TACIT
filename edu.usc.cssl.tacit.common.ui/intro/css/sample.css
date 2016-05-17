@@ -15,4 +15,7 @@ a#eduusccssltacitnews:hover img { background-image : url(graphics/news.png); }
 a#eduusccssltacitstack img { background-image : url(graphics/stack.png); }
 a#eduusccssltacitstack:hover img { background-image : url(graphics/stack.png); }
 
+a#eduusccssltacitexport img { background-image : url(graphics/export.png); }
+a#eduusccssltacitexport:hover img { background-image : url(graphics/export.png); }
+
 
