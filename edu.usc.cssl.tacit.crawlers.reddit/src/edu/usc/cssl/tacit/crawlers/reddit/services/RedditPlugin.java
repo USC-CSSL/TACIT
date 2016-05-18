@@ -161,7 +161,7 @@ public class RedditPlugin {
 			return;
 		}
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
-		String filePath = this.outputPath + File.separator + label + "-" + df.format(dateObj) + ".json";
+		String filePath = this.outputPath + File.separator + label + "-" + df.format(dateObj) + ".txt";
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, url);
     	FileWriter file = new FileWriter(filePath);
