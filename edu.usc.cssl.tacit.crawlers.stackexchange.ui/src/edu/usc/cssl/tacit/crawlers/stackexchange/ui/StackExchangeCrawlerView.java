@@ -25,8 +25,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -67,7 +65,6 @@ import edu.usc.cssl.tacit.crawlers.stackexchange.ui.internal.StackExchangeCrawle
 public class StackExchangeCrawlerView extends ViewPart implements IStackExchangeCrawlerUIConstants {
 	public static String ID = "edu.usc.cssl.tacit.crawlers.stackexchange.ui.view1";
 
-
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private StackExchangeCrawler crawler = new StackExchangeCrawler();
@@ -76,7 +73,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	private Text pageText;
 	private Text corpusNameTxt;
 	private static Button btnAnswer;
-	private boolean[] jsonFilter = new boolean[8];
+	private boolean[] jsonFilter = new boolean[6];
 	private Table senatorTable;
 	private Button addSenatorBtn;
 	private ElementListSelectionDialog listDialog;
@@ -84,6 +81,8 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	private static Button btnQuestion;
 	private Button removeSenatorButton;
 	private static Button btnComment;
+	private Text answerCount;
+	private Text commentCount;
 	String subredditText;
 	int redditCount = 1;
 	String oldSubredditText;
@@ -93,7 +92,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	private Date maxDate;
 	private Date minDate;
 	private Button dateRange;
-
+	private Button Creation, Activity, Votes;  
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -101,7 +100,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("StackExchange Crawler");
-		
+
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
@@ -146,22 +145,22 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		btnLayout.makeColumnsEqualWidth = false;
 		buttonComp.setLayout(btnLayout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
-		addSenatorBtn = new Button(buttonComp, SWT.PUSH); //$NON-NLS-1$
+
+		addSenatorBtn = new Button(buttonComp, SWT.PUSH); // $NON-NLS-1$
 		addSenatorBtn.setText("Add...");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSenatorBtn);
 
 		addSenatorBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				final String mainArray[] = StackConstants.sortTypes; 
+				final String mainArray[] = StackConstants.sortTypes;
 				ILabelProvider lp = new ArrayLabelProvider();
 				listDialog = new ElementListSelectionDialog(addSenatorBtn.getShell(), lp);
 				listDialog.setTitle("Select domain");
 				listDialog.setMessage("Type the name of the domain");
 				listDialog.setMultipleSelection(true);
 				listDialog.setElements(mainArray);
-				if(listDialog.open() == Window.OK){
+				if (listDialog.open() == Window.OK) {
 					updateTable(listDialog.getResult());
 				}
 			}
@@ -169,7 +168,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		});
 		addSenatorBtn.setEnabled(true);
 
-		removeSenatorButton = new Button(buttonComp,SWT.PUSH);
+		removeSenatorButton = new Button(buttonComp, SWT.PUSH);
 		removeSenatorButton.setText("Remove...");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSenatorButton);
 		removeSenatorButton.addSelectionListener(new SelectionAdapter() {
@@ -179,136 +178,182 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 					selectedRepresentatives.remove(item.getText());
 					item.dispose();
 				}
-				if(selectedRepresentatives.size() == 0) {
+				if (selectedRepresentatives.size() == 0) {
 					removeSenatorButton.setEnabled(false);
 				}
 			}
 		});
 		removeSenatorButton.setEnabled(false);
-		
 
 		Composite inputSec = new Composite(InputSectionClient, SWT.None);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).indent(0, 0).applyTo(inputSec);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(0, 0).applyTo(inputSec);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(inputSec);
-		
-		Label textLabel = new Label(inputSec, SWT.NONE);
+
+		Label textLabel = new Label(InputSectionClient, SWT.NONE);
 		textLabel.setText("Search:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(textLabel);
-		
-		queryText = new Text(inputSec, SWT.BORDER);
+
+		queryText = new Text(InputSectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(queryText);
 		queryText.setMessage("Search by \"tags\", seperate multiple tags by ;");
-		queryText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if(queryText.getText()!=null && !queryText.getText().equals("")){
-					ansUserBtn.setEnabled(true);
-					answerBodyBtn.setEnabled(true);
-					questionBodyBtn.setEnabled(true);
-					questionTitleBtn.setEnabled(true);
-					questionUserBtn.setEnabled(true);
-					isAnsweredBtn.setEnabled(true);
-					commentBodyBtn.setEnabled(true);
-					commentUserBtn.setEnabled(true);
-					btnAnswer.setEnabled(false);
-					btnQuestion.setEnabled(false);
-					btnComment.setEnabled(false);
-				}else{
-					ansUserBtn.setEnabled(false);
-					answerBodyBtn.setEnabled(false);
-					questionBodyBtn.setEnabled(false);
-					questionTitleBtn.setEnabled(false);
-					questionUserBtn.setEnabled(false);
-					isAnsweredBtn.setEnabled(false);
-					commentBodyBtn.setEnabled(false);
-					commentUserBtn.setEnabled(false);
-					btnAnswer.setEnabled(true);
-					btnQuestion.setEnabled(true);
-					btnComment.setEnabled(true);
-				}
-				
-			}
-		});
-		
-		Label limitPages = new Label(inputSec, SWT.NONE);
-		limitPages.setText("Number of Pages:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitPages);
-		pageText = new Text(inputSec, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(pageText);
-		pageText.setMessage("Enter the number pages");
-		
-		Label queryLabel = new Label(inputSec, SWT.NONE);
-		queryLabel.setText("Search for answers, questions and comments");
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(queryLabel);
+		// queryText.addModifyListener(new ModifyListener() {
+		// @Override
+		// public void modifyText(ModifyEvent e) {
+		// if(queryText.getText()!=null && !queryText.getText().equals("")){
+		// ansUserBtn.setEnabled(true);
+		// answerBodyBtn.setEnabled(true);
+		// questionBodyBtn.setEnabled(true);
+		// questionTitleBtn.setEnabled(true);
+		// questionUserBtn.setEnabled(true);
+		// isAnsweredBtn.setEnabled(true);
+		// commentBodyBtn.setEnabled(true);
+		// commentUserBtn.setEnabled(true);
+		// btnAnswer.setEnabled(false);
+		// btnQuestion.setEnabled(false);
+		// btnComment.setEnabled(false);
+		// }else{
+		// ansUserBtn.setEnabled(false);
+		// answerBodyBtn.setEnabled(false);
+		// questionBodyBtn.setEnabled(false);
+		// questionTitleBtn.setEnabled(false);
+		// questionUserBtn.setEnabled(false);
+		// isAnsweredBtn.setEnabled(false);
+		// commentBodyBtn.setEnabled(false);
+		// commentUserBtn.setEnabled(false);
+		// btnAnswer.setEnabled(true);
+		// btnQuestion.setEnabled(true);
+		// btnComment.setEnabled(true);
+		// }
+		//
+		// }
+		// });
 
-		btnAnswer = new Button(inputSec, SWT.CHECK);
-		btnAnswer.setText("Answers");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(btnAnswer);
-		btnAnswer.setSelection(false);
-		btnAnswer.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if(btnAnswer.getSelection()){
-					ansUserBtn.setEnabled(true);
-					answerBodyBtn.setEnabled(true);
-				}else{
-					ansUserBtn.setEnabled(false);
-					answerBodyBtn.setEnabled(false);
-				}
-			}
-		});
+		// Label queryLabel = new Label(inputSec, SWT.NONE);
+		// queryLabel.setText("Search for answers, questions and comments");
+		// GridDataFactory.fillDefaults().grab(false, false).span(3,
+		// 0).applyTo(queryLabel);
+		//
+		// btnAnswer = new Button(inputSec, SWT.CHECK);
+		// btnAnswer.setText("Answers");
+		// GridDataFactory.fillDefaults().grab(false, false).span(1,
+		// 0).applyTo(btnAnswer);
+		// btnAnswer.setSelection(false);
+		// btnAnswer.addListener(SWT.Selection, new Listener() {
+		// @Override
+		// public void handleEvent(Event event) {
+		// if(btnAnswer.getSelection()){
+		// ansUserBtn.setEnabled(true);
+		// answerBodyBtn.setEnabled(true);
+		// }else{
+		// ansUserBtn.setEnabled(false);
+		// answerBodyBtn.setEnabled(false);
+		// }
+		// }
+		// });
+		//
+		// btnQuestion = new Button(inputSec, SWT.CHECK);
+		// btnQuestion.setText("Questions");
+		// GridDataFactory.fillDefaults().grab(false, false).span(1,
+		// 0).applyTo(btnQuestion);
+		// btnQuestion.setSelection(false);
+		// btnQuestion.addListener(SWT.Selection, new Listener() {
+		// @Override
+		// public void handleEvent(Event event) {
+		// if(btnQuestion.getSelection()){
+		// questionBodyBtn.setEnabled(true);
+		// questionTitleBtn.setEnabled(true);
+		// questionUserBtn.setEnabled(true);
+		// isAnsweredBtn.setEnabled(true);
+		// }else{
+		// questionBodyBtn.setEnabled(false);
+		// questionTitleBtn.setEnabled(false);
+		// questionUserBtn.setEnabled(false);
+		// isAnsweredBtn.setEnabled(false);
+		// }
+		//
+		// }
+		// });
+		//
+		// btnComment = new Button(inputSec, SWT.CHECK);
+		// btnComment.setText("Comments");
+		// GridDataFactory.fillDefaults().grab(false, false).span(1,
+		// 0).applyTo(btnComment);
+		// btnComment.setSelection(false);
+		// btnComment.addListener(SWT.Selection, new Listener() {
+		// @Override
+		// public void handleEvent(Event event) {
+		// if(btnComment.getSelection()){
+		// commentBodyBtn.setEnabled(true);
+		// commentUserBtn.setEnabled(true);
+		// }else{
+		// commentBodyBtn.setEnabled(false);
+		// commentUserBtn.setEnabled(false);
+		// }
+		// }
+		// });
 
-		btnQuestion = new Button(inputSec, SWT.CHECK);
-		btnQuestion.setText("Questions");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(btnQuestion);
-		btnQuestion.setSelection(false);
-		btnQuestion.addListener(SWT.Selection, new Listener() {		
-			@Override
-			public void handleEvent(Event event) {
-				if(btnQuestion.getSelection()){
-					questionBodyBtn.setEnabled(true);
-					questionTitleBtn.setEnabled(true);
-					questionUserBtn.setEnabled(true);
-					isAnsweredBtn.setEnabled(true);
-				}else{
-					questionBodyBtn.setEnabled(false);
-					questionTitleBtn.setEnabled(false);
-					questionUserBtn.setEnabled(false);
-					isAnsweredBtn.setEnabled(false);
-				}
-				
-			}
-		});
+		TacitFormComposite.createEmptyRow(toolkit, InputSectionClient);
 
-		btnComment = new Button(inputSec, SWT.CHECK);
-		btnComment.setText("Comments");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(btnComment);
-		btnComment.setSelection(false);
-		btnComment.addListener(SWT.Selection, new Listener() {		
-			@Override
-			public void handleEvent(Event event) {
-				if(btnComment.getSelection()){
-					commentBodyBtn.setEnabled(true);
-					commentUserBtn.setEnabled(true);
-				}else{
-					commentBodyBtn.setEnabled(false);
-					commentUserBtn.setEnabled(false);
-				}
-			}
-		});
+		Composite inputSec1 = new Composite(InputSectionClient, SWT.None);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(0, 0).applyTo(inputSec1);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(inputSec1);
+
+		createStoredAttributesSection(toolkit, inputSec1, form.getMessageManager());
 
 		Label dummy1 = toolkit.createLabel(InputSectionClient, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy1);
 
 		Group dateGroup = new Group(InputSectionClient, SWT.SHADOW_IN);
 		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).applyTo(dateGroup);
-		dateGroup.setText("Date");
+		dateGroup.setText("Filter Results");
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(dateGroup);
+
+		final Composite limitClient = new Composite(dateGroup, SWT.None);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).indent(10, 10).applyTo(limitClient);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(limitClient);
+
+		Label limitPages = new Label(limitClient, SWT.NONE);
+		limitPages.setText("Limit pages per request: (30 records per page):");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitPages);
+		pageText = new Text(limitClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(pageText);
+		pageText.setEnabled(true);
+		pageText.setText("2");
+		Label limitanswers = new Label(limitClient, SWT.NONE);
+		limitanswers.setText("Limit answers per question:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitanswers);
+		answerCount = new Text(limitClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(answerCount);
+		answerCount.setEnabled(true);
+		answerCount.setText("5");
+		Label limitcomments = new Label(limitClient, SWT.NONE);
+		limitcomments.setText("Limit comments per question:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitcomments);
+		commentCount = new Text(limitClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(commentCount);
+		commentCount.setEnabled(true);
+		commentCount.setText("5");
+		Label sort = new Label(limitClient, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(sort);
+		sort.setText("Crawl Order");
+		
+		Composite radioGroup = new Composite(limitClient, SWT.None);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(0, 0).applyTo(radioGroup);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(radioGroup);
+		Creation = new Button(radioGroup, SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(Creation);
+		Creation.setText("Recently created");
+		Activity = new Button(radioGroup, SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(Activity);
+		Activity.setText("Highest Recent Activity");
+		Votes = new Button(radioGroup, SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(Votes);
+		Votes.setText("Highest votes");
+		
 
 		dateRange = new Button(dateGroup, SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(10, 10).applyTo(dateRange);
 		dateRange.setText("Specify Date Range");
-
 		final Composite dateRangeClient = new Composite(dateGroup, SWT.None);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).indent(10, 10).applyTo(dateRangeClient);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateRangeClient);
@@ -398,8 +443,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 		TacitFormComposite.createEmptyRow(toolkit, dateGroup);
 
-		createStoredAttributesSection(toolkit, form.getBody(), form.getMessageManager());
-
 		Composite client = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client); // Align
 																							// the
@@ -420,28 +463,28 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	public void setFocus() {
 		form.setFocus();
 	}
-	
-	public void updateTable(Object[] result){	
+
+	public void updateTable(Object[] result) {
 		if (selectedRepresentatives == null) {
 			selectedRepresentatives = new ArrayList<String>();
 		}
 
 		for (Object object : result) {
-			if(!selectedRepresentatives.contains((String)object))
+			if (!selectedRepresentatives.contains((String) object))
 				selectedRepresentatives.add((String) object);
 		}
-		//Collections.sort(selectedSenators);
+		// Collections.sort(selectedSenators);
 		senatorTable.removeAll();
 		for (String itemName : selectedRepresentatives) {
 			TableItem item = new TableItem(senatorTable, 0);
 			item.setText(itemName);
-			if(!removeSenatorButton.isEnabled()) {
+			if (!removeSenatorButton.isEnabled()) {
 				removeSenatorButton.setEnabled(true);
 			}
 		}
 
-	}	
-	
+	}
+
 	static class ArrayLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
@@ -451,30 +494,13 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
-		
-			try {
-				String tags = queryText.getText();
-				boolean question = btnQuestion.getSelection();
-				boolean answer = btnAnswer.getSelection();
-				boolean comment = btnComment.getSelection();
-				if ((tags.equals("") || tags == null) && !(question || answer || comment)){
-					form.getMessageManager().addMessage("searcherror", "Search by tag or Check either answer, question or comment", null,
-							IMessageProvider.ERROR);
-					return false;
-				} else
-					form.getMessageManager().removeMessage("searcherror");
-			} catch (Exception e) {
-				form.getMessageManager().addMessage("searcherror", "Search by tag or Check either answer, question or comment", null,
-						IMessageProvider.ERROR);
-				return false;
-			}
+
 		String k = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
-		if(k == null || k.equals("")){
+		if (k == null || k.equals("")) {
 			form.getMessageManager().addMessage("KeyError", "You have not entered a key for crawling", null,
 					IMessageProvider.ERROR);
 			return false;
-		}
-		else{
+		} else {
 			form.getMessageManager().removeMessage("KeyError");
 		}
 		try {
@@ -536,11 +562,13 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			String corpusName;
 			Corpus corpus;
 			int pages;
-			boolean question, answer, comment;
 			String tags;
 			boolean canProceed;
 			boolean isDate;
+			int ansLimit, comLimit;
 			Long from, to;
+			String crawlOrder;
+			
 			@Override
 			public void run() {
 				final Job job = new Job("StackExchange Crawler") {
@@ -553,28 +581,30 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							public void run() {
 								tags = queryText.getText();
 								pages = Integer.parseInt(pageText.getText());
-								question = btnQuestion.getSelection();
-								answer = btnAnswer.getSelection();
-								comment = btnComment.getSelection();
 								corpusName = corpusNameTxt.getText();
 								isDate = dateRange.getSelection();
-								jsonFilter[0] = ansUserBtn.getSelection();
-								jsonFilter[1] = answerBodyBtn.getSelection();
-								jsonFilter[2] = questionTitleBtn.getSelection();
-								jsonFilter[3] = questionBodyBtn.getSelection();
-								jsonFilter[4] = questionUserBtn.getSelection();
-								jsonFilter[5] = isAnsweredBtn.getSelection();
-								jsonFilter[6] = commentBodyBtn.getSelection();
-								jsonFilter[7] = commentUserBtn.getSelection();
-								
-								if(isDate){
+								jsonFilter[0] = questionUserBtn.getSelection();
+								jsonFilter[1] = ansUserBtn.getSelection();
+								jsonFilter[2] = commentUserBtn.getSelection();
+								jsonFilter[3] = isAnsweredBtn.getSelection();
+								jsonFilter[4] = answerBodyBtn.getSelection();
+								jsonFilter[5] = commentBodyBtn.getSelection();
+								ansLimit = Integer.parseInt(answerCount.getText().trim());
+								comLimit = Integer.parseInt(commentCount.getText().trim());
+								if(Creation.getSelection())
+									crawlOrder = "creation";
+								if(Activity.getSelection())
+									crawlOrder = "activity";
+								if(Votes.getSelection())
+									crawlOrder = "votes";
+								if (isDate) {
 									System.out.print("_____________________________");
 									Calendar cal = Calendar.getInstance();
-									cal.set(fromDate.getYear(),fromDate.getMonth(),fromDate.getDay());
-									from = cal.getTimeInMillis()/1000;
-									cal.set(toDate.getYear(),toDate.getMonth(),toDate.getDay());
-									to = cal.getTimeInMillis()/1000;
-									System.out.println(from+"   "+to);
+									cal.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
+									from = cal.getTimeInMillis() / 1000;
+									cal.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
+									to = cal.getTimeInMillis() / 1000;
+									System.out.println(from + "   " + to);
 								}
 								outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
 										+ corpusName.trim();
@@ -583,17 +613,18 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 								}
 							}
 						});
+
 						int progressSize = pages + 30;
 						monitor.beginTask("Running StackExchange Crawler...", progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("StackExchange Crawler started");
 						crawler.setDir(outputDir);
-//						StackCaller s = new StackCaller(outputDir, null);
+						// StackCaller s = new StackCaller(outputDir, null);
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if (monitor.isCanceled())
 							handledCancelRequest("Cancelled");
 						corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
-						for (final String domain : selectedRepresentatives){
+						for (final String domain : selectedRepresentatives) {
 							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
 									+ corpusName;
 							outputDir += File.separator + domain;
@@ -601,34 +632,38 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 								new File(outputDir).mkdirs();
 							}
 							crawler.setDir(outputDir);
-						try {
-							monitor.subTask("Crawling...");
-							if (monitor.isCanceled())
-								return handledCancelRequest("Cancelled");
-							if(!isDate)
-								crawler.search(tags,pages,question,answer,comment,corpusName,scs,StackConstants.domainList.get(domain), jsonFilter);
-							else
-								crawler.search(tags,pages,question,answer,comment,corpusName,scs,StackConstants.domainList.get(domain), from, to, jsonFilter);
-							if (monitor.isCanceled())
-								return handledCancelRequest("Cancelled");
-						} catch (Exception e) {
-							return handleException(monitor, e, "Crawling failed. Provide valid data");
-						}
-						try {
-							Display.getDefault().syncExec(new Runnable() {
+							try {
+								monitor.subTask("Crawling...");
+								if (monitor.isCanceled())
+									return handledCancelRequest("Cancelled");
+								if (!isDate)
+									crawler.search(tags, pages, corpusName, scs,
+											StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder);
+								else
+									crawler.search(tags, pages, corpusName, scs,
+											StackConstants.domainList.get(domain), from, to, jsonFilter, ansLimit,
+											comLimit, crawlOrder);
+								if (monitor.isCanceled())
+									return handledCancelRequest("Cancelled");
+							} catch (Exception e) {
+								return handleException(monitor, e, "Crawling failed. Provide valid data");
+							}
+							try {
+								Display.getDefault().syncExec(new Runnable() {
 
-								@Override
-								public void run() {
-									
-									CorpusClass cc= new CorpusClass(domain, outputDir);
-									cc.setParent(corpus);
-									corpus.addClass(cc);
-									
-								}});
-						} catch (Exception e) {
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
-						}
+									@Override
+									public void run() {
+
+										CorpusClass cc = new CorpusClass(domain, outputDir);
+										cc.setParent(corpus);
+										corpus.addClass(cc);
+
+									}
+								});
+							} catch (Exception e) {
+								e.printStackTrace();
+								return Status.CANCEL_STATUS;
+							}
 						}
 						ManageCorpora.saveCorpus(corpus);
 						if (monitor.isCanceled())
@@ -647,12 +682,14 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> StackExchange Crawler  ");
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> StackExchange Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
 										IStatus.INFO, form);
 
 							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> StackExchange Crawler  ");
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> StackExchange Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 										IStatus.INFO, form);
 								ConsoleView.printlInConsoleln("Done");
@@ -702,8 +739,8 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		return Status.CANCEL_STATUS;
 	}
 
-	static Button ansUserBtn, answerBodyBtn, questionTitleBtn, questionBodyBtn, questionUserBtn, commentBodyBtn, isAnsweredBtn,
-			commentUserBtn;
+	static Button ansUserBtn, answerBodyBtn, questionTitleBtn, questionBodyBtn, questionUserBtn, commentBodyBtn,
+			isAnsweredBtn, commentUserBtn;
 
 	public static void createStoredAttributesSection(FormToolkit toolkit, Composite parent,
 			final IMessageManager mmng) {
@@ -719,56 +756,46 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sc);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
 
 		Composite sectionClient = toolkit.createComposite(section);
 		sc.setContent(sectionClient);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
 		section.setClient(sectionClient);
 
 		Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(4, 0).applyTo(dummy);
-
-		ansUserBtn = new Button(sectionClient, SWT.CHECK);
-		ansUserBtn.setText("User Details for answers");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(ansUserBtn);
-		ansUserBtn.setEnabled(false);
-		
-		answerBodyBtn = new Button(sectionClient, SWT.CHECK);
-		answerBodyBtn.setText("Answer Body");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(answerBodyBtn);
-		answerBodyBtn.setEnabled(false);
-
-		questionTitleBtn = new Button(sectionClient, SWT.CHECK);
-		questionTitleBtn.setText("Question Title");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(questionTitleBtn);
-		questionTitleBtn.setEnabled(false);
-
-		questionBodyBtn = new Button(sectionClient, SWT.CHECK);
-		questionBodyBtn.setText("Question Body");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(questionBodyBtn);
-		questionBodyBtn.setEnabled(false);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
 
 		questionUserBtn = new Button(sectionClient, SWT.CHECK);
-		questionUserBtn.setText("User Details for questions");
+		questionUserBtn.setText("User Details for Questions");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(questionUserBtn);
-		questionUserBtn.setEnabled(false);
-		
-		isAnsweredBtn = new Button(sectionClient, SWT.CHECK);
-		isAnsweredBtn.setText("is Question Answered");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(isAnsweredBtn);
-		isAnsweredBtn.setEnabled(false);
+		questionUserBtn.setEnabled(true);
 
-		commentBodyBtn = new Button(sectionClient, SWT.CHECK);
-		commentBodyBtn.setText("Comment Body");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commentBodyBtn);
-		commentBodyBtn.setEnabled(false);
+		ansUserBtn = new Button(sectionClient, SWT.CHECK);
+		ansUserBtn.setText("User Details for Answers");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(ansUserBtn);
+		ansUserBtn.setEnabled(true);
 
 		commentUserBtn = new Button(sectionClient, SWT.CHECK);
-		commentUserBtn.setText("User Details for comments");
+		commentUserBtn.setText("User Details for Comments");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commentUserBtn);
-		commentUserBtn.setEnabled(false);
+		commentUserBtn.setEnabled(true);
+
+		isAnsweredBtn = new Button(sectionClient, SWT.CHECK);
+		isAnsweredBtn.setText("Is Question Answered");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(isAnsweredBtn);
+		isAnsweredBtn.setEnabled(true);
+
+		answerBodyBtn = new Button(sectionClient, SWT.CHECK);
+		answerBodyBtn.setText("Answer Text");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(answerBodyBtn);
+		answerBodyBtn.setEnabled(true);
+
+		commentBodyBtn = new Button(sectionClient, SWT.CHECK);
+		commentBodyBtn.setText("Comment Text");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commentBodyBtn);
+		commentBodyBtn.setEnabled(true);
 
 	}
 

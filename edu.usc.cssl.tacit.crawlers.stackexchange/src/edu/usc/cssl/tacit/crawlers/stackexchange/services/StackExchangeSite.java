@@ -281,11 +281,11 @@ public interface StackExchangeSite {
      */
     
     //get all questions
-    @GET("/questions?filter=!9YdnSIN18")
-    Call<QuestionItem> getQuestions(@Query("page") int page, @Query("key") String key, @Query("site") String site);
+    @GET("/questions?filter=!9YdnSIN18&order=desc")
+    Call<QuestionItem> getQuestions(@Query("page") int page, @Query("key") String key, @Query("site") String site, @Query("sort") String sort);
     
-    @GET("/questions?filter=!9YdnSIN18")
-    Call<QuestionItem> getQuestionsByDate(@Query("page") int page, @Query("key") String key, @Query("site") String site, @Query("fromdate") Long from, @Query("todate") Long to);
+    @GET("/questions?filter=!9YdnSIN18&order=desc")
+    Call<QuestionItem> getQuestionsByDate(@Query("page") int page, @Query("key") String key, @Query("site") String site, @Query("fromdate") Long from, @Query("todate") Long to, @Query("sort") String sort);
     
     //get questions by id
     @GET("/questions/{id}?filter=!-*f(6rc.lFba")
@@ -313,11 +313,11 @@ public interface StackExchangeSite {
     
     //get tagged searches
     
-    @GET("/search?filter=!9YdnSIN18")
-    Call<QuestionItem> getSearchTags(@Query("page") int page, @Query("tagged") String tag, @Query("key") String key, @Query("site") String site);
+    @GET("/search?filter=!9YdnSIN18&order=desc")
+    Call<QuestionItem> getSearchTags(@Query("page") int page, @Query("tagged") String tag, @Query("key") String key, @Query("site") String site, @Query("sort") String sort);
     
-    @GET("/search?filter=!9YdnSIN18")
-    Call<QuestionItem> getSearchTagsByDate(@Query("page") int page, @Query("tagged") String tag, @Query("key") String key,@Query("site") String site, @Query("fromdate") Long fromdate, @Query("todate") Long todate);
+    @GET("/search?filter=!9YdnSIN18&order=desc")
+    Call<QuestionItem> getSearchTagsByDate(@Query("page") int page, @Query("tagged") String tag, @Query("key") String key,@Query("site") String site, @Query("fromdate") Long fromdate, @Query("todate") Long todate, @Query("sort") String sort);
     
     
     
