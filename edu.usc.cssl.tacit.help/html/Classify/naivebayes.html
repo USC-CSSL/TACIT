@@ -65,7 +65,7 @@
 					<tr>
 						<td><b><a href = "../corpusmanage/preprocess.html" target="_blank">Preprocess</a></b>: The Preprocess check box allows users to apply a variety of data cleaning techniques to the input data before analysis. Click on the hyperlink in order to specify which cleaning processes you would like to apply (i.e., Stop Word Removal, Delimiters, Porter Stemming, Capitalization).
 							<br><br>
-							<b> Selecting the <b>Classify Unlabeled Data</b> option will allow you to automatically sort documents that have not yet been assigned a group into the groups you have provided in the input details section. To specify a folder/corpus class containing the files to be sorted, click the <b>Add Folder</b> or <b>Add Corpus Class</b> buttons next to the <b>Classify Input Path</b> box.
+							Selecting the <b>Classify Unlabeled Data</b> option will allow you to automatically sort documents that have not yet been assigned a group into the groups you have provided in the input details section. To specify a folder/corpus class containing the files to be sorted, click the <b>Add Folder</b> or <b>Add Corpus Class</b> buttons next to the <b>Classify Input Path</b> box.
 						</td>
 					</tr>
 					<tr>
@@ -77,8 +77,6 @@
 							the algorithm is trained on the remaining samples. This process is then repeated k-times (the folds) so that each subsample 
 							is used once as the test set. The error rates obtained from each fold are then averaged to estimate the actual error rate.  
 							Any number up to the total sample size can be specified as the k-value; however, k=10 is one of the most commonly used values. 
-							<br><br> 
-							To specify an output folder where crawled files will be saved, click on the <b>Browse</b> button to the right of the Output Location bar and select a folder. If you create a new folder within this menu and change its name from "New Folder", click on any other folder and then click back on your newly created & renamed folder to select it. 
 							<br><br>
 							After specifying all parameters, click the <b>green and white play button</b> (Image 1) located in the top right corner of the window to run the program. Output information regarding the k-fold validation process as well as the average test accuracy, standard deviation, and 
 							standard error will be displayed in the console panel at the bottom of the tool. 
@@ -94,10 +92,10 @@
 						<td class = "section">Understanding Naive Bayes Classification Output</td>
 					</tr>
 					<tr>
-						<td> While TACIT's naive Bayes tool is running, performance statistics for each k-fold validation will be output in the Console window. 
-							The average test accuracy (averaged across k-folds), as well as its standard deviation and standard error, will also be output in the Console window.
-							These statistics should be used to evaluate the accuracy performance of the algorithm on the data provided. 
-							<br><br>
+						<td> After the naive Bayes tool is finished running, a set of performance metrics will be output to the console window. 
+						These metrics metrics can be used to evaluate the performance of the algorithm. 
+						
+						<br><br>
 							For each analysis, a summary log file titled "Naive_Bayes_Run_Report_[date]_[time]" is created. This file contains the TACIT version number, date, and time of the analysis.
 							<br><br>
 							If <b>Classify Unlabeled Data</b> was selected, a .csv file with the classification data will be generated. The name will be the names of the folders/classes followed by the date and time (e.g. "class1-class2-Date-Time.csv").
