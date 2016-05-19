@@ -1,0 +1,82 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="sample.css">
+	</head>
+	<body>
+		<center><h3>TACIT User Guide</h3></center>
+		<hr>
+		<table style = "border:0px; width:100%" class = "help-contents">
+			<tr>
+				<td class = "header">TACIT StackExchange Crawler</td>
+			</tr>
+			<tr>
+				<table class = "contents">
+					<tr>
+						<td class = "head">Overview</td>
+					</tr>
+					<tr>
+						<td>The StackExchange Crawler provides full access to all data available on stackexchange.com, a question and answer website covering topics in various fields. This crawler provides various filtering options that can be used to search for specific Q/A domains and tags. This data is then saved in a format that is accessible and analyzable by the TACIT tool as well as other language analysis algorithms.   
+						<br><br> 	
+						</td>
+					</tr>
+				</table>
+			</tr>
+			<tr>
+				<table class = "contents">
+					<tr>
+						<td class = "head">Basic Tutorial: Collecting data using the StackExchange Crawler</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Selecting Input Parameters</td>
+					</tr>
+					<tr>
+						<td> The <b> Select Domains</b> input box lets you specify specific Q/A web site domains to which you would like to limit your search. You must specify a domain in order to crawl.
+							<br><br>
+							The<b> Search by Tag</b> input box allows you to specify tags (or keyword/keywords) you would like to base your search on. The crawler will return posts that have been marked with these specified tags. Note: StackExchange does not allow keyword searching of the question, answer, or comment text directly at this time. 
+							<br><br>
+						</td>
+					</tr>
+					<tr>
+							<td class = "subtitle">Stored Attributes Filters</td>
+						</tr>
+						<tr> 
+							<td> You can further tailor and filter your crawling results using the following options:
+								<br>
+								<b> Collect Answer/Comment Text: </b> These check boxes allow you to specify whether you would like to collect the answers and comments associated with the questions.  If you select these boxes, the crawler will default to collecting 5 answers and 5 comments per question.
+								<br>
+								<b>User Details for Questions/Answers/Comments</b> collect information about the users whose text you are collecting including user id, username, user reputation, and whether or not they are registered.
+								<br>
+								<b>Is Question Answered:</b> Selecting this box will limit results to only questions with answers.
+							</td>
+						</tr>
+					<tr>
+							<td class = "subtitle">Limit Results</td>
+					</tr>
+					<tr> 
+						<td> 
+						The <b>Specify Date Range</b> allows you to specify the time frame that you would like to receive data for based on calendar date.
+						<br><br>
+						Changing the numbers in the <b> Limit Questions Per Request</b>, <b> Limit Answers Per Question</b>, and <b>Limit Comments Per Question</b> text boxes will allow you to change these default numbers. Note that one question page returns 35 questions, and the default is 2 pages per request, 5 answers per question, and 5 comments per question.
+						<br><br>
+						<b>Crawl Order </b> will let you specify whether you would like the results to be collected started with the most recent questions that match your request or if you would prefer to have the crawl return a random subset of all questions that fit your parameters regardless of post date.
+						</td>
+						</tr>
+						<td class = "subtitle">Specifying Output Details</td>
+					</tr>
+					<tr>
+					<td>By default, all collected text in TACIT is saved as a corpus in Corpus Management. Specify the name you would like to assign this corpus in the <b>Corpus Name</b> box under <b> Output Details </b>.
+					<br><br>
+					</td>
+					</tr>			
+					<tr>
+						<td class = "subtitle">Understanding StackExchange Crawler Output</td>
+					</tr>
+					<tr>
+						<td> Crawl data is saved in Corpus Management under the corpus name you provided. Data can be output into formats compatible with other programs using Corpus Management. 
+						</td>
+					</tr>					
+				</table>
+			</tr>	
+		</table>
+	</body>
+</html>
