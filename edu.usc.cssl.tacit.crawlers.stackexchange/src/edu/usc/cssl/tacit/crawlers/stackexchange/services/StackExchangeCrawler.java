@@ -3,6 +3,7 @@ package edu.usc.cssl.tacit.crawlers.stackexchange.services;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.jsoup.Jsoup;
 
 import com.fasterxml.jackson.core.JsonEncoding;
@@ -28,6 +29,7 @@ public class StackExchangeCrawler {
 	JsonGenerator jsonGenerator;
 	JsonFactory jsonfactory;
 	private boolean[] filter;
+	IProgressMonitor monitor;
 
 	public StackExchangeCrawler() {
 		String k = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
@@ -61,8 +63,9 @@ public class StackExchangeCrawler {
 	}
 
 	public void search(String tags, int pages, String corpusName,
-			StackExchangeSite sc, String site, boolean[] jsonFilter, int ansLimit, int comLimit, String crawlOrder) {
+			StackExchangeSite sc, String site, boolean[] jsonFilter, int ansLimit, int comLimit, String crawlOrder, IProgressMonitor monitor) {
 		filter = jsonFilter;
+		this.monitor = monitor;
 		if (tags.equals("") || tags == null) {
 			getPosts(sc, pages, site, ansLimit, comLimit, crawlOrder);
 		} else {
@@ -78,7 +81,8 @@ public class StackExchangeCrawler {
 	}
 
 	public void search(String tags, int pages, String corpusName,
-			StackExchangeSite sc, String site, Long from, Long to, boolean[] jsonFilter, int ansLimit, int comLimit, String crawlOrder) {
+			StackExchangeSite sc, String site, Long from, Long to, boolean[] jsonFilter, int ansLimit, int comLimit, String crawlOrder, IProgressMonitor monitor) {
+		this.monitor = monitor;
 		filter = jsonFilter;
 		if (tags.equals("") || tags == null) {
 			getPosts(sc, pages, site, from, to, ansLimit, comLimit, crawlOrder);
@@ -104,6 +108,7 @@ public class StackExchangeCrawler {
 				QuestionItem i = call.execute().body();
 				System.out.println(i);
 				for (Question search : i.items) {
+					monitor.worked(1);
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
@@ -148,6 +153,7 @@ public class StackExchangeCrawler {
 				QuestionItem i = call.execute().body();
 				System.out.println(i);
 				for (Question search : i.items) {
+					monitor.worked(1);
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
@@ -472,6 +478,7 @@ public class StackExchangeCrawler {
 				QuestionItem i = call.execute().body();
 				System.out.println(i);
 				for (Question search : i.items) {
+					monitor.worked(1);
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
@@ -515,6 +522,7 @@ public class StackExchangeCrawler {
 				QuestionItem i = call.execute().body();
 				System.out.println(i);
 				for (Question search : i.items) {
+					monitor.worked(1);
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("Question");

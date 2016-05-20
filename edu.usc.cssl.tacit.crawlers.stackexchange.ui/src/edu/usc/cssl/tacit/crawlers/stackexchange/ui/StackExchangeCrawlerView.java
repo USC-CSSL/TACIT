@@ -614,7 +614,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							}
 						});
 
-						int progressSize = pages + 30;
+						int progressSize = pages*30 + 30;
 						monitor.beginTask("Running StackExchange Crawler...", progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("StackExchange Crawler started");
 						crawler.setDir(outputDir);
@@ -638,11 +638,11 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 									return handledCancelRequest("Cancelled");
 								if (!isDate)
 									crawler.search(tags, pages, corpusName, scs,
-											StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder);
+											StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder, monitor);
 								else
 									crawler.search(tags, pages, corpusName, scs,
 											StackConstants.domainList.get(domain), from, to, jsonFilter, ansLimit,
-											comLimit, crawlOrder);
+											comLimit, crawlOrder, monitor);
 								if (monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch (Exception e) {
