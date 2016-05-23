@@ -387,7 +387,11 @@ public class Preprocessor {
 
 		case STACKEXCHANGE_JSON:
 			processTwitter(corpus, seperateFiles);
-
+			break;
+			
+		case WIKI_JSON:
+			processGenericJSON(corpus, seperateFiles);
+			break;
 		default:
 			break;
 		}
@@ -463,6 +467,7 @@ public class Preprocessor {
 	 */
 	private void processGenericJSON(CorpusClass corpusClass, boolean seperateFiles) throws Exception {
 		String corpusClassPath = corpusClass.getTacitLocation();
+		CMDataType corpusType = corpusClass.getParent().getDatatype();
 		String tempDir = "";
 		String tempFile = "";
 		StringBuilder sb = new StringBuilder();
@@ -480,11 +485,16 @@ public class Preprocessor {
 				return filename.toLowerCase().endsWith(".json");
 			}
 		};
+		String keyFields;
+		if(corpusType == CMDataType.REDDIT_JSON)
+			keyFields = "post.selftext,comments.body";
+		else
+			keyFields = "search_result.result_content";
 		File[] fileList = new File(corpusClassPath).listFiles(jsonFileFilter);
 		int k = 0;
 		for (File f : fileList) {
 			QueryProcesser qp = new QueryProcesser();
-			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body",false);
+			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), keyFields ,false);
 			for (String str : outputs) {
 				if (doPreprocessing) {
 					if(seperateFiles){

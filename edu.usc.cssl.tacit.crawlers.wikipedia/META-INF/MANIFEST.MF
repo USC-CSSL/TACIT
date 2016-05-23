@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Wikipedia
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.wikipedia
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.wikipedia.Activator
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: boilerpipe-1.2.0.jar,
+ jsoup-1.8.3.jar,
+ .,
+ nekohtml-1.9.13.jar,
+ xerces-2.9.1.jar
+Export-Package: edu.usc.cssl.tacit.crawlers.wikipedia.services

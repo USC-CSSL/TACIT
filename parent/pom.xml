@@ -33,6 +33,12 @@
 
 		<module>../edu.usc.cssl.tacit.crawlers.twitter.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.twitter</module>
+		
+		<module>../edu.usc.cssl.tacit.crawlers.wikipedia.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.wikipedia</module>
+		
+		
+		
 
 		<!-- Cluster -->
 

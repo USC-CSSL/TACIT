@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Wikipedia Crawler
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.wikipedia.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.wikipedia.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ edu.usc.cssl.tacit.common.ui,
+ org.eclipse.ui.workbench,
+ edu.usc.cssl.tacit.crawlers.wikipedia;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

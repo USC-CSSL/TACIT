@@ -306,10 +306,16 @@ public class CorpusDetailsPage implements IDetailsPage {
 		case MICROSOFT_WORD:
 			wordData.setSelection(true);
 			break;
-		case JSON:
+		case CONGRESS_JSON:
+			stackExchangeJSON.setSelection(true);
+			break;
+		case WIKI_JSON:
 			stackExchangeJSON.setSelection(true);
 			break;
 		case STACKEXCHANGE_JSON:
+			stackExchangeJSON.setSelection(true);
+			break;
+		case JSON:
 			stackExchangeJSON.setSelection(true);
 			break;
 		}
