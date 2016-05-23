@@ -189,8 +189,11 @@ public class ManageCorpora {
 		File[] files = dir.listFiles();
 		if (files != null) {
 			for (File obj : files) {
-				if (!obj.isDirectory())
+				System.out.println(obj.getName());
+				if (!obj.isDirectory() && !obj.getName().equals(".DS_Store")){
+					
 					fCount++;
+				}
 				else{
 					fCount += getFileCount(obj);
 				}
