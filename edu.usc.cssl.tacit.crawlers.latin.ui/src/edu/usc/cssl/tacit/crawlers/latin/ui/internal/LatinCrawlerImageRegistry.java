@@ -16,6 +16,8 @@ public class LatinCrawlerImageRegistry {
 	private LatinCrawlerImageRegistry() {
 		ir.put(ILatinCrawlerUIConstants.IMAGE_LRUN_OBJ, ImageDescriptor
 				.createFromFile(LatinCrawlerImageRegistry.class, "/icons/lrun_obj.gif"));
+		ir.put(ILatinCrawlerUIConstants.IMAGE_LATIN, ImageDescriptor
+				.createFromFile(LatinCrawlerImageRegistry.class, "/icons/latin.ico"));
 		ir.put(ILatinCrawlerUIConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(LatinCrawlerImageRegistry.class, "/icons/help_contents.gif"));
 	}

@@ -78,6 +78,8 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
 		form.setText("Latin Crawler"); //$NON-NLS-1$
+		form.setImage(LatinCrawlerImageRegistry.getImageIconFactory()
+				.getImage(ILatinCrawlerUIConstants.IMAGE_LATIN));
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);

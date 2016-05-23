@@ -9,5 +9,6 @@ public interface ILatinCrawlerUIConstants {
 	public static final String IMAGE_HELP_CO = "help_co";
 	public static final String IMAGE_CRAWL = "crawl";
 	public static final String IMAGE_CRAWL_TITLE = "crawl_tle";
+	public static final String IMAGE_LATIN = "latin";
 
 }
