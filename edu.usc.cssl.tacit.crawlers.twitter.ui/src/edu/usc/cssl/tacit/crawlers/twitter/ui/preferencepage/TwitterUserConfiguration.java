@@ -75,7 +75,7 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		accessTokenSecret = createTextFields(sectionClient, true,
 				"Access Token Secret :");
 
-		//loadValues();
+		loadValues();
 
 		return sectionClient;
 
