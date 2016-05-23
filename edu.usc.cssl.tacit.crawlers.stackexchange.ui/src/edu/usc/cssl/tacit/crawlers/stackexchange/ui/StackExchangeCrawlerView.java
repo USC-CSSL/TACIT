@@ -614,7 +614,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							}
 						});
 
-						int progressSize = pages*30 + 30;
+						int progressSize =selectedRepresentatives.size()*pages*30 + 30;
 						monitor.beginTask("Running StackExchange Crawler...", progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("StackExchange Crawler started");
 						crawler.setDir(outputDir);

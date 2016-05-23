@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
@@ -61,6 +62,8 @@ import edu.usc.cssl.tacit.classify.naivebayes.ui.internal.NaiveBayesClassifierVi
 import edu.usc.cssl.tacit.classify.naivebayes.weka.NaiveBayesClassifierWeka;
 import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -106,7 +109,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 		// Create a composite that can hold the other widgets
 		Composite client = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client); 
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client);
 		GridLayout layout = new GridLayout();// Layout creation
 		layout.numColumns = 2;
@@ -114,19 +117,20 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 		// Create table layout to hold the input data
 		classLayoutData = TacitFormComposite.createTableSection(client, toolkit, layout, "Input Details",
 				"Add Folder(s) or Corpus Classes to include in analysis.", true, false, true, true);
-		
+
 		// Create preprocess link
 		createPreprocessLink(client);
 		createClassificationParameters(client);
 		createNBClassifierInputParameters(client); // to get k-value
-		
+
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
 	}
 
 	/**
 	 * Opens a "Browse" dialog
-	 * @param browseBtn 
+	 * 
+	 * @param browseBtn
 	 * @return
 	 */
 	protected String openBrowseDialog(Button browseBtn) {
@@ -138,8 +142,11 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Validation for "Classification path"
-	 * @param classifyInputText - path
-	 * @param errorMessage - message to be displayed in case of error
+	 * 
+	 * @param classifyInputText
+	 *            - path
+	 * @param errorMessage
+	 *            - message to be displayed in case of error
 	 * @return
 	 */
 	protected boolean inputPathListener(Text classifyInputText, String errorMessage) {
@@ -160,14 +167,16 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 					return false;
 				}
 			}
-		} else 
+		} else
 			form.getMessageManager().removeMessage("classifyInput");
 		return true;
 	}
 
 	/**
 	 * Checks to ensure read permission of the given location
-	 * @param location - Directory path
+	 * 
+	 * @param location
+	 *            - Directory path
 	 * @return
 	 */
 	public String validateInputDirectory(String location) {
@@ -181,7 +190,9 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Checks to ensure read permission of the given location
-	 * @param location - path
+	 * 
+	 * @param location
+	 *            - path
 	 * @return
 	 */
 	public String validateOutputDirectory(String location) {
@@ -195,8 +206,10 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Validation for "Output path"
+	 * 
 	 * @param outputText
-	 * @param errorMessage - error message to be displayed if required
+	 * @param errorMessage
+	 *            - error message to be displayed if required
 	 * @return
 	 */
 	protected boolean outputPathListener(Text outputText, String errorMessage) {
@@ -220,7 +233,8 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 	}
 
 	/**
-	 * Creates appropriate UI components for Naive NBayes  
+	 * Creates appropriate UI components for Naive NBayes
+	 * 
 	 * @param client
 	 */
 	private void createNBClassifierInputParameters(Composite client) {
@@ -305,6 +319,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Creates appropriate classification parameters
+	 * 
 	 * @param client
 	 */
 	private void createClassificationParameters(Composite client) {
@@ -434,6 +449,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 			String outputDir;
 			String tempkValue;
+			List<Object> selectedFiles;
 
 			@Override
 			public void run() {
@@ -464,7 +480,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								outputDir = outputPath.getText();
 								classificationInputDir = classifyInputText.getText();
 								tempkValue = kValueText.getText();
-
+								selectedFiles = classLayoutData.getSelectedFiles();
 								isPreprocessEnabled = preprocessEnabled.getSelection();
 								isClassificationEnabled = classificationEnabled.getSelection();
 							}
@@ -486,14 +502,16 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								preprocessTask = new Preprocessor("NB_Classifier", isPreprocessEnabled);
 								for (String dirPath : classPaths.keySet()) {
 									if (monitor.isCanceled()) {
-										TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+										TacitFormComposite
+												.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 										return handledCancelRequest("Cancelled");
 									}
 									List<String> allSelectedClassFiles = classPaths.get(dirPath);
 									List<Object> tempFiles = new ArrayList<Object>();
 									tempFiles.addAll(allSelectedClassFiles);
-									
-									List<String> preprocessedFilePaths = preprocessTask.processData(new File(dirPath).getName(), tempFiles);
+
+									List<String> preprocessedFilePaths = preprocessTask
+											.processData(new File(dirPath).getName(), tempFiles);
 									String preProcessedClassDir = null;
 
 									if (!preprocessedFilePaths.isEmpty())
@@ -504,14 +522,16 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								}
 
 								if (monitor.isCanceled()) {
-									TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
+									TacitFormComposite
+											.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 									return handledCancelRequest("Cancelled");
 								}
 
 								if (isClassificationEnabled) {
 									List<Object> files = new ArrayList<Object>();
 									nbc.selectAllFiles(classificationInputDir, files);
-									List<String> preprocessedFilePaths = preprocessTask.processData(new File(classificationInputDir).getName(), files);
+									List<String> preprocessedFilePaths = preprocessTask
+											.processData(new File(classificationInputDir).getName(), files);
 									if (!preprocessedFilePaths.isEmpty())
 										classificationInputDir = new File(preprocessedFilePaths.get(0)).getParent();
 									monitor.worked(1);
@@ -521,12 +541,36 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 							}
 							monitor.worked(10);
 
-						} else { 
-							if (monitor.isCanceled()) {
-								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
-								return handledCancelRequest("Cancelled");
-							}
+						} else {
 							try {
+								preprocessTask = null;
+								Preprocessor ppObj = null;
+								try {
+									ppObj = new Preprocessor("Hierarchical_Clustering", true);
+									List<String> inFiles;
+									// classPaths.clear();
+									for (Object i : selectedFiles) {
+										if (i instanceof CorpusClass) {
+											List<Object> tempSelection = new ArrayList<Object>();
+											tempSelection.add(i);
+											inFiles = ppObj.processData("Hierarchical_Clustering", tempSelection);
+											CorpusClass j = (CorpusClass) i;
+											classPaths.put(j.getClassName(), inFiles);
+											if (classPaths.containsKey(((CorpusClass) i).getParent().getCorpusName())) {
+												classPaths.remove(((CorpusClass) i).getParent().getCorpusName());
+											}
+										}
+									}
+									System.out.println("Done");
+								} catch (IOException e) {
+									e.printStackTrace();
+									return Status.CANCEL_STATUS;
+								} catch (Exception e) {
+									e.printStackTrace();
+									return Status.CANCEL_STATUS;
+								}
+								// classPaths
+								// export data here
 								nbc.createTempDirectories(classPaths, trainingDataPaths, monitor);
 							} catch (IOException e) {
 								return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
@@ -548,13 +592,15 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 							} else {
 								cv = new NaiveBayesClassifierWeka(tempClassPaths);
 							}
-							
+
 							try {
 								cv.initializeInstances();
 								cv.doCrossValidate(kValue, monitor, dateObj);
-							} catch(IllegalArgumentException iae) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
-								return handleException(monitor, iae, "Naive Bayes Classifier failed. Provide valid data.");
+							} catch (IllegalArgumentException iae) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
+								return handleException(monitor, iae,
+										"Naive Bayes Classifier failed. Provide valid data.");
 							}
 							monitor.worked(40);
 
@@ -562,16 +608,18 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
 								return handledCancelRequest("Cancelled");
 							}
-							
+
 							// perform cross validation
 							if (isClassificationEnabled) {
 								monitor.subTask("Classifying...");
 								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
 								try {
 									cv.doClassify(classificationInputDir, outputDir, monitor, dateObj);
-								} catch(IllegalArgumentException iae) {
-									TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
-									return handleException(monitor, iae, "Naive Bayes Classifier failed. Provide valid data.");
+								} catch (IllegalArgumentException iae) {
+									TacitFormComposite
+											.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
+									return handleException(monitor, iae,
+											"Naive Bayes Classifier failed. Provide valid data.");
 								}
 								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 							}
@@ -593,7 +641,8 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								return handledCancelRequest("Cancelled");
 							}
 						} catch (IOException e) {
-							TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
+							TacitFormComposite
+									.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");
 							return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");
 						} catch (EvalError e) {
 							TacitFormComposite
@@ -669,12 +718,12 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Handles cancel request by sending appropriate message to UI
+	 * 
 	 * @param message
 	 * @return
 	 */
 	private IStatus handledCancelRequest(String message) {
-		TacitFormComposite.updateStatusMessage(getViewSite(), message,
-				IStatus.ERROR, form);
+		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("Naive Bayes classifier cancelled.");
 		if (isPreprocessEnabled) {
 			preprocessTask.clean();
@@ -685,13 +734,15 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Validates the input form to ensure correctness
+	 * 
 	 * @param classPaths
 	 * @return
 	 */
 	private boolean canItProceed(Map<String, List<String>> classPaths) {
 		// Class paths
 		if (classPaths.size() < 2 && classLayoutData.getTree().getItemCount() < 2) {
-			form.getMessageManager().addMessage("classes", "Provide at least 2 valid class paths", null, IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("classes", "Provide at least 2 valid class paths", null,
+					IMessageProvider.ERROR);
 			return false;
 		} else if (classLayoutData.getTree().getItemCount() > 1 && classPaths.size() < 2) {
 			form.getMessageManager().addMessage("classes", "Select the required classes", null, IMessageProvider.ERROR);
@@ -702,7 +753,8 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 		// K-Vlaue
 		if (kValueText.getText().isEmpty() || Integer.parseInt(kValueText.getText()) < 2) {
-			form.getMessageManager().addMessage("kvalue", "Provide valid K-Value for cross validation, K must be atleast 2", null, IMessageProvider.ERROR);
+			form.getMessageManager().addMessage("kvalue",
+					"Provide valid K-Value for cross validation, K must be atleast 2", null, IMessageProvider.ERROR);
 			return false;
 		} else {
 			form.getMessageManager().removeMessage("kvalue");
@@ -726,6 +778,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Maps each class to its selected files
+	 * 
 	 * @param classLayoutData
 	 * @param classPaths
 	 */
@@ -741,6 +794,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 	/**
 	 * Function to be called incase of exception
+	 * 
 	 * @param monitor
 	 * @param e
 	 * @param message
@@ -760,7 +814,8 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 	}
 
 	/**
-	 * Output file creation with statistics 
+	 * Output file creation with statistics
+	 * 
 	 * @param location
 	 * @param title
 	 * @param dateObj
@@ -844,7 +899,8 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 	 * @return - Creates a form body section for Naive Bayes Classifier
 	 */
 	private FormToolkit createFormBodySection(Composite parent, String title) {
-		// Every interface requires a toolkit(Display) and form to store the components
+		// Every interface requires a toolkit(Display) and form to store the
+		// components
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
