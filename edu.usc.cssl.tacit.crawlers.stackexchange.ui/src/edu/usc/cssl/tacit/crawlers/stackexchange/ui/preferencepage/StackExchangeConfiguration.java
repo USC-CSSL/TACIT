@@ -39,7 +39,7 @@ public class StackExchangeConfiguration extends PreferencePage
 		Label dummy = new Label(sectionClient, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
 
-		consumerKey = createTextFields(sectionClient, true, "Consumer Key :");
+		consumerKey = createTextFields(sectionClient, true, "Key :");
 		String value = getPreferenceStore().getString(CONSUMER_KEY);
 		if(value!=null && !value.equals("")){
 			consumerKey.setText(value);
