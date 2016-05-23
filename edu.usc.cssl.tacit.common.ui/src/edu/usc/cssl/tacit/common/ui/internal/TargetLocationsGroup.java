@@ -148,7 +148,8 @@ public class TargetLocationsGroup {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_VERTICAL));
+				| GridData.GRAB_VERTICAL | GridData.GRAB_HORIZONTAL
+				));
 		initializeTreeViewer(comp);
 		ScrolledComposite sc = new ScrolledComposite(comp, SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -159,7 +160,7 @@ public class TargetLocationsGroup {
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.makeColumnsEqualWidth = false;
 		buttonComp.setLayout(layout);
-		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		buttonComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (isFolder) {
 			fAddButton = toolkit.createButton(buttonComp, "Add Folder...",
 					SWT.PUSH);

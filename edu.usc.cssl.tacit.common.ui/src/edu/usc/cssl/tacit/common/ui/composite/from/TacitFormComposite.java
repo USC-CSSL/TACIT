@@ -383,7 +383,7 @@ public class TacitFormComposite {
 
 		pluginTabContainer.setContent(scInput);
 
-		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 200)
+		GridDataFactory.fillDefaults().grab(true, true).hint(SWT.DEFAULT, 300)
 				.span(1, 1).applyTo(pluginTabContainer);
 		targetLocationContent = TargetLocationsGroup.createInForm(scInput,
 				toolkit, isFolder, isFile, isCorpus,isClass);
