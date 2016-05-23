@@ -99,6 +99,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
+		form.setImage(StackExchangeCrawlerViewImageRegistry.getImageIconFactory().getImage(IStackExchangeCrawlerUIConstants.IMAGE_STACK_OBJ));
 		form.setText("StackExchange Crawler");
 
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());

@@ -28,7 +28,7 @@ public class StackExchangeCrawlerViewImageRegistry {
 		imgReg.put(IStackExchangeCrawlerUIConstants.IMAGE_STACK_OBJ,
 				ImageDescriptor.createFromFile(
 						StackExchangeCrawlerViewImageRegistry.class,
-						"/icons/reddit.png"));
+						"/icons/stackexchange.png"));
 	}
 
 	public static StackExchangeCrawlerViewImageRegistry getImageIconFactory() {
