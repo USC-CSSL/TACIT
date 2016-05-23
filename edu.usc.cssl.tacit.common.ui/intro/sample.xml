@@ -4,7 +4,7 @@
 		style="css/sample.css" name="Sample Extension" path="whatsnew/@">
 		<group style-id="content-group" id="eduusccssltacitcommonui-introLink-group">
 
-			<link label="Stack Exchange Crawler" url="http://cssl.usc.edu/wiki/index.php/StackExchange"
+			<link label="TACIT Stack Exchange Crawler" url="http://cssl.usc.edu/wiki/index.php/TACIT_Stack_Exchange_Crawler"
 				id="eduusccssltacitstack" style-id="content-link">
 				<text>Find out more details about Stack Exchange Crawler</text>
 			</link>
