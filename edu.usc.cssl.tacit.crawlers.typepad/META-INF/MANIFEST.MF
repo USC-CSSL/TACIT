@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Typepad
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.typepad
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.typepad.Activator
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: json-20160212.jar,
+ .,
+ jsoup-1.9.1.jar
+Export-Package: edu.usc.cssl.tacit.crawlers.typepad,
+ edu.usc.cssl.tacit.crawlers.typepad.services

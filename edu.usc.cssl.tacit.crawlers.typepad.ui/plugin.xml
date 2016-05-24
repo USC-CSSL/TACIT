@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.typepad.ui.typePadCommand"
+               icon="icons/typepad.png"
+               label="TypePad Crawler"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.crawlers.typepad.ui.typePadCommand"
+            name="typePadCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.typepad.ui.handlers.TypePadViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.typepad.ui.typePadCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.crawlers.typepad.ui.TypePadCrawlerView"
+            icon="icons/typepad.png"
+            id="edu.usc.cssl.tacit.crawlers.typepad.ui.typePadView"
+            name="TypePadView"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>

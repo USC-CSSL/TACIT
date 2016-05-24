@@ -33,6 +33,9 @@
 
 		<module>../edu.usc.cssl.tacit.crawlers.twitter.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.twitter</module>
+		
+		<module>../edu.usc.cssl.tacit.crawlers.typepad.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.typepad</module>
 
 		<!-- Cluster -->
 
