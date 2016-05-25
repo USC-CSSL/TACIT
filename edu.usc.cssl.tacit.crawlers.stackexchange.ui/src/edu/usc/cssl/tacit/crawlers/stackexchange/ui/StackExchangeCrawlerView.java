@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -42,6 +43,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -61,6 +63,7 @@ import edu.usc.cssl.tacit.crawlers.stackexchange.services.StackExchangeCrawler;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.StackExchangeSite;
 import edu.usc.cssl.tacit.crawlers.stackexchange.ui.internal.IStackExchangeCrawlerUIConstants;
 import edu.usc.cssl.tacit.crawlers.stackexchange.ui.internal.StackExchangeCrawlerViewImageRegistry;
+import edu.usc.cssl.tacit.crawlers.stackexchange.ui.preferencepage.IStackExchangeConstants;
 
 public class StackExchangeCrawlerView extends ViewPart implements IStackExchangeCrawlerUIConstants {
 	public static String ID = "edu.usc.cssl.tacit.crawlers.stackexchange.ui.view1";
@@ -136,7 +139,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		inputSection.setClient(InputSectionClient);
 
 		Label sortType = new Label(InputSectionClient, SWT.NONE);
-		sortType.setText("Select Domains:");
+		sortType.setText("Select Domains*:");
 		senatorTable = new Table(InputSectionClient, SWT.BORDER | SWT.MULTI);
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).hint(90, 50).applyTo(senatorTable);
 
@@ -347,6 +350,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		Activity = new Button(radioGroup, SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(Activity);
 		Activity.setText("Highest Recent Activity");
+		Activity.setSelection(true);
 		Votes = new Button(radioGroup, SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(Votes);
 		Votes.setText("Highest votes");
@@ -496,13 +500,33 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
 
-		String k = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
+		String k = CommonUiActivator.getDefault().getPreferenceStore().getString(IStackExchangeConstants.CONSUMER_KEY);
 		if (k == null || k.equals("")) {
 			form.getMessageManager().addMessage("KeyError", "You have not entered a key for crawling", null,
 					IMessageProvider.ERROR);
+			ErrorDialog.openError(Display.getDefault().getActiveShell(), "Key has not been added",
+					"Please check user settings for StackExchange Crawler",
+					new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID, "No key found"));
+			String id = "edu.usc.cssl.tacit.crawlers.stackexchange.ui.config";
+			PreferencesUtil
+					.createPreferenceDialogOn(Display.getDefault().getActiveShell(), id, new String[] { id }, null)
+					.open();
 			return false;
 		} else {
 			form.getMessageManager().removeMessage("KeyError");
+		}
+		try{
+		if(selectedRepresentatives.isEmpty()){
+			form.getMessageManager().addMessage("DomainError", "Enter atleast one domain name", null,
+					IMessageProvider.ERROR);
+			return false;
+		}else{
+			form.getMessageManager().removeMessage("DomainError");
+		}
+		}catch(Exception e){
+			form.getMessageManager().addMessage("DomainError", "Enter atleast one domain name", null,
+					IMessageProvider.ERROR);
+			return false;
 		}
 		try {
 			int pages = Integer.parseInt(pageText.getText());
@@ -623,7 +647,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if (monitor.isCanceled())
-							handledCancelRequest("Cancelled");
+							handledCancelRequest("Crawling is Stopped");
 						corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
 						for (final String domain : selectedRepresentatives) {
 							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
@@ -636,7 +660,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							try {
 								monitor.subTask("Crawling...");
 								if (monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
+									return handledCancelRequest("Crawling is Stopped");
 								if (!isDate)
 									crawler.search(tags, pages, corpusName, scs,
 											StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder, monitor);
@@ -645,7 +669,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 											StackConstants.domainList.get(domain), from, to, jsonFilter, ansLimit,
 											comLimit, crawlOrder, monitor);
 								if (monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
+									return handledCancelRequest("Crawling is Stopped");
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
@@ -668,7 +692,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						}
 						ManageCorpora.saveCorpus(corpus);
 						if (monitor.isCanceled())
-							return handledCancelRequest("Cancelled");
+							return handledCancelRequest("Crawling is Stopped");
 
 						monitor.worked(100);
 						monitor.done();
@@ -727,8 +751,8 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	}
 
 	private IStatus handledCancelRequest(String message) {
-		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
-		ConsoleView.printlInConsoleln("Reddit crawler cancelled.");
+		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.INFO, form);
+		ConsoleView.printlInConsoleln("StackExchange crawler cancelled.");
 		return Status.CANCEL_STATUS;
 	}
 
