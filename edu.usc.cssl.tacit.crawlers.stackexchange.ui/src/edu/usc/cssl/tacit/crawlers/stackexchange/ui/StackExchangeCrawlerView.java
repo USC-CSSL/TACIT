@@ -647,7 +647,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if (monitor.isCanceled())
-							handledCancelRequest("Cancelled");
+							handledCancelRequest("Crawling is Stopped");
 						corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
 						for (final String domain : selectedRepresentatives) {
 							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
@@ -660,7 +660,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							try {
 								monitor.subTask("Crawling...");
 								if (monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
+									return handledCancelRequest("Crawling is Stopped");
 								if (!isDate)
 									crawler.search(tags, pages, corpusName, scs,
 											StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder, monitor);
@@ -669,7 +669,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 											StackConstants.domainList.get(domain), from, to, jsonFilter, ansLimit,
 											comLimit, crawlOrder, monitor);
 								if (monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
+									return handledCancelRequest("Crawling is Stopped");
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
@@ -692,7 +692,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						}
 						ManageCorpora.saveCorpus(corpus);
 						if (monitor.isCanceled())
-							return handledCancelRequest("Cancelled");
+							return handledCancelRequest("Crawling is Stopped");
 
 						monitor.worked(100);
 						monitor.done();
@@ -751,8 +751,8 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	}
 
 	private IStatus handledCancelRequest(String message) {
-		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
-		ConsoleView.printlInConsoleln("Reddit crawler cancelled.");
+		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.INFO, form);
+		ConsoleView.printlInConsoleln("StackExchange crawler cancelled.");
 		return Status.CANCEL_STATUS;
 	}
 
