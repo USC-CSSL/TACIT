@@ -515,12 +515,18 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		} else {
 			form.getMessageManager().removeMessage("KeyError");
 		}
+		try{
 		if(selectedRepresentatives.isEmpty()){
 			form.getMessageManager().addMessage("DomainError", "Enter atleast one domain name", null,
 					IMessageProvider.ERROR);
 			return false;
 		}else{
 			form.getMessageManager().removeMessage("DomainError");
+		}
+		}catch(Exception e){
+			form.getMessageManager().addMessage("DomainError", "Enter atleast one domain name", null,
+					IMessageProvider.ERROR);
+			return false;
 		}
 		try {
 			int pages = Integer.parseInt(pageText.getText());
