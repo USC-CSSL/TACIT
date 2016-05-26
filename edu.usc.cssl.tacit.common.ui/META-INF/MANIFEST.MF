@@ -37,5 +37,5 @@ Bundle-ClassPath: commons-io-2.4.jar,
  slf4j-api-1.7.5.jar,
  slf4j-simple-1.7.5.jar,
  asm-1.0.2.jar,
- org.annolab.tt4j-1.2.1.jar,
- pdfbox-app-2.0.0-RC3.jar
+ pdfbox-app-2.0.0-RC3.jar,
+ org.annolab.tt4j-1.2.1.jar
