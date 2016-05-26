@@ -366,14 +366,15 @@ public class SVMClassify {
 		// ConsoleView.printlInConsoleln("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
 		ConsoleView.printlInConsoleln("Accuracy = " + (double) correct / total
 				* 100 + "% (" + correct + "/" + total + ") (classification)\n");
-		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
+		
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
 		// ConsoleView.writeInConsole(nf.format(pvalue));
 		if (pvalue != 0) {
-			if (pvalue > 0.5)
+			if (pvalue > 1)
 				pvalue = Math.abs(pvalue - 1);
 		}
+		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
 		double x = (double) correct / total * 100;
 		return (double) correct / total * 100;
 	}
