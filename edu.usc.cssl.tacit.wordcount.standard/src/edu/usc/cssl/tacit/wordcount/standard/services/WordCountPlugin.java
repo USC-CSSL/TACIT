@@ -793,7 +793,8 @@ public class WordCountPlugin {
 					 */
 					for (int i = 1; i < words.length; i = increment(i)) {
 						
-						
+						if (words[i].contains(")") || words[i].contains("("))
+							continue;
 						// Add a category to the maps if it was not added
 						// earlier
 						if(oldCategoryMap.containsKey(Integer.parseInt(words[i]))){
