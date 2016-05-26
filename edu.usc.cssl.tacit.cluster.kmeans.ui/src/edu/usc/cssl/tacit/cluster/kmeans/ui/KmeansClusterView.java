@@ -140,7 +140,7 @@ public class KmeansClusterView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(noClusterTxtLbl);
 		noClusterTxt = toolkit.createText(comp, "", SWT.BORDER);
-		noClusterTxt.setText("1");
+		noClusterTxt.setText("2");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(noClusterTxt);
 	}
