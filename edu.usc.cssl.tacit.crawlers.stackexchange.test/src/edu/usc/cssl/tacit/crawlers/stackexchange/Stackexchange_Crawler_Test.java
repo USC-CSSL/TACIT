@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Test;
 
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.StackConstants;
@@ -27,7 +28,7 @@ public class Stackexchange_Crawler_Test {
 			long to = 1463019542;
 			boolean jsonFilter[] = {true, true, true, true, true, true, true, true};
 			crawler.setDir(outputDir);
-			crawler.search("NLP",1,true,true,true,"TestCorpus",scs,"stackoverflow", from, to, jsonFilter);
+			crawler.search("NLP",1,"TestCorpus",scs,"stackoverflow", from, to, jsonFilter, 1, 1, "activity", new NullProgressMonitor());
 			FileUtils.deleteDirectory(new File(outputDir));
 		}
 		catch (Exception e){
