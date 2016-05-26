@@ -230,7 +230,7 @@ public class Preprocessor {
 			outFile = ppFilesLoc + System.getProperty("file.separator") + (new File(inFileBefore).getName());
 		} else {
 			outFile = ppFilesLoc + System.getProperty("file.separator") + outName;
-		}	System.out.println("Hello lo l o");
+		}
 		return outFile;
 	}
 	
