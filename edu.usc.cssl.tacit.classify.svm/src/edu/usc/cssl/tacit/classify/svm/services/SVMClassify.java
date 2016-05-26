@@ -371,7 +371,7 @@ public class SVMClassify {
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
 		// ConsoleView.writeInConsole(nf.format(pvalue));
 		if (pvalue != 0) {
-			if (pvalue > 0.5)
+			if (pvalue > 1)
 				pvalue = Math.abs(pvalue - 1);
 		}
 		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
