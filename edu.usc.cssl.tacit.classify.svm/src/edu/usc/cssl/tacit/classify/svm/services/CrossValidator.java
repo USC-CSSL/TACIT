@@ -27,13 +27,7 @@ public class CrossValidator {
 		// File[] class2Files = folder2.listFiles();
 		int numFiles1 = class1Files.length;
 		int numFiles2 = class2Files.length;
-		
-		//Check if kValue is not greater than the least number of any of the two class files.
-		int leastClassFileSize = numFiles1 < numFiles2?numFiles1:numFiles2;
-		
-		if (kValue > leastClassFileSize){
-			throw new KValueException();
-		}
+
 
 		//Check  if kValue is 1
 		if (kValue == 1){
@@ -232,8 +226,5 @@ public class CrossValidator {
 			e.printStackTrace();
 		}
 	}
-	
-	public class KValueException extends RuntimeException{
-		
-	}
+
 }

@@ -42,6 +42,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.classify.svm.services.CrossValidator;
 import edu.usc.cssl.tacit.classify.svm.services.SVMClassify;
+import edu.usc.cssl.tacit.classify.svm.services.CrossValidator.KValueException;
 import edu.usc.cssl.tacit.classify.svm.ui.internal.ISVMViewConstants;
 import edu.usc.cssl.tacit.classify.svm.ui.internal.SVMViewImageRegistry;
 import edu.usc.cssl.tacit.common.Preprocess;
@@ -244,15 +245,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								}
 							});
 							return Status.CANCEL_STATUS;
-						}catch (CrossValidator.KValueException e){
-							Display.getDefault().asyncExec(new Runnable() {
-								
-								@Override
-								public void run() {
-
-									ErrorDialog.openError(form.getShell(), "Input Error", "Invalid KValue.", new Status(Status.WARNING, "1", "KValue cannot be greater than the number of files in any of the classes."));
-								}
-							});
 						}
 						catch (OperationCanceledException e){
 							e.printStackTrace();
@@ -326,6 +318,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	protected boolean canProceed() {
 		// Remove all errors from any previous tries
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+		
 		form.getMessageManager().removeMessage("class1");
 		form.getMessageManager().removeMessage("class2");
 		form.getMessageManager().removeMessage("class1NoProper");
@@ -342,6 +335,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		List<String> class2Files = new TacitUtil().refineInput(class2LayoutData
 				.getSelectedFiles());
 		boolean noProperFiles = true;
+		
+		int numFiles1 = class1Files.size();
+		int numFiles2 = class2Files.size();
 
 		if (class1Files.size() < 1) {
 			form.getMessageManager().addMessage("class1",
@@ -437,6 +433,16 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			return false;
 		}
 		form.getMessageManager().removeMessage("kValue");
+		
+		//Check if kValue is not greater than the least number of any of the two class files.
+		int leastClassFileSize = numFiles1 < numFiles2?numFiles1:numFiles2;
+		int kValue = Integer.parseInt(kValueText);
+		if (kValue > leastClassFileSize){
+			form.getMessageManager().addMessage("kValueInvalid","K Value cannot be greater than the number of files in any of the classes. ", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("kValueInvalid");
+		
 
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
@@ -449,6 +455,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			return false;
 		}
 		form.getMessageManager().removeMessage("output");
+		
+		
 
 		return true;
 	}
