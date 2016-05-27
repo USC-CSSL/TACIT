@@ -42,7 +42,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.classify.svm.services.CrossValidator;
 import edu.usc.cssl.tacit.classify.svm.services.SVMClassify;
-import edu.usc.cssl.tacit.classify.svm.services.CrossValidator.KValueException;
 import edu.usc.cssl.tacit.classify.svm.ui.internal.ISVMViewConstants;
 import edu.usc.cssl.tacit.classify.svm.ui.internal.SVMViewImageRegistry;
 import edu.usc.cssl.tacit.common.Preprocess;
