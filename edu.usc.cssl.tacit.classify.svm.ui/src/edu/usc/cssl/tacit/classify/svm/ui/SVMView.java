@@ -244,6 +244,15 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 								}
 							});
 							return Status.CANCEL_STATUS;
+						}catch (CrossValidator.KValueException e){
+							Display.getDefault().asyncExec(new Runnable() {
+								
+								@Override
+								public void run() {
+
+									ErrorDialog.openError(form.getShell(), "Input Error", "Invalid KValue.", new Status(Status.WARNING, "1", "KValue cannot be greater than the number of files in any of the classes."));
+								}
+							});
 						}
 						catch (OperationCanceledException e){
 							e.printStackTrace();
@@ -420,9 +429,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 					IMessageProvider.ERROR);
 			return false;
 		}
-		if (value < 0) {
+		if (value < 1) {
 			form.getMessageManager().addMessage("kValue",
-					"k Value should be greater than or equal to 0", null,
+					"k Value should be greater than or equal to 1", null,
 					IMessageProvider.ERROR);
 			return false;
 		}

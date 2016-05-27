@@ -109,7 +109,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
-		seedFile = createWordFileControl(compInput, "Seed File :");
+		seedFile = createWordFileControl(compInput, "Dictionary :");
 		windowSize = createAdditionalOptions(compInput, "Window Size :", "1");
 		thresholdValue = createAdditionalOptions(compInput, "Threshold :", "");
 
