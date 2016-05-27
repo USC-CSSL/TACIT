@@ -270,7 +270,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 					}
 				};
 				job.setUser(true);
-				job.schedule();
+			
 				job.addJobChangeListener(new JobChangeAdapter() {
 
 					@Override
@@ -293,6 +293,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 						}
 					}
 				});
+				job.schedule();
 			};
 		});
 
