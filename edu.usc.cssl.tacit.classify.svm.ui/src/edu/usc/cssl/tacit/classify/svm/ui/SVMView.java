@@ -513,17 +513,19 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		inputParamsSection.setClient(sectionClient);
 
 		class1Label = toolkit.createLabel(sectionClient,
-				"Enter Class 1 Label:", SWT.None);
+				"Class 1:", SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(class1Label);
 		class1Name = toolkit.createText(sectionClient, "", SWT.BORDER);
+		class1Name.setMessage("Enter Class 1 label");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class1Name);
 		class2Label = toolkit.createLabel(sectionClient,
-				"Enter Class 2 Label:", SWT.None);
+				"Class 2:", SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(class2Label);
 		class2Name = toolkit.createText(sectionClient, "", SWT.BORDER);
+		class2Name.setMessage("Enter Class 2 label");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class2Name);
 
