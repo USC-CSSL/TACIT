@@ -37,6 +37,10 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.typepad.services.TypePadCrawler;
@@ -142,16 +146,10 @@ public class TypePadCrawlerView extends ViewPart {
 				// check if the output address is correct and writable
 
 				final String corpusName = corpusNameTxt.getText();
-				final String outputDir = System.getProperty("user.dir") + System.getProperty("file.separator")
-						+ "json_corpuses" + System.getProperty("file.separator") + "typepad" + File.separator
-						+ corpusName;
-	
-				if (!new File(outputDir).exists()) {
-					new File(outputDir).mkdir();
-				}
-				DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
-				Date dateobj = new Date();
-				final String outputFile = outputDir + File.separator + "Typepad_Stream_" + df.format(dateobj) + ".json";
+				
+				//DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
+				//Date dateobj = new Date();
+				//final String outputFile = outputDir + File.separator + "Typepad_Stream_" + df.format(dateobj) + ".json";
 
 				// Get sort attribute values
 				if (publishedTimeRelevanceBtn.getSelection()){
@@ -198,21 +196,28 @@ public class TypePadCrawlerView extends ViewPart {
 							TypePadCrawler typePadCrawler = new TypePadCrawler();
 							monitor.beginTask("Crawling typepad..", 10);
 							
-
+							String corpusClassDir = ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
 							
-
-							/*ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
-							Corpus twitterCorpus = new Corpus(corpusName, CMDataType.TWITTER_JSON);
-							CorpusClass twitterCorpusClass = new CorpusClass();
-							twitterCorpusClass.setClassName(corpusName + "_class1");
-							twitterCorpusClass.setClassPath(outputDir);
-							List<ICorpusClass> corpusList = new ArrayList<ICorpusClass>();
-							corpusList.add(twitterCorpusClass);
-							twitterCorpus.setClasses(corpusList);*/
+							if (!new File(corpusClassDir).exists()) {
+								new File(corpusClassDir).mkdirs();
+							}
+							
+							//Creating the corpus and corpus class
+							ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
+							Corpus typepadCorpus = new Corpus(corpusName, CMDataType.TYPEPAD_JSON);
+							CorpusClass typepadCorpusClass = new CorpusClass();
+							typepadCorpusClass.setClassName(corpusName + "_class");
+							typepadCorpusClass.setClassPath(corpusClassDir);
+							typepadCorpus.addClass(typepadCorpusClass);
+							
+							if (monitor.isCanceled()){
+								throw new OperationCanceledException();
+							}
+							
 							try {
-								//ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
-								//ManageCorpora.saveCorpus(twitterCorpus);
-								typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,monitor); //This method starts the crawling 
+								ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
+								ManageCorpora.saveCorpus(typepadCorpus);
+								typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,monitor); //This method starts the crawling 
 								monitor.done();
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -288,41 +293,16 @@ public class TypePadCrawlerView extends ViewPart {
 		String titleKeywords[] = {};
 		
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-		boolean canProceed = true;
-		boolean validLimitState = true;
-		boolean validKeyWordLength = true;
-		boolean validKeyWordState = true;
-		
+
 		//Removing any other previous messages with the same key.
 		form.getMessageManager().removeMessage("maxlimit");
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("keywordLength");
 		form.getMessageManager().removeMessage("keywordState");
-
-
-		//Check 1: Check if the max limit for blogs is valid or not
-		if (limitBlogs.getSelection()) {
-			
-			try {
-				maxBlogLimit = Long.parseLong(maxText.getText());
-				if (maxBlogLimit <= 0){
-					validLimitState = false;
-				}
-
-			} catch (NumberFormatException e1) {
-				validLimitState = false;
-			}
-		}
+		form.getMessageManager().removeMessage("corpusName");
 		
-		//Check 2: Check if the corpus name is valid
-		String message = OutputPathValidation.getInstance().validateOutputCorpus(corpusNameTxt.getText());
-		if (message != null) {
-			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
-			canProceed = false;
-			return canProceed;
-		}
 		
-		//Check 3: Check if the the keyword field is not empty
+		//Check 1: Check if the the keyword field is not empty
 		if (!contentWordFilterText.getText().isEmpty()){
 			contentKeywords = contentWordFilterText.getText().split(";");
 		}
@@ -332,40 +312,55 @@ public class TypePadCrawlerView extends ViewPart {
 		}
 		
 		if (contentKeywords.length == 0 && titleKeywords.length == 0){
-			validKeyWordLength  = false;
+			form.getMessageManager().addMessage("keywordLength", "Word Filter cannot be empty.Add atleast one content or title word filter.", null,IMessageProvider.ERROR);
+			return false;
+			
 		}else{
-			//Check 4: Check if the keyword entered are valid or not
+			//Check 2: Check if the keyword entered are valid or not
 			if (contentKeywords.length != 0 && !isValidKeywordState(contentWordFilterText.getText())){
-				validKeyWordState = false;
+				form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
+				return false;
 			}
 			
 			if (titleKeywords.length != 0 && !isValidKeywordState(titleWordFilterText.getText())){
-				validKeyWordState = false;
+				form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
+				return false;
+			}
+		}
+
+
+		//Check 3: Check if the max limit for blogs is valid or not
+		if (limitBlogs.getSelection()) {
+			
+			try {
+				maxBlogLimit = Long.parseLong(maxText.getText());
+				if (maxBlogLimit <= 0){
+					form.getMessageManager().addMessage("maxlimit","Error: Invalid Max Limit for blogs. Please enter valid positive number.", null,IMessageProvider.ERROR);
+					return false;
+				}
+
+			} catch (NumberFormatException e1) {
+				form.getMessageManager().addMessage("maxlimit","Error: Invalid Max Limit for blogs. Please enter valid positive number.", null,IMessageProvider.ERROR);
+				return false;
 			}
 		}
 		
+		//Check 4: Check if the output corpus is valid.
+		String corpusName = corpusNameTxt.getText();
 		
-		//Building the error messages
-		if (!validKeyWordLength) {
-			form.getMessageManager().addMessage("keywordLength", "Word Filter cannot be empty.Add atleast one content or title word filter.", null,IMessageProvider.ERROR);
-			canProceed = false;
-			return canProceed;
-		}
-		
-		if (!validKeyWordState){
-			form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
-			canProceed = false;
-			return canProceed;
-		}
+		if(corpusName == null|| corpusName.isEmpty()) {
+			form.getMessageManager().addMessage("corpusName", "Provide corpus name", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			String outputDir = ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+			if(new File(outputDir).exists()){
+				form.getMessageManager().addMessage("corpusName", "Corpus already exists", null, IMessageProvider.ERROR);
+				return false;
+			}
 
-		if (!validLimitState) {
-			form.getMessageManager().addMessage("maxlimit","Error: Invalid Max Limit for blogs. Please enter valid positive number.", null,IMessageProvider.ERROR);
-			canProceed = false;
-			return canProceed;
 		}
 		
-
-		return canProceed;
+		return true;
 	}
 	
 

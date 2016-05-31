@@ -24,7 +24,6 @@ import edu.usc.cssl.tacit.crawlers.typepad.utils.TypePadWebConstants;
 
 
 public class TypePadCrawler {
-	public static String OUTPUT_PATH = "/Users/CSSLadmin/Desktop/TypePadOutput";
 
 	/**
 	 * This method returns the JSON HTTP response string for the input string URL 
@@ -137,9 +136,11 @@ public class TypePadCrawler {
 	 * @param titleKeywords list of title keywords
 	 * @param maxLimit maximum number of blogs
 	 * @param sortParam 0: published_time_relevance, 1: relevance, 2: published_time_asc, 3: published_time_desc, -1: no sort
+	 * @param corpusLocation The output location for the corpus
+	 * @param monitor IProgessMonitor to update the progress bar
 	 * @throws Exception
 	 */
-	public void getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, IProgressMonitor monitor)throws Exception{
+	public void getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, IProgressMonitor monitor)throws Exception{
 
 		//Initial Query Results
 		String url = TypePadWebConstants.BASE_URL+TypePadWebConstants.ASSETS+TypePadWebConstants.QUERY_SEPARATOR;
@@ -176,7 +177,7 @@ public class TypePadCrawler {
 				String finalEntryContent = "";
 				
 				for (int i= 0; i<retrievedEntriesArray.length();i++ ){
-					fw = new FileWriter(new File(OUTPUT_PATH + File.separator + "blog_"+blogCount+"_"+commonFileName));
+					fw = new FileWriter(new File(corpusLocation + File.separator + "blog_"+blogCount+"_"+commonFileName));
 					retrievedEntryObject = (JSONObject)retrievedEntriesArray.get(i);
 					retrievedEntryContent = retrievedEntryObject.getString("content");
 					finalEntryContent = Jsoup.parse(retrievedEntryContent).text();
