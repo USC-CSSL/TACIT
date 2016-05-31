@@ -54,7 +54,11 @@ public class TacitUtil {
 			File inputFile = new File((String) input);
 			if (!inputFile.exists())
 				continue;
+			
 			if (!inputFile.isDirectory()) {
+				if (inputFile.getName().contains("DS_Store")){
+					continue;
+				}
 				refinedInputList.add(inputFile.getAbsolutePath());
 				if (isCorpus)
 					filenameCorpusMap.put(inputFile.getAbsolutePath(),
@@ -102,8 +106,12 @@ public class TacitUtil {
 		for (File f : folder.listFiles()) {
 			if (f.getName().endsWith(".csv"))
 				continue;
-			if (!f.isDirectory())
+			if (!f.isDirectory()){
+				if (f.getName().contains("DS_Store")){
+					continue;
+				}
 				subFiles.add(f.getAbsolutePath());
+			}
 			else
 				subFiles.addAll(getFilesFromFolder(f.getAbsolutePath()));
 		}

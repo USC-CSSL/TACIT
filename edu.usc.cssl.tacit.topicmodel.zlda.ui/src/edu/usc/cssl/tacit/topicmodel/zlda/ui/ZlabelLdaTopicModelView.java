@@ -105,7 +105,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		createPreprocessLink(compInput);
 		seedFileText = createSeedFileControl(compInput, "Seed File Location :",
 				"");
-		topics = createAdditionalOptions(compInput, "No. of Topics :", "1");
+		topics = createAdditionalOptions(compInput, "No. of Topics :", "2");
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);

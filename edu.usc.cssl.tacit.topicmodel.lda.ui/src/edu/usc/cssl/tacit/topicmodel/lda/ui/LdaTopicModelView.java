@@ -102,7 +102,7 @@ public class LdaTopicModelView extends ViewPart implements
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
 		numberOfTopics = createAdditionalOptions(compInput, "No. of Topics :",
-				"1");
+				"2");
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)

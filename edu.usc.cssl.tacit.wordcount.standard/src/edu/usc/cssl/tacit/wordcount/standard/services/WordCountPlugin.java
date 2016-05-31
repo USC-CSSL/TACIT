@@ -169,10 +169,10 @@ public class WordCountPlugin {
 	protected void generateRunReport(){
 		if (weighted)
 			TacitUtility.createRunReport(outputPath,
-					"TACIT Weighted Word Count", dateObj,null);
+					"TACIT Weighted Word Count", dateObj, null);
 		else
 			TacitUtility.createRunReport(outputPath,
-					"TACIT Standard Word Count", dateObj,null);
+					"TACIT Standard Word Count", dateObj, null);
 	}
 	
 	protected BufferedWriter createWordDistributionFile(String inputFile) throws IOException{
@@ -763,7 +763,8 @@ public class WordCountPlugin {
 				while ((currentLine = br.readLine()) != null) {
 
 					String[] words = currentLine.split("\\s+");
-
+					if(words.length == 0)
+						continue;
 					// If word not in the maps, add it
 					if (!wordDictionary.containsKey(words[0])) {
 
@@ -793,7 +794,7 @@ public class WordCountPlugin {
 					 */
 					for (int i = 1; i < words.length; i = increment(i)) {
 						
-						if (words[i].contains(")") || words[i].contains("("))
+						if (words[i].contains(")") || words[i].contains("(") || words[i].contains("<"))
 							continue;
 						// Add a category to the maps if it was not added
 						// earlier

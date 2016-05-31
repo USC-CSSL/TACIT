@@ -207,7 +207,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 		final Button export = toolkit.createButton(buttonComposite, "Export", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(export);
-
+		export.setEnabled(false);
+		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
@@ -228,6 +229,15 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				 * //exception means item selected is not a corpus but a class.
 				 * }
 				 */
+				Object c = ((IStructuredSelection)event.getSelection()).getFirstElement();
+				if(c instanceof ICorpusClass){
+					if(((CorpusClass)c).getParent().getDatatype() != CMDataType.PLAIN_TEXT)
+						export.setEnabled(true);
+					else
+						export.setEnabled(false);
+				}
+				else					
+					export.setEnabled(false);
 			}
 		});
 
