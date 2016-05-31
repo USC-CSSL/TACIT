@@ -233,6 +233,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				if(c instanceof ICorpusClass){
 					if(((CorpusClass)c).getParent().getDatatype() != CMDataType.PLAIN_TEXT)
 						export.setEnabled(true);
+					else
+						export.setEnabled(false);
 				}
 				else					
 					export.setEnabled(false);
