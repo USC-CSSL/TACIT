@@ -194,7 +194,12 @@ public class TypePadCrawlerView extends ViewPart {
 							TacitFormComposite.writeConsoleHeaderBegining("TypePad Crawling Started... ");
 	
 							TypePadCrawler typePadCrawler = new TypePadCrawler();
-							monitor.beginTask("Crawling typepad..", 10);
+							if (maxBlogLimit != -1){
+								monitor.beginTask("Crawling typepad..",(int)maxBlogLimit+20);
+							}else{
+								monitor.beginTask("Crawling typepad..",5000);
+							}
+							
 							
 							String corpusClassDir = ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
 							
@@ -214,17 +219,19 @@ public class TypePadCrawlerView extends ViewPart {
 								throw new OperationCanceledException();
 							}
 							
-							try {
-								ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
-								ManageCorpora.saveCorpus(typepadCorpus);
-								typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,monitor); //This method starts the crawling 
-								monitor.done();
-							} catch (Exception e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
+							ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
+							monitor.worked(10);
+							typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,monitor); //This method starts the crawling 
+							ManageCorpora.saveCorpus(typepadCorpus);
+							monitor.worked(10);
+							monitor.done();
+
 							return Status.OK_STATUS;
 						} catch (OperationCanceledException e) {
+							ConsoleView.printlInConsoleln("Operation Cancelled by the user.");
+							return Status.CANCEL_STATUS;
+						}catch (Exception e){
+							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						}
 

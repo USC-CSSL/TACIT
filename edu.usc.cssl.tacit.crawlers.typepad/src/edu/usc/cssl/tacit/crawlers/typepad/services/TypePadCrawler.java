@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,7 +160,7 @@ public class TypePadCrawler {
 		Date currentDate = new Date();
 		String commonFileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(currentDate);
 		
-		do{
+		one:do{
 			
 			httpResponse = getHTTPResponse(url);
 			if (!httpResponse.equals("")){
@@ -183,15 +184,30 @@ public class TypePadCrawler {
 					finalEntryContent = Jsoup.parse(retrievedEntryContent).text();
 					fw.write(finalEntryContent);
 					fw.close();
+					if (maxLimit != -1 && blogCount == maxLimit){
+						break one;
+					}
 					blogCount++;
+					monitor.worked(1);
+					
+					//Check to break the operation if the user has cancelled.
+					if (monitor.isCanceled()){
+						throw new OperationCanceledException();
+					}
 				}
 				
 				url = TypePadWebConstants.BASE_URL+TypePadWebConstants.ASSETS+TypePadWebConstants.QUERY_SEPARATOR+TypePadWebConstants.START_TOKEN + moreResultsToken;
+				
+				//Check to break the operation if the user has cancelled.
+				if (monitor.isCanceled()){
+					throw new OperationCanceledException();
+				}
 			}else{
 				break;
 			}
 
 		}while(moreResultsToken != null);
+		
 	}
 
 }
