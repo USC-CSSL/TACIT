@@ -423,8 +423,9 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		 * 2. Each line must contain at least one alphanumeric word with no spaces. Special characters are allowed.
 		 * 3.At least one word must be present in the dictionary.(Dictionary cannot be empty)
 		 */
-		if (!isValidDictionary(seedFile.getText())){
-			form.getMessageManager().addMessage("invalidDictionary","Invalid dictionary or dictionary format.Change dictionary.", null,IMessageProvider.ERROR);
+		StringBuffer errorMessage = new StringBuffer("");
+		if (!isValidDictionary(seedFile.getText(),errorMessage)){
+			form.getMessageManager().addMessage("invalidDictionary",errorMessage.toString(), null,IMessageProvider.ERROR);
 			return false;
 		}
 		
@@ -480,35 +481,42 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	 * @param dictionaryPath The string input path of the dictionary file 
 	 * @return isValid boolean
 	 */
-	public boolean isValidDictionary(String dictionaryPath){
-		
+	public boolean isValidDictionary(String dictionaryPath,StringBuffer errorMessage){
 		if (!dictionaryPath.contains(".txt")){
+			errorMessage.append("Invalid Dictionary Format. Reason: Dictionary format is not .txt");
 			return false;
 		}
 		File dictionaryFile = new File(dictionaryPath);
 		
 		if (!dictionaryFile.exists()){
+			errorMessage.append("Dictionary file not found");
 			return false;
 		}else{
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(dictionaryFile));
 				long size = 0l;
 				String currentLine  = "";
+				int lineNum = 1;
 				while ((currentLine = br.readLine() )!= null){
 					currentLine = currentLine.trim();
-					if (currentLine == ""){
+					if (currentLine.equals("")){
+						errorMessage.append("Invalid Dictionary Format. Reason: Empty string at line "+lineNum);
 						return false;
 					}
 					if (currentLine.contains(" ")){
+						errorMessage.append("Invalid Dictionary Format. Reason: Multiple words found in a same line at line "+lineNum);
 						return false;
 					}else{
 						size++;
 					}
+					lineNum++;
 				}
 				if (size == 0l){
+					errorMessage.append("Invalid Dictionary Format. Reason: Empty Dictionary ");
 					return false;
 				}
 			} catch (Exception e) {
+				errorMessage.append("Exception occured while reading dictionary.");
 				return false;
 			}
 			
