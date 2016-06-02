@@ -740,13 +740,13 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.reddit.ui.reddit");
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
 			};
 		};
 
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.reddit.ui.reddit");
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.reddit.ui.reddit");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
 		form.getToolBarManager().update(true);
 	}
 
