@@ -26,7 +26,7 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class CooccurrenceAnalysis {
 
-	private static Pattern delimiters = Pattern.compile("[.,\"\']");
+	private static Pattern delimiters = Pattern.compile("[.,\"]");
 
 	private HashSet<String> seedWords;
 	private String outputPath;
@@ -145,7 +145,6 @@ public class CooccurrenceAnalysis {
 								
 								if(windowSeedWordCount >= threshold){
 									fw.write(StringUtils.join(window, " ") + ","+windowSeedWordCount+","+f.getName()+"\n");
-									System.out.println(StringUtils.join(window, " "));
 								}
 
 								isFirstWindow = false;
