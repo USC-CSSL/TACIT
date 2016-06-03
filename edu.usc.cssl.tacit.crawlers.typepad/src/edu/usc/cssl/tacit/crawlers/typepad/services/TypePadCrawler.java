@@ -152,7 +152,7 @@ public class TypePadCrawler {
 		FileWriter fw =  new FileWriter(new File(corpusLocation + File.separator + corpusName +".json"));
 		
 		//Building overall custom JSON object for all the search results
-		JSONObject overallJSONObject = new JSONObject();
+		//JSONObject overallJSONObject = new JSONObject();
 		JSONArray entryList = new JSONArray();
 		JSONObject entry = null;
 		
@@ -273,9 +273,9 @@ public class TypePadCrawler {
 		}while(moreResultsToken != null);
 		
 		//Adding the entry list to the overall json object
-		overallJSONObject.put(TypePadJSONKeys.ENTRIES, entryList);
+		//overallJSONObject.put(TypePadJSONKeys.ENTRIES, entryList);
 		
-		fw.write(overallJSONObject.toString());
+		fw.write(entryList.toString());
 		fw.close();
 		
 	}
