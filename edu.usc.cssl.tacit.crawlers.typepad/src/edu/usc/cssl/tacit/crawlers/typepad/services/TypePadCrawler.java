@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.HttpConnection;
 
+import edu.usc.cssl.tacit.crawlers.typepad.utils.TypePadJSONKeys;
 import edu.usc.cssl.tacit.crawlers.typepad.utils.TypePadWebConstants;
 
 
@@ -39,13 +40,18 @@ public class TypePadCrawler {
 		StringBuffer response = new StringBuffer();
 		try{
 			URL obj = new URL(url);
-			con = (HttpURLConnection) obj.openConnection();
-
-			con.setRequestMethod("GET");
-			con.setConnectTimeout(60000);
+			
 			int responseCode = 500; //To enter the while loop
 			int i = 0;
 			while (i <= 10 && responseCode != HttpURLConnection.HTTP_OK){
+				
+				con = (HttpURLConnection) obj.openConnection();
+
+				con.setRequestMethod("GET");
+				con.setReadTimeout(120000);
+				con.setConnectTimeout(60000);
+				con.setDoInput(true);
+				
 				responseCode = con.getResponseCode();
 				System.out.println("\nSending 'GET' request to URL : " + url);
 				System.out.println("Response Code : " + responseCode);
@@ -63,6 +69,9 @@ public class TypePadCrawler {
 					i++;
 					
 				}	
+				if (con != null){
+					con.disconnect();
+				}
 			}
 			return "";
 			
@@ -77,10 +86,6 @@ public class TypePadCrawler {
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return "";
-		}finally{
-			if (con != null){
-				con.disconnect();
-			}
 		}
 		
 
@@ -138,11 +143,19 @@ public class TypePadCrawler {
 	 * @param maxLimit maximum number of blogs
 	 * @param sortParam 0: published_time_relevance, 1: relevance, 2: published_time_asc, 3: published_time_desc, -1: no sort
 	 * @param corpusLocation The output location for the corpus
+	 * @param corpusName Name of the corpus
 	 * @param monitor IProgessMonitor to update the progress bar
 	 * @throws Exception
 	 */
-	public void getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, IProgressMonitor monitor)throws Exception{
-
+	public void getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws Exception{
+		
+		FileWriter fw =  new FileWriter(new File(corpusLocation + File.separator + corpusName +".json"));
+		
+		//Building overall custom JSON object for all the search results
+		JSONObject overallJSONObject = new JSONObject();
+		JSONArray entryList = new JSONArray();
+		JSONObject entry = null;
+		
 		//Initial Query Results
 		String url = TypePadWebConstants.BASE_URL+TypePadWebConstants.ASSETS+TypePadWebConstants.QUERY_SEPARATOR;
 		//Adding the query string
@@ -153,37 +166,88 @@ public class TypePadCrawler {
 		JSONArray retrievedEntriesArray = null;
 		String moreResultsToken = "";
 		String httpResponse = "";
-		FileWriter fw = null;
+
 		int blogCount = 1;
-		
-		//Generating common output file name 
-		Date currentDate = new Date();
-		String commonFileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(currentDate);
 		
 		one:do{
 			
 			httpResponse = getHTTPResponse(url);
 			if (!httpResponse.equals("")){
 				resultJSONObject = new JSONObject(httpResponse);
-				retrievedEntriesArray = resultJSONObject.getJSONArray("entries");
+				retrievedEntriesArray = resultJSONObject.getJSONArray(TypePadJSONKeys.ENTRIES);
 				try{
-					moreResultsToken = resultJSONObject.getString("moreResultsToken");
+					moreResultsToken = resultJSONObject.getString(TypePadJSONKeys.MORE_RESULTS_TOKEN);
 				}catch(JSONException e){
 					moreResultsToken = null;
 				}
 				
 				
-				JSONObject retrievedEntryObject = null;
-				String retrievedEntryContent = "";
-				String finalEntryContent = "";
-				
+				JSONObject retrievedEntryObject = null;				
 				for (int i= 0; i<retrievedEntriesArray.length();i++ ){
-					fw = new FileWriter(new File(corpusLocation + File.separator + "blog_"+blogCount+"_"+commonFileName));
 					retrievedEntryObject = (JSONObject)retrievedEntriesArray.get(i);
-					retrievedEntryContent = retrievedEntryObject.getString("content");
-					finalEntryContent = Jsoup.parse(retrievedEntryContent).text();
-					fw.write(finalEntryContent);
-					fw.close();
+					
+					//Making custom JSON object for each entry and adding it to entry list
+					entry = new JSONObject();
+					
+					try{
+						entry.put(TypePadJSONKeys.AUTHOR_DISPLAY_NAME, ((JSONObject)retrievedEntryObject.get(TypePadJSONKeys.AUTHOR)).getString(TypePadJSONKeys.AUTHOR_DISPLAY_NAME));
+					}catch(JSONException e){
+						entry.put(TypePadJSONKeys.AUTHOR_DISPLAY_NAME,"");
+					}
+					
+					try{
+						entry.put(TypePadJSONKeys.AUTHOR_PREFERRED_NAME, ((JSONObject)retrievedEntryObject.get(TypePadJSONKeys.AUTHOR)).getString(TypePadJSONKeys.AUTHOR_PREFERRED_NAME));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.AUTHOR_PREFERRED_NAME,"");
+					}
+					
+					try{
+						entry.put(TypePadJSONKeys.LOCATION, ((JSONObject)retrievedEntryObject.get(TypePadJSONKeys.AUTHOR)).getString(TypePadJSONKeys.LOCATION));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.LOCATION, "");
+					}
+					
+					try{
+						entry.put(TypePadJSONKeys.CATEGORIES, (JSONArray)retrievedEntryObject.get(TypePadJSONKeys.CATEGORIES));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.CATEGORIES, new JSONArray());
+					}
+					
+					try{
+						entry.put(TypePadJSONKeys.COMMENT_COUNT, retrievedEntryObject.getInt(TypePadJSONKeys.COMMENT_COUNT));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.COMMENT_COUNT, 0);
+					}
+					
+					try{
+						String content = retrievedEntryObject.getString("content");
+						content = Jsoup.parse(content).text();
+						entry.put(TypePadJSONKeys.CONTENT, content);
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.CONTENT, "");
+					}
+					
+					try{
+						entry.put(TypePadJSONKeys.EXCERPT, retrievedEntryObject.getString(TypePadJSONKeys.EXCERPT));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.EXCERPT, "");
+					}
+					
+					
+					try{
+						entry.put(TypePadJSONKeys.PUBLISHED, retrievedEntryObject.getString(TypePadJSONKeys.PUBLISHED));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.PUBLISHED, "");
+					}
+					
+					try{
+						entry.put(TypePadJSONKeys.TITLE, retrievedEntryObject.getString(TypePadJSONKeys.TITLE));
+					}catch(JSONException e ){
+						entry.put(TypePadJSONKeys.TITLE, "");
+					}
+					
+					entryList.put(entry);
+
 					if (maxLimit != -1 && blogCount == maxLimit){
 						break one;
 					}
@@ -208,6 +272,14 @@ public class TypePadCrawler {
 
 		}while(moreResultsToken != null);
 		
+		//Adding the entry list to the overall json object
+		overallJSONObject.put(TypePadJSONKeys.ENTRIES, entryList);
+		
+		fw.write(overallJSONObject.toString());
+		fw.close();
+		
 	}
+	
+	
 
 }

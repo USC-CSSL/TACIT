@@ -146,10 +146,6 @@ public class TypePadCrawlerView extends ViewPart {
 				// check if the output address is correct and writable
 
 				final String corpusName = corpusNameTxt.getText();
-				
-				//DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
-				//Date dateobj = new Date();
-				//final String outputFile = outputDir + File.separator + "Typepad_Stream_" + df.format(dateobj) + ".json";
 
 				// Get sort attribute values
 				if (publishedTimeRelevanceBtn.getSelection()){
@@ -221,7 +217,7 @@ public class TypePadCrawlerView extends ViewPart {
 							
 							ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
 							monitor.worked(10);
-							typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,monitor); //This method starts the crawling 
+							typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
 							ManageCorpora.saveCorpus(typepadCorpus);
 							monitor.worked(10);
 							monitor.done();
