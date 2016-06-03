@@ -173,11 +173,15 @@ public class TypePadCrawlerView extends ViewPart {
 				//Get the content word filters
 				if (!contentWordFilterText.getText().isEmpty()){
 					contentKeywords = getKeywords(contentWordFilterText.getText());
+				}else{
+					contentKeywords = null;
 				}
 				
 				//Get the title word filters
 				if (!titleWordFilterText.getText().isEmpty()){
 					titleKeywords = getKeywords(titleWordFilterText.getText());
+				}else{
+					titleKeywords = null;
 				}
 				
 				job = new Job("Typepad Crawl Job") {
@@ -388,7 +392,7 @@ public class TypePadCrawlerView extends ViewPart {
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(section);
 		section.setText("Filter Settings "); 
-		section.setDescription("Use Semicolon as delimeter to give more than one filter value in field\nUse Inverted double commas to specify continuous words.");
+		section.setDescription("Use Semicolon to separate word filters.");
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
