@@ -125,7 +125,7 @@ public class AmericanPresidencyCrawler {
 		System.out.println(i+"---------------"+elements.size());
 	}
 	
-	public void crawlBrowse(String outputDir, Calendar date, String president, String documentCategory, boolean flag1, boolean flag2, IProgressMonitor monitor) throws IOException{
+	public void crawlBrowse(String outputDir, String month, String day, String year, String president, String documentCategory, boolean flag1, boolean flag2, IProgressMonitor monitor) throws IOException{
 		int progressMonitorIncrement = 890;
 		this.outputDir = outputDir;
 		setDir();
@@ -135,9 +135,9 @@ public class AmericanPresidencyCrawler {
 			conn = conn.data("includepress","1");
 		if(flag2)
 			conn = conn.data("includecampaign","1");
-		if (date!=null)
+		if (!(day==""&&month==""&&year==""))
 		{
-			conn = conn.data("month",months[date.get(Calendar.MONTH)]).data("daynum",days[date.get(Calendar.DATE)-1]).data("year",date.get(Calendar.YEAR)+"");
+			conn = conn.data("month",month).data("daynum",day).data("year",year);
 			elements = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1).child(2).child(0).children();
 
 		}

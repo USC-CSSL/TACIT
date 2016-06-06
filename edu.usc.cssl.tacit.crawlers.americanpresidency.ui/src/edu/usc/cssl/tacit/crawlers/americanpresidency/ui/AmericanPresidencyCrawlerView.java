@@ -79,12 +79,16 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private Text corpusNameTxt;
 	private DateTime toDate;
 	private DateTime fromDate;
-	private DateTime date;
+	private Combo browseMonth;	
+	private Combo browseDay;	
+	private Combo browseYear;
 	Corpus americanPresidencyCorpus;
 	
 	String presidentNames[] = {"President","George Washington","John Adams","Thomas Jefferson","James Madison","James Monroe","John Quincy Adams","Andrew Jackson","Martin van Buren","William Henry Harrison","John Tyler","James K. Polk","Zachary Taylor","Millard Fillmore","Franklin Pierce","James Buchanan","Abraham Lincoln","Andrew Johnson","Ulysses S. Grant","Rutherford B. Hayes","James A. Garfield","Chester A. Arthur","Grover Cleveland","Benjamin Harrison","Grover Cleveland","William McKinley","Theodore Roosevelt","William Howard Taft","Woodrow Wilson","Warren G. Harding","Calvin Coolidge","Herbert Hoover","Franklin D. Roosevelt","Harry S. Truman","Dwight D. Eisenhower","John F. Kennedy","Lyndon B. Johnson","Richard Nixon","Gerald R. Ford","Jimmy Carter","Ronald Reagan","George Bush","William J. Clinton","George W. Bush","Barack Obama"};
 	String documentTypes[] = {"Document Category","Oral: Address - Inaugural","Oral: Address - to Congress (non SOTU)","Oral: Address - State of the Union","Oral: Address - major to the Nation","Oral: Address - Farewell","Oral: Address - Saturday Radio","Oral: Address - Fireside Chats","Oral: Address  - \"Inaugural\" (Accidental Presidents)","Oral: Address - at College Commencements","Oral: Address - to the UN General Assembly","Oral: Address - to Foreign Legislatures","Oral: Address - Nomination Acceptance","Oral: Remarks - (non categorized)","Oral: Remarks - Toasts","Oral: Remarks - Bill Signings","Oral: Remarks - Bill Vetos","Oral: News Conferences","Oral: News Conferences - Joint","Debates: General Election","Oral: Remarks - Campaign Fundraiser","Oral: Remarks - regarding Executive Nominations","Oral: Remarks - regarding Executive Appointments","Oral: Remarks - regarding Resignations","Written: Messages - (non categorized)","Written: Messages -  to Congress","Written: Messages - Annual Messages (written SOTU)","Written: Messages - Veto Messages","Written: Messages - Pocket Veto Messages","Written: Messages - Budget Messages","Written: Messages -  Farewell Addresses","Written: Memorandums","Written: Memorandums - Pocket Vetos","Written: Memorandums - Determinations","Written: Memorandums - Diplomatic - Memo of Understanding","Written: Executive Orders","Written: Proclamations","Written: Statements - (non categorized)","Written: Statements - Signing Statements","Written: Statements - Veto Statements","Written: Letters - (non categorized)","Written: Letters - to Congress","Written: Notices","Written: Telegrams - Lincoln (Civil War)","E.O.P.: Press Briefings","OMB: Statements of Administration Policy","Debates: Vice-Presidential","Debates: Primary Elections-Democratic Party","Debates: Primary Elections-Republican Party","Party Platforms"};
-	
+	String days[]={"Day","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
+	String months[] = {"Month","January","February","March","April","May","June","July","August","September","October","November","December"};
+	String years[] = {"Year","1789","1790","1791","1792","1793","1794","1795","1796","1797","1798","1799","1800","1801","1802","1803","1804","1805","1806","1807","1808","1809","1810","1811","1812","1813","1814","1815","1816","1817","1818","1819","1820","1821","1822","1823","1824","1825","1826","1827","1828","1829","1830","1831","1832","1833","1834","1835","1836","1837","1838","1839","1840","1841","1842","1843","1844","1845","1846","1847","1848","1849","1850","1851","1852","1853","1854","1855","1856","1857","1858","1859","1860","1861","1862","1863","1864","1865","1866","1867","1868","1869","1870","1871","1872","1873","1874","1875","1876","1877","1878","1879","1880","1881","1882","1883","1884","1885","1886","1887","1888","1889","1890","1891","1892","1893","1894","1895","1896","1897","1898","1899","1900","1901","1902","1903","1904","1905","1906","1907","1908","1909","1910","1911","1912","1913","1914","1915","1916","1917","1918","1919","1920","1921","1922","1923","1924","1925","1926","1927","1928","1929","1930","1931","1932","1933","1934","1935","1936","1937","1938","1939","1940","1941","1942","1943","1944","1945","1946","1947","1948","1949","1950","1951","1952","1953","1954","1955","1956","1957","1958","1959","1960","1961","1962","1963","1964","1965","1966","1967","1968","1969","1970","1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016"};
 	HashMap<Integer, String> documentCategoryMap = new HashMap<Integer, String>();
 	{
 		documentCategoryMap.put(0, "");
@@ -220,7 +224,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private void createCrawlInputParameters(final FormToolkit toolkit, final Composite parent) {
 		
 		Group buttonComposite = new Group(parent, SWT.LEFT);
-		buttonComposite.setText("Crawl");
+		buttonComposite.setText("Type of crawl");
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -383,32 +387,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
-	
-		
-		/*fromDate.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				int day = fromDate.getDay();
-				int month = fromDate.getMonth() + 1;
-				int year = fromDate.getYear();
-				Date newDate = null;
-				try {
-					newDate = format.parse(day + "/" + month + "/" + year);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-
-				if (newDate.before(minDate) || newDate.after(maxDate)) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(minDate);
-					fromDate.setMonth(cal.get(Calendar.MONTH));
-					fromDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-					fromDate.setYear(cal.get(Calendar.YEAR));
-				}
-			}
-		});*/
-		
-		
 		
 		checkboxSearch1 = new Button(filterResultsGroup, SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(10,10).applyTo(checkboxSearch1);
@@ -444,32 +422,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toDate);
 		toLabel.setEnabled(false);
 		toDate.setEnabled(false);
-		
-		/*toDate.addListener(SWT.Selection, new Listener()
-		{
-			@Override
-			public void handleEvent(Event event) {
-	            int day = toDate.getDay();
-	            int month = toDate.getMonth() + 1;
-	            int year = toDate.getYear();
-	            Date newDate = null;
-	            try {
-	                newDate = format.parse(day + "/" + month + "/" + year);
-	            }
-	            catch (ParseException e) {
-	                e.printStackTrace();
-	            }
-	            
-	            if(newDate.after(maxDate) || newDate.before(minDate))
-	            {
-	                Calendar cal = Calendar.getInstance();
-	                cal.setTime(maxDate);
-	                toDate.setMonth(cal.get(Calendar.MONTH));
-	                toDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-	                toDate.setYear(cal.get(Calendar.YEAR));
-	            }
-			}
-		});*/
 		
 		dateCheckSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -543,47 +495,43 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder3);
 		
 		
-		
-		date = new DateTime(dateHolder3, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(date);
+		browseMonth = new Combo(dateHolder3, SWT.FLAT | SWT.READ_ONLY);
+		browseMonth.setItems(months);
+		browseMonth.select(0);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(browseMonth);
+		browseDay = new Combo(dateHolder3, SWT.FLAT | SWT.READ_ONLY);
+		browseDay.setItems(days);
+		browseDay.select(0);
+		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(browseDay);
+		browseYear = new Combo(dateHolder3, SWT.FLAT | SWT.READ_ONLY);
+		browseYear.setItems(years);
+		browseYear.select(0);
+		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(browseYear);
 		dateLabel.setEnabled(false);
+		browseDay.setEnabled(false);
+		browseMonth.setEnabled(false);
+		browseYear.setEnabled(false);
+		/*
+		date = new DateTime(dateHolder3, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
 		date.setEnabled(false);
-		
-		/*date.addListener(SWT.Selection, new Listener()
-		{
-			@Override
-			public void handleEvent(Event event) {
-	            int day = date.getDay();
-	            int month = date.getMonth() + 1;
-	            int year = date.getYear();
-	            Date newDate = null;
-	            try {
-	                newDate = format.parse(day + "/" + month + "/" + year);
-	            }
-	            catch (ParseException e) {
-	                e.printStackTrace();
-	            }
-	            	Calendar cal = Calendar.getInstance();
-	                cal.setTime(maxDate);
-	                date.setMonth(cal.get(Calendar.MONTH));
-	                date.setDay(cal.get(Calendar.DAY_OF_MONTH));
-	                date.setYear(cal.get(Calendar.YEAR));
-	            
-			}
-		});*/
-		
+		*/
 		dateCheckBrowse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dateCheckBrowse.getSelection()) {
-					date.setEnabled(true);
+					browseDay.setEnabled(true);
+					browseMonth.setEnabled(true);
+					browseYear.setEnabled(true);
 					dateLabel.setEnabled(true);
 				} else {
-					date.setEnabled(false);
+					browseDay.setEnabled(false);
 					dateLabel.setEnabled(false);
+					browseMonth.setEnabled(false);
+					browseYear.setEnabled(false);
 				}
 			}
 		});
+		
 		
 		checkboxBrowse1 = new Button(browseComposite, SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(checkboxBrowse1);
@@ -634,7 +582,12 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 				}
 				form.getMessageManager().removeMessage("queryText");
 			}
-			
+			else if(browseDay.getSelectionIndex()==0&&browseMonth.getSelectionIndex()==0&&browseYear.getSelectionIndex()==0){
+				form.getMessageManager().addMessage("queryText", "Please choose atleast one of the three fields - Month, Day, or Year.", null, IMessageProvider.ERROR);
+				return false;
+			}
+			else
+				form.getMessageManager().removeMessage("queryText");
 		}
 		else{
 			Calendar cal = Calendar.getInstance();
@@ -686,7 +639,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			public String getToolTipText() {
 				return "Crawl";
 			}
-			
+			String month, day, year;
 			String outputDir;
 			int presidentIndex; int documentIndex; String corpusName;			
 			boolean officeDocs, campaignDocs;
@@ -694,7 +647,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			String query1; String query2;
 			Calendar from = null;
 			Calendar to  = null;
-			Calendar dateBrowse = null;
 			String operator;
 			@Override
 			public void run() {
@@ -732,11 +684,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 									officeDocs = checkboxSearch1.getSelection();
 									campaignDocs = checkboxSearch2.getSelection();
 								} else if(browse) {
-									if (dateCheckBrowse.getSelection())
-									{	
-										dateBrowse = Calendar.getInstance();
-										dateBrowse.set(date.getYear(), date.getMonth(), date.getDay());
-									}
+									month = browseMonth.getSelectionIndex() == 0 ? "" : months[browseMonth.getSelectionIndex()];
+									day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
+									year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
 									officeDocs = checkboxBrowse1.getSelection();
 									campaignDocs = checkboxBrowse2.getSelection();
 									documentIndex = selectDocumentBrowse.getSelectionIndex();	
@@ -781,7 +731,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 									return handledCancelRequest("Cancelled");								
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
-								rc.crawlBrowse(outputDir,dateBrowse,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex),officeDocs, campaignDocs, monitor);
+								
+								rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex),officeDocs, campaignDocs, monitor);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
