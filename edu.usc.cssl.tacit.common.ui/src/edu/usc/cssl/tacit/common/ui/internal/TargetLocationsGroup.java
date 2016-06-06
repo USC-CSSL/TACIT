@@ -221,7 +221,7 @@ public class TargetLocationsGroup {
 		g.setLayoutData(gd);
 		return g;
 	}
-
+public static int corpusClass;
 	private void updateSelectionText() {
 		int totalFiles = calculateFiles(fTreeViewer.getCheckedElements());
 		if (totalFiles > 0)
@@ -234,8 +234,11 @@ public class TargetLocationsGroup {
 			int totalCorpusClass = calculateCorpus(fTreeViewer
 					.getCheckedElements());
 			if (totalCorpusClass > 0)
-				dummyCorpus.setText("No. of corpus class selected : "
+				{dummyCorpus.setText("No. of corpus class selected : "
 						+ String.valueOf(totalCorpusClass));
+				corpusClass = totalCorpusClass;
+				}
+			
 			else {
 				dummyCorpus.setText("");
 			}

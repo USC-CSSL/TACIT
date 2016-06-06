@@ -26,7 +26,7 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class CooccurrenceAnalysis {
 
-	private static Pattern delimiters = Pattern.compile("[\\\\.,;\"!-\\)\\(\\]\\[\\{\\}:\\?'/\\`~$%#@&*_=\\+<>]");
+	private static Pattern delimiters = Pattern.compile("[.,\"]");
 
 	private HashSet<String> seedWords;
 	private String outputPath;
@@ -85,6 +85,8 @@ public class CooccurrenceAnalysis {
 			String outputPath, int threshold, boolean buildMatrix, IProgressMonitor monitor) {
 		String currentLine = null;
 		Date currTime = new Date();
+		ArrayList<String> emptyRemovalString = new ArrayList<String>();
+		emptyRemovalString.add("");
 		setOutputPath(outputPath);
 		setThreshold(threshold);
 		setWindowSize(windowSize);
@@ -120,6 +122,8 @@ public class CooccurrenceAnalysis {
 
 					while ((currentLine = br.readLine()) != null) {
 						ArrayList<String> lineWords = new ArrayList<String>(Arrays.asList(delimiters.matcher(currentLine).replaceAll(" ").toLowerCase().trim().split("\\s+")));
+						//ArrayList<String> lineWords = new ArrayList<String>(Arrays.asList(currentLine.split(" ")));
+						//lineWords.removeAll(emptyRemovalString);
 						boolean isFirstWindow = true;
 						
 						int windowSeedWordCount = 0;
@@ -343,7 +347,7 @@ public class CooccurrenceAnalysis {
 				}
 				fw.write(rowStr + "\n");
 			}
-			appendLog("Writng Word Matrix into " + filename);
+			appendLog("Writing Word Matrix into " + filename);
 			fw.close();
 			appendLog("Word to word matrix stored in " + outputPath + File.separator + filename);
 

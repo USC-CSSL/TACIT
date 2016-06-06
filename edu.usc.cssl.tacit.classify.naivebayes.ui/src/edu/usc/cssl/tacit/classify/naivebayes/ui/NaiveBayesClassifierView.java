@@ -64,6 +64,7 @@ import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -739,12 +740,13 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 	 * @return
 	 */
 	private boolean canItProceed(Map<String, List<String>> classPaths) {
+		
 		// Class paths
-		if (classPaths.size() < 2 && classLayoutData.getTree().getItemCount() < 2) {
+		if (TargetLocationsGroup.corpusClass < 2 && classLayoutData.getTree().getItemCount() < 2) {
 			form.getMessageManager().addMessage("classes", "Provide at least 2 valid class paths", null,
 					IMessageProvider.ERROR);
 			return false;
-		} else if (classLayoutData.getTree().getItemCount() > 1 && classPaths.size() < 2) {
+		} else if (classLayoutData.getTree().getItemCount() > 1 && TargetLocationsGroup.corpusClass < 2) {
 			form.getMessageManager().addMessage("classes", "Select the required classes", null, IMessageProvider.ERROR);
 			return false;
 		} else {

@@ -261,7 +261,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 					}
 				};
 				job.setUser(true);
-				job.schedule();
+			
 				job.addJobChangeListener(new JobChangeAdapter() {
 
 					@Override
@@ -284,6 +284,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 						}
 					}
 				});
+				job.schedule();
 			};
 		});
 
@@ -316,6 +317,7 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	protected boolean canProceed() {
 		// Remove all errors from any previous tries
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+		
 		form.getMessageManager().removeMessage("class1");
 		form.getMessageManager().removeMessage("class2");
 		form.getMessageManager().removeMessage("class1NoProper");
@@ -332,6 +334,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		List<String> class2Files = new TacitUtil().refineInput(class2LayoutData
 				.getSelectedFiles());
 		boolean noProperFiles = true;
+		
+		int numFiles1 = class1Files.size();
+		int numFiles2 = class2Files.size();
 
 		if (class1Files.size() < 1) {
 			form.getMessageManager().addMessage("class1",
@@ -420,13 +425,23 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 					IMessageProvider.ERROR);
 			return false;
 		}
-		if (value < 0) {
+		if (value < 1) {
 			form.getMessageManager().addMessage("kValue",
-					"k Value should be greater than or equal to 0", null,
+					"k Value should be greater than or equal to 1", null,
 					IMessageProvider.ERROR);
 			return false;
 		}
 		form.getMessageManager().removeMessage("kValue");
+		
+		//Check if kValue is not greater than the least number of any of the two class files.
+		int leastClassFileSize = numFiles1 < numFiles2?numFiles1:numFiles2;
+		int kValue = Integer.parseInt(kValueText);
+		if (kValue > leastClassFileSize){
+			form.getMessageManager().addMessage("kValueInvalid","K Value cannot be greater than the number of files in any of the classes. ", null,IMessageProvider.ERROR);
+			return false;
+		}
+		form.getMessageManager().removeMessage("kValueInvalid");
+		
 
 		String message = OutputPathValidation.getInstance()
 				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
@@ -439,6 +454,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			return false;
 		}
 		form.getMessageManager().removeMessage("output");
+		
+		
 
 		return true;
 	}
@@ -504,17 +521,19 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		inputParamsSection.setClient(sectionClient);
 
 		class1Label = toolkit.createLabel(sectionClient,
-				"Enter Class 1 Label:", SWT.None);
+				"Class 1:", SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(class1Label);
 		class1Name = toolkit.createText(sectionClient, "", SWT.BORDER);
+		class1Name.setMessage("Enter Class 1 label");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class1Name);
 		class2Label = toolkit.createLabel(sectionClient,
-				"Enter Class 2 Label:", SWT.None);
+				"Class 2:", SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
 				.applyTo(class2Label);
 		class2Name = toolkit.createText(sectionClient, "", SWT.BORDER);
+		class2Name.setMessage("Enter Class 2 label");
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
 				.applyTo(class2Name);
 

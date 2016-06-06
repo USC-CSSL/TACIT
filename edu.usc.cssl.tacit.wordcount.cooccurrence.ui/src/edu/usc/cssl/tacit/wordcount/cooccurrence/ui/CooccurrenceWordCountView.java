@@ -1,6 +1,11 @@
 package edu.usc.cssl.tacit.wordcount.cooccurrence.ui;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +114,7 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
-		seedFile = createWordFileControl(compInput, "Seed File :");
+		seedFile = createWordFileControl(compInput, "Dictionary :");
 		windowSize = createAdditionalOptions(compInput, "Window Size :", "1");
 		thresholdValue = createAdditionalOptions(compInput, "Threshold :", "");
 
@@ -391,58 +396,132 @@ public class CooccurrenceWordCountView extends ViewPart implements
 
 	private boolean canProceed() {
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-		boolean canPerform = true;
+		//Remove all previously added error messages
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
-		form.getMessageManager().removeMessage("dict");
+		form.getMessageManager().removeMessage("noDictionary");
+		form.getMessageManager().removeMessage("invalidDictionary");
+		form.getMessageManager().removeMessage("windowsize");
+		form.getMessageManager().removeMessage("threshold");
 
-		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
-						"Output");
-		if (message != null) {
-			message = layoutData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null,
-					IMessageProvider.ERROR);
-			canPerform = false;
-		}
 		// validate input
 		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
-			canPerform = false;
+			form.getMessageManager().addMessage("input","Select/Add atleast one input file", null,IMessageProvider.ERROR);
+			return false;
 		}
-		if (windowSize.getText().isEmpty()
-				|| Integer.parseInt(windowSize.getText()) < 1) {
-			form.getMessageManager().addMessage("windowsize",
-					"Window should be an integer value greater than 1", null,
-					IMessageProvider.ERROR);
-			canPerform = false;
+				
+		//Check if empty dictionary
+		if (seedFile == null || seedFile.getText().isEmpty()){
+			form.getMessageManager().addMessage("noDictionary","Select/Add Dictionary file", null,IMessageProvider.ERROR);
+			return false;
+		}
+		
+		//Validate Dictionary
+		/*
+		 * Validation rules for dictionary:
+		 * 1. File must be with the extension of .txt
+		 * 2. Each line must contain at least one alphanumeric word with no spaces. Special characters are allowed.
+		 * 3.At least one word must be present in the dictionary.(Dictionary cannot be empty)
+		 */
+		StringBuffer errorMessage = new StringBuffer("");
+		if (!isValidDictionary(seedFile.getText(),errorMessage)){
+			form.getMessageManager().addMessage("invalidDictionary",errorMessage.toString(), null,IMessageProvider.ERROR);
+			return false;
+		}
+		
+		//Check window size
+		try{
+			if (windowSize.getText().isEmpty() || Integer.parseInt(windowSize.getText()) < 1) {
+				form.getMessageManager().addMessage("windowsize","Window should be an integer value greater than 1", null,IMessageProvider.ERROR);
+				return false;
+			}
+		}catch(NumberFormatException e){
+			form.getMessageManager().addMessage("windowsize","Window should be an integer value greater than 1", null,IMessageProvider.ERROR);
+			return false;
+		}
+	
+
+		//Check threshold value
+		try{
+			if (thresholdValue.getText().isEmpty() || Integer.parseInt(thresholdValue.getText()) < 1) {
+				form.getMessageManager().addMessage("threshold","Threshold should be an integer value greater than or equal to 1",null, IMessageProvider.ERROR);
+				return false;
+			}	
+		}catch(NumberFormatException e){
+			form.getMessageManager().addMessage("threshold","Threshold should be an integer value greater than or equal to 1",null, IMessageProvider.ERROR);
+			return false;
+		}
+		
+		
+		//Compare window size with threshold
+		if (Integer.parseInt(thresholdValue.getText()) > Integer.parseInt(windowSize.getText())) {
+			form.getMessageManager().addMessage("threshold","Window size should not be less than threshold", null,IMessageProvider.ERROR);
+			return false;
+		}
+		
+		//Validate output path
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
+		if (message != null) {
+			message = layoutData.getOutputLabel().getText() + " " + message;
+			form.getMessageManager().addMessage("location", message, null,IMessageProvider.ERROR);
+			return false;
 		}
 
-		if (thresholdValue.getText().isEmpty()
-				|| Integer.parseInt(thresholdValue.getText()) < 1) {
-			form.getMessageManager().addMessage("threshold",
-					"Threshold should be an integer value greater than 1",
-					null, IMessageProvider.ERROR);
-			canPerform = false;
-		}
-
-		if (Integer.parseInt(thresholdValue.getText()) > Integer
-				.parseInt(windowSize.getText())) {
-			form.getMessageManager().addMessage("threshold",
-					"Window size should not be less than threshold", null,
-					IMessageProvider.ERROR);
-			canPerform = false;
-		}
-
-		return canPerform;
+		return true;
 	}
 
 	@Override
 	public String getPartName() {
 		// TODO Auto-generated method stub
 		return "Co-occurrence Analysis";
+	}
+	
+	/**
+	 * Validation method for the input dictionary file
+	 * @param dictionaryPath The string input path of the dictionary file 
+	 * @return isValid boolean
+	 */
+	public boolean isValidDictionary(String dictionaryPath,StringBuffer errorMessage){
+		if (!dictionaryPath.contains(".txt")){
+			errorMessage.append("Invalid Dictionary Format. Reason: Dictionary format is not .txt");
+			return false;
+		}
+		File dictionaryFile = new File(dictionaryPath);
+		
+		if (!dictionaryFile.exists()){
+			errorMessage.append("Dictionary file not found");
+			return false;
+		}else{
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(dictionaryFile));
+				long size = 0l;
+				String currentLine  = "";
+				int lineNum = 1;
+				while ((currentLine = br.readLine() )!= null){
+					currentLine = currentLine.trim();
+					if (currentLine.equals("")){
+						errorMessage.append("Invalid Dictionary Format. Reason: Empty string at line "+lineNum);
+						return false;
+					}
+					if (currentLine.contains(" ")){
+						errorMessage.append("Invalid Dictionary Format. Reason: Multiple words found in a same line at line "+lineNum);
+						return false;
+					}else{
+						size++;
+					}
+					lineNum++;
+				}
+				if (size == 0l){
+					errorMessage.append("Invalid Dictionary Format. Reason: Empty Dictionary ");
+					return false;
+				}
+			} catch (Exception e) {
+				errorMessage.append("Exception occured while reading dictionary.");
+				return false;
+			}
+			
+			return true;
+		}
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,8 +28,23 @@ public class CrossValidator {
 		int numFiles1 = class1Files.length;
 		int numFiles2 = class2Files.length;
 
-		int trains1 = (int) Math.floor(0.90 * numFiles1);
-		int trains2 = (int) Math.floor(0.90 * numFiles2);
+
+		//Check  if kValue is 1
+		if (kValue == 1){
+			svm.cross_train("k"+1, class1Label, class1Files, class2Label,class2Files, doPredictiveWeights,dateObj);
+			double accuracy= svm.cross_predict("k" + 1, class1Label,class1Files, class2Label, class2Files);
+			
+			ConsoleView.printlInConsoleln("");
+			ConsoleView.printlInConsoleln("Average accuracy over " + kValue + " folds = " + accuracy + "%");
+			createRunReport(outputPath, dateObj);
+			clearFiles(kValue, outputPath);
+			writeToCSV(new double[]{accuracy}, outputPath,dateObj);
+			return;
+		}
+
+		int trains1 = (int) Math.floor(((kValue*1.0-1)/kValue)* numFiles1);
+		int trains2 = (int) Math.floor(((kValue*1.0-1)/kValue) * numFiles2);
+		
 
 		double[] accuracies = new double[kValue];
 
@@ -210,4 +226,5 @@ public class CrossValidator {
 			e.printStackTrace();
 		}
 	}
+
 }

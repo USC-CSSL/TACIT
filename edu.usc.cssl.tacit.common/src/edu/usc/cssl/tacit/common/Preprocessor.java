@@ -769,10 +769,10 @@ public class Preprocessor {
 
 			if (!(new File(tempOutputPath).exists())) {
 				new File(tempOutputPath).mkdir();
-			} else {
+			} 
 				ppDir = tempOutputPath + System.getProperty("file.separator") + caller + "_" + currTime;
 				new File(ppDir).mkdir();
-			}
+			
 		} else {
 			ppDir = ppOutputPath + System.getProperty("file.separator") + caller + "_" + currTime;
 			new File(ppDir).mkdir();
