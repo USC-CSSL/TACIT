@@ -185,14 +185,4 @@ public class JsonParser {
 													// default cases
 	}
 
-	public static void main(String[] args) throws FileNotFoundException {
-		JsonParser jh = new JsonParser();
-		Set<Attribute> result = new HashSet<Attribute>();
-		 jh.getKeysFromJson("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\anybody_have_any_good_iphone_text_tones-09-24-15-16-51-35.json", result);
-//		Set<Attribute> jsonKeys = jh
-//				.findJsonStructure("C:\\Program Files (x86)\\eclipse\\json_corpuses\\reddit\\REDDIT_1443138695389\\Dummy\\long.json");
-		for (Attribute attr : result) {
-			System.out.println(attr.key + "->" + attr.dataType);
-		}
-	}
 }

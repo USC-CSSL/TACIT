@@ -28,7 +28,7 @@ public class AmericanPresidencyCrawlerViewImageRegistry {
 		imgReg.put(IAmericanPresidencyCrawlerViewConstants.IMAGE_AMERICAN_PRESIDENCY_OBJ,
 				ImageDescriptor.createFromFile(
 						AmericanPresidencyCrawlerViewImageRegistry.class,
-						"/icons/latin.ico"));
+						"/icons/PresidentialPapersCrawlerIcon.ico"));
 	}
 
 	public static AmericanPresidencyCrawlerViewImageRegistry getImageIconFactory() {

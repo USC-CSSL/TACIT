@@ -378,18 +378,24 @@ public class Preprocessor {
 			break;
 
 		case TWITTER_JSON:
-			processTwitter(corpus, seperateFiles);
+			processJSONArray(corpus, seperateFiles);
 			break;
 
 		case CONGRESS_JSON:
-			processTwitter(corpus, seperateFiles);
+			processJSONArray(corpus, seperateFiles);
 			break;
 
 		case STACKEXCHANGE_JSON:
-			processTwitter(corpus, seperateFiles);
+			processJSONArray(corpus, seperateFiles);
+			break;
+			
+		case TYPEPAD_JSON:
+			processJSONArray(corpus, seperateFiles);
+			break;
 
 		case PRESIDENCY_JSON:
-			processTwitter(corpus, seperateFiles);
+			processJSONArray(corpus, seperateFiles);
+			break;
 		default:
 			break;
 		}
@@ -452,6 +458,11 @@ public class Preprocessor {
 							keyFields.substring(0, keyFields.length() - 1), false);
 				}
 
+			}
+			if (corpusType  == CMDataType.TYPEPAD_JSON){
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.content", true);
 			}
 			f.delete();
 		} catch (Exception e) {
@@ -534,7 +545,7 @@ public class Preprocessor {
 	 * @param corpusClass
 	 * @throws TikaException
 	 */
-	private void processTwitter(CorpusClass corpusClass, boolean seperateFiles) {
+	private void processJSONArray(CorpusClass corpusClass, boolean seperateFiles) {
 		/*** read from file ***/
 		JSONParser jParser;
 		String corpusClassPath = corpusClass.getTacitLocation();
