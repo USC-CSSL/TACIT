@@ -190,7 +190,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		toolkit = createFormBodySection(parent, "American Presidency Documents Crawler");
+		toolkit = createFormBodySection(parent, "UC Santa Barbara Presidential Papers Crawler");
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
 		section.setExpanded(true);
@@ -623,7 +623,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
 		
-		if(browseButton.getSelection()) { 
+		if(browseButton.getSelection()) {
 			
 			if(!dateCheckBrowse.getSelection()){
 				
@@ -643,8 +643,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			cal.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
 			double to = cal.getTimeInMillis() / 1000;
 			
-			if(searchText1.getText().equals("")){
-				form.getMessageManager().addMessage("queryText", "Provide valid search text to crawl.", null, IMessageProvider.ERROR);
+			if(searchText1.getText().equals("") && selectPresidentSearch.getSelectionIndex()==0&&selectDocumentSearch.getSelectionIndex()==0){
+				form.getMessageManager().addMessage("queryText", "Provide provide atleast one of the three fields - Search text, President, or Document category.", null, IMessageProvider.ERROR);
 				return false;
 			}
 			else if(from>to){

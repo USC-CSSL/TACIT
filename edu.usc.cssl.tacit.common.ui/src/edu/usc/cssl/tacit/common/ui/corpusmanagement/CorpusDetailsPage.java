@@ -50,7 +50,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 	private Button plainText = null;
 	private Button twitterJSON = null;
 	private Button redditJSON = null;
-	private Button stackExchangeJSON = null;
+	private Button generalJSON = null;
 	private Button xmlData = null;
 	private Button wordData = null;
 	private IViewSite viewSite;
@@ -241,13 +241,13 @@ public class CorpusDetailsPage implements IDetailsPage {
 			}
 		});
 
-		stackExchangeJSON = toolkit.createButton(dataTypeGroup, "JSON", SWT.RADIO);
-		stackExchangeJSON.setSelection(false);
-		stackExchangeJSON.addSelectionListener(new SelectionAdapter() {
+		generalJSON = toolkit.createButton(dataTypeGroup, "JSON", SWT.RADIO);
+		generalJSON.setSelection(false);
+		generalJSON.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				super.widgetSelected(e);
-				if (stackExchangeJSON.getSelection()) {
+				if (generalJSON.getSelection()) {
 					selectedCorpus.setDataType(CMDataType.STACKEXCHANGE_JSON);
 				}
 			}
@@ -283,7 +283,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 	private void setDataTypeOption(CMDataType type) {
 		plainText.setSelection(false);
-		stackExchangeJSON.setSelection(false);
+		generalJSON.setSelection(false);
 		twitterJSON.setSelection(false);
 		redditJSON.setSelection(false);
 		xmlData.setSelection(false);
@@ -307,10 +307,12 @@ public class CorpusDetailsPage implements IDetailsPage {
 			wordData.setSelection(true);
 			break;
 		case JSON:
-			stackExchangeJSON.setSelection(true);
+			generalJSON.setSelection(true);
 			break;
 		case STACKEXCHANGE_JSON:
-			stackExchangeJSON.setSelection(true);
+			generalJSON.setSelection(true);
+		case PRESIDENCY_JSON:
+			generalJSON.setSelection(true);
 			break;
 		}
 	}

@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.AmericanPresidencyCrawlerView"
+            icon="icons/PresidentialPapersCrawlerIcon.ico"
             id="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.view1"
             name="American Presidency Crawler"
             restorable="true">
@@ -17,7 +18,8 @@
             locationURI="menu:crawl">
          <command
                commandId="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.command1"
-               label="Ame"
+               icon="icons/PresidentialPapersCrawlerIcon.ico"
+               label="UC Santa Barbara Presidential Papers Crawler"
                style="push">
          </command>
       </menuContribution>

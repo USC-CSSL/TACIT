@@ -420,6 +420,11 @@ public class Preprocessor {
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
 			}
+			if (corpusType == CMDataType.PRESIDENCY_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.title,data.body", true);
+			}
 			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);
 				Map<String, QueryDataType> keys = iqp.getJsonKeys();
