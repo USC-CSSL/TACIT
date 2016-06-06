@@ -80,6 +80,13 @@
              visible="false">
        </view>
        <view
+             id="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.view1"
+             minimized="true"
+             relationship="stack"
+             relative="org.eclipse.ui.editorss"
+             visible="false">
+       </view>
+       <view
              id="edu.usc.cssl.tacit.wordcount.weighted.ui.view1"
              minimized="true"
              relationship="stack"
