@@ -387,12 +387,15 @@ public class Preprocessor {
 
 		case STACKEXCHANGE_JSON:
 			processJSONArray(corpus, seperateFiles);
+			break;
 			
 		case TYPEPAD_JSON:
 			processJSONArray(corpus, seperateFiles);
+			break;
 
 		case PRESIDENCY_JSON:
 			processJSONArray(corpus, seperateFiles);
+			break;
 		default:
 			break;
 		}
