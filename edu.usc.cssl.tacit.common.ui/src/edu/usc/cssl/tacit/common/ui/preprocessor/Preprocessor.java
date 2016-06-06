@@ -388,6 +388,8 @@ public class Preprocessor {
 		case STACKEXCHANGE_JSON:
 			processTwitter(corpus, seperateFiles);
 
+		case PRESIDENCY_JSON:
+			processTwitter(corpus, seperateFiles);
 		default:
 			break;
 		}
