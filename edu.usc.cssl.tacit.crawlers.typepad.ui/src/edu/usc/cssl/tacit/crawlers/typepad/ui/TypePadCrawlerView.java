@@ -197,7 +197,7 @@ public class TypePadCrawlerView extends ViewPart {
 							if (maxBlogLimit != -1){
 								monitor.beginTask("Crawling typepad..",(int)maxBlogLimit+20);
 							}else{
-								monitor.beginTask("Crawling typepad..",5000);
+								monitor.beginTask("Crawling typepad..",2000);
 							}
 							
 							
@@ -209,21 +209,30 @@ public class TypePadCrawlerView extends ViewPart {
 							
 							//Creating the corpus and corpus class
 							ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
+							monitor.subTask("Creating Corpus " + corpusName + "...");
+							
 							Corpus typepadCorpus = new Corpus(corpusName, CMDataType.TYPEPAD_JSON);
 							CorpusClass typepadCorpusClass = new CorpusClass();
 							typepadCorpusClass.setClassName(corpusName + "_class");
 							typepadCorpusClass.setClassPath(corpusClassDir);
 							typepadCorpus.addClass(typepadCorpusClass);
 							
+							monitor.worked(10);
 							if (monitor.isCanceled()){
 								throw new OperationCanceledException();
 							}
 							
+							int blogCount = typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
+							
 							ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
-							monitor.worked(10);
-							typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
+							monitor.subTask("Saving Corpus " + corpusName + "...");
 							ManageCorpora.saveCorpus(typepadCorpus);
 							monitor.worked(10);
+							if (blogCount == 0){
+								ConsoleView.printlInConsoleln("No blogs found.");
+							}else{
+								ConsoleView.printlInConsoleln(blogCount+" blogs crawled and saved in corpus.");
+							}
 							monitor.done();
 
 							return Status.OK_STATUS;

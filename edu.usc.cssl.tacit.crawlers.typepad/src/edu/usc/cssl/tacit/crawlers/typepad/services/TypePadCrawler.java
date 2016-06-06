@@ -26,6 +26,8 @@ import edu.usc.cssl.tacit.crawlers.typepad.utils.TypePadWebConstants;
 
 
 public class TypePadCrawler {
+	
+	public final static int MAXIMUM_NETWORK_CALL_REATTEMPTS = 20;
 
 	/**
 	 * This method returns the JSON HTTP response string for the input string URL 
@@ -43,7 +45,8 @@ public class TypePadCrawler {
 			
 			int responseCode = 500; //To enter the while loop
 			int i = 0;
-			while (i <= 10 && responseCode != HttpURLConnection.HTTP_OK){
+			//This loop continuous to hit the URL until the maximum number of network call re-attempts are done or the response code 200 is received, whichever is first. 
+			while (i <= MAXIMUM_NETWORK_CALL_REATTEMPTS && responseCode != HttpURLConnection.HTTP_OK){
 				
 				con = (HttpURLConnection) obj.openConnection();
 
@@ -145,9 +148,10 @@ public class TypePadCrawler {
 	 * @param corpusLocation The output location for the corpus
 	 * @param corpusName Name of the corpus
 	 * @param monitor IProgessMonitor to update the progress bar
+	 * @return No. of blogs crawled.
 	 * @throws Exception
 	 */
-	public void getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws Exception{
+	public int getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws Exception{
 		
 		FileWriter fw =  new FileWriter(new File(corpusLocation + File.separator + corpusName +".json"));
 		
@@ -166,6 +170,7 @@ public class TypePadCrawler {
 		JSONArray retrievedEntriesArray = null;
 		String moreResultsToken = "";
 		String httpResponse = "";
+		String blogTitle = "";
 
 		int blogCount = 1;
 		
@@ -242,8 +247,10 @@ public class TypePadCrawler {
 					
 					try{
 						entry.put(TypePadJSONKeys.TITLE, retrievedEntryObject.getString(TypePadJSONKeys.TITLE));
+						blogTitle = retrievedEntryObject.getString(TypePadJSONKeys.TITLE);
 					}catch(JSONException e ){
 						entry.put(TypePadJSONKeys.TITLE, "");
+						blogTitle = "";
 					}
 					
 					entryList.put(entry);
@@ -253,6 +260,8 @@ public class TypePadCrawler {
 					}
 					blogCount++;
 					monitor.worked(1);
+					
+					monitor.subTask("Crawling Blog #"+(blogCount-1)+" "+blogTitle);
 					
 					//Check to break the operation if the user has cancelled.
 					if (monitor.isCanceled()){
@@ -277,7 +286,7 @@ public class TypePadCrawler {
 		
 		fw.write(entryList.toString());
 		fw.close();
-		
+		return blogCount-1;
 	}
 	
 	
