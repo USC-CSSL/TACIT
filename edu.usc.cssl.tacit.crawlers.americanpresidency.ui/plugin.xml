@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.AmericanPresidencyCrawlerView"
+            id="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.view1"
+            name="American Presidency Crawler"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.command1"
+               label="Ame"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.command1"
+            name="American Presidency Crawler">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.handlers.AmericanPresidencyCrawlerViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.command1">
+      </handler>
+   </extension>
+
+</plugin>
