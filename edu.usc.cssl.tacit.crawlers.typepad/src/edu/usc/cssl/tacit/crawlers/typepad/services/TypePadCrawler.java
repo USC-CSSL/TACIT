@@ -256,6 +256,7 @@ public class TypePadCrawler {
 					entryList.put(entry);
 
 					if (maxLimit != -1 && blogCount == maxLimit){
+						blogCount++;
 						break one;
 					}
 					blogCount++;
