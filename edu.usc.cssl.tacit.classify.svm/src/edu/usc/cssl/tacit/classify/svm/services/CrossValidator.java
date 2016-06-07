@@ -32,13 +32,14 @@ public class CrossValidator {
 		//Check  if kValue is 1
 		if (kValue == 1){
 			svm.cross_train("k"+1, class1Label, class1Files, class2Label,class2Files, doPredictiveWeights,dateObj);
-			double accuracy= svm.cross_predict("k" + 1, class1Label,class1Files, class2Label, class2Files);
-			
+			double tempResults[]= svm.cross_predict("k" + 1, class1Label,class1Files, class2Label, class2Files);
+			double accuracy = tempResults[0];
+			double pValue = tempResults[1];
 			ConsoleView.printlInConsoleln("");
 			ConsoleView.printlInConsoleln("Average accuracy over " + kValue + " folds = " + accuracy + "%");
 			createRunReport(outputPath, dateObj);
 			clearFiles(kValue, outputPath);
-			writeToCSV(new double[]{accuracy}, outputPath,dateObj);
+			writeToCSV(new double[]{accuracy},new double[]{pValue}, outputPath,dateObj);
 			return;
 		}
 
@@ -47,6 +48,7 @@ public class CrossValidator {
 		
 
 		double[] accuracies = new double[kValue];
+		double[] pValues = new double[kValue];
 
 		int index1 = 0;
 		int index2 = 0;
@@ -125,8 +127,11 @@ public class CrossValidator {
 
 			svm.cross_train("k" + i, class1Label, trainFiles1, class2Label,
 					trainFiles2, doPredictiveWeights,dateObj);
-			accuracies[i - 1] = svm.cross_predict("k" + i, class1Label,
+			
+			double tempResults[]= svm.cross_predict("k" + i, class1Label,
 					testFiles1, class2Label, testFiles2);
+			accuracies[i - 1] = tempResults[0];
+			pValues[i-1] = tempResults[1];
 			
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
@@ -157,7 +162,7 @@ public class CrossValidator {
 				+ " folds = " + averageAccuracy / accuracies.length + "%");
 		createRunReport(outputPath, dateObj);
 		clearFiles(kValue, outputPath);
-		writeToCSV(accuracies, outputPath,dateObj);
+		writeToCSV(accuracies,pValues, outputPath,dateObj);
 	}
 	protected void createRunReport(String outputPath, Date dateObj){
 
@@ -198,7 +203,14 @@ public class CrossValidator {
 		return output + System.getProperty("file.separator")
 				+ "SVM-Classification-" + df.format(dateObj) + ".csv";
 	}
-	private void writeToCSV(double[] accuracies, String output, Date dateObj) {
+	
+	/**
+	 * This method writes the final report of accuracies and binomial p values over all the runs.
+	 * @param accuracies
+	 * @param output
+	 * @param dateObj
+	 */
+	private void writeToCSV(double[] accuracies,double[] pValues, String output, Date dateObj) {
 		double averageAccuracy = 0;
 
 		for (int j = 0; j < accuracies.length; j++) {
@@ -209,13 +221,13 @@ public class CrossValidator {
 		File outFile = new File(outputPath);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-			bw.write("Run,Accuracy");
+			bw.write("Run,Accuracy,pValue");
 			bw.newLine();
 
 			for (int i = 0; i < accuracies.length; i++) {
 				bw.write(Integer.toString(i + 1) + ","
-						+ Double.toString(accuracies[i]));
-				bw.newLine();
+						+ Double.toString(accuracies[i]) + "," + Double.toString(pValues[i]));
+				bw.newLine(); 
 			}
 			bw.write("Average accuracy,"
 					+ Double.toString(averageAccuracy / accuracies.length));

@@ -306,8 +306,10 @@ public class SVMClassify {
 		return intermediatePath + "-weights" + "-"
 				+ kVal +"-"+df.format(dateObj)+".csv";
 	}
-	public double cross_predict(String kVal, String label1, File[] testFiles1,
+	public double[] cross_predict(String kVal, String label1, File[] testFiles1,
 			String label2, File[] testFiles2) throws IOException {
+		
+		double[] returnValues  = new double[2];
 
 		// if TFIDF method, clear and rebuild df map
 		dfMap.clear();
@@ -375,8 +377,11 @@ public class SVMClassify {
 				pvalue = Math.abs(pvalue - 1);
 		}
 		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
-		double x = (double) correct / total * 100;
-		return (double) correct / total * 100;
+		double accuracy = (double) correct / total * 100;
+		returnValues[0] = accuracy;
+		returnValues[1] = pvalue;
+		
+		return returnValues;
 	}
 
 }
