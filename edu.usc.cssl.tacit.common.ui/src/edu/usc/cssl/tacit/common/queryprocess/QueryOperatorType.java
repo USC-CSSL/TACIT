@@ -36,9 +36,9 @@ public enum QueryOperatorType {
 			return STRING_EQUALS;
 		else if(op.equals("contains"))
 			return STRING_CONTAINS;
-		else if(op.equals("starts_with"))
+		else if(op.equals("starts with"))
 			return STRING_STARS_WITH;
-		else if(op.equals("ends_with"))
+		else if(op.equals("ends with"))
 			return STRING_ENDS_WITH;
 		else if(op.equals(">"))
 			return INTEGER_GREATER_THAN;
