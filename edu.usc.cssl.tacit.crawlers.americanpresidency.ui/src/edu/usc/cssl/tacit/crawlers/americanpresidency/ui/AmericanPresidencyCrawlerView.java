@@ -196,7 +196,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "UC Santa Barbara Presidential Papers Crawler");
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(section);
 		section.setExpanded(true);
 		form.setImage(AmericanPresidencyCrawlerViewImageRegistry.getImageIconFactory().getImage(IAmericanPresidencyCrawlerViewConstants.IMAGE_AMERICAN_PRESIDENCY_OBJ));
 
@@ -227,7 +227,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		buttonComposite.setText("Type of crawl");
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
 
 		
@@ -309,19 +309,19 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		
 		//Gerneal search parameters
 		searchComposite = toolkit.createComposite(mainComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(searchComposite);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(searchComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchComposite);
+		GridLayoutFactory.fillDefaults().equalWidth(true).applyTo(searchComposite);
 		
 		commonsearchComposite = toolkit.createComposite(searchComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(commonsearchComposite);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(commonsearchComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commonsearchComposite);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(commonsearchComposite);
 		
 		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
 		
 		// split it into 3		
 		Group filterResultsGroup = new Group(searchComposite, SWT.LEFT);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(filterResultsGroup);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true).applyTo(filterResultsGroup);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(filterResultsGroup);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(filterResultsGroup);
 		filterResultsGroup.setText("Filter Results");
 		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
 		
@@ -378,11 +378,11 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		fromLabel.setText("From:");
 		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(fromLabel);
 		
-		final Composite dateHolder1 = new Composite(dateComposite1, SWT.None);
+		/*final Composite dateHolder1 = new Composite(dateComposite1, SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(1,1).applyTo(dateHolder1);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder1);
-		
-		fromDate = new DateTime(dateHolder1, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dateHolder1);
+		*/
+		fromDate = new DateTime(dateComposite1, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
 		
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
@@ -413,13 +413,13 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		toLabel.setText("To:");
 		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(toLabel);
 		
-		final Composite dateHolder2 = new Composite(dateComposite2, SWT.None);
+		/*final Composite dateHolder2 = new Composite(dateComposite2, SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).indent(15,0).span(1,1).applyTo(dateHolder2);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder2);
+		*/
 		
-		
-		toDate = new DateTime(dateHolder2, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toDate);
+		toDate = new DateTime(dateComposite2, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).indent(15,0).span(1, 0).applyTo(toDate);
 		toLabel.setEnabled(false);
 		toDate.setEnabled(false);
 		
