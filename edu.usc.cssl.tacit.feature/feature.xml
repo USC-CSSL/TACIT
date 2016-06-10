@@ -136,6 +136,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="edu.usc.cssl.tacit.crawlers.americanpresidency"
          download-size="0"
@@ -149,6 +150,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="edu.usc.cssl.tacit.crawlers.latin"
          download-size="0"
@@ -239,6 +241,21 @@
          version="0.0.0"
          unpack="false"/>
 
+
+   <plugin
+         id="edu.usc.cssl.tacit.topicmodel.turbotopics"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.tacit.topicmodel.turbotopics.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
          id="edu.usc.cssl.tacit.wordcount.standard.ui"
          download-size="0"
@@ -315,22 +332,20 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="edu.usc.cssl.tacit.crawlers.typepad"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-  <plugin
-     id="edu.usc.cssl.tacit.crawlers.typepad.ui"
-     download-size="0"
-     install-size="0"
-     version="0.0.0"
-     unpack="false"/>
-         
-         
+
+   <plugin
+         id="edu.usc.cssl.tacit.crawlers.typepad.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="edu.usc.cssl.tacit.wordcount.weighted"
@@ -387,5 +402,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
 
 </feature>

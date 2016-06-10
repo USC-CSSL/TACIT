@@ -142,6 +142,15 @@
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
+                       
+          <view
+              id="edu.usc.cssl.tacit.topicmodel.turbotopics.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
+        
         <view
               id="edu.usc.cssl.tacit.wordcount.standard.ui.view1"
               minimized="true"
@@ -202,14 +211,7 @@
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
-         
-          <view
-              id="edu.usc.cssl.tacit.crawlers.americanpresidency.ui.view1"
-              minimized="true"
-              relationship="stack"
-              relative="org.eclipse.ui.editorss"
-              visible="false">
-        </view>
+
         
     </perspectiveExtension>
  </extension>
