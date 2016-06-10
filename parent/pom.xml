@@ -74,6 +74,9 @@
 
 		<module>../edu.usc.cssl.tacit.topicmodel.zlda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
+		
+		<module>../edu.usc.cssl.tacit.topicmodel.turbotopics.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.turbotopics</module>
 
 		<!-- Help -->
 		<module>../edu.usc.cssl.tacit.help</module>
