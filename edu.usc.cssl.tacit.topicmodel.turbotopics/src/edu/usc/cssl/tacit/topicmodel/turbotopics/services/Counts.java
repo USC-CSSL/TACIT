@@ -1,9 +1,9 @@
 package edu.usc.cssl.tacit.topicmodel.turbotopics.services;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Created by msamak on 3/6/16.
@@ -28,7 +28,7 @@ public class Counts {
      * @param root_filter - A function of that returns true or false for a given string
      * @param next_filter - A function of that returns true or false for a given string
      */
-    public void update_counts(String doc, Function<String,Boolean>root_filter, Function<String,Boolean>next_filter){
+    public void update_counts(String doc, TestingFilter root_filter, TestingFilter next_filter){
         String[] words = Turbotopics.word_list(doc,vocab);
         for(int pos = 0; pos < words.length; pos++){
             String w = words[pos];
@@ -62,7 +62,7 @@ public class Counts {
     }
 
     /** Same as above method but with 1 filters */
-    public void update_counts(String doc, Function<String,Boolean>root_filter){
+    public void update_counts(String doc, TestingFilter root_filter){
         update_counts(doc,root_filter,null);
     }
 
@@ -112,7 +112,7 @@ public class Counts {
         Map<Object,Object> selected = new HashMap<Object,Object>();
         Map<Object,Object> scores = sig_test.score(marg_w,marg,bigram_w,total,min);
         ArrayList<Object>items = Turbotopics.items(scores);
-        items.sort(new Comparator<Object>() {
+        Collections.sort(items,new Comparator<Object>() {
             @Override
             public int compare(Object o1, Object o2) {
                 Object[]a1 = (Object[])o1;

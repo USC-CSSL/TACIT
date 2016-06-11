@@ -86,7 +86,8 @@ public class LikelihoodRatio {
             items[1] = marg.get(key);
             table.add(items);
         }
-        table.sort(new Comparator<Object[]>() {
+
+        Collections.sort(table, new Comparator<Object[]>() {
             @Override
             public int compare(Object[] o1, Object[] o2) {
                 if ((Integer)o1[1] - (Integer)o2[1] == 0)
@@ -97,6 +98,7 @@ public class LikelihoodRatio {
                     return -1;
             }
         });
+
         for(int perm=0; perm < nperm; perm++){
             Map<Object,Object> perm_bigram = Turbotopics.sample_no_replace(total,table,count);
             Map<Object,Object> obs= score(count,marg,perm_bigram,total,1);

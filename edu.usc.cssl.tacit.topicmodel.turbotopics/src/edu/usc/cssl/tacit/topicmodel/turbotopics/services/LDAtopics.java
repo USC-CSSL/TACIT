@@ -4,8 +4,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Created by msamak on 3/14/16.
@@ -130,9 +128,9 @@ public class LDAtopics {
             }
         }
         if(!topicFound) return;
-        Function<String,Boolean> root_filter = new Function<String, Boolean>() {
+        TestingFilter root_filter = new TestingFilter() {
             @Override
-            public Boolean apply(String s) {
+            public boolean apply(String s) {
                 int comp = -1;
                 if(topicmap.containsKey(s.split(" ")[0])){
                     comp = (Integer)topicmap.get(s.split(" ")[0]);
@@ -161,7 +159,7 @@ public class LDAtopics {
             item[1] = assigns.get(i);
             iter_gen.add(item);
         }
-        BiConsumer<Counts,Object[]> update_fun = new BiConsumer<Counts, Object[]>() {
+        TestingBiconsumer<Counts,Object[]> update_fun = new TestingBiconsumer<Counts, Object[]>() {
             @Override
             public void accept(Counts counts, Object[] objects) {
                 update_counts_from_topic((String)objects[0],(Map<Object,Object>)objects[1],topic,counts);

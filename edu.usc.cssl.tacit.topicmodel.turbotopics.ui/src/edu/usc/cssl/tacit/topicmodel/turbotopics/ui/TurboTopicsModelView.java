@@ -348,7 +348,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						
 						//------Generating the vocab file------
 						
-						String wordWeightsFile = outputPath + System.getProperty("file.separator") + "Lda.word-weights.txt";
+						String wordWeightsFile = outputPath + System.getProperty("file.separator") + preFix+".word-weights.txt";
 						String vocabFile = topicModelDirPath + System.getProperty("file.separator") + "vocab";
 						HashMap<String, Integer> vocab = new HashMap<String, Integer>();
 						BufferedReader br = null;
@@ -361,8 +361,11 @@ public class TurboTopicsModelView extends ViewPart implements
 								vocab.put(line.split("\t")[1], 1);
 							}
 							br.close();
+
 							String vocabKeys[] = vocab.keySet().toArray(new String[1]); 
+
 							Arrays.sort(vocabKeys);
+
 							for(String word : vocabKeys){
 								fw.write(word + "\n");
 							};

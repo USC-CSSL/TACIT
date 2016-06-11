@@ -1,70 +1,21 @@
 package edu.usc.cssl.tacit.topicmodel.turbotopics.services;
-import java.io.*;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by msamak on 3/7/16.
  */
 public class Turbotopics {
     private static Map<String,String> stop_words = null;
-
-    /**
-     * Returns a stop_words Filter.
-     * The filter returns true if a given word is not a stop word
-     * Otherwise returns false
-     * @return
-     */
-    public static Function<String,Boolean> getStopFilter(){
-        Function<String,Boolean> stop_filter = new Function<String, Boolean>() {
-            @Override
-            public Boolean apply(String s) {
-                return !getStopWords().containsKey(s);
-            }
-        };
-        return stop_filter;
-    }
-
-    /**
-     * Return char_filter for a given N
-     * This returns true if the word length >= N
-     * Otherwise return false
-     * @param n
-     * @return
-     */
-    public static Function<String,Boolean> getCharFilter(final int n){
-        Function<String,Boolean> char_filter = new Function<String, Boolean>() {
-            @Override
-            public Boolean apply(String word) {
-                return word.length() >= n;
-            }
-        };
-        return char_filter;
-    }
-
-    /**
-     * Return a digit_filter
-     * Return true if the word does not contain a digit
-     * Otherwise returns false
-     * @return
-     */
-    public static Function<String,Boolean> getDigitFilter(){
-        String pattern = "[0-9]";
-        final Pattern r = Pattern.compile(pattern);
-        Function<String,Boolean> digit_filter = new Function<String, Boolean>() {
-            @Override
-            public Boolean apply(String word) {
-                Matcher m = r.matcher(word);
-                return !m.find();
-            }
-        };
-        return digit_filter;
-    }
-
     /**
      * @return: Returns a chi_sq_table filled with default values
      */
@@ -202,7 +153,7 @@ public class Turbotopics {
     public static void write_vocab(Map<Object,Object> v, String outname, Boolean incl_stop) throws Exception {
         PrintWriter pw = new PrintWriter(outname);
         ArrayList<Object> items =  items(v);
-        items.sort(new Comparator<Object>() {
+        Collections.sort(items, new Comparator<Object>() {
             @Override
             public int compare(Object o1, Object o2) {
                 Object[] a1 = (Object[])o1;
@@ -240,7 +191,7 @@ public class Turbotopics {
      * @param min: minimum count
      * @return An the Counts object in which the significant bigrams are stored
      */
-    public static Counts nested_sig_bigrams(ArrayList<Object[]>iter_generator, BiConsumer<Counts,Object[]> update_fun, LikelihoodRatio sig_test, Integer min){
+    public static Counts nested_sig_bigrams(ArrayList<Object[]>iter_generator, TestingBiconsumer<Counts,Object[]> update_fun, LikelihoodRatio sig_test, Integer min){
         System.out.println("computing initial counts\n");
         Counts counts = new Counts();
         ArrayList<String> terms = new ArrayList<String>();
@@ -269,7 +220,7 @@ public class Turbotopics {
                 update_fun.accept(counts,doc);
             }
             items = items(new_vocab);
-            items.sort(new Comparator<Object>() {
+            Collections.sort(items,new Comparator<Object>() {
                 @Override
                 public int compare(Object o1, Object o2) {
                     Object[] a1 = (Object[])o1;
@@ -302,7 +253,7 @@ public class Turbotopics {
      */
     private static ArrayList<String> getTerms(ArrayList<Object> items, int min){
         ArrayList<String> terms = new ArrayList<String>();
-        items.sort(new Comparator<Object>() {
+        Collections.sort(items, new Comparator<Object>() {
             @Override
             public int compare(Object o1, Object o2) {
                 Object[]a1 = (Object[])o1;
