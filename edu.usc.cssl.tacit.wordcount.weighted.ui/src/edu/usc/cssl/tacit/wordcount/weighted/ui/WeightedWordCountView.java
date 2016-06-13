@@ -478,13 +478,13 @@ public class WeightedWordCountView extends ViewPart implements
 		// check input
 		if (inputLayoutData.getSelectedFiles().size() < 1) {
 			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
+					"Select/Add at least one input file", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
 		if (dictLayoutData.getSelectedFiles().size() < 1) {
 			form.getMessageManager().addMessage("dict",
-					"Select/Add atleast one Dictionary file", null,
+					"Select/Add at least one Dictionary file", null,
 					IMessageProvider.ERROR);
 			canPerform = false;
 		}
