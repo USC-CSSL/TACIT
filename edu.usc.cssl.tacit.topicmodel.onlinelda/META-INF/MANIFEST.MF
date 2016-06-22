@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Onlinelda
+Bundle-SymbolicName: edu.usc.cssl.tacit.topicmodel.onlinelda
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.topicmodel.onlinelda.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0",
+ org.eclipse.ui;bundle-version="3.107.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.tacit.topicmodel.onlinelda.services
+Bundle-ClassPath: commons-math3-3.6.1.jar,
+ .

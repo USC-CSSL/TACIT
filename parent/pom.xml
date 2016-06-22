@@ -71,6 +71,9 @@
 		<!-- Topic Model -->
 		<module>../edu.usc.cssl.tacit.topicmodel.lda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.lda</module>
+		
+		<module>../edu.usc.cssl.tacit.topicmodel.onlinelda.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.onlinelda</module>
 
 		<module>../edu.usc.cssl.tacit.topicmodel.zlda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
