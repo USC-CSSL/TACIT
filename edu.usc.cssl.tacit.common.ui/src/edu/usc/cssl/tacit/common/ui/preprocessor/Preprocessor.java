@@ -517,7 +517,7 @@ public class Preprocessor {
 						sb.append(str);
 					}
 					new File(tempFile).delete();
-				} else {
+					} else {
 					String outFile = tempDir + System.getProperty("file.separator") + "json_file_" + k + ".txt";
 					FileWriter fw = new FileWriter(outFile);
 					fw.write(str);

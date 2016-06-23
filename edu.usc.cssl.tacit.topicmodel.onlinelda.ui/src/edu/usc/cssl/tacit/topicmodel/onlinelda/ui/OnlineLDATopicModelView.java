@@ -1,6 +1,8 @@
 package edu.usc.cssl.tacit.topicmodel.onlinelda.ui;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +44,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.cssl.tacit.common.Preprocessor;
+import edu.usc.cssl.tacit.common.ui.preprocessor.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -65,6 +67,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 	private TableLayoutData inputLayoutData;
 	private Text seedFileText;
 	private Text topics;
+	private Text tokensPerTopic;
 	private Button fAddFileButton;
 	protected Job job;
 
@@ -108,6 +111,8 @@ public class OnlineLDATopicModelView extends ViewPart implements
 		seedFileText = createSeedFileControl(compInput, "Seed File Location :",
 				"");
 		topics = createAdditionalOptions(compInput, "No. of Topics :", "10");
+		tokensPerTopic = createAdditionalOptions(compInput, "No. of tokens per topic :", "10");
+		
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
 				.applyTo(client1);
@@ -242,8 +247,8 @@ public class OnlineLDATopicModelView extends ViewPart implements
 				if (!canProceedJob()) {
 					return;
 				}
-				final int noOfTopics = Integer.valueOf(topics.getText())
-						.intValue();
+				final int noOfTopics = Integer.valueOf(topics.getText()).intValue();
+				final int noOfTokensPerTopic = Integer.valueOf(tokensPerTopic.getText()).intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
@@ -260,7 +265,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(),
 								null, null, form);
-						monitor.beginTask("TACIT started analyzing...", selectedFiles.size()*2+50);
+						monitor.beginTask("TACIT started analyzing...", selectedFiles.size()*2+50+noOfTopics*50);
 	
 						Preprocessor ppObj = null;
 
@@ -268,8 +273,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 						try {
 							monitor.subTask("Preprocessing documents...");;
 							ppObj = new Preprocessor("Online_LDA", isPreprocess);
-							inFiles = ppObj.processData("Online_LDA",
-									selectedFiles);
+							inFiles = ppObj.processData("Online_LDA",selectedFiles,true);
 							monitor.worked(50);
 						} catch (IOException e1) {
 							e1.printStackTrace();
@@ -283,7 +287,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 						long startTime = System.currentTimeMillis();
 
 						Date dateObj = new Date();
-						OnlineLDA onlineLDA = new OnlineLDA(inFiles, seedFilePath, outputPath, noOfTopics, 10);
+						OnlineLDA onlineLDA = new OnlineLDA(inFiles, seedFilePath, outputPath, noOfTopics, noOfTokensPerTopic);
 						//ZlabelTopicModelAnalysis zlda = new ZlabelTopicModelAnalysis(
 								//new SubProgressMonitor(monitor, 70));
 						monitor.subTask("Topic Modelling...");
@@ -367,7 +371,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 						.getWorkbench()
 						.getHelpSystem()
 						.displayHelp(
-								"edu.usc.cssl.tacit.topicmodel.zlda.ui.zlda");
+								"edu.usc.cssl.tacit.topicmodel.onlinelda.ui.onlinelda");
 			};
 		};
 		mgr.add(helpAction);
@@ -396,45 +400,111 @@ public class OnlineLDATopicModelView extends ViewPart implements
 
 	private boolean canProceedJob() {
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-		boolean canProceed = true;
+
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("inputlocation");
 		form.getMessageManager().removeMessage("topics");
 		form.getMessageManager().removeMessage("seedfile");
-		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(),
-						"Output");
+		form.getMessageManager().removeMessage("token");
+		
+		//Validate Output
+		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");
 		if (message != null) {
 
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
-			canProceed = false;
+			return false;
 		}
+		
 		// validate input
 		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
-			canProceed = false;
+			form.getMessageManager().addMessage("input","Select/Add atleast one input file", null,IMessageProvider.ERROR);
+			return false;
 		}
-		String seedFileMsg = OutputPathValidation.getInstance()
-				.validateOutputDirectory(seedFileText.getText(), "Seed File");
+		
+		//Validate Seed File
+		String seedFileMsg = OutputPathValidation.getInstance().validateOutputDirectory(seedFileText.getText(), "Seed File");
 		if (seedFileMsg != null) {
-
 			seedFileMsg = seedFileText.getText() + " " + seedFileMsg;
-			form.getMessageManager().addMessage("seedfile", seedFileMsg, null,
-					IMessageProvider.ERROR);
-			canProceed = false;
+			form.getMessageManager().addMessage("seedfile", seedFileMsg, null,IMessageProvider.ERROR);
+			return false;
 		}
-		if (topics.getText().isEmpty()
-				|| Integer.parseInt(topics.getText()) < 1) {
-			form.getMessageManager().addMessage("topic",
-					"Number of topics cannot be empty or less than 1", null,
-					IMessageProvider.ERROR);
-			canProceed = false;
+		
+		StringBuffer errorMessage = new StringBuffer("");
+		if (!isValidDictionary(seedFileText.getText(),errorMessage)){
+			form.getMessageManager().addMessage("seedfile",errorMessage.toString(), null,IMessageProvider.ERROR);
+			return false;
 		}
-		return canProceed;
+		
+		
+		//Validate topics
+		try{
+			if (topics.getText().isEmpty()|| Integer.parseInt(topics.getText()) < 1) {
+				form.getMessageManager().addMessage("topic","Number of topics cannot be empty or less than 1", null,IMessageProvider.ERROR);
+				return false;
+			}
+			
+		}catch(Exception e){
+			form.getMessageManager().addMessage("topic","Please enter a valid number of topics", null,IMessageProvider.ERROR);
+			return false;
+		}
+
+		//Validate Tokens per topic
+		try{
+			if (tokensPerTopic.getText().isEmpty()|| Integer.parseInt(tokensPerTopic.getText()) < 1) {
+				form.getMessageManager().addMessage("token","Number of tokens per topic cannot be empty or less than 1", null,IMessageProvider.ERROR);
+				return false;
+			}
+		}catch(Exception e){
+			form.getMessageManager().addMessage("token","Please enter a valid number of tokens per topic", null,IMessageProvider.ERROR);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean isValidDictionary(String dictionaryPath,StringBuffer errorMessage){
+		if (!dictionaryPath.contains(".txt")){
+			errorMessage.append("Invalid Seed File Format. Reason: Dictionary format is not .txt");
+			return false;
+		}
+		File dictionaryFile = new File(dictionaryPath);
+		
+		if (!dictionaryFile.exists()){
+			errorMessage.append("Seed File not found");
+			return false;
+		}else{
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(dictionaryFile));
+				long size = 0l;
+				String currentLine  = "";
+				int lineNum = 1;
+				while ((currentLine = br.readLine() )!= null){
+					currentLine = currentLine.trim();
+					if (currentLine.equals("")){
+						errorMessage.append("Invalid Seed File Format. Reason: Empty string at line "+lineNum);
+						return false;
+					}
+					if (currentLine.contains(" ")){
+						errorMessage.append("Invalid Seed File Format. Reason: Multiple words found in a same line at line "+lineNum);
+						return false;
+					}else{
+						size++;
+					}
+					lineNum++;
+				}
+				if (size == 0l){
+					errorMessage.append("Invalid Seed File Format. Reason: Empty Dictionary ");
+					return false;
+				}
+			} catch (Exception e) {
+				errorMessage.append("Exception occured while reading dictionary.");
+				return false;
+			}
+			
+			return true;
+		}
 	}
 
 }

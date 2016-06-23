@@ -44,6 +44,7 @@ public class OnlineLDA {
 		ConsoleView.printlInConsoleln("Document batch size: " + batchSize);
 		
 		List<String> docs = getDocs(documentList,monitor);
+		ConsoleView.printlInConsoleln("Total documents extracted" + docs.size());
 		Vocabulary vocab = new Vocabulary(dictionaryLocation);
 
 		int W = vocab.words.size();
@@ -72,7 +73,7 @@ public class OnlineLDA {
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		PrintWriter writer1 = new PrintWriter(outputLocation+File.separator+"lambda_"+df.format(dateObj)+".txt", "UTF-8");
 		PrintWriter writer2 = new PrintWriter(outputLocation+File.separator+"output_"+df.format(dateObj)+".txt", "UTF-8");
-		out.printTopics(writer1, writer2,dList,vocab,noOfWordsPerTopic);
+		out.printTopics(writer1, writer2,dList,vocab,noOfWordsPerTopic, monitor);
 
 		
 	}

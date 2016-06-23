@@ -10,6 +10,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Stream;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 /*
  * An encapsulating class to hold the results of updateLambda method in the OnlineLda class
  */
@@ -36,11 +39,12 @@ public class OnlineLDAOutput {
         ConsoleView.printlInConsoleln("Perplexity: "+perplexity);
 	}
 	
-	public void printTopics(PrintWriter p1, PrintWriter p2, ArrayList<Documents> dList, Vocabulary v, int wordsPerTopic){
+	public void printTopics(PrintWriter p1, PrintWriter p2, ArrayList<Documents> dList, Vocabulary v, int wordsPerTopic, IProgressMonitor monitor){
 		
 		int [][] topicWords = new int[lambda.numOfRows()][wordsPerTopic];
 		
 		for(int k=0; k<lambda.numOfRows(); k++){
+			monitor.subTask("Writing Topic " + k);
 			p2.println("Topic "+k);
 			ConsoleView.printlInConsoleln("Topic "+k);
 			int num = 0;
@@ -71,6 +75,11 @@ public class OnlineLDAOutput {
 		        num++;
 		    }
 			ConsoleView.printlInConsoleln();
+			
+			monitor.worked(50);
+			if (monitor.isCanceled()){
+				throw new OperationCanceledException();
+			}
 		}
 		p1.close();
 		p2.close();
