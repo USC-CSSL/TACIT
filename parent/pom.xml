@@ -39,6 +39,9 @@
 		
 		<module>../edu.usc.cssl.tacit.crawlers.typepad.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.typepad</module>
+		
+		<module>../edu.usc.cssl.tacit.crawlers.frontier.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.frontier</module>
 
 		<!-- Cluster -->
 
@@ -74,6 +77,12 @@
 		
 		<module>../edu.usc.cssl.tacit.topicmodel.onlinelda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.onlinelda</module>
+		
+		<module>../edu.usc.cssl.tacit.topicmodel.hdp.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.hdp</module>
+		
+		<module>../edu.usc.cssl.tacit.topicmodel.slda.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.slda</module>
 
 		<module>../edu.usc.cssl.tacit.topicmodel.zlda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.zlda</module>
