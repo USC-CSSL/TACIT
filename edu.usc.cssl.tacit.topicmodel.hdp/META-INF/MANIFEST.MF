@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hdp
+Bundle-SymbolicName: edu.usc.cssl.tacit.topicmodel.hdp
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.topicmodel.hdp.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.tacit.topicmodel.hdp.services,
+ edu.usc.cssl.tacit.topicmodel.hdp.utils
