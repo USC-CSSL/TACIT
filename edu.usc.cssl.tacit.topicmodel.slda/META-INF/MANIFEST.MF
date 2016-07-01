@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Slda
+Bundle-SymbolicName: edu.usc.cssl.tacit.topicmodel.slda
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.topicmodel.slda.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.topicmodel.lda;bundle-version="1.0.0",
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.tacit.topicmodel.slda.services
+Bundle-ClassPath: mallet-deps.jar,
+ mallet.jar,
+ weka-3.7.0.jar,
+ .

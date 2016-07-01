@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.topicmodel.slda.ui.SLDATopicModelView"
+            id="edu.usc.cssl.tacit.topicmodel.slda.ui.view1"
+            name="SLDA Topic Model"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:topicmodel">
+         <command
+               commandId="edu.usc.cssl.tacit.topicmodel.slda.ui.command1"
+               label="SLDA"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.topicmodel.slda.ui.command1"
+            name="SLDA Topic Model">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.topicmodel.slda.ui.handlers.SLDATopicModelViewHandler"
+            commandId="edu.usc.cssl.tacit.topicmodel.slda.ui.command1">
+      </handler>
+   </extension>
+
+</plugin>
