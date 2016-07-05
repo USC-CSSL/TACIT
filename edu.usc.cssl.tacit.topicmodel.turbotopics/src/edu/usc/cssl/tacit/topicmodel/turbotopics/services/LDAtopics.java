@@ -171,7 +171,7 @@ public class LDAtopics {
     }
 
     //constructor
-    public LDAtopics(String corpus, String assignments, String vocab, String out, Integer ntopics, Integer min_count, Double pvalue, Boolean use_perm, String prefix){
+    public LDAtopics(String corpus, String assignments, String vocab, String out, Integer ntopics, Integer min_count, Double pvalue, Boolean use_perm){
         this.corpus = corpus;
         this.assignments = assignments;
         this.vocab = vocab;

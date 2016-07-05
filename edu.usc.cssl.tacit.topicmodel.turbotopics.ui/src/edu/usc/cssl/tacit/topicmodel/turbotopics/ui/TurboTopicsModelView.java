@@ -71,7 +71,6 @@ public class TurboTopicsModelView extends ViewPart implements
 	private OutputLayoutData layoutData;
 	private TableLayoutData inputLayoutData;
 	private Text numberOfTopics;
-	private Text prefixTxt;
 	private LdaAnalysis lda = new LdaAnalysis();
 	protected Job job;
 	Text pValueTxt;
@@ -131,7 +130,6 @@ public class TurboTopicsModelView extends ViewPart implements
 
 		Composite output = layoutData.getSectionClient();
 
-		prefixTxt = createAdditionalOptions(output, "Output Prefix", "TurboTopic");
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
@@ -262,7 +260,6 @@ public class TurboTopicsModelView extends ViewPart implements
 						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 
-				final String preFix = prefixTxt.getText();
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Topic Modelling started  ");
 				job = new Job("Analyzing...") {
@@ -304,7 +301,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						}
 
 						lda.initialize(topicModelDirPath, noOfTopics,
-								outputPath, preFix, true);
+								outputPath,true);
 
 						// lda processsing
 						long startTime = System.currentTimeMillis();
@@ -348,7 +345,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						
 						//------Generating the vocab file------
 						
-						String wordWeightsFile = outputPath + System.getProperty("file.separator") + preFix+".word-weights.txt";
+						String wordWeightsFile = outputPath + System.getProperty("file.separator") +".word-weights.txt";
 						String vocabFile = topicModelDirPath + System.getProperty("file.separator") + "vocab";
 						HashMap<String, Integer> vocab = new HashMap<String, Integer>();
 						BufferedReader br = null;
@@ -421,7 +418,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						} catch (IOException e3) {
 						}
 						
-						LDAtopics lda = new LDAtopics(corpusFile, wordTopicFile, vocabFile, outputPath,noOfTopics,minCount,pValue,usePermBool,preFix);
+						LDAtopics lda = new LDAtopics(corpusFile, wordTopicFile, vocabFile, outputPath,noOfTopics,minCount,pValue,usePermBool);
 						try {
 							lda.generateTurboTopics();
 						} catch (Exception e1) {
@@ -537,11 +534,6 @@ public class TurboTopicsModelView extends ViewPart implements
 			canProceed = false;
 		}
 
-		if (prefixTxt.getText().length() < 1) {
-			form.getMessageManager().addMessage("prefix",
-					"Prefix Cannout be empty", null, IMessageProvider.ERROR);
-			canProceed = false;
-		}
 		if (numberOfTopics.getText().isEmpty()
 				|| Integer.parseInt(numberOfTopics.getText()) < 1) {
 			form.getMessageManager().addMessage("topic",

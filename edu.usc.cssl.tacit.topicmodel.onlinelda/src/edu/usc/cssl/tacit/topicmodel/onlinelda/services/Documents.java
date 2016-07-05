@@ -1,7 +1,6 @@
 package edu.usc.cssl.tacit.topicmodel.onlinelda.services;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
