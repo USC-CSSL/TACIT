@@ -283,7 +283,19 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+<plugin
+         id="edu.usc.cssl.tacit.topicmodel.slda"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
+   <plugin
+         id="edu.usc.cssl.tacit.topicmodel.slda.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
    <plugin
          id="edu.usc.cssl.tacit.wordcount.standard.ui"
          download-size="0"

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.frontier.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.frontier.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ edu.usc.cssl.tacit.common.ui,
+ edu.usc.cssl.tacit.crawlers.frontier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

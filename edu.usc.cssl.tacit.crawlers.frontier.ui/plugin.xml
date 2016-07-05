@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.crawlers.frontier.ui.FrontierCrawlerView"
+            id="edu.usc.cssl.tacit.crawlers.frontier.ui.view1"
+            name="Frontier Journals Crawler"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.frontier.ui.command1"
+               label="Frontier Journal Crawler"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.crawlers.frontier.ui.command1"
+            name="Frontier Journal Crawler">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.frontier.ui.handlers.FrontierViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.frontier.ui.command1">
+      </handler>
+   </extension>
+
+</plugin>

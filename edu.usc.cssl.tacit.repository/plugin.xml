@@ -150,6 +150,20 @@
               relative="org.eclipse.ui.editorss"
               visible="false">
         </view>
+        <view
+              id="edu.usc.cssl.tacit.topicmodel.hdp.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
+        <view
+              id="edu.usc.cssl.tacit.topicmodel.slda.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
                        
           <view
               id="edu.usc.cssl.tacit.topicmodel.turbotopics.ui.view1"
@@ -228,6 +242,13 @@
               visible="false">
         </view>
 
+		<view
+              id="edu.usc.cssl.tacit.crawlers.frontier.ui.view1"
+              minimized="true"
+              relationship="stack"
+              relative="org.eclipse.ui.editorss"
+              visible="false">
+        </view>
         
     </perspectiveExtension>
  </extension>

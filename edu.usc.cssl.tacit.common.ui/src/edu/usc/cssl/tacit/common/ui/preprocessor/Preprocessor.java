@@ -389,6 +389,10 @@ public class Preprocessor {
 			processJSONArray(corpus, seperateFiles);
 			break;
 			
+		case FRONTIER_JSON:
+			processJSONArray(corpus, seperateFiles);
+			break;
+			
 		case TYPEPAD_JSON:
 			processJSONArray(corpus, seperateFiles);
 			break;
@@ -430,6 +434,11 @@ public class Preprocessor {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.title,data.body", true);
+			}
+			if (corpusType == CMDataType.FRONTIER_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.journal_body", true);
 			}
 			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);
