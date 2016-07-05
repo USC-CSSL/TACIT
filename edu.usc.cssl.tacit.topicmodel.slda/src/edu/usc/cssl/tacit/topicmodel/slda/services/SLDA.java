@@ -28,7 +28,7 @@ public class SLDA {
 			f.mkdirs();
 		}
 		
-		lda.initialize(corpus , 5, name, "intermediate", false);
+		lda.initialize(corpus , 5, name, false);
 		threshold = 1.0/5;
 		Date dateObj = new Date();
 		try {
