@@ -24,23 +24,19 @@ public class LdaAnalysis {
 	private String sourceDir;
 	private int numTopics;
 	private String outputDir;
-	private String label;
 	private boolean wordWeights;
 
-	public void initialize(String sourceDir, int numTopics, String outputDir,
-			String label, boolean wordWeights) {
+	public void initialize(String sourceDir, int numTopics, String outputDir, boolean wordWeights) {
 		this.sourceDir = sourceDir;
 		this.numTopics = numTopics;
 		this.outputDir = outputDir;
-		this.label = label;
 		this.wordWeights = wordWeights;
 	}
 
 	public void doLDA(IProgressMonitor monitor, Date dateObj)
 			throws FileNotFoundException, IOException {
 		
-		String outputPath = outputDir + System.getProperty("file.separator")
-				+ label;
+		String outputPath = outputDir + System.getProperty("file.separator");
 
 		String keepSeq = "TRUE", stopWords = "FALSE", preserveCase = "TRUE";
 

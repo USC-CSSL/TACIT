@@ -35,7 +35,7 @@ public class Lda_Test {
 			}
 		};
 		lda.initialize(directoryPath + File.separator
-				+ "InputFiles", noOfTopics, directoryPath, preFix, wordWeightFile);
+				+ "InputFiles", noOfTopics, directoryPath, wordWeightFile);
 
 		Date dateObj = new Date();
 		Object exception = null;

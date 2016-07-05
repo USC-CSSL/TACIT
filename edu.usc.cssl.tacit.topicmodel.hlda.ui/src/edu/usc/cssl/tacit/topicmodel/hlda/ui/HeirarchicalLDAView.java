@@ -1,10 +1,15 @@
-package edu.usc.cssl.tacit.topicmodel.lda.ui;
+package edu.usc.cssl.tacit.topicmodel.hlda.ui;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,26 +50,26 @@ import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
-import edu.usc.cssl.tacit.topicmodel.lda.services.LdaAnalysis;
-import edu.usc.cssl.tacit.topicmodel.lda.ui.internal.ILdaTopicModelClusterViewConstants;
-import edu.usc.cssl.tacit.topicmodel.lda.ui.internal.LdaTopicModelViewImageRegistry;
+import edu.usc.cssl.tacit.topicmodel.hlda.services.HierarchicalLDAModel;
+import edu.usc.cssl.tacit.topicmodel.hlda.ui.internal.HeirarchalLDAViewImageRegistry;
+import edu.usc.cssl.tacit.topicmodel.hlda.ui.internal.HeirarchicalLDAViewConstants;
 
-public class LdaTopicModelView extends ViewPart implements
-		ILdaTopicModelClusterViewConstants {
-	public static final String ID = "edu.usc.cssl.tacit.topicmodel.lda.ui.view1";
+public class HeirarchicalLDAView  extends ViewPart implements
+		HeirarchicalLDAViewConstants {
+	public static final String ID = "edu.usc.cssl.tacit.topicmodel.hlda.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private Button preprocessEnabled;
 
 	private OutputLayoutData layoutData;
 	private TableLayoutData inputLayoutData;
-	private Text numberOfTopics;
-	private LdaAnalysis lda = new LdaAnalysis();
+	private Text numberOfIterations;
+	private HierarchicalLDAModel hlda = new HierarchicalLDAModel();
 	protected Job job;
-	private Button wordWeights;
-
+	protected int noOfIterations;
 	@Override
 	public void createPartControl(Composite parent) {
+
 		toolkit = createFormBodySection(parent);
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED);
@@ -100,8 +105,8 @@ public class LdaTopicModelView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 1)
 				.applyTo(compInput);
 		createPreprocessLink(compInput);
-		numberOfTopics = createAdditionalOptions(compInput, "No. of Topics :",
-				"2");
+		numberOfIterations = createAdditionalOptions(compInput, "No. of Iterations :",
+				"5");
 
 		Composite client1 = toolkit.createComposite(form.getBody());
 		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1)
@@ -115,15 +120,10 @@ public class LdaTopicModelView extends ViewPart implements
 		// we dont need stop word's as it will be taken from the preprocessor
 		// settings
 
-		Composite output = layoutData.getSectionClient();
-
-
-		wordWeights = toolkit.createButton(output, "Create Word Weight File",
-				SWT.CHECK);
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
-		this.setPartName("LDA Topic Model");
+		this.setPartName("HLDA Topic Model");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
 
@@ -181,7 +181,7 @@ public class LdaTopicModelView extends ViewPart implements
 		form = toolkit.createScrolledForm(parent);
 
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("LDA Topic Model"); //$NON-NLS-1$
+		form.setText("HLDA Topic Model"); //$NON-NLS-1$
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true)
 				.applyTo(form.getBody());
 		return toolkit;
@@ -192,7 +192,7 @@ public class LdaTopicModelView extends ViewPart implements
 		mgr.add(new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (LdaTopicModelViewImageRegistry.getImageIconFactory()
+				return (HeirarchalLDAViewImageRegistry.getImageIconFactory()
 						.getImageDescriptor(IMAGE_LRUN_OBJ));
 			}
 
@@ -211,8 +211,7 @@ public class LdaTopicModelView extends ViewPart implements
 				if (!canProceedCluster()) {
 					return;
 				}
-				final int noOfTopics = Integer
-						.valueOf(numberOfTopics.getText()).intValue();
+				
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
@@ -220,7 +219,7 @@ public class LdaTopicModelView extends ViewPart implements
 						.getSelectedFiles();
 				tacitHelper.writeSummaryFile(outputPath);
 
-				final boolean wordWeightFile = wordWeights.getSelection();
+			
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Topic Modelling started  ");
 				job = new Job("Analyzing...") {
@@ -239,8 +238,8 @@ public class LdaTopicModelView extends ViewPart implements
 						Preprocessor ppObj = null;
 						List<String> inFiles;
 						try {
-							ppObj = new Preprocessor("LDA", isPreprocess);
-							inFiles = ppObj.processData("LDA", selectedFiles);
+							ppObj = new Preprocessor("HLDA", isPreprocess);
+							inFiles = ppObj.processData("HLDA", selectedFiles);
 
 							for (String filename : inFiles) {
 								File srcFile = new File(filename);
@@ -261,20 +260,61 @@ public class LdaTopicModelView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
 
-						lda.initialize(topicModelDirPath, noOfTopics,
-								outputPath, wordWeightFile);
+						//lda.initialize(topicModelDirPath, noOfTopics,
+						//		outputPath, preFix, wordWeightFile);
 
 						// lda processsing
 						long startTime = System.currentTimeMillis();
 						Date dateObj = new Date();
 						monitor.subTask("Topic Modelling...");
 						try {
-							lda.doLDA(monitor, dateObj);
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-							monitor.done();
-							return Status.CANCEL_STATUS;
-						} catch (IOException e) {
+							File directory = new File(topicModelDirPath);
+							List<List<String>> documentList = new ArrayList<List<String>>();
+							for(File file:directory.listFiles()){
+								BufferedReader br = new BufferedReader(new FileReader(file));
+								String line = "";
+						
+								List<String> sfile = new ArrayList<String>();
+								while((line = br.readLine())!=null){
+									String array[] = line.split(" ");
+									for(String word:array){
+										sfile.add(word);
+									}
+								}
+								br.close();
+								documentList.add(sfile);
+							}
+							monitor.worked(5);
+							hlda.readDocuments(documentList);
+							monitor.worked(5);
+							hlda.doGibbsSampling(noOfIterations, monitor);
+							Map<Integer,List<String>> topicMap = hlda.getTopics(10, 1);
+							Map<Integer,List<Integer>> topicHeirarchy = hlda.getHierarchy();
+							File topicFile = new File(outputPath + File.separator + "topics.txt");
+							BufferedWriter bw = new BufferedWriter(new FileWriter(topicFile));
+							for(int i:topicMap.keySet()){
+								
+								bw.write("Topic "+i);
+								bw.newLine();
+								bw.write(topicMap.get(i).toString());
+								bw.newLine();
+							}
+							bw.close();
+							monitor.worked(5);
+							File topicHeirarchyFile = new File(outputPath + File.separator + "topicsHeirarchy.txt");
+							bw = new BufferedWriter(new FileWriter(topicHeirarchyFile));
+							for(int i:topicHeirarchy.keySet()){
+								bw.write("Children/Child of Topic "+i);
+								bw.newLine();
+								bw.write(topicHeirarchy.get(i).toString());
+								bw.newLine();
+							}
+							bw.close();
+							monitor.worked(5);
+							int x = 1;
+							if(x==0)
+								throw new Exception();
+						} catch (Exception e) {
 							e.printStackTrace();
 							monitor.done();
 							return Status.CANCEL_STATUS;
@@ -284,7 +324,7 @@ public class LdaTopicModelView extends ViewPart implements
 							return Status.CANCEL_STATUS;
 						}
 						ConsoleView
-								.printlInConsoleln("LDA Topic Modelling completed successfully in "
+								.printlInConsoleln("HLDA Topic Modelling completed successfully in "
 										+ (System.currentTimeMillis() - startTime)
 										+ " milliseconds.");
 
@@ -309,7 +349,7 @@ public class LdaTopicModelView extends ViewPart implements
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite
-										.writeConsoleHeaderBegining("Error: <Terminated> LDA Topic Modelling");
+										.writeConsoleHeaderBegining("Error: <Terminated> HLDA Topic Modelling");
 								ConsoleView
 										.printlInConsoleln("LDA not successful.");
 							} else {
@@ -319,7 +359,7 @@ public class LdaTopicModelView extends ViewPart implements
 										IStatus.OK, form);
 
 								TacitFormComposite
-										.writeConsoleHeaderBegining("Success: <Completed> LDA Topic Modelling ");
+										.writeConsoleHeaderBegining("Success: <Completed> HLDA Topic Modelling ");
 
 							}
 						}
@@ -328,7 +368,7 @@ public class LdaTopicModelView extends ViewPart implements
 					TacitFormComposite
 							.updateStatusMessage(
 									getViewSite(),
-									"LDA Topic Modelling cannot be started. Please check the Form status to correct the errors",
+									"HLDA Topic Modelling cannot be started. Please check the Form status to correct the errors",
 									IStatus.ERROR, form);
 				}
 
@@ -338,7 +378,7 @@ public class LdaTopicModelView extends ViewPart implements
 		Action helpAction = new Action() {
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return (LdaTopicModelViewImageRegistry.getImageIconFactory()
+				return (HeirarchalLDAViewImageRegistry.getImageIconFactory()
 						.getImageDescriptor(IMAGE_HELP_CO));
 			}
 
@@ -395,13 +435,15 @@ public class LdaTopicModelView extends ViewPart implements
 			canProceed = false;
 		}
 
-		if (numberOfTopics.getText().isEmpty()
-				|| Integer.parseInt(numberOfTopics.getText()) < 1) {
+		if (numberOfIterations.getText().isEmpty()
+				|| Integer.parseInt(numberOfIterations.getText()) < 1) {
 			form.getMessageManager().addMessage("topic",
 					"Number of topics cannot be empty or less than 1", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
+
+		noOfIterations = Integer.parseInt(numberOfIterations.getText());
 		return canProceed;
 	}
 

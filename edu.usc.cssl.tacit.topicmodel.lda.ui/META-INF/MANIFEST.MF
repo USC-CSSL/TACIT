@@ -17,3 +17,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.tacit.topicmodel.lda.ui.internal

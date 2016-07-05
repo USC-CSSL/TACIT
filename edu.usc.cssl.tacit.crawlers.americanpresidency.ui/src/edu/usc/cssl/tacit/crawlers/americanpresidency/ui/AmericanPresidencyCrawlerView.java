@@ -51,30 +51,23 @@ import edu.usc.cssl.tacit.crawlers.americanpresidency.ui.internal.IAmericanPresi
 public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmericanPresidencyCrawlerViewConstants{
 	public static String ID = "edu.usc.cssl.tacit.crawlers.americanpresidency.ui.view1";
 	
-	private Button searchButton;
 	private ScrolledForm form;
 	private FormToolkit toolkit;
-	private Button browseButton;
 
 	private Button andButton;
 	private Button orButton;
 	private Button notButton;
 	private Button checkboxSearch1;
 	private Button checkboxSearch2;
-	private Button checkboxBrowse1;
-	private Button checkboxBrowse2;
 	private Button dateCheckBrowse;
 	private Button dateCheckSearch;
 	
-	private Composite browseComposite;
 	private Composite searchComposite;
 
 	private Text searchText1;
 	private Composite commonsearchComposite;
 	private Combo selectPresidentSearch;	
-	private Combo selectPresidentBrowse;	
 	private Combo selectDocumentSearch;	
-	private Combo selectDocumentBrowse;
 	private Text searchText2;
 	private Text corpusNameTxt;
 	private DateTime toDate;
@@ -231,61 +224,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		buttonComposite.setLayout(layout);
 
 		
+
 		
-		searchButton = new Button(buttonComposite, SWT.RADIO);
-		searchButton.setText("Search");
-		searchButton.setSelection(true);
-		searchButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if(searchButton.getSelection()) {
-					
-					// hide - search 
-					browseComposite.setVisible(false);
-					((GridData) browseComposite.getLayoutData()).exclude = true;
-					//searchComposite.getParent().layout(true);					
-					// show - trend
-					searchComposite.setVisible(true);
-					((GridData) searchComposite.getLayoutData()).exclude = false;
-					searchComposite.getParent().layout(true);		
-					parent.layout(true);
-					form.reflow(true);
-
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
-		
-		browseButton = new Button(buttonComposite, SWT.RADIO);
-		browseButton.setText("Browse");
-		browseButton.setSelection(false);
-		browseButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				if(browseButton.getSelection()) {
-					//hide - trend 
-					searchComposite.setVisible(false);
-					((GridData) searchComposite.getLayoutData()).exclude = true;
-					//trendingDataComposite.getParent().layout(true);
-				
-					// show - search
-					browseComposite.setVisible(true);
-					((GridData) browseComposite.getLayoutData()).exclude = false;
-					browseComposite.getParent().layout(true);
-					parent.layout(true);
-					toolkit.paintBordersFor(form.getBody());
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
 
 		// create input parameters section
 		// main section
@@ -321,13 +261,13 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		// split it into 3		
 		Group filterResultsGroup = new Group(searchComposite, SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(filterResultsGroup);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(filterResultsGroup);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(filterResultsGroup);
 		filterResultsGroup.setText("Filter Results");
 		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
 		
 		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
 		
-		Label searchLabel1 = new Label(commonsearchComposite, SWT.NONE);
+		final Label searchLabel1 = new Label(commonsearchComposite, SWT.NONE);
 		searchLabel1.setText("Search Term 1:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchLabel1);
 		searchText1 = new Text(commonsearchComposite, SWT.BORDER);
@@ -357,7 +297,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			
 		TacitFormComposite.createEmptyRow(toolkit, commonsearchComposite);
 		
-		Label searchLabel2 = new Label(commonsearchComposite, SWT.NONE);
+		final Label searchLabel2 = new Label(commonsearchComposite, SWT.NONE);
 		searchLabel2.setText("Search Term 2:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchLabel2);
 		searchText2 = new Text(commonsearchComposite, SWT.BORDER);
@@ -365,72 +305,80 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		searchText2.setMessage("Enter a search term");			
 
 		dateCheckSearch = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(10, 0).applyTo(dateCheckSearch);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(10,0).applyTo(dateCheckSearch);
 		dateCheckSearch.setText("Specify Date Range");
 		
-		
-		
+ 		
+		dateCheckBrowse = new Button(filterResultsGroup, SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(dateCheckBrowse);
+		dateCheckBrowse.setText("Specify Date");
+
 		Composite dateComposite1 = new Composite(filterResultsGroup, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(dateComposite1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(dateComposite1);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateComposite1);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(dateComposite1);
 		
 		final Label fromLabel = new Label(dateComposite1, SWT.NONE);
 		fromLabel.setText("From:");
 		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(fromLabel);
-		
-		/*final Composite dateHolder1 = new Composite(dateComposite1, SWT.None);
-		GridDataFactory.fillDefaults().grab(false, false).span(1,1).applyTo(dateHolder1);
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dateHolder1);
-		*/
+
 		fromDate = new DateTime(dateComposite1, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
 		
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
+
+		
+		
+		final Label toLabel = new Label(dateComposite1, SWT.NONE);
+		toLabel.setText("To:");
+		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(toLabel);
+		
+		toDate = new DateTime(dateComposite1, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).indent(15,0).span(1, 0).applyTo(toDate);
+		toLabel.setEnabled(false);
+		toDate.setEnabled(false);
+		
+		
+		
+		
+		Composite dateComposite3 = new Composite(filterResultsGroup, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(dateComposite3);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(dateComposite3);
+		
+		final Composite dateHolder3 = new Composite(dateComposite3, SWT.None);
+		GridDataFactory.fillDefaults().grab(false, false).span(2,1).applyTo(dateHolder3);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder3);
+	
 		
 		checkboxSearch1 = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(10,10).applyTo(checkboxSearch1);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(10,10).applyTo(checkboxSearch1);
 		checkboxSearch1.setText("Include documents from the Office of the Press Secretary");
-		
-		
-		
+
 		Composite comboComposite1 = new Composite(filterResultsGroup, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(comboComposite1);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comboComposite1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(comboComposite1);
 		Label selectPresidentSearchLabel = new Label(comboComposite1, SWT.NONE);
 		selectPresidentSearchLabel.setText("Select President:");
 		selectPresidentSearch = new Combo(comboComposite1, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).indent(55,0).span(1, 0).applyTo(selectPresidentSearch);
+		GridDataFactory.fillDefaults().grab(true, false).indent(55,10).span(1, 0).applyTo(selectPresidentSearch);
 		selectPresidentSearch.setItems(presidentNames);
 		selectPresidentSearch.select(0);
-		
-		
-		
-		Composite dateComposite2 = new Composite(filterResultsGroup, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(dateComposite2);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(dateComposite2);
-		final Label toLabel = new Label(dateComposite2, SWT.NONE);
-		toLabel.setText("To:");
-		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(toLabel);
-		
-		/*final Composite dateHolder2 = new Composite(dateComposite2, SWT.None);
-		GridDataFactory.fillDefaults().grab(false, false).indent(15,0).span(1,1).applyTo(dateHolder2);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder2);
-		*/
-		
-		toDate = new DateTime(dateComposite2, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).indent(15,0).span(1, 0).applyTo(toDate);
-		toLabel.setEnabled(false);
-		toDate.setEnabled(false);
 		
 		dateCheckSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dateCheckSearch.getSelection()) {
+					dateCheckBrowse.setSelection(false);
 					fromDate.setEnabled(true);
 					toDate.setEnabled(true);
 					fromLabel.setEnabled(true);
 					toLabel.setEnabled(true);
+					dateHolder3.setEnabled(false);
+					searchLabel1.setEnabled(true);
+					searchLabel2.setEnabled(true);
+					andButton.setEnabled(true);
+					orButton.setEnabled(true);
+					notButton.setEnabled(true);
 				} else {
 					fromDate.setEnabled(false);
 					toDate.setEnabled(false);
@@ -440,14 +388,44 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			}
 		});
 		
-		
+		dateCheckBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (dateCheckBrowse.getSelection()) {
+					dateCheckSearch.setSelection(false);
+					fromDate.setEnabled(false);
+					toDate.setEnabled(false);
+					fromLabel.setEnabled(false);
+					toLabel.setEnabled(false);
+					dateHolder3.setEnabled(true);
+					searchText1.setEnabled(false);
+					searchText2.setEnabled(false);
+					searchLabel1.setEnabled(false);
+					searchLabel2.setEnabled(false);
+					andButton.setEnabled(false);
+					orButton.setEnabled(false);
+					notButton.setEnabled(false);
+				} else {
+					dateHolder3.setEnabled(false);
+					commonsearchComposite.setEnabled(true);
+
+					searchText1.setEnabled(true);
+					searchText2.setEnabled(true);
+					searchLabel1.setEnabled(true);
+					searchLabel2.setEnabled(true);
+					andButton.setEnabled(true);
+					orButton.setEnabled(true);
+					notButton.setEnabled(true);
+				}
+			}
+		});
 		
 		checkboxSearch2 = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(10,10).applyTo(checkboxSearch2);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(10,10).applyTo(checkboxSearch2);
 		checkboxSearch2.setText("Include election campaign documents");
 		
 		Composite comboComposite2 = new Composite(filterResultsGroup, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(comboComposite2);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comboComposite2);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(comboComposite2);
 		Label documentCategory = new Label(comboComposite2, SWT.NONE);
 		documentCategory.setText("Select document category:");
@@ -457,42 +435,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		selectDocumentSearch.select(0);
 		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
 		
-		
-		browseComposite = toolkit.createComposite(mainComposite);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(browseComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(browseComposite);
-		
-
-		Label selectPresidentBrowseLabel = new Label(browseComposite, SWT.NONE);
-		selectPresidentBrowseLabel.setText("Select President:");
-		selectPresidentBrowse = new Combo(browseComposite, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(0,10).applyTo(selectPresidentBrowse);
-		selectPresidentBrowse.setItems(presidentNames);
-		selectPresidentBrowse.select(0);
-		
-		
-		Label documentCategoryBrowseLabel = new Label(browseComposite, SWT.NONE);
-		documentCategoryBrowseLabel.setText("Select document category:");
-		selectDocumentBrowse = new Combo(browseComposite, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(0,10).applyTo(selectDocumentBrowse);
-		selectDocumentBrowse.setItems(documentTypes);
-		selectDocumentBrowse.select(0);
-		
-		dateCheckBrowse = new Button(browseComposite, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(0, 10).applyTo(dateCheckBrowse);
-		dateCheckBrowse.setText("Specify Date");
-		
-		
-		Composite dateComposite3 = new Composite(browseComposite, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(dateComposite3);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(dateComposite3);
-		final Label dateLabel = new Label(dateComposite3, SWT.NONE);
-		dateLabel.setText("Date:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dateLabel);
-		
-		final Composite dateHolder3 = new Composite(dateComposite3, SWT.None);
-		GridDataFactory.fillDefaults().grab(false, false).span(1,1).applyTo(dateHolder3);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder3);
 		
 		
 		browseMonth = new Combo(dateHolder3, SWT.FLAT | SWT.READ_ONLY);
@@ -507,7 +449,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		browseYear.setItems(years);
 		browseYear.select(0);
 		GridDataFactory.fillDefaults().grab(false, false).indent(10,0).span(1, 0).applyTo(browseYear);
-		dateLabel.setEnabled(false);
 		browseDay.setEnabled(false);
 		browseMonth.setEnabled(false);
 		browseYear.setEnabled(false);
@@ -522,27 +463,13 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 					browseDay.setEnabled(true);
 					browseMonth.setEnabled(true);
 					browseYear.setEnabled(true);
-					dateLabel.setEnabled(true);
 				} else {
 					browseDay.setEnabled(false);
-					dateLabel.setEnabled(false);
 					browseMonth.setEnabled(false);
 					browseYear.setEnabled(false);
 				}
 			}
 		});
-		
-		
-		checkboxBrowse1 = new Button(browseComposite, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(checkboxBrowse1);
-		checkboxBrowse1.setText("Include documents from the Office of the Press Secretary");
-		
-		checkboxBrowse2 = new Button(browseComposite, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(checkboxBrowse2);
-		checkboxBrowse2.setText("Include election campaign documents");
-		
-		((GridData) browseComposite.getLayoutData()).exclude = true; // hide this
-		TacitFormComposite.createEmptyRow(toolkit, browseComposite);
 		
 }
 	/**
@@ -571,18 +498,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
 		
-		if(browseButton.getSelection()) {
+		if(dateCheckBrowse.getSelection()) {
 			
-			if(!dateCheckBrowse.getSelection()){
-				
-				if(selectPresidentBrowse.getSelectionIndex()==0&&selectDocumentBrowse.getSelectionIndex()==0)
-				{
-					form.getMessageManager().addMessage("queryText", "Please choose atleast one of the three fields - President, Document category, or Date.", null, IMessageProvider.ERROR);
-					return false;
-				}
-				form.getMessageManager().removeMessage("queryText");
-			}
-			else if(browseDay.getSelectionIndex()==0&&browseMonth.getSelectionIndex()==0&&browseYear.getSelectionIndex()==0){
+			if(browseDay.getSelectionIndex()==0&&browseMonth.getSelectionIndex()==0&&browseYear.getSelectionIndex()==0){
 				form.getMessageManager().addMessage("queryText", "Please choose atleast one of the three fields - Month, Day, or Year.", null, IMessageProvider.ERROR);
 				return false;
 			}
@@ -643,7 +561,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			String outputDir;
 			int presidentIndex; int documentIndex; String corpusName;			
 			boolean officeDocs, campaignDocs;
-			boolean search; boolean browse; boolean canProceed; 
+			boolean browse; boolean canProceed; 
 			String query1; String query2;
 			Calendar from = null;
 			Calendar to  = null;
@@ -659,10 +577,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 							@Override
 							public void run() {
 								
-								search = searchButton.getSelection();
-								browse = browseButton.getSelection();
+								browse = dateCheckBrowse.getSelection();
 								corpusName = corpusNameTxt.getText();
-								if(search) {
+								if(!browse) {
 									
 									if (andButton.getSelection())
 										operator = "AND";
@@ -683,23 +600,21 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 									}
 									officeDocs = checkboxSearch1.getSelection();
 									campaignDocs = checkboxSearch2.getSelection();
-								} else if(browse) {
+								} else {
 									month = browseMonth.getSelectionIndex() == 0 ? "" : months[browseMonth.getSelectionIndex()];
 									day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
 									year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
-									officeDocs = checkboxBrowse1.getSelection();
-									campaignDocs = checkboxBrowse2.getSelection();
-									documentIndex = selectDocumentBrowse.getSelectionIndex();	
-									presidentIndex = selectPresidentBrowse.getSelectionIndex();							
+									officeDocs = checkboxSearch1.getSelection();
+									campaignDocs = checkboxSearch2.getSelection();
+									documentIndex = selectDocumentSearch.getSelectionIndex();	
+									presidentIndex = selectPresidentSearch.getSelectionIndex();							
 								}
 								Date dateObj = new Date();
 								corpusName+= "_" + dateObj.getTime();
 								outputDir = IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
 								if(!new File(outputDir).exists()){
-									System.out.println("---------------+++++++++++++++++++----------------"+outputDir);
 									boolean flag = new File(outputDir).mkdirs();									
 
-									System.out.println("---------------+++++++++++++++++++----------------"+flag);
 								}
 						}
 						});
@@ -713,7 +628,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						if(monitor.isCanceled())
 							handledCancelRequest("Cancelled");
 						americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
-						if(search) {
+						if(!browse) {
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
@@ -724,7 +639,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							} 
-						} else if(browse) {
+						} else {
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled())
@@ -843,10 +758,3 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	}	
 
 }
-/*
-
-Corpus Management of the American presidency json 
-UI of browse section will change if the date input style is modified - discuss
-The progress bar has to be made proper 
-
-*/

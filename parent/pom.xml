@@ -80,6 +80,10 @@
 		
 		<module>../edu.usc.cssl.tacit.topicmodel.turbotopics.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.turbotopics</module>
+		
+		
+		<module>../edu.usc.cssl.tacit.topicmodel.hlda.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.hlda</module>
 
 		<!-- Help -->
 		<module>../edu.usc.cssl.tacit.help</module>
