@@ -316,6 +316,7 @@ public class TypePadCrawlerView extends ViewPart {
 		form.getMessageManager().removeMessage("keywordLength");
 		form.getMessageManager().removeMessage("keywordState");
 		form.getMessageManager().removeMessage("corpusName");
+		form.getMessageManager().removeAllMessages();
 		
 		
 		//Check 1: Check if the the keyword field is not empty
@@ -562,6 +563,7 @@ public class TypePadCrawlerView extends ViewPart {
 			String[] splitKeywords = rawKeywords.split(";");
 			
 			for (String keyword: splitKeywords){
+				keyword = keyword.trim();
 				if (keyword.length() != 0){
 					if (keyword.contains(" ")){
 						keyword = "\"" + keyword + "\"";

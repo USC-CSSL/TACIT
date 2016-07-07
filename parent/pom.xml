@@ -42,6 +42,9 @@
 		
 		<module>../edu.usc.cssl.tacit.crawlers.frontier.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.frontier</module>
+		
+		<module>../edu.usc.cssl.tacit.crawlers.plosone.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.plosone</module>
 
 		<!-- Cluster -->
 

@@ -406,6 +406,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 		form.getMessageManager().removeMessage("topics");
 		form.getMessageManager().removeMessage("seedfile");
 		form.getMessageManager().removeMessage("token");
+		form.getMessageManager().removeAllMessages();
 		
 		//Validate Output
 		String message = OutputPathValidation.getInstance().validateOutputDirectory(layoutData.getOutputLabel().getText(),"Output");

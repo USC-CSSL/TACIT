@@ -391,6 +391,10 @@ public class Preprocessor {
 		case TYPEPAD_JSON:
 			processTwitter(corpus);
 			break;
+			
+		case PLOSONE_JSON:
+			processTwitter(corpus);
+			break;
 
 		default:
 			break;
@@ -454,6 +458,11 @@ public class Preprocessor {
 							keyFields.substring(0, keyFields.length() - 1), false);
 				}
 
+			}
+			if (corpusType == CMDataType.PLOSONE_JSON){
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.everything", true);
 			}
 			f.delete();
 		} catch (Exception e) {
