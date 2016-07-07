@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.plosone.ui.plosOneCommand"
+               icon="icons/plosone.png"
+               label="PLOS ONE Crawler"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.crawlers.plosone.ui.plosOneCommand"
+            name="plosOneCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.plosone.ui.handlers.PlosOneViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.plosone.ui.plosOneCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.crawlers.plosone.ui.PlosOneCrawlerView"
+            icon="icons/plosone.png"
+            id="edu.usc.cssl.tacit.crawlers.plosone.ui.plosOneView"
+            name="PlosOneView"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
+            class="edu.usc.cssl.tacit.crawlers.plosone.ui.preferencepage.PlosOneConfiguration"
+            id="edu.usc.cssl.tacit.crawlers.plosone.ui.configuration"
+            name="PLOS ONE Configuration">
+      </page>
+   </extension>
+
+</plugin>
