@@ -252,7 +252,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						.valueOf(numberOfTopics.getText()).intValue();
 				final int minCount = Integer.parseInt(minCountTxt.getText());
 				final double pValue = Double.parseDouble(pValueTxt.getText());
-				boolean usePermBool = usePerm.getSelection();
+				final boolean usePermBool = usePerm.getSelection();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
