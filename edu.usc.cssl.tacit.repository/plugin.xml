@@ -226,6 +226,14 @@
                visible="false">
          </view>
          
+         <view
+               id="edu.usc.cssl.tacit.crawlers.plosone.ui.plosOneView"
+               minimized="true"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss"
+               visible="false">
+         </view>
+         
           <view
                 id="edu.usc.cssl.tacit.common.ui.corpusmanagement.view1"
                 minimized="true"

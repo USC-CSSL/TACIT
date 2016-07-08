@@ -10,3 +10,5 @@
 *.bin
 
 *.dat
+
+*.class

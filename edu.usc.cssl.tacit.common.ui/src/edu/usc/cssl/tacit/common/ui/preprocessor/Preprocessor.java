@@ -408,6 +408,9 @@ public class Preprocessor {
 		case PRESIDENCY_JSON:
 			processJSONArray(corpus, seperateFiles);
 			break;
+			
+		case PLOSONE_JSON:
+			processJSONArray(corpus, seperateFiles);
 		default:
 			break;
 		}
@@ -488,6 +491,11 @@ public class Preprocessor {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.content", true);
+			}
+			if (corpusType == CMDataType.PLOSONE_JSON){
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.everything", true);
 			}
 			f.delete();
 		} catch (Exception e) {

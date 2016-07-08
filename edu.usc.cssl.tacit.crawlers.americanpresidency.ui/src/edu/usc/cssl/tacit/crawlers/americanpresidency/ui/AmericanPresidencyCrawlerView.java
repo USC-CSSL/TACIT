@@ -21,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,8 +56,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private Button andButton;
 	private Button orButton;
 	private Button notButton;
-	private Button checkboxSearch1;
-	private Button checkboxSearch2;
 	private Button dateCheckBrowse;
 	private Button dateCheckSearch;
 	
@@ -261,7 +258,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		// split it into 3		
 		Group filterResultsGroup = new Group(searchComposite, SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(filterResultsGroup);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(filterResultsGroup);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(filterResultsGroup);
 		filterResultsGroup.setText("Filter Results");
 		TacitFormComposite.createEmptyRow(toolkit, filterResultsGroup);
 		
@@ -304,18 +301,18 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchText2);	
 		searchText2.setMessage("Enter a search term");			
 
-		dateCheckSearch = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(10,0).applyTo(dateCheckSearch);
+		dateCheckSearch = new Button(filterResultsGroup, SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(10,0).applyTo(dateCheckSearch);
 		dateCheckSearch.setText("Specify Date Range");
 		
  		
-		dateCheckBrowse = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(dateCheckBrowse);
+		dateCheckBrowse = new Button(filterResultsGroup, SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(dateCheckBrowse);
 		dateCheckBrowse.setText("Specify Date");
 
 		Composite dateComposite1 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateComposite1);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(dateComposite1);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(0,10).applyTo(dateComposite1);
 		
 		final Label fromLabel = new Label(dateComposite1, SWT.NONE);
 		fromLabel.setText("From:");
@@ -343,24 +340,20 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		
 		Composite dateComposite3 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(dateComposite3);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(0,10).applyTo(dateComposite3);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(0,10).applyTo(dateComposite3);
 		
 		final Composite dateHolder3 = new Composite(dateComposite3, SWT.None);
 		GridDataFactory.fillDefaults().grab(false, false).span(2,1).applyTo(dateHolder3);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(true).applyTo(dateHolder3);
 	
-		
-		checkboxSearch1 = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(10,10).applyTo(checkboxSearch1);
-		checkboxSearch1.setText("Include documents from the Office of the Press Secretary");
 
 		Composite comboComposite1 = new Composite(filterResultsGroup, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comboComposite1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(comboComposite1);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(comboComposite1);
+		GridDataFactory.fillDefaults().grab(true, false).indent(10,10).span(1, 0).applyTo(comboComposite1);
 		Label selectPresidentSearchLabel = new Label(comboComposite1, SWT.NONE);
 		selectPresidentSearchLabel.setText("Select President:");
 		selectPresidentSearch = new Combo(comboComposite1, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).indent(55,10).span(1, 0).applyTo(selectPresidentSearch);
+		GridDataFactory.fillDefaults().grab(true, false).indent(10,0).span(1, 0).applyTo(selectPresidentSearch);
 		selectPresidentSearch.setItems(presidentNames);
 		selectPresidentSearch.select(0);
 		
@@ -376,6 +369,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 					dateHolder3.setEnabled(false);
 					searchLabel1.setEnabled(true);
 					searchLabel2.setEnabled(true);
+					searchText1.setEnabled(true);
+					searchText2.setEnabled(true);
 					andButton.setEnabled(true);
 					orButton.setEnabled(true);
 					notButton.setEnabled(true);
@@ -392,6 +387,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dateCheckBrowse.getSelection()) {
+					browseDay.setEnabled(true);
+					browseMonth.setEnabled(true);
+					browseYear.setEnabled(true);
 					dateCheckSearch.setSelection(false);
 					fromDate.setEnabled(false);
 					toDate.setEnabled(false);
@@ -406,6 +404,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 					orButton.setEnabled(false);
 					notButton.setEnabled(false);
 				} else {
+					browseDay.setEnabled(false);
+					browseMonth.setEnabled(false);
+					browseYear.setEnabled(false);
 					dateHolder3.setEnabled(false);
 					commonsearchComposite.setEnabled(true);
 
@@ -420,13 +421,10 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			}
 		});
 		
-		checkboxSearch2 = new Button(filterResultsGroup, SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).indent(10,10).applyTo(checkboxSearch2);
-		checkboxSearch2.setText("Include election campaign documents");
-		
+
 		Composite comboComposite2 = new Composite(filterResultsGroup, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(comboComposite2);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(comboComposite2);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(comboComposite2);
+		GridDataFactory.fillDefaults().grab(true, false).indent(10,10).span(1, 0).applyTo(comboComposite2);
 		Label documentCategory = new Label(comboComposite2, SWT.NONE);
 		documentCategory.setText("Select document category:");
 		selectDocumentSearch = new Combo(comboComposite2, SWT.FLAT | SWT.READ_ONLY);
@@ -452,24 +450,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		browseDay.setEnabled(false);
 		browseMonth.setEnabled(false);
 		browseYear.setEnabled(false);
-		/*
-		date = new DateTime(dateHolder3, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-		date.setEnabled(false);
-		*/
-		dateCheckBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (dateCheckBrowse.getSelection()) {
-					browseDay.setEnabled(true);
-					browseMonth.setEnabled(true);
-					browseYear.setEnabled(true);
-				} else {
-					browseDay.setEnabled(false);
-					browseMonth.setEnabled(false);
-					browseYear.setEnabled(false);
-				}
-			}
-		});
+	
 		
 }
 	/**
@@ -560,7 +541,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			String month, day, year;
 			String outputDir;
 			int presidentIndex; int documentIndex; String corpusName;			
-			boolean officeDocs, campaignDocs;
 			boolean browse; boolean canProceed; 
 			String query1; String query2;
 			Calendar from = null;
@@ -598,14 +578,10 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 										to = Calendar.getInstance();
 										to.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
 									}
-									officeDocs = checkboxSearch1.getSelection();
-									campaignDocs = checkboxSearch2.getSelection();
 								} else {
 									month = browseMonth.getSelectionIndex() == 0 ? "" : months[browseMonth.getSelectionIndex()];
 									day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
 									year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
-									officeDocs = checkboxSearch1.getSelection();
-									campaignDocs = checkboxSearch2.getSelection();
 									documentIndex = selectDocumentSearch.getSelectionIndex();	
 									presidentIndex = selectPresidentSearch.getSelectionIndex();							
 								}
@@ -628,12 +604,13 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						if(monitor.isCanceled())
 							handledCancelRequest("Cancelled");
 						americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
+						System.out.println("---------before crawl function call-----------"+browse);
 						if(!browse) {
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
 									return handledCancelRequest("Cancelled");					
-								rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), officeDocs, campaignDocs, monitor);
+								rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), monitor);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch (Exception e) {
@@ -647,7 +624,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 								
-								rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex),officeDocs, campaignDocs, monitor);
+								rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), monitor);
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
