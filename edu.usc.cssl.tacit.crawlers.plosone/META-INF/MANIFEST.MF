@@ -11,4 +11,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: json-20160212.jar,
  .
-Export-Package: edu.usc.cssl.tacit.crawlers.plosone.services
+Export-Package: edu.usc.cssl.tacit.crawlers.plosone,
+ edu.usc.cssl.tacit.crawlers.plosone.services
