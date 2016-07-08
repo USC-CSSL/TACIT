@@ -581,7 +581,7 @@ public class TypePadCrawlerView extends ViewPart {
 		
 		sc.setContent(sectionClient);
 
-		Label crawlOrder = toolkit.createLabel(sectionClient, "Record Crawl Order :", SWT.NONE);
+		Label crawlOrder = toolkit.createLabel(sectionClient, "Crawl Order :", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(crawlOrder);
 		
 		publishedTimeRelevanceBtn = new Button(sectionClient, SWT.RADIO);
