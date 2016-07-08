@@ -36,6 +36,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.ICommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
@@ -255,6 +257,12 @@ public class TypePadCrawlerView extends ViewPart {
 							if (!event.getResult().isOK()) {
 								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> TypePad Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",IStatus.INFO, form);
+								
+								//Delete the temp corpus if the operation is cancelled or met with an exception.
+								File tempCorpus = new File(ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
+								if (tempCorpus.exists()){
+									deleteDir(tempCorpus);
+								}
 
 							} else {
 								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> TypePad Crawler  ");
@@ -369,7 +377,7 @@ public class TypePadCrawlerView extends ViewPart {
 			form.getMessageManager().addMessage("corpusName", "Provide corpus name", null, IMessageProvider.ERROR);
 			return false;
 		} else {
-			String outputDir = ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+			String outputDir = CommonUiActivator.getDefault().getPreferenceStore().getString(ICommonUiConstants.CORPUS_LOCATION) + File.separator + corpusName;
 			if(new File(outputDir).exists()){
 				form.getMessageManager().addMessage("corpusName", "Corpus already exists", null, IMessageProvider.ERROR);
 				return false;
@@ -612,6 +620,25 @@ public class TypePadCrawlerView extends ViewPart {
 		}
 		
 		return isValid;
+	}
+	
+	/**
+	 * This method deletes the directory with all its file
+	 * @param dir
+	 * @return
+	 */
+	private boolean deleteDir(File dir) {
+	    if (dir.isDirectory()) {
+	        String[] children = dir.list();
+	        for (int i = 0; i < children.length; i++) {
+	            boolean success = deleteDir(new File(dir, children[i]));
+	            if (!success) {
+	                return false;
+	            }
+	        }
+	    }
+
+	    return dir.delete(); // The directory is empty now and can be deleted.
 	}
 
 }
