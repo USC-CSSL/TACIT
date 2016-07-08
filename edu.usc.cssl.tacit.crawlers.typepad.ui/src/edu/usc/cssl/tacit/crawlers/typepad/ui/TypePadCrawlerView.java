@@ -23,10 +23,12 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -55,6 +57,9 @@ public class TypePadCrawlerView extends ViewPart {
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 	
+	private static Button genericWordFilterLbl;
+	private static Text genericWordFilterText;
+	private static Button contentAndTitleFilterLbl;
 	private static Label contentWordFilterLbl;
 	private static Text contentWordFilterText;
 	private static Label titleWordFilterLbl;
@@ -71,6 +76,7 @@ public class TypePadCrawlerView extends ViewPart {
 
 	private int sortParameter = -1;
 
+	private ArrayList<String> genericKeywords = null;
 	private ArrayList<String> contentKeywords= null;
 	private ArrayList<String> titleKeywords = null;
 	
@@ -106,16 +112,14 @@ public class TypePadCrawlerView extends ViewPart {
 
 		// Output Data
 		Composite client1 = toolkit.createComposite(form.getBody());
-		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(2).applyTo(client1);
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(1).applyTo(client1);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(client1);
 
 		createFilterSection(toolkit, client1, form.getMessageManager());
 		createLimitSection(toolkit, client1, form.getMessageManager());
 
 		Label dummy = toolkit.createLabel(form.getBody(), "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(dummy);
-
-		createSortAttributesSection(toolkit, form.getBody(), form.getMessageManager());
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy);
 
 		Label filler = toolkit.createLabel(form.getBody(), "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(filler);
@@ -172,6 +176,13 @@ public class TypePadCrawlerView extends ViewPart {
 					maxBlogLimit = -1; //Indicates max limit is not imposed
 				}
 				
+				//Get the generic word filters
+				if (!genericWordFilterText.getText().isEmpty()){
+					genericKeywords = getKeywords(genericWordFilterText.getText());
+				}else{
+					genericKeywords = null;
+				}				
+				
 				//Get the content word filters
 				if (!contentWordFilterText.getText().isEmpty()){
 					contentKeywords = getKeywords(contentWordFilterText.getText());
@@ -224,16 +235,16 @@ public class TypePadCrawlerView extends ViewPart {
 								throw new OperationCanceledException();
 							}
 							
-							int blogCount = typePadCrawler.getQueryResults(contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
+							int blogCount = typePadCrawler.getQueryResults(genericKeywords,contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
 							
 							ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
 							monitor.subTask("Saving Corpus " + corpusName + "...");
 							ManageCorpora.saveCorpus(typepadCorpus);
 							monitor.worked(10);
 							if (blogCount == 0){
-								ConsoleView.printlInConsoleln("No blogs found.");
+								ConsoleView.printlInConsoleln("No blog posts found.");
 							}else{
-								ConsoleView.printlInConsoleln(blogCount+" blogs crawled and saved in corpus.");
+								ConsoleView.printlInConsoleln(blogCount+" blog posts crawled and saved in corpus.");
 							}
 							monitor.done();
 
@@ -313,6 +324,7 @@ public class TypePadCrawlerView extends ViewPart {
 	 */
 	private boolean canProceedCrawl() {
 		
+		String genericKeywords[] = {};
 		String contentKeywords[] = {};
 		String titleKeywords[] = {};
 		
@@ -326,34 +338,57 @@ public class TypePadCrawlerView extends ViewPart {
 		form.getMessageManager().removeMessage("corpusName");
 		form.getMessageManager().removeAllMessages();
 		
-		
-		//Check 1: Check if the the keyword field is not empty
-		if (!contentWordFilterText.getText().isEmpty()){
-			contentKeywords = contentWordFilterText.getText().split(";");
-		}
-			
-		if (!titleWordFilterText.getText().isEmpty()){
-			titleKeywords = titleWordFilterText.getText().split(";");
-		}
-		
-		if (contentKeywords.length == 0 && titleKeywords.length == 0){
-			form.getMessageManager().addMessage("keywordLength", "Word Filter cannot be empty.Add atleast one content or title word filter.", null,IMessageProvider.ERROR);
-			return false;
-			
-		}else{
-			//Check 2: Check if the keyword entered are valid or not
-			if (contentKeywords.length != 0 && !isValidKeywordState(contentWordFilterText.getText())){
-				form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
-				return false;
+		//Check 1: Check generic word filter is not empty and invalid
+		if(genericWordFilterLbl.getSelection()){
+			//Check if the the keyword field is not empty
+			if (!genericWordFilterText.getText().isEmpty()){
+				genericKeywords = genericWordFilterText.getText().split(";");
 			}
 			
-			if (titleKeywords.length != 0 && !isValidKeywordState(titleWordFilterText.getText())){
-				form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
+			if (genericKeywords.length == 0 ){
+				form.getMessageManager().addMessage("keywordLength", "Word Filter cannot be empty", null,IMessageProvider.ERROR);
 				return false;
+			}else{
+				//Check if the keyword entered are valid or not
+				if (genericKeywords.length != 0 && !isValidKeywordState(genericWordFilterText.getText())){
+					form.getMessageManager().addMessage("keywordState", "Word Filter is not properly formed.", null,IMessageProvider.ERROR);
+					return false;
+				}
 			}
 		}
+		
+			
+		//Check 2: Check if the content and title word filter are not empty and invalid 
+		if (contentAndTitleFilterLbl.getSelection()){
+			//Check if the the keyword field is not empty
+			if (!contentWordFilterText.getText().isEmpty()){
+				contentKeywords = contentWordFilterText.getText().split(";");
+			}
+				
+			if (!titleWordFilterText.getText().isEmpty()){
+				titleKeywords = titleWordFilterText.getText().split(";");
+			}
+			
+			if (contentKeywords.length == 0 && titleKeywords.length == 0){
+				form.getMessageManager().addMessage("keywordLength", "Word Filter cannot be empty.Add atleast one content or title word filter.", null,IMessageProvider.ERROR);
+				return false;
+				
+			}else{
+				//Check if the keyword entered are valid or not
+				if (contentKeywords.length != 0 && !isValidKeywordState(contentWordFilterText.getText())){
+					form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
+					return false;
+				}
+				
+				if (titleKeywords.length != 0 && !isValidKeywordState(titleWordFilterText.getText())){
+					form.getMessageManager().addMessage("keywordState", "Either Content or Title Word Filter is not properly formed.", null,IMessageProvider.ERROR);
+					return false;
+				}
+			}
 
-
+		}
+		
+		
 		//Check 3: Check if the max limit for blogs is valid or not
 		if (limitBlogs.getSelection()) {
 			
@@ -428,22 +463,96 @@ public class TypePadCrawlerView extends ViewPart {
 
 		//Adding the components of Filter Section
 		
-		//Content word filter
-		contentWordFilterLbl = toolkit.createLabel(sectionClient, "Content Word Filter", SWT.NONE);
+		//Generic word filter
+		genericWordFilterLbl = toolkit.createButton(sectionClient, "Word Filter :", SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(genericWordFilterLbl);
+		genericWordFilterLbl.setSelection(true);
+		
+		genericWordFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(genericWordFilterText);
+		genericWordFilterText.setMessage("For example: movie;\"star wars\"");
+		
+		contentAndTitleFilterLbl = toolkit.createButton(sectionClient, "Content AND Title Word Filter :", SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(contentAndTitleFilterLbl); 
+		
+		//Content word filter	
+		contentWordFilterLbl = toolkit.createLabel(sectionClient, "Content :", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(contentWordFilterLbl);
 
-		
 		contentWordFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(contentWordFilterText);
 		contentWordFilterText.setMessage("For example: movie;\"star wars\"");
+		contentWordFilterText.setEnabled(false);
+		contentWordFilterText.setEditable(false);
 		
 		//Title word filter
-		titleWordFilterLbl = toolkit.createLabel(sectionClient, "Title Word Filter", SWT.NONE);
+		titleWordFilterLbl = toolkit.createLabel(sectionClient, "Title :", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(titleWordFilterLbl);
 		
 		titleWordFilterText = toolkit.createText(sectionClient, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleWordFilterText);
 		titleWordFilterText.setMessage("For example: movie;\"star wars\"");
+		titleWordFilterText.setEnabled(false);
+		titleWordFilterText.setEditable(false);
+		
+		genericWordFilterLbl.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (genericWordFilterLbl.getSelection()){
+					genericWordFilterText.setEditable(true);
+					genericWordFilterText.setEnabled(true);
+					genericWordFilterText.setText("");
+					contentWordFilterText.setEditable(false);
+					contentWordFilterText.setEnabled(false);
+					contentWordFilterText.setText("");
+					titleWordFilterText.setEditable(false);
+					titleWordFilterText.setEnabled(false);
+					titleWordFilterText.setText("");
+				}else if (contentAndTitleFilterLbl.getSelection()){
+					genericWordFilterText.setEditable(false);
+					genericWordFilterText.setEnabled(false);
+					genericWordFilterText.setText("");
+					contentWordFilterText.setEditable(true);
+					contentWordFilterText.setEnabled(true);
+					contentWordFilterText.setText("");
+					titleWordFilterText.setEditable(true);
+					titleWordFilterText.setEnabled(true);
+					titleWordFilterText.setText("");
+				}
+
+			}
+			
+		});
+		
+		contentAndTitleFilterLbl.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (genericWordFilterLbl.getSelection()){
+					genericWordFilterText.setEditable(true);
+					genericWordFilterText.setEnabled(true);
+					genericWordFilterText.setText("");
+					contentWordFilterText.setEditable(false);
+					contentWordFilterText.setEnabled(false);
+					contentWordFilterText.setText("");
+					titleWordFilterText.setEditable(false);
+					titleWordFilterText.setEnabled(false);
+					titleWordFilterText.setText("");
+				}else if (contentAndTitleFilterLbl.getSelection()){
+					genericWordFilterText.setEditable(false);
+					genericWordFilterText.setEnabled(false);
+					genericWordFilterText.setText("");
+					contentWordFilterText.setEditable(true);
+					contentWordFilterText.setEnabled(true);
+					contentWordFilterText.setText("");
+					titleWordFilterText.setEditable(true);
+					titleWordFilterText.setEnabled(true);
+					titleWordFilterText.setText("");
+				}
+			}
+			
+		});
 
 
 	}
@@ -458,35 +567,54 @@ public class TypePadCrawlerView extends ViewPart {
 		Section section = toolkit.createSection(parent,Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION | Section.TWISTIE);
 
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
-		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).applyTo(section);
-		section.setText("Limit Blogs"); //$NON-NLS-1$
+		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(section);
+		section.setText("Limit Results"); //$NON-NLS-1$
 
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-
-		GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(sc);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
 
 		Composite sectionClient = toolkit.createComposite(section);
-		sc.setContent(sectionClient);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(sectionClient);
+		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(sectionClient);
 		section.setClient(sectionClient);
+		
+		sc.setContent(sectionClient);
 
+		Label crawlOrder = toolkit.createLabel(sectionClient, "Record Crawl Order :", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(crawlOrder);
+		
+		publishedTimeRelevanceBtn = new Button(sectionClient, SWT.RADIO);
+		publishedTimeRelevanceBtn.setText("Most Recent Relevant");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(publishedTimeRelevanceBtn);
+
+		relevanceBtn = new Button(sectionClient, SWT.RADIO);
+		relevanceBtn.setText("Most Relevant");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(relevanceBtn);
+		relevanceBtn.setSelection(true);
+		
+		publishedTimeDescBtn = new Button(sectionClient, SWT.RADIO);
+		publishedTimeDescBtn.setText("Most Recent");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(publishedTimeDescBtn);
+
+		publishedTimeAscBtn = new Button(sectionClient, SWT.RADIO);
+		publishedTimeAscBtn.setText("Least Recent");
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(publishedTimeAscBtn);
+		
 		TacitFormComposite.createEmptyRow(toolkit, sectionClient);
-
+		
 		//Adding the components of Filter Section
 		
 		limitBlogs = new Button(sectionClient, SWT.CHECK);
-		limitBlogs.setText("Limit number of blogs to be crawled");
-		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(limitBlogs);
+		limitBlogs.setText("Limit number of blog posts to be crawled");
+		GridDataFactory.fillDefaults().grab(false, false).span(5, 0).applyTo(limitBlogs);
 		
 		//Max Limit
 		maxLimit = toolkit.createLabel(sectionClient, "Max Limit:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(maxLimit);
 
 		maxText = toolkit.createText(sectionClient, "", SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(maxText);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).applyTo(maxText);
 		maxText.setText("10");
 		maxText.setEnabled(false);
 		
@@ -510,53 +638,6 @@ public class TypePadCrawlerView extends ViewPart {
 		
 		
 
-	}
-
-	/**
-	 * This method creates the Sort Attributes section on the UI
-	 * @param toolkit
-	 * @param parent
-	 * @param mmng
-	 */
-	public static void createSortAttributesSection(FormToolkit toolkit, Composite parent,final IMessageManager mmng) {
-		Section section = toolkit.createSection(parent,Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION | Section.TWISTIE);
-
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
-		GridLayoutFactory.fillDefaults().numColumns(4).applyTo(section);
-		section.setText("Sort Attributes "); //$NON-NLS-1$
-		section.setDescription("Choose values for Filter");
-
-		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sc);
-
-		Composite sectionClient = toolkit.createComposite(section);
-		sc.setContent(sectionClient);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sectionClient);
-		section.setClient(sectionClient);
-
-		Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(4, 0).applyTo(dummy);
-
-		publishedTimeRelevanceBtn = new Button(sectionClient, SWT.RADIO);
-		publishedTimeRelevanceBtn.setText("Published Time Relevance");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(publishedTimeRelevanceBtn);
-
-		relevanceBtn = new Button(sectionClient, SWT.RADIO);
-		relevanceBtn.setText("Relevance");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(relevanceBtn);
-		relevanceBtn.setSelection(true);
-
-		publishedTimeAscBtn = new Button(sectionClient, SWT.RADIO);
-		publishedTimeAscBtn.setText("Published Time Ascending");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(publishedTimeAscBtn);
-
-		publishedTimeDescBtn = new Button(sectionClient, SWT.RADIO);
-		publishedTimeDescBtn.setText("Published Time Descending");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(publishedTimeDescBtn);
 	}
 	
 	
