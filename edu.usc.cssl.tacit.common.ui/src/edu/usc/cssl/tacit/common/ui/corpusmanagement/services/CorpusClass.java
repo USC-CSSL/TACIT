@@ -15,6 +15,8 @@ public class CorpusClass implements ICorpusClass {
 	private String classPath;
 	private TreeViewer viewer;
 	private String tacitLocation;
+	private String analysisField;
+
 	private Corpus parent;
 	private String id;
 	private Long noOfFiles;
@@ -61,6 +63,14 @@ public class CorpusClass implements ICorpusClass {
 		this.className = className;
 		this.classPath = classPath;
 		this.viewer = viewer;
+	}
+	
+	public String getAnalysisField() {
+		return analysisField;
+	}
+	
+	public void setAnalysisField(String analysisField) {
+		this.analysisField = analysisField;
 	}
 
 	public CorpusClass() {

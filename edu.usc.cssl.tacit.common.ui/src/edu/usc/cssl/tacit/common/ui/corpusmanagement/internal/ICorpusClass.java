@@ -10,6 +10,8 @@ public interface ICorpusClass {
 	
 	public String getClassPath();
 	
+	public void setClassPath(String path);
+	
 	public String getTacitLocation();
 	
 	public Corpus getParent();

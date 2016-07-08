@@ -393,6 +393,14 @@ public class Preprocessor {
 			processJSONArray(corpus, seperateFiles);
 			break;
 			
+		case IMPORTED_CSV:
+			String analysis = corpus.getAnalysisField();
+			if(analysis == null)
+				processDirectory(corpusClassPath);
+			else
+				processJSONArray(corpus, seperateFiles);
+			break;
+			
 		case TYPEPAD_JSON:
 			processJSONArray(corpus, seperateFiles);
 			break;
@@ -420,6 +428,14 @@ public class Preprocessor {
 			// writer.write("{\"data\":"+obj.toJSONString()+"}");
 			// writer.write(obj.toJSONString());
 			// writer.close();
+			if(corpusType == CMDataType.IMPORTED_CSV){
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				
+				String fields = corpusClass.getAnalysisField();
+				
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), fields, true);
+			}
 			if (corpusType == CMDataType.TWITTER_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
@@ -494,13 +510,13 @@ public class Preprocessor {
 		String tempFile = "";
 		StringBuilder sb = new StringBuilder();
 		Date dateobj = new Date();
-		if (doPreprocessing) {
+		tempDir = ppFilesLoc + System.getProperty("file.separator") + "json_data_" + dateobj.getTime();
 			// else {
-			tempDir = ppFilesLoc + System.getProperty("file.separator") + "json_data_" + dateobj.getTime();
 			if (!new File(tempDir).exists())
 				new File(tempDir).mkdir();
+		if (doPreprocessing) {
 			tempFile = tempPPFileLoc + "temp_json_" + System.currentTimeMillis() + ".txt";
-		}
+			}
 		FilenameFilter jsonFileFilter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String filename) {
@@ -518,7 +534,6 @@ public class Preprocessor {
 					FileWriter fw = new FileWriter(tempFile);
 					fw.write(str);
 					fw.close();
-
 					outputFiles.add(processFile(tempFile, "json_file_" + k + ".txt"));
 					k++;
 					}
@@ -528,7 +543,7 @@ public class Preprocessor {
 					new File(tempFile).delete();
 					} else {
 					String outFile = tempDir + System.getProperty("file.separator") + "json_file_" + k + ".txt";
-					FileWriter fw = new FileWriter(outFile);
+					FileWriter fw = new FileWriter(new File(outFile));
 					fw.write(str);
 					fw.close();
 					outputFiles.add(checkfiletype(outFile));

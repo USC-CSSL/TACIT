@@ -390,7 +390,7 @@ public class LdaTopicModelView extends ViewPart implements
 		// validate input
 		if (inputLayoutData.getSelectedFiles().size() < 1) {
 			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
+					"Select/Add at least one input file", null,
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
