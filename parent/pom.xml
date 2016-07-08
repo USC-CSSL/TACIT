@@ -78,11 +78,12 @@
 		<module>../edu.usc.cssl.tacit.topicmodel.lda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.lda</module>
 		
+		<module>../edu.usc.cssl.tacit.topicmodel.hdp.ui</module>
+		<module>../edu.usc.cssl.tacit.topicmodel.hdp</module>
+		
 		<module>../edu.usc.cssl.tacit.topicmodel.onlinelda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.onlinelda</module>
 		
-		<module>../edu.usc.cssl.tacit.topicmodel.hdp.ui</module>
-		<module>../edu.usc.cssl.tacit.topicmodel.hdp</module>
 		
 		<module>../edu.usc.cssl.tacit.topicmodel.slda.ui</module>
 		<module>../edu.usc.cssl.tacit.topicmodel.slda</module>
