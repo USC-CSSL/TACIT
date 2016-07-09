@@ -71,7 +71,7 @@ public class LDAtopics {
     Integer min_count = 25;
     Integer ntopics;
     String out;
-    String prefix="topic";
+    String prefix=".topics";
 
     //Reads the vocabulary and stores it in a list
     private ArrayList<String> read_vocab() throws Exception {
@@ -186,9 +186,7 @@ public class LDAtopics {
         if(use_perm != null){
             this.use_perm = use_perm;
         }
-        if(prefix != null){
-            this.prefix = prefix;
-        }
+
 
     }
 
@@ -204,13 +202,14 @@ public class LDAtopics {
             line = br.readLine();
         }
         br.close();
+        
         for(int topic=0; topic<this.ntopics; topic++){
             System.out.println("'writing topic "+topic);
             Counts sig_bigrams = turbo_topic(corpus,assigns,topic,this.use_perm,this.pvalue,this.min_count);
             if(this.out.charAt(this.out.length()-1) == '/'){
                 this.out = this.out.substring(0,this.out.length()-1);
             }
-            Turbotopics.write_vocab(sig_bigrams.marg,this.out+"/"+this.prefix+topic+".txt");
+            Turbotopics.write_vocab(sig_bigrams.marg,this.out+"/"+this.prefix, topic);
         }
     }
 }

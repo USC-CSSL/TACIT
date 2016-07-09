@@ -301,7 +301,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						}
 
 						lda.initialize(topicModelDirPath, noOfTopics,
-								outputPath,true);
+								topicModelDirPath,true);
 
 						// lda processsing
 						long startTime = System.currentTimeMillis();
@@ -345,7 +345,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						
 						//------Generating the vocab file------
 						
-						String wordWeightsFile = outputPath + System.getProperty("file.separator") +".word-weights.txt";
+						String wordWeightsFile = topicModelDirPath + System.getProperty("file.separator") +".word-weights.txt";
 						String vocabFile = topicModelDirPath + System.getProperty("file.separator") + "vocab";
 						HashMap<String, Integer> vocab = new HashMap<String, Integer>();
 						BufferedReader br = null;
@@ -416,6 +416,7 @@ public class TurboTopicsModelView extends ViewPart implements
 							fw.close();
 							br.close();
 						} catch (IOException e3) {
+							e3.printStackTrace();
 						}
 						
 						LDAtopics lda = new LDAtopics(corpusFile, wordTopicFile, vocabFile, outputPath,noOfTopics,minCount,pValue,usePermBool);

@@ -725,7 +725,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		return Status.CANCEL_STATUS;
 	}
 
-	
 	private IStatus handleException(IProgressMonitor monitor, Exception e, String message) {
 		monitor.done();
 		System.out.println(message);

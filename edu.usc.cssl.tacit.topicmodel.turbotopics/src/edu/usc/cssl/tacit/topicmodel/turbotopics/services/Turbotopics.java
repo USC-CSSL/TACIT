@@ -1,6 +1,9 @@
 package edu.usc.cssl.tacit.topicmodel.turbotopics.services;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -150,8 +153,17 @@ public class Turbotopics {
      * @param incl_stop: Decision as to include the stop words or not
      * @throws Exception
      */
-    public static void write_vocab(Map<Object,Object> v, String outname, Boolean incl_stop) throws Exception {
-        PrintWriter pw = new PrintWriter(outname);
+    public static void write_vocab(Map<Object,Object> v, String outname, Boolean incl_stop, int topic) throws Exception {
+        //PrintWriter pw = new PrintWriter(outname);\
+    	FileWriter fw = new FileWriter(new File(outname), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write("----- Topic "+topic+" -----");
+        bw.newLine();
+        bw.newLine();
+
+        bw.write("WORD \t WORD COUNT");
+        bw.newLine();
+        bw.newLine();
         ArrayList<Object> items =  items(v);
         Collections.sort(items, new Comparator<Object>() {
             @Override
@@ -170,14 +182,17 @@ public class Turbotopics {
         for(Object item: items){
             Object[] itemArray = (Object[])item;
             if(incl_stop || stop_words == null || !stop_words.containsKey((String)itemArray[0])){
-                pw.printf("%-25s %8.2f\n",itemArray[0],Float.parseFloat(itemArray[1].toString()));
+                bw.write(itemArray[0]+"\t"+(int)Float.parseFloat(itemArray[1].toString())+"\n");
             }
         }
-        pw.close();
+        bw.newLine();
+        bw.newLine();
+        bw.close();
+        fw.close();
     }
 
-    public static void write_vocab(Map<Object,Object> v, String outname)throws Exception{
-        write_vocab(v,outname,false);
+    public static void write_vocab(Map<Object,Object> v, String outname, int topic)throws Exception{
+        write_vocab(v,outname,false, topic);
     }
 
     /**
