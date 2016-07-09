@@ -109,6 +109,8 @@ public class StackExchangeCrawler {
 				System.out.println(i);
 				for (Question search : i.items) {
 					monitor.worked(1);
+					if(monitor.isCanceled())
+						return;
 					int questionId = search.getQuestion_id();
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
@@ -122,8 +124,7 @@ public class StackExchangeCrawler {
 						jsonGenerator.writeObjectFieldStart("user");
 						jsonGenerator.writeStringField("user_id", Integer.toString(search.getOwner().user_id));
 						jsonGenerator.writeStringField("username", search.getOwner().display_name);
-						jsonGenerator.writeStringField("user_reputation",
-								Integer.toString(search.getOwner().reputation));
+						jsonGenerator.writeStringField("user_reputation",Integer.toString(search.getOwner().reputation));
 						jsonGenerator.writeStringField("user_type", search.getOwner().user_type.toString());
 						jsonGenerator.writeEndObject();
 					}

@@ -428,6 +428,20 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+   <plugin
+         id="edu.usc.cssl.tacit.topicmodel.hdp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.tacit.topicmodel.hdp.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="edu.usc.cssl.tacit.crawlers.uscongress"
@@ -452,6 +466,20 @@
 
    <plugin
          id="edu.usc.cssl.tacit.crawlers.stackexchange.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+         <plugin
+         id="edu.usc.cssl.tacit.crawlers.frontier"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.tacit.crawlers.frontier.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

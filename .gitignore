@@ -1,2 +1,14 @@
 !*.class
 !*.settings/.DS_Store
+
+*.class
+
+*.csv
+
+*.txt
+
+*.bin
+
+*.dat
+
+*.class

@@ -1,7 +1,11 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -127,29 +131,32 @@ public class CorpusDetailsPage implements IDetailsPage {
 		Button saveCorpus = new Button(buttonComposite, SWT.PUSH);
 		saveCorpus.setText("Save Corpus");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(saveCorpus);
-
+		
 		saveCorpus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				
+				
 				if (CorpusMangementValidation.validateCorpus(selectedCorpus, true, corpusMgmtViewform,
 						corpusManagement)) {
-					// corpusMgmtViewform.getMessageManager().addMessage("saveCorpus",
-					// "Creating corpus...", null,
-					// IMessageProvider.INFORMATION);
 
+					
 					if (null != selectedCorpus)
 						selectedCorpus.getViewer().refresh();
 					Job saveCorpus = new Job("Creating corpus...") {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
+							
 							TacitFormComposite.updateStatusMessage(viewSite,
 									"Creating corpus \"" + selectedCorpus.getCorpusName() + "\"", IStatus.INFO,
 									corpusMgmtViewform);
+							
 							ManageCorpora.saveCorpus(selectedCorpus);
+							
 							TacitFormComposite.updateStatusMessage(viewSite,
 									"Corpus \"" + selectedCorpus.getCorpusName() + "\" created successfully",
 									IStatus.OK, corpusMgmtViewform);
-
+							
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
@@ -157,14 +164,14 @@ public class CorpusDetailsPage implements IDetailsPage {
 											"Corpus \"" + selectedCorpus.getCorpusName() + "\" created successfully");
 								}
 							});
+					
 							return Status.OK_STATUS;
 						}
 					};
 
 					saveCorpus.schedule();
-					// corpusMgmtViewform.getMessageManager().removeMessage("saveCorpus");
-
-				}
+					
+				}				
 			}
 		});
 		toolkit.paintBordersFor(mform.getForm().getForm().getBody());
@@ -311,6 +318,10 @@ public class CorpusDetailsPage implements IDetailsPage {
 			break;
 		case STACKEXCHANGE_JSON:
 			generalJSON.setSelection(true);
+			break;
+		case FRONTIER_JSON:
+			generalJSON.setSelection(true);
+			break;
 		case PRESIDENCY_JSON:
 			generalJSON.setSelection(true);
 			break;

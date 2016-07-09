@@ -102,31 +102,47 @@ public class TypePadCrawler {
 	 * @param sortParam 0: published_time_relevance, 1: relevance, 2: published_time_asc, 3: published_time_desc, -1: no sort 
 	 * @return buildQuery (eg. q=star%20wars)
 	 */
-	private String buildQuery(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, IProgressMonitor monitor){
+	private String buildQuery(ArrayList<String> genericKeywords,ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, IProgressMonitor monitor){
 
 		
 		StringBuilder buildQuery = new StringBuilder();
 		String finalBuildQuery = "";
+		boolean isContentFilterPresent = false;
 		
-		//Building the content keyword query string 
-		if (contentKeywords != null && contentKeywords.size() > 0){
-			for (String queryKeyword : contentKeywords){
+		if (genericKeywords != null && genericKeywords.size() > 0){
+			for (String queryKeyword : genericKeywords){
 				queryKeyword = queryKeyword.replaceAll(" ", "%20");
 				buildQuery.append(queryKeyword+"%20");
 			}
 			buildQuery.delete(buildQuery.length()-3, buildQuery.length());
 		}
-		
-		//Building the title keyword query string
-		if (titleKeywords != null && titleKeywords.size() > 0){
-			buildQuery.append("%20title:");
-			for (String queryKeyword : titleKeywords){
-				queryKeyword = queryKeyword.replaceAll(" ", "%20");
-				buildQuery.append(queryKeyword+"%20");
+		else{
+			//Building the content keyword query string 
+			if (contentKeywords != null && contentKeywords.size() > 0){
+				isContentFilterPresent = true;
+				buildQuery.append("content:");
+				for (String queryKeyword : contentKeywords){
+					queryKeyword = queryKeyword.replaceAll(" ", "%20");
+					buildQuery.append(queryKeyword+"%20");
+				}
+				buildQuery.delete(buildQuery.length()-3, buildQuery.length());
 			}
-			buildQuery.delete(buildQuery.length()-3, buildQuery.length());
+			
+			//Building the title keyword query string
+			if (titleKeywords != null && titleKeywords.size() > 0){
+				if(isContentFilterPresent){
+					buildQuery.append("%20title:");
+				}else{
+					buildQuery.append("title:");
+				}
+				
+				for (String queryKeyword : titleKeywords){
+					queryKeyword = queryKeyword.replaceAll(" ", "%20");
+					buildQuery.append(queryKeyword+"%20");
+				}
+				buildQuery.delete(buildQuery.length()-3, buildQuery.length());
+			}
 		}
-		
 		finalBuildQuery = buildQuery.toString();
 		
 		finalBuildQuery = TypePadWebConstants.QUERY+finalBuildQuery;
@@ -151,7 +167,7 @@ public class TypePadCrawler {
 	 * @return No. of blogs crawled.
 	 * @throws Exception
 	 */
-	public int getQueryResults(ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws Exception{
+	public int getQueryResults(ArrayList<String> genericKeywords,ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws Exception{
 		
 		FileWriter fw =  new FileWriter(new File(corpusLocation + File.separator + corpusName +".json"));
 		
@@ -163,7 +179,7 @@ public class TypePadCrawler {
 		//Initial Query Results
 		String url = TypePadWebConstants.BASE_URL+TypePadWebConstants.ASSETS+TypePadWebConstants.QUERY_SEPARATOR;
 		//Adding the query string
-		url = url + buildQuery(contentKeywords,titleKeywords,maxLimit,sortParam,monitor);
+		url = url + buildQuery(genericKeywords,contentKeywords,titleKeywords,maxLimit,sortParam,monitor);
 		
 		//Default Variable Declaration 
 		JSONObject resultJSONObject = null; 

@@ -1,20 +1,28 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.io.File;
+import java.util.Arrays;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -23,6 +31,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CSVtoJSON;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusMangementValidation;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
@@ -119,13 +128,13 @@ public class ClassDetailsPage implements IDetailsPage {
 		});
 		final Label classPathLbl = toolkit.createLabel(sectionClient,
 				"Class Path:", SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+		GridDataFactory.fillDefaults().grab(false, false).span(1,2)
 				.applyTo(classPathLbl);
 		classPathTxt = toolkit.createText(sectionClient, "", SWT.BORDER);
 		if (null != selectedCorpusClass)
 			classPathTxt.setText(selectedCorpusClass.getClassPath());
 
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 2)
 				.applyTo(classPathTxt);
 		final Button browseBtn = toolkit.createButton(sectionClient,
 				"Browse...", SWT.PUSH);
@@ -143,11 +152,61 @@ public class ClassDetailsPage implements IDetailsPage {
 				corpusMgmtViewform.getMessageManager().removeMessage(
 						"classPath");
 			}
+			
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		final Button importBtn = toolkit.createButton(sectionClient,
+				"Import CSV", SWT.PUSH);
+		
+		importBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				FileDialog dlg = new FileDialog(importBtn.getShell(),
+						SWT.OPEN | SWT.MULTI);
+				dlg.setText("Select File");
+				String path = dlg.open();
+				File dir;
+				if(path.contains(".csv")){
+					dir = new File(System.getProperty("user.dir") +System.getProperty("file.separator") +"json_corpuses"+System.getProperty("file.separator")+selectedCorpusClass.getParent().getCorpusName()+System.getProperty("file.separator")+classNameTxt.getText());
+					if(!dir.exists())
+						dir.mkdirs();
+					CSVtoJSON a = new CSVtoJSON();
+					String [] elements = a.convert(path, dir+File.separator+classNameTxt.getText()+".json");
+					path = dir.toString();
+					
+					ListSelectionDialog dialog = 
+							   new ListSelectionDialog(importBtn.getShell(), elements, ArrayContentProvider.getInstance(),
+							            new LabelProvider(), "Select the field for text analysis");
+							dialog.setTitle("Analysis Field");
+							dialog.open();
+							Object [] result = dialog.getResult();
+							System.out.println(Arrays.toString(result));
+							String fields = null;
+							int count= 0;
+							for(Object i: result){
+								if(count==0)
+									fields="data."+i.toString();
+								else
+									fields+=",data."+i.toString();
+								count++;
+							}
+							selectedCorpusClass.setAnalysisField(fields);
+							selectedCorpusClass.getParent().setDataType(CMDataType.IMPORTED_CSV);
+				}
+				classPathTxt.setText(path);
+				selectedCorpusClass.setClassPath(classPathTxt.getText());
+				selectedCorpusClass.setTacitLocation(classPathTxt.getText());
+				corpusMgmtViewform.getMessageManager().removeMessage(
+						"classPath");
+				
+			}
+		});
+		
 		classPathTxt.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -173,6 +232,7 @@ public class ClassDetailsPage implements IDetailsPage {
 							"classPath");
 			}
 		});
+		
 		keyFields = toolkit.createLabel(sectionClient, "Analysis Fields:",
 				SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
@@ -239,8 +299,7 @@ public class ClassDetailsPage implements IDetailsPage {
 		classPathTxt.setText(selectedCorpusClass.getClassPath());
 		CorpusMangementValidation.validateClassData(selectedCorpusClass,
 				corpusMgmtViewform);
-		if ((selectedCorpusClass.getParent().getDatatype() != CMDataType.REDDIT_JSON && selectedCorpusClass
-				.getParent().getDatatype() != CMDataType.TWITTER_JSON)) {
+		if ((selectedCorpusClass.getParent().getDatatype() != CMDataType.REDDIT_JSON && selectedCorpusClass.getParent().getDatatype() != CMDataType.TWITTER_JSON)) {
 			keyFields.setVisible(false);
 			keyFieldTxt.setVisible(false);
 

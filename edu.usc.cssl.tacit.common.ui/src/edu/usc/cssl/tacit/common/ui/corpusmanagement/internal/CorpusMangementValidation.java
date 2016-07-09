@@ -10,7 +10,6 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 
 public class CorpusMangementValidation {
-
 	public static boolean isClassPathValid(String classPathText, String className, ScrolledForm corpusMgmtViewform) {
 		if (classPathText.isEmpty()) {
 			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location for class \"" + className + "\"", null, IMessageProvider.ERROR);
@@ -68,9 +67,11 @@ public class CorpusMangementValidation {
 	}	
 	
 	public static boolean validateCorpus(ICorpus selectedCorpus, boolean saveCorpusAction, ScrolledForm corpusMgmtViewform, ManageCorpora corpusManagement) {
+		
 		if(isCorpusNameValid(selectedCorpus.getCorpusName(), selectedCorpus.getCorpusId(), corpusMgmtViewform, corpusManagement)) {
 			List<ICorpusClass> classes = selectedCorpus.getClasses(); // validate the class details as well
 			for(ICorpusClass cc : classes) {
+				System.out.println(cc.getClassPath());
 				if(saveCorpusAction && !CorpusMangementValidation.validateClassData(cc, corpusMgmtViewform)) return false;
 			}
 		} else 

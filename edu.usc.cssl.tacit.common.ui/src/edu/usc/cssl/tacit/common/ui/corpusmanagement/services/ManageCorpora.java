@@ -82,6 +82,7 @@ public class ManageCorpora {
 				classObj.put("original_loc", currClass.getClassPath());
 				classObj.put("tacit_loc",
 						corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
+				classObj.put("analysis_field", currClass.getAnalysisField());
 				classObj.put("data_key", currClass.getKeyTextFields());
 				classObj.put("no_of_files", fCount);
 				classArray.add(classObj);
@@ -531,6 +532,7 @@ public class ManageCorpora {
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
 			cc.setNoOfFiles((Long)corpusClassObj.get("no_of_files"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
+			cc.setAnalysisField((String) corpusClassObj.get("analysis_field"));
 			if (corpusClassObj.containsKey("data_key")) {
 				cc.setKeyTextFields((String) corpusClassObj.get("data_key"));
 			}
