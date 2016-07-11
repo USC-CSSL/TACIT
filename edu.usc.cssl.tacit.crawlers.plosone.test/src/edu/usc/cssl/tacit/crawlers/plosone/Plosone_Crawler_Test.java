@@ -36,7 +36,7 @@ public class Plosone_Crawler_Test {
 		urlFeatures.put(PLOSOneWebConstants.FEATURE_ROWS,"100"); 
 		urlFeatures.put(PLOSOneWebConstants.FEATURE_START, "0");
 
-		
+		exceptionObj = null;
 		try {
 			plosOneCrawler.invokePlosOneCrawler(urlFeatures, 201, testDirectory.getAbsolutePath(), "TestContentData", new NullProgressMonitor());
 			FileUtils.deleteDirectory(testDirectory);
@@ -66,13 +66,13 @@ public class Plosone_Crawler_Test {
 		urlFeatures.put(PLOSOneWebConstants.FEATURE_ROWS,"100"); 
 		urlFeatures.put(PLOSOneWebConstants.FEATURE_START, "0");
 
-		
+		exceptionObj = null;
 		try {
 			plosOneCrawler.invokePlosOneCrawler(urlFeatures, 201, testDirectory.getAbsolutePath(), "TestContentData", new NullProgressMonitor());
 			FileUtils.deleteDirectory(testDirectory);
 		} catch (Exception e) {
 			exceptionObj = e;
 		}
-		assertEquals("Checking if any exception occured in content plosone crawl." ,exceptionObj, null);
+		assertEquals("Checking if any exception occured in author plosone crawl." ,exceptionObj, null);
 	}
 }

@@ -27,6 +27,7 @@ public class Typepad_Crawler_Test {
 		genericKeywords.add("\"star wars\"");
 		genericKeywords.add("galaxy");
 	
+		exceptionObj = null;
 		try{
 			typePadCrawler.getQueryResults(genericKeywords, null, null, 100, 1, testDirectory.getAbsolutePath(), "GenericTestData", new NullProgressMonitor());	
 			FileUtils.deleteDirectory(testDirectory);
@@ -51,6 +52,7 @@ public class Typepad_Crawler_Test {
 		ArrayList<String> contentKeywords = new ArrayList<String>();
 		contentKeywords.add("galaxy");
 		
+		exceptionObj = null;
 		try{
 			typePadCrawler.getQueryResults(null, contentKeywords, titleKeywords, 100, 1, testDirectory.getAbsolutePath(), "ContentTitleTestData", new NullProgressMonitor());	
 			FileUtils.deleteDirectory(testDirectory);
