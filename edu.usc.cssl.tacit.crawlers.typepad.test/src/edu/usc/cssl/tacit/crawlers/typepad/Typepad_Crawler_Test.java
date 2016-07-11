@@ -17,14 +17,16 @@ public class Typepad_Crawler_Test {
 	
 	@Test
 	public void testGenericCrawl() {
+		
+		if (!testDirectory.exists()){
+			testDirectory.mkdir();
+		}
+		
 		TypePadCrawler typePadCrawler = new TypePadCrawler();
 		ArrayList<String> genericKeywords = new ArrayList<String>();
 		genericKeywords.add("\"star wars\"");
 		genericKeywords.add("galaxy");
-		if (!testDirectory.exists()){
-			testDirectory.mkdir();
-		}
-			
+	
 		try{
 			typePadCrawler.getQueryResults(genericKeywords, null, null, 100, 1, testDirectory.getAbsolutePath(), "GenericTestData", new NullProgressMonitor());	
 			FileUtils.deleteDirectory(testDirectory);
@@ -38,16 +40,17 @@ public class Typepad_Crawler_Test {
 	
 	@Test
 	public void testConentAndTitleCrawl() {
+		
+		if (!testDirectory.exists()){
+			testDirectory.mkdir();
+		}
+			
 		TypePadCrawler typePadCrawler = new TypePadCrawler();
 		ArrayList<String> titleKeywords = new ArrayList<String>();
 		titleKeywords.add("\"star wars\"");
 		ArrayList<String> contentKeywords = new ArrayList<String>();
 		contentKeywords.add("galaxy");
 		
-		if (!testDirectory.exists()){
-			testDirectory.mkdir();
-		}
-			
 		try{
 			typePadCrawler.getQueryResults(null, contentKeywords, titleKeywords, 100, 1, testDirectory.getAbsolutePath(), "ContentTitleTestData", new NullProgressMonitor());	
 			FileUtils.deleteDirectory(testDirectory);
@@ -56,6 +59,6 @@ public class Typepad_Crawler_Test {
 			exceptionObj = e;
 		}
 		
-		assertEquals("Checking if any exception occured in generic typepad crawl.", exceptionObj, null);
+		assertEquals("Checking if any exception occured in content and title typepad crawl.", exceptionObj, null);
 	}
 }
