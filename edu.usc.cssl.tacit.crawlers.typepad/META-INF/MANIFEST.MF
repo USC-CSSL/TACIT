@@ -4,7 +4,9 @@ Bundle-Name: Typepad
 Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.typepad
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.crawlers.typepad.Activator
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0",
+ org.eclipse.ui;bundle-version="3.107.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: json-20160212.jar,

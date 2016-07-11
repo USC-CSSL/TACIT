@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.HttpConnection;
 
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.typepad.utils.TypePadJSONKeys;
 import edu.usc.cssl.tacit.crawlers.typepad.utils.TypePadWebConstants;
 
@@ -34,7 +35,7 @@ public class TypePadCrawler {
 	 * @param url Connection URL
 	 * @return JSON response string if the connection was successful and response was received else it returns an empty string.
 	 */
-	private String getHTTPResponse(String url) {
+	private String getHTTPResponse(String url) throws Exception{
 		
 		BufferedReader br = null;
 		HttpURLConnection con = null;
@@ -80,15 +81,17 @@ public class TypePadCrawler {
 			
 		}catch(SocketTimeoutException e){
 			System.out.println("Connection is taking too long.There is something wrong with the server.");
+			ConsoleView.printlInConsoleln("Connection is taking too long.There is something wrong with the server.");
 			System.out.println(e.getMessage());
-			return "";
+			throw new Exception();
 		}catch(UnknownHostException e){
 			System.out.println("There seems to be no internet connection.");
+			ConsoleView.printlInConsoleln("There seems to be no internet connection.");
 			System.out.println(e.getMessage());
-			return "";
+			throw new Exception();
 		}catch(Exception e){
 			System.out.println(e.getMessage());
-			return "";
+			throw new Exception();
 		}
 		
 
@@ -167,7 +170,7 @@ public class TypePadCrawler {
 	 * @return No. of blogs crawled.
 	 * @throws Exception
 	 */
-	public int getQueryResults(ArrayList<String> genericKeywords,ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws Exception{
+	public int getQueryResults(ArrayList<String> genericKeywords,ArrayList<String> contentKeywords,ArrayList<String> titleKeywords,long maxLimit,int sortParam, String corpusLocation, String corpusName,IProgressMonitor monitor)throws IOException,OperationCanceledException,Exception{
 		
 		FileWriter fw =  new FileWriter(new File(corpusLocation + File.separator + corpusName +".json"));
 		
