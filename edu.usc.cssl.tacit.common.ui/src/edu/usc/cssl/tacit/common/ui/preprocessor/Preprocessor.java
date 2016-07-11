@@ -447,12 +447,12 @@ public class Preprocessor {
 			if (corpusType == CMDataType.CONGRESS_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.ody", true);
 			}
 			if (corpusType == CMDataType.PRESIDENCY_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.title,data.body", true);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
 			}
 			if (corpusType == CMDataType.FRONTIER_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");

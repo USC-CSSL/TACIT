@@ -395,6 +395,8 @@ public class Preprocessor {
 		case PLOSONE_JSON:
 			processTwitter(corpus);
 			break;
+		case PRESIDENCY_JSON:
+			processTwitter(corpus);
 
 		default:
 			break;
@@ -426,6 +428,12 @@ public class Preprocessor {
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
 			}
+			if (corpusType == CMDataType.PRESIDENCY_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
+			}
+			
 			if (corpusType  == CMDataType.TYPEPAD_JSON){
 					writer.write("{\"data\":" + obj.toJSONString() + "}");
 					writer.close();

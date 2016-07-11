@@ -65,9 +65,7 @@ public class AmericanPresidencyCrawler {
 	}
 	
 	public void crawlSearch(String outputDir, String searchTerm1, String searchTerm2, String operator, Calendar from, Calendar to, String presidentName, String documentCategory, IProgressMonitor monitor) throws IOException{
-		System.out.println("crawl entered-------------------");
 		this.outputDir = outputDir;
-		System.out.println("--------------"+outputDir);
 		setDir();
 		Elements elements = null;
 		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("searchterm",searchTerm1).data("bool",operator).data("searchterm1",searchTerm2).data("ty",documentCategory).data("pres",presidentName);
@@ -75,22 +73,16 @@ public class AmericanPresidencyCrawler {
 
 		if(from!=null)
 		{
-			//System.out.println("Before crawl-------------------");
 			conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
 			Document e = conn.post();
-			System.out.println("--------"+e);
 			Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
 			elements = et.child(2).child(0).children();
 		}
 		else
 		{
 			Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0);
-
-			//System.out.println(e.child(1).child(2).child(0).children()+"---------no date----------");
 			elements = e.child(1).child(2).child(0).children();// This seems incorrect
-			//elements = e.child(0).child(2).children();
 		}
-		int i = 1;
 		if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 		{
 			progressMonitorIncrement = 980/(elements.size());
@@ -98,7 +90,6 @@ public class AmericanPresidencyCrawler {
 			
 			for (Element element : elements)
 			{
-				//System.out.println("----"+element);
 				try{
 					strDate = element.child(0).text();
 					strName = element.child(1).text();			
@@ -108,14 +99,8 @@ public class AmericanPresidencyCrawler {
 				}catch(Exception e){
 					System.out.println("Exception occurred");
 				}
-				//Monitor only accepts integer increments, but progressMonitorIncrement could have taken a double value
-				if (i%4==0)
-					monitor.worked(progressMonitorIncrement+1);
-				else
-					monitor.worked(progressMonitorIncrement);
-				i++;
+				monitor.worked(progressMonitorIncrement);
 			}
-			//monitor.
 		}
 		try {
 			jsonGenerator.writeEndArray();
@@ -124,7 +109,6 @@ public class AmericanPresidencyCrawler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//System.out.println(i+"---------elements.size()------"+elements.size());
 	}
 	
 	public void crawlBrowse(String outputDir, String month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
@@ -142,7 +126,6 @@ public class AmericanPresidencyCrawler {
 			Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0);
 			elements = e.child(1).child(1).child(0).children();
 		}
-		int i=1;
 		if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 		{
 			elements.remove(0);
@@ -156,12 +139,7 @@ public class AmericanPresidencyCrawler {
 					extractInfo(element.child(3).child(0).child(0).attr("href"));
 				}catch(Exception e){}
 
-				//Monitor only accepts integer increments, but progressMonitorIncrement could have taken a double value
-				if (i%4==0)
-					monitor.worked(progressMonitorIncrement+1);
-				else
-					monitor.worked(progressMonitorIncrement);
-				i++;
+				monitor.worked(progressMonitorIncrement);
 			}
 		}
 		

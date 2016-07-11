@@ -589,7 +589,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								corpusName+= "_" + dateObj.getTime();
 								outputDir = IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
 								if(!new File(outputDir).exists()){
-									boolean flag = new File(outputDir).mkdirs();									
+									new File(outputDir).mkdirs();									
 
 								}
 						}
@@ -604,7 +604,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						if(monitor.isCanceled())
 							handledCancelRequest("Cancelled");
 						americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
-						System.out.println("---------before crawl function call-----------"+browse);
 						if(!browse) {
 							try {
 								monitor.subTask("Crawling...");
@@ -634,7 +633,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
-									CorpusClass cc = new CorpusClass("American Presidency Documents", outputDir);
+									CorpusClass cc = new CorpusClass("American Presidential Papers", outputDir);
 									cc.setParent(americanPresidencyCorpus);
 									americanPresidencyCorpus.addClass(cc);
 								}
