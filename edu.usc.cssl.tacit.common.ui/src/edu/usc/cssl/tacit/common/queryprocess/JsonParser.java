@@ -148,11 +148,13 @@ public class JsonParser {
 			}
 		} else if (o instanceof Collection) {
 			for (Object key : (Collection<?>) o) {
+				
 				if (!(key instanceof Map) && !(key instanceof Collection)) {
 					Attribute attr = new Attribute();
 					setDataType(attr, key);
 					if (null != parent)
-						attr.setKey(parent + "." + key.toString());
+//						attr.setKey(parent + "." + key.toString());
+						attr.setKey(parent);
 					else
 						attr.setKey(key.toString());
 					resultAttr.add(attr);
