@@ -74,6 +74,7 @@ public class AmericanPresidencyCrawler {
 		if(from!=null)
 		{
 			conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
+			conn.timeout(120000);
 			Document e = conn.post();
 			Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
 			elements = et.child(2).child(0).children();

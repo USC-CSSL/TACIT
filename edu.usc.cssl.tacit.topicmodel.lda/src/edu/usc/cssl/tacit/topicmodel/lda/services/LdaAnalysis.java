@@ -46,16 +46,16 @@ public class LdaAnalysis {
 		 */
 
 		String[] t2vArgs = { "--input", sourceDir, "--output",
-				outputPath + ".mallet", "--keep-sequence", keepSeq,
+				outputPath + "mallet", "--keep-sequence", keepSeq,
 				"--remove-stopwords", stopWords, "--preserve-case",
 				preserveCase };
-		String[] v2tArgs = { "--input", outputPath + ".mallet", "--num-topics",
+		String[] v2tArgs = { "--input", outputPath + "mallet", "--num-topics",
 				String.valueOf(numTopics), "--optimize-interval", "20",
-				"--output-state", outputPath + ".topic-state.gz",
-				"--output-topic-keys", outputPath + ".topic-keys.txt",
-				"--output-doc-topics", outputPath + ".topic-composition.txt",
-				"--topic-word-weights-file", outputPath + ".word-weights.txt",
-				"--word-topic-counts-file", outputPath + ".word-counts.txt" };
+				"--output-state", outputPath + "topic-state.gz",
+				"--output-topic-keys", outputPath + "topic-keys.txt",
+				"--output-doc-topics", outputPath + "topic-composition.txt",
+				"--topic-word-weights-file", outputPath + "word-weights.txt",
+				"--word-topic-counts-file", outputPath + "word-counts.txt" };
 		monitor.subTask("Performing text to vector conversion");
 		// --input pathway\to\the\directory\with\the\files --output
 		// tutorial.mallet --keep-sequence --remove-stopwords
@@ -68,23 +68,23 @@ public class LdaAnalysis {
 		Vectors2Topics.main(v2tArgs);
 		monitor.worked(5);
 		monitor.subTask("Created complete state file " + outputPath
-				+ ".topic-state.gz");
+				+ "topic-state.gz");
 		// ConsoleView.printlInConsoleln("Created complete state file "+outputPath+".topic-state.gz");
 		// ConsoleView.printlInConsoleln("Created topic keys file "+outputPath+".topic_keys.txt");
 		// ConsoleView.printlInConsoleln("Created topic composition file "+outputPath+".topic_composition.txt");
 		// ConsoleView.printlInConsoleln("Created topic word counts file "+outputPath+".word_counts.txt");
 
-		monitor.subTask("Convert " + outputPath + ".topic-keys to csv");
-		convertKeys2csv(outputPath + ".topic-keys", dateObj);
+		monitor.subTask("Convert " + outputPath + "topic-keys to csv");
+		convertKeys2csv(outputPath + "topic-keys", dateObj);
 		monitor.worked(5);
 
-		monitor.subTask("Convert " + outputPath + ".topic-composition to csv");
-		convertComposition2csv(outputPath + ".topic-composition", dateObj);
+		monitor.subTask("Convert " + outputPath + "topic-composition to csv");
+		convertComposition2csv(outputPath + "topic-composition", dateObj);
 		monitor.worked(5);
 
-		monitor.subTask("Convert " + outputPath + ".word-counts to csv");
+		monitor.subTask("Convert " + outputPath + "word-counts to csv");
 		if (wordWeights) {
-			convertWeights2csv(outputPath + ".word-weights", dateObj);
+			convertWeights2csv(outputPath + "word-weights", dateObj);
 		}
 
 		monitor.worked(5);
@@ -97,17 +97,17 @@ public class LdaAnalysis {
 		TacitUtility.createRunReport(outputDir, "LDA Analysis", dateObj,null);
 	}
 	private void deleteFiles(String outputPath) {
-		File toDel = new File(outputPath + ".topic-state.gz");
+		File toDel = new File(outputPath + "topic-state.gz");
 		toDel.delete();
-		toDel = new File(outputPath + ".word_counts.txt");
+		toDel = new File(outputPath + "word-counts.txt");
 		toDel.delete();
-		toDel = new File(outputPath + ".topic_keys.txt");
+		toDel = new File(outputPath + "topic-keys.txt");
 		toDel.delete();
-		toDel = new File(outputPath + ".topic_composition.txt");
+		toDel = new File(outputPath + "topic-composition.txt");
 		toDel.delete();
-		toDel = new File(outputPath + ".word_weights.txt");
+		toDel = new File(outputPath + "word-weights.txt");
 		toDel.delete();
-		toDel = new File(outputPath + ".mallet");
+		toDel = new File(outputPath + "mallet");
 		toDel.delete();
 	}
 	protected String generateFileName(String fileName, Date dateObj){
