@@ -411,6 +411,7 @@ public class Preprocessor {
 			
 		case PLOSONE_JSON:
 			processJSONArray(corpus, seperateFiles);
+			break;
 		default:
 			break;
 		}

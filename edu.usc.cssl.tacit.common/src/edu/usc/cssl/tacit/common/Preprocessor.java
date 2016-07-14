@@ -388,6 +388,10 @@ public class Preprocessor {
 			processTwitter(corpus);
 			break;
 			
+		case FRONTIER_JSON:
+			processTwitter(corpus);
+			break;
+			
 		case TYPEPAD_JSON:
 			processTwitter(corpus);
 			break;
@@ -438,6 +442,11 @@ public class Preprocessor {
 					writer.write("{\"data\":" + obj.toJSONString() + "}");
 					writer.close();
 					ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.content", true);
+			}
+			if (corpusType == CMDataType.FRONTIER_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.journal_body", true);
 			}
 			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);
