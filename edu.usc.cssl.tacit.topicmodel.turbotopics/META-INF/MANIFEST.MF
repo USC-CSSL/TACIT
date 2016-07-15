@@ -5,7 +5,8 @@ Bundle-SymbolicName: edu.usc.cssl.tacit.topicmodel.turbotopics
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.topicmodel.turbotopics.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.topicmodel.turbotopics.services

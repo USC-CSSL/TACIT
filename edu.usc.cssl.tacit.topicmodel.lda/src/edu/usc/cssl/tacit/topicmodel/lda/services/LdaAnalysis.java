@@ -105,8 +105,8 @@ public class LdaAnalysis {
 		toDel.delete();
 		toDel = new File(outputPath + "topic-composition.txt");
 		toDel.delete();
-		toDel = new File(outputPath + "word-weights.txt");
-		toDel.delete();
+		//toDel = new File(outputPath + "word-weights.txt");
+		//toDel.delete();
 		toDel = new File(outputPath + "mallet");
 		toDel.delete();
 	}

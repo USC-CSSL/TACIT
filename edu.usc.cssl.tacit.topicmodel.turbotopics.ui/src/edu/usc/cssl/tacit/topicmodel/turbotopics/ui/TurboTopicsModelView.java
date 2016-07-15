@@ -71,7 +71,7 @@ public class TurboTopicsModelView extends ViewPart implements
 	private OutputLayoutData layoutData;
 	private TableLayoutData inputLayoutData;
 	private Text numberOfTopics;
-	private LdaAnalysis lda = new LdaAnalysis();
+	private LdaAnalysis lda = null;
 	protected Job job;
 	Text pValueTxt;
 	Text minCountTxt;
@@ -258,6 +258,13 @@ public class TurboTopicsModelView extends ViewPart implements
 				TacitUtil tacitHelper = new TacitUtil();
 				final List<Object> selectedFiles = inputLayoutData
 						.getSelectedFiles();
+				lda = new LdaAnalysis(){
+					@Override
+					protected void createRunReport(Date date){
+						
+					}
+					
+				};
 				tacitHelper.writeSummaryFile(outputPath);
 
 				TacitFormComposite
@@ -322,10 +329,6 @@ public class TurboTopicsModelView extends ViewPart implements
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
-						ConsoleView
-								.printlInConsoleln("Turbo Topics Modelling completed successfully in "
-										+ (System.currentTimeMillis() - startTime)
-										+ " milliseconds.");
 						
 						
 						//-----Generating the corpus file-------
@@ -345,7 +348,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						
 						//------Generating the vocab file------
 						
-						String wordWeightsFile = topicModelDirPath + System.getProperty("file.separator") +".word-weights.txt";
+						String wordWeightsFile = topicModelDirPath + System.getProperty("file.separator") +"word-weights.txt";
 						String vocabFile = topicModelDirPath + System.getProperty("file.separator") + "vocab";
 						HashMap<String, Integer> vocab = new HashMap<String, Integer>();
 						BufferedReader br = null;
@@ -434,6 +437,11 @@ public class TurboTopicsModelView extends ViewPart implements
 						}
 						monitor.worked(10);
 						monitor.done();
+						ConsoleView
+						.printlInConsoleln("Turbo Topics Modelling completed successfully in "
+								+ (System.currentTimeMillis() - startTime)
+								+ " milliseconds.");
+				
 						return Status.OK_STATUS;
 					}
 				};
@@ -512,7 +520,6 @@ public class TurboTopicsModelView extends ViewPart implements
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
-		form.getMessageManager().removeMessage("prefix");
 		form.getMessageManager().removeMessage("topic");
 		form.getMessageManager().removeMessage("minCount");
 		form.getMessageManager().removeMessage("pValue");

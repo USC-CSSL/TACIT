@@ -8,11 +8,13 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 
 /**
  * Created by msamak on 3/7/16.
@@ -155,7 +157,12 @@ public class Turbotopics {
      */
     public static void write_vocab(Map<Object,Object> v, String outname, Boolean incl_stop, int topic) throws Exception {
         //PrintWriter pw = new PrintWriter(outname);\
-    	FileWriter fw = new FileWriter(new File(outname), true);
+    	FileWriter fw = null;
+    	if(topic == 0)
+    		fw = new FileWriter(new File(outname), false);
+    	else
+    		fw = new FileWriter(new File(outname), true);
+    		
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write("----- Topic "+topic+" -----");
         bw.newLine();
@@ -342,6 +349,5 @@ public class Turbotopics {
         }
         return items;
     }
-
 
 }

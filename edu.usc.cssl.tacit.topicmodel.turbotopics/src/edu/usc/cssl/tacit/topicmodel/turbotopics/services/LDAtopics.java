@@ -2,6 +2,8 @@ package edu.usc.cssl.tacit.topicmodel.turbotopics.services;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +64,7 @@ import java.util.Map;
  * javac -cp src/main/java/turbotopics/ src/main/java/turbotopics/LDAtopics.java
  * java -cp src/main/java/turbotopics/ src/main/java/turbotopics/LDAtopics <corpus_file> <word_topic_assignemnt_file> <vocabulary_file> <output_path> <number_of_topics> <min_count> <pvalue> <use_permutaion> <prefix>
  */
+import edu.usc.cssl.tacit.common.TacitUtility;
 public class LDAtopics {
     String corpus;
     String assignments;
@@ -71,7 +74,7 @@ public class LDAtopics {
     Integer min_count = 25;
     Integer ntopics;
     String out;
-    String prefix=".topics";
+    String prefix="topics.txt";
 
     //Reads the vocabulary and stores it in a list
     private ArrayList<String> read_vocab() throws Exception {
@@ -211,5 +214,10 @@ public class LDAtopics {
             }
             Turbotopics.write_vocab(sig_bigrams.marg,this.out+"/"+this.prefix, topic);
         }
+        createRunReport(Calendar.getInstance().getTime()) ;
     }
+
+    protected void createRunReport(Date dateObj) {
+		TacitUtility.createRunReport(out, "Turbotopics Analysis", dateObj,null);
+	}
 }
