@@ -61,7 +61,19 @@ public class StackExchangeCrawler {
 		StackExchangeSite siteService = api.getSiteService(StackExchangeSite.STACK_OVERFLOW);
 		return siteService;
 	}
-
+	/**
+	 * This method is called by the UI and in turn calls the StackExchange API
+	 * @param tags
+	 * @param pages
+	 * @param corpusName
+	 * @param sc
+	 * @param site
+	 * @param jsonFilter
+	 * @param ansLimit
+	 * @param comLimit
+	 * @param crawlOrder
+	 * @param monitor
+	 */
 	public void search(String tags, int pages, String corpusName,
 			StackExchangeSite sc, String site, boolean[] jsonFilter, int ansLimit, int comLimit, String crawlOrder, IProgressMonitor monitor) {
 		filter = jsonFilter;

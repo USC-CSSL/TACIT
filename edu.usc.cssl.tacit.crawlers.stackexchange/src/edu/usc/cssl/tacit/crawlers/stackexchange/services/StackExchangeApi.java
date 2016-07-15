@@ -34,8 +34,6 @@ public class StackExchangeApi {
 			@Override
 			public Response intercept(Chain chain) throws IOException {
 				Request request = chain.request();
-//		        HttpUrl url = request.url().newBuilder().addQueryParameter("site",site).build();
-//		        request = request.newBuilder().url(url).build();
 		        return chain.proceed(request);
 			}
 		});

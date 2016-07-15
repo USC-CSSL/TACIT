@@ -11,6 +11,10 @@ import retrofit2.http.Query;
 
 public interface StackExchangeSite {
 
+	/*
+	 * This interface contains calls to the StackExchange API using Retrofit v2.2
+	 */
+	
     /* Statics last update 14.03.2014 */
     public static final String STACK_OVERFLOW                           = "stackoverflow";
     public static final String SERVER_FAULT                             = "serverfault";

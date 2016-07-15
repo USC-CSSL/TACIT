@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class StackConstants {
 	public static final Map<String, String> domainList = new HashMap<String, String>();
+	
+	//list of all the domains available
 	public static String sortTypes[] = {"STACK_OVERFLOW","SERVER_FAULT","SUPER_USER","META_STACK_OVERFLOW",
 			"WEB_APPLICATIONS","WEB_APPLICATIONS_META","ARQADE","ARQADE_META","WEBMASTERS","WEBMASTERS_META",
 			"SEASONED_ADVICE","SEASONED_ADVICE_META","GAME_DEVELOPMENT","GAME_DEVELOPMENT_META","PHOTOGRAPHY",
@@ -57,6 +59,8 @@ public class StackConstants {
 			"AVIATION_META","EBOOKS","EBOOKS_META","BEER","BEER_META","SOFTWARE_RECOMMENDATIONS",
 			"SOFTWARE_RECOMMENDATIONS_META","ARDUINO","ARDUINO_META","EXPATRIATES","EXPATRIATES_META",
 			"MATHEMATICS_EDUCATORS","MATHEMATICS_EDUCATORS_META" };
+	
+	//map of domain and their url parameter
 	static {
 		domainList.put("STACK_OVERFLOW","stackoverflow");
 		domainList.put("SERVER_FAULT","serverfault");
