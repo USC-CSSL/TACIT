@@ -28,7 +28,7 @@ public class FrontierCrawlerViewImageRegistry {
 		imgReg.put(IFrontierCrawlerUIConstants.IMAGE_STACK_OBJ,
 				ImageDescriptor.createFromFile(
 						FrontierCrawlerViewImageRegistry.class,
-						"/icons/stackexchange.png"));
+						"/icons/frontier.png"));
 	}
 
 	public static FrontierCrawlerViewImageRegistry getImageIconFactory() {

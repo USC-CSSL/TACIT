@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.crawlers.frontier.ui.FrontierCrawlerView"
+            icon="icons/frontier.png"
             id="edu.usc.cssl.tacit.crawlers.frontier.ui.view1"
             name="Frontier Journals Crawler"
             restorable="true">
@@ -17,6 +18,7 @@
             locationURI="menu:crawl">
          <command
                commandId="edu.usc.cssl.tacit.crawlers.frontier.ui.command1"
+               icon="icons/frontier.png"
                label="Frontier Journal Crawler"
                style="push">
          </command>

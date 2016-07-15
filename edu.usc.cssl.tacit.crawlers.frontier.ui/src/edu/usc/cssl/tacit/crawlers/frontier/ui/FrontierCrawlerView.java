@@ -63,22 +63,15 @@ public class FrontierCrawlerView extends ViewPart{
 
 		private ScrolledForm form;
 		private FormToolkit toolkit;
-		private Text queryText;
 		private Text pageText;
 		private Text corpusNameTxt;
-		private static Button btnAnswer;
 		Combo domainList;
 		Button checkPages;
-		private boolean[] jsonFilter = new boolean[6];
 		private Table senatorTable;
 		private Button addSenatorBtn;
 		private ElementListSelectionDialog listDialog;
 		private List<String> selectedRepresentatives;
-		private static Button btnQuestion;
 		private Button removeSenatorButton;
-		private static Button btnComment;
-		private Text answerCount;
-		private Text commentCount;
 		String subredditText;
 		int redditCount = 1;
 		String oldSubredditText;
@@ -88,7 +81,6 @@ public class FrontierCrawlerView extends ViewPart{
 		private Date maxDate;
 		private Date minDate;
 		private Button dateRange;
-		private Button Creation, Activity, Votes;  
 		final String[] domains = new String[]{"Science","Health","Engineering","Humanities and Social Sciences"};
 
 		@Override
@@ -163,7 +155,6 @@ public class FrontierCrawlerView extends ViewPart{
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					
-//					final String mainArray[] = StackConstants.sortTypes;
 					ILabelProvider lp = new ArrayLabelProvider();
 					listDialog = new ElementListSelectionDialog(addSenatorBtn.getShell(), lp);
 					listDialog.setTitle("Select domain");
@@ -201,12 +192,6 @@ public class FrontierCrawlerView extends ViewPart{
 
 			TacitFormComposite.createEmptyRow(toolkit, InputSectionClient);
 
-//			Composite inputSec1 = new Composite(InputSectionClient, SWT.None);
-//			GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(0, 0).applyTo(inputSec1);
-//			GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(inputSec1);
-//
-//			createStoredAttributesSection(toolkit, inputSec1, form.getMessageManager());
-
 			Label dummy1 = toolkit.createLabel(InputSectionClient, "", SWT.NONE);
 			GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy1);
 
@@ -231,14 +216,12 @@ public class FrontierCrawlerView extends ViewPart{
 			pageText.setEnabled(false);	
 			
 			checkPages.addSelectionListener(new SelectionListener() {
-				
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if(checkPages.getSelection())
 						pageText.setEnabled(true);
 					else
 						pageText.setEnabled(false);
-					
 				}
 				
 				@Override
@@ -372,7 +355,7 @@ public class FrontierCrawlerView extends ViewPart{
 				if (!selectedRepresentatives.contains((String) object))
 					selectedRepresentatives.add((String) object);
 			}
-			// Collections.sort(selectedSenators);
+
 			senatorTable.removeAll();
 			for (String itemName : selectedRepresentatives) {
 				TableItem item = new TableItem(senatorTable, 0);
@@ -421,16 +404,6 @@ public class FrontierCrawlerView extends ViewPart{
 				return false;
 			}
 
-			/*
-			 * String message =
-			 * OutputPathValidation.getInstance().validateOutputDirectory(
-			 * outputLayout.getOutputLabel().getText(), "Output"); if (message !=
-			 * null) { message = outputLayout.getOutputLabel().getText() + " " +
-			 * message; form.getMessageManager().addMessage("output", message,
-			 * null,IMessageProvider.ERROR); return false; } else {
-			 * form.getMessageManager().removeMessage("output"); }
-			 */
-
 			// Validate corpus name
 			String corpusName = corpusNameTxt.getText();
 			if (null == corpusName || corpusName.isEmpty()) {
@@ -467,12 +440,8 @@ public class FrontierCrawlerView extends ViewPart{
 				String corpusName;
 				Corpus corpus;
 				int pages;
-				String tags;
 				boolean canProceed;
 				boolean isDate;
-				int ansLimit, comLimit;
-				Long from, to;
-				String crawlOrder;
 				
 				@Override
 				public void run() {
@@ -490,14 +459,6 @@ public class FrontierCrawlerView extends ViewPart{
 										pages =-1;
 									corpusName = corpusNameTxt.getText();
 									isDate = dateRange.getSelection();
-									jsonFilter[0] = questionUserBtn.getSelection();
-									jsonFilter[1] = ansUserBtn.getSelection();
-									jsonFilter[2] = commentUserBtn.getSelection();
-									jsonFilter[3] = isAnsweredBtn.getSelection();
-									jsonFilter[4] = answerBodyBtn.getSelection();
-									jsonFilter[5] = commentBodyBtn.getSelection();
-									ansLimit = Integer.parseInt(answerCount.getText().trim());
-									comLimit = Integer.parseInt(commentCount.getText().trim());
 //									if (isDate) {
 //										System.out.print("_____________________________");
 //										Calendar cal = Calendar.getInstance();
@@ -534,7 +495,7 @@ public class FrontierCrawlerView extends ViewPart{
 									monitor.subTask("Crawling...");
 									if (monitor.isCanceled())
 										return handledCancelRequest("Crawling is Stopped");
-									crawler.crawl(outputDir, domain, pages);
+									crawler.crawl(outputDir, domain, pages, monitor);
 									if (monitor.isCanceled())
 										return handledCancelRequest("Crawling is Stopped");
 								} catch (Exception e) {
@@ -630,67 +591,6 @@ public class FrontierCrawlerView extends ViewPart{
 			TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 			return Status.CANCEL_STATUS;
 		}
-
-		static Button ansUserBtn, answerBodyBtn, questionTitleBtn, questionBodyBtn, questionUserBtn, commentBodyBtn,
-				isAnsweredBtn, commentUserBtn;
-
-		public static void createStoredAttributesSection(FormToolkit toolkit, Composite parent,
-				final IMessageManager mmng) {
-			Section section = toolkit.createSection(parent,
-					Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION | Section.TWISTIE);
-
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
-			GridLayoutFactory.fillDefaults().numColumns(4).applyTo(section);
-			section.setText("Stored Attributes "); //$NON-NLS-1$
-			section.setDescription("Choose values for Filter");
-
-			ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
-			sc.setExpandHorizontal(true);
-			sc.setExpandVertical(true);
-
-			GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sc);
-
-			Composite sectionClient = toolkit.createComposite(section);
-			sc.setContent(sectionClient);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
-			GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
-			section.setClient(sectionClient);
-
-			Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
-			GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
-
-			questionUserBtn = new Button(sectionClient, SWT.CHECK);
-			questionUserBtn.setText("User Details for Questions");
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(questionUserBtn);
-			questionUserBtn.setEnabled(true);
-
-			ansUserBtn = new Button(sectionClient, SWT.CHECK);
-			ansUserBtn.setText("User Details for Answers");
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(ansUserBtn);
-			ansUserBtn.setEnabled(true);
-
-			commentUserBtn = new Button(sectionClient, SWT.CHECK);
-			commentUserBtn.setText("User Details for Comments");
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commentUserBtn);
-			commentUserBtn.setEnabled(true);
-
-			isAnsweredBtn = new Button(sectionClient, SWT.CHECK);
-			isAnsweredBtn.setText("Is Question Answered");
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(isAnsweredBtn);
-			isAnsweredBtn.setEnabled(true);
-
-			answerBodyBtn = new Button(sectionClient, SWT.CHECK);
-			answerBodyBtn.setText("Answer Text");
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(answerBodyBtn);
-			answerBodyBtn.setEnabled(true);
-
-			commentBodyBtn = new Button(sectionClient, SWT.CHECK);
-			commentBodyBtn.setText("Comment Text");
-			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commentBodyBtn);
-			commentBodyBtn.setEnabled(true);
-
-		}
-
 
 	}
 

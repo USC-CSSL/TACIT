@@ -1,6 +1,8 @@
 package edu.usc.cssl.tacit.crawlers.frontier.services;
 import java.io.File;
 import java.io.IOException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,9 +14,17 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public class FrontierCrawl {
 	JsonFactory jsonFactory;
 	JsonGenerator jsonGenerator;
-	
-	public void crawl(String dir, String domain, int limit){
+	IProgressMonitor monitor;
+	/**
+	 * This method crawls the static website for all the years from the current year. 
+	 * @param dir
+	 * @param domain
+	 * @param limit
+	 * @param monitor
+	 */
+	public void crawl(String dir, String domain, int limit, IProgressMonitor monitor){
 		jsonFactory = new JsonFactory();
+		this.monitor = monitor;
 		File streamFile = new File(dir+File.separator+domain+".json");
 		try {
 			jsonGenerator = jsonFactory.createGenerator(streamFile, JsonEncoding.UTF8);
@@ -53,6 +63,7 @@ public class FrontierCrawl {
 				}
 				jsonGenerator.writeEndObject();
 				count++;
+				monitor.worked(1);
 	}catch(HttpStatusException e1){
 		f.delete();
 		if(e1.getStatusCode() == 412){
