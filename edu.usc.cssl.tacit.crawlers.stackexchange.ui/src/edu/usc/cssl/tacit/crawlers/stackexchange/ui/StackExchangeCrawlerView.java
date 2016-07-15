@@ -75,15 +75,12 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	private Text queryText;
 	private Text pageText;
 	private Text corpusNameTxt;
-	private static Button btnAnswer;
 	private boolean[] jsonFilter = new boolean[6];
 	private Table senatorTable;
 	private Button addSenatorBtn;
 	private ElementListSelectionDialog listDialog;
 	private List<String> selectedRepresentatives;
-	private static Button btnQuestion;
 	private Button removeSenatorButton;
-	private static Button btnComment;
 	private Text answerCount;
 	private Text commentCount;
 	String subredditText;
@@ -200,101 +197,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		queryText = new Text(InputSectionClient, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(queryText);
 		queryText.setMessage("Search by \"tags\", seperate multiple tags by ;");
-		// queryText.addModifyListener(new ModifyListener() {
-		// @Override
-		// public void modifyText(ModifyEvent e) {
-		// if(queryText.getText()!=null && !queryText.getText().equals("")){
-		// ansUserBtn.setEnabled(true);
-		// answerBodyBtn.setEnabled(true);
-		// questionBodyBtn.setEnabled(true);
-		// questionTitleBtn.setEnabled(true);
-		// questionUserBtn.setEnabled(true);
-		// isAnsweredBtn.setEnabled(true);
-		// commentBodyBtn.setEnabled(true);
-		// commentUserBtn.setEnabled(true);
-		// btnAnswer.setEnabled(false);
-		// btnQuestion.setEnabled(false);
-		// btnComment.setEnabled(false);
-		// }else{
-		// ansUserBtn.setEnabled(false);
-		// answerBodyBtn.setEnabled(false);
-		// questionBodyBtn.setEnabled(false);
-		// questionTitleBtn.setEnabled(false);
-		// questionUserBtn.setEnabled(false);
-		// isAnsweredBtn.setEnabled(false);
-		// commentBodyBtn.setEnabled(false);
-		// commentUserBtn.setEnabled(false);
-		// btnAnswer.setEnabled(true);
-		// btnQuestion.setEnabled(true);
-		// btnComment.setEnabled(true);
-		// }
-		//
-		// }
-		// });
-
-		// Label queryLabel = new Label(inputSec, SWT.NONE);
-		// queryLabel.setText("Search for answers, questions and comments");
-		// GridDataFactory.fillDefaults().grab(false, false).span(3,
-		// 0).applyTo(queryLabel);
-		//
-		// btnAnswer = new Button(inputSec, SWT.CHECK);
-		// btnAnswer.setText("Answers");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(btnAnswer);
-		// btnAnswer.setSelection(false);
-		// btnAnswer.addListener(SWT.Selection, new Listener() {
-		// @Override
-		// public void handleEvent(Event event) {
-		// if(btnAnswer.getSelection()){
-		// ansUserBtn.setEnabled(true);
-		// answerBodyBtn.setEnabled(true);
-		// }else{
-		// ansUserBtn.setEnabled(false);
-		// answerBodyBtn.setEnabled(false);
-		// }
-		// }
-		// });
-		//
-		// btnQuestion = new Button(inputSec, SWT.CHECK);
-		// btnQuestion.setText("Questions");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(btnQuestion);
-		// btnQuestion.setSelection(false);
-		// btnQuestion.addListener(SWT.Selection, new Listener() {
-		// @Override
-		// public void handleEvent(Event event) {
-		// if(btnQuestion.getSelection()){
-		// questionBodyBtn.setEnabled(true);
-		// questionTitleBtn.setEnabled(true);
-		// questionUserBtn.setEnabled(true);
-		// isAnsweredBtn.setEnabled(true);
-		// }else{
-		// questionBodyBtn.setEnabled(false);
-		// questionTitleBtn.setEnabled(false);
-		// questionUserBtn.setEnabled(false);
-		// isAnsweredBtn.setEnabled(false);
-		// }
-		//
-		// }
-		// });
-		//
-		// btnComment = new Button(inputSec, SWT.CHECK);
-		// btnComment.setText("Comments");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(btnComment);
-		// btnComment.setSelection(false);
-		// btnComment.addListener(SWT.Selection, new Listener() {
-		// @Override
-		// public void handleEvent(Event event) {
-		// if(btnComment.getSelection()){
-		// commentBodyBtn.setEnabled(true);
-		// commentUserBtn.setEnabled(true);
-		// }else{
-		// commentBodyBtn.setEnabled(false);
-		// commentUserBtn.setEnabled(false);
-		// }
-		// }
-		// });
 
 		TacitFormComposite.createEmptyRow(toolkit, InputSectionClient);
 
@@ -478,7 +380,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			if (!selectedRepresentatives.contains((String) object))
 				selectedRepresentatives.add((String) object);
 		}
-		// Collections.sort(selectedSenators);
 		senatorTable.removeAll();
 		for (String itemName : selectedRepresentatives) {
 			TableItem item = new TableItem(senatorTable, 0);
@@ -542,15 +443,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			return false;
 		}
 
-		/*
-		 * String message =
-		 * OutputPathValidation.getInstance().validateOutputDirectory(
-		 * outputLayout.getOutputLabel().getText(), "Output"); if (message !=
-		 * null) { message = outputLayout.getOutputLabel().getText() + " " +
-		 * message; form.getMessageManager().addMessage("output", message,
-		 * null,IMessageProvider.ERROR); return false; } else {
-		 * form.getMessageManager().removeMessage("output"); }
-		 */
 
 		// Validate corpus name
 		String corpusName = corpusNameTxt.getText();
@@ -643,7 +535,6 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 						monitor.beginTask("Running StackExchange Crawler...", progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("StackExchange Crawler started");
 						crawler.setDir(outputDir);
-						// StackCaller s = new StackCaller(outputDir, null);
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if (monitor.isCanceled())
