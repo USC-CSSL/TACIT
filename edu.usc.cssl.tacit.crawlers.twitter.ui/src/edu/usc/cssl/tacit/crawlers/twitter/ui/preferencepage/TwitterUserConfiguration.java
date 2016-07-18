@@ -8,7 +8,10 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -21,12 +24,12 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
+import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
-import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 
 public class TwitterUserConfiguration extends PreferencePage implements
 		IWorkbenchPreferencePage, ITwitterConstant {
@@ -36,6 +39,7 @@ public class TwitterUserConfiguration extends PreferencePage implements
 	private Text consumerSecret;
 	private Text accessToken;
 	private Text accessTokenSecret;
+	private Button erase;
 
 	public TwitterUserConfiguration() {
 	}
@@ -74,7 +78,27 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		accessToken = createTextFields(sectionClient, true, "Access Token :");
 		accessTokenSecret = createTextFields(sectionClient, true,
 				"Access Token Secret :");
-
+		erase = new Button(sectionClient, SWT.NONE);
+		erase.setText("Erase all data");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(erase);
+		
+		erase.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				consumerKey.setText("");
+				consumerSecret.setText("");
+				accessToken.setText("");
+				accessTokenSecret.setText("");
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		loadValues();
 
 		return sectionClient;
@@ -145,7 +169,14 @@ public class TwitterUserConfiguration extends PreferencePage implements
 
 	@Override
 	public boolean performOk() {
-
+		if(consumerKey.getText().equals("") && consumerSecret.getText().equals("") && accessToken.getText().equals("") && accessTokenSecret.getText().equals(""))
+			{
+			store(CONSUMER_KEY, consumerKey.getText());
+			store(CONSUMER_SECRET, consumerSecret.getText());
+			store(ACCESS_TOKEN, accessToken.getText());
+			store(ACCESS_TOKEN_SECRET, accessTokenSecret.getText());
+			return super.performOk();
+			}
 		try {
 			updateUser();
 			store(INITIAL, Boolean.toString(false));
@@ -197,5 +228,7 @@ public class TwitterUserConfiguration extends PreferencePage implements
 		return getPreferenceStore().getString(name);
 
 	}
+	
+	
 
 }
