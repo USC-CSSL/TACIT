@@ -406,11 +406,11 @@ public class SLDATopicModelView extends ViewPart implements
 				String testing = ISLdaTopicModelClusterViewConstants.DEFAULT_LOCATION+File.separator+"test";
 				selectedFiles = classLayoutData.getSelectedFiles();
 				outputDirectory = outputPath.getText();
-				
+				final boolean isPreprocess = preprocessEnabled.getSelection();
 				Preprocessor ppObj = null;
 				List<String> inFiles;
 				try {
-					ppObj = new Preprocessor("LDA", false);
+					ppObj = new Preprocessor("LDA", isPreprocess);
 					inFiles = ppObj.processData("LDA", selectedFiles);
 
 					for (String filename : inFiles) {
