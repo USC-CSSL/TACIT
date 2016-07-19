@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
@@ -62,7 +61,6 @@ import edu.usc.cssl.tacit.classify.naivebayes.ui.internal.NaiveBayesClassifierVi
 import edu.usc.cssl.tacit.classify.naivebayes.weka.NaiveBayesClassifierWeka;
 import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
@@ -86,11 +84,13 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 	private Preprocessor preprocessTask;
 	private boolean isPreprocessEnabled = false;
 	private boolean isClassificationEnabled = false;
-	boolean canProceed = false;
+	private boolean canProceed = false;
 	private Button classificationEnabled;
 	Map<String, List<String>> classPaths;
 	protected Job job;
 
+	private boolean checkType = true;
+	boolean breakFlag = false;
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
@@ -467,13 +467,12 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 				job = new Job("Naive Bayes Classification") {
 
 					@Override
-					protected IStatus run(IProgressMonitor monitor) {
+					protected IStatus run(final IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 						monitor.beginTask("Running Naive Bayes Classification...", 100);
 
 						Date dateObj = new Date();
-
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
@@ -481,12 +480,27 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 								outputDir = outputPath.getText();
 								classificationInputDir = classifyInputText.getText();
 								tempkValue = kValueText.getText();
-								selectedFiles = classLayoutData.getSelectedFiles();
 								isPreprocessEnabled = preprocessEnabled.getSelection();
+								if(isPreprocessEnabled)
+									checkType = false;	//Because file type check is already being performed in the PreprocessorView class 
+								
 								isClassificationEnabled = classificationEnabled.getSelection();
+								try{
+									selectedFiles = classLayoutData.getTypeCheckedSelectedFiles(checkType);
+								}
+								catch(Exception e){
+									if(e.getMessage().equals("User has requested cancel"))
+										breakFlag = true;
+									else handleException(monitor, e, "Some error occurred");
+								}
+
 							}
 						});
 
+						if(breakFlag){
+							return Status.CANCEL_STATUS;
+						}
+						
 						HashMap<Integer, String> perf;
 						if (monitor.isCanceled()) {
 							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Naive Bayes Classifier ");
@@ -513,6 +527,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 									List<String> preprocessedFilePaths = preprocessTask
 											.processData(new File(dirPath).getName(), tempFiles);
+									
 									String preProcessedClassDir = null;
 
 									if (!preprocessedFilePaths.isEmpty())
@@ -533,12 +548,16 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 									nbc.selectAllFiles(classificationInputDir, files);
 									List<String> preprocessedFilePaths = preprocessTask
 											.processData(new File(classificationInputDir).getName(), files);
+
 									if (!preprocessedFilePaths.isEmpty())
 										classificationInputDir = new File(preprocessedFilePaths.get(0)).getParent();
 									monitor.worked(1);
 								}
-							} catch (Exception e) {
-								return handleException(monitor, e, "Preprocessing failed. Provide valid data");
+							} catch(Exception e){
+								if (e.getMessage().equals("User has requested cancel"))
+									return Status.CANCEL_STATUS;
+								else
+									return handleException(monitor, e, "Preprocessing failed. Provide valid data");
 							}
 							monitor.worked(10);
 
@@ -550,11 +569,13 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 									ppObj = new Preprocessor("Hierarchical_Clustering", true);
 									List<String> inFiles;
 									// classPaths.clear();
+
 									for (Object i : selectedFiles) {
 										if (i instanceof CorpusClass) {
 											List<Object> tempSelection = new ArrayList<Object>();
 											tempSelection.add(i);
 											inFiles = ppObj.processData("Hierarchical_Clustering", tempSelection);
+											
 											CorpusClass j = (CorpusClass) i;
 											classPaths.put(j.getClassName(), inFiles);
 											if (classPaths.containsKey(((CorpusClass) i).getParent().getCorpusName())) {
@@ -562,7 +583,6 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 											}
 										}
 									}
-									System.out.println("Done");
 								} catch (IOException e) {
 									e.printStackTrace();
 									return Status.CANCEL_STATUS;
@@ -613,7 +633,6 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 							// perform cross validation
 							if (isClassificationEnabled) {
 								monitor.subTask("Classifying...");
-								ConsoleView.printlInConsoleln("---------- Classification Starts ------------");
 								try {
 									cv.doClassify(classificationInputDir, outputDir, monitor, dateObj);
 								} catch (IllegalArgumentException iae) {
@@ -622,7 +641,6 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 									return handleException(monitor, iae,
 											"Naive Bayes Classifier failed. Provide valid data.");
 								}
-								ConsoleView.printlInConsoleln("---------- Classification Finished ------------");
 							}
 							monitor.worked(15);
 							if (monitor.isCanceled()) {

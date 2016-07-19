@@ -212,17 +212,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	}
 	
 	private void createCrawlInputParameters(final FormToolkit toolkit, final Composite parent) {
-		
-		Group buttonComposite = new Group(parent, SWT.LEFT);
-		buttonComposite.setText("Type of crawl");
-		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		buttonComposite.setLayout(layout);
-
-		
-
-		
 
 		// create input parameters section
 		// main section

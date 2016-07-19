@@ -65,7 +65,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 	private Text topics;
 	private Button fAddFileButton;
 	protected Job job;
-
+	private List<Object> selectedFiles;
+	private boolean checkType = true;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -243,10 +244,18 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				final int noOfTopics = Integer.valueOf(topics.getText())
 						.intValue();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
+				if(isPreprocess){
+					checkType = false;
+				}
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				
+				try {
+					selectedFiles = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e2) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 
 				final String seedFilePath = seedFileText.getText();
@@ -423,10 +432,14 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 			canProceed = false;
 		}
 		// validate input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+		} catch (Exception e) {
 			canProceed = false;
 		}
 		String seedFileMsg = OutputPathValidation.getInstance()

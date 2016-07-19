@@ -67,7 +67,8 @@ public class StandardWordCountView extends ViewPart implements
 	private Button createDATFile;
 	private Button createPOSTags;
 	protected Job wordCountJob;
-
+	private List<Object> inputObjs;
+	private boolean checkType = true;
 	@Override
 	public Image getTitleImage() {
 		return StandardWordCountImageRegistry.getImageIconFactory().getImage(
@@ -289,8 +290,13 @@ public class StandardWordCountView extends ViewPart implements
 				TacitFormComposite.writeConsoleHeaderBegining("Word Count ");
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> inputObjs = inputLayoutData
-						.getSelectedFiles();
+				
+				try {
+					inputObjs = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e1) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
@@ -299,6 +305,9 @@ public class StandardWordCountView extends ViewPart implements
 				final boolean doWordDistribution = wordDistribution
 						.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
+				if(ppValue){
+					checkType = false;
+				}
 				final boolean wcType = weightedWordCountButton.getSelection();
 				final boolean datFile = createDATFile.getSelection();
 				final boolean doPOSTags = createPOSTags.getSelection();
@@ -426,16 +435,25 @@ public class StandardWordCountView extends ViewPart implements
 			canPerform = false;
 		}
 		// check input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add at least one input file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add at least one input file", null,
+						IMessageProvider.ERROR);
+				canPerform = false;
+			}
+			
+		} catch (Exception e) {
 			canPerform = false;
 		}
-		if (dictLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("dict",
-					"Select/Add at least one Dictionary file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (dictLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("dict",
+						"Select/Add at least one Dictionary file", null,
+						IMessageProvider.ERROR);
+				canPerform = false;
+			}
+		} catch (Exception e) {
 			canPerform = false;
 		}
 		return canPerform;

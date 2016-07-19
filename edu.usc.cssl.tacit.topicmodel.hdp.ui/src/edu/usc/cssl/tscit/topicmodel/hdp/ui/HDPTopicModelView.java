@@ -53,10 +53,12 @@ public class HDPTopicModelView extends ViewPart implements
 		private FormToolkit toolkit;
 		private Button preprocessEnabled;
 
+		private boolean checkType = true;
 		private OutputLayoutData layoutData;
 		private TableLayoutData inputLayoutData;
 		protected Job job;
-
+		private List<Object> selectedFiles;
+		
 		@Override
 		public void createPartControl(Composite parent) {
 			toolkit = createFormBodySection(parent);
@@ -187,10 +189,18 @@ public class HDPTopicModelView extends ViewPart implements
 						return;
 					}
 					final boolean isPreprocess = preprocessEnabled.getSelection();
+					if(isPreprocess){
+						checkType = false;
+					}
 					final String outputPath = layoutData.getOutputLabel().getText();
 					TacitUtil tacitHelper = new TacitUtil();
-					final List<Object> selectedFiles = inputLayoutData
-							.getSelectedFiles();
+					
+					try {
+						selectedFiles = inputLayoutData
+								.getTypeCheckedSelectedFiles(checkType);
+					} catch (Exception e2) {
+						return;
+					}
 					tacitHelper.writeSummaryFile(outputPath);
 
 					TacitFormComposite
@@ -352,10 +362,14 @@ public class HDPTopicModelView extends ViewPart implements
 				canProceed = false;
 			}
 			// validate input
-			if (inputLayoutData.getSelectedFiles().size() < 1) {
-				form.getMessageManager().addMessage("input",
-						"Select/Add at least one input file", null,
-						IMessageProvider.ERROR);
+			try {
+				if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+					form.getMessageManager().addMessage("input",
+							"Select/Add at least one input file", null,
+							IMessageProvider.ERROR);
+					canProceed = false;
+				}
+			} catch (Exception e) {
 				canProceed = false;
 			}
 			return canProceed;

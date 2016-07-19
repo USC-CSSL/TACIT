@@ -68,7 +68,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private Text windowSize;
 	private Text thresholdValue;
 	private Job cooccurrenceAnalysisJob;
-
+private List<Object> selectedFiles;
+private boolean checkType = true;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -265,8 +266,15 @@ public class CooccurrenceWordCountView extends ViewPart implements
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				
+				try {
+					selectedFiles = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+					checkType = false;	//if control reaches here, that means the user ignored the warning, so no more checks will be made
+							
+				} catch (Exception e1) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
@@ -405,8 +413,14 @@ public class CooccurrenceWordCountView extends ViewPart implements
 		form.getMessageManager().removeMessage("threshold");
 
 		// validate input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input","Select/Add atleast one input file", null,IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input","Select/Add atleast one input file", null,IMessageProvider.ERROR);
+				return false;
+			}
+			checkType = false;	//if control reaches here, that means the user ignored the warning, so no more checks will be made
+			
+		} catch (Exception e1) {
 			return false;
 		}
 				

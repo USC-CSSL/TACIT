@@ -85,6 +85,7 @@ public class SLDATopicModelView extends ViewPart implements
 	private Button classificationEnabled;
 	Map<String, List<String>> classPaths;
 	protected Job job;
+	private boolean checkType = true;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -404,7 +405,11 @@ public class SLDATopicModelView extends ViewPart implements
 				trainingSrc = trainingInputText.getText();
 				String training = ISLdaTopicModelClusterViewConstants.DEFAULT_LOCATION+File.separator+"train";
 				String testing = ISLdaTopicModelClusterViewConstants.DEFAULT_LOCATION+File.separator+"test";
-				selectedFiles = classLayoutData.getSelectedFiles();
+				try {
+					selectedFiles = classLayoutData.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e2) {
+					return;
+				}
 				outputDirectory = outputPath.getText();
 				
 				Preprocessor ppObj = null;
@@ -412,7 +417,12 @@ public class SLDATopicModelView extends ViewPart implements
 				try {
 					ppObj = new Preprocessor("LDA", false);
 					inFiles = ppObj.processData("LDA", selectedFiles);
-
+					
+					//inFiles will be run if unsupported files are given as input
+					if (inFiles == null){
+						return;
+					}
+					
 					for (String filename : inFiles) {
 						File srcFile = new File(filename);
 						File destDir = new File(testing);

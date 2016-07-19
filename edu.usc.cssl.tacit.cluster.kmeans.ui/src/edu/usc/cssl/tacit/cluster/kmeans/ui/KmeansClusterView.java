@@ -55,7 +55,13 @@ public class KmeansClusterView extends ViewPart implements
 	private Text noClusterTxt;
 	private OutputLayoutData layoutData;
 	protected Job performCluster;
+	private List<Object> selectedFiles;
 
+	private boolean checkType = true;
+
+	private int noOfClusters;
+	private boolean isPreprocess;
+	private String outputPath;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -182,12 +188,17 @@ public class KmeansClusterView extends ViewPart implements
 				}
 				TacitFormComposite
 						.writeConsoleHeaderBegining("KMeans Clustering started ");
-				final int noOfClusters = Integer
+				noOfClusters = Integer
 						.valueOf(noClusterTxt.getText()).intValue();
-				final boolean isPreprocess = preprocessEnabled.getSelection();
-				final String outputPath = layoutData.getOutputLabel().getText();
+				isPreprocess = preprocessEnabled.getSelection();
+				outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = layData.getSelectedFiles();
+				
+				try {
+					selectedFiles = layData.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e1) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 
 				performCluster = new Job("Clustering...") {
@@ -335,10 +346,14 @@ public class KmeansClusterView extends ViewPart implements
 		}
 
 		// todo: check whether there is any real file - not just a folder name
-		if (layData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (layData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+		} catch (Exception e1) {
 			canProceed = false;
 		}
 		int noClusters;

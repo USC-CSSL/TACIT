@@ -165,6 +165,7 @@ public class Preprocessor {
 					continue;
 					// processDirectory(inputFile.getAbsolutePath());
 				} else {
+					
 					if (inputFile.getName().contains("DS_Store"))
 						continue;
 
@@ -231,7 +232,6 @@ public class Preprocessor {
 		} else {
 			outFile = ppFilesLoc + System.getProperty("file.separator") + outName;
 		}
-		System.out.println("Hello lo l o");
 		return outFile;
 	}
 

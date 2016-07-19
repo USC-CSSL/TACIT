@@ -63,6 +63,10 @@ public class LdaTopicModelView extends ViewPart implements
 	protected Job job;
 	private Button wordWeights;
 
+	private boolean checkType = true;
+	private int noOfTopics;
+	private boolean isPreprocess;
+	private List<Object> selectedFiles = null;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -211,13 +215,19 @@ public class LdaTopicModelView extends ViewPart implements
 				if (!canProceedCluster()) {
 					return;
 				}
-				final int noOfTopics = Integer
+				noOfTopics = Integer
 						.valueOf(numberOfTopics.getText()).intValue();
-				final boolean isPreprocess = preprocessEnabled.getSelection();
+				isPreprocess = preprocessEnabled.getSelection();
+				if(isPreprocess)
+					checkType = false;
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				try {
+					selectedFiles = inputLayoutData.getTypeCheckedSelectedFiles(checkType);
+					
+				} catch (Exception e2) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 
 				final boolean wordWeightFile = wordWeights.getSelection();
@@ -241,7 +251,12 @@ public class LdaTopicModelView extends ViewPart implements
 						try {
 							ppObj = new Preprocessor("LDA", isPreprocess);
 							inFiles = ppObj.processData("LDA", selectedFiles);
-
+							
+							//inFiles will be null if the input files have unsupported formats
+							
+							if (inFiles == null){
+								return Status.CANCEL_STATUS;
+							}
 							for (String filename : inFiles) {
 								File srcFile = new File(filename);
 								File destDir = new File(topicModelDirPath);
@@ -388,10 +403,15 @@ public class LdaTopicModelView extends ViewPart implements
 			canProceed = false;
 		}
 		// validate input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add at least one input file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add at least one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+			
+		} catch (Exception e) {
 			canProceed = false;
 		}
 

@@ -69,7 +69,8 @@ public class WeightedWordCountView extends ViewPart implements
 	private Button weightedWordCountButton;
 	private Button standardWordCountButton;
 	private Job wordCountJob;
-
+	private boolean checkType = true;
+	private List<Object> inputFiles;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -317,8 +318,12 @@ public class WeightedWordCountView extends ViewPart implements
 						+ fileName + ".dat");
 
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> inputFiles = inputLayoutData
-						.getSelectedFiles();
+				try {
+					inputFiles = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e1) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 				final Map<String, String[]> fileCorpusMap = tacitHelper
 						.getFileCorpusMembership();
@@ -476,16 +481,25 @@ public class WeightedWordCountView extends ViewPart implements
 			canPerform = false;
 		}
 		// check input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add at least one input file", null,
-					IMessageProvider.ERROR);
+		try {
+
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add at least one input file", null,
+						IMessageProvider.ERROR);
+				canPerform = false;
+			}
+		} catch (Exception e) {
 			canPerform = false;
 		}
-		if (dictLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("dict",
-					"Select/Add at least one Dictionary file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (dictLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("dict",
+						"Select/Add at least one Dictionary file", null,
+						IMessageProvider.ERROR);
+				canPerform = false;
+			}
+		} catch (Exception e) {
 			canPerform = false;
 		}
 		return canPerform;

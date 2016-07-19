@@ -70,7 +70,9 @@ public class OnlineLDATopicModelView extends ViewPart implements
 	private Text tokensPerTopic;
 	private Button fAddFileButton;
 	protected Job job;
-
+	private List<Object> selectedFiles;
+	private boolean checkType = true;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -252,8 +254,17 @@ public class OnlineLDATopicModelView extends ViewPart implements
 				final boolean isPreprocess = preprocessEnabled.getSelection();
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				if(isPreprocess)
+					checkType = false;
+				try {
+					selectedFiles = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+					checkType = false;	//if control reaches here, that means the user ignored the warning, so no more checks will be made
+					
+				} catch (Exception e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 
 				final String seedFilePath = seedFileText.getText();
@@ -419,8 +430,14 @@ public class OnlineLDATopicModelView extends ViewPart implements
 		}
 		
 		// validate input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input","Select/Add atleast one input file", null,IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input","Select/Add atleast one input file", null,IMessageProvider.ERROR);
+				return false;
+			}
+			checkType = false;	//if control reaches here, that means the user ignored the warning, so no more checks will be made
+			
+		} catch (Exception e1) {
 			return false;
 		}
 		

@@ -204,8 +204,13 @@ public class PreprocessorView extends ViewPart {
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("inputNoProper");
 		form.getMessageManager().removeMessage("noOutput"); 
-		
-		List<String> inputFiles = new TacitUtil().refineInput(layData.getSelectedFiles());
+		List<String> inputFiles;
+		try{
+			inputFiles = new TacitUtil().refineInput(layData.getTypeCheckedSelectedFiles(true));
+		}
+		catch(Exception e){
+			return false;
+		}
 		boolean noProperFiles = true;
 
 		if (inputFiles.size() < 1) {

@@ -71,6 +71,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 	private Button featureFileButton;
 	protected Job job;
 
+	private boolean checkType = false;
+	private List<Object> class1Files;
+	private List<Object> class2Files;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -174,10 +177,17 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 			public void run() {
 				if (!canProceed())
 					return;
-				final List<Object> class1Files = class1LayoutData
-						.getSelectedFiles();
-				final List<Object> class2Files = class2LayoutData
-						.getSelectedFiles();
+				try {
+					class1Files = class1LayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+					
+					class2Files = class2LayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				final String class1NameStr = class1Name.getText();
 				final String class2NameStr = class2Name.getText();
 				final int kValueInt = Integer.parseInt(kValue.getText());
@@ -328,11 +338,16 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		form.getMessageManager().removeMessage("kValueEmpty");
 		form.getMessageManager().removeMessage("kValue");
 		form.getMessageManager().removeMessage("output");
-
-		List<String> class1Files = new TacitUtil().refineInput(class1LayoutData
-				.getSelectedFiles());
-		List<String> class2Files = new TacitUtil().refineInput(class2LayoutData
-				.getSelectedFiles());
+		List<String> class1Files;
+		List<String> class2Files;
+		try{
+			class1Files = new TacitUtil().refineInput(class1LayoutData
+					.getTypeCheckedSelectedFiles(checkType));
+			class2Files = new TacitUtil().refineInput(class2LayoutData
+					.getTypeCheckedSelectedFiles(checkType));
+		}catch (Exception e){
+			return false;
+		}
 		boolean noProperFiles = true;
 		
 		int numFiles1 = class1Files.size();

@@ -67,7 +67,6 @@ public class QueryProcesser implements IQueryProcessor {
 			try {
 				String smartQuery;
 				smartQuery = createSmartFilters(parentFilters, groupedFilters, operator);
-				System.out.println(parentFilters + ":" + smartQuery);
 				Object result = JsonPath.parse(document).read(smartQuery);
 				if (result instanceof LinkedHashMap<?, ?>) {
 					LinkedHashMap<?, ?> records = (LinkedHashMap<?, ?>) result;

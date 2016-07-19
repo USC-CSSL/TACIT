@@ -75,9 +75,12 @@ public class TurboTopicsModelView extends ViewPart implements
 	protected Job job;
 	Text pValueTxt;
 	Text minCountTxt;
-
+	private boolean checkType = true;
+	private List<Object> selectedFiles;
+	
 	@Override
 	public void createPartControl(Composite parent) {
+		
 		toolkit = createFormBodySection(parent);
 		Section section = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR | Section.EXPANDED);
@@ -254,16 +257,22 @@ public class TurboTopicsModelView extends ViewPart implements
 				final double pValue = Double.parseDouble(pValueTxt.getText());
 				final boolean usePermBool = usePerm.getSelection();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
+				if(isPreprocess)
+					checkType = false;
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				
+				try {
+					selectedFiles = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e2) {
+					return;
+				}
 				lda = new LdaAnalysis(){
 					@Override
 					protected void createRunReport(Date date){
 						
 					}
-					
 				};
 				tacitHelper.writeSummaryFile(outputPath);
 
@@ -437,7 +446,8 @@ public class TurboTopicsModelView extends ViewPart implements
 						}
 						monitor.worked(10);
 						monitor.done();
-						ConsoleView
+
+ConsoleView
 						.printlInConsoleln("Turbo Topics Modelling completed successfully in "
 								+ (System.currentTimeMillis() - startTime)
 								+ " milliseconds.");
@@ -535,10 +545,14 @@ public class TurboTopicsModelView extends ViewPart implements
 			canProceed = false;
 		}
 		// validate input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+		} catch (Exception e1) {
 			canProceed = false;
 		}
 

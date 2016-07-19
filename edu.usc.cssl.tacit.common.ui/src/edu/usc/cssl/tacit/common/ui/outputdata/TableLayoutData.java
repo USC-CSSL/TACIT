@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -32,7 +33,6 @@ public class TableLayoutData {
 	public void refreshInternalTree(List<String> files){
 		if(this.lgroup!= null){
 			this.lgroup.updateLocationTree(files.toArray(new String[files.size()]));
-		
 		}
 	}
 	/*
@@ -45,6 +45,7 @@ public class TableLayoutData {
 		for(TreeItem ti : children) {
 			if(null != ti.getData()) {
 				Object classObj = ti.getData();
+				
 				if (ti.getChecked()) {
 					if (classObj instanceof TreeParent) {
 						if (((TreeParent) classObj).getCorpusClass() != null) {
@@ -54,8 +55,10 @@ public class TableLayoutData {
 							subfolders.put(new File(classObj.toString()).getAbsolutePath(), ti);
 					} else {
 						String filename = classObj.toString();
-						if (!(new File(filename).isDirectory())) 
+						if (!(new File(filename).isDirectory())) {
+							
 							selectedItems.add(filename);
+						}
 					}
 				}
 			}
@@ -107,7 +110,7 @@ public class TableLayoutData {
 
 	}
 	
-	public List<Object> getSelectedFiles() {
+	public List<Object> getTypeCheckedSelectedFiles(boolean checkType) throws Exception {
 		Object[] checkedElements = treeViewer.getCheckedElements();
 		List<Object> files = new ArrayList<Object>();
 		for (int i = 0; i < checkedElements.length; i++) {
@@ -121,6 +124,27 @@ public class TableLayoutData {
 				}
 			}
 			files.add(checkedElements[i].toString());
+			String filename = checkedElements[i].toString();
+			File file = new File(checkedElements[i].toString());
+			if(!file.isDirectory()){
+				
+				if(checkType && !(filename.endsWith(".txt")||filename.endsWith(".rtf")||filename.endsWith(".pdf")))
+				{
+					MessageDialog dialog = new MessageDialog(null, "Alert", null, "The input contains one or more files with unsupported formats (other than .pdf, .txt, and .rtf ). Hence the analysis may include extraneous information may be included in the analysis with text. To separate text in json files before analysis, see corpus management. Would you like to continue?", MessageDialog.INFORMATION, new String[]{"Cancel","OK"}, 1);
+					int result = dialog.open();
+					
+					//If user selects the cancel button then return
+					if (result <= 0){
+						dialog.close();
+						throw new Exception("User has requested cancel");
+					}
+					else{
+						checkType = false;
+					}
+				}
+				
+				
+			}
 		}
 		return files;
 	}

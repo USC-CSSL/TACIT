@@ -67,6 +67,8 @@ public class HeirarchicalLDAView  extends ViewPart implements
 	private HierarchicalLDAModel hlda = new HierarchicalLDAModel();
 	protected Job job;
 	protected int noOfIterations;
+	private boolean checkType = true;
+	private List<Object> selectedFiles;
 	@Override
 	public void createPartControl(Composite parent) {
 
@@ -213,10 +215,17 @@ public class HeirarchicalLDAView  extends ViewPart implements
 				}
 				
 				final boolean isPreprocess = preprocessEnabled.getSelection();
+				if(isPreprocess){
+					checkType = false;
+				}
 				final String outputPath = layoutData.getOutputLabel().getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = inputLayoutData
-						.getSelectedFiles();
+				try {
+					selectedFiles = inputLayoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				} catch (Exception e2) {
+					return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 
 			
@@ -428,10 +437,14 @@ public class HeirarchicalLDAView  extends ViewPart implements
 			canProceed = false;
 		}
 		// validate input
-		if (inputLayoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
+		try {
+			if (inputLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+		} catch (Exception e) {
 			canProceed = false;
 		}
 

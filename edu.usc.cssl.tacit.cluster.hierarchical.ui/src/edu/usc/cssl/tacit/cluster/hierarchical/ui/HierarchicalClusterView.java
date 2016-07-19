@@ -64,6 +64,8 @@ public class HierarchicalClusterView extends ViewPart implements
 	private Button saveImage;
 	protected Job performCluster;
 
+	private boolean checkType = false;
+	private List<Object> selectedFiles = null;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -218,8 +220,14 @@ public class HierarchicalClusterView extends ViewPart implements
 				final String outputPath = layoutOutputData.getOutputLabel()
 						.getText();
 				TacitUtil tacitHelper = new TacitUtil();
-				final List<Object> selectedFiles = layoutData
-						.getSelectedFiles();
+				try{
+					selectedFiles = layoutData
+							.getTypeCheckedSelectedFiles(checkType);
+				}
+				catch (Exception e){
+					if(e.getMessage().equals("User has requested cancel"))
+						return;
+				}
 				tacitHelper.writeSummaryFile(outputPath);
 
 				final boolean isSaveImage = saveImage.getSelection();
@@ -244,16 +252,19 @@ public class HierarchicalClusterView extends ViewPart implements
 
 							List<String> inFiles;
 
+							
 							inFiles = ppObj.processData(
 									"Hierarchical_Clustering", selectedFiles);
-
+							
+							
 							for (String f : inFiles) {
 								inputFiles.add(new File(f));
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
-						} catch (Exception e) {
+						}
+						catch (Exception e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
 						}
@@ -392,13 +403,18 @@ public class HierarchicalClusterView extends ViewPart implements
 					IMessageProvider.ERROR);
 			canProceed = false;
 		}
-
+		
 		// check input
-		if (layoutData.getSelectedFiles().size() < 1) {
-			form.getMessageManager().addMessage("input",
-					"Select/Add atleast one input file", null,
-					IMessageProvider.ERROR);
-			canProceed = false;
+		try{
+			if (layoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
+				form.getMessageManager().addMessage("input",
+						"Select/Add atleast one input file", null,
+						IMessageProvider.ERROR);
+				canProceed = false;
+			}
+		}
+		catch(Exception e){
+			return false;
 		}
 		return canProceed;
 	}
