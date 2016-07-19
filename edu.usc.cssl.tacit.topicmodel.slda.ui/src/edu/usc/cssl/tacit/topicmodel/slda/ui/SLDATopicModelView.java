@@ -412,6 +412,9 @@ public class SLDATopicModelView extends ViewPart implements
 				}
 				outputDirectory = outputPath.getText();
 				final boolean isPreprocess = preprocessEnabled.getSelection();
+				if (isPreprocess){
+					checkType = false;
+				}
 				Preprocessor ppObj = null;
 				List<String> inFiles;
 				try {
