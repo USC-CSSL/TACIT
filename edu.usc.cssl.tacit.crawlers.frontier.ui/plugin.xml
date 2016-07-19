@@ -7,7 +7,7 @@
             class="edu.usc.cssl.tacit.crawlers.frontier.ui.FrontierCrawlerView"
             icon="icons/frontier.png"
             id="edu.usc.cssl.tacit.crawlers.frontier.ui.view1"
-            name="Frontier Journals Crawler"
+            name="Frontier Journal Crawler"
             restorable="true">
       </view>
    </extension>
