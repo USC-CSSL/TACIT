@@ -411,11 +411,11 @@ public class SLDATopicModelView extends ViewPart implements
 					return;
 				}
 				outputDirectory = outputPath.getText();
-				
+				final boolean isPreprocess = preprocessEnabled.getSelection();
 				Preprocessor ppObj = null;
 				List<String> inFiles;
 				try {
-					ppObj = new Preprocessor("LDA", false);
+					ppObj = new Preprocessor("LDA", isPreprocess);
 					inFiles = ppObj.processData("LDA", selectedFiles);
 					
 					//inFiles will be run if unsupported files are given as input
