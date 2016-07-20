@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -466,7 +467,7 @@ public class WeightedWordCountView extends ViewPart implements
 	}
 
 	private boolean canProceed() {
-		boolean canPerform = true;
+
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
@@ -478,7 +479,7 @@ public class WeightedWordCountView extends ViewPart implements
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
-			canPerform = false;
+			return false;
 		}
 		// check input
 		try {
@@ -487,22 +488,37 @@ public class WeightedWordCountView extends ViewPart implements
 				form.getMessageManager().addMessage("input",
 						"Select/Add at least one input file", null,
 						IMessageProvider.ERROR);
-				canPerform = false;
+				return false;
 			}
 		} catch (Exception e) {
-			canPerform = false;
+			return false;
 		}
 		try {
 			if (dictLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
 				form.getMessageManager().addMessage("dict",
 						"Select/Add at least one Dictionary file", null,
 						IMessageProvider.ERROR);
-				canPerform = false;
+				return false;
 			}
 		} catch (Exception e) {
-			canPerform = false;
+			return false;
 		}
-		return canPerform;
+		
+		try{
+			List<Object> dictPaths = dictLayoutData.getTypeCheckedSelectedFiles(checkType);
+			Iterator<Object> dictPathIterator  = dictPaths.iterator();
+			while(dictPathIterator.hasNext()){
+				String dictPath  = (String)dictPathIterator.next();
+				if (!dictPath.endsWith(".txt")){
+					form.getMessageManager().addMessage("dict", "Error:The dictionary is not in .txt format", null, IMessageProvider.ERROR);
+					return false;
+				}
+			}
+		}catch(Exception e){
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override

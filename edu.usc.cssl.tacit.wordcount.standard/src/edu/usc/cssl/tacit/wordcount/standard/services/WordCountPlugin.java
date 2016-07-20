@@ -124,19 +124,19 @@ public class WordCountPlugin {
 				+ System.getProperty("file.separator")
 				+ "TACIT-word-distribution-" + df.format(dateObj);
 	}
-	public void countWords(List<String> inputFiles, List<String> dictionaryFiles) {
+	public void countWords(List<String> inputFiles, List<String> dictionaryFiles) throws OperationCanceledException,Exception{
 
 		ConsoleView.printlInConsoleln("Loading models.");
 		if (!setModels())
 			return;
 
 		try {
-			ConsoleView.printlInConsoleln("Bulding dictionary.");
+			ConsoleView.printlInConsoleln("Building dictionary.");
 			buildMaps(dictionaryFiles);
-		} catch (IOException e) {
-			ConsoleView.printlInConsoleln("Error parsing dictionary.");
+		} catch (Exception e) {
+			ConsoleView.printlInConsoleln("Error parsing dictionary.Dictionary is not properly formed.");
 			e.printStackTrace();
-			return;
+			throw new Exception("Error Parsing Dictionary");
 		}
 
 		ConsoleView.printlInConsoleln("Counting Words.");
@@ -719,7 +719,7 @@ public class WordCountPlugin {
 	 *             Catch error in caller. The errors might be due to bad
 	 *             dictionary format.
 	 */
-	private void buildMaps(List<String> dictionaryFiles) throws IOException {
+	private void buildMaps(List<String> dictionaryFiles) throws Exception {
 
 		monitor.subTask("Building Dictionary Maps");
 

@@ -2,6 +2,7 @@ package edu.usc.cssl.tacit.wordcount.standard.ui;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -356,7 +357,7 @@ public class StandardWordCountView extends ViewPart implements
 				};
 				wordCountJob.setUser(true);
 				if (canProceed()) {
-					wordCountJob.schedule();
+					wordCountJob.schedule();		
 					wordCountJob.addJobChangeListener(new JobChangeAdapter() {
 
 						@Override
@@ -421,7 +422,6 @@ public class StandardWordCountView extends ViewPart implements
 
 	private boolean canProceed() {
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-		boolean canPerform = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("input");
 		form.getMessageManager().removeMessage("dict");
@@ -432,7 +432,7 @@ public class StandardWordCountView extends ViewPart implements
 			message = layoutData.getOutputLabel().getText() + " " + message;
 			form.getMessageManager().addMessage("location", message, null,
 					IMessageProvider.ERROR);
-			canPerform = false;
+			return false;
 		}
 		// check input
 		try {
@@ -440,23 +440,38 @@ public class StandardWordCountView extends ViewPart implements
 				form.getMessageManager().addMessage("input",
 						"Select/Add at least one input file", null,
 						IMessageProvider.ERROR);
-				canPerform = false;
+				return false;
 			}
 			
 		} catch (Exception e) {
-			canPerform = false;
+			return false;
 		}
 		try {
 			if (dictLayoutData.getTypeCheckedSelectedFiles(checkType).size() < 1) {
 				form.getMessageManager().addMessage("dict",
 						"Select/Add at least one Dictionary file", null,
 						IMessageProvider.ERROR);
-				canPerform = false;
+				return false;
 			}
 		} catch (Exception e) {
-			canPerform = false;
+			return false;
 		}
-		return canPerform;
+		
+		try{
+			List<Object> dictPaths = dictLayoutData.getTypeCheckedSelectedFiles(checkType);
+			Iterator<Object> dictPathIterator  = dictPaths.iterator();
+			while(dictPathIterator.hasNext()){
+				String dictPath  = (String)dictPathIterator.next();
+				if (!dictPath.endsWith(".txt")){
+					form.getMessageManager().addMessage("dict", "Error:The dictionary is not in .txt format", null, IMessageProvider.ERROR);
+					return false;
+				}
+			}
+		}catch(Exception e){
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override
