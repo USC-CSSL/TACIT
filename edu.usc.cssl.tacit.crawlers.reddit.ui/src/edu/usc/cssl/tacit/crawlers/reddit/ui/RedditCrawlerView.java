@@ -316,7 +316,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		content = new ArrayList<String>();
 		subreddits = new Text(commonsearchComposite, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(subreddits);	
-		subreddits.setMessage("Provide subreddit names seperated by \",\"");		
+		subreddits.setMessage("Provide a subreddit name");		
 		
 		Label sortType = new Label(commonsearchComposite, SWT.NONE);
 		sortType.setText("Sort Links By:");
