@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.junit.Test;
 
 import edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin;
@@ -44,7 +45,14 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
 		File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WordCountOutput.csv");
 		File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"StandardWordCountTestExpectedOutput.csv");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
@@ -108,7 +116,14 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
 		File generatedPOSTagsFile = new File(directoryPath + System.getProperty("file.separator") +"POS-Tags-Generated-Output.txt");
 		File expectedPOSTagsFile = new File(directoryPath + System.getProperty("file.separator") +"POS-Tags-Expected-Output.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedPOSTagsFile));
@@ -160,7 +175,15 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
+
 		File generatedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") +"WordDistributionOutput.csv");
 		File expectedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") +"WordDistributionExpectedOutput.csv");
 		HashSet<String> temp = new HashSet<String>();
@@ -207,7 +230,15 @@ public class Tacit_Wordcount_Test{
 			inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 			List<String> dictionary = new ArrayList<String>();
 			dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
-			wc.countWords(inputFiles, dictionary);
+			Exception exceptionObj = null;
+			try {
+				wc.countWords(inputFiles, dictionary);
+			} catch (Exception e) {
+				exceptionObj = e;
+			}
+			
+			assertEquals("Checking if any exception occured", exceptionObj, null);
+
 			File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"StandardWordCountStemmedGeneratedOutput.csv");
 			File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"StandardWordCountStemmedExpectedOutput.csv");
 			BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
@@ -261,7 +292,15 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidStandardWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
+
 
 		File expectedDATOutput = new File(directoryPath + System.getProperty("file.separator") +"ExpectedWordCountOutput.dat");
 		File generatedDATOutput = new File(directoryPath + System.getProperty("file.separator") +"WordCountOutput.dat");
@@ -318,7 +357,15 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidWeightedWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
+
 		File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountOutput.csv");
 		File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountTestExpectedOutput.csv");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
@@ -380,7 +427,15 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidWeightedWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
+
 		File generatedPOSTagsFile = new File(directoryPath + System.getProperty("file.separator") +"POS-Tags-Generated-Output.txt");
 		File expectedPOSTagsFile = new File(directoryPath + System.getProperty("file.separator") +"weighted-POS-Tags-Expected-Output.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(generatedPOSTagsFile));
@@ -429,7 +484,15 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") + "Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") + "ValidWeightedWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
+
 		File generatedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") + "WeightedWordDistributionOutput.csv");
 		File expectedWordDistributionOutput = new File(directoryPath + System.getProperty("file.separator") + "WeightedWordDistributionExpectedOutput.csv");
 		HashSet<String> temp = new HashSet<String>();
@@ -476,7 +539,15 @@ public class Tacit_Wordcount_Test{
 			inputFiles.add(directoryPath + System.getProperty("file.separator") + "Data.txt");
 			List<String> dictionary = new ArrayList<String>();
 			dictionary.add(directoryPath + System.getProperty("file.separator") + "ValidWeightedWordCountDictionary.txt");
-			wc.countWords(inputFiles, dictionary);
+			Exception exceptionObj = null;
+			try {
+				wc.countWords(inputFiles, dictionary);
+			} catch (Exception e) {
+				exceptionObj = e;
+			}
+			
+			assertEquals("Checking if any exception occured", exceptionObj, null);
+
 			File generatedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountStemmedGeneratedOutput.csv");
 			File expectedOutputFile = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountStemmedExpectedOutput.csv");
 			BufferedReader reader = new BufferedReader(new FileReader(generatedOutputFile));
@@ -530,7 +601,15 @@ public class Tacit_Wordcount_Test{
 		inputFiles.add(directoryPath + System.getProperty("file.separator") +"Data.txt");
 		List<String> dictionary = new ArrayList<String>();
 		dictionary.add(directoryPath + System.getProperty("file.separator") +"ValidWeightedWordCountDictionary.txt");
-		wc.countWords(inputFiles, dictionary);
+		Exception exceptionObj = null;
+		try {
+			wc.countWords(inputFiles, dictionary);
+		} catch (Exception e) {
+			exceptionObj = e;
+		}
+		
+		assertEquals("Checking if any exception occured", exceptionObj, null);
+
 		
 		File expectedDATOutput = new File(directoryPath + System.getProperty("file.separator") +"ExpectedWeightedWordCountOutput.dat");
 		File generatedDATOutput = new File(directoryPath + System.getProperty("file.separator") +"WeightedWordCountOutput.dat");
