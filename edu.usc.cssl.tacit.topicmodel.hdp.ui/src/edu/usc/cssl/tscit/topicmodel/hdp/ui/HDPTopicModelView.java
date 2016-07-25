@@ -258,7 +258,7 @@ public class HDPTopicModelView extends ViewPart implements
 								return Status.CANCEL_STATUS;
 							}
 							ConsoleView
-									.printlInConsoleln("LDA Topic Modelling completed successfully in "
+									.printlInConsoleln("HDP Topic Modelling completed successfully in "
 											+ (System.currentTimeMillis() - startTime)
 											+ " milliseconds.");
 
@@ -283,13 +283,13 @@ public class HDPTopicModelView extends ViewPart implements
 							public void done(IJobChangeEvent event) {
 								if (!event.getResult().isOK()) {
 									TacitFormComposite
-											.writeConsoleHeaderBegining("Error: <Terminated> LDA Topic Modelling");
+											.writeConsoleHeaderBegining("Error: <Terminated> HDP Topic Modelling");
 									ConsoleView
 											.printlInConsoleln("HDP not successful.");
 								} else {
 									TacitFormComposite.updateStatusMessage(
 											getViewSite(),
-											"LDA topic modelling completed",
+											"HDP topic modelling completed",
 											IStatus.OK, form);
 
 									TacitFormComposite
