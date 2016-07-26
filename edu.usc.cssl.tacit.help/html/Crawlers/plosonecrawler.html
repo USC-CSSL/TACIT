@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="sample.css">
+	</head>
+	<body>
+		<center><h3>TACIT User Guide</h3></center>
+		<hr>
+		<table style = "border:0px; width:100%" class = "help-contents">
+			<tr>
+				<td class = "header">TACIT PLOS ONE Blog Crawler</td>
+			</tr>
+			<tr>
+				<table class = "contents">
+					<tr>
+						<td class = "head">Overview</td>
+					</tr>
+					<tr>
+						<td>The PLOS ONE Crawler tool collects text from <a href = "http://journals.plos.org/plosone/" target="_blank">the PLOS ONE journal website</a>. 
+							PLOS ONE is a website that provides an open access platform for scientific research articles to be published in an impactful and accessible setting. 
+							The crawler provides various filtering settings including a word filter option and an author filter option. Users can choose the specific attributes 
+							they want collected with their data, and can also set a maximum limit for the number of documents they want to be crawled. The data is saved in a
+							format that is accessible and analyzable by the TACIT tool as well as other language analysis algorithms.
+							<br><br> 
+						</td>
+					</tr>
+				</table>
+			</tr>
+			<tr>
+				<table class = "contents">
+					<tr>
+						<td class = "head">Basic Tutorial: Collecting data using PLOS ONE Crawler</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">PLOS ONE Crawler Filters</td>
+					</tr>
+					<tr>
+						<td>Typepad data can be crawled based on keywords found in the blog content (Content Word Search) or the blog title (Title Word Search). 
+							The <b>Word Filter</b> option allows you to crawl for journal article content using a specific keyword or set of keywords. For multiple keywords, separate each word by entering a semicolon in between each word. 
+							<br><br>
+							The <b>Author Filter</b> allows you to crawl for journal articles written by a specific author.
+							<br><br>
+							</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Crawler Limits</td>
+					</tr>
+					<tr>
+						<td> <b>Max Limit:</b> You can limit the number of blog posts collected using the Max Limit box. The
+							crawler will default to collecting 100 journal articles if you select the limit number of documents option and do not specify a number.
+							<br><br>
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Specifying Journal Article Attributes for Collection</td>
+					</tr>
+					<tr>
+						<td> Users can select which types of information they would like the crawler to collect about each journal article by checking the box next to the following attributes:
+						<br><b> Title: </b> Article title
+						<br> <b> Abstract: </b> the article abstract
+						<br><b> Publication Date: </b> the date of article publication
+						<br><b> Author: </b> The names of the article's authors
+						<br><b> Subject: </b> 
+						<br><b> Journal: </b>
+						<br><b> Body: </b> The entire article text
+						<br><b> Introduction: </b> the text from the introduction section of the article
+						<br><b> Materials and Methods: </b> The text from the materials and methods sections of the article
+						<br> <b> Results and Discussion:</b> the text from the results and discussion sections of the article
+						<br><b> Conclusion: </b>the text from the conclusion section of the article
+						<br><b> Score: </b> the score assigned to the article indicating the quality of the paper based on various qualifications such as how many times it 
+						has been referenced in other publications.
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Specifying Output Details</td>
+					</tr>
+					<tr>
+					<td>By default, all collected text in TACIT is saved as a corpus in Corpus Management. Specify the name you would like to assign this corpus in the <b>Corpus Name</b> box under <b> Output Details </b>.
+					</td>
+					</tr>			
+					<tr>
+						<td class = "subtitle">Understanding PLOS ONE Crawler Output</td>
+					</tr>
+					<tr>
+						<td>The <b> Console </b> panel at the bottom of the tool will provide information about the Supreme Court term/issue selected, the website url being crawled, and the names of the files being created
+							 while the crawler is running. Crawl data is saved in Corpus Management under the corpus name you provided. Data can be output into formats compatible with other programs using Corpus Management.  
+						</td>
+					</tr>			
+					</tr>						
+				</table>
+			</tr>	
+		</table>
+	</body>
+</html>
