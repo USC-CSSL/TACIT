@@ -185,7 +185,6 @@ public class ClassDetailsPage implements IDetailsPage {
 							dialog.setTitle("Analysis Field");
 							dialog.open();
 							Object [] result = dialog.getResult();
-							System.out.println(Arrays.toString(result));
 							String fields = null;
 							int count= 0;
 							for(Object i: result){

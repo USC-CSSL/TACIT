@@ -83,14 +83,8 @@ public class Preprocessor {
 	private String checkfiletype(String inputFilePath) {
 		File inputFile = new File(inputFilePath);
 		PDDocument document = null;
-		// Tika tika = new Tika();
-//		String mediaType = null;
 		String fileName = inputFile.getName();
 		String filePath = tempPPFileLoc + System.getProperty("file.separator") + fileName.replace('.', '_') + ".txt";
-		/*
-		 * try { mediaType = tika.detect(inputFile); } catch (IOException e) {
-		 * e.printStackTrace(); }
-		 */
 		if (inputFilePath.endsWith(".pdf")) {
 			try {
 				document = PDDocument.load(inputFile);
@@ -164,7 +158,6 @@ public class Preprocessor {
 				File inputFile = new File((String) obj);
 				if (inputFile.isDirectory()) {
 					continue;
-					// processDirectory(inputFile.getAbsolutePath());
 				} else {
 					if (inputFile.getName().contains("DS_Store"))
 						continue;
@@ -174,7 +167,6 @@ public class Preprocessor {
 						if (ppFile != "")
 							outputFiles.add(ppFile);
 					} else {
-//						outputFiles.add(inputFile.getAbsolutePath());
 						outputFiles.add(checkfiletype(inputFile.getAbsolutePath()));
 					}
 				}
@@ -219,7 +211,6 @@ public class Preprocessor {
 				else {
 					File file2 = new File(checkfiletype(file.getAbsolutePath()));
 					outputFiles.add(file2.getAbsolutePath());
-//					outputFiles.add(file.getAbsolutePath());
 				}
 			}
 		}
@@ -419,9 +410,6 @@ public class Preprocessor {
 		List<String> ans = null;
 		try {
 			writer = new FileWriter(f);
-			// writer.write("{\"data\":"+obj.toJSONString()+"}");
-			// writer.write(obj.toJSONString());
-			// writer.close();
 			if (corpusType == CMDataType.TWITTER_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
@@ -517,8 +505,6 @@ public class Preprocessor {
 		int k = 0;
 		for (File f : fileList) {
 			QueryProcesser qp = new QueryProcesser();
-			// qp.processJson(corpusClass.getFilters(), f.getAbsolutePath(),
-			// corpusClass.getKeyTextFields());
 
 			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body", false);
 			for (String str : outputs) {
@@ -536,7 +522,6 @@ public class Preprocessor {
 					fw.write(str);
 					fw.close();
 					 outputFiles.add(checkfiletype(outFile));
-//					outputFiles.add(outFile);
 					k++;
 				}
 			}
@@ -574,43 +559,42 @@ public class Preprocessor {
 		File[] fileList = new File(corpusClassPath).listFiles();
 		for (int i = 0; i < fileList.length; i++) {
 			try {
-				String fileName = fileList[i].getAbsolutePath();
-				if (!fileList[i].getAbsolutePath().endsWith(".json"))
-					continue;
-				JSONArray objects = (JSONArray) jParser.parse(new FileReader(fileName));
-				int j = 0;
-				for (Object obj : objects) {
-					JSONObject twitterStream = (JSONObject) obj;
-					List<String> outputs = processQuery(corpusClass, twitterStream);
-					if (!outputs.isEmpty() && outputs.get(0) != null && !outputs.get(0).equals("")) {
-					dateobj = new Date();
-					File file;
-					if (doPreprocessing) {
-						file = new File(tempFile);
-					} else {
-						file = new File(tempDir + System.getProperty("file.separator") + corpusClass.getClassName() + j + "-"
-								+ df.format(dateobj));
+					String fileName = fileList[i].getAbsolutePath();
+					if (!fileList[i].getAbsolutePath().endsWith(".json"))
+						continue;
+					JSONArray objects = (JSONArray) jParser.parse(new FileReader(fileName));
+					int j = 0;
+					for (Object obj : objects) {
+						JSONObject twitterStream = (JSONObject) obj;
+						List<String> outputs = processQuery(corpusClass, twitterStream);
+						if (!outputs.isEmpty() && outputs.get(0) != null && !outputs.get(0).equals("")) {
+						dateobj = new Date();
+						File file;
+						if (doPreprocessing) {
+							file = new File(tempFile);
+						} else {
+							file = new File(tempDir + System.getProperty("file.separator") + corpusClass.getClassName() + j + "-"
+									+ df.format(dateobj));
+						}
+						if (file.exists()) {
+							file.delete();
+						}
+	
+						FileWriter fw = new FileWriter(file.getAbsoluteFile());
+						BufferedWriter bw = new BufferedWriter(fw);
+						String tweet = outputs.get(0);
+						bw.write(tweet);
+						bw.close();
+	
+						if (doPreprocessing) {
+							outputFiles.add(processFile(tempFile, corpusClass.getClassName() + j + "-"
+									+ df.format(dateobj)));
+						} else {
+							 outputFiles.add(checkfiletype(file.getAbsolutePath()));
+						}
+						j++;
+	
 					}
-					if (file.exists()) {
-						file.delete();
-					}
-
-					FileWriter fw = new FileWriter(file.getAbsoluteFile());
-					BufferedWriter bw = new BufferedWriter(fw);
-					String tweet = outputs.get(0);
-					bw.write(tweet);
-					// addContentsToSummary(file.getName(),tweet);
-					bw.close();
-
-					if (doPreprocessing) {
-						outputFiles.add(processFile(tempFile, "twitter_" + j + "-" + df.format(dateobj)));
-					} else {
-						 outputFiles.add(checkfiletype(file.getAbsolutePath()));
-//						outputFiles.add(file.getAbsolutePath());
-					}
-					j++;
-
-				}
 				}
 
 			} catch (JsonParseException e) {
@@ -657,8 +641,6 @@ public class Preprocessor {
 					continue;
 
 				JSONObject redditStream = (JSONObject) jParser.parse(new FileReader(fileName));
-//				if (!processQuery(corpusClass, redditStream))
-//					continue;
 
 				String postTitle = RedditGetPostTitle(redditStream);
 				String[] postComments = RedditGetPostComments(redditStream);

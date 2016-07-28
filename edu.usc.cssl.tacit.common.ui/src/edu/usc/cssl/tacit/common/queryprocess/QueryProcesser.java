@@ -53,10 +53,8 @@ public class QueryProcesser implements IQueryProcessor {
 		HashMap<String, List<Filter>> groupedFilters = groupFilters(filters);
 		for (Filter f : filters) {
 			if (f == null) {
-				System.out.println("Null PP");
 				continue;
 			}
-			System.out.println(f.getTargetName());
 		}
 		JSONParser parser = new JSONParser();
 		Object obj = parser.parse(new FileReader(jsonFilePath));
@@ -77,7 +75,6 @@ public class QueryProcesser implements IQueryProcessor {
 						for (String k : keys.get(parentFilters)) {
 							try {
 								resultText.add((String) ((LinkedHashMap) result).get(k) + "\n");
-								System.out.println((String) ((LinkedHashMap) result).get(k));
 							} catch (ClassCastException e) {
 								continue;
 							}
@@ -93,7 +90,6 @@ public class QueryProcesser implements IQueryProcessor {
 							for (String k : keys.get(parentFilters)) {
 								try {
 									resultText.add((String) ((LinkedHashMap) res).get(k) + "\n");
-									System.out.println((String) ((LinkedHashMap) result).get(k) + "\n");
 								} catch (ClassCastException e) {
 									continue;
 								}

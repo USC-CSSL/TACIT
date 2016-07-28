@@ -74,7 +74,6 @@ public class LatinStemFilter {
 			}
 			word = word.toLowerCase();
 
-			// System.out.println(word);
 			currentTokenBuffer = word.toCharArray();
 
 			currentTokenLength = word.length();

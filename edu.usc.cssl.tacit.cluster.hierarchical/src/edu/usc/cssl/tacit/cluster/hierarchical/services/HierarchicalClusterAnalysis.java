@@ -37,7 +37,6 @@ import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
 public class HierarchicalClusterAnalysis {
 	public static String doClustering(List<File> inputFiles, String outputPath,
 			boolean saveImg, SubProgressMonitor subProgressMonitor, Date dateObj, boolean junitTest) {
-		System.out.println("doClustering");
 		try {
 			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 			StringToWordVector filter = new StringToWordVector();
@@ -96,7 +95,6 @@ public class HierarchicalClusterAnalysis {
 			f.setVisible(true);
 			tv.fitToScreen();
 
-			System.out.println("Checkpoint 4");
 			if (saveImg) {
 				try {
 					BufferedImage image = new BufferedImage(
@@ -133,14 +131,12 @@ public class HierarchicalClusterAnalysis {
 			buf.close();
 			
 			subProgressMonitor.done();
-			System.out.println("doClustering ending successfully");
 			return output;
 		} catch (Exception e) {
 			System.out
 					.println("Exception occurred in Hierarchical Clustering  "
 							+ e);
 		}
-		System.out.println("doClustering ending unsuccessfully");
 		return null;
 	}
 
