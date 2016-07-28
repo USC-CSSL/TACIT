@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.junit.Test;
 
 import edu.usc.cssl.tacit.wordcount.standard.services.WordCountPlugin;
@@ -309,7 +308,7 @@ public class Tacit_Wordcount_Test{
 		reader.readLine();
 		line = reader.readLine();
 		reader.close();
-		line = line.substring(line.lastIndexOf(System.getProperty("file.separator"))+2);
+		line = line.substring(line.lastIndexOf("Data.txt")+9);
 		String values[] = line.split(" ");
 		System.out.println(line);
 		System.out.println(values);
@@ -322,7 +321,7 @@ public class Tacit_Wordcount_Test{
 		reader.readLine();
 		line = reader.readLine();
 		reader.close();
-		line = line.substring(line.lastIndexOf(System.getProperty("file.separator"))+2);
+		line = line.substring(line.lastIndexOf("Data.txt")+9);
 		values = line.split(" ");
 		String expectedWC = values[1];
 		String expectedWPS = values[2];
@@ -618,7 +617,7 @@ public class Tacit_Wordcount_Test{
 		reader.readLine();
 		line = reader.readLine();
 		reader.close();
-		line = line.substring(line.lastIndexOf(System.getProperty("file.separator"))+2);
+		line = line.substring(line.lastIndexOf("Data.txt")+9);
 		String values[] = line.split(" ");
 		System.out.println(line);
 		System.out.println(values);
@@ -631,7 +630,7 @@ public class Tacit_Wordcount_Test{
 		reader.readLine();
 		line = reader.readLine();
 		reader.close();
-		line = line.substring(line.lastIndexOf(System.getProperty("file.separator"))+2);
+		line = line.substring(line.lastIndexOf("Data.txt")+9);
 		values = line.split(" ");
 		String expectedWC = values[1];
 		String expectedWPS = values[2];
