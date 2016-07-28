@@ -22,6 +22,7 @@ public class TableLayoutData {
 	private Composite sectionClient;
 	private CheckboxTreeViewer treeViewer;
 	private TargetLocationsGroup lgroup;
+	private boolean checkType = true;
 	public Tree getTree(){
 		return this.treeViewer.getTree();
 	}
@@ -110,7 +111,11 @@ public class TableLayoutData {
 
 	}
 	
-	public List<Object> getTypeCheckedSelectedFiles(boolean checkType) throws Exception {
+	public List<Object> getTypeCheckedSelectedFiles(boolean check) throws Exception {
+		
+		//check is passed by the plugins to indicate whether type is to be checked
+		//typecheck is stored by TableLayoutData right from the start, and if the user ever indicates that no type check is needed, this flag will be reset.
+		
 		Object[] checkedElements = treeViewer.getCheckedElements();
 		List<Object> files = new ArrayList<Object>();
 		for (int i = 0; i < checkedElements.length; i++) {
@@ -128,7 +133,7 @@ public class TableLayoutData {
 			File file = new File(checkedElements[i].toString());
 			if(!file.isDirectory()){
 				
-				if(checkType && !(filename.endsWith(".txt")||filename.endsWith(".rtf")||filename.endsWith(".pdf")))
+				if(checkType && check && !(filename.endsWith(".txt")||filename.endsWith(".rtf")||filename.endsWith(".pdf")))
 				{
 					MessageDialog dialog = new MessageDialog(null, "Alert", null, "The input contains one or more files with unsupported formats (other than .pdf, .txt, and .rtf ). Hence the analysis may include extraneous information may be included in the analysis with text. To separate text in json files before analysis, see corpus management. Would you like to continue?", MessageDialog.INFORMATION, new String[]{"Cancel","OK"}, 1);
 					int result = dialog.open();
