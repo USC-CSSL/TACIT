@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -290,12 +291,12 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchText2);	
 		searchText2.setMessage("Enter a search term");			
 
-		dateCheckSearch = new Button(filterResultsGroup, SWT.RADIO);
+		dateCheckSearch = new Button(filterResultsGroup, SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(10,0).applyTo(dateCheckSearch);
 		dateCheckSearch.setText("Specify Date Range");
 		
  		
-		dateCheckBrowse = new Button(filterResultsGroup, SWT.RADIO);
+		dateCheckBrowse = new Button(filterResultsGroup, SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(dateCheckBrowse);
 		dateCheckBrowse.setText("Specify Date");
 
@@ -477,18 +478,14 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			else
 				form.getMessageManager().removeMessage("queryText");
 		}
-		else{
+		if(dateCheckSearch.getSelection()) {
 			Calendar cal = Calendar.getInstance();
 			cal.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
 			double from = cal.getTimeInMillis() / 1000;
 			cal.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
 			double to = cal.getTimeInMillis() / 1000;
 			
-			if(searchText1.getText().equals("") && selectPresidentSearch.getSelectionIndex()==0&&selectDocumentSearch.getSelectionIndex()==0){
-				form.getMessageManager().addMessage("queryText", "Provide provide atleast one of the three fields - Search text, President, or Document category.", null, IMessageProvider.ERROR);
-				return false;
-			}
-			else if(from>to){
+			if(from>to){
 				
 				form.getMessageManager().addMessage("queryText", "Invalid dates entered.", null, IMessageProvider.ERROR);
 				return false;
@@ -496,7 +493,13 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			form.getMessageManager().removeMessage("queryText");
 			
 		}
-		
+		if(searchText1.getText().equals("") && selectPresidentSearch.getSelectionIndex()==0&&selectDocumentSearch.getSelectionIndex()==0){
+			form.getMessageManager().addMessage("queryText", "Provide provide atleast one of the three fields - Search text, President, or Document category.", null, IMessageProvider.ERROR);
+			return false;
+		}
+		else{
+			form.getMessageManager().removeMessage("queryText");
+		}
 		
 		//Validate corpus name
 		String corpusName = corpusNameTxt.getText();
@@ -601,7 +604,23 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), monitor);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
+							} catch(IndexOutOfBoundsException e){
+
+								System.out.println(e);
+								Display.getDefault().syncExec(new Runnable() {
+									@Override
+									public void run() {
+										MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+										int result = dialog.open();
+										if (result <= 0){
+											dialog.close();
+										}
+									}
+								});
+								
+								
 							} catch (Exception e) {
+									
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							} 
 						} else {
@@ -613,6 +632,23 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 									return handledCancelRequest("Cancelled");
 								
 								rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), monitor);
+							} catch(IndexOutOfBoundsException e){
+								
+								
+								Display.getDefault().syncExec(new Runnable() {
+									@Override
+									public void run() {
+										MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+										int result = dialog.open();
+										if (result <= 0){
+											dialog.close();
+										}
+									}
+								});
+								
+								
+								
+								
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}

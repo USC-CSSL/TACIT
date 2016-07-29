@@ -1,10 +1,12 @@
 package edu.usc.cssl.tacit.crawlers.americanpresidency.services;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -68,48 +70,57 @@ public class AmericanPresidencyCrawler {
 		this.outputDir = outputDir;
 		setDir();
 		Elements elements = null;
-		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("searchterm",searchTerm1).data("bool",operator).data("searchterm1",searchTerm2).data("ty",documentCategory).data("pres",presidentName);
+		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("ty",documentCategory).data("pres",presidentName);
 		int progressMonitorIncrement = 890;
-
-		if(from!=null)
-		{
-			conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
-			conn.timeout(120000);
-			Document e = conn.post();
-			Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
-			elements = et.child(2).child(0).children();
-		}
-		else
-		{
-			Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0);
-			elements = e.child(1).child(2).child(0).children();// This seems incorrect
-		}
-		if(elements!=null&&elements.size()!=0)	//Needed when no results are found
-		{
-			progressMonitorIncrement = 980/(elements.size());
-			elements.remove(0);
-			
-			for (Element element : elements)
-			{
-				try{
-					strDate = element.child(0).text();
-					strName = element.child(1).text();			
-					strTitle = element.child(3).child(0).child(0).text();
-					extractInfo(element.child(3).child(0).child(0).attr("href"));
-					
-				}catch(Exception e){
-					System.out.println("Exception occurred");
-				}
-				monitor.worked(progressMonitorIncrement);
+			if(!searchTerm1.equals("")){
+				conn = conn.data("searchterm",searchTerm1).data("bool",operator).data("searchterm1",searchTerm2);
 			}
-		}
-		try {
-			jsonGenerator.writeEndArray();
-			jsonGenerator.flush();
-			jsonGenerator.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			if(from!=null)
+			{
+				conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
+				conn.timeout(120000);
+				Document e = conn.post();
+				Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
+				
+				elements = et.child(2).child(0).children();
+			}
+			else
+			{
+				Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
+				conn.timeout(120000);
+				if(!searchTerm1.equals("")){
+					elements = e.child(2).child(0).children();// This seems correct only when search term is present
+				} else {
+					elements = e.child(1).child(0).children();// else this is correct
+				}
+			}
+			if(elements!=null&&elements.size()!=0)	//Needed when no results are found
+			{
+				progressMonitorIncrement = 980/(elements.size());
+				elements.remove(0);
+				
+				for (Element element : elements)
+				{
+					try{
+						strDate = element.child(0).text();
+						strName = element.child(1).text();			
+						strTitle = element.child(3).child(0).child(0).text();
+						extractInfo(element.child(3).child(0).child(0).attr("href"));
+						
+					}catch(Exception e){
+						System.out.println("Exception occurred");
+					}
+					monitor.worked(progressMonitorIncrement);
+				}
+			}
+			try {
+				jsonGenerator.writeEndArray();
+				jsonGenerator.flush();
+				jsonGenerator.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 	}
 	
 	public void crawlBrowse(String outputDir, String month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
