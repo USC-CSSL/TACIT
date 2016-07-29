@@ -27,6 +27,7 @@ public class AmericanPresidencyCrawler {
 	String months[]={"01","02","03","04","05","06","07","08","09","10","11","12"};
 	String days[]={"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
 
+	
 	private void setDir() {
 		// TODO Auto-generated constructor stub
 		// Instantiate JSON writer
@@ -52,7 +53,7 @@ public class AmericanPresidencyCrawler {
 			jsonGenerator.writeStringField("Date", strDate); 
 			jsonGenerator.writeStringField("Name", strName); 
 			jsonGenerator.writeStringField("Title", strTitle);
-			String body = element.text();
+			String body = "";
 			
 			for (Element el : element.getElementsByTag("p"))
 			{
@@ -60,6 +61,7 @@ public class AmericanPresidencyCrawler {
 			}
 			jsonGenerator.writeStringField("Body", body);
 			jsonGenerator.writeEndObject();
+			
 		}
 		catch(Exception e){
 			throw e;
