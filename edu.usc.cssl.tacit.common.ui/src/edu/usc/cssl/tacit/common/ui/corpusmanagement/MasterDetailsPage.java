@@ -209,6 +209,9 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(export);
 		export.setEnabled(false);
 		
+		Button refresh = toolkit.createButton(buttonComposite, "Refresh", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(refresh);
+		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
@@ -251,7 +254,16 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			}
 		}
 		corpusViewer.setInput(corpusList);
-
+		
+		refresh.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				corpusManagement = new ManageCorpora();
+				corpusList = corpusManagement.getAllCorpusDetails();
+				corpusViewer.setInput(corpusList);
+			}
+		});
+		
 		export.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
