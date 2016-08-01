@@ -68,6 +68,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.preprocessor.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class MasterDetailsPage extends MasterDetailsBlock {
 	private ScrolledForm corpusMgmtViewform;
@@ -341,7 +342,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 								int l = i.lastIndexOf(File.separator);
 								String export = outputDir + File.separator + i.substring(l + 1);
 								FileUtils.copyFile(new File(i), new File(export));
-
+								ConsoleView.printlInConsoleln("Successfully exported file to " + outputDir);
 							} catch (FileNotFoundException e1) {
 								e1.printStackTrace();
 							} catch (IOException e1) {
