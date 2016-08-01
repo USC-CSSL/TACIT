@@ -1,9 +1,7 @@
 package edu.usc.cssl.tacit.crawlers.frontier.ui;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,7 +29,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -40,7 +37,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -76,10 +72,6 @@ public class FrontierCrawlerView extends ViewPart{
 		int redditCount = 1;
 		String oldSubredditText;
 		ArrayList<String> content;
-		private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		private DateTime fromDate, toDate;
-		private Date maxDate;
-		private Date minDate;
 		private Button dateRange;
 		final String[] domains = new String[]{"Science","Health","Engineering","Humanities and Social Sciences"};
 
@@ -89,7 +81,7 @@ public class FrontierCrawlerView extends ViewPart{
 			form = toolkit.createScrolledForm(parent);
 			toolkit.decorateFormHeading(form.getForm());
 			form.setImage(FrontierCrawlerViewImageRegistry.getImageIconFactory().getImage(IFrontierCrawlerUIConstants.IMAGE_STACK_OBJ));
-			form.setText("Frontier Journal Crawler");
+			form.setText("Frontiers Journal Crawler");
 
 			GridLayoutFactory.fillDefaults().applyTo(form.getBody());
 
@@ -231,98 +223,6 @@ public class FrontierCrawlerView extends ViewPart{
 				}
 			});
 
-//			dateRange = new Button(dateGroup, SWT.CHECK);
-//			GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(10, 10).applyTo(dateRange);
-//			dateRange.setText("Specify Date Range");
-//			final Composite dateRangeClient = new Composite(dateGroup, SWT.None);
-//			GridDataFactory.fillDefaults().grab(true, false).span(1, 1).indent(10, 10).applyTo(dateRangeClient);
-//			GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateRangeClient);
-//			dateRangeClient.setEnabled(false);
-//			dateRangeClient.pack();
-//
-//			final Label fromLabel = new Label(dateRangeClient, SWT.NONE);
-//			fromLabel.setText("From:");
-//			GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
-//			fromDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-//			GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
-//			fromLabel.setEnabled(false);
-//			fromDate.setEnabled(false);
-//
-//			fromDate.addListener(SWT.Selection, new Listener() {
-//				@Override
-//				public void handleEvent(Event event) {
-//					int day = fromDate.getDay();
-//					int month = fromDate.getMonth() + 1;
-//					int year = fromDate.getYear();
-//					Date newDate = null;
-//					try {
-//						newDate = format.parse(day + "/" + month + "/" + year);
-//					} catch (java.text.ParseException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//
-//					if (newDate.before(minDate) || newDate.after(maxDate)) {
-//						Calendar cal = Calendar.getInstance();
-//						cal.setTime(minDate);
-//						fromDate.setMonth(cal.get(Calendar.MONTH));
-//						fromDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-//						fromDate.setYear(cal.get(Calendar.YEAR));
-//					}
-//				}
-//			});
-//
-//			final Label toLabel = new Label(dateRangeClient, SWT.NONE);
-//			toLabel.setText("To:");
-//			GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
-//			toDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-//			GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toDate);
-//			toLabel.setEnabled(false);
-//			toDate.setEnabled(false);
-//
-//			toDate.addListener(SWT.Selection, new Listener() {
-//				@Override
-//				public void handleEvent(Event event) {
-//					int day = toDate.getDay();
-//					int month = toDate.getMonth() + 1;
-//					int year = toDate.getYear();
-//					Date newDate = null;
-//					try {
-//						newDate = format.parse(day + "/" + month + "/" + year);
-//					} catch (java.text.ParseException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//
-//					if (newDate.after(maxDate) || newDate.before(minDate)) {
-//						Calendar cal = Calendar.getInstance();
-//						cal.setTime(maxDate);
-//						toDate.setMonth(cal.get(Calendar.MONTH));
-//						toDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-//						toDate.setYear(cal.get(Calendar.YEAR));
-//					}
-//				}
-//			});
-//
-//			dateRange.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent e) {
-//					if (dateRange.getSelection()) {
-//						dateRangeClient.setEnabled(true);
-//						fromLabel.setEnabled(true);
-//						fromDate.setEnabled(true);
-//						toLabel.setEnabled(true);
-//						toDate.setEnabled(true);
-//					} else {
-//						dateRangeClient.setEnabled(false);
-//						fromLabel.setEnabled(false);
-//						fromDate.setEnabled(false);
-//						toLabel.setEnabled(false);
-//						toDate.setEnabled(false);
-//					}
-//				}
-//			});
-
 			TacitFormComposite.createEmptyRow(toolkit, dateGroup);
 
 			Composite client = toolkit.createComposite(form.getBody());
@@ -445,7 +345,7 @@ public class FrontierCrawlerView extends ViewPart{
 				
 				@Override
 				public void run() {
-					final Job job = new Job("Frontier Journal Crawler") {
+					final Job job = new Job("Frontiers Journal Crawler") {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							TacitFormComposite.setConsoleViewInFocus();
@@ -459,15 +359,6 @@ public class FrontierCrawlerView extends ViewPart{
 										pages =-1;
 									corpusName = corpusNameTxt.getText();
 									isDate = dateRange.getSelection();
-//									if (isDate) {
-//										System.out.print("_____________________________");
-//										Calendar cal = Calendar.getInstance();
-//										cal.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
-//										from = cal.getTimeInMillis() / 1000;
-//										cal.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
-//										to = cal.getTimeInMillis() / 1000;
-//										System.out.println(from + "   " + to);
-//									}
 									outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
 									if (!new File(outputDir).exists()) {
 										new File(outputDir).mkdirs();
@@ -476,8 +367,8 @@ public class FrontierCrawlerView extends ViewPart{
 							});
 
 							int progressSize =selectedRepresentatives.size()*pages + 30;
-							monitor.beginTask("Running Frontier Journal Crawler...", progressSize);
-							TacitFormComposite.writeConsoleHeaderBegining("Frontier Journal Crawler started");
+							monitor.beginTask("Running Frontiers Journal Crawler...", progressSize);
+							TacitFormComposite.writeConsoleHeaderBegining("Frontiers Journal Crawler started");
 							FrontierCrawl crawler = new FrontierCrawl();
 							monitor.subTask("Initializing...");
 							monitor.worked(10);
@@ -521,7 +412,7 @@ public class FrontierCrawlerView extends ViewPart{
 							ManageCorpora.saveCorpus(corpus);
 							if (monitor.isCanceled())
 								return handledCancelRequest("Crawling is Stopped");
-
+							ConsoleView.printlInConsoleln("Created Corpus: "+corpusName);
 							monitor.worked(100);
 							monitor.done();
 							return Status.OK_STATUS;
@@ -536,17 +427,17 @@ public class FrontierCrawlerView extends ViewPart{
 							public void done(IJobChangeEvent event) {
 								if (!event.getResult().isOK()) {
 									TacitFormComposite
-											.writeConsoleHeaderBegining("Error: <Terminated> Frontier Journal Crawler  ");
+											.writeConsoleHeaderBegining("Error: <Terminated> Frontiers Journal Crawler  ");
 									TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
 											IStatus.INFO, form);
 
 								} else {
 									TacitFormComposite
-											.writeConsoleHeaderBegining("Success: <Completed> Frontier Journal Crawler  ");
+											.writeConsoleHeaderBegining("Success: <Completed> Frontiers Journal Crawler  ");
 									TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 											IStatus.INFO, form);
 									ConsoleView.printlInConsoleln("Done");
-									ConsoleView.printlInConsoleln("Frontier Journal Crawler completed successfully.");
+									ConsoleView.printlInConsoleln("Frontiers Journal Crawler completed successfully.");
 
 								}
 							}
@@ -580,7 +471,7 @@ public class FrontierCrawlerView extends ViewPart{
 
 		private IStatus handledCancelRequest(String message) {
 			TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.INFO, form);
-			ConsoleView.printlInConsoleln("Frontier Journal Crawler cancelled.");
+			ConsoleView.printlInConsoleln("Frontiers Journal Crawler cancelled.");
 			return Status.CANCEL_STATUS;
 		}
 

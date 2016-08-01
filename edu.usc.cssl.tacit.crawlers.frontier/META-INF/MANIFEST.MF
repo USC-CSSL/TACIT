@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.crawlers.frontier.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.jsoup
+ org.jsoup,
+ edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.crawlers.frontier.services

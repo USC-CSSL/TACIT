@@ -7,7 +7,7 @@
             class="edu.usc.cssl.tacit.crawlers.frontier.ui.FrontierCrawlerView"
             icon="icons/frontier.png"
             id="edu.usc.cssl.tacit.crawlers.frontier.ui.view1"
-            name="Frontier Journal Crawler"
+            name="Frontiers Journal Crawler"
             restorable="true">
       </view>
    </extension>
@@ -19,7 +19,7 @@
          <command
                commandId="edu.usc.cssl.tacit.crawlers.frontier.ui.command1"
                icon="icons/frontier.png"
-               label="Frontier Journal Crawler"
+               label="Frontiers Journal Crawler"
                style="push">
          </command>
       </menuContribution>

@@ -118,6 +118,14 @@ public class TacitFormComposite {
 				corpusPathListener(corpusNameTxt, mmng);
 			}
 		});
+//		Composite sectionClient2 = toolkit.createComposite(sectionClient);
+//		GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
+//		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient2);
+//		section.setClient(sectionClient2);
+//		Button run = new Button(sectionClient2, SWT.PUSH); // $NON-NLS-1$
+//		run.setText("Run...");
+//		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+//		.applyTo(run);
 
 		return corpusNameTxt;
 	}

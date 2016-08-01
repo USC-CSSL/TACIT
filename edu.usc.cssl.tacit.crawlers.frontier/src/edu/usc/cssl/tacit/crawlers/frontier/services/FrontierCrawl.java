@@ -11,10 +11,13 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
 public class FrontierCrawl {
 	JsonFactory jsonFactory;
 	JsonGenerator jsonGenerator;
 	IProgressMonitor monitor;
+	
 	/**
 	 * This method crawls the static website for all the years from the current year. 
 	 * @param dir
@@ -23,6 +26,7 @@ public class FrontierCrawl {
 	 * @param monitor
 	 */
 	public void crawl(String dir, String domain, int limit, IProgressMonitor monitor){
+		int downloadCount = 0;
 		jsonFactory = new JsonFactory();
 		this.monitor = monitor;
 		File streamFile = new File(dir+File.separator+domain+".json");
@@ -59,10 +63,10 @@ public class FrontierCrawl {
 				jsonGenerator.writeObjectField("references", Jsoup.parse(abstractBody.substring(i+10)).text());
 				}else{
 					jsonGenerator.writeObjectField("journal_body", Jsoup.parse(abstractBody).text());
-					
 				}
 				jsonGenerator.writeEndObject();
 				count++;
+				downloadCount++;
 				monitor.worked(1);
 	}catch(HttpStatusException e1){
 		f.delete();
@@ -87,5 +91,8 @@ public class FrontierCrawl {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		ConsoleView.printlInConsoleln(downloadCount+" file(s) downloaded for "+domain);
 }
+	
 }

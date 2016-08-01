@@ -5,7 +5,23 @@ import java.util.HashMap;
 public class FrontierConstants {
 	public static HashMap<String, String> site2Link = new HashMap<String, String>();
 	public static HashMap<Integer, String[]> sites = new HashMap<Integer, String[]>();
-	static String science[] = new String[]{"Applied Mathematics and Statistics",
+	static String science[] = new String[]{"Aging Neuroscience",
+			"Behavioral Neuroscience",
+			"Evolutionary Neuroscience",
+			"Cellular and Infection Microbiology",
+			"Integrative Neuroscience",
+			"Neuroanatomy",
+			"Neuroinformatics",
+			"Neuroenergetics",
+			"Neurorobotics",
+			"Neural Circuits",
+			"Neuroengineering",
+			"Synaptic Neuroscience",
+			"Systems Neuroscience",
+			"Molecular Neuroscience",
+			"Computational Neuroscience",
+			"Cellular Neuroscience",
+			"Applied Mathematics and Statistics",
 			"Astronomy and Space Sciences",
 			"Cell and Developmental Biology",
 			"Chemistry",
@@ -40,6 +56,8 @@ public class FrontierConstants {
 			"Built Environment",
 			"Energy Research",
 			"ICT",
+			"Neuroinformatics",
+			"Neurorobotics",
 			"Materials",
 			"Mechanical Engineering",
 			"Robotics and AI"
@@ -47,7 +65,8 @@ public class FrontierConstants {
 	static String hsc[] = new String[]{
 			"Communication",
 			"Digital Humanities",
-			"Sociology"
+			"Sociology",
+			"Research Metrics and Analysis"
 	};
 	
 	static{
@@ -55,6 +74,23 @@ public class FrontierConstants {
 	sites.put(1, health);
 	sites.put(2, eng);
 	sites.put(3, hsc);
+	site2Link.put("Neurorobotics", "fnbot");
+	site2Link.put("Neural Circuits", "fncir");
+	site2Link.put("Neuroengineering", "fneng");
+	site2Link.put("Synaptic Neuroscience", "fnsyn");
+	site2Link.put("Systems Neuroscience", "fnsys");
+	site2Link.put("Neuroanatomy", "fnana");
+	site2Link.put("Neuroinformatics", "fninf");
+	site2Link.put("Molecular Neuroscience", "fnmol");
+	site2Link.put("Neuroenergetics", "fnene");
+	site2Link.put("Integrative Neuroscience", "fnint");
+	site2Link.put("Evolutionary Neuroscience", "fnevo");
+	site2Link.put("Cellular Neuroscience", "fncel");
+	site2Link.put("Computational Neuroscience", "fncom");
+	site2Link.put("Cellular and Infection Microbiology", "fcimb");
+	site2Link.put("Behavioral Neuroscience", "fnbeh");
+	site2Link.put("Research Metrics and Analysis", "frma");
+	site2Link.put("Aging Neuroscience", "fnagi");
 	site2Link.put("Applied Mathematics and Statistics", "fams");
 	site2Link.put("Astronomy and Space Sciences", "fspas");
 	site2Link.put("Cell and Developmental Biology", "fcell");
