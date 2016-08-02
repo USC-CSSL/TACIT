@@ -8,4 +8,5 @@ public interface IWizardData {
 	public void getData(List<Filter> a);
 	public void getPath(String path);
 	public void getDivision(boolean seperate);
+	public void getExportSelection(String selection);
 }

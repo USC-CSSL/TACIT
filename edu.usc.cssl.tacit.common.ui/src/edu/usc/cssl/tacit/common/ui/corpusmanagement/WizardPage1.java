@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -18,7 +19,7 @@ import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
 
 public class WizardPage1 extends WizardPage {
 	Composite container;
-	Button b1, b2, b3, b4, b5, b6;
+	Button b1, b2, b3, b4;
 	TacitCorpusFilterDialog filterDialog;
 	List<Filter> returnFilter;
 	IWizardData data;
@@ -29,60 +30,11 @@ public class WizardPage1 extends WizardPage {
 		this.data = data;
 		setTitle("Export Files");
 		setDescription("Select the files to be exported");
-		// TODO Auto-generated constructor stub
 	}
 
-	SelectionListener finalSelection = new SelectionListener() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			if (b6.isEnabled() || b5.isEnabled())
-				setPageComplete(true);
-				
-		}
-
-		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-	};
-
-	SelectionListener initial1 = new SelectionListener() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			if (b1.isEnabled() || b2.isEnabled()) {
-				b5.setEnabled(true);
-				b6.setEnabled(true);
-			}
-		}
-
-		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-	};
-
-	SelectionListener initial2 = new SelectionListener() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			if (b3.isEnabled() || b4.isEnabled()) {
-				b5.setEnabled(true);
-				b6.setEnabled(true);
-			}
-
-		}
-
-		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-	};
 
 	@Override
 	public void createControl(Composite parent) {
-		// TODO Auto-generated method stub
 		container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -93,65 +45,105 @@ public class WizardPage1 extends WizardPage {
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(label1);
 		Composite c1 = new Composite(container, SWT.NONE);
 		c1.setLayout(layout);
+		
 		b1 = new Button(c1, SWT.RADIO);
 		b1.setText("Export all");
-		b2 = new Button(c1, SWT.RADIO);
-		b2.setText("Export by query");
-		b1.addSelectionListener(initial1);
-		b2.addSelectionListener(new SelectionListener() {
-			
+		b1.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (b2.isEnabled()) {
+				if (b1.getSelection()) {
+					b2.setSelection(false);
+					b3.setEnabled(true);
+					b4.setEnabled(true);
+				}else if(b2.getSelection()){
+					b1.setSelection(false);
 					if(filterDialog.open() == Window.OK){
 						returnFilter = filterDialog.getSelectionObjects();
 						data.getData(returnFilter);
 					}
 					else{
 						b1.setSelection(true);
+						b2.setSelection(false);
 					}
-					b5.setEnabled(true);
-					b6.setEnabled(true);
+					b3.setEnabled(true);
+					b4.setEnabled(true);
+				}else{
+					b3.setEnabled(false);
+					b4.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+		});
+		
+		b2 = new Button(c1, SWT.RADIO);
+		b2.setText("Export by query");
+		b2.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (b2.getSelection()) {
+					b1.setSelection(false);
+					if(filterDialog.open() == Window.OK){
+						returnFilter = filterDialog.getSelectionObjects();
+						data.getData(returnFilter);
+					}
+					else{
+						b1.setSelection(true);
+						b2.setSelection(false);
+					}
+					b3.setEnabled(true);
+					b4.setEnabled(true);
+				}else if(b1.getSelection()){
+					b2.setSelection(false);
+					b3.setEnabled(true);
+					b4.setEnabled(true);
+				}else{
+					b3.setEnabled(false);
+					b4.setEnabled(false);
 				}
 				
 			}
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
 		
-		
-//		Label label2 = new Label(container, SWT.NONE);
-//		label2.setText("Select export file type");
-//		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(label2);
-//		Composite c2 = new Composite(container, SWT.NONE);
-//		c2.setLayout(layout);
-//		b3 = new Button(c2, SWT.RADIO);
-//		b3.setEnabled(false);
-//		b3.setText("Output as text");
-//		b4 = new Button(c2, SWT.RADIO);
-//		b4.setEnabled(false);
-//		b4.setText("Output as CSV");
-//		b3.addSelectionListener(initial2);
-//		b4.addSelectionListener(initial2);
 
 		Label label3 = new Label(container, SWT.NONE);
 		label3.setText("Select number of files");
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(label3);
 		Composite c3 = new Composite(container, SWT.NONE);
 		c3.setLayout(layout);
-		b5 = new Button(c3, SWT.RADIO);
-		b5.setEnabled(false);
-		b5.setText("Export as one file");
-		b6 = new Button(c3, SWT.RADIO);
-		b6.setEnabled(false);
-		b6.setText("Export seperate file for each entry");
+		
+		
+		b3 = new Button(c3, SWT.RADIO);
+		b3.setEnabled(false);
+		b3.setText("Export as one file");
+		b3.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (b4.getSelection() || b3.getSelection())
+					setPageComplete(true);
+					
+			}
 
-		b5.addSelectionListener(finalSelection);
-		b6.addSelectionListener(new SelectionListener() {	
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+
+			}
+		});
+		
+		
+		b4 = new Button(c3, SWT.RADIO);
+		b4.setEnabled(false);
+		b4.setText("Export seperate file for each entry");
+		b4.addSelectionListener(new SelectionListener() {	
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				data.getDivision(true);
@@ -167,5 +159,14 @@ public class WizardPage1 extends WizardPage {
 		setControl(container);
 		setPageComplete(false);
 	}
+
+
+	@Override
+	public IWizardPage getNextPage() {
+		WizardPage2 wizardPage2 = ((ExportWizard)getWizard()).two;
+		return wizardPage2;
+	}
+	
+	
 
 }

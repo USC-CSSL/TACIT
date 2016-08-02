@@ -1,13 +1,21 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jface.action.Action;
@@ -70,11 +78,13 @@ import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
-public class MasterDetailsPage extends MasterDetailsBlock {
+public class MasterDetailsPage extends MasterDetailsBlock {	
 	private ScrolledForm corpusMgmtViewform;
 	List<ICorpus> corpusList;
 	ManageCorpora corpusManagement;
 	IViewSite viewSite;
+	String exportSelection;
+	
 
 	MasterDetailsPage(ScrolledForm form, IViewSite viewSite) throws IOException, ParseException {
 		corpusList = new ArrayList<ICorpus>();
@@ -210,9 +220,6 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(export);
 		export.setEnabled(false);
 		
-		Button refresh = toolkit.createButton(buttonComposite, "Refresh", SWT.PUSH);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(refresh);
-		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
 		managedForm.addPart(spart);
@@ -255,16 +262,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			}
 		}
 		corpusViewer.setInput(corpusList);
-		
-		refresh.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				corpusManagement = new ManageCorpora();
-				corpusList = corpusManagement.getAllCorpusDetails();
-				corpusViewer.setInput(corpusList);
-			}
-		});
-		
+
 		export.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -294,7 +292,9 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				// if (filterDialog.open() == Window.OK) {
 				// cls.refreshFilters(filterDialog.getSelectionObjects());
 				// }
-				IWizardData w = new IWizardData() {
+				
+				//Initializing the data model to collect data from the wizard selection.
+				IWizardData wizardDataModel = new IWizardData() {
 
 					@Override
 					public void getData(List<Filter> filter) {
@@ -311,54 +311,82 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						seperateFiles = true;
 
 					}
+
+					@Override
+					public void getExportSelection(String selection) {
+						exportSelection = selection;
+						
+					}
 				};
 
-				WizardDialog wizardDialog = new WizardDialog(export.getShell(), new ExportWizard(filterDialog, w));
+				WizardDialog wizardDialog = new WizardDialog(export.getShell(), new ExportWizard(filterDialog, wizardDataModel));
 				if (wizardDialog.open() == Window.OK) {
 					System.out.println("Ok pressed");
-					Preprocessor ppObj = null;
-					List<String> inFiles = null;
-					List<Object> inputFiles = new ArrayList<Object>();
-					inputFiles.add(cls);
-					File delFile = null;
-					try {
-						ppObj = new Preprocessor("Liwc", true);
-						inFiles = ppObj.processData("tempData", inputFiles, seperateFiles);
-						if(!inFiles.isEmpty()){
-							delFile = new File(inFiles.get(0));
+					
+					//Check for different export selections and 
+					if (exportSelection.equals(ExportSelectionConstants.EXPORT_CSV_FORMAT)){
+						System.out.println("CSV format selected");
+					}else if (exportSelection.equals(ExportSelectionConstants.EXPORT_ROBJ_FORMAT)){
+						System.out.println("ROBJ format selected");
+						
+						try {
+							writeRObj(outputLoc, cls);
+						} catch (ScriptException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					String outputDir = outputLoc + File.separator + cls.getParent().getCorpusName() + "-"
-							+ cls.getClassName();
-					System.out.println(outputDir);
-					File dir = new File(outputDir);
-					if (!dir.exists()) {
-						dir.mkdir();
-					}
-						for (String i : inFiles) {
-							try {
+						
+						
+					}else if (exportSelection.equals(ExportSelectionConstants.EXPORT_TXT_FORMAT)){
+						
+						Preprocessor ppObj = null;
+						List<String> inFiles = null;
+						List<Object> inputFiles = new ArrayList<Object>();
+						inputFiles.add(cls);
+						File delFile = null;
+						try {
+							ppObj = new Preprocessor("Liwc", true);
+							inFiles = ppObj.processData("tempData", inputFiles, seperateFiles);
+							if(!inFiles.isEmpty()){
+								delFile = new File(inFiles.get(0));
+							}
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+						String outputDir = outputLoc + File.separator + cls.getParent().getCorpusName() + "-"
+								+ cls.getClassName();
+						System.out.println(outputDir);
+						File dir = new File(outputDir);
+						if (!dir.exists()) {
+							dir.mkdir();
+						}
+							for (String i : inFiles) {
+								try {
 								int l = i.lastIndexOf(File.separator);
 								String export = outputDir + File.separator + i.substring(l + 1);
 								File exportFile =new File(export);
 								FileUtils.copyFile(new File(i), exportFile);
 								ConsoleView.printlInConsoleln("Successfully exported filename:<"+exportFile.getName()+"> file to " + outputDir);
-							} catch (FileNotFoundException e1) {
-								e1.printStackTrace();
+
+								} catch (FileNotFoundException e1) {
+									e1.printStackTrace();
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+								
+						}
+
+						if(!inFiles.isEmpty()){
+							try {
+								FileUtils.deleteDirectory(delFile.getParentFile().getParentFile());
 							} catch (IOException e1) {
 								e1.printStackTrace();
 							}
-							
-					}
-					if(!inFiles.isEmpty()){
-						try {
-							FileUtils.deleteDirectory(delFile.getParentFile().getParentFile());
-						} catch (IOException e1) {
-							e1.printStackTrace();
 						}
 					}
-
 				} else {
 					System.out.println("Cancel pressed");
 				}
@@ -484,4 +512,103 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);
 	}
+	
+	private static void writeRObj(String outputLoc, CorpusClass cls) throws ScriptException,Exception{
+		
+		// Location where the R Object needs to be saved.
+		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".RData" + "\"";
+		
+		// Location of the corpus
+		String corpusLocation = cls.getTacitLocation();
+		File corpusDirectory = new File(corpusLocation);
+		
+		
+		String corpusClassLocation = "" ; 
+		String[] jsonFiles = corpusDirectory.list();
+		for(int i=0; i<jsonFiles.length ;i++){
+			if(jsonFiles[i].endsWith(".json")){
+				corpusClassLocation = corpusLocation + File.separator + jsonFiles[i]; 
+				break;
+			}
+		}
+		
+		//Name of the corpus
+		String corpusName = cls.getClassName();
+		
+		// Create a Script engine manager:
+	    ScriptEngineManager manager = new ScriptEngineManager();
+	    
+	    // Create a Renjin engine:
+	    ScriptEngine engine = manager.getEngineByName("Renjin");
+	    
+	    // Check if the engine has loaded correctly:
+	    if(engine == null) {
+	        throw new Exception("Renjin Script Engine not found on the classpath.");
+	    }
+	    
+	    try {
+			JSONParser jsonParser = new JSONParser();
+			JSONArray entireJsonArray = (JSONArray)jsonParser.parse(new FileReader(new File(corpusClassLocation)));
+			
+			//Get the first JSONObject and extract all the keys 
+			JSONObject firstJsonObject = (JSONObject)entireJsonArray.get(0);
+			Set<String> keySet = firstJsonObject.keySet();
+			
+			//Generate the R data frame columns
+			Iterator<String> keyIterator = keySet.iterator();
+			String key;
+			String dataFrameHeader = "";
+			while(keyIterator.hasNext()){
+				key = keyIterator.next();
+				engine.eval(key+" <- c() ");
+				dataFrameHeader = dataFrameHeader + key + ","; 
+			}
+			dataFrameHeader = dataFrameHeader.substring(0,dataFrameHeader.length()-1);
+			
+			//Iterate over JSONArray and build the columns for the data frame
+			Iterator<Object> arrayIterator = entireJsonArray.iterator();
+			while(arrayIterator.hasNext()){
+				JSONObject singleJsonObject = (JSONObject)arrayIterator.next();
+				
+				keyIterator = keySet.iterator();
+				while(keyIterator.hasNext()){
+					
+					key = keyIterator.next();
+					
+					if(singleJsonObject.containsKey(key)){
+						String data = singleJsonObject.get(key).toString();
+						
+						//Cleaning the data before inserting in the dataframe.
+						/*data = data.toLowerCase()
+								.replaceAll("-", " ")
+								.replaceAll("[^a-z0-9. ]", "")
+								.replaceAll("\\s+", " ")
+								.trim();*/
+						
+						data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").trim();
+						
+						//Insert into dataframe
+						engine.eval("data <- \"" +data.toString()+"\"");
+						engine.eval(key + " <- c("+key+",data)");
+					}else{
+						engine.eval(key + " <- c("+key+",\"\")");
+					}
+				}
+			}
+			
+			engine.eval(corpusName+" <- data.frame("+dataFrameHeader+")");	
+		    engine.eval("save(list = c(\""+corpusName+"\"), file = "+saveLocation+")");
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+			ConsoleView.printlInConsoleln("Could not create R Dataframe due to an internal error.");
+			return;
+		}
+
+	    ConsoleView.printlInConsoleln("R Dataframe saved at : " + saveLocation);
+
+	}
+	
+	
+	
 }

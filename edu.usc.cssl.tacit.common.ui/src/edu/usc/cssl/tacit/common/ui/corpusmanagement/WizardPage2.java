@@ -24,7 +24,6 @@ public class WizardPage2 extends WizardPage {
 		setTitle("Select Location");
 		setDescription("Select the location to export the file(s)");
 		setControl(outputLocationTxt);
-		// TODO Auto-generated constructor stub
 	}
 
 	String exportLocation;
@@ -52,6 +51,8 @@ public class WizardPage2 extends WizardPage {
 				
 			}
 		});
+		
+		
 
 		final Button browseBtn = new Button(container, SWT.PUSH);
 		browseBtn.setText("Browse...");
@@ -67,6 +68,7 @@ public class WizardPage2 extends WizardPage {
 					return;
 				outputLocationTxt.setText(path);
 				exportLocation = outputLocationTxt.getText();
+				data.getPath(exportLocation);
 
 			}
 
@@ -77,6 +79,8 @@ public class WizardPage2 extends WizardPage {
 		
 		setControl(container);
 	}
+	
+	
 	
 	
 

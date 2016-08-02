@@ -1,12 +1,14 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
 
 public class ExportWizard extends Wizard{
-
-	WizardPage1 one ;
-	WizardPage2 two;
+	
+	public WizardPage0 zero; 
+	public WizardPage1 one;
+	public WizardPage2 two;
 	TacitCorpusFilterDialog filterDialog;
 	IWizardData data;
 
@@ -24,26 +26,29 @@ public class ExportWizard extends Wizard{
 
 	  @Override
 	  public void addPages() {
-		 one = new WizardPage1(filterDialog, data); 
-		  two = new WizardPage2(data);
-		  addPage(one);
-		  addPage(two);
+		zero = new WizardPage0(filterDialog, data);
+		one = new WizardPage1(filterDialog, data); 
+		two = new WizardPage2(data);
+		addPage(zero);
+		addPage(one);
+		addPage(two);
 	  }
 
 	  
 	  @Override
 	public boolean canFinish() {
-		  if(getContainer().getCurrentPage() == one)
+		  IWizardPage currentPage = getContainer().getCurrentPage();
+		  if(currentPage instanceof WizardPage0 || currentPage instanceof WizardPage1 )
 			  return false;
 		  else 
 			  return true;
+
+	}
+
+	@Override
+	public boolean performFinish() {
+		return true;
 	}
 	  
-	  @Override
-	  public boolean performFinish() {
-		  data.getPath(two.exportLocation);
-	    return true;
-	  }
-
 
 }
