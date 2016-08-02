@@ -739,13 +739,13 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
 			};
 		};
 
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.uscongress.ui.uscongress");
 		form.getToolBarManager().update(true);
 	}
 	
