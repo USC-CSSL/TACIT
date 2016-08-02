@@ -237,7 +237,129 @@ public class FrontierCrawlerView extends ViewPart{
 
 			TacitFormComposite.createEmptyRow(toolkit, client);
 			corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
+			TacitFormComposite.createEmptyRow(toolkit, client);
+			Button btnRun = TacitFormComposite.createRunButton(client, toolkit);
+			
+			btnRun.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final Job job = new Job("Frontiers Journal Crawler") {
+						String outputDir;
+						String corpusName;
+						Corpus corpus;
+						int pages;
+						boolean canProceed;
+						boolean isDate;
+						
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							
+							TacitFormComposite.setConsoleViewInFocus();
+							TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+							Display.getDefault().syncExec(new Runnable() {
+								@Override
+								public void run() {
+									if(checkPages.getSelection())
+										pages = Integer.parseInt(pageText.getText());
+									else
+										pages =-1;
+									corpusName = corpusNameTxt.getText();
+									isDate = dateRange.getSelection();
+									outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
+									if (!new File(outputDir).exists()) {
+										new File(outputDir).mkdirs();
+									}
+								}
+							});
 
+							int progressSize =selectedRepresentatives.size()*pages + 30;
+							monitor.beginTask("Running Frontiers Journal Crawler...", progressSize);
+							TacitFormComposite.writeConsoleHeaderBegining("Frontiers Journal Crawler started");
+							FrontierCrawl crawler = new FrontierCrawl();
+							monitor.subTask("Initializing...");
+							monitor.worked(10);
+							if (monitor.isCanceled())
+								handledCancelRequest("Crawling is Stopped");
+							corpus = new Corpus(corpusName, CMDataType.FRONTIER_JSON);
+							for (final String domain : selectedRepresentatives) {
+								outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+								outputDir += File.separator + domain;
+								if (!new File(outputDir).exists()) {
+									new File(outputDir).mkdirs();
+								}
+
+								try {
+									monitor.subTask("Crawling...");
+									if (monitor.isCanceled())
+										return handledCancelRequest("Crawling is Stopped");
+									crawler.crawl(outputDir, domain, pages, monitor);
+									if (monitor.isCanceled())
+										return handledCancelRequest("Crawling is Stopped");
+								} catch (Exception e) {
+									return handleException(monitor, e, "Crawling failed. Provide valid data");
+								}
+								try {
+									Display.getDefault().syncExec(new Runnable() {
+
+										@Override
+										public void run() {
+
+											CorpusClass cc = new CorpusClass(domain, outputDir);
+											cc.setParent(corpus);
+											corpus.addClass(cc);
+
+										}
+									});
+								} catch (Exception e) {
+									e.printStackTrace();
+									return Status.CANCEL_STATUS;
+								}
+							}
+							ManageCorpora.saveCorpus(corpus);
+							if (monitor.isCanceled())
+								return handledCancelRequest("Crawling is Stopped");
+							ConsoleView.printlInConsoleln("Created Corpus: "+corpusName);
+							monitor.worked(100);
+							monitor.done();
+							return Status.OK_STATUS;
+						}
+					};
+					job.setUser(true);
+					boolean canProceed = canItProceed();
+					if (canProceed) {
+						job.schedule(); // schedule the job
+						job.addJobChangeListener(new JobChangeAdapter() {
+
+							public void done(IJobChangeEvent event) {
+								if (!event.getResult().isOK()) {
+									TacitFormComposite
+											.writeConsoleHeaderBegining("Error: <Terminated> Frontiers Journal Crawler  ");
+									TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+											IStatus.INFO, form);
+
+								} else {
+									TacitFormComposite
+											.writeConsoleHeaderBegining("Success: <Completed> Frontiers Journal Crawler  ");
+									TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+											IStatus.INFO, form);
+									ConsoleView.printlInConsoleln("Done");
+									ConsoleView.printlInConsoleln("Frontiers Journal Crawler completed successfully.");
+
+								}
+							}
+						});
+					}
+					
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
 			addButtonsToToolBar();
 		}
 
@@ -459,13 +581,13 @@ public class FrontierCrawlerView extends ViewPart{
 
 				@Override
 				public void run() {
-					PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
+					PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.frontier.ui.frontier");
 				};
 			};
 
 			mgr.add(helpAction);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.frontier.ui.frontier");
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.frontier.ui.frontier");
 			form.getToolBarManager().update(true);
 		}
 
