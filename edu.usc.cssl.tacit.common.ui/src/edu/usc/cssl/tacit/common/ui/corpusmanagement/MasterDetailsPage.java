@@ -464,6 +464,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						ICorpus selectedCorpus = (ICorpus) selection.getFirstElement();
 						corpusList.remove(selectedCorpus);
 						ManageCorpora.removeCorpus((Corpus) selectedCorpus, true);
+						deleteCorpus((Corpus) selectedCorpus);
 					} else if (selectedObj instanceof ICorpusClass) {
 						ITreeSelection classSelection = (ITreeSelection) selection;
 						ICorpusClass selectedClass = (ICorpusClass) selection.getFirstElement();
@@ -485,7 +486,39 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		});
 
 	}
-
+	
+	protected void deleteCorpus(Corpus corpus) throws IOException{
+		CMDataType type = corpus.getDatatype();
+		String location = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_corpuses" + System.getProperty("file.separator");
+		if(type == CMDataType.FRONTIER_JSON){
+			File f = new File(location+"frontier"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.STACKEXCHANGE_JSON){
+			File f = new File(location+"stackexchange"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.PLOSONE_JSON){
+			File f = new File(location+"plosone"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.TYPEPAD_JSON){
+			File f = new File(location+"typepad"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.REDDIT_JSON){
+			File f = new File(location+"reddit"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.TWITTER_JSON){
+			File f = new File(location+"twitter"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.PRESIDENCY_JSON){
+			File f = new File(location+"americanpresidency"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}
+		else if(type == CMDataType.IMPORTED_CSV){
+			File f = new File(location+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}
+		
+	}
+	
 	protected Object[] expandNewCorpus(Object[] expanded, Corpus c) {
 		Object[] newExpandedSet = new Object[expanded.length + 1];
 		int index = 0;
