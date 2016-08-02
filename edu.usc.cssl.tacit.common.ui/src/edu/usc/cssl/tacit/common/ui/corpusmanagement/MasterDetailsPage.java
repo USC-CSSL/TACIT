@@ -341,8 +341,9 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 							try {
 								int l = i.lastIndexOf(File.separator);
 								String export = outputDir + File.separator + i.substring(l + 1);
-								FileUtils.copyFile(new File(i), new File(export));
-								ConsoleView.printlInConsoleln("Successfully exported file to " + outputDir);
+								File exportFile =new File(export);
+								FileUtils.copyFile(new File(i), exportFile);
+								ConsoleView.printlInConsoleln("Successfully exported filename:<"+exportFile.getName()+"> file to " + outputDir);
 							} catch (FileNotFoundException e1) {
 								e1.printStackTrace();
 							} catch (IOException e1) {
