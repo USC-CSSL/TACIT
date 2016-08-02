@@ -7,6 +7,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -14,8 +18,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.crawlers.stackexchange.ui.internal.IStackExchangeCrawlerUIConstants;
+import edu.usc.cssl.tacit.crawlers.stackexchange.ui.internal.StackExchangeCrawlerViewImageRegistry;
 
 public class StackExchangeConfiguration extends PreferencePage
 		implements IWorkbenchPreferencePage, IStackExchangeConstants {
@@ -45,7 +52,23 @@ public class StackExchangeConfiguration extends PreferencePage
 			consumerKey.setText(value);
 		}
 		// loadValues();
-
+		Button help = new Button(sectionClient, SWT.NONE);
+		help.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false , false));
+		help.setImage(StackExchangeCrawlerViewImageRegistry.getImageIconFactory().getImage(IStackExchangeCrawlerUIConstants.IMAGE_HELP_CO));
+		help.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.stackexchange.ui.stackexchange");
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		return sectionClient;
 	}
 
@@ -70,7 +93,7 @@ public class StackExchangeConfiguration extends PreferencePage
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(locationLbl);
 
 		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(outputLocationTxt);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(outputLocationTxt);
 		outputLocationTxt.setEditable(editable);
 		return outputLocationTxt;
 	}
