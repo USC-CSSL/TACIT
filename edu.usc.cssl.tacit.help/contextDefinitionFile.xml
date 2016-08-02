@@ -64,7 +64,7 @@
       
       <context id="frontier">
      <description>Check here for help with Froniters Crawler.</description>
-     <topic href="html/Crawlers/frontiers.html" label="Frontiers Crawler"/>
+     <topic href="html/Crawlers/frontierscrawler.html" label="Frontiers Crawler"/>
       </context>
       
       <context id="corpusmanagement">
