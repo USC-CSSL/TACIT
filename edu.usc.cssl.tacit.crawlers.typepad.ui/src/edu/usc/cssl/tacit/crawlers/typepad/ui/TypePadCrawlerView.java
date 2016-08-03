@@ -301,12 +301,12 @@ public class TypePadCrawlerView extends ViewPart {
 
 			@Override
 			public void run() {
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.twitter.ui.twitter");
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.typepad.ui.typepad");
 			};
 		};
 		mgr.add(helpAction);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.twitter.ui.twitter");
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.twitter.ui.twitter");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(helpAction, "edu.usc.cssl.tacit.crawlers.typepad.ui.typepad");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.crawlers.typepad.ui.typepad");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
 	}

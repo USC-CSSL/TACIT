@@ -63,8 +63,18 @@
       </context>
       
       <context id="frontier">
-     <description>Check here for help with Froniters Crawler.</description>
+     <description>Check here for help with Frontiers Crawler.</description>
      <topic href="html/Crawlers/frontierscrawler.html" label="Frontiers Crawler"/>
+      </context>
+      
+      <context id="plosone">
+     <description>Check here for help with PLOS Crawler.</description>
+     <topic href="html/Crawlers/plosonecrawler.html" label="PLOS Crawler"/>
+      </context>
+      
+     <context id="typepad">
+     <description>Check here for help with Typepad Crawler.</description>
+     <topic href="html/Crawlers/typepad.html" label="Typepad Crawler"/>
       </context>
       
       <context id="corpusmanagement">
