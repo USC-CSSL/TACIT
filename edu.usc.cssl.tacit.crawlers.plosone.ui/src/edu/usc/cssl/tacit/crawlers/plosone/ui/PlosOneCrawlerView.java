@@ -93,6 +93,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 	private static Button authorFilterLbl;
 	private boolean authorFilterFlag;
 
+	private int numOfRows; //This the the number of documents to be downloaded
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -270,11 +271,12 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							urlFeatures.put(PLOSOneWebConstants.FEATURE_START, "0");
 							
 							
-							int numOfRows;
 							if (maxDocumentLimit == -1){
 								numOfRows= plosOneCrawler.getNumOfRows(plosOneCrawler.buildURL(urlFeatures));
 							}else{
-								numOfRows = maxDocumentLimit;
+								//Check if the max document limit given by the user does not exceed the number of available document
+								int checkRows = plosOneCrawler.getNumOfRows(plosOneCrawler.buildURL(urlFeatures));
+								numOfRows = maxDocumentLimit < checkRows ? maxDocumentLimit : checkRows;	
 							}
 							
 							ConsoleView.printlInConsoleln(numOfRows+" documents found in the search result.");
@@ -363,6 +365,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 										IStatus.INFO, form);
 								ConsoleView.printlInConsoleln("PLOS ONE crawler completed successfully.");
+								ConsoleView.printlInConsoleln(numOfRows + " documents downloaded. ");
 								ConsoleView.printlInConsoleln("Done");
 
 							}

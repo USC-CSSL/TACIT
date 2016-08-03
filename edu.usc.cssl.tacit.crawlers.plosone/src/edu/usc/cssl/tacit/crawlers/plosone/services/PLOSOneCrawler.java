@@ -239,6 +239,9 @@ public class PLOSOneCrawler {
 		//If the user does not indicate the number of documents then by default it should download all the documents
 		if (noOfDocuments == -1){
 			noOfDocuments = getNumOfRows(buildURL(urlFeatures));
+		}else{
+			int checkRows = getNumOfRows(buildURL(urlFeatures));
+			noOfDocuments = noOfDocuments < checkRows ? noOfDocuments : checkRows;
 		}
 		 
 		int numOfRequests = noOfDocuments/DOCUMENTS_PER_RESPONSE_PAGE ;
