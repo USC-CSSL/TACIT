@@ -104,7 +104,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("PLOS ONE Crawler"); //$NON-NLS-1$
+		form.setText("PLOS Crawler"); //$NON-NLS-1$
 		form.setImage(PlosOneCrawlerViewImageRegistry.getImageIconFactory()
 				.getImage(IPlosOneCrawlerUIConstants.IMAGE_PLOSONE_OBJ));
 		GridLayoutFactory.fillDefaults().applyTo(form.getBody());
@@ -140,7 +140,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
-		this.setPartName("PLOS ONE Crawler");
+		this.setPartName("PLOS Crawler");
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
 
@@ -159,7 +159,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 			@Override
 			public void run() {
 				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-				TacitFormComposite.writeConsoleHeaderBegining("Crawling PLOS ONE started ");
+				TacitFormComposite.writeConsoleHeaderBegining("Crawling PLOS started ");
 
 				// Get the corpus name
 				final String corpusName = corpusNameTxt.getText();
@@ -199,14 +199,14 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 				authorFilterFlag = authorFilterLbl.getSelection();
 
 
-				job = new Job("PLOS ONE Crawl Job") {
+				job = new Job("PLOS Crawl Job") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 
 						try {
 							TacitFormComposite.setConsoleViewInFocus();
 							TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-							TacitFormComposite.writeConsoleHeaderBegining("PLOS ONE Crawling Started... ");
+							TacitFormComposite.writeConsoleHeaderBegining("PLOS Crawling Started... ");
 							
 							PLOSOneCrawler plosOneCrawler = new PLOSOneCrawler();
 							
@@ -280,7 +280,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							}
 							
 							ConsoleView.printlInConsoleln(numOfRows+" documents found in the search result.");
-							monitor.beginTask("Crawling plos one...",(int)numOfRows+100);
+							monitor.beginTask("Crawling PLOS...",(int)numOfRows+100);
 							
 							String corpusClassDir = IPlosOneCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
 							//String originalCorpusClassDir = CommonUiActivator.getDefault().getPreferenceStore()
@@ -309,7 +309,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							//This is the core of the job.
 							plosOneCrawler.invokePlosOneCrawler(urlFeatures, maxDocumentLimit, corpusClassDir, corpusName, monitor);
 							
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> PLOS ONE Crawling  ");
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> PLOS Crawling  ");
 							TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,form);
 							
 							//Saving the corpus in the tacit corpora
@@ -349,7 +349,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 
 						public void done(IJobChangeEvent event) {
 							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> PLOS ONE Crawler  ");
+								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> PLOS Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
 										IStatus.INFO, form);
 								
@@ -361,10 +361,10 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								
 
 							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> PLOS ONE Crawler  ");
+								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> PLOS Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 										IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("PLOS ONE crawler completed successfully.");
+								ConsoleView.printlInConsoleln("PLOS crawler completed successfully.");
 								ConsoleView.printlInConsoleln(numOfRows + " documents downloaded. ");
 								ConsoleView.printlInConsoleln("Done");
 
@@ -419,7 +419,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 		if (k == null || k.equals("")) {
 			form.getMessageManager().addMessage("keyerror", "You have not entered a key for crawling", null,IMessageProvider.ERROR);
 			ErrorDialog.openError(Display.getDefault().getActiveShell(), "Key has not been added",
-					"Please check user settings for PLOS ONE Crawler",
+					"Please check user settings for PLOS Crawler",
 					new Status(IStatus.ERROR, CommonUiActivator.PLUGIN_ID, "No key found"));
 			String id = "edu.usc.cssl.tacit.crawlers.plosone.ui.configuration";
 			PreferencesUtil.createPreferenceDialogOn(Display.getDefault().getActiveShell(), id, new String[] { id }, null).open();

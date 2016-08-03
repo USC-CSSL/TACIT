@@ -29,7 +29,7 @@ public class PlosOneConfiguration extends PreferencePage implements IWorkbenchPr
 		Label dummy = new Label(sectionClient, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
 
-		plosOneApiKey = createTextFields(sectionClient, true, "PLOS ONE API Key:");
+		plosOneApiKey = createTextFields(sectionClient, true, "PLOS API Key:");
 		String value = getPreferenceStore().getString(PLOS_ONE_API_KEY);
 		if(value!=null && !value.equals("")){
 			plosOneApiKey.setText(value);

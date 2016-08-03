@@ -9,7 +9,7 @@
          <command
                commandId="edu.usc.cssl.tacit.crawlers.plosone.ui.plosOneCommand"
                icon="icons/plosone.png"
-               label="PLOS ONE Crawler"
+               label="PLOS Crawler"
                style="push">
          </command>
       </menuContribution>
@@ -44,7 +44,7 @@
             category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
             class="edu.usc.cssl.tacit.crawlers.plosone.ui.preferencepage.PlosOneConfiguration"
             id="edu.usc.cssl.tacit.crawlers.plosone.ui.configuration"
-            name="PLOS ONE Configuration">
+            name="PLOS Configuration">
       </page>
    </extension>
 
