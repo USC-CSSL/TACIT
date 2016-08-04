@@ -53,17 +53,17 @@ public class AmericanPresidencyCrawler {
 			jsonGenerator.writeStringField("Date", strDate); 
 			jsonGenerator.writeStringField("Name", strName); 
 			jsonGenerator.writeStringField("Title", strTitle);
-			String body = "";
+			String body = element.ownText();
 			
 			for (Element el : element.getElementsByTag("p"))
 			{
-				body += el.text();
+				body += el.text() + " ";
 			}
 			jsonGenerator.writeStringField("Body", body);
 			jsonGenerator.writeEndObject();
 			
 		}
-		catch(Exception e){
+		catch(Exception e) {
 			throw e;
 		}
 	}
