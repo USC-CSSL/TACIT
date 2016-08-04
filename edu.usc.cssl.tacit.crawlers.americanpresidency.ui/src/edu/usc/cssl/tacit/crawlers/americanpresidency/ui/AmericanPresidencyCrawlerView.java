@@ -104,35 +104,34 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		documentCategoryMap.put(19, "1141");	
 		documentCategoryMap.put(20, "1157");	
 		documentCategoryMap.put(21, "1160");
-		documentCategoryMap.put(22, "1160");	
-		documentCategoryMap.put(23, "1161");	
-		documentCategoryMap.put(24, "1162");	
-		documentCategoryMap.put(25, "2100");	
-		documentCategoryMap.put(26, "2110");	
-		documentCategoryMap.put(27, "2111");	
-		documentCategoryMap.put(28, "2113");	
-		documentCategoryMap.put(29, "2114");	
-		documentCategoryMap.put(30, "2115");	
-		documentCategoryMap.put(31, "2165");	
-		documentCategoryMap.put(32, "2200");	
-		documentCategoryMap.put(33, "2201");	
-		documentCategoryMap.put(34, "2202");	
-		documentCategoryMap.put(35, "2210");	
-		documentCategoryMap.put(36, "2300");	
-		documentCategoryMap.put(37, "2400");	
-		documentCategoryMap.put(38, "2500");	
-		documentCategoryMap.put(39, "2510");	
-		documentCategoryMap.put(40, "2511");	
-		documentCategoryMap.put(41, "2600");	
-		documentCategoryMap.put(42, "2610");	
-		documentCategoryMap.put(43, "2710");	
-		documentCategoryMap.put(44, "2800");	
-		documentCategoryMap.put(45, "3001");	
-		documentCategoryMap.put(46, "3500");	
-		documentCategoryMap.put(47, "5501");	
-		documentCategoryMap.put(48, "5502");	
-		documentCategoryMap.put(49, "5503");	
-		documentCategoryMap.put(50, "8000");			
+		documentCategoryMap.put(22, "1161");	
+		documentCategoryMap.put(23, "1162");	
+		documentCategoryMap.put(24, "2100");	
+		documentCategoryMap.put(25, "2110");	
+		documentCategoryMap.put(26, "2111");	
+		documentCategoryMap.put(27, "2113");	
+		documentCategoryMap.put(28, "2114");	
+		documentCategoryMap.put(29, "2115");	
+		documentCategoryMap.put(30, "2165");	
+		documentCategoryMap.put(31, "2200");	
+		documentCategoryMap.put(32, "2201");	
+		documentCategoryMap.put(33, "2202");	
+		documentCategoryMap.put(34, "2210");	
+		documentCategoryMap.put(35, "2300");	
+		documentCategoryMap.put(36, "2400");	
+		documentCategoryMap.put(37, "2500");	
+		documentCategoryMap.put(38, "2510");	
+		documentCategoryMap.put(39, "2511");	
+		documentCategoryMap.put(40, "2600");	
+		documentCategoryMap.put(41, "2610");	
+		documentCategoryMap.put(42, "2710");	
+		documentCategoryMap.put(43, "2800");	
+		documentCategoryMap.put(44, "3001");	
+		documentCategoryMap.put(45, "3500");	
+		documentCategoryMap.put(46, "5501");	
+		documentCategoryMap.put(47, "5502");	
+		documentCategoryMap.put(48, "5503");	
+		documentCategoryMap.put(49, "8000");			
 	}
 	HashMap<Integer, String> presidentNameMap = new HashMap<Integer, String>();
 	{
@@ -313,8 +312,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
 		fromLabel.setEnabled(false);
 		fromDate.setEnabled(false);
-
-		
 		
 		final Label toLabel = new Label(dateComposite1, SWT.NONE);
 		toLabel.setText("To:");
@@ -324,9 +321,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		GridDataFactory.fillDefaults().grab(false, false).indent(15,0).span(1, 0).applyTo(toDate);
 		toLabel.setEnabled(false);
 		toDate.setEnabled(false);
-		
-		
-		
 		
 		Composite dateComposite3 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(dateComposite3);
@@ -339,7 +333,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 
 		Composite comboComposite1 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(comboComposite1);
-		GridDataFactory.fillDefaults().grab(true, false).indent(10,10).span(1, 0).applyTo(comboComposite1);
+		GridDataFactory.fillDefaults().grab(true, false).indent(10,10).span(2, 0).applyTo(comboComposite1);
 		Label selectPresidentSearchLabel = new Label(comboComposite1, SWT.NONE);
 		selectPresidentSearchLabel.setText("Select President:");
 		selectPresidentSearch = new Combo(comboComposite1, SWT.FLAT | SWT.READ_ONLY);
@@ -414,7 +408,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 
 		Composite comboComposite2 = new Composite(filterResultsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(comboComposite2);
-		GridDataFactory.fillDefaults().grab(true, false).indent(10,10).span(1, 0).applyTo(comboComposite2);
+		GridDataFactory.fillDefaults().grab(true, false).indent(10,10).span(2, 0).applyTo(comboComposite2);
 		Label documentCategory = new Label(comboComposite2, SWT.NONE);
 		documentCategory.setText("Select document category:");
 		selectDocumentSearch = new Combo(comboComposite2, SWT.FLAT | SWT.READ_ONLY);
@@ -468,15 +462,17 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
-		
+		boolean browseFlag = false;
 		if(dateCheckBrowse.getSelection()) {
 			
 			if(browseDay.getSelectionIndex()==0&&browseMonth.getSelectionIndex()==0&&browseYear.getSelectionIndex()==0){
 				form.getMessageManager().addMessage("queryText", "Please choose atleast one of the three fields - Month, Day, or Year.", null, IMessageProvider.ERROR);
 				return false;
 			}
-			else
+			else {
 				form.getMessageManager().removeMessage("queryText");
+				browseFlag = true;
+			}
 		}
 		if(dateCheckSearch.getSelection()) {
 			Calendar cal = Calendar.getInstance();
@@ -493,8 +489,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			form.getMessageManager().removeMessage("queryText");
 			
 		}
-		if(searchText1.getText().equals("") && selectPresidentSearch.getSelectionIndex()==0&&selectDocumentSearch.getSelectionIndex()==0){
-			form.getMessageManager().addMessage("queryText", "Provide provide atleast one of the three fields - Search text, President, or Document category.", null, IMessageProvider.ERROR);
+		if(!browseFlag&&searchText1.getText().equals("") && selectPresidentSearch.getSelectionIndex()==0&&selectDocumentSearch.getSelectionIndex()==0){
+			form.getMessageManager().addMessage("queryText", "Provide provide atleast one of the four fields - Search text, President, Date, or Document category.", null, IMessageProvider.ERROR);
 			return false;
 		}
 		else{
@@ -530,7 +526,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			public String getToolTipText() {
 				return "Crawl";
 			}
-			String month, day, year;
+			String  day, year;
+			int month;
 			String outputDir;
 			int presidentIndex; int documentIndex; String corpusName;			
 			boolean browse; boolean canProceed; 
@@ -551,6 +548,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								
 								browse = dateCheckBrowse.getSelection();
 								corpusName = corpusNameTxt.getText();
+								presidentIndex = selectPresidentSearch.getSelectionIndex();
+								documentIndex = selectDocumentSearch.getSelectionIndex();
 								if(!browse) {
 									
 									if (andButton.getSelection())
@@ -561,21 +560,20 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 										operator = "AND NOT";
 									query1 = searchText1.getText();
 									query2 = searchText2.getText();
-									presidentIndex = selectPresidentSearch.getSelectionIndex();
-									documentIndex = selectDocumentSearch.getSelectionIndex();
 									if (dateCheckSearch.getSelection())
 									{	
 										from = Calendar.getInstance();
 										from.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
 										to = Calendar.getInstance();
 										to.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
+									}else{
+										from = null;
+										to = null;
 									}
 								} else {
-									month = browseMonth.getSelectionIndex() == 0 ? "" : months[browseMonth.getSelectionIndex()];
+									month = browseMonth.getSelectionIndex() - 1;
 									day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
 									year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
-									documentIndex = selectDocumentSearch.getSelectionIndex();	
-									presidentIndex = selectPresidentSearch.getSelectionIndex();							
 								}
 								Date dateObj = new Date();
 								corpusName+= "_" + dateObj.getTime();
@@ -606,7 +604,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 									return handledCancelRequest("Cancelled");
 							} catch(IndexOutOfBoundsException e){
 
-								System.out.println(e);
 								Display.getDefault().syncExec(new Runnable() {
 									@Override
 									public void run() {

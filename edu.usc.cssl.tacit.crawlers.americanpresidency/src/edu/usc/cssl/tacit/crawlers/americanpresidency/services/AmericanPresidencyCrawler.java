@@ -29,7 +29,6 @@ public class AmericanPresidencyCrawler {
 
 	
 	private void setDir() {
-		// TODO Auto-generated constructor stub
 		// Instantiate JSON writer
 		String output = outputDir + File.separator + "americanpresidency.json";
 		File streamFile = new File(output);
@@ -72,9 +71,9 @@ public class AmericanPresidencyCrawler {
 		this.outputDir = outputDir;
 		setDir();
 		Elements elements = null;
-		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("ty",documentCategory).data("pres",presidentName);
+		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("ty",documentCategory).data("pres",presidentName).data("includepres","1").data("includecampaign","1");
 		int progressMonitorIncrement = 890;
-			if(!searchTerm1.equals("")){
+			if(!searchTerm1.equals("")) {
 				conn = conn.data("searchterm",searchTerm1).data("bool",operator).data("searchterm1",searchTerm2);
 			}
 			if(from!=null)
@@ -82,9 +81,10 @@ public class AmericanPresidencyCrawler {
 				conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
 				conn.timeout(120000);
 				Document e = conn.post();
-				Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
 				
-				elements = et.child(2).child(0).children();
+				Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
+				elements = et.child(1).child(0).children();
+				//elements = et.child(2).child(0).children();
 			}
 			else
 			{
@@ -95,6 +95,7 @@ public class AmericanPresidencyCrawler {
 				} else {
 					elements = e.child(1).child(0).children();// else this is correct
 				}
+
 			}
 			if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 			{
@@ -103,7 +104,8 @@ public class AmericanPresidencyCrawler {
 				
 				for (Element element : elements)
 				{
-					try{
+					try{ 
+						
 						strDate = element.child(0).text();
 						strName = element.child(1).text();			
 						strTitle = element.child(3).child(0).child(0).text();
@@ -125,21 +127,15 @@ public class AmericanPresidencyCrawler {
 			
 	}
 	
-	public void crawlBrowse(String outputDir, String month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
+	public void crawlBrowse(String outputDir, int month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
 		int progressMonitorIncrement = 890;
 		this.outputDir = outputDir;
 		setDir();
 		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("includecampaign","1").data("includepress","1").data("ty",documentCategory).data("pres",president);
 		Elements elements;
-		if (!(day==""&&month==""&&year==""))
-		{
-			conn = conn.data("month",month).data("daynum",day).data("year",year);
+			conn = conn.data("month",month==-1?"":months[month]).data("daynum",day).data("year",year);
 			elements = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1).child(2).child(0).children();
-		}
-		else {
-			Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0);
-			elements = e.child(1).child(1).child(0).children();
-		}
+		
 		if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 		{
 			elements.remove(0);
@@ -164,5 +160,6 @@ public class AmericanPresidencyCrawler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 }
