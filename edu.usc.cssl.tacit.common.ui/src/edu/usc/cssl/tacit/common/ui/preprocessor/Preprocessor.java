@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -605,11 +606,50 @@ public class Preprocessor {
 					continue;
 				JSONArray objects = (JSONArray) jParser.parse(new FileReader(fileName));
 				int j = 0;
+				boolean first = true;
+				boolean lineCheck = true;
+				
+				File summary = new File("summary.csv");
+				BufferedWriter bWriter = new BufferedWriter(new FileWriter(summary));
 				for (Object obj : objects) {
+					
 					JSONObject twitterStream = (JSONObject) obj;
+					if(first){
+					for(Object keys: twitterStream.keySet()){
+						String key = (String) keys;
+						if(lineCheck){
+							System.out.println(key);
+							bWriter.write(key);
+							lineCheck = false;
+						}else{
+							System.out.println(","+key);
+							bWriter.write(","+key);
+						}
+					}
+					lineCheck = true;
+					System.out.println("\n");
+					bWriter.write("\n");
+					first = false;
+					}
 					File file;
 					List<String> outputs = processQuery(corpusClass, twitterStream);
 					if (!outputs.isEmpty() && outputs.get(0) != null && !outputs.get(0).equals("")) {
+						
+						for(Object keys: twitterStream.keySet()){
+							String key = (String) keys;
+							Object val = twitterStream.get(key);
+							if(lineCheck){
+								System.out.println("\""+val.toString()+"\"");
+								bWriter.write("\""+val.toString()+"\"");
+								lineCheck = false;
+							}else{
+								System.out.println(",\""+val.toString()+"\"");
+								bWriter.write(",\""+val.toString()+"\"");
+							}
+						}
+						lineCheck = true;
+						System.out.println("\n");
+						bWriter.write("\n");
 						dateobj = new Date();
 						if (doPreprocessing) {
 							file = new File(tempFile);
@@ -641,7 +681,9 @@ public class Preprocessor {
 					j++;
 
 				}
-
+				bWriter.flush();
+				bWriter.close();
+				outputFiles.add(summary.getAbsolutePath());
 				if (!seperateFiles) {
 					File file = new File(tempFile);
 					if (file.exists()) {
