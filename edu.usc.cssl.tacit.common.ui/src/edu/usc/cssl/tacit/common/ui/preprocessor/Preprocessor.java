@@ -449,7 +449,7 @@ public class Preprocessor {
 			if (corpusType == CMDataType.CONGRESS_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.ody", true);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
 			}
 			if (corpusType == CMDataType.PRESIDENCY_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
