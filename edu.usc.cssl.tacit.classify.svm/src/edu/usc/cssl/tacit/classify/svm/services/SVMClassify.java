@@ -309,7 +309,7 @@ public class SVMClassify {
 	public double[] cross_predict(String kVal, String label1, File[] testFiles1,
 			String label2, File[] testFiles2) throws IOException {
 		
-		double[] returnValues  = new double[2];
+		double[] returnValues  = new double[4];
 
 		// if TFIDF method, clear and rebuild df map
 		dfMap.clear();
@@ -380,6 +380,8 @@ public class SVMClassify {
 		double accuracy = (double) correct / total * 100;
 		returnValues[0] = accuracy;
 		returnValues[1] = pvalue;
+		returnValues[2] = total;
+		returnValues[3] = correct;
 		
 		return returnValues;
 	}
