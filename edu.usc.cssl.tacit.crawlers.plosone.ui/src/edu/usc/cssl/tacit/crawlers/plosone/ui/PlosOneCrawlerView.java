@@ -279,6 +279,11 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								numOfRows = maxDocumentLimit < checkRows ? maxDocumentLimit : checkRows;	
 							}
 							
+							if (numOfRows == 0){
+								ConsoleView.printlInConsoleln("No document found in the search result.");
+								return Status.OK_STATUS;
+							}
+							
 							ConsoleView.printlInConsoleln(numOfRows+" documents found in the search result.");
 							monitor.beginTask("Crawling PLOS...",(int)numOfRows+100);
 							

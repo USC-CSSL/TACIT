@@ -237,6 +237,20 @@ public class TypePadCrawlerView extends ViewPart {
 							
 							int blogCount = typePadCrawler.getQueryResults(genericKeywords,contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
 							
+							//Do not do anything if the no blog posts are found.
+							if (blogCount == 0){
+								ConsoleView.printlInConsoleln("No blog posts found in the search result.");
+								ConsoleView.printlInConsoleln("Removing Corpus " + corpusName + "...");
+								
+								//Delete the corpus since nothing is stored in it.
+								File tempCorpus = new File(ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
+								if (tempCorpus.exists()){
+									deleteDir(tempCorpus);
+								}
+								
+								return Status.OK_STATUS;
+							}
+							
 							ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
 							monitor.subTask("Saving Corpus " + corpusName + "...");
 							ManageCorpora.saveCorpus(typepadCorpus);
