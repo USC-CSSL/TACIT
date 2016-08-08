@@ -204,7 +204,7 @@ public class FrontierCrawlerView extends ViewPart{
 			checkPages.setText("Limit Pages");
 			
 			Label limitPages = new Label(limitClient, SWT.NONE);
-			limitPages.setText("Limit records per topic:");
+			limitPages.setText("Limit records per sub-domains:");
 			GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitPages);
 			pageText = new Text(limitClient, SWT.BORDER);
 			GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(pageText);
