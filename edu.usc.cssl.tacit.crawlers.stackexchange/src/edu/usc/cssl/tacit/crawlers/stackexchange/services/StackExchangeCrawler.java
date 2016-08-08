@@ -125,7 +125,7 @@ public class StackExchangeCrawler {
 					if(monitor.isCanceled())
 						return;
 					int questionId = search.getQuestion_id();
-					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
+					ConsoleView.printlInConsoleln("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
@@ -170,7 +170,7 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();
-					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
+					ConsoleView.printlInConsoleln("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
@@ -496,7 +496,7 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();
-					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
+					ConsoleView.printlInConsoleln("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
@@ -541,7 +541,7 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();
-					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
+					ConsoleView.printlInConsoleln("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("Question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
