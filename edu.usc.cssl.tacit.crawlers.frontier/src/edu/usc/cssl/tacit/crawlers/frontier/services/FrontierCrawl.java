@@ -52,6 +52,7 @@ public class FrontierCrawl {
 				Document docJournalAbstract = Jsoup.parse(d.body().child(2).child(4).child(0).child(1).child(1).child(0).child(0).child(0).child(1).toString());
 				Elements title = docJournalAbstract.select("h1");
 				Elements abs = docJournalAbstract.select("p");
+				ConsoleView.printlInConsoleln("Writing topic: "+ Jsoup.parse(title.toString()).text());
 				jsonGenerator.writeStartObject();
 				if(jsonFilter[0])
 					jsonGenerator.writeObjectField("title", Jsoup.parse(title.toString()).text());
