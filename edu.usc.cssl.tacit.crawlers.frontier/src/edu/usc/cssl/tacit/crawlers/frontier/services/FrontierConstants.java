@@ -60,6 +60,7 @@ public class FrontierConstants {
 			"Neurorobotics",
 			"Materials",
 			"Mechanical Engineering",
+			"Research Metrics and Analytics",
 			"Robotics and AI"
 	};
 	static String hsc[] = new String[]{
@@ -74,6 +75,7 @@ public class FrontierConstants {
 	sites.put(1, health);
 	sites.put(2, eng);
 	sites.put(3, hsc);
+	site2Link.put("Research Metrics and Analytics", "frma");
 	site2Link.put("Neurorobotics", "fnbot");
 	site2Link.put("Neural Circuits", "fncir");
 	site2Link.put("Neuroengineering", "fneng");
