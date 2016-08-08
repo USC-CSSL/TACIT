@@ -7,7 +7,7 @@
 		<hr>
 		<table style = "border:0px; width:100%" class = "help-contents">
 			<tr>
-				<td class = "header">TACIT PLOS ONE Blog Crawler</td>
+				<td class = "header">TACIT PLOS Crawler</td>
 			</tr>
 			<tr>
 				<table class = "contents">
@@ -15,8 +15,8 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>The PLOS ONE Crawler tool collects text from <a href = "http://journals.plos.org/plosone/" target="_blank">the PLOS ONE journal website</a>. 
-							PLOS ONE is a website that provides an open access platform for scientific research articles to be published in an impactful and accessible setting. 
+						<td>The PLOS Crawler tool collects text from <a href = "http://journals.plos.org/plosone/" target="_blank">the PLOS ONE journal website</a>. 
+							PLOS is a website that provides an open access platform for scientific research articles to be published in an impactful and accessible setting. 
 							The crawler provides various filtering settings including a word filter option and an author filter option. Users can choose the specific attributes 
 							they want collected with their data, and can also set a maximum limit for the number of documents they want to be crawled. The data is saved in a
 							format that is accessible and analyzable by the TACIT tool as well as other language analysis algorithms.
@@ -28,10 +28,18 @@
 			<tr>
 				<table class = "contents">
 					<tr>
-						<td class = "head">Basic Tutorial: Collecting data using PLOS ONE Crawler</td>
+						<td class = "head">Basic Tutorial: Collecting data using PLOS Crawler</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">PLOS ONE Crawler Filters</td>
+						<td class = "subtitle">PLOS Crawler Key</td>
+					</tr>
+					<tr>
+						<td> In order to crawl data using the PLOS crawler, you must first create an account on the PLOS website and get an api key. The first time you click the green run arrow, TACIT will prompt you to enter your api key.
+							Instructions for creating an account and receiving the api key can be found here: <a href ="http://api.plos.org/registration/" target="_blank">http://api.plos.org/registration/</a>.
+						</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">PLOS Crawler Filters</td>
 					</tr>
 					<tr>
 						<td>Typepad data can be crawled based on keywords found in the blog content (Content Word Search) or the blog title (Title Word Search). 
@@ -42,10 +50,10 @@
 							</td>
 					</tr>
 					<tr>
-						<td class = "subtitle">Crawler Limits</td>
+						<td class = "subtitle">PLOS Crawler Limits</td>
 					</tr>
 					<tr>
-						<td> <b>Max Limit:</b> You can limit the number of blog posts collected using the Max Limit box. The
+						<td> <b>Max Limit:</b> You can limit the number of articles collected using the Max Limit box. The
 							crawler will default to collecting 100 journal articles if you select the limit number of documents option and do not specify a number.
 							<br><br>
 						</td>
@@ -59,8 +67,8 @@
 						<br> <b> Abstract: </b> the article abstract
 						<br><b> Publication Date: </b> the date of article publication
 						<br><b> Author: </b> The names of the article's authors
-						<br><b> Subject: </b> 
-						<br><b> Journal: </b>
+						<br><b> Subject: </b> subject domains assigned to the article by PLOS
+						<br><b> Journal: </b> the PLOS journal the article was published in
 						<br><b> Body: </b> The entire article text
 						<br><b> Introduction: </b> the text from the introduction section of the article
 						<br><b> Materials and Methods: </b> The text from the materials and methods sections of the article
