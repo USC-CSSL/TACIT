@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Answer;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.AnswerItem;
 import edu.usc.cssl.tacit.crawlers.stackexchange.services.types.Comment;
@@ -124,6 +125,7 @@ public class StackExchangeCrawler {
 					if(monitor.isCanceled())
 						return;
 					int questionId = search.getQuestion_id();
+					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
@@ -168,6 +170,7 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();
+					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
@@ -493,6 +496,7 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();
+					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));
@@ -537,6 +541,7 @@ public class StackExchangeCrawler {
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();
+					ConsoleView.printlInConsole("Writing question: "+ Jsoup.parse(search.getTitle()).text());
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeObjectFieldStart("Question");
 					jsonGenerator.writeStringField("question_id", Integer.toString(search.getQuestion_id()));

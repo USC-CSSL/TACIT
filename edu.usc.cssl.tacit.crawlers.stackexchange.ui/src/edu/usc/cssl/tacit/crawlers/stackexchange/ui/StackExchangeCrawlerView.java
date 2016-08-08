@@ -582,6 +582,8 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							}
 						}
 						ManageCorpora.saveCorpus(corpus);
+						ConsoleView.printlInConsole(pages*30 + " case(s) downloaded");
+						ConsoleView.printlInConsole("Created corpus: " + corpus.getCorpusName());
 						if (monitor.isCanceled())
 							return handledCancelRequest("Crawling is Stopped");
 
