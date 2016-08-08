@@ -698,8 +698,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					}
 				};
 				job.setUser(true);
-				canProceed = true; 
-//						canItProceed();
+				canProceed = canItProceed();
 				if (canProceed) {
 					job.schedule(); // schedule the job
 					job.addJobChangeListener(new JobChangeAdapter() {
@@ -773,31 +772,13 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	}
 
 	private boolean canItProceed() {
-		if(senatorButton.getSelection()) {
-			if(!senateBtn.getSelection() && !extensionBtn.getSelection() && !dailyDigestBtn.getSelection()) {
-				form.getMessageManager() .addMessage( "section", "Provide select atleast one congressional section", null, IMessageProvider.ERROR);
-				return false;
-			} else
-				form.getMessageManager().removeMessage("section");
+
 			if(senatorTable.getItemCount() == 0) {
 				form.getMessageManager().addMessage("list", "Senator list cannot be empty", null, IMessageProvider.ERROR);
 				return false;
 			}
 			else
 				form.getMessageManager().removeMessage("list");
-		}
-		if(representativeButton.getSelection()) {
-			if(!senateBtn.getSelection() && !extensionBtn.getSelection() && !dailyDigestBtn.getSelection()) {
-				form.getMessageManager() .addMessage( "section", "Provide select atleast one congressional section", null, IMessageProvider.ERROR);
-				return false;
-			} else
-				form.getMessageManager().removeMessage("section");
-			if(representativeTable.getItemCount() == 0) {
-				form.getMessageManager().addMessage("list", "Representatives list cannot be empty", null, IMessageProvider.ERROR);
-				return false;
-			} else
-				form.getMessageManager().removeMessage("list");			
-		}
 		if(limitRecords.getSelection()) {
 			if(limitText.getText().isEmpty()) {
 				form.getMessageManager() .addMessage( "limitText", "Provide valid no.of.records per senator", null, IMessageProvider.ERROR);

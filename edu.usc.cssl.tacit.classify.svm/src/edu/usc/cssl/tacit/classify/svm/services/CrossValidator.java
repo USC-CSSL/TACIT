@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
+import org.apache.commons.math3.stat.inference.BinomialTest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
@@ -37,6 +39,7 @@ public class CrossValidator {
 			double pValue = tempResults[1];
 			ConsoleView.printlInConsoleln("");
 			ConsoleView.printlInConsoleln("Average accuracy over " + kValue + " folds = " + accuracy + "%");
+			ConsoleView.printlInConsoleln("Average Binomial Test P value  = " + pValue);
 			createRunReport(outputPath, dateObj);
 			clearFiles(kValue, outputPath);
 			writeToCSV(new double[]{accuracy},new double[]{pValue}, outputPath,dateObj);
@@ -49,6 +52,8 @@ public class CrossValidator {
 
 		double[] accuracies = new double[kValue];
 		double[] pValues = new double[kValue];
+		double[] totals = new double[kValue];
+		double[] corrects = new double[kValue];
 
 		int index1 = 0;
 		int index2 = 0;
@@ -132,6 +137,8 @@ public class CrossValidator {
 					testFiles1, class2Label, testFiles2);
 			accuracies[i - 1] = tempResults[0];
 			pValues[i-1] = tempResults[1];
+			totals[i-1] = tempResults[2];
+			corrects[i-1] = tempResults[3];
 			
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
@@ -152,14 +159,23 @@ public class CrossValidator {
 		}
 
 		double averageAccuracy = 0;
+		double cumulativeTotal = 0;
+		double cumulativeCorrect = 0;
 
 		for (int j = 0; j < accuracies.length; j++) {
 			averageAccuracy = averageAccuracy + accuracies[j];
+			cumulativeTotal = cumulativeTotal + totals[j];
+			cumulativeCorrect = cumulativeCorrect + corrects[j];
 		}
+		
+		//Calculate the average binomial p value 
+		BinomialTest btest = new BinomialTest();
+		double p = 0.5;
+		double averagePvalue = btest.binomialTest((int)cumulativeTotal, (int)cumulativeCorrect, p,AlternativeHypothesis.TWO_SIDED);
 
 		ConsoleView.printlInConsoleln("");
-		ConsoleView.printlInConsoleln("Average accuracy over " + kValue
-				+ " folds = " + averageAccuracy / accuracies.length + "%");
+		ConsoleView.printlInConsoleln("Average accuracy over " + kValue + " folds = " + averageAccuracy / accuracies.length + "%");
+		ConsoleView.printlInConsoleln("Average Binomial Test P value  = " + averagePvalue);
 		createRunReport(outputPath, dateObj);
 		clearFiles(kValue, outputPath);
 		writeToCSV(accuracies,pValues, outputPath,dateObj);

@@ -83,6 +83,14 @@
            file="contextDefinitionFile.xml"
            plugin="edu.usc.cssl.tacit.crawlers.frontier.ui">
      </contexts>
+     <contexts
+           file="contextDefinitionFile.xml"
+           plugin="edu.usc.cssl.tacit.crawlers.plosone.ui">
+     </contexts>
+     <contexts
+           file="contextDefinitionFile.xml"
+           plugin="edu.usc.cssl.tacit.crawlers.typepad.ui">
+     </contexts>
 </extension> 
 
 </plugin>

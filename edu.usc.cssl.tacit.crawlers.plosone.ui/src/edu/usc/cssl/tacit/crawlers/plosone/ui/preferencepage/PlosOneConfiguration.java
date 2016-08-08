@@ -7,6 +7,10 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -14,8 +18,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
+import edu.usc.cssl.tacit.crawlers.plosone.ui.internal.IPlosOneCrawlerUIConstants;
+import edu.usc.cssl.tacit.crawlers.plosone.ui.internal.PlosOneCrawlerViewImageRegistry;
 
 public class PlosOneConfiguration extends PreferencePage implements IWorkbenchPreferencePage,IPlosOneConstants{
 	
@@ -24,17 +31,31 @@ public class PlosOneConfiguration extends PreferencePage implements IWorkbenchPr
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite sectionClient = new Composite(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(sectionClient);
-
-		Label dummy = new Label(sectionClient, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy);
+		GridLayoutFactory.fillDefaults().numColumns(6).equalWidth(false).applyTo(sectionClient);
 
 		plosOneApiKey = createTextFields(sectionClient, true, "PLOS API Key:");
 		String value = getPreferenceStore().getString(PLOS_ONE_API_KEY);
 		if(value!=null && !value.equals("")){
 			plosOneApiKey.setText(value);
 		}
-		// loadValues();
+		
+		Button help = new Button(sectionClient, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(help);
+		help.setImage(PlosOneCrawlerViewImageRegistry.getImageIconFactory().getImage(IPlosOneCrawlerUIConstants.IMAGE_HELP_CO));
+		help.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp("edu.usc.cssl.tacit.crawlers.plosone.ui.plosone");
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		return sectionClient;
 	}
@@ -66,7 +87,7 @@ public class PlosOneConfiguration extends PreferencePage implements IWorkbenchPr
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(locationLbl);
 
 		final Text outputLocationTxt = new Text(sectionClient, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(outputLocationTxt);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).applyTo(outputLocationTxt);
 		outputLocationTxt.setEditable(editable);
 		return outputLocationTxt;
 	}

@@ -1,12 +1,9 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,8 +53,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -498,6 +493,9 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			FileUtils.deleteDirectory(f);
 		}else if(type == CMDataType.PLOSONE_JSON){
 			File f = new File(location+"plosone"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.CONGRESS_JSON){
+			File f = new File(location+"congress"+File.separator+corpus.getCorpusName());
 			FileUtils.deleteDirectory(f);
 		}else if(type == CMDataType.TYPEPAD_JSON){
 			File f = new File(location+"typepad"+File.separator+corpus.getCorpusName());

@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -179,11 +180,13 @@ public class FrontierCrawlerView extends ViewPart{
 			removeSenatorButton.setEnabled(false);
 
 			Composite inputSec = new Composite(InputSectionClient, SWT.None);
-			GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(0, 0).applyTo(inputSec);
+			GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(inputSec);
 			GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(inputSec);
 
-			TacitFormComposite.createEmptyRow(toolkit, InputSectionClient);
-
+			TacitFormComposite.createEmptyRow(toolkit, inputSec);
+			createStoredAttributesSection(toolkit, inputSec, form.getMessageManager());
+			
+			
 			Label dummy1 = toolkit.createLabel(InputSectionClient, "", SWT.NONE);
 			GridDataFactory.fillDefaults().grab(false, false).span(3, 0).applyTo(dummy1);
 
@@ -251,7 +254,7 @@ public class FrontierCrawlerView extends ViewPart{
 						int pages;
 						boolean canProceed;
 						boolean isDate;
-						
+						boolean []jsonFilter = new boolean[4];
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							
@@ -264,6 +267,11 @@ public class FrontierCrawlerView extends ViewPart{
 										pages = Integer.parseInt(pageText.getText());
 									else
 										pages =-1;
+									jsonFilter[0] = title.getSelection();
+									jsonFilter[1] = abstractBody.getSelection();
+									jsonFilter[2] = journalBody.getSelection();
+									jsonFilter[3] = reference.getSelection();
+									
 									corpusName = corpusNameTxt.getText();
 									isDate = dateRange.getSelection();
 									outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
@@ -293,7 +301,7 @@ public class FrontierCrawlerView extends ViewPart{
 									monitor.subTask("Crawling...");
 									if (monitor.isCanceled())
 										return handledCancelRequest("Crawling is Stopped");
-									crawler.crawl(outputDir, domain, pages, monitor);
+									crawler.crawl(outputDir, domain, pages, monitor, jsonFilter);
 									if (monitor.isCanceled())
 										return handledCancelRequest("Crawling is Stopped");
 								} catch (Exception e) {
@@ -464,6 +472,7 @@ public class FrontierCrawlerView extends ViewPart{
 				int pages;
 				boolean canProceed;
 				boolean isDate;
+				boolean []jsonFilter = new boolean[4];
 				
 				@Override
 				public void run() {
@@ -479,6 +488,10 @@ public class FrontierCrawlerView extends ViewPart{
 										pages = Integer.parseInt(pageText.getText());
 									else
 										pages =-1;
+									jsonFilter[0] = title.getSelection();
+									jsonFilter[1] = abstractBody.getSelection();
+									jsonFilter[2] = journalBody.getSelection();
+									jsonFilter[3] = reference.getSelection();
 									corpusName = corpusNameTxt.getText();
 									isDate = dateRange.getSelection();
 									outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
@@ -508,7 +521,7 @@ public class FrontierCrawlerView extends ViewPart{
 									monitor.subTask("Crawling...");
 									if (monitor.isCanceled())
 										return handledCancelRequest("Crawling is Stopped");
-									crawler.crawl(outputDir, domain, pages, monitor);
+									crawler.crawl(outputDir, domain, pages, monitor, jsonFilter);
 									if (monitor.isCanceled())
 										return handledCancelRequest("Crawling is Stopped");
 								} catch (Exception e) {
@@ -605,5 +618,55 @@ public class FrontierCrawlerView extends ViewPart{
 			return Status.CANCEL_STATUS;
 		}
 
+		static Button title, abstractBody, journalBody, reference;
+
+public static void createStoredAttributesSection(FormToolkit toolkit, Composite parent,
+		final IMessageManager mmng) {
+	Section section = toolkit.createSection(parent,
+			Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION | Section.TWISTIE);
+
+	GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
+	GridLayoutFactory.fillDefaults().numColumns(4).applyTo(section);
+	section.setText("Stored Attributes "); //$NON-NLS-1$
+	section.setDescription("Choose values for Filter");
+
+	ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+	sc.setExpandHorizontal(true);
+	sc.setExpandVertical(true);
+
+	GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sc);
+
+	Composite sectionClient = toolkit.createComposite(section);
+	sc.setContent(sectionClient);
+	GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
+	GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sectionClient);
+	section.setClient(sectionClient);
+
+	Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
+	GridDataFactory.fillDefaults().grab(false, false).span(4, 0).applyTo(dummy);
+
+	title = new Button(sectionClient, SWT.CHECK);
+	title.setText("Title");
+	GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(title);
+	title.setSelection(true);
+
+	abstractBody = new Button(sectionClient, SWT.CHECK);
+	abstractBody.setText("Abstract Body");
+	GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(abstractBody);
+	abstractBody.setSelection(true);
+
+	journalBody = new Button(sectionClient, SWT.CHECK);
+	journalBody.setText("Journal Body");
+	GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(journalBody);
+	journalBody.setSelection(true);
+
+	reference = new Button(sectionClient, SWT.CHECK);
+	reference.setText("References");
+	GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(reference);
+	reference.setSelection(true);
+
+
+}
+		
 	}
 

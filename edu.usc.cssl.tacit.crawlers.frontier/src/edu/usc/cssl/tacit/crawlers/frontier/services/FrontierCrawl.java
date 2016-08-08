@@ -25,7 +25,7 @@ public class FrontierCrawl {
 	 * @param limit
 	 * @param monitor
 	 */
-	public void crawl(String dir, String domain, int limit, IProgressMonitor monitor){
+	public void crawl(String dir, String domain, int limit, IProgressMonitor monitor, boolean[] jsonFilter){
 		int downloadCount = 0;
 		jsonFactory = new JsonFactory();
 		this.monitor = monitor;
@@ -53,16 +53,21 @@ public class FrontierCrawl {
 				Elements title = docJournalAbstract.select("h1");
 				Elements abs = docJournalAbstract.select("p");
 				jsonGenerator.writeStartObject();
-				jsonGenerator.writeObjectField("title", Jsoup.parse(title.toString()).text());
-				jsonGenerator.writeObjectField("abstract_body", Jsoup.parse(abs.toString()).text());
+				if(jsonFilter[0])
+					jsonGenerator.writeObjectField("title", Jsoup.parse(title.toString()).text());
+				if(jsonFilter[1])
+					jsonGenerator.writeObjectField("abstract_body", Jsoup.parse(abs.toString()).text());
 				String abstractBody = d.body().child(2).child(4).child(0).child(1).child(1).child(0).child(0).child(0).child(2).toString();
 				int i = abstractBody.indexOf("References");
 				if(i != -1){
 				String journalBody = abstractBody.substring(0, i);
-				jsonGenerator.writeObjectField("journal_body", Jsoup.parse(journalBody).text());
-				jsonGenerator.writeObjectField("references", Jsoup.parse(abstractBody.substring(i+10)).text());
+				if(jsonFilter[2])
+					jsonGenerator.writeObjectField("journal_body", Jsoup.parse(journalBody).text());
+				if(jsonFilter[3])
+					jsonGenerator.writeObjectField("references", Jsoup.parse(abstractBody.substring(i+10)).text());
 				}else{
-					jsonGenerator.writeObjectField("journal_body", Jsoup.parse(abstractBody).text());
+					if(jsonFilter[2])
+						jsonGenerator.writeObjectField("journal_body", Jsoup.parse(abstractBody).text());
 				}
 				jsonGenerator.writeEndObject();
 				count++;

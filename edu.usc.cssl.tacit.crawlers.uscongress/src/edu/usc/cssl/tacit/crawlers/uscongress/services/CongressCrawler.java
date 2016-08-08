@@ -12,12 +12,23 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+
 public class CongressCrawler {
 
+	JsonGenerator jsonGenerator;
+	JsonFactory jsonfactory;
 	static int docCount;
 	boolean first =true;
 
 	public void crawl(String outputDir, int limit, String party, String congress, IProgressMonitor monitor, boolean random ) throws IOException{
+		File streamFile = new File(outputDir+File.separator+"congressCrawl.json"); 
+		jsonfactory = new JsonFactory();
+		jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
+		jsonGenerator.useDefaultPrettyPrinter();
+		jsonGenerator.writeStartArray();
 		docCount= 0;
 		int page = 1;
 		int totalPages = 0;
@@ -39,8 +50,10 @@ public class CongressCrawler {
 					continue;
 				}
 			}
+			
 			if(first){
 			Elements number = d.getElementsByClass("results-number");
+			
 			String num = Jsoup.parse(number.toString()).text();
 			int results = Integer.parseInt(num.substring(num.indexOf("of")+3).replaceAll(",", ""));
 			System.out.println(num+"------"+results);
@@ -59,7 +72,7 @@ public class CongressCrawler {
 			Elements title = d.getElementsByClass("results_list");
 			Elements links = title.select("h2").select("a");
 		 tag:	for (Element link : links) {
-				bw = new BufferedWriter(new FileWriter(new File(outputDir+File.separator+"congressCrawl" + docCount)));
+			 	
 				String data = link.toString();
 				int start = data.indexOf("=\"");
 				int end = data.indexOf("?resultIndex=");
@@ -79,16 +92,28 @@ public class CongressCrawler {
 				}
 				if (doc.body().child(1).child(1).child(1).child(5).childNodeSize() > 6) {
 					Element element = docJournalAbstract.getElementById("billTextContainer");
-					bw.write(Jsoup.parse(element.toString()).text());
+					Element congress1 = doc.getElementById("main").child(0);
+					Element date = doc.getElementById("main").child(3);
+					String congStr = Jsoup.parse(congress1.toString()).text();
+					String dateStr = Jsoup.parse(date.toString()).text();
+
+					jsonGenerator.writeStartObject();
+					jsonGenerator.writeStringField("bill_data", congStr.substring(6, congStr.indexOf("(")));
+					try{
+					jsonGenerator.writeStringField("date", dateStr.substring(dateStr.indexOf("(")+1, dateStr.indexOf(")")));
+					}catch(Exception e){
+						jsonGenerator.writeStringField("date", "null");
+					}
+					jsonGenerator.writeStringField("body", Jsoup.parse(element.toString()).text());
+					jsonGenerator.writeEndObject();
 				} else {
 					continue;
 				}
 				docCount++;
 				monitor.worked(1);
-				if (docCount >= limit)
+				if (docCount >= limit){					
 					break;
-				bw.flush();
-				bw.close();
+				}
 			}
 			if(random)
 				page = (int) (Math.random()*totalPages+1);
@@ -97,5 +122,8 @@ public class CongressCrawler {
 			if (docCount >= limit)
 				break;
 		}
+		jsonGenerator.writeEndArray();
+		jsonGenerator.flush();
+		jsonGenerator.close();
 	}
 }
