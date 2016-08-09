@@ -3,6 +3,7 @@ package edu.usc.cssl.tacit.common.ui.corpusmanagement;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -333,16 +334,19 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					//Check for different export selections and 
 					if (exportSelection.equals(ExportSelectionConstants.EXPORT_CSV_FORMAT)){
 						System.out.println("CSV format selected");
+						try {
+							writeCSV(outputLoc, cls);
+						} catch (Exception e1) {
+							ConsoleView.printlInConsoleln("Could not create CSV File.");
+							e1.printStackTrace();
+						}
 					}else if (exportSelection.equals(ExportSelectionConstants.EXPORT_ROBJ_FORMAT)){
 						System.out.println("ROBJ format selected");
 						
 						try {
 							writeRObj(outputLoc, cls);
-						} catch (ScriptException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 						} catch (Exception e1) {
-							// TODO Auto-generated catch block
+							ConsoleView.printlInConsoleln("Could not create R Dataframe.");
 							e1.printStackTrace();
 						}
 						
@@ -556,7 +560,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		form.getToolBarManager().add(vaction);
 	}
 	
-	private static void writeRObj(String outputLoc, CorpusClass cls) throws ScriptException,Exception{
+	/**
+	 * This method writes the corpus into a R Dataframe and stores it to the specified output location.
+	 * @param outputLoc
+	 * @param cls
+	 * @throws Exception
+	 */
+	private static void writeRObj(String outputLoc, CorpusClass cls) throws Exception{
 		
 		// Location where the R Object needs to be saved.
 		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".RData" + "\"";
@@ -648,10 +658,103 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			return;
 		}
 
+	    ConsoleView.printlInConsoleln("R Dataframe successfully exported.");
 	    ConsoleView.printlInConsoleln("R Dataframe saved at : " + saveLocation);
 
 	}
 	
-	
+	/**
+	 * This method writes the corpus into a CSV file and stores it to the specified output location.
+	 * @param outputLoc
+	 * @param cls
+	 * @throws Exception
+	 */
+	private static void writeCSV(String outputLoc, CorpusClass cls)throws Exception{
+		
+		// Location where the R Object needs to be saved.
+		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".csv";
+		
+		FileWriter fileWriter = new FileWriter(new File(saveLocation));
+		
+		// Location of the corpus
+		String corpusLocation = cls.getTacitLocation();
+		File corpusDirectory = new File(corpusLocation);
+		
+		
+		String corpusClassLocation = "" ; 
+		String[] jsonFiles = corpusDirectory.list();
+		for(int i=0; i<jsonFiles.length ;i++){
+			if(jsonFiles[i].endsWith(".json")){
+				corpusClassLocation = corpusLocation + File.separator + jsonFiles[i]; 
+				break;
+			}
+		}
+		
+		//Name of the corpus
+		String corpusName = cls.getClassName();
+	    
+	    try {
+			JSONParser jsonParser = new JSONParser();
+			JSONArray entireJsonArray = (JSONArray)jsonParser.parse(new FileReader(new File(corpusClassLocation)));
+			
+			//Get the first JSONObject and extract all the keys 
+			JSONObject firstJsonObject = (JSONObject)entireJsonArray.get(0);
+			Set<String> keySet = firstJsonObject.keySet();
+			
+			//Generate the R data frame columns
+			Iterator<String> keyIterator = keySet.iterator();
+			String key;
+			String dataFrameHeader = "";
+			while(keyIterator.hasNext()){
+				key = keyIterator.next();
+				dataFrameHeader = dataFrameHeader + key + ","; 
+			}
+			dataFrameHeader = dataFrameHeader.substring(0,dataFrameHeader.length()-1);
+			fileWriter.write(dataFrameHeader + "\n");
+			
+			
+			//Iterate over JSONArray and build the columns for the data frame
+			Iterator<Object> arrayIterator = entireJsonArray.iterator();
+			while(arrayIterator.hasNext()){
+				JSONObject singleJsonObject = (JSONObject)arrayIterator.next();
+				
+				//Building single csv entry for each object
+				StringBuffer singleCsvEntry=  new StringBuffer();
+				keyIterator = keySet.iterator();
+				while(keyIterator.hasNext()){
+					
+					key = keyIterator.next();
+					
+					if(singleJsonObject.containsKey(key)){
+						String data = singleJsonObject.get(key).toString();
+						
+						//Cleaning the data before inserting in the dataframe.
+						/*data = data.toLowerCase()
+								.replaceAll("-", " ")
+								.replaceAll("[^a-z0-9. ]", "")
+								.replaceAll("\\s+", " ")
+								.trim();*/
+						
+						data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").trim();
+						singleCsvEntry.append(data + ",");
+
+					}else{
+						singleCsvEntry.append(",");
+					}
+				}
+				singleCsvEntry.deleteCharAt(singleCsvEntry.length()-1);
+				fileWriter.write(singleCsvEntry.toString() + "\n");
+			}
+			
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+			ConsoleView.printlInConsoleln("Could not create CSV file due to an internal error.");
+			return;
+		}
+	    fileWriter.close();
+	    ConsoleView.printlInConsoleln("CSV successfully exported.");
+	    ConsoleView.printlInConsoleln("CSV file saved at : " + saveLocation);
+	}
 	
 }
