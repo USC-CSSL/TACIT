@@ -15,6 +15,9 @@
 		<module>../edu.usc.cssl.tacit.common.ui</module>
 
 		<!-- Crawlers -->
+		<module>../edu.usc.cssl.tacit.crawlers.hansard.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.hansard</module>
+		
 		<module>../edu.usc.cssl.tacit.crawlers.americanpresidency.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.americanpresidency</module>
 		
