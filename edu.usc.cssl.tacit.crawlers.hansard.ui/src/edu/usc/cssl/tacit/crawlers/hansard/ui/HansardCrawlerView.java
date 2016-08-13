@@ -65,7 +65,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 	private DateTime toDate;
 	private DateTime fromDate;
 	private Corpus hansardCorpus;
-
+	boolean filesFound = false;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "Hansard Debates Crawler");
@@ -283,20 +283,34 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 						monitor.beginTask("Running Hansard Crawler..." , progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("Hansard Crawler started");
 						final HansardDebatesCrawler rc = new HansardDebatesCrawler(); // initialize all the common parameters	
+						
 						try{
 							monitor.worked(1000);
 							System.out.println(startDate);
 							System.out.println(endDate);
-							rc.crawl(outputDir, searchString.trim(), house, startDate, endDate, monitor);
+							filesFound = rc.crawl(outputDir, searchString.trim(), house, startDate, endDate, monitor);
 						}
-						catch(Exception e){
+						catch(IndexOutOfBoundsException e){
+
+							Display.getDefault().syncExec(new Runnable() {
+								@Override
+								public void run() {
+									MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+									int result = dialog.open();
+									if (result <= 0){
+										dialog.close();
+									}
+								}
+							});
+							
+						}catch (Exception e){
+							
 							e.printStackTrace();
 						}
 						monitor.subTask("Initializing...");
 						monitor.worked(100);
 						if(monitor.isCanceled())
 							handledCancelRequest("Cancelled");
-						hansardCorpus = new Corpus(corpusName, CMDataType.HANSARD_JSON);
 						try {
 							monitor.subTask("Crawling...");
 							if(monitor.isCanceled())
@@ -325,9 +339,12 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
-									CorpusClass cc = new CorpusClass("Hansard Debates", outputDir);
-									cc.setParent(hansardCorpus);
-									hansardCorpus.addClass(cc);
+									if(filesFound) {
+										hansardCorpus = new Corpus(corpusName, CMDataType.HANSARD_JSON);
+										CorpusClass cc = new CorpusClass("Hansard Debates", outputDir);
+										cc.setParent(hansardCorpus);
+										hansardCorpus.addClass(cc);
+									}
 								}
 							});
 						} catch (Exception e) {

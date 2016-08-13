@@ -101,7 +101,7 @@ public class HansardDebatesCrawler {
 		
 	}
 	
-	public void crawl(String outputDir, String searchTerm, String house, String startDate, String endDate, IProgressMonitor monitor) throws IOException{
+	public boolean crawl(String outputDir, String searchTerm, String house, String startDate, String endDate, IProgressMonitor monitor) throws IOException{
 		this.outputDir = outputDir;
 		setDir();
 		Elements elements = null;
@@ -171,7 +171,7 @@ public class HansardDebatesCrawler {
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}
-			
+		return true;
 	}
 	
 }

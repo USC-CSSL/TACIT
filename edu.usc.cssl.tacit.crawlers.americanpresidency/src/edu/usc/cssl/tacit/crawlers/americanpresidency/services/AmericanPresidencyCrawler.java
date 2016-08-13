@@ -53,21 +53,65 @@ public class AmericanPresidencyCrawler {
 			jsonGenerator.writeStringField("Name", strName); 
 			jsonGenerator.writeStringField("Title", strTitle);
 			String body = element.ownText();
+			int index = body.indexOf(":");
+			if(index == -1)
+				index = body.indexOf(";"); //Because ; has been used on the website at certain places by mistake
+
+			if(strTitle.toLowerCase().contains("debate")&&index!=-1) {	//If it's a debate, then the json content is broken down by speaker. -1 because some debates are not formatted well, hence not possible to break them.
+
+				jsonGenerator.writeArrayFieldStart("Body");
+				jsonGenerator.writeStartObject();
+				jsonGenerator.writeStringField("Speaker",body.substring(0, index));
+				jsonGenerator.writeStringField("Text", body.substring(index+1));
+				jsonGenerator.writeEndObject();
+				String speaker = ""; 
+				for (Element el : element.getElementsByTag("p"))
+				{
+					if(index!=-1)
+						speaker = body.substring(0, index);
+					body = el.text();
+					
+					index = body.indexOf(":");
+					if(index == -1)
+						index = body.indexOf(";");
+					
+					jsonGenerator.writeStartObject();
+					if(index == -1)//if no speaker for current statement, assume it's the previous one
+					 {
+						jsonGenerator.writeStringField("Speaker", speaker);
+						jsonGenerator.writeStringField("Text", body);
+					 }
+					else{
+						jsonGenerator.writeStringField("Speaker", body.substring(0, index));
+						jsonGenerator.writeStringField("Text", body.substring(index+1));
+					
+					}
+					jsonGenerator.writeEndObject();
+				}
+				jsonGenerator.writeEndArray();
 			
-			for (Element el : element.getElementsByTag("p"))
-			{
-				body += el.text() + " ";
+			} else {
+				jsonGenerator.writeArrayFieldStart("Body");
+				for (Element el : element.getElementsByTag("p"))
+					body += el.text() + " ";
+				jsonGenerator.writeStartObject();
+				jsonGenerator.writeStringField("Speaker","NA");
+				jsonGenerator.writeStringField("Text", body);
+				jsonGenerator.writeEndObject();
+				jsonGenerator.writeEndArray();
 			}
-			jsonGenerator.writeStringField("Body", body);
+			
 			jsonGenerator.writeEndObject();
 			
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			throw e;
 		}
 	}
 	
-	public void crawlSearch(String outputDir, String searchTerm1, String searchTerm2, String operator, Calendar from, Calendar to, String presidentName, String documentCategory, IProgressMonitor monitor) throws IOException{
+	public boolean crawlSearch(String outputDir, String searchTerm1, String searchTerm2, String operator, Calendar from, Calendar to, String presidentName, String documentCategory, IProgressMonitor monitor) throws IOException{
+		boolean flag = true;
 		this.outputDir = outputDir;
 		setDir();
 		Elements elements = null;
@@ -79,7 +123,7 @@ public class AmericanPresidencyCrawler {
 			if(from!=null)
 			{
 				conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
-				conn.timeout(120000);
+				conn.timeout(480000);
 				Document e = conn.post();
 				
 				Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
@@ -89,7 +133,7 @@ public class AmericanPresidencyCrawler {
 			else
 			{
 				Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
-				conn.timeout(120000);
+				conn.timeout(480000);
 				if(!searchTerm1.equals("")){
 					elements = e.child(2).child(0).children();// This seems correct only when search term is present
 				} else {
@@ -117,6 +161,8 @@ public class AmericanPresidencyCrawler {
 					monitor.worked(progressMonitorIncrement);
 				}
 			}
+			else
+				flag = false;
 			try {
 				jsonGenerator.writeEndArray();
 				jsonGenerator.flush();
@@ -124,10 +170,12 @@ public class AmericanPresidencyCrawler {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			return flag;
 			
 	}
 	
-	public void crawlBrowse(String outputDir, int month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
+	public boolean crawlBrowse(String outputDir, int month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
+		boolean flag = true;
 		int progressMonitorIncrement = 890;
 		this.outputDir = outputDir;
 		setDir();
@@ -152,6 +200,9 @@ public class AmericanPresidencyCrawler {
 				monitor.worked(progressMonitorIncrement);
 			}
 		}
+		else{
+			flag = false;
+		}
 		
 		try {
 			jsonGenerator.writeEndArray();
@@ -160,6 +211,7 @@ public class AmericanPresidencyCrawler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return flag;
 		
 	}
 }

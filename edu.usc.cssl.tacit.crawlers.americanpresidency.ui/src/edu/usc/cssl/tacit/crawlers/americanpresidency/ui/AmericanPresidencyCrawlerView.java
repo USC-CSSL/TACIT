@@ -22,7 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -74,7 +73,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private Combo browseDay;	
 	private Combo browseYear;
 	Corpus americanPresidencyCorpus;
-	
+	private boolean filesFound;
 	String presidentNames[] = {"President","George Washington","John Adams","Thomas Jefferson","James Madison","James Monroe","John Quincy Adams","Andrew Jackson","Martin van Buren","William Henry Harrison","John Tyler","James K. Polk","Zachary Taylor","Millard Fillmore","Franklin Pierce","James Buchanan","Abraham Lincoln","Andrew Johnson","Ulysses S. Grant","Rutherford B. Hayes","James A. Garfield","Chester A. Arthur","Grover Cleveland","Benjamin Harrison","Grover Cleveland","William McKinley","Theodore Roosevelt","William Howard Taft","Woodrow Wilson","Warren G. Harding","Calvin Coolidge","Herbert Hoover","Franklin D. Roosevelt","Harry S. Truman","Dwight D. Eisenhower","John F. Kennedy","Lyndon B. Johnson","Richard Nixon","Gerald R. Ford","Jimmy Carter","Ronald Reagan","George Bush","William J. Clinton","George W. Bush","Barack Obama"};
 	String documentTypes[] = {"Document Category","Oral: Address - Inaugural","Oral: Address - to Congress (non SOTU)","Oral: Address - State of the Union","Oral: Address - major to the Nation","Oral: Address - Farewell","Oral: Address - Saturday Radio","Oral: Address - Fireside Chats","Oral: Address  - \"Inaugural\" (Accidental Presidents)","Oral: Address - at College Commencements","Oral: Address - to the UN General Assembly","Oral: Address - to Foreign Legislatures","Oral: Address - Nomination Acceptance","Oral: Remarks - (non categorized)","Oral: Remarks - Toasts","Oral: Remarks - Bill Signings","Oral: Remarks - Bill Vetos","Oral: News Conferences","Oral: News Conferences - Joint","Debates: General Election","Oral: Remarks - Campaign Fundraiser","Oral: Remarks - regarding Executive Nominations","Oral: Remarks - regarding Executive Appointments","Oral: Remarks - regarding Resignations","Written: Messages - (non categorized)","Written: Messages -  to Congress","Written: Messages - Annual Messages (written SOTU)","Written: Messages - Veto Messages","Written: Messages - Pocket Veto Messages","Written: Messages - Budget Messages","Written: Messages -  Farewell Addresses","Written: Memorandums","Written: Memorandums - Pocket Vetos","Written: Memorandums - Determinations","Written: Memorandums - Diplomatic - Memo of Understanding","Written: Executive Orders","Written: Proclamations","Written: Statements - (non categorized)","Written: Statements - Signing Statements","Written: Statements - Veto Statements","Written: Letters - (non categorized)","Written: Letters - to Congress","Written: Notices","Written: Telegrams - Lincoln (Civil War)","E.O.P.: Press Briefings","OMB: Statements of Administration Policy","Debates: Vice-Presidential","Debates: Primary Elections-Democratic Party","Debates: Primary Elections-Republican Party","Party Platforms"};
 	String days[]={"Day","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
@@ -593,13 +592,14 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						monitor.worked(10);
 						if(monitor.isCanceled())
 							handledCancelRequest("Cancelled");
-						americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
+						
 						if(!browse) {
 							try {
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
 									return handledCancelRequest("Cancelled");					
-								rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), monitor);
+								filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), monitor);
+								System.out.println("--"+filesFound);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch(IndexOutOfBoundsException e){
@@ -628,7 +628,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 								
-								rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), monitor);
+								filesFound = rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), monitor);
 							} catch(IndexOutOfBoundsException e){
 								
 								
@@ -655,9 +655,16 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
-									CorpusClass cc = new CorpusClass("American Presidential Papers", outputDir);
-									cc.setParent(americanPresidencyCorpus);
-									americanPresidencyCorpus.addClass(cc);
+									System.out.println("filesFound "+filesFound);
+									if(filesFound) {
+
+										System.out.println("Creating");
+										americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
+										
+										CorpusClass cc = new CorpusClass("American Presidential Papers", outputDir);
+										cc.setParent(americanPresidencyCorpus);
+										americanPresidencyCorpus.addClass(cc);
+									}
 								}
 							});
 						} catch (Exception e) {

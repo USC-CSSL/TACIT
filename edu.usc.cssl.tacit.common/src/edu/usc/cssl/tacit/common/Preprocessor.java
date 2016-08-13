@@ -392,7 +392,10 @@ public class Preprocessor {
 			break;
 		case PRESIDENCY_JSON:
 			processTwitter(corpus);
-
+			break;
+		case HANSARD_JSON:
+			processTwitter(corpus);
+			break;
 		default:
 			break;
 		}

@@ -409,6 +409,10 @@ public class Preprocessor {
 		case PRESIDENCY_JSON:
 			processJSONArray(corpus, seperateFiles);
 			break;
+		
+		case HANSARD_JSON:
+			processJSONArray(corpus, seperateFiles);
+			break;
 			
 		case PLOSONE_JSON:
 			processJSONArray(corpus, seperateFiles);
@@ -460,6 +464,11 @@ public class Preprocessor {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.journal_body", true);
+			}
+			if (corpusType == CMDataType.HANSARD_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
 			}
 			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);
