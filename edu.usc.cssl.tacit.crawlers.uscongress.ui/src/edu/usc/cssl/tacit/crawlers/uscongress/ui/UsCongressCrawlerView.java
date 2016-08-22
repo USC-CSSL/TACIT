@@ -1,15 +1,9 @@
 package edu.usc.cssl.tacit.crawlers.uscongress.ui;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -21,7 +15,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -43,30 +36,27 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
-import edu.usc.cssl.tacit.crawlers.uscongress.services.AvailableRecords;
-import edu.usc.cssl.tacit.crawlers.uscongress.services.CongressCrawler;
-import edu.usc.cssl.tacit.crawlers.uscongress.services.UsCongressCrawler;
+import edu.usc.cssl.tacit.crawlers.uscongress.services.RecordCongressCrawl;
+import edu.usc.cssl.tacit.crawlers.uscongress.services.SearchSenators;
 import edu.usc.cssl.tacit.crawlers.uscongress.ui.internal.IUsCongressCrawlerViewConstants;
 import edu.usc.cssl.tacit.crawlers.uscongress.ui.internal.UsCongressCrawlerViewImageRegistry;
 
@@ -126,15 +116,17 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Button senateBtn;
 	private Button extensionBtn;
 	private Button dailyDigestBtn;
+	private Text keywordTxt;
 	private Composite limitRecordsClient;
 	private boolean crawlAgain;
 	private Text corpusNameTxt;
 
-	final UsCongressCrawler sc = new UsCongressCrawler();
 
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
+		
+		
 		toolkit = createFormBodySection(parent, "US Congress Crawler");
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
@@ -194,6 +186,12 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(senatorComposite);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(senatorComposite);
 
+		houseBtn = toolkit.createButton(senatorComposite, "House", SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(houseBtn);
+		houseBtn.setSelection(true);
+		
+		senateBtn = toolkit.createButton(senatorComposite, "Senate", SWT.RADIO);
+		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(senateBtn);
 		
 		Label sCongressLabel = toolkit.createLabel(senatorComposite, "Congress:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sCongressLabel);
@@ -202,10 +200,12 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		toolkit.adapt(sCmbCongress);
 		sCmbCongress.setItems(sLoading);
 		sCmbCongress.select(0);
-
-		representativeComposite = toolkit.createComposite(mainComposite);
-		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(representativeComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(representativeComposite);
+		
+		Label keywordLabel = toolkit.createLabel(senatorComposite, "Keyword:", SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(keywordLabel);
+		keywordTxt = toolkit.createText(senatorComposite, "", SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(keywordTxt);
+		
 
 		// String[] rLoading = {"Loading..."};
 		// Label rCongressLabel = toolkit.createLabel(representativeComposite,
@@ -268,6 +268,16 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		});
 		removeSenatorButton.setEnabled(true);
 
+		TacitFormComposite.createEmptyRow(toolkit, senatorComposite);
+		
+		representativeComposite = toolkit.createComposite(senatorComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(representativeComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(representativeComposite);
+		
+		createStoredAttributesSection(toolkit, representativeComposite, form.getMessageManager());
+		
+		TacitFormComposite.createEmptyRow(toolkit, representativeComposite);
+		
 		Group limitGroup = new Group(filterResultsComposite, SWT.SHADOW_IN);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(limitGroup);
 		limitGroup.setText("Limit Records");
@@ -546,10 +556,9 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		processElementSelectionDialog(shell);
 
 		senatorList = new LinkedHashSet<String>();
-		senatorList.add("All Senators");
-		senatorList.add("All Democratic");
-		senatorList.add("All Republican");
-		senatorList.add("All Independent");
+		int num = sCmbCongress.getSelectionIndex();
+		String congress = sLoading[num].substring(0,sLoading[num].indexOf("(")-1).toLowerCase();
+		senatorList = SearchSenators.crawl(houseBtn.getSelection(), congress, keywordTxt.getText());
 		listDialog.setElements(senatorList.toArray());
 		listDialog.setMultipleSelection(true);
 		if (listDialog.open() == Window.OK) {
@@ -598,11 +607,13 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 			String outputDir;
 			String corpusName;
 			Corpus corpus;
-			String party, congress;
+			String chamber ="", congress;
 			int limit;
+			String keyword;
 			boolean random;
 			boolean canProceed;
 			boolean isDate;
+			boolean[] fields = new boolean[4];
 			
 			@Override
 			public void run() {
@@ -617,78 +628,106 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 								
 								corpusName = corpusNameTxt.getText();
 								random = sortByDateNo.getSelection();
+								fields[0] = chamberBtn.getSelection();
+								fields[1] = dateBtn.getSelection();
+								fields[2] = titleBtn.getSelection();
+								fields[3] = bodyBtn.getSelection();
+								
 								if(limitRecords.getSelection())
 									limit = Integer.parseInt(limitText.getText());
 								else
 									limit = -1;
+								if(houseBtn.getSelection())
+									chamber = "House";
+								else if(senateBtn.getSelection())
+									chamber = "Senate";
+								
 								int num = sCmbCongress.getSelectionIndex();
 								congress = sLoading[num].substring(0,sLoading[num].indexOf("(")-1).toLowerCase();
-								for(String parties:selectedSenators){
-									String name = parties.substring(5);
-									if(name.equals("Senators")){
-										party = "\"all\"";
-										break;
-									}else{
-										if(party!=null)
-											party += ",\""+name+"\""; 
-										else
-											party = "\""+name+"\"";
-									}
-									
-								}
+								keyword = keywordTxt.getText();
 								outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
 								if (!new File(outputDir).exists()) {
 									new File(outputDir).mkdirs();
 								}
 							}
 						});
-						int progressSize=1000;
-						if(limit!=-1)
+						int progressSize= limit+15;
+						if(limit!=-1 && selectedSenators!=null)
 							progressSize = limit*selectedSenators.size()+15;
 						monitor.beginTask("Running US Congress Crawler...", progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("US Congress Crawler started");
-						CongressCrawler crawler = new CongressCrawler();
+						RecordCongressCrawl crawler = new RecordCongressCrawl();
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if (monitor.isCanceled())
 							handledCancelRequest("Crawling is Stopped");
 						corpus = new Corpus(corpusName, CMDataType.CONGRESS_JSON);
-						for (final String domain : selectedSenators) {
-							outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
-							outputDir += File.separator + domain;
-							if (!new File(outputDir).exists()) {
-								new File(outputDir).mkdirs();
-							}
 
 							try {
 								monitor.subTask("Crawling...");
 								if (monitor.isCanceled())
 									return handledCancelRequest("Crawling is Stopped");
-								crawler.crawl(outputDir, limit, party, congress, monitor, random);
 								
+								if(senatorList == null){
+								outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+								outputDir += File.separator + "Congress"+chamber;
+									if (!new File(outputDir).exists()) {
+										new File(outputDir).mkdirs();
+									}
+
+								crawler.crawl(outputDir, limit, "" ,keyword, chamber, congress, random, monitor, fields);
+								try {
+									Display.getDefault().syncExec(new Runnable() {
+
+										@Override
+										public void run() {
+
+											CorpusClass cc = new CorpusClass("Congress"+chamber, outputDir);
+											cc.setParent(corpus);
+											corpus.addClass(cc);
+
+										}
+									});
+								} catch (Exception e) {
+									e.printStackTrace();
+									return Status.CANCEL_STATUS;
+								}
+
+								}
+								else{
+									for(final String senator: selectedSenators){
+										
+										outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName+ File.separator + senator;
+										if (!new File(outputDir).exists()) {
+											new File(outputDir).mkdirs();
+										}
+										crawler.crawl(outputDir, limit, senator ,keyword, chamber, congress, random, monitor, fields);
+										try {
+											Display.getDefault().syncExec(new Runnable() {
+
+												@Override
+												public void run() {
+
+													CorpusClass cc = new CorpusClass(senator, outputDir);
+													cc.setParent(corpus);
+													corpus.addClass(cc);
+
+												}
+											});
+										} catch (Exception e) {
+											e.printStackTrace();
+											return Status.CANCEL_STATUS;
+										}
+
+									}
+								}
 								if (monitor.isCanceled())
 									return handledCancelRequest("Crawling is Stopped");
 							} catch (Exception e) {
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
-							try {
-								Display.getDefault().syncExec(new Runnable() {
-
-									@Override
-									public void run() {
-
-										CorpusClass cc = new CorpusClass(domain, outputDir);
-										cc.setParent(corpus);
-										corpus.addClass(cc);
-
-									}
-								});
-							} catch (Exception e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
-						}
-						ManageCorpora.saveCorpus(corpus);
+							
+							ManageCorpora.saveCorpus(corpus);
 						if (monitor.isCanceled())
 							return handledCancelRequest("Crawling is Stopped");
 
@@ -698,7 +737,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					}
 				};
 				job.setUser(true);
-				canProceed = canItProceed();
+				canProceed = true; 
+						//canItProceed();
 				if (canProceed) {
 					job.schedule(); // schedule the job
 					job.addJobChangeListener(new JobChangeAdapter() {
@@ -764,8 +804,8 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("US Congress crawler cancelled.");
-		ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
-		sc.filesDownload = new HashSet<String>();
+//		ConsoleView.printlInConsoleln("Total no.of.files downloaded : " + sc.totalFilesDownloaded);
+//		sc.filesDownload = new HashSet<String>();
 		TacitFormComposite.writeConsoleHeaderBegining("<terminated> US Congress Crawler");
 		return Status.CANCEL_STATUS;
 		
@@ -833,4 +873,54 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		return toolkit;
 	}
 
+	static Button chamberBtn, dateBtn, titleBtn, bodyBtn;
+
+public static void createStoredAttributesSection(FormToolkit toolkit, Composite parent,
+	final IMessageManager mmng) {
+Section section = toolkit.createSection(parent,
+		Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION | Section.TWISTIE);
+
+GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(section);
+GridLayoutFactory.fillDefaults().numColumns(4).applyTo(section);
+section.setText("Stored Attributes "); //$NON-NLS-1$
+section.setDescription("Choose values for Filter");
+
+ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL | SWT.V_SCROLL);
+sc.setExpandHorizontal(true);
+sc.setExpandVertical(true);
+
+GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sc);
+
+Composite sectionClient = toolkit.createComposite(section);
+sc.setContent(sectionClient);
+GridDataFactory.fillDefaults().grab(true, false).applyTo(sc);
+GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(sectionClient);
+section.setClient(sectionClient);
+
+Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
+GridDataFactory.fillDefaults().grab(false, false).span(4, 0).applyTo(dummy);
+
+chamberBtn = new Button(sectionClient, SWT.CHECK);
+chamberBtn.setText("Chamber of Congress");
+GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(chamberBtn);
+chamberBtn.setSelection(true);
+
+dateBtn = new Button(sectionClient, SWT.CHECK);
+dateBtn.setText("Date");
+GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(dateBtn);
+dateBtn.setSelection(true);
+
+titleBtn = new Button(sectionClient, SWT.CHECK);
+titleBtn.setText("Title");
+GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleBtn);
+titleBtn.setSelection(true);
+
+bodyBtn = new Button(sectionClient, SWT.CHECK);
+bodyBtn.setText("Body");
+GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(bodyBtn);
+bodyBtn.setSelection(true);
+
+}
+
+	
 }
