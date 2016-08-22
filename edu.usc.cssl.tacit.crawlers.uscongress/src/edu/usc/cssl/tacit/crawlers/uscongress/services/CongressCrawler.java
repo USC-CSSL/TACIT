@@ -16,6 +16,8 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
 public class CongressCrawler {
 
 	JsonGenerator jsonGenerator;
@@ -39,8 +41,7 @@ public class CongressCrawler {
 			connected = false;
 			if(random)
 				page = (int) (Math.random()*25);
-			String site = "https://www.congress.gov/search?q={\"source\":\"legislation\",\"party\":\"" + party
-					+ "\",\"congress\":\"" + congress + "\",\"type\":[\"bills\",\"resolutions\",\"concurrent-resolutions\",\"joint-resolutions\"]}&pageSize=250&page=" + page;
+			String site = "https://www.congress.gov/search?q={\"source\":\"congrecord\",\"congress\":\"" + congress + "\",\"chamber\":\"House\"}&pageSize=25&page=" + page;
 			while (!connected) {
 				try {
 					d = Jsoup.connect(site).timeout(50000).get();
@@ -96,7 +97,6 @@ public class CongressCrawler {
 					Element date = doc.getElementById("main").child(3);
 					String congStr = Jsoup.parse(congress1.toString()).text();
 					String dateStr = Jsoup.parse(date.toString()).text();
-
 					jsonGenerator.writeStartObject();
 					jsonGenerator.writeStringField("bill_data", congStr.substring(6, congStr.indexOf("(")));
 					try{
