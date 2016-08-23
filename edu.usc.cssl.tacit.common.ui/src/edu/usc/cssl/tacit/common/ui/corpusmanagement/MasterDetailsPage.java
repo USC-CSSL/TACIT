@@ -359,7 +359,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						inputFiles.add(cls);
 						File delFile = null;
 						try {
-							ppObj = new Preprocessor("Liwc", true);
+							ppObj = new Preprocessor("Liwc", false);
 							inFiles = ppObj.processData("tempData", inputFiles, seperateFiles);
 							if(!inFiles.isEmpty()){
 								delFile = new File(inFiles.get(0));
@@ -390,13 +390,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 								
 						}
 
-						if(!inFiles.isEmpty()){
-							try {
-								FileUtils.deleteDirectory(delFile.getParentFile().getParentFile());
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							}
-						}
+//						if(!inFiles.isEmpty()){
+//							try {
+//								FileUtils.deleteDirectory(delFile.getParentFile().getParentFile());
+//							} catch (IOException e1) {
+//								e1.printStackTrace();
+//							}
+//						}
 					}
 				} else {
 					System.out.println("Cancel pressed");

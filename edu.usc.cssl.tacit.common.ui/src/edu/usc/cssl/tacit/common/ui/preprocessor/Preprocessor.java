@@ -596,7 +596,7 @@ public class Preprocessor {
 		String tempFile = "";
 		Date dateobj = new Date();
 		StringBuilder sb = new StringBuilder();
-		if (doPreprocessing)
+		if (!doPreprocessing)
 			tempFile = tempPPFileLoc + corpusClass.getClassName() + System.currentTimeMillis() + ".json";
 		else {
 			tempDir = ppFilesLoc + System.getProperty("file.separator") + "twitter_data_" + dateobj.getTime();
@@ -660,7 +660,7 @@ public class Preprocessor {
 						System.out.println("\n");
 						bWriter.write("\n");
 						dateobj = new Date();
-						if (doPreprocessing) {
+						if (!doPreprocessing) {
 							file = new File(tempFile);
 						} else {
 							file = new File(tempDir + System.getProperty("file.separator") + corpusClass.getClassName()
@@ -676,7 +676,7 @@ public class Preprocessor {
 							bw.write(tweet);
 							// addContentsToSummary(file.getName(),tweet);
 							bw.close();
-							if (doPreprocessing) {
+							if (!doPreprocessing) {
 								outputFiles.add(processFile(tempFile,
 										corpusClass.getClassName() + "-" + j + "-" + df.format(dateobj)));
 							} else {
@@ -702,7 +702,7 @@ public class Preprocessor {
 					BufferedWriter bw = new BufferedWriter(fw);
 					bw.write(sb.toString());
 					bw.close();
-					if (doPreprocessing) {
+					if (!doPreprocessing) {
 						outputFiles.add(
 								processFile(tempFile, corpusClass.getClassName() + "-" + j + "-" + df.format(dateobj)));
 					} else {
