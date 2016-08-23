@@ -188,7 +188,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(senatorComposite);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(senatorComposite);
 
-		houseBtn = toolkit.createButton(senatorComposite, "House", SWT.RADIO);
+		houseBtn = toolkit.createButton(senatorComposite, "Representatives", SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(houseBtn);
 		houseBtn.setSelection(true);
 		
