@@ -65,8 +65,6 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 	private String wordFilter = ""; 
 	private static Text authorFilterText;
 	private String authorFilter = "";
-	
-	private static Button titleBtn;
 	private static Button conclusionBtn;
 	private static Button resultsAndDiscussionBtn;
 	private static Button materialAndMethodsBtn;
@@ -165,19 +163,18 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 				final String corpusName = corpusNameTxt.getText();
 				
 				// Get stored attribute values
-				storedAtts = new boolean[12];
-				storedAtts[0] = titleBtn.getSelection();
-				storedAtts[1] = authorBtn.getSelection();
-				storedAtts[2] = abstractBtn.getSelection();
-				storedAtts[3] = introductionBtn.getSelection();
-				storedAtts[4] = bodyBtn.getSelection();
-				storedAtts[5] = materialAndMethodsBtn.getSelection();
-				storedAtts[6] = resultsAndDiscussionBtn.getSelection();
-				storedAtts[7] = conclusionBtn.getSelection();
-				storedAtts[8] = publicationDateBtn.getSelection();
-				storedAtts[9] = subjectBtn.getSelection();
-				storedAtts[10] = journalBtn.getSelection();
-				storedAtts[11] = scoreBtn.getSelection();
+				storedAtts = new boolean[11];
+				storedAtts[0] = authorBtn.getSelection();
+				storedAtts[1] = abstractBtn.getSelection();
+				storedAtts[2] = introductionBtn.getSelection();
+				storedAtts[3] = bodyBtn.getSelection();
+				storedAtts[4] = materialAndMethodsBtn.getSelection();
+				storedAtts[5] = resultsAndDiscussionBtn.getSelection();
+				storedAtts[6] = conclusionBtn.getSelection();
+				storedAtts[7] = publicationDateBtn.getSelection();
+				storedAtts[8] = subjectBtn.getSelection();
+				storedAtts[9] = journalBtn.getSelection();
+				storedAtts[10] = scoreBtn.getSelection();
 				
 				//Get max blog limit
 				if (limitDocuments.getSelection()) {
@@ -211,41 +208,42 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							PLOSOneCrawler plosOneCrawler = new PLOSOneCrawler();
 							
 							List<String> outputFields = new ArrayList<String>();
+							//Mandatory fields
 							outputFields.add(PLOSOneWebConstants.FIELD_EVERYTHING);
+							outputFields.add(PLOSOneWebConstants.FIELD_TITLE);
+							
+							//User Selected Field
 							if (storedAtts[0]){
-								outputFields.add(PLOSOneWebConstants.FIELD_TITLE);
-							}
-							if (storedAtts[1]){
 								outputFields.add(PLOSOneWebConstants.FIELD_AUTHOR);
 							}
-							if (storedAtts[2]){
+							if (storedAtts[1]){
 								outputFields.add(PLOSOneWebConstants.FIELD_ABSTRACT);
 							}
-							if (storedAtts[3]){
+							if (storedAtts[2]){
 								outputFields.add(PLOSOneWebConstants.FIELD_INTRODUCTION);
 							}
-							if (storedAtts[4]){
+							if (storedAtts[3]){
 								outputFields.add(PLOSOneWebConstants.FIELD_BODY);
 							}
-							if (storedAtts[5]){
+							if (storedAtts[4]){
 								outputFields.add(PLOSOneWebConstants.FIELD_MATERIALS_AND_METHODS);
 							}
-							if (storedAtts[6]){
+							if (storedAtts[5]){
 								outputFields.add(PLOSOneWebConstants.FIELD_RESULTS_AND_DISCUSSION);
 							}
-							if (storedAtts[7]){
+							if (storedAtts[6]){
 								outputFields.add(PLOSOneWebConstants.FIELD_CONCLUSIONS);
 							}
-							if (storedAtts[8]){
+							if (storedAtts[7]){
 								outputFields.add(PLOSOneWebConstants.FIELD_PUBLICATION_DATE);
 							}
-							if (storedAtts[9]){
+							if (storedAtts[8]){
 								outputFields.add(PLOSOneWebConstants.FIELD_SUBJECT);
 							}
-							if (storedAtts[10]){
+							if (storedAtts[9]){
 								outputFields.add(PLOSOneWebConstants.FIELD_JOURNAL);
 							}
-							if (storedAtts[11]){
+							if (storedAtts[10]){
 								outputFields.add(PLOSOneWebConstants.FIELD_SCORE);
 							}
 							
@@ -284,7 +282,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								return Status.OK_STATUS;
 							}
 							
-							ConsoleView.printlInConsoleln(numOfRows+" documents found in the search result.");
+							//ConsoleView.printlInConsoleln(numOfRows+" documents found in the search result.");
 							monitor.beginTask("Crawling PLOS...",(int)numOfRows+100);
 							
 							String corpusClassDir = IPlosOneCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
@@ -295,7 +293,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							}
 							
 							//Creating the corpus and corpus class
-							ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
+							//ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
 							monitor.subTask("Creating Corpus " + corpusName + "...");
 							
 							Corpus plosoneCorpus = new Corpus(corpusName, CMDataType.PLOSONE_JSON);
@@ -309,7 +307,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								throw new OperationCanceledException();
 							}
 							
-							ConsoleView.printlInConsoleln("Started Crawling...");
+							//ConsoleView.printlInConsoleln("Started Crawling...");
 							
 							//This is the core of the job.
 							plosOneCrawler.invokePlosOneCrawler(urlFeatures, maxDocumentLimit, corpusClassDir, corpusName, monitor);
@@ -318,7 +316,8 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,form);
 							
 							//Saving the corpus in the tacit corpora
-							ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
+							
+							//ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
 							monitor.subTask("Saving Corpus " + corpusName + "...");
 							ManageCorpora.saveCorpus(plosoneCorpus);
 							monitor.worked(50);
@@ -369,8 +368,9 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> PLOS Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 										IStatus.INFO, form);
+								ConsoleView.printlInConsoleln(numOfRows + " paper(s) downloaded. ");
+								ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
 								ConsoleView.printlInConsoleln("PLOS crawler completed successfully.");
-								ConsoleView.printlInConsoleln(numOfRows + " documents downloaded. ");
 								ConsoleView.printlInConsoleln("Done");
 
 							}
@@ -482,7 +482,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 		
 		
 		//Check 4: Check if atleast one of the stored attributes is selected.
-		if (!(titleBtn.getSelection() || authorBtn.getSelection() || abstractBtn.getSelection() || introductionBtn.getSelection()
+		if (!(authorBtn.getSelection() || abstractBtn.getSelection() || introductionBtn.getSelection()
 				|| bodyBtn.getSelection() || materialAndMethodsBtn.getSelection() || resultsAndDiscussionBtn.getSelection() || conclusionBtn.getSelection()
 				|| publicationDateBtn.getSelection() || subjectBtn.getSelection() || journalBtn.getSelection() || scoreBtn.getSelection())) {
 			form.getMessageManager().addMessage("storedattribute", "Error: Select at least one stored attribute", null,
@@ -683,10 +683,10 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 		Label dummy = toolkit.createLabel(sectionClient, "", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(4, 0).applyTo(dummy);
 
-		titleBtn = new Button(sectionClient, SWT.CHECK);
-		titleBtn.setText("Title");
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleBtn);
-		titleBtn.setSelection(true);
+		//titleBtn = new Button(sectionClient, SWT.CHECK);
+		//titleBtn.setText("Title");
+		//GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(titleBtn);
+		//titleBtn.setSelection(true);
 
 		authorBtn = new Button(sectionClient, SWT.CHECK);
 		authorBtn.setText("Author");

@@ -282,6 +282,7 @@ public class TypePadCrawler {
 					monitor.worked(1);
 					
 					monitor.subTask("Crawling Blog #"+(blogCount-1)+" "+blogTitle);
+					ConsoleView.printlInConsoleln("Writing Blog: "+blogTitle);
 					
 					//Check to break the operation if the user has cancelled.
 					if (monitor.isCanceled()){

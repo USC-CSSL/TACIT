@@ -277,6 +277,23 @@ public class PLOSOneCrawler {
 
 			JSONObject singleResponseDocuments = new JSONObject(singleResponse);
 			singleResponse = singleResponseDocuments.getJSONObject("response").getJSONArray("docs").toString();
+			
+			//Print the details of the papers to the console.
+			JSONArray entireJsonArray = new JSONArray(singleResponse);
+			Iterator<Object> iterator = entireJsonArray.iterator();
+			while(iterator.hasNext()){
+				JSONObject singleJsonObject = (JSONObject)iterator.next();
+				
+				if(singleJsonObject.has(PLOSOneWebConstants.FIELD_TITLE)){
+					String paperTitle = singleJsonObject.get(PLOSOneWebConstants.FIELD_TITLE).toString();
+					ConsoleView.printlInConsoleln("Writing Paper: " + paperTitle);
+				}else{
+					ConsoleView.printlInConsoleln("Writing Paper: <No Title>");
+				}
+				
+			}
+			
+			
 			singleResponse = singleResponse.substring(singleResponse.indexOf("[")+1,singleResponse.lastIndexOf("]")).trim();
 			
 			//This condition checks for the last request.
