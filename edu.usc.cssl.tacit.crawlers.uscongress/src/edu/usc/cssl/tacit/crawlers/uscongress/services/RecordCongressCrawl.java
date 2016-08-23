@@ -135,7 +135,7 @@ public class RecordCongressCrawl {
 					page = (int) (Math.random()*totalPages+1);
 				else
 					page++;
-				if (page>totalPages || docCount >= limit)
+				if (page>totalPages || (limit!=-1 && docCount >= limit))
 					break;
 			}
 			ConsoleView.printlInConsoleln(docCount+ "file(s) Downloaded ");
