@@ -26,6 +26,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -238,19 +240,15 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		keywordTxt = toolkit.createText(senatorComposite, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(keywordTxt);
 		
-
-		// String[] rLoading = {"Loading..."};
-		// Label rCongressLabel = toolkit.createLabel(representativeComposite,
-		// "Congress:", SWT.NONE);
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(rCongressLabel);
-		// rCmbCongress = new Combo(representativeComposite, SWT.FLAT |
-		// SWT.READ_ONLY);
-		// GridDataFactory.fillDefaults().grab(true, false).span(2,
-		// 0).applyTo(rCmbCongress);
-		// toolkit.adapt(rCmbCongress);
-		// rCmbCongress.setItems(rLoading);
-		// rCmbCongress.select(0);
+		keywordTxt.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				selectedSenators.clear();
+				senatorTable.removeAll();
+				
+			}
+		});
 
 		filterResultsComposite = toolkit.createComposite(mainComposite);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(filterResultsComposite);
