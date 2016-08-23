@@ -191,7 +191,6 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 				final String class1NameStr = class1Name.getText();
 				final String class2NameStr = class2Name.getText();
 				final int kValueInt = Integer.parseInt(kValue.getText());
-				;
 				final String outputPath = layoutData.getOutputLabel().getText();
 				final boolean featureFile = featureFileButton.getSelection();
 				final boolean ppValue = preprocessButton.getSelection();
@@ -231,7 +230,15 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 							for (int k = 0; k < c2Files.size(); k++) {
 								class2FilesL[k] = new File(c2Files.get(k));
 							}
-
+							
+							//Check if kValue is not greater than the least number of any of the two class files.
+							int numFiles1  = c1Files.size();
+							int numFiles2 = c2Files.size();
+							int leastClassFileSize = numFiles1 < numFiles2?numFiles1:numFiles2;
+							if (kValueInt > leastClassFileSize){
+								ConsoleView.printlInConsoleln("Invalid K Value given.K Value cannot be greater than the number of files in any of the classes.");
+								return Status.CANCEL_STATUS;
+							}
 							
 							monitor.worked(2);
 
@@ -449,13 +456,13 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		form.getMessageManager().removeMessage("kValue");
 		
 		//Check if kValue is not greater than the least number of any of the two class files.
-		int leastClassFileSize = numFiles1 < numFiles2?numFiles1:numFiles2;
+		/*int leastClassFileSize = numFiles1 < numFiles2?numFiles1:numFiles2;
 		int kValue = Integer.parseInt(kValueText);
 		if (kValue > leastClassFileSize){
 			form.getMessageManager().addMessage("kValueInvalid","K Value cannot be greater than the number of files in any of the classes. ", null,IMessageProvider.ERROR);
 			return false;
 		}
-		form.getMessageManager().removeMessage("kValueInvalid");
+		form.getMessageManager().removeMessage("kValueInvalid");*/
 		
 
 		String message = OutputPathValidation.getInstance()
