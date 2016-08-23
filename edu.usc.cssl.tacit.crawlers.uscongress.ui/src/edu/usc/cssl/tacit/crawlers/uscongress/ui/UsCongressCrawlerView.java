@@ -190,8 +190,40 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(houseBtn);
 		houseBtn.setSelection(true);
 		
+		houseBtn.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectedSenators.clear();
+				senatorTable.removeAll();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		senateBtn = toolkit.createButton(senatorComposite, "Senate", SWT.RADIO);
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(senateBtn);
+		
+		senateBtn.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectedSenators.clear();
+				senatorTable.removeAll();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 		Label sCongressLabel = toolkit.createLabel(senatorComposite, "Congress:", SWT.NONE);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(sCongressLabel);
@@ -287,36 +319,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).indent(10, 10).applyTo(limitRecordsClient);
 		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).applyTo(limitRecordsClient);
 
-		// final Label sectionLabel = new Label(limitRecordsClient, SWT.NONE);
-		// sectionLabel.setText("Section of Congressional Record:");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(sectionLabel);
-		//
-		// extensionBtn = new Button(limitRecordsClient, SWT.CHECK);
-		// extensionBtn.setText("Extension of Remarks");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(extensionBtn);
-		// extensionBtn.setSelection(true);
-		//
-		// senateBtn = new Button(limitRecordsClient, SWT.CHECK);
-		// senateBtn.setText("Senate");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(senateBtn);
-		// senateBtn.setSelection(true);
-		//
-		// houseBtn = new Button(limitRecordsClient, SWT.CHECK);
-		// houseBtn.setText("House");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(houseBtn);
-		// houseBtn.setSelection(true);
-		// houseBtn.setEnabled(false);
-		//
-		// dailyDigestBtn = new Button(limitRecordsClient, SWT.CHECK);
-		// dailyDigestBtn.setText("Daily Digest ");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(dailyDigestBtn);
-		// dailyDigestBtn.setSelection(true);
-		//
+
 		limitRecords = new Button(limitRecordsClient, SWT.CHECK);
 		limitRecords.setText("Limit records per congress member");
 		GridDataFactory.fillDefaults().grab(false, false).span(5, 0).applyTo(limitRecords);
@@ -377,146 +380,6 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		});
 		TacitFormComposite.createEmptyRow(toolkit, limitGroup);
 
-		// Group dateGroup = new Group(filterResultsComposite, SWT.SHADOW_IN);
-		// GridDataFactory.fillDefaults().grab(true, false).span(4,
-		// 0).applyTo(dateGroup);
-		// dateGroup.setText("Date");
-		// GridLayoutFactory.fillDefaults().numColumns(3).applyTo(dateGroup);
-		//
-		// dateRange = new Button(dateGroup, SWT.CHECK);
-		// GridDataFactory.fillDefaults().grab(true, false).span(4,
-		// 0).indent(10,10).applyTo(dateRange);
-		// dateRange.setText("Specify Date Range");
-		//
-		// final Composite dateRangeClient = new Composite(dateGroup, SWT.None);
-		// GridDataFactory.fillDefaults().grab(true,
-		// false).span(1,1).indent(10,10).applyTo(dateRangeClient);
-		// GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateRangeClient);
-		// dateRangeClient.setEnabled(false);
-		// dateRangeClient.pack();
-		//
-		// final Label fromLabel = new Label(dateRangeClient, SWT.NONE);
-		// fromLabel.setText("From:");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(fromLabel);
-		// fromDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN |
-		// SWT.BORDER);
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(fromDate);
-		// fromLabel.setEnabled(false);
-		// fromDate.setEnabled(false);
-		//
-		// fromDate.addListener(SWT.Selection, new Listener()
-		// {
-		// @Override
-		// public void handleEvent(Event event) {
-		// int day = fromDate.getDay();
-		// int month = fromDate.getMonth() + 1;
-		// int year = fromDate.getYear();
-		// Date newDate = null;
-		// try {
-		// newDate = format.parse(day + "/" + month + "/" + year);
-		// }
-		// catch (ParseException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// if(newDate.before(minDate) || newDate.after(maxDate))
-		// {
-		// Calendar cal = Calendar.getInstance();
-		// cal.setTime(minDate);
-		// fromDate.setMonth(cal.get(Calendar.MONTH));
-		// fromDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-		// fromDate.setYear(cal.get(Calendar.YEAR));
-		// }
-		// }
-		// });
-		//
-		// final Label toLabel = new Label(dateRangeClient, SWT.NONE);
-		// toLabel.setText("To:");
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(toLabel);
-		// toDate = new DateTime(dateRangeClient, SWT.DATE | SWT.DROP_DOWN |
-		// SWT.BORDER);
-		// GridDataFactory.fillDefaults().grab(false, false).span(1,
-		// 0).applyTo(toDate);
-		// toLabel.setEnabled(false);
-		// toDate.setEnabled(false);
-		//
-		// toDate.addListener(SWT.Selection, new Listener()
-		// {
-		// @Override
-		// public void handleEvent(Event event) {
-		// int day = toDate.getDay();
-		// int month = toDate.getMonth() + 1;
-		// int year = toDate.getYear();
-		// Date newDate = null;
-		// try {
-		// newDate = format.parse(day + "/" + month + "/" + year);
-		// }
-		// catch (ParseException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// if(newDate.after(maxDate) || newDate.before(minDate))
-		// {
-		// Calendar cal = Calendar.getInstance();
-		// cal.setTime(maxDate);
-		// toDate.setMonth(cal.get(Calendar.MONTH));
-		// toDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-		// toDate.setYear(cal.get(Calendar.YEAR));
-		// }
-		// }
-		// });
-		// TacitFormComposite.createEmptyRow(toolkit, dateGroup);
-		//
-		//
-		//
-		// sCmbCongress.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// // set dates
-		// String tempYears[] =
-		// congressYears[sCmbCongress.getSelectionIndex()].split("-");
-		// Calendar cal = Calendar.getInstance();
-		// cal.set(Integer.parseInt(tempYears[0]), 0, 1);
-		// minDate = cal.getTime();
-		// fromDate.setMonth(cal.get(Calendar.MONTH));
-		// fromDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-		// fromDate.setYear(cal.get(Calendar.YEAR));
-		//
-		// cal.set(Integer.parseInt(tempYears[1]), 11, 31);
-		// toDate.setMonth(cal.get(Calendar.MONTH));
-		// toDate.setDay(cal.get(Calendar.DAY_OF_MONTH));
-		// toDate.setYear(cal.get(Calendar.YEAR));
-		// maxDate = cal.getTime();
-		// //cmbSenator.select(0);
-		//
-		// //Empty the senatorTable
-		// senatorTable.removeAll();
-		// selectedSenators = new ArrayList<String>();
-		// }
-		// });
-		//
-		// dateRange.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// if (dateRange.getSelection()) {
-		// dateRangeClient.setEnabled(true);
-		// fromLabel.setEnabled(true);
-		// fromDate.setEnabled(true);
-		// toLabel.setEnabled(true);
-		// toDate.setEnabled(true);
-		// } else {
-		// dateRangeClient.setEnabled(false);
-		// fromLabel.setEnabled(false);
-		// fromDate.setEnabled(false);
-		// toLabel.setEnabled(false);
-		// toDate.setEnabled(false);
-		// }
-		// }
-		// });
-		//
 		limitRecords.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -737,8 +600,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 					}
 				};
 				job.setUser(true);
-				canProceed = true; 
-						//canItProceed();
+				canProceed = canItProceed();
 				if (canProceed) {
 					job.schedule(); // schedule the job
 					job.addJobChangeListener(new JobChangeAdapter() {
