@@ -529,7 +529,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 								if (monitor.isCanceled())
 									return handledCancelRequest("Crawling is Stopped");
 								
-								if(senatorList == null){
+								if(selectedSenators == null || selectedSenators.isEmpty()){
 								outputDir = IUsCongressCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
 								outputDir += File.separator + "Congress"+chamber;
 									if (!new File(outputDir).exists()) {
@@ -673,7 +673,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 
 	private boolean canItProceed() {
 
-			if(senatorTable.getItemCount() == 0) {
+			if(!keywordTxt.getText().equals("") && senatorTable.getItemCount() == 0) {
 				form.getMessageManager().addMessage("list", "Senator list cannot be empty", null, IMessageProvider.ERROR);
 				return false;
 			}
