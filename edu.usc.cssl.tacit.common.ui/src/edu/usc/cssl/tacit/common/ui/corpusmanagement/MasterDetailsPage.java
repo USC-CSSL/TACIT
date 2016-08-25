@@ -335,7 +335,12 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					if (exportSelection.equals(ExportSelectionConstants.EXPORT_CSV_FORMAT)){
 						System.out.println("CSV format selected");
 						try {
-							writeCSV(outputLoc, cls);
+							if (cls.getParent().getDatatype() == CMDataType.REDDIT_JSON){
+								writeCSVforReddit(outputLoc, cls);
+							}else{
+								writeCSV(outputLoc, cls);
+							}
+							
 						} catch (Exception e1) {
 							ConsoleView.printlInConsoleln("Could not create CSV File.");
 							e1.printStackTrace();
@@ -344,7 +349,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						System.out.println("ROBJ format selected");
 						
 						try {
-							writeRObj(outputLoc, cls);
+							//Separate export for reddit
+							if (cls.getParent().getDatatype() == CMDataType.REDDIT_JSON){
+								writeRObjforReddit(outputLoc, cls);
+							}else{
+								writeRObj(outputLoc, cls);
+							}
+							
 						} catch (Exception e1) {
 							ConsoleView.printlInConsoleln("Could not create R Dataframe.");
 							e1.printStackTrace();
@@ -757,4 +768,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	    ConsoleView.printlInConsoleln("CSV file saved at : " + saveLocation);
 	}
 	
+	//TODO: To be implemented
+	private static void writeCSVforReddit(String outputLoc, CorpusClass cls)throws Exception{
+		
+	}
+	
+	//TODO: To be implemented
+	private static void writeRObjforReddit(String outputLoc, CorpusClass cls)throws Exception{
+		
+	}
 }
