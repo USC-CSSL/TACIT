@@ -6,10 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.crawlers.americanpresidency.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.equinox.registry
+ org.eclipse.equinox.registry,
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.crawlers.americanpresidency.services
 Bundle-ClassPath: jsoup-1.7.3.jar,
  .,
  jackson-core-2.5.0.jar
+Import-Package: edu.usc.cssl.tacit.common.ui.views

@@ -1,12 +1,10 @@
 package edu.usc.cssl.tacit.crawlers.americanpresidency.services;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +16,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
+
 
 public class AmericanPresidencyCrawler {
 	static String strDate;
