@@ -426,7 +426,7 @@ public class Preprocessor {
 			if (corpusType == CMDataType.PRESIDENCY_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
 			}
 			
 			if (corpusType  == CMDataType.TYPEPAD_JSON){

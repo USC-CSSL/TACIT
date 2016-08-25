@@ -583,7 +583,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								}
 						}
 						});
-						int progressSize = 1000;//+30
+						int progressSize = 116317;//+30
 						monitor.beginTask("Running American Presidency Crawler..." , progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("American Presidency Crawler started");
 						final AmericanPresidencyCrawler rc = new AmericanPresidencyCrawler(); // initialize all the common parameters	
@@ -674,6 +674,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						
 						try {
 							ManageCorpora.saveCorpus(americanPresidencyCorpus);
+
+							ConsoleView.printlInConsoleln("Created Corpus: "+ corpusName);
+							ConsoleView.printlInConsoleln("American Presidential Papers crawler completed successfully.");
 						} catch(Exception e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;

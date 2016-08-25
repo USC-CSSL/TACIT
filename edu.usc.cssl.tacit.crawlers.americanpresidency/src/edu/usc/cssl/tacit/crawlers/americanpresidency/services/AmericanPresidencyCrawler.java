@@ -17,6 +17,8 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
 public class AmericanPresidencyCrawler {
 	static String strDate;
 	static String strName;
@@ -46,14 +48,23 @@ public class AmericanPresidencyCrawler {
 	void extractInfo(String link)throws Exception{
 		try{
 			String url = "http://www.presidency.ucsb.edu/ws/"+link;
-			Document doc1 = Jsoup.connect(url).get();
+			Connection conn = Jsoup.connect(url);
+			conn.timeout(5000000);
+			Document doc1 = conn.get();
 			Element element = doc1.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1).child(5).child(0).child(2).child(0).child(1);
 			jsonGenerator.writeStartObject();
 			jsonGenerator.writeStringField("Date", strDate); 
 			jsonGenerator.writeStringField("Name", strName); 
 			jsonGenerator.writeStringField("Title", strTitle);
 			String body = element.ownText();
-			int index = body.indexOf(":");
+			
+			
+			for (Element el : element.getElementsByTag("p"))
+				body += el.text() + " \n ";
+			jsonGenerator.writeStringField("Body", body);
+			
+			
+			/*int index = body.indexOf(":");
 			if(index == -1)
 				index = body.indexOf(";"); //Because ; has been used on the website at certain places by mistake
 
@@ -93,14 +104,14 @@ public class AmericanPresidencyCrawler {
 			} else {
 				jsonGenerator.writeArrayFieldStart("Body");
 				for (Element el : element.getElementsByTag("p"))
-					body += el.text() + " ";
+					body += el.text() + " \n ";
 				jsonGenerator.writeStartObject();
 				jsonGenerator.writeStringField("Speaker","NA");
 				jsonGenerator.writeStringField("Text", body);
 				jsonGenerator.writeEndObject();
 				jsonGenerator.writeEndArray();
 			}
-			
+			*/
 			jsonGenerator.writeEndObject();
 			
 		}
@@ -116,48 +127,63 @@ public class AmericanPresidencyCrawler {
 		setDir();
 		Elements elements = null;
 		Connection conn = Jsoup.connect("http://www.presidency.ucsb.edu/ws/index.php").data("ty",documentCategory).data("pres",presidentName).data("includepres","1").data("includecampaign","1");
+
 		int progressMonitorIncrement = 890;
 			if(!searchTerm1.equals("")) {
 				conn = conn.data("searchterm",searchTerm1).data("bool",operator).data("searchterm1",searchTerm2);
 			}
+
+
 			if(from!=null)
 			{
 				conn = conn.data("monthstart",months[from.get(Calendar.MONTH)]).data("daystart",days[from.get(Calendar.DATE)-1]).data("yearstart",from.get(Calendar.YEAR)+"").data("monthend",months[to.get(Calendar.MONTH)]).data("dayend",days[to.get(Calendar.DATE)-1]).data("yearend",to.get(Calendar.YEAR)+"");
-				conn.timeout(480000);
+				conn.timeout(5000000);
 				Document e = conn.post();
 				
 				Element et = e.body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
-				elements = et.child(1).child(0).children();
-				//elements = et.child(2).child(0).children();
+				
+				if(!searchTerm1.equals(""))
+					elements = et.child(2).child(0).children();
+				else
+					elements = et.child(1).child(0).children();
+					
 			}
 			else
 			{
 				Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
-				conn.timeout(480000);
+				conn.timeout(5000000);
 				if(!searchTerm1.equals("")){
 					elements = e.child(2).child(0).children();// This seems correct only when search term is present
 				} else {
-					elements = e.child(1).child(0).children();// else this is correct
+					elements = e.child(2).child(0).children();// else this is correct
 				}
-
+				
 			}
+
+			int number = 0;
 			if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 			{
-				progressMonitorIncrement = 980/(elements.size());
+				progressMonitorIncrement = 116317/(elements.size());
+				monitor.worked(progressMonitorIncrement);
 				elements.remove(0);
-				
+				if(progressMonitorIncrement<0)
+					progressMonitorIncrement = 1;
 				for (Element element : elements)
 				{
+
 					try{ 
 						
 						strDate = element.child(0).text();
 						strName = element.child(1).text();			
 						strTitle = element.child(3).child(0).child(0).text();
 						extractInfo(element.child(3).child(0).child(0).attr("href"));
-						
+						ConsoleView.printlInConsoleln("Writing Paper: "+strTitle);
+						number +=1;
 					}catch(Exception e){
-						System.out.println("Exception occurred");
+						System.out.println("Exception handled successfully");
 					}
+
+					
 					monitor.worked(progressMonitorIncrement);
 				}
 			}
@@ -167,6 +193,7 @@ public class AmericanPresidencyCrawler {
 				jsonGenerator.writeEndArray();
 				jsonGenerator.flush();
 				jsonGenerator.close();
+				ConsoleView.printlInConsoleln(number + " paper(s) downloaded.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -183,7 +210,7 @@ public class AmericanPresidencyCrawler {
 		Elements elements;
 			conn = conn.data("month",month==-1?"":months[month]).data("daynum",day).data("year",year);
 			elements = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1).child(2).child(0).children();
-		
+		int number = 0;
 		if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 		{
 			elements.remove(0);
@@ -195,6 +222,8 @@ public class AmericanPresidencyCrawler {
 					strName = element.child(1).text();			
 					strTitle = element.child(3).child(0).child(0).text();
 					extractInfo(element.child(3).child(0).child(0).attr("href"));
+					ConsoleView.printlInConsoleln("Writing Paper: "+strTitle);
+					number += 1;
 				}catch(Exception e){}
 
 				monitor.worked(progressMonitorIncrement);
@@ -208,6 +237,8 @@ public class AmericanPresidencyCrawler {
 			jsonGenerator.writeEndArray();
 			jsonGenerator.flush();
 			jsonGenerator.close();
+
+			ConsoleView.printlInConsoleln(number + " paper(s) downloaded.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -215,3 +246,21 @@ public class AmericanPresidencyCrawler {
 		
 	}
 }
+
+/*
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ */
