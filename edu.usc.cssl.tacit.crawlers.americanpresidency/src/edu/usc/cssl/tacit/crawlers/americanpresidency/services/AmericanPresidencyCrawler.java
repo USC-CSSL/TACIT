@@ -153,7 +153,6 @@ public class AmericanPresidencyCrawler {
 
 				conn.timeout(5000000);
 				Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
-				System.out.println(e);
 				
 				if(!searchTerm1.equals("")){
 					elements = e.child(2).child(0).children();// This seems correct only when search term is present
@@ -187,7 +186,7 @@ public class AmericanPresidencyCrawler {
 						System.out.println("Exception handled successfully");
 					}
 
-					
+					monitor.subTask("Downloading Paper: "+strTitle);
 					monitor.worked(progressMonitorIncrement);
 				}
 			}
@@ -232,7 +231,7 @@ public class AmericanPresidencyCrawler {
 					ConsoleView.printlInConsoleln("Writing Paper: "+strTitle);
 					number += 1;
 				}catch(Exception e){}
-
+				monitor.subTask("Downloading Paper: "+strTitle);
 				monitor.worked(progressMonitorIncrement);
 			}
 		}

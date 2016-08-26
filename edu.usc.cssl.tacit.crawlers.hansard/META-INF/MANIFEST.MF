@@ -5,7 +5,8 @@ Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.hansard
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.crawlers.hansard.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: jsoup-1.7.3.jar,

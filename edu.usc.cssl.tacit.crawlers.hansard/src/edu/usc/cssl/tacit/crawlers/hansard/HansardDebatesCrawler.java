@@ -16,6 +16,8 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+
 public class HansardDebatesCrawler {
 	static String strDate;
 	static String strName;
@@ -102,6 +104,7 @@ public class HansardDebatesCrawler {
 	}
 	
 	public boolean crawl(String outputDir, String searchTerm, String house, String startDate, String endDate, IProgressMonitor monitor) throws IOException{
+		int number = 0;
 		this.outputDir = outputDir;
 		setDir();
 		Elements elements = null;
@@ -121,10 +124,13 @@ public class HansardDebatesCrawler {
 				strMetaData = element.child(0).child(0).child(1).text();
 				strLink = element.child(0).attr("href");
 				extractInfo();
+				ConsoleView.printlInConsoleln("Writing Debate: "+strTitle);
+				number+=1;
 			} catch(Exception exception){
 				System.out.println("Exception occurred");
 			}
 		}
+		monitor.subTask("Page 1 of " + numberOfPages+" pages crawled");
 		monitor.worked(progressMonitorIncrement);
 		System.out.println(link);
 		String updateLink = link;
@@ -157,10 +163,13 @@ public class HansardDebatesCrawler {
 					strMetaData = element.child(0).child(0).child(1).text();
 					strLink = element.child(0).attr("href");
 					extractInfo();
+					ConsoleView.printlInConsoleln("Writing Debate: "+strTitle);
+					number +=1;
 				} catch(Exception exception){
 					System.out.println("Exception occurred");
 				}
 			}
+			monitor.subTask("Page "+i+" of " + numberOfPages+" pages crawled");
 			monitor.worked(progressMonitorIncrement);
 		}
 		
@@ -171,6 +180,8 @@ public class HansardDebatesCrawler {
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}
+
+		ConsoleView.printlInConsoleln(number + " debate(s) downloaded.");
 		return true;
 	}
 	

@@ -286,8 +286,6 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 						
 						try{
 							monitor.worked(1000);
-							System.out.println(startDate);
-							System.out.println(endDate);
 							filesFound = rc.crawl(outputDir, searchString.trim(), house, startDate, endDate, monitor);
 						}
 						catch(IndexOutOfBoundsException e){
