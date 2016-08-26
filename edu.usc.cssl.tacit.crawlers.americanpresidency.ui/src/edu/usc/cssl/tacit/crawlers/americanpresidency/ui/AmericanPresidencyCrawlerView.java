@@ -599,7 +599,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								if(monitor.isCanceled()) 
 									return handledCancelRequest("Cancelled");					
 								filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), monitor);
-								System.out.println("--"+filesFound);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch(IndexOutOfBoundsException e){
@@ -655,10 +654,8 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
-									System.out.println("filesFound "+filesFound);
 									if(filesFound) {
 
-										System.out.println("Creating");
 										americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
 										
 										CorpusClass cc = new CorpusClass("American Presidential Papers", outputDir);
