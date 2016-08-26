@@ -150,12 +150,15 @@ public class AmericanPresidencyCrawler {
 			}
 			else
 			{
-				Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
+
 				conn.timeout(5000000);
+				Element e = conn.post().body().child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(1);
+				System.out.println(e);
+				
 				if(!searchTerm1.equals("")){
 					elements = e.child(2).child(0).children();// This seems correct only when search term is present
 				} else {
-					elements = e.child(2).child(0).children();// else this is correct
+					elements = e.child(1).child(0).children();// else this is correct
 				}
 				
 			}
@@ -163,6 +166,7 @@ public class AmericanPresidencyCrawler {
 			int number = 0;
 			if(elements!=null&&elements.size()!=0)	//Needed when no results are found
 			{
+				System.out.println("When results are present");
 				progressMonitorIncrement = 116317/(elements.size());
 				monitor.worked(progressMonitorIncrement);
 				elements.remove(0);
@@ -187,8 +191,11 @@ public class AmericanPresidencyCrawler {
 					monitor.worked(progressMonitorIncrement);
 				}
 			}
-			else
+			else {
 				flag = false;
+
+				System.out.println("When no results are present");
+			}
 			try {
 				jsonGenerator.writeEndArray();
 				jsonGenerator.flush();
