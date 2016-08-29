@@ -81,6 +81,7 @@ public class TypePadCrawlerView extends ViewPart {
 	private ArrayList<String> titleKeywords = null;
 	
 	private Text corpusNameTxt;
+	private int blogCount;
 
 	private long maxBlogLimit = 10l; //Default value is 10
 
@@ -235,11 +236,12 @@ public class TypePadCrawlerView extends ViewPart {
 								throw new OperationCanceledException();
 							}
 							
-							int blogCount = typePadCrawler.getQueryResults(genericKeywords,contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
+							blogCount = typePadCrawler.getQueryResults(genericKeywords,contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
 							
 							//Do not do anything if the no blog posts are found.
 							if (blogCount == 0){
 								ConsoleView.printlInConsoleln("No blog posts found in the search result.");
+								ConsoleView.printlInConsoleln("0 blog post(s) downloaded.");
 								//ConsoleView.printlInConsoleln("Removing Corpus " + corpusName + "...");
 								
 								//Delete the corpus since nothing is stored in it.
@@ -256,7 +258,7 @@ public class TypePadCrawlerView extends ViewPart {
 							ManageCorpora.saveCorpus(typepadCorpus);
 							monitor.worked(10);
 							if (blogCount == 0){
-								ConsoleView.printlInConsoleln("No blog posts found.");
+								ConsoleView.printlInConsoleln("No blog posts found in the search result.");
 							}else{
 								ConsoleView.printlInConsoleln(blogCount+" blog post(s) downloaded");
 							}
@@ -292,7 +294,12 @@ public class TypePadCrawlerView extends ViewPart {
 							} else {
 								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> TypePad Crawler  ");
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
+								
+								
+								if (blogCount != 0){
+									ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
+								}
+								
 								ConsoleView.printlInConsoleln("TypePad crawler completed successfully.");
 								ConsoleView.printlInConsoleln("Done");
 

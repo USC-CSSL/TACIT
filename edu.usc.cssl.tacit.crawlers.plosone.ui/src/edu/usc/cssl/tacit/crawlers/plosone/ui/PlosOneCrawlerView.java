@@ -278,7 +278,7 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 							}
 							
 							if (numOfRows == 0){
-								ConsoleView.printlInConsoleln("No document found in the search result.");
+								ConsoleView.printlInConsoleln("No papers found in the search result.");
 								return Status.OK_STATUS;
 							}
 							
@@ -369,7 +369,12 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 										IStatus.INFO, form);
 								ConsoleView.printlInConsoleln(numOfRows + " paper(s) downloaded. ");
-								ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
+								
+								//Print corpus created only when there are more than 0 results.
+								if (numOfRows != 0){
+									ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
+								}
+								
 								ConsoleView.printlInConsoleln("PLOS crawler completed successfully.");
 								ConsoleView.printlInConsoleln("Done");
 
