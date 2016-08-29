@@ -200,7 +200,10 @@ public class RedditPlugin {
 		
 		JSONArray resultData = new JSONArray(); // to store the results
 		getSimplifiedLinkData(resultData, "/search/.json?".concat(query));
-		ConsoleView.printlInConsoleln("Writing "+ filePath);		
+		if (filesDownloaded != 0){
+			ConsoleView.printlInConsoleln("Writing "+ filePath);
+		}
+				
 		FileWriter file = new FileWriter(filePath);
     	Writer writer = new JSONWriter(); // for pretty-printing 
     	resultData.writeJSONString(writer);

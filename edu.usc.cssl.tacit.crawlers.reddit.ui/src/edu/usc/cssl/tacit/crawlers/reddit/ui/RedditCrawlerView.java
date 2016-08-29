@@ -1,6 +1,9 @@
 package edu.usc.cssl.tacit.crawlers.reddit.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +39,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import edu.usc.cssl.tacit.common.queryprocess.JsonParser;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
@@ -74,6 +81,7 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	private Combo cmbSortType;	
 	private Text subreddits;
 	private Text corpusNameTxt;
+	
 	
 	String subredditText;
 	int redditCount = 1;
@@ -591,8 +599,19 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 								return handleException(monitor, e, "Crawling failed. Provide valid data");
 							}
 						}
+						
+						
 						try {
-							ManageCorpora.saveCorpus(redditCorpus);
+							boolean manageCorpora = true;
+							
+							if (search){
+								manageCorpora = !deleteCorpusIfEmpty(outputDir,corpusName); 
+							}
+							
+							if (manageCorpora){
+								ManageCorpora.saveCorpus(redditCorpus);
+							}
+							
 						} catch(Exception e) {
 							e.printStackTrace();
 							return Status.CANCEL_STATUS;
@@ -678,6 +697,54 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		return Status.CANCEL_STATUS;
 	}	
+	
+	
+	private boolean deleteCorpusIfEmpty(String outputDir,String corpusName) throws FileNotFoundException, IOException, ParseException{
+		File dir = new File(outputDir);
+		String corpusClasses[] = dir.list();
+		
+		File corpusDir = new File(dir,corpusClasses[0]);
+		
+		File summaryFile = null;
+		if (corpusDir.isDirectory()) {
+	        String[] children = corpusDir.list();
+	        for (int i = 0; i < children.length; i++) {
+	        	if(children[i].contains("SearchResults")){
+	        		summaryFile = new File(corpusDir, children[i]);
+	        		break;
+	        	}
+	        }
+	    }
+		
+		JSONParser jsonParser = new JSONParser();
+		JSONArray jsonArray = (JSONArray)jsonParser.parse(new FileReader(summaryFile));
+		if (jsonArray.size() == 0){
+			deleteDir(new File(outputDir));
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * This method deletes the directory with all its file
+	 * @param dir
+	 * @return
+	 */
+	private boolean deleteDir(File dir) {
+	    if (dir.isDirectory()) {
+	        String[] children = dir.list();
+	        for (int i = 0; i < children.length; i++) {
+	            boolean success = deleteDir(new File(dir, children[i]));
+	            if (!success) {
+	                return false;
+	            }
+	        }
+	    }
+
+	    return dir.delete(); // The directory is empty now and can be deleted.
+	}
 }
 
 

@@ -12,3 +12,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: json-simple-1.1.1.jar,
+ .
