@@ -605,11 +605,14 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 							}
 						}
 							
-						ConsoleView.printlInConsoleln(counter*30 + " case(s) downloaded");
-						if(counter>0)
+						if(counter>0){
+							ConsoleView.printlInConsoleln(pages*30 + " case(s) downloaded");
 							ConsoleView.printlInConsoleln("Created corpus: " + corpus.getCorpusName());
-						else
+						}
+						else{
+							ConsoleView.printlInConsoleln(0 + " case(s) downloaded");
 							ConsoleView.printlInConsoleln("No results found, No corpus created");
+						}
 						if (monitor.isCanceled())
 							return handledCancelRequest("Crawling is Stopped");
 
