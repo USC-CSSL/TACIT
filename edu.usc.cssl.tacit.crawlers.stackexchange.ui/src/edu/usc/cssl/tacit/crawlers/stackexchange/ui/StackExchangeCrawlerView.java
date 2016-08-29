@@ -483,7 +483,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			int pages;
 			String tags;
 			boolean canProceed;
-			boolean isDate;
+			boolean isDate, goCheck;
 			int ansLimit, comLimit;
 			Long from, to;
 			String crawlOrder;
@@ -571,7 +571,16 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 									@Override
 									public void run() {
-										if(!outputDir.isEmpty())
+										String[] f = new File(outputDir).list();
+										goCheck = false;
+										for(String fname: f){
+											if(fname.contains(".json"))
+											{
+												goCheck = true;
+												break;
+											}
+										}
+										if(outputDir.isEmpty() && goCheck)
 										{	CorpusClass cc = new CorpusClass(domain, outputDir);
 											cc.setParent(corpus);
 											corpus.addClass(cc);
