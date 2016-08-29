@@ -22,7 +22,7 @@ public class AmericanPresidencyCrawlerTest {
 		Exception exceptionObj = null;
 		
 		try {
-			crawler.crawlSearch(outputDir, "Obama", "", "AND", null, null, "", "", new NullProgressMonitor());
+			crawler.crawlSearch(outputDir, "Obama", "", "AND", null, null, "", "", 10, new NullProgressMonitor());
 		} catch (IOException e) {
 			e.printStackTrace();
 			exceptionObj = e;

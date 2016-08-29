@@ -121,7 +121,7 @@ public class AmericanPresidencyCrawler {
 		}
 	}
 	
-	public boolean crawlSearch(String outputDir, String searchTerm1, String searchTerm2, String operator, Calendar from, Calendar to, String presidentName, String documentCategory, IProgressMonitor monitor) throws IOException{
+	public boolean crawlSearch(String outputDir, String searchTerm1, String searchTerm2, String operator, Calendar from, Calendar to, String presidentName, String documentCategory, int limit, IProgressMonitor monitor) throws IOException{
 		boolean flag = true;
 		this.outputDir = outputDir;
 		setDir();
@@ -175,13 +175,15 @@ public class AmericanPresidencyCrawler {
 				{
 
 					try{ 
-						
+						if (limit!=-1&&number >= limit)
+							break;
 						strDate = element.child(0).text();
 						strName = element.child(1).text();			
 						strTitle = element.child(3).child(0).child(0).text();
 						extractInfo(element.child(3).child(0).child(0).attr("href"));
 						ConsoleView.printlInConsoleln("Writing Paper: "+strTitle);
 						number +=1;
+						
 					}catch(Exception e){
 						System.out.println("Exception handled successfully");
 					}
@@ -207,7 +209,7 @@ public class AmericanPresidencyCrawler {
 			
 	}
 	
-	public boolean crawlBrowse(String outputDir, int month, String day, String year, String president, String documentCategory, IProgressMonitor monitor) throws IOException{
+	public boolean crawlBrowse(String outputDir, int month, String day, String year, String president, String documentCategory, int limit, IProgressMonitor monitor) throws IOException{
 		boolean flag = true;
 		int progressMonitorIncrement = 890;
 		this.outputDir = outputDir;
@@ -222,6 +224,8 @@ public class AmericanPresidencyCrawler {
 			elements.remove(0);
 			for (Element element : elements)
 			{
+				if (limit!=-1&&number >= limit) //if limit is not set, it is -1
+				break;
 				strDate = "";
 				try{
 					strDate = element.child(0).text();
@@ -230,6 +234,7 @@ public class AmericanPresidencyCrawler {
 					extractInfo(element.child(3).child(0).child(0).attr("href"));
 					ConsoleView.printlInConsoleln("Writing Paper: "+strTitle);
 					number += 1;
+					
 				}catch(Exception e){}
 				monitor.subTask("Downloading Paper: "+strTitle);
 				monitor.worked(progressMonitorIncrement);

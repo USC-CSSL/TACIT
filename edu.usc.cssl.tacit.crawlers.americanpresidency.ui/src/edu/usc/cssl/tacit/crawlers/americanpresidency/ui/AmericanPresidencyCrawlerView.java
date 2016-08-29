@@ -1,10 +1,12 @@
 package edu.usc.cssl.tacit.crawlers.americanpresidency.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -58,10 +61,12 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private Button notButton;
 	private Button dateCheckBrowse;
 	private Button dateCheckSearch;
+	private Button limitResults;
 	
 	private Composite searchComposite;
 
 	private Text searchText1;
+	private Text limitResultsText;
 	private Composite commonsearchComposite;
 	private Combo selectPresidentSearch;	
 	private Combo selectDocumentSearch;	
@@ -79,6 +84,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	String days[]={"Day","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
 	String months[] = {"Month","January","February","March","April","May","June","July","August","September","October","November","December"};
 	String years[] = {"Year","1789","1790","1791","1792","1793","1794","1795","1796","1797","1798","1799","1800","1801","1802","1803","1804","1805","1806","1807","1808","1809","1810","1811","1812","1813","1814","1815","1816","1817","1818","1819","1820","1821","1822","1823","1824","1825","1826","1827","1828","1829","1830","1831","1832","1833","1834","1835","1836","1837","1838","1839","1840","1841","1842","1843","1844","1845","1846","1847","1848","1849","1850","1851","1852","1853","1854","1855","1856","1857","1858","1859","1860","1861","1862","1863","1864","1865","1866","1867","1868","1869","1870","1871","1872","1873","1874","1875","1876","1877","1878","1879","1880","1881","1882","1883","1884","1885","1886","1887","1888","1889","1890","1891","1892","1893","1894","1895","1896","1897","1898","1899","1900","1901","1902","1903","1904","1905","1906","1907","1908","1909","1910","1911","1912","1913","1914","1915","1916","1917","1918","1919","1920","1921","1922","1923","1924","1925","1926","1927","1928","1929","1930","1931","1932","1933","1934","1935","1936","1937","1938","1939","1940","1941","1942","1943","1944","1945","1946","1947","1948","1949","1950","1951","1952","1953","1954","1955","1956","1957","1958","1959","1960","1961","1962","1963","1964","1965","1966","1967","1968","1969","1970","1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016"};
+	int limit;
 	HashMap<Integer, String> documentCategoryMap = new HashMap<Integer, String>();
 	{
 		documentCategoryMap.put(0, "");
@@ -434,7 +440,29 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		browseMonth.setEnabled(false);
 		browseYear.setEnabled(false);
 	
+		Group limitResultsGroup = new Group(searchComposite, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(limitResultsGroup);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(limitResultsGroup);
+		limitResultsGroup.setText("Limit results");
+		limitResults = new Button(limitResultsGroup, SWT.CHECK);
+		limitResults.setText("Limit the results");
 		
+		limitResultsText = new Text(limitResultsGroup, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitResultsText);
+		limitResultsText.setEnabled(false);
+		limitResultsText.setMessage("Number of records crawled");
+		limitResults.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (limitResults.getSelection()) {
+					limitResultsText.setText("50");
+					limitResultsText.setEnabled(true);
+				} else {
+					limitResultsText.setText("");
+					limitResultsText.setEnabled(false);
+				}
+			}
+		});
 }
 	/**
 	 * 
@@ -495,7 +523,23 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		else{
 			form.getMessageManager().removeMessage("queryText");
 		}
-		
+		if(limitResults.getSelection()) {
+			int val;
+			try{
+				 val = Integer.parseInt(limitResultsText.getText());
+				 if(val <= 0){
+					 form.getMessageManager().addMessage("limitRecordPositive", "Record limit must be greater than 0.", null, IMessageProvider.ERROR);
+					 return false;
+				 }
+				 else{
+					 form.getMessageManager().removeMessage("limitRecordPositive");
+				 }
+				 form.getMessageManager().removeMessage("limitRecordInvalid");
+			} catch(Exception e){
+				form.getMessageManager().addMessage("limitRecordInvalid", "Record limit must be an integer.", null, IMessageProvider.ERROR);
+				return false;
+			}
+		}
 		//Validate corpus name
 		String corpusName = corpusNameTxt.getText();
 		if(null == corpusName || corpusName.isEmpty()) {
@@ -511,8 +555,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 				form.getMessageManager().removeMessage("corpusName");
 				return true;
 			}
-			}		
-		}
+		}	
+		
+	}
 	
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
@@ -549,6 +594,10 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								corpusName = corpusNameTxt.getText();
 								presidentIndex = selectPresidentSearch.getSelectionIndex();
 								documentIndex = selectDocumentSearch.getSelectionIndex();
+								if(limitResults.getSelection())
+									limit = Integer.parseInt(limitResultsText.getText());
+								else
+									limit = -1;
 								if(!browse) {
 									
 									if (andButton.getSelection())
@@ -574,8 +623,6 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 									day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
 									year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
 								}
-								Date dateObj = new Date();
-								corpusName+= "_" + dateObj.getTime();
 								outputDir = IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
 								if(!new File(outputDir).exists()){
 									new File(outputDir).mkdirs();									
@@ -598,7 +645,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								monitor.subTask("Crawling...");
 								if(monitor.isCanceled()) 
 									return handledCancelRequest("Cancelled");					
-								filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), monitor);
+								filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), limit, monitor);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch(IndexOutOfBoundsException e){
@@ -627,7 +674,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 								
-								filesFound = rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), monitor);
+								filesFound = rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), limit, monitor);
 							} catch(IndexOutOfBoundsException e){
 								
 								
@@ -673,9 +720,14 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 							ManageCorpora.saveCorpus(americanPresidencyCorpus);
 
 							ConsoleView.printlInConsoleln("Created Corpus: "+ corpusName);
-							ConsoleView.printlInConsoleln("American Presidential Papers crawler completed successfully.");
 						} catch(Exception e) {
 							e.printStackTrace();
+							System.out.println(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName).exists());
+							try {
+								FileUtils.deleteDirectory(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+							} catch (IOException e1) {
+							}
+							ConsoleView.printlInConsoleln("No corpus created");
 							return Status.CANCEL_STATUS;
 						}
 						
@@ -705,7 +757,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 										IStatus.INFO, form);
 								ConsoleView.printlInConsoleln("Done");
-								ConsoleView.printlInConsoleln("American Presidency crawler completed successfully.");
+								ConsoleView.printlInConsoleln("American Presidency Papers crawler completed successfully.");
 	
 							}
 						}
