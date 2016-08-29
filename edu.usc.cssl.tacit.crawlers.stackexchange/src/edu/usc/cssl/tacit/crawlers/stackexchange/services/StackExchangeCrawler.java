@@ -1,8 +1,11 @@
 package edu.usc.cssl.tacit.crawlers.stackexchange.services;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.jsoup.Jsoup;
 
@@ -31,6 +34,7 @@ public class StackExchangeCrawler {
 	JsonFactory jsonfactory;
 	private boolean[] filter;
 	IProgressMonitor monitor;
+	File streamFile;
 
 	public StackExchangeCrawler() {
 		String k = CommonUiActivator.getDefault().getPreferenceStore().getString("ckey");
@@ -47,7 +51,7 @@ public class StackExchangeCrawler {
 		// TODO Auto-generated constructor stub
 		// Instantiate JSON writer
 		String output = fileName + File.separator + "stackexchange.json";
-		File streamFile = new File(output);
+		streamFile = new File(output);
 		jsonfactory = new JsonFactory();
 		try {
 			jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
@@ -87,6 +91,10 @@ public class StackExchangeCrawler {
 		try {
 			jsonGenerator.writeEndArray();
 			jsonGenerator.close();
+			BufferedReader br = new BufferedReader(new FileReader(streamFile));
+			if(br.readLine().equals("[ ]")){
+				streamFile.delete();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -105,6 +113,10 @@ public class StackExchangeCrawler {
 		try {
 			jsonGenerator.writeEndArray();
 			jsonGenerator.close();
+			BufferedReader br = new BufferedReader(new FileReader(streamFile));
+			if(br.readLine().equals("[ ]")){
+				streamFile.delete();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -537,7 +549,6 @@ public class StackExchangeCrawler {
 				Call<QuestionItem> call = siteService.getSearchTagsByDate(page, tag, key, site, from, to, crawlOrder);
 				System.out.println(call);
 				QuestionItem i = call.execute().body();
-				System.out.println(i);
 				for (Question search : i.items) {
 					monitor.worked(1);
 					int questionId = search.getQuestion_id();

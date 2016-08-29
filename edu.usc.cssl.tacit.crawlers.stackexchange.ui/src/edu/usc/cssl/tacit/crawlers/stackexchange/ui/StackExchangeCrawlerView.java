@@ -569,7 +569,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 									@Override
 									public void run() {
-
+										
 										CorpusClass cc = new CorpusClass(domain, outputDir);
 										cc.setParent(corpus);
 										corpus.addClass(cc);
