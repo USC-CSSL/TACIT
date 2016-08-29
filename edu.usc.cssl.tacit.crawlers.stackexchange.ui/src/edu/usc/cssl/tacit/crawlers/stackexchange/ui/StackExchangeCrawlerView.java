@@ -580,7 +580,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 												break;
 											}
 										}
-										if(!outputDir.isEmpty() && goCheck)
+										if(goCheck)
 										{	CorpusClass cc = new CorpusClass(domain, outputDir);
 											cc.setParent(corpus);
 											corpus.addClass(cc);
