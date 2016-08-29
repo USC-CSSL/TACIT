@@ -255,7 +255,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).applyTo(filterResultsComposite);
 
 		Label dummy1 = new Label(senatorComposite, SWT.NONE);
-		dummy1.setText("Senators:");
+		dummy1.setText("Congress Member:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy1);
 
 		senatorTable = new Table(senatorComposite, SWT.BORDER | SWT.MULTI);
@@ -589,6 +589,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 							}
 							
 							ManageCorpora.saveCorpus(corpus);
+							ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
 						if (monitor.isCanceled())
 							return handledCancelRequest("Crawling is Stopped");
 
