@@ -1,6 +1,7 @@
 package edu.usc.cssl.tacit.crawlers.stackexchange.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -485,7 +487,7 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 			int ansLimit, comLimit;
 			Long from, to;
 			String crawlOrder;
-			
+			int counter = 0;
 			@Override
 			public void run() {
 				final Job job = new Job("StackExchange Crawler") {
@@ -569,10 +571,12 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 									@Override
 									public void run() {
-										
-										CorpusClass cc = new CorpusClass(domain, outputDir);
-										cc.setParent(corpus);
-										corpus.addClass(cc);
+										if(!outputDir.isEmpty())
+										{	CorpusClass cc = new CorpusClass(domain, outputDir);
+											cc.setParent(corpus);
+											corpus.addClass(cc);
+											counter++;
+										}
 
 									}
 								});
@@ -581,9 +585,22 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 								return Status.CANCEL_STATUS;
 							}
 						}
+						if(counter>0)
 						ManageCorpora.saveCorpus(corpus);
-						ConsoleView.printlInConsoleln(pages*30 + " case(s) downloaded");
-						ConsoleView.printlInConsoleln("Created corpus: " + corpus.getCorpusName());
+						else{
+							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+							try {
+								FileUtils.deleteDirectory(new File(IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+							
+						ConsoleView.printlInConsoleln(counter*30 + " case(s) downloaded");
+						if(counter>0)
+							ConsoleView.printlInConsoleln("Created corpus: " + corpus.getCorpusName());
+						else
+							ConsoleView.printlInConsoleln("No results found, No corpus created");
 						if (monitor.isCanceled())
 							return handledCancelRequest("Crawling is Stopped");
 
