@@ -21,7 +21,11 @@ public class ZlabelLdaTopicModelViewImageRegistry {
 		ir.put(IZlabelLdaTopicModelClusterViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(ZlabelLdaTopicModelViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(IZlabelLdaTopicModelClusterViewConstants.IMAGE_ZLDA_OBJ,
+				ImageDescriptor.createFromFile(
+						ZlabelLdaTopicModelViewImageRegistry.class,
+						"/icons/ZLDAIcon.png"));
+
 
 	}
 

@@ -46,10 +46,10 @@ import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.topicmodel.hlda.services.HLDA;
 import edu.usc.cssl.tacit.topicmodel.hlda.ui.internal.HeirarchalLDAViewImageRegistry;
-import edu.usc.cssl.tacit.topicmodel.hlda.ui.internal.HeirarchicalLDAViewConstants;
+import edu.usc.cssl.tacit.topicmodel.hlda.ui.internal.IHeirarchicalLDAViewConstants;
 
 public class HeirarchicalLDAView  extends ViewPart implements
-		HeirarchicalLDAViewConstants {
+		IHeirarchicalLDAViewConstants {
 	public static final String ID = "edu.usc.cssl.tacit.topicmodel.hlda.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -128,6 +128,7 @@ public class HeirarchicalLDAView  extends ViewPart implements
 		this.setPartName("HLDA Topic Model");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(HeirarchalLDAViewImageRegistry.getImageIconFactory().getImage(IHeirarchicalLDAViewConstants.IMAGE_HEIRARCHICAL_LDA_OBJ));
 
 	}
 

@@ -126,6 +126,8 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
+		form.setImage(NaiveBayesClassifierViewImageRegistry.getImageIconFactory().getImage(INaiveBayesClassifierViewConstants.IMAGE_NAIVE_BAYES_CLASSIFIER_OBJ));
+
 	}
 
 	/**

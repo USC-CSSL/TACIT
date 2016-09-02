@@ -124,6 +124,8 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 		this.setPartName("ZLabel LDA Topic Model");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(ZlabelLdaTopicModelViewImageRegistry.getImageIconFactory().getImage(IZlabelLdaTopicModelClusterViewConstants.IMAGE_ZLDA_OBJ));
+
 
 	}
 

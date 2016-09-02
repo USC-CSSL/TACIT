@@ -586,6 +586,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
 						TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+						
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
@@ -631,6 +632,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						}
 						});
 						int progressSize = 116317;//+30
+						if(limit!=-1){
+							progressSize = limit+10;
+						}
 						monitor.beginTask("Running American Presidency Crawler..." , progressSize);
 						TacitFormComposite.writeConsoleHeaderBegining("American Presidency Crawler started");
 						final AmericanPresidencyCrawler rc = new AmericanPresidencyCrawler(); // initialize all the common parameters	
@@ -638,14 +642,21 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 						monitor.subTask("Initializing...");
 						monitor.worked(10);
 						if(monitor.isCanceled())
+						{
+							try {
+								FileUtils.deleteDirectory(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 							handledCancelRequest("Cancelled");
-						
+						}
 						if(!browse) {
 							try {
 								monitor.subTask("Crawling...");
-								if(monitor.isCanceled()) 
+								if(monitor.isCanceled()) {
 									return handledCancelRequest("Cancelled");					
-								filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), limit, monitor);
+								} 
+									filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), limit, monitor);
 								if(monitor.isCanceled())
 									return handledCancelRequest("Cancelled");
 							} catch(IndexOutOfBoundsException e){
@@ -660,7 +671,7 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 										}
 									}
 								});
-								
+								 
 								
 							} catch (Exception e) {
 									

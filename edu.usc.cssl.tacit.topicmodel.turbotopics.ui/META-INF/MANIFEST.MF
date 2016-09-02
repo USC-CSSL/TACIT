@@ -4,6 +4,7 @@ Bundle-Name: Ui
 Bundle-SymbolicName: edu.usc.cssl.tacit.topicmodel.turbotopics.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.usc.cssl.tacit.topicmodel.turbotopics.ui.Activator
+Bundle-Vendor: USC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
@@ -11,5 +12,5 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.topicmodel.lda,
  edu.usc.cssl.tacit.common;bundle-version="1.0.0",
  edu.usc.cssl.tacit.topicmodel.turbotopics
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

@@ -20,7 +20,10 @@ public class HDPTopicModelViewImageRegistry {
 		ir.put(IHdpTopicModelViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(HDPTopicModelViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(IHdpTopicModelViewConstants.IMAGE_HDP_OBJ,
+				ImageDescriptor.createFromFile(HDPTopicModelViewImageRegistry.class,
+						"/icons/HDPIcon.png"));
+
 
 	}
 

@@ -5,6 +5,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -12,6 +13,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
+
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusManagementUIViewImageRegistry;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -51,12 +54,17 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		register(introAction);
 
 		preferenceAction = ActionFactory.PREFERENCES.create(window);
+		preferenceAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
+				"/icons/PreferencesIcon.png"));
 		register(preferenceAction);
 
 		aboutAction = ActionFactory.ABOUT.create(window);
 		register(aboutAction);
 
 		exitAction = ActionFactory.QUIT.create(window);
+		exitAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
+				"/icons/ExitIcon.png"));
+	
 		register(exitAction);
 
 	}
@@ -77,13 +85,17 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 		// File
 
-		fileMenu.add(new Action("Restart") {
+		Action restartAction = new Action("Restart") {
 
 			@Override
 			public void run() {
 				PlatformUI.getWorkbench().restart();
 			}
-		});
+		};
+		restartAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
+			"/icons/RestartIcon.png"));
+			
+		fileMenu.add(restartAction);
 		fileMenu.add(exitAction);
 
 		// Help

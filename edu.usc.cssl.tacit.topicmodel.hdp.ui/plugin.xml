@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tscit.topicmodel.hdp.ui.HDPTopicModelView"
+            icon="icons/HDPIcon.png"
             id="edu.usc.cssl.tacit.topicmodel.hdp.ui.view1"
             name="HDP Topic Model"
             restorable="true">
@@ -17,6 +18,7 @@
             locationURI="menu:topicmodel">
          <command
                commandId="edu.usc.cssl.tacit.topicmodel.hdp.ui.command1"
+               icon="icons/HDPIcon.png"
                label="HDP"
                style="push">
          </command>

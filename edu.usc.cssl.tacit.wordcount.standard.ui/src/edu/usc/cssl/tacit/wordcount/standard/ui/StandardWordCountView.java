@@ -150,6 +150,7 @@ public class StandardWordCountView extends ViewPart implements
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(StandardWordCountImageRegistry.getImageIconFactory().getImage(IStandardWordCountViewConstants.IMAGE_WORD_TITLE));
 
 	}
 

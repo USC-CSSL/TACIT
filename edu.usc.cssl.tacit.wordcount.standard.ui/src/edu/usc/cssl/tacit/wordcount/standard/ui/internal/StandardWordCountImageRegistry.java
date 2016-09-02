@@ -22,7 +22,7 @@ public class StandardWordCountImageRegistry {
 				.createFromFile(StandardWordCountImageRegistry.class, "/icons/help_contents.gif"));
 
 		ir.put(IStandardWordCountViewConstants.IMAGE_WORD_TITLE, ImageDescriptor
-				.createFromFile(IStandardWordCountViewConstants.class, "/icons/wc.png"));
+				.createFromFile(IStandardWordCountViewConstants.class, "/icons/TACITWordCountIcon.png"));
 
 	}
 

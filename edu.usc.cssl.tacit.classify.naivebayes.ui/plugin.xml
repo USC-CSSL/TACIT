@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.classify.naivebayes.ui.NaiveBayesClassifierView"
+            icon="icons/NaiveBayesClassifierIcon.png"
             id="edu.usc.cssl.tacit.classify.naivebayes.ui.naivebayesview"
             name="Naive Bayes Classifier"
             restorable="true">
@@ -17,6 +18,7 @@
             locationURI="menu:classify">
          <command
                commandId="edu.usc.cssl.tacit.classify.naivebayes.ui.naivebayesview"
+               icon="icons/NaiveBayesClassifierIcon.png"
                label="Naive Bayes Classifier"
                style="push"
                tooltip="Naive Bayes Classifier">

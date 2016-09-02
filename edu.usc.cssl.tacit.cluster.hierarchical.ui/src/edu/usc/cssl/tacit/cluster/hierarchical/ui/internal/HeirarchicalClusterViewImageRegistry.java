@@ -21,7 +21,11 @@ public class HeirarchicalClusterViewImageRegistry {
 		ir.put(IHeirarchicalClusterViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(HeirarchicalClusterViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(IHeirarchicalClusterViewConstants.IMAGE_HEIRARCHICAL_CLUSTERING_OBJ,
+				ImageDescriptor.createFromFile(
+						HeirarchicalClusterViewImageRegistry.class,
+						"/icons/HeirarchicalClusteringIcon.png"));
+
 
 	}
 

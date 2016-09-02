@@ -15,13 +15,14 @@ public class TurboTopicsModelViewImageRegistry {
 
 	private TurboTopicsModelViewImageRegistry() {
 		
-		ir.put(ITurboTopicsModelClusterViewConstants.IMAGE_LRUN_OBJ, ImageDescriptor
+		ir.put(ITurboTopicsModelViewConstants.IMAGE_LRUN_OBJ, ImageDescriptor
 				.createFromFile(TurboTopicsModelViewImageRegistry.class, "/icons/lrun_obj.gif"));
 		
-		ir.put(ITurboTopicsModelClusterViewConstants.IMAGE_HELP_CO, ImageDescriptor
+		ir.put(ITurboTopicsModelViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(TurboTopicsModelViewImageRegistry.class, "/icons/help_contents.gif"));
-
-		
+		ir.put(ITurboTopicsModelViewConstants.IMAGE_TURBO_TOPICS_OBJ,
+				ImageDescriptor.createFromFile(TurboTopicsModelViewImageRegistry.class,
+						"/icons/TurboTopicsIcon.png"));
 
 	}
 
@@ -30,7 +31,6 @@ public class TurboTopicsModelViewImageRegistry {
 			imgIcon = new TurboTopicsModelViewImageRegistry();
 		}
 		return imgIcon;
-
 	}
 
 	public Image getImage(String imageName) {

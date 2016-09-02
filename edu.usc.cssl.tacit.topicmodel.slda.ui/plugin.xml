@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.topicmodel.slda.ui.SLDATopicModelView"
+            icon="icons/SLDAIcon.png"
             id="edu.usc.cssl.tacit.topicmodel.slda.ui.view1"
             name="SLDA Topic Model"
             restorable="true">
@@ -17,6 +18,7 @@
             locationURI="menu:topicmodel">
          <command
                commandId="edu.usc.cssl.tacit.topicmodel.slda.ui.command1"
+               icon="icons/SLDAIcon.png"
                label="SLDA"
                style="push">
          </command>

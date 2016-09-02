@@ -123,6 +123,7 @@ public class KmeansClusterView extends ViewPart implements
 		this.setPartName("KMeans Cluster");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(KmeansClusterViewImageRegistry.getImageIconFactory().getImage(IKmeansClusterViewConstants.IMAGE_KMEANS_CLUSTERING_OBJ));
 
 	}
 

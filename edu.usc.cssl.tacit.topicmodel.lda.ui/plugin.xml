@@ -5,9 +5,10 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="LDA Topic Model"
             class="edu.usc.cssl.tacit.topicmodel.lda.ui.LdaTopicModelView"
-            id="edu.usc.cssl.tacit.topicmodel.lda.ui.view1">
+            icon="icons/LDAIcon.png"
+            id="edu.usc.cssl.tacit.topicmodel.lda.ui.view1"
+            name="LDA Topic Model">
       </view>
       
    </extension>
@@ -18,6 +19,7 @@
             locationURI="menu:topicmodel">
              <command
                    commandId="edu.usc.cssl.tacit.topicmodel.lda.ui.view1"
+                   icon="icons/LDAIcon.png"
                    label="LDA"
                    tooltip="LDA">
             </command>

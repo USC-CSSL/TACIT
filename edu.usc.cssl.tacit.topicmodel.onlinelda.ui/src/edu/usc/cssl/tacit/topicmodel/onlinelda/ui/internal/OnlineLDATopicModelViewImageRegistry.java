@@ -19,6 +19,9 @@ public class OnlineLDATopicModelViewImageRegistry {
 		
 		ir.put(IOnlineLDATopicModelViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(OnlineLDATopicModelViewImageRegistry.class, "/icons/help_contents.gif"));	
+		ir.put(IOnlineLDATopicModelViewConstants.IMAGE_ONLINE_LDA_OBJ,
+				ImageDescriptor.createFromFile(OnlineLDATopicModelViewImageRegistry.class,
+						"/icons/OnlineLDAIcon.png"));
 
 	}
 

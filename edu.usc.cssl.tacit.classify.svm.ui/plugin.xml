@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.classify.svm.ui.SVMView"
+            icon="icons/SVMClassifierIcon.png"
             id="edu.usc.cssl.tacit.classify.svm.ui.view1"
             name="SVM Classifier">
       </view>
@@ -15,6 +16,7 @@
             locationURI="menu:classify">
          <command
                commandId="edu.usc.cssl.tacit.classify.svm.ui.view1"
+               icon="icons/SVMClassifierIcon.png"
                label="SVM Classifier"
                tooltip="SVM Classifier">
          </command>

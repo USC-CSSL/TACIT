@@ -7,11 +7,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -21,7 +19,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,10 +41,10 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.usc.cssl.tacit.common.ui.preprocessor.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
+import edu.usc.cssl.tacit.common.ui.preprocessor.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -132,6 +129,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 		this.setPartName("Online LDA Topic Model");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(OnlineLDATopicModelViewImageRegistry.getImageIconFactory().getImage(IOnlineLDATopicModelViewConstants.IMAGE_ONLINE_LDA_OBJ));
 
 	}
 

@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.topicmodel.turbotopics.ui.TurboTopicsModelView"
+            icon="icons/TurboTopicsIcon.png"
             id="edu.usc.cssl.tacit.topicmodel.turbotopics.ui.view1"
             name="Tubro Topics"
             restorable="true">
@@ -13,10 +14,10 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            allPopups="false"
             locationURI="menu:topicmodel">
          <command
                commandId="edu.usc.cssl.tacit.topicmodel.turbotopics.ui.command1"
+               icon="icons/TurboTopicsIcon.png"
                label="Turbo Topics"
                style="push"
                tooltip="Turbo Topics">

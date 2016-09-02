@@ -57,6 +57,8 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 	private Button bothButton;
 	private Button commonsButton;
 	private Button lordsButton;
+	private Button searchButton;
+	private Button MPButton;
 	
 	private Composite searchComposite;
 
@@ -146,12 +148,28 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		
 		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
 		
+		Group searchGroup = new Group(searchComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchGroup);
+		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(searchGroup);
+		searchGroup.setText("Hello");
+		
+		searchButton = new Button(searchGroup, SWT.RADIO);
+		searchButton.setText("Both");
+		searchButton.setSelection(true);
+		
+		MPButton = new Button(searchGroup, SWT.RADIO);
+		MPButton.setText("Commons");
+		MPButton.setSelection(false);
+		
+		
 		final Label searchLabel = new Label(searchComposite, SWT.NONE);
 		searchLabel.setText("Search Term:");
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchLabel);
 		searchText = new Text(searchComposite, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchText);	
 		searchText.setMessage("Enter a search term");
+		
+		
 		
 		Group dateComposite1 = new Group(searchComposite, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateComposite1);

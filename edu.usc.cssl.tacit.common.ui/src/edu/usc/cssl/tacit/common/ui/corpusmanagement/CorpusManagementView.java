@@ -17,6 +17,8 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.CorpusManagementUIViewImageRegistry;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusManagementConstants;
 import edu.usc.cssl.tacit.common.ui.utility.INlpCommonUiConstants;
 import edu.usc.cssl.tacit.common.ui.utility.IconRegistry;
 
@@ -86,6 +88,8 @@ public class CorpusManagementView extends ViewPart {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, "edu.usc.cssl.tacit.common.ui.corpusmanagement");
 		form.getToolBarManager().update(true);
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(CorpusManagementUIViewImageRegistry.getImageIconFactory().getImage(ICorpusManagementConstants.IMAGE_CORPUS_MANAGEMENT_OBJ));
+
 	}
 
 

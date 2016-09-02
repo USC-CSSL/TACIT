@@ -148,6 +148,7 @@ public class WeightedWordCountView extends ViewPart implements
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(WeightedWordCountImageRegistry.getImageIconFactory().getImage(IWeightedWordCountViewConstants.IMAGE_LIWC_WORD_COUNT_OBJ));
 
 	}
 

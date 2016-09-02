@@ -21,7 +21,11 @@ public class SVMViewImageRegistry {
 		ir.put(ISVMViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(SVMViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(ISVMViewConstants.IMAGE_SVM_CLASSIFIER_OBJ,
+				ImageDescriptor.createFromFile(
+						SVMViewImageRegistry.class,
+						"/icons/SVMClassifierIcon.png"));
+
 
 	}
 

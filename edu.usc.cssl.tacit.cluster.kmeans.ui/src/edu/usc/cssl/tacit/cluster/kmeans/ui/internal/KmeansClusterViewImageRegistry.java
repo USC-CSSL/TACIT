@@ -21,7 +21,11 @@ public class KmeansClusterViewImageRegistry {
 		ir.put(IKmeansClusterViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(KmeansClusterViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(IKmeansClusterViewConstants.IMAGE_KMEANS_CLUSTERING_OBJ,
+				ImageDescriptor.createFromFile(
+						KmeansClusterViewImageRegistry.class,
+						"/icons/KMeansClusteringIcon.png"));
+
 
 	}
 

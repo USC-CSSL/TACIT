@@ -130,6 +130,7 @@ public class LdaTopicModelView extends ViewPart implements
 		this.setPartName("LDA Topic Model");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(LdaTopicModelViewImageRegistry.getImageIconFactory().getImage(ILdaTopicModelClusterViewConstants.IMAGE_LDA_OBJ));
 
 	}
 

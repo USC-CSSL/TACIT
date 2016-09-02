@@ -2,10 +2,8 @@ package edu.usc.cssl.tacit.wordcount.cooccurrence.ui;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,6 +131,7 @@ private boolean checkType = true;
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(CooccurrenceWordCountImageRegistry.getImageIconFactory().getImage(ICooccurrenceWordCountViewConstants.IMAGE_COOCCURENCE_ANALYSIS_OBJ));
 
 	}
 

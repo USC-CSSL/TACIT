@@ -5,9 +5,10 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="KMeans Cluster"
             class="edu.usc.cssl.tacit.cluster.kmeans.ui.KmeansClusterView"
-            id="edu.usc.cssl.tacit.cluster.kmeansui.view1">
+            icon="icons/KMeansClusteringIcon.png"
+            id="edu.usc.cssl.tacit.cluster.kmeansui.view1"
+            name="KMeans Cluster">
       </view>
       
    </extension>
@@ -18,6 +19,7 @@
             locationURI="menu:cluster">
              <command
                    commandId="edu.usc.cssl.tacit.cluster.kmeans.ui.view1"
+                   icon="icons/KMeansClusteringIcon.png"
                    label="KMeans Cluster"
                    tooltip="KMeans Cluster">
             </command>

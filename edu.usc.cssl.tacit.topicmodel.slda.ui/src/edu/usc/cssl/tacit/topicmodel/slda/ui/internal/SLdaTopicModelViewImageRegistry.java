@@ -21,7 +21,10 @@ public class SLdaTopicModelViewImageRegistry {
 		ir.put(ISLdaTopicModelClusterViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(SLdaTopicModelViewImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(ISLdaTopicModelClusterViewConstants.IMAGE_SLDA_OBJ,
+				ImageDescriptor.createFromFile(SLdaTopicModelViewImageRegistry.class,
+						"/icons/SLDAIcon.png"));
+
 
 	}
 

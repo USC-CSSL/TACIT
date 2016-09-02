@@ -5,9 +5,10 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Cooccurrence Analysis"
             class="edu.usc.cssl.tacit.wordcount.cooccurrence.ui.CooccurrenceWordCountView"
-            id="edu.usc.cssl.tacit.wordcount.cooccurrence.ui.view1">
+            icon="icons/CooccurenceAnalysisIcon.png"
+            id="edu.usc.cssl.tacit.wordcount.cooccurrence.ui.view1"
+            name="Cooccurrence Analysis">
       </view>
       
    </extension>
@@ -18,6 +19,7 @@
             locationURI="menu:wordcount">
              <command
                    commandId="edu.usc.cssl.tacit.wordcount.cooccurrence.ui.view.command1"
+                   icon="icons/CooccurenceAnalysisIcon.png"
                    label="Co-occurrence Analysis"
                    tooltip="Cooccurrence Analysis">
             </command>

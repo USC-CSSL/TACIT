@@ -123,6 +123,7 @@ public class HierarchicalClusterView extends ViewPart implements
 		this.setPartName("Heirarchial Cluster");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(HeirarchicalClusterViewImageRegistry.getImageIconFactory().getImage(IHeirarchicalClusterViewConstants.IMAGE_HEIRARCHICAL_CLUSTERING_OBJ));
 
 	}
 

@@ -2,7 +2,6 @@ package edu.usc.cssl.tscit.topicmodel.hdp.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -23,8 +22,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -119,6 +116,7 @@ public class HDPTopicModelView extends ViewPart implements
 			this.setPartName("HDP Topic Model");
 			addButtonsToToolBar();
 			toolkit.paintBordersFor(form.getBody());
+			form.setImage(HDPTopicModelViewImageRegistry.getImageIconFactory().getImage(IHdpTopicModelViewConstants.IMAGE_HDP_OBJ));
 
 		}
 

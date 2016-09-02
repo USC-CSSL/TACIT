@@ -148,6 +148,8 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 		this.setPartName("SVM Classification");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(SVMViewImageRegistry.getImageIconFactory().getImage(ISVMViewConstants.IMAGE_SVM_CLASSIFIER_OBJ));
+
 	}
 
 	@Override

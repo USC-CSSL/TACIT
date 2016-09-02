@@ -2,7 +2,6 @@ package edu.usc.cssl.tacit.topicmodel.turbotopics.ui;
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -57,11 +56,11 @@ import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.topicmodel.lda.services.LdaAnalysis;
 import edu.usc.cssl.tacit.topicmodel.turbotopics.services.LDAtopics;
-import edu.usc.cssl.tacit.topicmodel.turbotopics.ui.internal.ITurboTopicsModelClusterViewConstants;
+import edu.usc.cssl.tacit.topicmodel.turbotopics.ui.internal.ITurboTopicsModelViewConstants;
 import edu.usc.cssl.tacit.topicmodel.turbotopics.ui.internal.TurboTopicsModelViewImageRegistry;
 
 public class TurboTopicsModelView extends ViewPart implements
-		ITurboTopicsModelClusterViewConstants {
+		ITurboTopicsModelViewConstants {
 	public static final String ID = "edu.usc.cssl.tacit.topicmodel.turbotopics.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -88,6 +87,7 @@ public class TurboTopicsModelView extends ViewPart implements
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1)
 				.applyTo(section);
 		section.setExpanded(true);
+		
 		ScrolledComposite sc = new ScrolledComposite(section, SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -139,6 +139,7 @@ public class TurboTopicsModelView extends ViewPart implements
 		this.setPartName("Turbo Topics");
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
+		form.setImage(TurboTopicsModelViewImageRegistry.getImageIconFactory().getImage(ITurboTopicsModelViewConstants.IMAGE_TURBO_TOPICS_OBJ));
 
 	}
 

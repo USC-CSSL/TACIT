@@ -5,9 +5,10 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Hierarchical Cluster"
             class="edu.usc.cssl.tacit.cluster.hierarchical.ui.HierarchicalClusterView"
-            id="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1">
+            icon="icons/HeirarchicalClusteringIcon.png"
+            id="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1"
+            name="Hierarchical Cluster">
       </view>
       
    </extension>
@@ -18,6 +19,7 @@
             locationURI="menu:cluster">
              <command
                    commandId="edu.usc.cssl.tacit.cluster.hierarchical.ui.view1"
+                   icon="icons/HeirarchicalClusteringIcon.png"
                    label="Hierarchical Cluster"
                    tooltip="Hierarchical Cluster">
             </command>

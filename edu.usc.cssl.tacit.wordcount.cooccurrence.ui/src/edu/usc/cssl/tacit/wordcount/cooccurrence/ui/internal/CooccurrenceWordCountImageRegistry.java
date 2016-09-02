@@ -21,7 +21,11 @@ public class CooccurrenceWordCountImageRegistry {
 		ir.put(ICooccurrenceWordCountViewConstants.IMAGE_HELP_CO, ImageDescriptor
 				.createFromFile(CooccurrenceWordCountImageRegistry.class, "/icons/help_contents.gif"));
 
-		
+		ir.put(ICooccurrenceWordCountViewConstants.IMAGE_COOCCURENCE_ANALYSIS_OBJ,
+				ImageDescriptor.createFromFile(
+						CooccurrenceWordCountImageRegistry.class,
+						"/icons/CooccurenceAnalysisIcon.png"));
+
 
 	}
 

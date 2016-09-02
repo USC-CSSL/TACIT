@@ -194,6 +194,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.common.ui.corpusmanagement.CorpusManagementView"
+            icon="icons/CorpusManagementIcon.png"
             id="edu.usc.cssl.tacit.common.ui.corpusmanagement.view1"
             name="Corpus Management"
             restorable="true">
@@ -205,6 +206,7 @@
             locationURI="menu:view">
          <command
                commandId="edu.usc.cssl.tacit.common.ui.corpusmanagement.view1"
+               icon="icons/CorpusManagementIcon.png"
                label="Corpus Management"
                tooltip="Corpus Management">
          </command>

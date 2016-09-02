@@ -3,17 +3,13 @@ package edu.usc.cssl.tacit.topicmodel.slda.ui;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.event.HyperlinkEvent;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,7 +28,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -40,7 +35,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -56,11 +50,10 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
-import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
-import edu.usc.cssl.tacit.common.*;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.topicmodel.slda.services.SLDA;
 import edu.usc.cssl.tacit.topicmodel.slda.ui.internal.ISLdaTopicModelClusterViewConstants;
@@ -122,6 +115,8 @@ public class SLDATopicModelView extends ViewPart implements
 
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();
+		form.setImage(SLdaTopicModelViewImageRegistry.getImageIconFactory().getImage(ISLdaTopicModelClusterViewConstants.IMAGE_SLDA_OBJ));
+
 	}
 
 	/**

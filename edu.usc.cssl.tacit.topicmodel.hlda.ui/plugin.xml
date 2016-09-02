@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.topicmodel.hlda.ui.HeirarchicalLDAView"
+            icon="icons/HeirarchicalLDAIcon.png"
             id="edu.usc.cssl.tacit.topicmodel.hlda.ui.view1"
             name="Heirarchical LDA"
             restorable="true">
@@ -17,6 +18,7 @@
             locationURI="menu:topicmodel">
          <command
                commandId="edu.usc.cssl.tacit.topicmodel.hlda.ui.command1"
+               icon="icons/HeirarchicalLDAIcon.png"
                label="HLDA"
                style="push"
                tooltip="HLDA">

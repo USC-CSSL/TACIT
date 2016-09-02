@@ -14,12 +14,15 @@ public class HeirarchalLDAViewImageRegistry {
 
 	private HeirarchalLDAViewImageRegistry() {
 		
-		ir.put(HeirarchicalLDAViewConstants.IMAGE_LRUN_OBJ, ImageDescriptor
+		ir.put(IHeirarchicalLDAViewConstants.IMAGE_LRUN_OBJ, ImageDescriptor
 				.createFromFile(HeirarchalLDAViewImageRegistry.class, "/icons/lrun_obj.gif"));
 		
-		ir.put(HeirarchicalLDAViewConstants.IMAGE_HELP_CO, ImageDescriptor
-				.createFromFile(HeirarchalLDAViewImageRegistry.class, "/icons/help_contents.gif"));	
-
+		ir.put(IHeirarchicalLDAViewConstants.IMAGE_HELP_CO, ImageDescriptor
+				.createFromFile(HeirarchalLDAViewImageRegistry.class, "/icons/help_contents.gif"));
+		
+		ir.put(IHeirarchicalLDAViewConstants.IMAGE_HEIRARCHICAL_LDA_OBJ,
+				ImageDescriptor.createFromFile(HeirarchalLDAViewImageRegistry.class,
+						"/icons/HeirarchicalLDAIcon.png"));
 	}
 
 	public static HeirarchalLDAViewImageRegistry getImageIconFactory() {

@@ -5,9 +5,10 @@
          point="org.eclipse.ui.views">
  
       <view
-            name="Weighted Word Count"
             class="edu.usc.cssl.tacit.wordcount.weighted.ui.WeightedWordCountView"
-            id="edu.usc.cssl.tacit.wordcount.weighted.ui.view1">
+            icon="icons/LIWCWordCountIcon.png"
+            id="edu.usc.cssl.tacit.wordcount.weighted.ui.view1"
+            name="Weighted Word Count">
       </view>
       
    </extension>
@@ -18,6 +19,7 @@
             locationURI="menu:wordcount">
              <command
                    commandId="usc.edu.cssl.wordcount.weighted.view.command1"
+                   icon="icons/LIWCWordCountIcon.png"
                    label="LIWC-Style Word Count"
                    tooltip="LIWC-Style Word Count - Standard/Weighted ">
             </command>

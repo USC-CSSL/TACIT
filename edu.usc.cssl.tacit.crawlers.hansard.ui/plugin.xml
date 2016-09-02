@@ -13,6 +13,16 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.hansard.ui.command1"
+               icon="icons/HansardCrawlerIcon.ico"
+               label="Hansard Crawler"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

@@ -8,6 +8,7 @@
             locationURI="menu:topicmodel">
          <command
                commandId="edu.usc.cssl.tacit.topicmodel.onlinelda.ui.onlineldaCommand"
+               icon="icons/OnlineLDAIcon.png"
                label="Online LDA"
                style="push">
          </command>
@@ -31,6 +32,7 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.usc.cssl.tacit.topicmodel.onlinelda.ui.OnlineLDATopicModelView"
+            icon="icons/OnlineLDAIcon.png"
             id="edu.usc.cssl.tacit.topicmodel.onlinelda.ui.OnlineLDAView"
             name="OnlineLDAView"
             restorable="true">
