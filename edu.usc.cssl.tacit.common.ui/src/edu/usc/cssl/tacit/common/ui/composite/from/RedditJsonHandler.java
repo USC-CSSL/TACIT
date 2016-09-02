@@ -64,7 +64,7 @@ public class RedditJsonHandler {
 		return path;
 	}
 	
-	private String[] getPostComments(JSONObject redditStream) {
+	public String[] getPostComments(JSONObject redditStream) {
 		if(null == redditStream) return null;
 		JSONArray comments = (JSONArray) redditStream.get("comments");
 		if(null == comments) return null;

@@ -62,6 +62,7 @@ import edu.usc.cssl.tacit.common.queryprocess.IQueryProcessor;
 import edu.usc.cssl.tacit.common.queryprocess.QueryDataType;
 import edu.usc.cssl.tacit.common.queryprocess.QueryProcesser;
 import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
+import edu.usc.cssl.tacit.common.ui.composite.from.RedditJsonHandler;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpus;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.internal.ICorpusManagementConstants;
@@ -408,6 +409,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 //								e1.printStackTrace();
 //							}
 //						}
+							if (inFiles == null || inFiles.size() == 0 ){
+								ConsoleView.printlInConsoleln("No File exported");
+							}else{
+								ConsoleView.printlInConsoleln(inFiles.size() + " File(s) exported");
+							}
+							ConsoleView.printlInConsoleln("Done");
+							
 					}
 				} else {
 					System.out.println("Cancel pressed");
@@ -682,7 +690,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	 */
 	private static void writeCSV(String outputLoc, CorpusClass cls)throws Exception{
 		
-		// Location where the R Object needs to be saved.
+		// Location where the CSV needs to be saved.
 		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".csv";
 		
 		FileWriter fileWriter = new FileWriter(new File(saveLocation));
@@ -770,11 +778,309 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	
 	//TODO: To be implemented
 	private static void writeCSVforReddit(String outputLoc, CorpusClass cls)throws Exception{
+		JSONParser jsonParser = new JSONParser();
+		RedditJsonHandler redditJsonHandler = new RedditJsonHandler();
+		
+		// Location where the CSV needs to be saved.
+		String saveLocation =outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".csv";
+		
+		FileWriter fileWriter = new FileWriter(new File(saveLocation));
+		
+		// Location of the corpus
+		String corpusLocation = cls.getTacitLocation();
+		File corpusDirectory = new File(corpusLocation);
+		
+		//List of JSON Reddit Post
+		String[] jsonFiles = corpusDirectory.list();
+		
+		//Name of the corpus
+		String corpusName = cls.getClassName();
+		
+		
+	    try {
+	    	
+			//Finding the maximum number of comments to be included as a columns.
+			String singleRedditLocation = "" ; 
+			JSONObject singleReddit = null;
+			JSONArray commentArray;
+			int maxComments = 0;
+			for(int i=0; i<jsonFiles.length ;i++){
+				if(jsonFiles[i].endsWith(".json")){
+					singleRedditLocation = corpusLocation + File.separator + jsonFiles[i]; 
+					singleReddit = (JSONObject)jsonParser.parse(new FileReader(new File(singleRedditLocation)));
+					commentArray = (JSONArray)singleReddit.get("comments");
+					if (commentArray.size() > maxComments){
+						maxComments = commentArray.size();
+					}
+					
+				}
+			}
+			
+			//Generate the R data frame columns
+			String dataFrameHeader = "";
+			JSONObject singleRedditContent = (JSONObject)singleReddit.get("post"); //Take the last stored single reddit from the above loop to generate the keyset
+			Set<String> keySet = singleRedditContent.keySet();
+			Iterator<String> keyIterator = keySet.iterator();
+			String key;
+			
+			while(keyIterator.hasNext()){
+				key = keyIterator.next();
+				dataFrameHeader = dataFrameHeader + key + ","; 
+			}
+			
+			for (int i = 0; i < maxComments; i++){
+				dataFrameHeader = dataFrameHeader + "comment" + (i+1) + ",";
+			}
+			dataFrameHeader = dataFrameHeader.substring(0,dataFrameHeader.length()-1);
+			fileWriter.write(dataFrameHeader + "\n");
+			
+			
+			//Iterate over all the Reddit posts to generate the columns in dataframe.
+			
+			for(int i=0; i<jsonFiles.length ;i++){
+				if(jsonFiles[i].endsWith(".json")){
+					singleRedditLocation = corpusLocation + File.separator + jsonFiles[i]; 
+					singleReddit = (JSONObject)jsonParser.parse(new FileReader(new File(singleRedditLocation)));
+					StringBuffer singleCsvEntry=  new StringBuffer();
+					
+					
+					//Inserting the post content
+					JSONObject post = (JSONObject)singleReddit.get("post");
+					keyIterator = keySet.iterator();
+					
+					while(keyIterator.hasNext()){
+						
+						key = keyIterator.next();
+						
+						if(post.containsKey(key)){
+							String data = post.get(key).toString();
+							
+							//Cleaning the data before inserting in the dataframe.
+							/*data = data.toLowerCase()
+									.replaceAll("-", " ")
+									.replaceAll("[^a-z0-9. ]", "")
+									.replaceAll("\\s+", " ")
+									.trim();*/
+							
+							data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").trim();
+							singleCsvEntry.append(data + ",");
+						}else{
+							singleCsvEntry.append(",");
+						}
+					}
+
+					
+					//Inserting the comment content.
+					
+					String[] redditPostComments = redditJsonHandler.getPostComments(singleReddit);
+					int remainingComments = maxComments;
+					//When there are one or more comments.
+					if (redditPostComments != null){
+						remainingComments = maxComments - redditPostComments.length;
+						int commentCountStamp = 1;
+						
+						for(String redditPostComment : redditPostComments){
+							
+							//Cleaning the data before inserting in the dataframe.
+							/*redditPostComment = redditPostComment.toLowerCase()
+									.replaceAll("-", " ")
+									.replaceAll("[^a-z0-9. ]", "")
+									.replaceAll("\\s+", " ")
+									.trim();*/
+							
+							redditPostComment = redditPostComment.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").trim();
+							singleCsvEntry.append(redditPostComment + ",");
+							commentCountStamp++;
+						}
+						
+						for(int j=0; j<remainingComments; j++){
+							singleCsvEntry.append(",");
+							commentCountStamp++;
+						}
+						
+					}else{//When there is no comment
+						for(int j=0; j<remainingComments; j++){
+							singleCsvEntry.append(",");
+						}
+					}
+					
+					singleCsvEntry.deleteCharAt(singleCsvEntry.length()-1);
+					fileWriter.write(singleCsvEntry.toString() + "\n");
+						
+				}
+			}
+			
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+			ConsoleView.printlInConsoleln("Could not create CSV file due to an internal error.");
+			return;
+		}
+
+	    fileWriter.close();
+	    ConsoleView.printlInConsoleln("CSV successfully exported.");
+	    ConsoleView.printlInConsoleln("CSV file saved at : " + saveLocation);
 		
 	}
 	
-	//TODO: To be implemented
+	//TODO: To be tested
 	private static void writeRObjforReddit(String outputLoc, CorpusClass cls)throws Exception{
 		
+		JSONParser jsonParser = new JSONParser();
+		RedditJsonHandler redditJsonHandler = new RedditJsonHandler();
+		
+		// Location where the R Object needs to be saved.
+		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".RData" + "\"";
+		
+		// Location of the corpus
+		String corpusLocation = cls.getTacitLocation();
+		File corpusDirectory = new File(corpusLocation);
+		
+		//List of JSON Reddit Post
+		String[] jsonFiles = corpusDirectory.list();
+		
+		//Name of the corpus
+		String corpusName = cls.getClassName();
+		
+		// Create a Script engine manager:
+	    ScriptEngineManager manager = new ScriptEngineManager();
+	    
+	    // Create a Renjin engine:
+	    ScriptEngine engine = manager.getEngineByName("Renjin");
+	    
+	    // Check if the engine has loaded correctly:
+	    if(engine == null) {
+	        throw new Exception("Renjin Script Engine not found on the classpath.");
+	    }
+		
+	    try {
+	    	
+			//Finding the maximum number of comments to be included as a columns.
+			String singleRedditLocation = "" ; 
+			JSONObject singleReddit = null;
+			JSONArray commentArray;
+			int maxComments = 0;
+			for(int i=0; i<jsonFiles.length ;i++){
+				if(jsonFiles[i].endsWith(".json")){
+					singleRedditLocation = corpusLocation + File.separator + jsonFiles[i]; 
+					singleReddit = (JSONObject)jsonParser.parse(new FileReader(new File(singleRedditLocation)));
+					commentArray = (JSONArray)singleReddit.get("comments");
+					if (commentArray.size() > maxComments){
+						maxComments = commentArray.size();
+					}
+					
+				}
+			}
+			
+			//Generate the R data frame columns
+			String dataFrameHeader = "";
+			JSONObject singleRedditContent = (JSONObject)singleReddit.get("post"); //Take the last stored single reddit from the above loop to generate the keyset
+			Set<String> keySet = singleRedditContent.keySet();
+			Iterator<String> keyIterator = keySet.iterator();
+			String key;
+			
+			while(keyIterator.hasNext()){
+				key = keyIterator.next();
+				engine.eval(key+" <- c() ");
+				dataFrameHeader = dataFrameHeader + key + ","; 
+			}
+			
+			for (int i = 0; i < maxComments; i++){
+				engine.eval("comment" + (i+1) +" <- c() ");
+				dataFrameHeader = dataFrameHeader + "comment" + (i+1) + ",";
+			}
+			dataFrameHeader = dataFrameHeader.substring(0,dataFrameHeader.length()-1);
+			
+			
+			//Iterate over all the Reddit posts to generate the columns in dataframe.
+			
+			for(int i=0; i<jsonFiles.length ;i++){
+				if(jsonFiles[i].endsWith(".json")){
+					singleRedditLocation = corpusLocation + File.separator + jsonFiles[i]; 
+					singleReddit = (JSONObject)jsonParser.parse(new FileReader(new File(singleRedditLocation)));
+					
+					
+					
+					//Inserting the post content
+					JSONObject post = (JSONObject)singleReddit.get("post");
+					keyIterator = keySet.iterator();
+					while(keyIterator.hasNext()){
+						
+						key = keyIterator.next();
+						
+						if(post.containsKey(key)){
+							String data = post.get(key).toString();
+							
+							//Cleaning the data before inserting in the dataframe.
+							/*data = data.toLowerCase()
+									.replaceAll("-", " ")
+									.replaceAll("[^a-z0-9. ]", "")
+									.replaceAll("\\s+", " ")
+									.trim();*/
+							
+							data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").trim();
+							
+							//Insert into dataframe
+							engine.eval("data <- \"" +data.toString()+"\"");
+							engine.eval(key + " <- c("+key+",data)");
+						}else{
+							engine.eval(key + " <- c("+key+",\"\")");
+						}
+					}					
+					
+					
+					
+					
+					//Inserting the comment content.
+					
+					String[] redditPostComments = redditJsonHandler.getPostComments(singleReddit);
+					int remainingComments = maxComments;
+					//When there are one or more comments.
+					if (redditPostComments != null){
+						remainingComments = maxComments - redditPostComments.length;
+						int commentCountStamp = 1;
+						
+						for(String redditPostComment : redditPostComments){
+							
+							//Cleaning the data before inserting in the dataframe.
+							/*redditPostComment = redditPostComment.toLowerCase()
+									.replaceAll("-", " ")
+									.replaceAll("[^a-z0-9. ]", "")
+									.replaceAll("\\s+", " ")
+									.trim();*/
+							
+							redditPostComment = redditPostComment.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").trim();
+							engine.eval("data <- \"" +redditPostComment+"\"");
+							engine.eval("comment" + commentCountStamp + " <- c(comment" + commentCountStamp + ",data)");
+							commentCountStamp++;
+						}
+						
+						for(int j=0; j<remainingComments; j++){
+							engine.eval("comment" + commentCountStamp + " <- c(comment" + commentCountStamp + ",\"\")");
+							commentCountStamp++;
+						}
+						
+					}else{//When there is no comment
+						for(int j=0; j<remainingComments; j++){
+							engine.eval("comment" + (j+1) + " <- c(comment" + (j+1) + ",\"\")");
+						}
+					}
+						
+				}
+			}
+			
+			
+			
+			engine.eval(corpusName+" <- data.frame("+dataFrameHeader+")");	
+		    engine.eval("save(list = c(\""+corpusName+"\"), file = "+saveLocation+")");
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+			ConsoleView.printlInConsoleln("Could not create R Dataframe due to an internal error.");
+			return;
+		}
+
+	    ConsoleView.printlInConsoleln("R Dataframe successfully exported.");
+	    ConsoleView.printlInConsoleln("R Dataframe saved at : " + saveLocation);
 	}
 }

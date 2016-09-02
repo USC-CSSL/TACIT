@@ -41,14 +41,13 @@ public class WizardPage0 extends WizardPage {
 		csvSelectionBtn = new Button(container, SWT.RADIO);
 		csvSelectionBtn.setText("CSV Format");
 		csvSelectionBtn.setSelection(false);
-		csvSelectionBtn.setEnabled(false);
+
 		
 		//RObject format button
 		robjSelectionBtn = new Button(container, SWT.RADIO);
 		robjSelectionBtn.setText("R Dataframe Format");
 		robjSelectionBtn.setSelection(false);
-		robjSelectionBtn.setEnabled(false);
-		
+
 		setControl(container);
 		setPageComplete(true);
 		
