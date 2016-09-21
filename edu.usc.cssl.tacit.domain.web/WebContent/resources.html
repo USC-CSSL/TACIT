@@ -1,75 +1,287 @@
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-language" content="en">
-<meta name="description" content="TACIT Resources">
-<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-<!--script type="text/javascript" src="js/googleAnalytics.js"></script>
-<script type="text/javascript" src="js/functions.js"></script-->
-
-<link rel="icon" type="image/png" href="icon16.png" />
-<title>TACIT - Resources</title>
-<link type="text/css" rel="stylesheet" href="css/style.css" />
-<link
-	href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
-	rel='stylesheet' type='text/css'>
-<link
-	href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300italic,700,300'
-	rel='stylesheet' type='text/css'>
-<link rel="stylesheet" href="css/font-awesome.min.css">
-<script>
-	(function(i, s, o, g, r, a, m) {
-		i['GoogleAnalyticsObject'] = r;
-		i[r] = i[r] || function() {
-			(i[r].q = i[r].q || []).push(arguments)
-		}, i[r].l = 1 * new Date();
-		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
-		a.async = 1;
-		a.src = g;
-		m.parentNode.insertBefore(a, m)
-	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
-			'ga');
-
-	ga('create', 'UA-67308301-1', 'auto');
-	ga('send', 'pageview');
-</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-language" content="en">
+	<meta name="description" content="TACIT Resources">
+	<link rel="icon" type="image/png" href="icon16.png" />
+	<title>TACIT - Resources</title>
+  	
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<link type="text/css" rel="stylesheet" href="css/style.css" />
+  	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  	<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300italic,700,300' rel='stylesheet' type='text/css'>
+  	<link rel="stylesheet" href="css/font-awesome.min.css">
+ 	
+ 	<style>
+		.navbar-pills>.active>a, .navbar-pills>.active>a:hover, .navbar-pills>.active>a:focus {
+  			color:#FFFFFF;
+		}
+	</style>
+	
 </head>
+
 
 <body>
 
-	<div id="header_wrapper">
-		<div id="logo">
-			<a href="index.html"><img alt="logo" src="logo.png" /></a>
-		</div>
+<div id="header_wrapper">
+	<div id="logo">
+		<a href="index.html"><img alt="logo" src="logo.png" /></a>
+	</div>
 
-		<div id="menu_wrapper">
-			<ul id="nav">
-				<li><a href="index.html">Home</a></li>
-				<li><a href="gettingstarted.html">Getting Started</a></li>
-				<li><a href="download.html">Download</a></li>
-				<li class="current_menu_item"><a href="resources.html">Resources</a></li>
-				<li><a href="contactus.html">Contact Us</a></li>
+	<div id="menu_wrapper">
+		<ul id="nav">
+			<li><a href="index.html">Home</a></li>
+			<li><a href="gettingstarted.html">Getting Started</a></li>
+			<li><a href="download.html">Download</a></li>
+			<li class="current_menu_item"><a href="resources.html">Resources</a></li>
+			<li><a href="contactus.html">Contact Us</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-------->
+<div id="body_wrapper">
+<div id="content">
+
+	<h1 class="page_title">Resources</h1>
+	
+    <ul id="tabsHeader" class="nav nav-pills nav-stacked navbar-custom navbar-default" data-tabs="tabs" style="width: 20%; float:left">
+        <li class="active"><a href="#tab1" data-toggle="tab">Acquiring Data</a></li>
+        <li><a href="#tab2" data-toggle="tab">Cleaning Data</a></li>
+        <li><a href="#tab3" data-toggle="tab">Selecting Analysis Method </a></li>
+        <li><a href="#tab4" data-toggle="tab">Validate Results</a></li>
+        <li><a href="#tab5" data-toggle="tab">TACIT Specific Resources</a></li>
+    </ul>
+    <div class="tab-content" style="width: 80%; float:right">
+        <div class="tab-pane active" id="tab1">
+        
+        	<!-- Subtopic 1 -->
+            <h2>Use existing data sets</h2>
+            
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol><li>Dodds, P. S., Harris, K. D., Kloumann, I. M., Bliss, C. A., & Danforth, C. M. (2011). Temporal patterns of happiness and information in a global social network: Hedonometrics and Twitter. PloS One, 6(12), e26752.</li></ol>
+			<h3><u>Applications</u></h3>
+			<ol><li>Sandhaus, E. (2008). The New York Times Annotated Corpus [data file]. Available <a href="https://catalog.ldc.upenn.edu/LDC2008T19" target="_blank">here</a>.</li></ol>
+        	
+        	<!-- Subtopic 2 -->
+        	<h2>Gather new data</h2>
+        	
+        	<h3><u>Methods Specific Papers</u></h3>
+        	<ol><li>Dodds, P. S., Harris, K. D., Kloumann, I. M., Bliss, C. A., & Danforth, C. M. (2011). Temporal patterns of happiness and information in a global social network: Hedonometrics and Twitter. PloS One, 6(12), e26752. </li></ol>
+        	<h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Frimer, J. A., Aquino, K., Gebauer, J. E., Zhu, L. L., & Oakes, H. (2015). A decline in prosocial language helps explain public disapproval of the US Congress. Proceedings of the National Academy of Sciences, 112(21), 6591-6594. (social science) </li>
+        	<li>Dehghani et al, 2015 </li>
+        	<li>Mohammad, S. M., & Turney, P. D. (2010). Emotions evoked by common words and phrases: Using Mechanical Turk to create an emotion lexicon. In Proceedings of the NAACL HLT 2010 Workshop on Computational Approaches to Analysis and Generation of Emotion in Text (pp. 26-34). Stroudsburg, PA: Association for Computational Linguistics. (social science) </li>
+        	</ol>
+        	
+        </div>
+       	     	
+        <div class="tab-pane" id="tab2">
+        	
+        	<!-- Subtopic 1 -->
+        	<h2>Preprocessing </h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Boyd, R. L., (2012). ConverSplitter (Version 0.8.0 beta) [software]. Available <a href="http://riot.ryanb.cc/other-tools/" target="_blank">here</a>.</li>
+            <li>Boyd, R L. (2015). MEH: Meaning Extraction Helper (Version 1.3.01) [software]. Available <a href="http://meh.ryanb.cc/" target="_blank">here</a>.</li>
+            <li>Boyd, R L. (2015). RIOT Scan (Version 2.0.11) [software]. Available <a href="http://riot.ryanb.cc/" target="_blank">here</a>.</li>
+            <li>IBM Corporation (2011). IBM SPSS Modeler 14.2 Algorithms Guide [software manual]. Available <a href="http://www-01.ibm.com/software/analytics/spss/products/modeler/" target="_blank">here</a>.</li>
+            <li>Gagolewski, M., & Tartanus, B. (2015) Stringi: The string processing package for R [software]. Available <a href="http://www.rexamine.com/resources/stringi/" target="_blank">here</a>.</li>
+            <li>Vijayarani, S., Ilamathi, J., & Nithya, (2015). Preprocessing techniques for text mining – An overview. International Journal of Computer Science & Communication Networks, 5(1), 7-16. </li>
+            <li>Porter, M. F. (2006). An algorithm for suffix stripping. Program: Electronic Library and Information Systems, 40(3), 211–218.</li>
+            <li>Feinerer, I., Meyer, D., & Hornik, K. (2008). Text mining infrastructure in R. Journal of Statistical Software, 25(5), 1–54.</li>
+            <li>Abell, M. (2014). SAS Text Miner [Software]. Available <a href="http://www.sas.com/en_us/software/analytics/text-miner.html" target="_blank">here</a>.</li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Han, B., & Baldwin, T. (2011). Lexical normalisation of short text messages: Makn sens a# Twitter. In Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies (pp. 368-378). Stroudsburg, PA: Association for Computational Linguistics.</li>
+        	<li>Manning, C. D., & Schutze H. (1999). Foundations of statistical natural language processing. Cambridge, MA: MIT Press  </li>
+        	<li>Salton, G. (1989). Automatic text processing, the transformation, analysis, and retrieval of information by computer. Reading: Addison-Wesley. </li>
+        	</ol>
+            
+        </div>
+        
+        <div class="tab-pane" id="tab3">
+        	<!-- Subtopic 1 -->
+        	<h2>Measure known topic/ category </h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Pennebaker, J. W., Booth, R. J., & Francis, M. E., (2007). Linguistic Inquiry and Word Count: LIWC2007 [software manual]. Available <a href="http://homepage.psy.utexas.edu/homepage/faculty/pennebaker/reprints/liwc2007_operatormanual.pdf" target="_blank">here</a>.</li>
+            <li>Péladeau, N. (2003). WordStat: Content analysis module for SIMSTAT. Montreal, Canada: Provalis Research </li>
+            <li>Akthar, F., & Hahne, C. (2012). Rapidminer 5 Operator Reference. Rapid-I GmbH.</li>
+            <li>Crossley, S. A., Allen, L. K., Kyle, K., & McNamara, D. S. (2014). Analyzing discourse processing using a simple natural language processing tool. Discourse Processes 51(5-6), 511-534.</li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Boyd, R. L., & Pennebaker, J. W. (2015). Did Shakespeare write double falsehood? Identifying individuals by creating psychological signatures with text analysis. Psychological Science, 26(5), 570–582.</li>
+        	<li>Tausczik, Y. R., & Pennebaker, J. W. (2010). The psychological meaning of words: LIWC and computerized text analysis methods. Journal of Language and Social Psychology, 29(1), 24–54.  </li>
+        	<li>Graham, J., Haidt, J., & Nosek, B. A. (2009). Liberals and conservatives rely on different sets of moral foundations. Journal of Personality and Social Psychology, 96(5), 1029-1045.</li>
+        	<li>Hancock, J. T., Landrigan, C., & Silver, C. (2007). Expressing emotion in text-based communication. In Proceedings of the CHI’07 conference on human factors in computing systems (pp. 929-932). New York, NY: Association for Computing Machinery Press</li>
+        	</ol>
+        	
+        	<!-- Subtopic 2 -->
+        	<h2>Identify new topic or category </h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent dirichlet allocation. Journal of Machine Learning Research, 3, 993–1022.</li>
+            <li>Hall, M., Frank, E., Holmes, G., Pfahringer, B., Reutemann, P., & Witten, I. H. (2009). The WEKA data mining software: an update. ACM SIGKDD Explorations Newsletter, 11(1), 10-18. </li>
+            <li>Tan, S., Bu, J., Qin, X., Chen, C., & Cai, D. (2014). Cross domain recommendation based on multi-type media fusion. Neurocomputing, 127, 124-134.</li>
+            <li>Boyd, R L. (2015). RIOT Scan (Version 2.0.11) [software]. Available <a href="http://riot.ryanb.cc/ " target="_blank">here</a>.</li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Chen, Z., Koh, P. W., Ritter, P. L., Lorig, K., Bantum, E. O. C., & Saria, S. (2015). Dissecting an online intervention for cancer survivors: Four exploratory analyses of internet engagement and Its effects on health status and health behaviors. Health Education & Behavior, 42(1), 32-45.</li>
+        	<li>Ramage, D., Dumais, S. T., & Liebling, D. J. (2010). Characterizing microblogs with topic models. In Proceedings of the Fourth International AAAI Conference on Weblogs and Social Media (pp. 130-137). Menlo Park, CA: AAAI Press</li>
+        	<li>Stark, A., Shafran, I., & Kaye, J. (2011). Supervised and unsupervised feature selection for inferring social nature of telephone conversations from their content. In Automatic Speech Recognition and Understanding (pp. 449-454). New York, NY: IEEE.</li>
+        	<li>Schwartz, H. A., Eichstaedt, J., Kern, M. L., Park, G., Sap, M., Stillwell, D., Kosinski, M., & Ungar, L. (2014). Towards assessing changes in degree of depression through Facebook. In Proceedings of the Workshop on Computational Linguistics and Clinical Psychology: From Linguistic Signal to Clinical Reality, (pp. 118-125). Stroudsburg, PA: Association for Computational Linguistics.</li>
+        	<li>Griffiths, T. L., & Steyvers, M. (2004). Finding scientific topics. Proceedings of the National Academy of Sciences of the United States of America, 101(1), 5228–5235.</li>
+        	<li>Mcauliffe, J. D., & Blei, D. M.(2008). Supervised topic models. In J. C. Platt, D. Koller, Y. Singer, & S. T. Roweis (Eds.), Advances in Neural Information Processing Systems (pp. 121–128). Cambridge, MA: MIT Press</li>
+        	<li>Resnik, P., Philip, R., William, A., Leonardo, C., Thang, N., Viet-An, N., & Jordan, B. G. (2015). Beyond LDA: Exploring supervised topic modeling for depression-related language in Twitter. In Proceedings of the 2nd Workshop on Computational Linguistics and Clinical Psychology: From Linguistic Signal to Clinical Reality (pp. 54-60). Denver, CO: Association for Computational Linguistics</li>
+        	<li>Boyd, R. L., & Pennebaker, J. W. (2015). Did Shakespeare write double falsehood? Identifying individuals by creating psychological signatures with text analysis. Psychological Science, 26(5), 570–582.</li>
+        	<li>Ramirez-Esparza, N., Chung, C. K., Kacewicz, E., & Pennebaker, J. W. (2008). The psychology of word use in depression forums in English and in Spanish: Testing two text analytic approaches. In International Conference on Weblogs and Social Media (pp. 102-108). Menlo Park, CA: AAAI Press</li>
+        	<li>Chung, C. K., & Pennebaker, J. W. (2008). Revealing dimensions of thinking in open-ended self-descriptions: An automated meaning extraction method for natural language. Journal of Research in Personality, 42(1), 96-132</li>
+        	</ol>
+        	
+        	<!-- Subtopic 3 -->
+        	<h2>Expand existing topic or category  </h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Mikolov, T., Chen, K., Corrado, G., & Dean, J. (2013). Efficient estimation of word representations in vector space. ICRL Workshop, 1-12.</li>
+            <li>Pennington, J., Socher, R., & Manning, C. D. (2014). Glove: Global vectors for word representation. In Proceedings of the Empirical Methods in Natural Language Processing 2014 (pp. 1532-1543). Stroudsburg, PA: Association of Computational Linguistics</li>
+            <li>Andrzejewski, D., & Zhu, X. (2009). Latent Dirichlet Allocation with topic-in-set knowledge In Proceedings of the NAACL HLT 2009 Workshop on Semi-Supervised Learning for Natural Language Processing (pp. 43–48). Stroudsburg, PA: Association for Computational Linguistics.</li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Deerwester, S., Dumais, S. T., Furnas, G. W., Landauer, T. K., & Harshman, R. (1990). Indexing by latent semantic analysis. Journal of the American Society for Information Science, 41, 391–407.</li>
+        	<li>Dehghani, M., Gratch, J., Sachdeva, S., & Sagae, K. (2014). Analyzing conservative and liberal blogs related to the construction of the ‘Ground Zero Mosque’. Journal of Information Technology & Politics, 11(1), 1-14. </li>
+        	</ol>
+        	
+        	<!-- Subtopic 4 -->
+        	<h2>Comparing known groups</h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Hall, M., Frank, E., Holmes, G., Pfahringer, B., Reutemann, P., & Witten, I. H. (2009). The WEKA data mining software: an update. ACM SIGKDD Explorations Newsletter, 11(1), 10-18.</li>
+            <li>Borgelt, C., & Rodríguez, G. G. (2007, July). FrIDA-a free intelligent data analysis toolbox. In Proceedings IEEE International Conference on Fuzzy Systems (pp. 1892–1896). London; IEEE.  </li>
+            <li>Cortes, C., Corinna, C., & Vladimir, V. (1995). Support-vector networks. Machine Learning, 20 (3), 273–297.</li>
+            <li>Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). Image net classification with deep convolutional neural networks. In F. Pereira, C.J.C. Burges, L. Bottou, K.Q. Weinberger (Eds.) Advances in neural information processing systems (pp. 1097-1105). Red Hook, NY: Curran Associates, Inc</li>
+            <li>Mikolov, T., Chen, K., Corrado, G., & Dean, J. (2013). Efficient estimation of word representations in vector space. ICRL Workshop, 1-12.</li>
+            <li>Nguyen, L. T., Wu, P., Chan, W., Peng, W., & Zhang, Y. (2012). Predicting collective sentiment dynamics from time-series social media. In Proceedings of the first international workshop on issues of sentiment discovery and opinion mining (p. 1-8). New York, NY: ACM.</li>
+            <li>Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5–32.</li>
+            <li>Liaw, A., & Weiner, M. (2002). Classification and regression by random forest. R News, 2(3), 18-22.</li>
+            <li>Filatova, E. (2012). Irony and sarcasm: Corpus generation and analysis using crowdsourcing. In Proceedings of Language Resources and Evaluation Conference (pp. 392–398). Istanbul, Turkey: European Language Resources Association. </li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Lewis, D. D. (1998). Naive (Bayes) at forty: The independence assumption in information retrieval. In C. Nédellec, & C. Rouveirol (Eds.) Machine learning: ECML-98 (pp. 4-15). Berlin Heidelberg: Springer.</li>
+        	<li>Dehghani, M., Gratch, J., Sachdeva, S., & Sagae, K. (2014). Analyzing conservative and liberal blogs related to the construction of the ‘Ground Zero Mosque’. Journal of Information Technology & Politics, 11(1), 1-14. </li>
+        	<li>Sumner et al. 2012</li>
+        	<li>Nguyen, M. T., & Lim, E. P. (2014). On predicting religion labels in microblogging networks. In Proceedings of the 37th international ACM SIGIR conference on Research & development in information retrieval (pp. 1211-1214). New York, NY: ACM.</li>
+        	<li>Sumner et al. 2012</li>
+        	<li>Stark, A., Shafran, I., & Kaye, J. (2011). Supervised and unsupervised feature selection for inferring social nature of telephone conversations from their content. In Automatic Speech Recognition and Understanding (pp. 449-454). New York, NY: IEEE.</li>
+        	<li>Diermeier, D., Daniel, D., Jean-François, G., Bei, Y., & Stefan, K. (2011). Language and ideology in congress. British Journal of Political Science, 42(1), 31–55.</li>
+        	<li>Dehghani, M., Gratch, J., Sachdeva, S., & Sagae, K. (2014). Analyzing conservative and liberal blogs related to the construction of the ‘Ground Zero Mosque’. Journal of Information Technology & Politics, 11(1), 1-14. </li>
+        	</ol>
+        	
+        	<!-- Subtopic 5 -->
+        	<h2>Identify language that reflects latent attitudes/ opinions </h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Deerwester, S., Dumais, S. T., Furnas, G. W., Landauer, T. K., & Harshman, R. (1990). Indexing by latent semantic analysis. Journal of the American Society for Information Science, 41, 391–407.</li>
+            <li>Kim, S. M., & Hovy, E. (2006). Extracting opinions, opinion holders, and topics expressed in online news media text. In Proceedings of the Workshop on Sentiment and Subjectivity in Text (pp. 1-8). Stroudsburg, PA: Association for Computational Linguistics.</li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Rude, S., Gortner, E.-M., & Pennebaker, J. (2004). Language use of depressed and depression-vulnerable college students. Cognition and Emotion, 18(8), 1121–1133.</li>
+        	<li>Mitchell, L., Frank, M., Harris, K., Dodds, P., & Danforth, C. (2013). The geography of happiness: Connecting Twitter sentiment and expression, demographics, and objective characteristics of place. PLOS One, 8(5), e64417. doi:10.1371/journal.pone.0064417</li>
+        	</ol>
+        	
+        	
+        	<!-- Subtopic 6 -->
+        	<h2>Identify new groups </h2>
+        
+            <h3><u>Methods Specific Papers</u></h3>
+            <ol>
+            <li>Johnson, S. C. (1967). Hierarchical clustering schemes. Psychometrika, 32(3), 241–254.</li>
+            <li>MacQueen, J. (1967). Some methods for classification and analysis of multivariate observations. In L. Lecam & J. Neyman (Eds.), Proceedings of the fifth Berkeley symposium on mathematical statistics and probability Volume 1 (pp. 281-297). Los Angeles, CA: University of California Press</li>
+            <li>Lin, D., & Wu, X. (2009). Phrase clustering for discriminative learning. In Proceedings of the Joint Conference of the 47th Annual Meeting of the ACL and the 4th International Joint Conference on Natural Language Processing of the AFNLP: Volume 2, (pp. 1030-1038). Stroudsburg, PA: Association for Computational Linguistics</li>
+            </ol>
+            
+            <h3><u>Applications</u></h3>
+        	<ol>
+        	<li>Ritter, R. S., & Preston, J. L. (2013). Representations of religious words: Insights for religious priming research. Journal for the Scientific Study of Religion, 52(3), 494-507.</li>
+        	</ol>
+      
+        </div>
+        
+        <div class="tab-pane" id="tab4">
+        
+		    <!-- Subtopic 1 -->
+            <h2>Multi-method comparisons </h2>
+            
+            <h3><u>Applications</u></h3>
+            <ol>
+            <li>Sumner et al., 2012</li>
+            <li>Eichstaedt, J. C., Schwartz, H. A., Kern, M. L., Park, G., Labarthe, D. R., Merchant, R. M., & Seligman, M. E. P. (2015). Psychological language on Twitter predicts county-level heart disease mortality. Psychological Science, 26(2), 159–169.</li>
+            <li>Stark, A., Shafran, I., & Kaye, J. (2011). Supervised and unsupervised feature selection for inferring social nature of telephone conversations from their content. In Automatic Speech Recognition and Understanding (pp. 449-454). New York, NY: IEEE.</li>
+            </ol>
+			
+        	<!-- Subtopic 2 -->
+        	<h2>Comparisons to other variables </h2>
+        	
+        	<h3><u>Applications</u></h3>
+        	<ol>
+        	<li>D'Mello, S., & Graesser, A. (2012). Language and0020discourse are powerful signals of student emotions during tutoring. IEEE Transactions on Learning Technologies, 5(4), 304-317.</li>
+        	<li>Eichstaedt, J. C., Schwartz, H. A., Kern, M. L., Park, G., Labarthe, D. R., Merchant, R. M., & Seligman, M. E. P. (2015). Psychological language on Twitter predicts county-level heart disease mortality. Psychological Science, 26(2), 159–169.</li>
+        	<li>Tausczik, Y. R., & Pennebaker, J. W. (2010). The psychological meaning of words: LIWC and computerized text analysis methods. Journal of Language and Social Psychology, 29(1), 24–54.</li>
+        	<li>Chae, D. H., Clouston, S., Hatzenbuehler, M. L., Kramer, M. R., Cooper, H. L., Wilson, S. M., ... & Link, B. G. (2015). Association between an internet-based measure of area racism and Black mortality. PLoS ONE 10(4): e0122963.</li>
+        	</ol>
+        	
+        	<!-- Subtopic 3 -->
+        	<h2>Follow-up Experiments </h2>
+
+        	<ol>
+        	<li>Dehghani et al., 2015</li>
+        	</ol>
+        	
+        </div>
+        
+        <div class="tab-pane" id="tab5">
+			<ul>
+				<li><b><a href="/resources/stopwords_eng.txt" download="stopwords.txt">Stop Words</a></b> - List of English Stop Words.</li>
+				<li><b><a href="/resources/tacit.exe.manifest" download="tacit.exe.manifest">tacit.exe.manifest</a></b> - Exe for High Definition Windows Screen Resolution</li>
 			</ul>
 		</div>
-		<!-- Fin menu_wrapper -->
-	</div>
-	<!-- Fin header_wrapper -->
+		
+    </div>
+</div>
+</div>
 
-	<div id="body_wrapper">
-		<h1 class="page_title">Resources</h1>
-		<div class="simple">
-			<div id="midcolumn">
-				<ul>
-					<li><b><a href="/resources/stopwords_eng.txt" download="stopwords.txt">Stop Words</a></b> - List of English Stop Words.</li>
-				</ul>
-				<ul>
-					<li><b><a href="/resources/tacit.exe.manifest" download="tacit.exe.manifest">tacit.exe.manifest</a></b> - Exe for High Definition Windows Screen Resolution</li>
-				</ul>
-			</div>
-		</div>
-	</div>
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $('#tabsHeader').tab();
+    });
+</script>    
+</div> <!-- container -->
 
-	</div>
 </body>
 </html>
-

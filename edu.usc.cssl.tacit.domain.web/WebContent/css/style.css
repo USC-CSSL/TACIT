@@ -1275,6 +1275,11 @@ ul.nav-tabs{
   border-bottom-color: transparent;
 }
 
+.navbar-custom {
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
 .icon_features {
 display: -webkit-inline-box;
 display: -moz-inline-box;
