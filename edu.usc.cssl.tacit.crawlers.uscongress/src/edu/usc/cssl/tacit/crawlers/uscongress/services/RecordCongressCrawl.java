@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.jsoup.HttpStatusException;
@@ -34,14 +35,15 @@ public class RecordCongressCrawl {
 // }
 // 
  public void crawl(String outputDir, int limit, String member, String search, String chamber, String congress, boolean random, IProgressMonitor monitor, boolean[] fields) throws IOException{
-			File streamFile = new File(outputDir+File.separator+"crawl.json"); 
+			first =true;
+	 		File streamFile = new File(outputDir+File.separator+"crawl.json"); 
 			jsonfactory = new JsonFactory();
 			jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
 			jsonGenerator.useDefaultPrettyPrinter();
 			jsonGenerator.writeStartArray();
 			String houseRemark = "";
 			String chamberTxt = "";
-			if(!member.equals("")){
+			if(!member.equals("") && !member.equals("All")){
 				member = member.replaceAll(" ", "+");
 				if(chamber.equals("House"))
 					houseRemark = ",\"crHouseMemberRemarks\":\""+member+"\"";
@@ -61,6 +63,7 @@ public class RecordCongressCrawl {
 			BufferedWriter bw;
 			Document d = null;
 			boolean connected = false;
+			HashSet<String> set = new HashSet<String>();
 			tag: while (true) {
 				connected = false;
 				if(random)
@@ -82,20 +85,25 @@ public class RecordCongressCrawl {
 				Elements number = d.getElementsByClass("results-number");
 				String num = Jsoup.parse(number.toString()).text();
 				System.out.println(num);
-				int results = Integer.parseInt(num.substring(num.indexOf("of")+3).replaceAll(",", ""));
+				System.out.println("This is "+ num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
+				int results = Integer.parseInt(num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
 				System.out.println(num+"------"+results);
-				totalPages = results/25;
+				if(limit == -1)
+					limit = results;
 				first = false;
 				}
-				Elements title = d.getElementsByClass("results_list");
-				Elements links = title.select("h2").select("a");
-				for (Element link : links) {
-				 	
+				Elements title = d.getElementsByClass("result-heading");
+				for (Element links : title) {
+					Elements link = links.select("a");
 					String data = link.toString();
+					System.out.println(data);
 					int start = data.indexOf("=\"");
 					int end = data.indexOf("resultIndex=");
 					Elements docJournalAbstract = null;
 					String contentLink = data.substring(start + 2, end-1);
+					if(set.contains(contentLink))
+						continue;
+					set.add(contentLink);
 					System.out.println(contentLink);
 					String dateText;
 					Document doc;
@@ -135,7 +143,7 @@ public class RecordCongressCrawl {
 					page = (int) (Math.random()*totalPages+1);
 				else
 					page++;
-				if (page>totalPages || (limit!=-1 && docCount >= limit))
+				if (docCount >= limit)
 					break;
 			}
 			ConsoleView.printlInConsoleln(docCount+ "file(s) Downloaded ");
