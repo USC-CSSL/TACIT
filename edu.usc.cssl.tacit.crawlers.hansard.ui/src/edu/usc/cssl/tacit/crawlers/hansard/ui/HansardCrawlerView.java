@@ -1,6 +1,8 @@
 package edu.usc.cssl.tacit.crawlers.hansard.ui;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,19 +20,26 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -54,20 +63,42 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 	private ScrolledForm form;
 	private FormToolkit toolkit;
 
-	private Button bothButton;
-	private Button commonsButton;
-	private Button lordsButton;
 	private Button searchButton;
 	private Button MPButton;
 	
+	private Button bothButton;
+	private Button commonsButton;
+	private Button lordsButton;
+	
+//	private Button allMembersButton;
+//	private Button currentMembersButton;
+//	private Button formerMembersButton;
+	
+	
+
+	private int limitRecords = 0;
+	private Button addSenatorBtn;
+	private Button removeSenatorButton;
+	
 	private Composite searchComposite;
 
-	private Text searchText;
+	private Text keywordSearchText;
+	private Text houseMemberSearchText;
 	private Text corpusNameTxt;
 	private DateTime toDate;
 	private DateTime fromDate;
 	private Corpus hansardCorpus;
 	boolean filesFound = false;
+	private Text limitResultsText;
+	private Text limitTotalResults;
+	private Button limitByDate;
+	private Table senatorTable;
+	private ListDialog listDialog;
+	private ArrayList<String> selectedMPs;
+	private ArrayList<String> selectedMPLinks;
+	private HashMap<String, String> map;
+	private boolean limitByDateFlag = false;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "Hansard Debates Crawler");
@@ -103,7 +134,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		// main section
 		Section inputParamsSection = toolkit.createSection(parent, Section.TITLE_BAR | Section.EXPANDED | Section.DESCRIPTION);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 1).applyTo(inputParamsSection);
-		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(inputParamsSection);
+		GridLayoutFactory.fillDefaults().numColumns(4).applyTo(inputParamsSection);
 		inputParamsSection.setText("Input Details");
 		
 		ScrolledComposite sc = new ScrolledComposite(inputParamsSection, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -117,18 +148,16 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(mainComposite);
 		inputParamsSection.setClient(mainComposite);
 		
-
 		
 		//Gerneal search parameters
 		searchComposite = toolkit.createComposite(mainComposite);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchComposite);
-		GridLayoutFactory.fillDefaults().equalWidth(true).applyTo(searchComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).applyTo(searchComposite);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).applyTo(searchComposite);
 
-		final Label radioLabel1 = new Label(searchComposite, SWT.NONE);
-		radioLabel1.setText("Search House:");
-		Group operatorButtonComposite = new Group(searchComposite, SWT.LEFT);
-		GridDataFactory.fillDefaults().span(3, 0).indent(0,10).applyTo(operatorButtonComposite);
-		//operatorButtonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Group operatorButtonComposite = new Group(mainComposite, SWT.LEFT);
+		operatorButtonComposite.setText("Select House:");
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(0,10).applyTo(operatorButtonComposite);
 		GridLayout operatorLayout = new GridLayout();
 		operatorLayout.numColumns = 3;
 		operatorButtonComposite.setLayout(operatorLayout);
@@ -146,51 +175,364 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		lordsButton.setText("Lords");
 		lordsButton.setSelection(false);
 		
-		TacitFormComposite.createEmptyRow(toolkit, searchComposite);
 		
 		Group searchGroup = new Group(searchComposite, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchGroup);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(searchGroup);
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(searchGroup);
-		searchGroup.setText("Hello");
-		
+		searchGroup.setText("Search type:");
+
 		searchButton = new Button(searchGroup, SWT.RADIO);
-		searchButton.setText("Both");
+		searchButton.setText("Keyword search");
 		searchButton.setSelection(true);
 		
 		MPButton = new Button(searchGroup, SWT.RADIO);
-		MPButton.setText("Commons");
+		MPButton.setText("House member search");
 		MPButton.setSelection(false);
-		
-		
-		final Label searchLabel = new Label(searchComposite, SWT.NONE);
-		searchLabel.setText("Search Term:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchLabel);
-		searchText = new Text(searchComposite, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchText);	
-		searchText.setMessage("Enter a search term");
-		
-		
-		
-		Group dateComposite1 = new Group(searchComposite, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(dateComposite1);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).indent(0,20).applyTo(dateComposite1);
-		
-		final Label fromLabel = new Label(dateComposite1, SWT.NONE);
-		fromLabel.setText("From:");
-		GridDataFactory.fillDefaults().grab(false, false).indent(10,15).span(1, 0).applyTo(fromLabel);
 
-		fromDate = new DateTime(dateComposite1, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-		
-		GridDataFactory.fillDefaults().grab(false, false).indent(15,15).span(1, 0).applyTo(fromDate);
+		Group searchFilterComposite = new Group(mainComposite, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true).applyTo(searchFilterComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(0,20).applyTo(searchFilterComposite);
+		searchFilterComposite.setText("Keyword search:");
 	
-		final Label toLabel = new Label(dateComposite1, SWT.NONE);
-		toLabel.setText("To:");
-		GridDataFactory.fillDefaults().grab(false, false).indent(10,15).span(1, 0).applyTo(toLabel);
+		final Label searchLabel = new Label(searchFilterComposite, SWT.NONE);
+		searchLabel.setText("Keyword:");
+		GridDataFactory.fillDefaults().grab(false, false).indent(4,10).span(1, 0).applyTo(searchLabel);
 		
-		toDate = new DateTime(dateComposite1, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(false, false).indent(15,15).span(1, 0).applyTo(toDate);
+		keywordSearchText = new Text(searchFilterComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(keywordSearchText);	
+		keywordSearchText.setMessage("Enter a search term");
+		
+		limitByDate  = new Button(searchFilterComposite, SWT.CHECK);
+		limitByDate.setText("Limit by date");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitByDate);
+		
+		Composite fromComposite = new Composite(searchFilterComposite, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).indent(0,10).span(1, 0).applyTo(fromComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true).applyTo(fromComposite);
+		
+		final Label fromLabel = new Label(fromComposite, SWT.NONE);
+		fromLabel.setText("From:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromLabel);
 
-}
+		fromDate = new DateTime(fromComposite, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(fromDate);
+		
+		Composite toComposite = new Composite(searchFilterComposite, SWT.NONE);
+		GridDataFactory.fillDefaults().grab(false, false).indent(0,10).span(1, 0).applyTo(toComposite);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(true).applyTo(toComposite);
+		
+		final Label toLabel = new Label(toComposite, SWT.NONE);
+		toLabel.setText("To:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toLabel);
+		
+		toDate = new DateTime(toComposite, SWT.DATE | SWT.DROP_DOWN | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(toDate);
+		
+		
+		final Label limitTotalResultsLabel = new Label(searchFilterComposite, SWT.NONE);
+		limitTotalResultsLabel.setText("Limit total results:");
+		GridDataFactory.fillDefaults().grab(false, false).indent(4,10).span(1, 0).applyTo(limitTotalResultsLabel);
+		
+		limitTotalResults = new Text(searchFilterComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(limitTotalResults);	
+		limitTotalResults.setText("1000");
+		
+		selectedMPs = new ArrayList<String>();
+		selectedMPLinks = new ArrayList<String>();
+		
+		searchButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if (searchButton.getSelection()) {
+					
+//					allMembersButton.setEnabled(false);
+//					currentMembersButton.setEnabled(false);
+//					formerMembersButton.setEnabled(false);
+					
+					toDate.setEnabled(true);
+					fromDate.setEnabled(true);
+					keywordSearchText.setEnabled(true);
+					limitByDate.setEnabled(true);
+					
+					houseMemberSearchText.setEnabled(false);
+					limitResultsText.setEnabled(false);
+					addSenatorBtn.setEnabled(false);
+					removeSenatorButton.setEnabled(false);
+				}
+			}
+		});
+		
+		MPButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if (MPButton.getSelection()) {
+					
+//					allMembersButton.setEnabled(true);
+//					currentMembersButton.setEnabled(true);
+//					formerMembersButton.setEnabled(true);
+					
+					toDate.setEnabled(false);
+					fromDate.setEnabled(false);
+					keywordSearchText.setEnabled(false);
+					limitByDate.setEnabled(false);
+					
+					houseMemberSearchText.setEnabled(true);
+					limitResultsText.setEnabled(true);
+					addSenatorBtn.setEnabled(true);
+					removeSenatorButton.setEnabled(true);
+				}
+			}
+		});
+
+		
+		
+		
+		Group houseMemberFilterComposite = new Group(mainComposite, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(houseMemberFilterComposite);
+		GridDataFactory.fillDefaults().grab(true, false).span(4, 0).indent(0,20).applyTo(houseMemberFilterComposite);
+		houseMemberFilterComposite.setText("House member search:");
+	
+		
+		/*
+		 * 
+		Group representativesGroup = new Group(houseMemberFilterComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(3, 0).indent(0,10).applyTo(representativesGroup);
+		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).applyTo(representativesGroup);
+		representativesGroup.setText("Select members:");
+
+		allMembersButton = new Button(representativesGroup, SWT.RADIO);
+		allMembersButton.setText("Both");
+		allMembersButton.setSelection(true);
+		
+		currentMembersButton = new Button(representativesGroup, SWT.RADIO);
+		currentMembersButton.setText("Current members");
+		currentMembersButton.setSelection(false);
+		
+		formerMembersButton = new Button(representativesGroup, SWT.RADIO);
+		formerMembersButton.setText("Former members");
+		formerMembersButton.setSelection(false);
+		
+	
+		allMembersButton.setEnabled(false);
+		currentMembersButton.setEnabled(false);
+		formerMembersButton.setEnabled(false);
+		
+		*/
+		final Label memberLabel = new Label(houseMemberFilterComposite, SWT.NONE);
+		memberLabel.setText("House Member search:");
+		GridDataFactory.fillDefaults().grab(false, false).indent(1,10).span(1, 0).applyTo(memberLabel);
+		
+		houseMemberSearchText = new Text(houseMemberFilterComposite, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).indent(1,10).span(2, 0).applyTo(houseMemberSearchText);	
+		houseMemberSearchText.setMessage("Enter a search term");
+		houseMemberSearchText.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+				
+			}
+		});
+		final Label limitResultsLabel = new Label(houseMemberFilterComposite, SWT.NONE);
+		limitResultsLabel.setText("Limit results per member:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(limitResultsLabel);
+		
+		
+		limitResultsText = new Text(houseMemberFilterComposite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(limitResultsText);
+		limitResultsText.setText("5");
+		
+		Label dummy1 = new Label(houseMemberFilterComposite, SWT.NONE);
+		dummy1.setText("Congress Member:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(dummy1);
+
+		senatorTable = new Table(houseMemberFilterComposite, SWT.BORDER | SWT.MULTI);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).hint(90, 50).applyTo(senatorTable);
+
+		Composite buttonComp = new Composite(houseMemberFilterComposite, SWT.NONE);
+		GridLayout btnLayout = new GridLayout();
+		btnLayout.marginWidth = btnLayout.marginHeight = 0;
+		btnLayout.makeColumnsEqualWidth = false;
+		buttonComp.setLayout(btnLayout);
+		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
+
+		addSenatorBtn = new Button(buttonComp, SWT.PUSH); // $NON-NLS-1$
+		addSenatorBtn.setText("Add...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(addSenatorBtn);
+
+		addSenatorBtn.setEnabled(true);
+		addSenatorBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				sHandleAdd(addSenatorBtn.getShell());
+			}
+		});
+		removeSenatorButton = new Button(buttonComp, SWT.PUSH);
+		removeSenatorButton.setText("Remove...");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(removeSenatorButton);
+		removeSenatorButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				for (TableItem item : senatorTable.getSelection()) {
+					int index = selectedMPs.indexOf(item.getText());
+					selectedMPs.remove(item.getText());
+					selectedMPLinks.remove(index);
+					item.dispose();
+				}
+				if (selectedMPs.size() == 0) {
+					removeSenatorButton.setEnabled(false);
+				}
+			}
+		});
+		houseMemberSearchText.setEnabled(false);
+		limitResultsText.setEnabled(false);
+		addSenatorBtn.setEnabled(false);
+		removeSenatorButton.setEnabled(false);
+
+bothButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+			}
+		});
+		
+		commonsButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+			}
+		});
+		
+		lordsButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+			}
+		});
+/*		
+		allMembersButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+			}
+		});
+		
+		currentMembersButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+			}
+		});
+		
+		formerMembersButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				selectedMPLinks.clear();
+				selectedMPs.clear();
+				senatorTable.removeAll();
+			}
+		});
+*/
+	}
+	
+	private void updateSenatorTable(Object[] result) {
+		
+		for (Object object : result) {
+			selectedMPs.add((String) object);
+			selectedMPLinks.add(map.get((String)object));
+		}
+		//Collections.sort(selectedSenators);
+		senatorTable.removeAll();
+		for (String itemName : selectedMPs) {
+			TableItem item = new TableItem(senatorTable, 0);
+			item.setText(itemName);
+			if(!removeSenatorButton.isEnabled()) {
+				removeSenatorButton.setEnabled(true);
+			}
+		}
+
+	}
+	
+	
+	private void sHandleAdd(Shell shell) {
+
+		processElementSelectionDialog(shell);
+		String search = houseMemberSearchText.getText();
+		String house, members = "1";
+		if(bothButton.getSelection())
+			house = "Both";
+		else if(commonsButton.getSelection())
+			house = "Commons";
+		else
+			house = "Lords";
+/*		if(allMembersButton.getSelection())
+			members = "0";
+		else if(currentMembersButton.getSelection())
+			members = "1";
+		else
+			members = "2";
+*/
+		try {
+			map = HansardDebatesCrawler.crawlMPs(search, house, members);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(selectedMPs!=null)
+			for(String element: selectedMPs) {
+				if(map.containsKey(element)) {
+					map.remove(element);
+				}
+			}
+		listDialog.setElements(map.keySet().toArray());
+		listDialog.setMultipleSelection(true);
+		if (listDialog.open() == Window.OK) {
+			updateSenatorTable(listDialog.getResult());
+		}
+
+	}
+	
+	public void processElementSelectionDialog(Shell shell) {
+		ILabelProvider lp = new ArrayLabelProvider();
+		listDialog = new ListDialog(shell, lp);
+		listDialog.setTitle("Select the Authors from the list");
+		listDialog.setMessage("Enter Author name to search");
+	}
+	static class ArrayLabelProvider extends LabelProvider {
+		@Override
+		public String getText(Object element) {
+			return (String) element;
+		}
+	}
+
 	/**
 	 * 
 	 * @param parent
@@ -267,6 +609,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 			String startDate;
 			String endDate;
 			String house;
+			boolean searchFlag;
 			boolean canProceed; 
 			@Override
 			public void run() {
@@ -278,11 +621,22 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
-								
+								searchFlag = searchButton.getSelection();
+								if(searchFlag) {
+									startDate = (fromDate.getDay()<10?"0"+fromDate.getDay():fromDate.getDay())+"/"+(fromDate.getMonth()<9?"0"+(int)(fromDate.getMonth()+1):(int)(fromDate.getMonth()+1))+"/"+fromDate.getYear();
+									endDate = (toDate.getDay()<10?"0"+toDate.getDay():toDate.getDay())+"/"+(toDate.getMonth()<9?"0"+(int)(toDate.getMonth()+1):(int)(toDate.getMonth()+1))+"/"+toDate.getYear();
+									try {
+									limitRecords = Integer.parseInt(limitTotalResults.getText());
+									}
+									catch (Exception e) {
+										limitRecords = -1;
+									}
+									limitByDateFlag = limitByDate.getSelection();	
+									searchString = keywordSearchText.getText();
+								}
+								else
+									limitRecords = Integer.parseInt(limitResultsText.getText());
 								corpusName = corpusNameTxt.getText();
-								searchString = searchText.getText();
-								startDate = (fromDate.getDay()<10?"0"+fromDate.getDay():fromDate.getDay())+"/"+(fromDate.getMonth()<10?"0"+fromDate.getMonth():fromDate.getMonth())+"/"+fromDate.getYear();
-								endDate = (toDate.getDay()<10?"0"+toDate.getDay():toDate.getDay())+"/"+(toDate.getMonth()<10?"0"+toDate.getMonth():toDate.getMonth())+"/"+toDate.getYear();
 								if (bothButton.getSelection()) 
 									house = "Both";
 								else if(lordsButton.getSelection())
@@ -295,6 +649,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 								if(!new File(outputDir).exists()) {
 									new File(outputDir).mkdirs();									
 								}
+								
 						}
 						});
 						int progressSize = 20000;//+30
@@ -304,10 +659,17 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 						
 						try{
 							monitor.worked(1000);
-							filesFound = rc.crawl(outputDir, searchString.trim(), house, startDate, endDate, monitor);
+							if(searchFlag)
+								filesFound = rc.crawlByKeywordSearch(outputDir, searchString.trim(), house, limitByDateFlag, startDate, endDate, limitRecords, monitor);
+							else{
+								System.out.println(selectedMPLinks);
+								
+								filesFound = rc.crawlByHouseMemberSearch(outputDir, selectedMPLinks/*new ArrayList<String>(map.values())*/, limitRecords, monitor);
+							}
 						}
 						catch(IndexOutOfBoundsException e){
-
+							System.out.println(e.getMessage());
+							e.printStackTrace();
 							Display.getDefault().syncExec(new Runnable() {
 								@Override
 								public void run() {
@@ -323,6 +685,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 							
 							e.printStackTrace();
 						}
+						System.out.println("FILES FOUND ---- "+filesFound);
 						monitor.subTask("Initializing...");
 						monitor.worked(100);
 						if(monitor.isCanceled())
