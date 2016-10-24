@@ -474,11 +474,22 @@ public class Preprocessor {
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.journal_body", true);
 			}
 			if (corpusType == CMDataType.HANSARD_JSON) {
-
-				writer.write(obj.toJSONString());
-				//writer.write("{\"data\":" + obj.toJSONString() + "}");
-				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
+//[Body, Date, MetaData, Title]
+				IQueryProcessor iqp = new QueryProcesser(corpusClass);
+				Map<String, QueryDataType> keys = iqp.getJsonKeys();
+				Set<String> k = keys.keySet();
+				System.out.println(k);
+				if(k.contains("Body.Speaker"))
+				{	
+					writer.write(obj.toJSONString());
+					writer.close();
+					ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
+				}
+				else{
+					writer.write("{\"data\":" + obj.toJSONString() + "}");
+					writer.close();
+					ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
+				}
 			}
 			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);

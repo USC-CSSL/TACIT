@@ -272,7 +272,7 @@ public class HansardDebatesCrawler {
 			
 			for(Element xx: e.child(2).children()) {
 				System.out.println("Entered --");
-				System.out.println(xx);
+				//System.out.println(xx);
 				strTitle = xx.child(0).child(0).child(0).text();
 				strDate = xx.child(0).child(0).child(1).child(0).text();
 				String line = xx.child(0).attr("href");
@@ -283,16 +283,18 @@ public class HansardDebatesCrawler {
 					Element t = et.getElementById(line.substring(line.indexOf('#')+1));
 					strName = t.child(0).text();
 					String body = t.child(3).child(0).text();
+					
 					strMetaData = et.child(1).child(1).child(0).child(0).child(0).child(1).child(3).text();
 					if(strMetaData.length()>20)
 						strMetaData = "NA";
-					System.out.println("System.out.println(strMetaData);");
-					System.out.println(strMetaData);
-
+					
 					ConsoleView.printlInConsoleln("Writing Member Dialogue: "+strTitle);
 					
+					System.out.println(jsonGenerator + "-------------------");
 					jsonGenerator.writeStartObject();
+					System.out.println(strTitle);
 					jsonGenerator.writeStringField("Title", strTitle); 
+					System.out.println(strDate);
 					jsonGenerator.writeStringField("Date", strDate); 
 					jsonGenerator.writeStringField("MetaData", strMetaData);
 					jsonGenerator.writeStringField("Body", strName+": "+body);
@@ -333,6 +335,8 @@ public class HansardDebatesCrawler {
 						strMetaData = et.child(1).child(1).child(0).child(0).child(0).child(1).child(3).text();
 						if(strMetaData.length()>20)
 							strMetaData = "NA";
+
+						System.out.println(jsonGenerator + "------||||||||||||||||||-------------");
 						jsonGenerator.writeStartObject();
 						jsonGenerator.writeStringField("Title", strTitle); 
 						jsonGenerator.writeStringField("Date", strDate); 
@@ -346,13 +350,14 @@ public class HansardDebatesCrawler {
 				monitor.subTask("Page "+i+" of " + numberOfPages+" pages crawled");
 				monitor.worked(progressMonitorIncrement);
 			}
-			try {
-				jsonGenerator.writeEndArray();
-				jsonGenerator.flush();
-				jsonGenerator.close();
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			}
+			
+		}
+		try {
+			jsonGenerator.writeEndArray();
+			jsonGenerator.flush();
+			jsonGenerator.close();
+		} catch (IOException exception) {
+			exception.printStackTrace();
 		}
 		return true;
 	}
