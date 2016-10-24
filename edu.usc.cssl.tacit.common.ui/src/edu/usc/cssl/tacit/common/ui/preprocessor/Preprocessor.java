@@ -456,19 +456,29 @@ public class Preprocessor {
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
 			}
 			if (corpusType == CMDataType.PRESIDENCY_JSON) {
-				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.write(obj.toJSONString());
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
+//				IQueryProcessor iqp = new QueryProcesser(corpusClass);
+//				Map<String, QueryDataType> keys = iqp.getJsonKeys();
+//				Set<String> k = keys.keySet();
+//				String keyFields = "";
+//				System.out.println("--------------------------"+k);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
+				//System.out.println(ans+"------------Checking Presidency------------------");
 			}
+			//data.Body.Speaker gives null, 
+			//Body.Speaker does not give anything
 			if (corpusType == CMDataType.FRONTIER_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.journal_body", true);
 			}
 			if (corpusType == CMDataType.HANSARD_JSON) {
-				writer.write("{\"data\":" + obj.toJSONString() + "}");
+
+				writer.write(obj.toJSONString());
+				//writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
 			}
 			if (corpusType == CMDataType.STACKEXCHANGE_JSON) {
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);
@@ -497,6 +507,7 @@ public class Preprocessor {
 							keyFields.substring(0, keyFields.length() - 1), false);
 				}
 
+				//System.out.println(ans+"------------Checking------------------");
 			}
 			if (corpusType  == CMDataType.TYPEPAD_JSON){
 				writer.write("{\"data\":" + obj.toJSONString() + "}");

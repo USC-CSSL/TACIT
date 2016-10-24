@@ -59,12 +59,12 @@ public class AmericanPresidencyCrawler {
 			String body = element.ownText();
 			
 			
-			for (Element el : element.getElementsByTag("p"))
-				body += el.text() + " \n ";
-			jsonGenerator.writeStringField("Body", body);
+	//		for (Element el : element.getElementsByTag("p"))
+	//			body += el.text() + " \n ";
+	//		jsonGenerator.writeStringField("Body", body);
 			
-			
-			/*int index = body.indexOf(":");
+	// /*		
+			int index = body.indexOf(":");
 			if(index == -1)
 				index = body.indexOf(";"); //Because ; has been used on the website at certain places by mistake
 
@@ -100,19 +100,24 @@ public class AmericanPresidencyCrawler {
 					jsonGenerator.writeEndObject();
 				}
 				jsonGenerator.writeEndArray();
+
+				jsonGenerator.writeEndObject();
 			
 			} else {
 				jsonGenerator.writeArrayFieldStart("Body");
 				for (Element el : element.getElementsByTag("p"))
 					body += el.text() + " \n ";
 				jsonGenerator.writeStartObject();
-				jsonGenerator.writeStringField("Speaker","NA");
+				jsonGenerator.writeStringField("Speaker","Various/NA");
 				jsonGenerator.writeStringField("Text", body);
 				jsonGenerator.writeEndObject();
 				jsonGenerator.writeEndArray();
+
+				jsonGenerator.writeEndObject();
 			}
-			*/
-			jsonGenerator.writeEndObject();
+	// */		
+			
+	//		jsonGenerator.writeEndObject();
 			
 		}
 		catch(Exception e) {
