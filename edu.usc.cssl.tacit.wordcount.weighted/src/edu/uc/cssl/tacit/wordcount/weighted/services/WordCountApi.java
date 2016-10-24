@@ -565,6 +565,8 @@ public class WordCountApi {
 
 			if (currentLine.equals("%"))
 				while ((currentLine = br.readLine().trim().toLowerCase()) != null && !currentLine.equals("%")) {
+					if(currentLine.split("\\s+")[0].trim().equals(""))
+						continue;
 					int categoryId = Integer.parseInt(currentLine.split("\\s+")[0].trim());
 					String categoryName = currentLine.split("\\s+")[1].trim();
 					if (categories.containsKey(categoryId) && !((categories.get(categoryId)).equals(categoryName))) {
