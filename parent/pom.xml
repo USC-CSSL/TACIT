@@ -48,6 +48,9 @@
 		
 		<module>../edu.usc.cssl.tacit.crawlers.plosone.ui</module>
 		<module>../edu.usc.cssl.tacit.crawlers.plosone</module>
+		
+		<module>../edu.usc.cssl.tacit.crawlers.govtrack.ui</module>
+		<module>../edu.usc.cssl.tacit.crawlers.govtrack</module>
 
 		<!-- Cluster -->
 

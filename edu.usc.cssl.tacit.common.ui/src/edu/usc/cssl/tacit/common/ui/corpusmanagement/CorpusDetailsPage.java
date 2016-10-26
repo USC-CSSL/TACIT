@@ -324,9 +324,12 @@ public class CorpusDetailsPage implements IDetailsPage {
 			break;
 		case PRESIDENCY_JSON:
 			generalJSON.setSelection(true);
+			break;
 		case HANSARD_JSON:
 			generalJSON.setSelection(true);
 			break;
+		case GOVTRACK_JSON:
+			generalJSON.setSelection(true);
 		}
 	}
 

@@ -414,6 +414,10 @@ public class Preprocessor {
 			processJSONArray(corpus, seperateFiles);
 			break;
 			
+		case GOVTRACK_JSON:
+			processJSONArray(corpus, seperateFiles);
+			break;
+			
 		case PLOSONE_JSON:
 			processJSONArray(corpus, seperateFiles);
 			break;
@@ -458,23 +462,20 @@ public class Preprocessor {
 			if (corpusType == CMDataType.PRESIDENCY_JSON) {
 				writer.write(obj.toJSONString());
 				writer.close();
-//				IQueryProcessor iqp = new QueryProcesser(corpusClass);
-//				Map<String, QueryDataType> keys = iqp.getJsonKeys();
-//				Set<String> k = keys.keySet();
-//				String keyFields = "";
-//				System.out.println("--------------------------"+k);
+
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
-				//System.out.println(ans+"------------Checking Presidency------------------");
 			}
-			//data.Body.Speaker gives null, 
-			//Body.Speaker does not give anything
+			if (corpusType == CMDataType.GOVTRACK_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(),"data.Bill_Name,data.Introduced_Date,data.Congress,data.Bill_Type,data.Bill_Resolution_Type,data.Sponsor_Name,data.Sponsor_Party", true);
+			}
 			if (corpusType == CMDataType.FRONTIER_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.journal_body", true);
 			}
 			if (corpusType == CMDataType.HANSARD_JSON) {
-//[Body, Date, MetaData, Title]
 				IQueryProcessor iqp = new QueryProcesser(corpusClass);
 				Map<String, QueryDataType> keys = iqp.getJsonKeys();
 				Set<String> k = keys.keySet();

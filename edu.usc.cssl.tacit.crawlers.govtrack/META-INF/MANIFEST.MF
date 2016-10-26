@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Govtrack
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.govtrack
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.govtrack.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: jsoup-1.7.3.jar,
+ .,
+ jackson-all-1.9.0.jar,
+ jackson-core-2.5.0.jar
+Export-Package: edu.usc.cssl.tacit.crawlers.govtrack.services

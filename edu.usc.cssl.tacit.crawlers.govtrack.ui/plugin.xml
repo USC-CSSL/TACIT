@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.crawlers.govtrack.ui.GovTrackCrawlerView"
+            icon="icons/govtrack_icon.png"
+            id="edu.usc.cssl.tacit.crawlers.govtrack.ui.view1"
+            name="GovTrack Crawler"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.govtrack.ui.command1"
+               icon="icons/govtrack_icon.png"
+               label="GovTrack Crawler"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.crawlers.govtrack.ui.command1"
+            name="GovTrack Crawler">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.govtrack.ui.handlers.GovTrackCrawlerViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.govtrack.ui.command1">
+      </handler>
+   </extension>
+
+</plugin>

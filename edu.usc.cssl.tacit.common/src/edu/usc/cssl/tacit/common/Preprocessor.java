@@ -396,6 +396,9 @@ public class Preprocessor {
 		case HANSARD_JSON:
 			processTwitter(corpus);
 			break;
+		case GOVTRACK_JSON:
+			processTwitter(corpus);
+			break;
 		default:
 			break;
 		}
@@ -423,12 +426,39 @@ public class Preprocessor {
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
 			}
-			if (corpusType == CMDataType.PRESIDENCY_JSON) {
+			/*if (corpusType == CMDataType.PRESIDENCY_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
+			}*/
+			if (corpusType == CMDataType.PRESIDENCY_JSON) {
+				writer.write(obj.toJSONString());
+				writer.close();
+
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
 			}
-			
+			if (corpusType == CMDataType.HANSARD_JSON) {
+				IQueryProcessor iqp = new QueryProcesser(corpusClass);
+				Map<String, QueryDataType> keys = iqp.getJsonKeys();
+				Set<String> k = keys.keySet();
+				System.out.println(k);
+				if(k.contains("Body.Speaker"))
+				{	
+					writer.write(obj.toJSONString());
+					writer.close();
+					ans = qp.processJson(corpusClass, f.getAbsolutePath(), "Body.Speaker,Body.Text", true);
+				}
+				else{
+					writer.write("{\"data\":" + obj.toJSONString() + "}");
+					writer.close();
+					ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
+				}
+			}
+			if (corpusType == CMDataType.GOVTRACK_JSON) {
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(),"data.Bill_Name,data.Introduced_Date,data.Congress,data.Bill_Type,data.Bill_Resolution_Type,data.Sponsor_Name,data.Sponsor_Party", true);
+			}
 			if (corpusType  == CMDataType.TYPEPAD_JSON){
 					writer.write("{\"data\":" + obj.toJSONString() + "}");
 					writer.close();

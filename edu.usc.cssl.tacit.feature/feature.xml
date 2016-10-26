@@ -179,6 +179,20 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+    <plugin
+         id="edu.usc.cssl.tacit.crawlers.govtrack"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.usc.cssl.tacit.crawlers.govtrack.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="edu.usc.cssl.tacit.crawlers.supremecourt"

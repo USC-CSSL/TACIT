@@ -532,6 +532,12 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		}else if(type == CMDataType.PRESIDENCY_JSON){
 			File f = new File(location+"americanpresidency"+File.separator+corpus.getCorpusName());
 			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.HANSARD_JSON){
+			File f = new File(location+"hansard"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
+		}else if(type == CMDataType.GOVTRACK_JSON){
+			File f = new File(location+"govtrack"+File.separator+corpus.getCorpusName());
+			FileUtils.deleteDirectory(f);
 		}
 		else if(type == CMDataType.IMPORTED_CSV){
 			File f = new File(location+corpus.getCorpusName());
