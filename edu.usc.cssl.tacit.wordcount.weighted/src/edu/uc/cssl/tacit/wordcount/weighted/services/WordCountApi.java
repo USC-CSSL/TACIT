@@ -61,6 +61,10 @@ public class WordCountApi {
 	private String punctuations = " .,;\"!-()[]{}:?'/\\`~$%#@&*_=+<>";
 	// counting numbers - // 5.7, .7 , 5., 567, -25.9, +45
 	Pattern pattern = Pattern.compile("^[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.]{0,1}$");
+	Pattern emoji1 = Pattern.compile(":\\)|:\\(|\\(:|\\):");
+	Pattern emoji2 = Pattern.compile(";\\)|\\(;");
+	Pattern emoji3 = Pattern.compile("\\\\:|:\\\\");
+	
 	// Pattern pattern =
 	// Pattern.compile("\\s+[+-]{0,1}[\\d]*[.]{0,1}[\\d]+[.,\\s]+");
 
@@ -72,8 +76,8 @@ public class WordCountApi {
 
 	Pattern doubleHyphenPattern = Pattern.compile("[\\w\\d]+[\\p{Punct}&&[^-]]*[-]{2}[\\p{Punct}&&[^-]]*[\\w\\d]+");
 
-	// Regular word
-	Pattern regularPattern = Pattern.compile("[\\w\\d]+");
+	// Regular word and emojis - :) (: :( ): :/ /:
+	Pattern regularPattern = Pattern.compile("([\\w\\d]+)|:\\)|:\\(|;\\)|\\(;|\\(:|\\):|\\\\:|:\\\\");
 
 	// for calculating punctuation ratios
 	int period, comma, colon, semiC, qMark, exclam, dash, quote, apostro, parenth, otherP, allPct;
@@ -232,9 +236,27 @@ public class WordCountApi {
 		while ((currentLine = br.readLine()) != null) {
 
 			Matcher eolMatcher = eol.matcher(currentLine);
+
+			Matcher pattern1 = emoji1.matcher(currentLine);
+			Matcher pattern2 = emoji2.matcher(currentLine);
+			Matcher pattern3 = emoji3.matcher(currentLine);
+			
 			while (eolMatcher.find())
 				noOfLines++;
-
+			int set1 = 0;
+			int set2 = 0;
+			int set3 = 0;
+			while (pattern1.find())
+				set1++;
+			while (pattern2.find())
+				set2++;
+			while (pattern3.find())
+				set3++;
+			
+			while (eolMatcher.find())
+				noOfLines++;
+			
+			
 			period = period + StringUtils.countMatches(currentLine, ".");
 			comma = comma + StringUtils.countMatches(currentLine, ",");
 			colon = colon + StringUtils.countMatches(currentLine, ":");
@@ -256,7 +278,10 @@ public class WordCountApi {
 			for (char c : "#$%&*+=/\\<>@_^`~|".toCharArray()) {
 				otherP = otherP + StringUtils.countMatches(currentLine, String.valueOf(c));
 			}
-
+			parenth = parenth - set1 - set2;
+			otherP -= set3;
+			colon = colon - set1 - set3;
+			semiC -= set2;
 			int[] i = process(currentLine, map);
 			totalWords = totalWords + i[0];
 			sixltr = sixltr + i[1];
@@ -600,6 +625,7 @@ public class WordCountApi {
 
 						
 						if (!words[i].matches("\\d+")) {
+							
 							if (words[i].contains("/")) {
 								String[] splits = words[i].split("/");
 								categories.add(Integer.parseInt(splits[1]));
@@ -802,13 +828,24 @@ public class WordCountApi {
 		StringTokenizer st = new StringTokenizer(line, delimiters);
 		
 		String currentWord = null;
-		if (st.hasMoreTokens())
-			currentWord = trimChars(st.nextToken(), punctuations);
+		if (st.hasMoreTokens()) {
+			String s = st.nextToken();
+			if(s.equals(":)")||s.equals("(:")||s.equals(":(")||s.equals("):")||s.equals(";)")||s.equals("(;")||s.equals(":/")||s.equals("/:"))
+				currentWord = s;
+			else
+				currentWord = trimChars(s, punctuations);
+		}
 		do {
 			String nextWord = null;
 			// take the next word too
-			if (st.hasMoreTokens())
-				nextWord = trimChars(st.nextToken(), punctuations);
+			if (st.hasMoreTokens()) {
+
+				String s = st.nextToken();
+				if(s.equals(":)")||s.equals("(:")||s.equals(":(")||s.equals("):")||s.equals(";)")||s.equals("(;")||s.equals(":/")||s.equals("/:"))
+					nextWord = s;
+				else
+					nextWord = trimChars(s, punctuations);
+			}
 			// String currentWord = st.nextToken();
 
 			if (currentWord == null || currentWord.equals("")) {
