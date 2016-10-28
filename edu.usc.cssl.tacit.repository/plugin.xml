@@ -267,6 +267,14 @@
               visible="false">
         </view>
         
+        <view
+             id="edu.usc.cssl.tacit.crawlers.govtrack.ui.view1"
+             minimized="true"
+             relationship="stack"
+             relative="org.eclipse.ui.editorss"
+             visible="false">
+       </view>
+        
     </perspectiveExtension>
  </extension>
  
