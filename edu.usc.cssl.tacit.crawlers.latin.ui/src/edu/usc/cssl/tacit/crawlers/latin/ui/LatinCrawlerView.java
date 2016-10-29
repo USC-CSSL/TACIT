@@ -32,6 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -156,6 +157,23 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 		layoutData = TacitFormComposite.createOutputSection(toolkit, form.getBody(), form.getMessageManager());
 
+		Button btnRun = TacitFormComposite.createRunButton(form.getBody(), toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
+		
+		
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Latin Crawler");
@@ -174,81 +192,7 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 			public void run() {
 				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
 				latinCrawler.initialize(layoutData.getOutputLabel().getText());
-
-				Job job = new Job("Crawling...") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-
-						final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
-						final Calendar cal = Calendar.getInstance();
-						ConsoleView
-								.writeInConsoleHeader("Latin Crawling started " + (dateFormat.format(cal.getTime())));
-						Iterator<String> authorItr;
-						int totalWork = 1;
-						try {
-							authorItr = selectedAuthors.iterator();
-							System.out.println(selectedAuthors);
-							totalWork = selectedAuthors.size();
-							monitor.beginTask("TACIT started crawling...", totalWork);
-							int totalFilesCreated = 0;
-							while (authorItr.hasNext()) {
-								if (monitor.isCanceled()) {
-									monitor.subTask("Crawling is cancelled...");
-									return Status.CANCEL_STATUS;
-								}
-								String author = authorItr.next();
-								monitor.subTask("crawling " + author + "...");
-								ConsoleView.printlInConsoleln("Crawling " + author);
-								totalFilesCreated += latinCrawler.getBooksByAuthor(author,
-										latinCrawler.getAuthorNames().get(author), monitor);
-								monitor.worked(1);
-							}
-							ConsoleView.printlInConsole("Total number of files downloaded : " + totalFilesCreated);
-
-						} catch (final IOException exception) {
-							ConsoleView.printlInConsole(exception.toString());
-							Display.getDefault().syncExec(new Runnable() {
-
-								@Override
-								public void run() {
-									ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred",
-											"Please Check your connectivity to server", new Status(IStatus.ERROR,
-													CommonUiActivator.PLUGIN_ID, exception.getMessage()));
-
-								}
-							});
-
-							return Status.CANCEL_STATUS;
-						}
-						monitor.done();
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				if (canProceedCrawl()) {
-					job.schedule();
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
-							final Calendar cal = Calendar.getInstance();
-
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped ",
-										IStatus.INFO, form);
-								ConsoleView.writeInConsoleHeader(
-										"Error: <Terminated> Latin crawler" + (dateFormat.format(cal.getTime())));
-
-							} else {
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
-										form);
-								ConsoleView.writeInConsoleHeader(
-										"Success: <Completed> Latin crawling  " + (dateFormat.format(cal.getTime())));
-
-							}
-						}
-					});
-				}
+				runModule();
 
 			};
 		});
@@ -378,6 +322,82 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 	}
 
+	private void runModule() {
+		Job job = new Job("Crawling...") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
+				final Calendar cal = Calendar.getInstance();
+				ConsoleView
+						.writeInConsoleHeader("Latin Crawling started " + (dateFormat.format(cal.getTime())));
+				Iterator<String> authorItr;
+				int totalWork = 1;
+				try {
+					authorItr = selectedAuthors.iterator();
+					System.out.println(selectedAuthors);
+					totalWork = selectedAuthors.size();
+					monitor.beginTask("TACIT started crawling...", totalWork);
+					int totalFilesCreated = 0;
+					while (authorItr.hasNext()) {
+						if (monitor.isCanceled()) {
+							monitor.subTask("Crawling is cancelled...");
+							return Status.CANCEL_STATUS;
+						}
+						String author = authorItr.next();
+						monitor.subTask("crawling " + author + "...");
+						ConsoleView.printlInConsoleln("Crawling " + author);
+						totalFilesCreated += latinCrawler.getBooksByAuthor(author,
+								latinCrawler.getAuthorNames().get(author), monitor);
+						monitor.worked(1);
+					}
+					ConsoleView.printlInConsole("Total number of files downloaded : " + totalFilesCreated);
+
+				} catch (final IOException exception) {
+					ConsoleView.printlInConsole(exception.toString());
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							ErrorDialog.openError(Display.getDefault().getActiveShell(), "Problem Occurred",
+									"Please Check your connectivity to server", new Status(IStatus.ERROR,
+											CommonUiActivator.PLUGIN_ID, exception.getMessage()));
+
+						}
+					});
+
+					return Status.CANCEL_STATUS;
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		if (canProceedCrawl()) {
+			job.schedule();
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
+					final Calendar cal = Calendar.getInstance();
+
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped ",
+								IStatus.INFO, form);
+						ConsoleView.writeInConsoleHeader(
+								"Error: <Terminated> Latin crawler" + (dateFormat.format(cal.getTime())));
+
+					} else {
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
+								form);
+						ConsoleView.writeInConsoleHeader(
+								"Success: <Completed> Latin crawling  " + (dateFormat.format(cal.getTime())));
+
+					}
+				}
+			});
+		}
+	}
 	static class ArrayLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			return (String) element;

@@ -136,6 +136,22 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, form.getBody(), form.getMessageManager());
 
+
+		Button btnRun = TacitFormComposite.createRunButton(form.getBody(), toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
+		
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("PLOS Crawler");
@@ -804,6 +820,233 @@ public class PlosOneCrawlerView extends ViewPart implements IPlosOneCrawlerUICon
 
 	    return dir.delete(); // The directory is empty now and can be deleted.
 	}
+	private void runModule() {
 
+		// Get the corpus name
+		final String corpusName = corpusNameTxt.getText();
+		
+		// Get stored attribute values
+		storedAtts = new boolean[11];
+		storedAtts[0] = authorBtn.getSelection();
+		storedAtts[1] = abstractBtn.getSelection();
+		storedAtts[2] = introductionBtn.getSelection();
+		storedAtts[3] = bodyBtn.getSelection();
+		storedAtts[4] = materialAndMethodsBtn.getSelection();
+		storedAtts[5] = resultsAndDiscussionBtn.getSelection();
+		storedAtts[6] = conclusionBtn.getSelection();
+		storedAtts[7] = publicationDateBtn.getSelection();
+		storedAtts[8] = subjectBtn.getSelection();
+		storedAtts[9] = journalBtn.getSelection();
+		storedAtts[10] = scoreBtn.getSelection();
+		
+		//Get max blog limit
+		if (limitDocuments.getSelection()) {
+			maxDocumentLimit = Integer.parseInt(maxText.getText());
+				
+		}else{
+			maxDocumentLimit = -1; //Indicates max limit is not imposed
+		}
+		
+		//Get the filter text
+		if (authorFilterLbl.getSelection()){
+			authorFilter = authorFilterText.getText();
+		}else if(wordFilterLbl.getSelection()){
+			wordFilter = wordFilterText.getText();
+		}
+		
+		//Get the filter selection flag
+		wordFilterFlag = wordFilterLbl.getSelection();
+		authorFilterFlag = authorFilterLbl.getSelection();
+
+
+		Job job = new Job("PLOS Crawl Job") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				try {
+					TacitFormComposite.setConsoleViewInFocus();
+					TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+					TacitFormComposite.writeConsoleHeaderBegining("PLOS Crawling Started... ");
+					
+					PLOSOneCrawler plosOneCrawler = new PLOSOneCrawler();
+					
+					List<String> outputFields = new ArrayList<String>();
+					//Mandatory fields
+					outputFields.add(PLOSOneWebConstants.FIELD_EVERYTHING);
+					outputFields.add(PLOSOneWebConstants.FIELD_TITLE);
+					
+					//User Selected Field
+					if (storedAtts[0]){
+						outputFields.add(PLOSOneWebConstants.FIELD_AUTHOR);
+					}
+					if (storedAtts[1]){
+						outputFields.add(PLOSOneWebConstants.FIELD_ABSTRACT);
+					}
+					if (storedAtts[2]){
+						outputFields.add(PLOSOneWebConstants.FIELD_INTRODUCTION);
+					}
+					if (storedAtts[3]){
+						outputFields.add(PLOSOneWebConstants.FIELD_BODY);
+					}
+					if (storedAtts[4]){
+						outputFields.add(PLOSOneWebConstants.FIELD_MATERIALS_AND_METHODS);
+					}
+					if (storedAtts[5]){
+						outputFields.add(PLOSOneWebConstants.FIELD_RESULTS_AND_DISCUSSION);
+					}
+					if (storedAtts[6]){
+						outputFields.add(PLOSOneWebConstants.FIELD_CONCLUSIONS);
+					}
+					if (storedAtts[7]){
+						outputFields.add(PLOSOneWebConstants.FIELD_PUBLICATION_DATE);
+					}
+					if (storedAtts[8]){
+						outputFields.add(PLOSOneWebConstants.FIELD_SUBJECT);
+					}
+					if (storedAtts[9]){
+						outputFields.add(PLOSOneWebConstants.FIELD_JOURNAL);
+					}
+					if (storedAtts[10]){
+						outputFields.add(PLOSOneWebConstants.FIELD_SCORE);
+					}
+					
+					//Obtaining the api key
+					String apiKey = CommonUiActivator.getDefault().getPreferenceStore().getString(IPlosOneConstants.PLOS_ONE_API_KEY);							
+					
+					//Building the url features for hitting the API
+					Map<String,String> urlFeatures = new HashMap<String,String>();
+					
+					urlFeatures.put(PLOSOneWebConstants.FEATURE_APIKEY, apiKey);
+					urlFeatures.put(PLOSOneWebConstants.FEATURE_DOCTYPE, "json");
+					urlFeatures.put(PLOSOneWebConstants.FEATURE_FIELDS, plosOneCrawler.getOutputFields(outputFields));
+					urlFeatures.put(PLOSOneWebConstants.FEATURE_FILTER_QUERY, "doc_type:full");
+					
+					if (authorFilterFlag){
+						urlFeatures.put(PLOSOneWebConstants.FEATURE_QUERY, plosOneCrawler.getModifiedQuery(PLOSOneWebConstants.FIELD_AUTHOR ,authorFilter));
+					}else if(wordFilterFlag){
+						urlFeatures.put(PLOSOneWebConstants.FEATURE_QUERY, plosOneCrawler.getModifiedQuery(PLOSOneWebConstants.FIELD_EVERYTHING ,wordFilter));
+					}
+					//This is the number of documents in a single paged response. Several pages need to be combined.
+					urlFeatures.put(PLOSOneWebConstants.FEATURE_ROWS, PLOSOneCrawler.DOCUMENTS_PER_RESPONSE_PAGE + ""); 
+					//Initialize start to 0.
+					urlFeatures.put(PLOSOneWebConstants.FEATURE_START, "0");
+					
+					
+					if (maxDocumentLimit == -1){
+						numOfRows= plosOneCrawler.getNumOfRows(plosOneCrawler.buildURL(urlFeatures));
+					}else{
+						//Check if the max document limit given by the user does not exceed the number of available document
+						int checkRows = plosOneCrawler.getNumOfRows(plosOneCrawler.buildURL(urlFeatures));
+						numOfRows = maxDocumentLimit < checkRows ? maxDocumentLimit : checkRows;	
+					}
+					
+					if (numOfRows == 0){
+						ConsoleView.printlInConsoleln("No papers found in the search result.");
+						return Status.OK_STATUS;
+					}
+					
+					//ConsoleView.printlInConsoleln(numOfRows+" documents found in the search result.");
+					monitor.beginTask("Crawling PLOS...",(int)numOfRows+100);
+					
+					String corpusClassDir = IPlosOneCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
+					//String originalCorpusClassDir = CommonUiActivator.getDefault().getPreferenceStore()
+							//.getString(ICommonUiConstants.CORPUS_LOCATION) + System.getProperty("file.separator") + corpusName + File.separator + corpusName + "_class";
+					if (!new File(corpusClassDir).exists()) {
+						new File(corpusClassDir).mkdirs();
+					}
+					
+					//Creating the corpus and corpus class
+					//ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
+					monitor.subTask("Creating Corpus " + corpusName + "...");
+					
+					Corpus plosoneCorpus = new Corpus(corpusName, CMDataType.PLOSONE_JSON);
+					CorpusClass typepadCorpusClass = new CorpusClass();
+					typepadCorpusClass.setClassName(corpusName + "_class");
+					typepadCorpusClass.setClassPath(corpusClassDir);
+					plosoneCorpus.addClass(typepadCorpusClass);
+					monitor.worked(50);
+					
+					if (monitor.isCanceled()){
+						throw new OperationCanceledException();
+					}
+					
+					//ConsoleView.printlInConsoleln("Started Crawling...");
+					
+					//This is the core of the job.
+					plosOneCrawler.invokePlosOneCrawler(urlFeatures, maxDocumentLimit, corpusClassDir, corpusName, monitor);
+					
+					TacitFormComposite.writeConsoleHeaderBegining("<terminated> PLOS Crawling  ");
+					TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,form);
+					
+					//Saving the corpus in the tacit corpora
+					
+					//ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
+					monitor.subTask("Saving Corpus " + corpusName + "...");
+					ManageCorpora.saveCorpus(plosoneCorpus);
+					monitor.worked(50);
+					
+					/*//Removing the temporary corpus in json corpora
+					ConsoleView.printlInConsoleln("Removed duplicate files..");
+					monitor.subTask("Removing duplicate files..");
+					File tempCorpus = new File(IPlosOneCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
+					if (tempCorpus.exists()){
+						deleteDir(tempCorpus);
+					}
+					monitor.worked(50);*/
+					
+					monitor.done();
+					return Status.OK_STATUS;
+					
+				}catch (OperationCanceledException e) {
+					ConsoleView.printlInConsoleln("Operation Cancelled by the user.");
+					monitor.done();
+					return Status.CANCEL_STATUS;
+				}catch (Exception e){
+					e.printStackTrace();
+					monitor.done();
+					return Status.CANCEL_STATUS;
+				}
+
+			}
+		};
+		if (canProceedCrawl()) {
+			job.setUser(true);
+			job.schedule();
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> PLOS Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+						
+						//Delete the temp corpus if the operation is cancelled or met with an exception.
+						File tempCorpus = new File(IPlosOneCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
+						if (tempCorpus.exists()){
+							deleteDir(tempCorpus);
+						}
+						
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> PLOS Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln(numOfRows + " paper(s) downloaded. ");
+						
+						//Print corpus created only when there are more than 0 results.
+						if (numOfRows != 0){
+							ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
+						}
+						
+						ConsoleView.printlInConsoleln("PLOS crawler completed successfully.");
+						ConsoleView.printlInConsoleln("Done");
+
+					}
+				}
+			});
+		}
+
+
+	}
 
 }

@@ -126,7 +126,21 @@ public class TypePadCrawlerView extends ViewPart {
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(filler);
 
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, form.getBody(), form.getMessageManager());
+		Button btnRun = TacitFormComposite.createRunButton(form.getBody(), toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
 		this.setPartName("TypePad Crawler");
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
@@ -150,163 +164,7 @@ public class TypePadCrawlerView extends ViewPart {
 				TacitFormComposite.writeConsoleHeaderBegining("Crawling TypePad started ");
 
 
-				// check if the output address is correct and writable
-
-				final String corpusName = corpusNameTxt.getText();
-
-				// Get sort attribute values
-				if (publishedTimeRelevanceBtn.getSelection()){
-					sortParameter = 0;
-				}else{
-					if(relevanceBtn.getSelection()){
-						sortParameter = 1;
-					}else{
-						if(publishedTimeAscBtn.getSelection()){
-							sortParameter = 2;
-						}else{
-							sortParameter = 3;
-						}
-					}
-				}
-	
-				//Get max blog limit
-				if (limitBlogs.getSelection()) {
-					maxBlogLimit = Long.parseLong(maxText.getText());
-						
-				}else{
-					maxBlogLimit = -1; //Indicates max limit is not imposed
-				}
-				
-				//Get the generic word filters
-				if (!genericWordFilterText.getText().isEmpty()){
-					genericKeywords = getKeywords(genericWordFilterText.getText());
-				}else{
-					genericKeywords = null;
-				}				
-				
-				//Get the content word filters
-				if (!contentWordFilterText.getText().isEmpty()){
-					contentKeywords = getKeywords(contentWordFilterText.getText());
-				}else{
-					contentKeywords = null;
-				}
-				
-				//Get the title word filters
-				if (!titleWordFilterText.getText().isEmpty()){
-					titleKeywords = getKeywords(titleWordFilterText.getText());
-				}else{
-					titleKeywords = null;
-				}
-				
-				job = new Job("Typepad Crawl Job") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-
-						try {
-							TacitFormComposite.setConsoleViewInFocus();
-							TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-							TacitFormComposite.writeConsoleHeaderBegining("TypePad Crawling Started... ");
-	
-							TypePadCrawler typePadCrawler = new TypePadCrawler();
-							if (maxBlogLimit != -1){
-								monitor.beginTask("Crawling typepad..",(int)maxBlogLimit+20);
-							}else{
-								monitor.beginTask("Crawling typepad..",2000);
-							}
-							
-							
-							String corpusClassDir = ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
-							
-							if (!new File(corpusClassDir).exists()) {
-								new File(corpusClassDir).mkdirs();
-							}
-							
-							//Creating the corpus and corpus class
-							//ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
-							monitor.subTask("Creating Corpus " + corpusName + "...");
-							
-							Corpus typepadCorpus = new Corpus(corpusName, CMDataType.TYPEPAD_JSON);
-							CorpusClass typepadCorpusClass = new CorpusClass();
-							typepadCorpusClass.setClassName(corpusName + "_class");
-							typepadCorpusClass.setClassPath(corpusClassDir);
-							typepadCorpus.addClass(typepadCorpusClass);
-							
-							monitor.worked(10);
-							if (monitor.isCanceled()){
-								throw new OperationCanceledException();
-							}
-							
-							blogCount = typePadCrawler.getQueryResults(genericKeywords,contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
-							
-							//Do not do anything if the no blog posts are found.
-							if (blogCount == 0){
-								ConsoleView.printlInConsoleln("No blog posts found in the search result.");
-								ConsoleView.printlInConsoleln("0 blog post(s) downloaded.");
-								//ConsoleView.printlInConsoleln("Removing Corpus " + corpusName + "...");
-								
-								//Delete the corpus since nothing is stored in it.
-								File tempCorpus = new File(ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
-								if (tempCorpus.exists()){
-									deleteDir(tempCorpus);
-								}
-								
-								return Status.OK_STATUS;
-							}
-							
-							//ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
-							monitor.subTask("Saving Corpus " + corpusName + "...");
-							ManageCorpora.saveCorpus(typepadCorpus);
-							monitor.worked(10);
-							if (blogCount == 0){
-								ConsoleView.printlInConsoleln("No blog posts found in the search result.");
-							}else{
-								ConsoleView.printlInConsoleln(blogCount+" blog post(s) downloaded");
-							}
-							monitor.done();
-
-							return Status.OK_STATUS;
-						} catch (OperationCanceledException e) {
-							ConsoleView.printlInConsoleln("Operation Cancelled by the user.");
-							return Status.CANCEL_STATUS;
-						}catch (Exception e){
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
-						}
-
-					}
-				};
-				if (canProceedCrawl()) {
-					job.setUser(true);
-					job.schedule();
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> TypePad Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",IStatus.INFO, form);
-								
-								//Delete the temp corpus if the operation is cancelled or met with an exception.
-								File tempCorpus = new File(ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
-								if (tempCorpus.exists()){
-									deleteDir(tempCorpus);
-								}
-
-							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> TypePad Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",IStatus.INFO, form);
-								
-								
-								if (blogCount != 0){
-									ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
-								}
-								
-								ConsoleView.printlInConsoleln("TypePad crawler completed successfully.");
-								ConsoleView.printlInConsoleln("Done");
-
-							}
-						}
-					});
-				}
+				runModule();
 			}
 
 		});
@@ -742,6 +600,165 @@ public class TypePadCrawlerView extends ViewPart {
 	    }
 
 	    return dir.delete(); // The directory is empty now and can be deleted.
+	}
+	private void runModule() {
+		// check if the output address is correct and writable
+
+		final String corpusName = corpusNameTxt.getText();
+
+		// Get sort attribute values
+		if (publishedTimeRelevanceBtn.getSelection()){
+			sortParameter = 0;
+		}else{
+			if(relevanceBtn.getSelection()){
+				sortParameter = 1;
+			}else{
+				if(publishedTimeAscBtn.getSelection()){
+					sortParameter = 2;
+				}else{
+					sortParameter = 3;
+				}
+			}
+		}
+
+		//Get max blog limit
+		if (limitBlogs.getSelection()) {
+			maxBlogLimit = Long.parseLong(maxText.getText());
+				
+		}else{
+			maxBlogLimit = -1; //Indicates max limit is not imposed
+		}
+		
+		//Get the generic word filters
+		if (!genericWordFilterText.getText().isEmpty()){
+			genericKeywords = getKeywords(genericWordFilterText.getText());
+		}else{
+			genericKeywords = null;
+		}				
+		
+		//Get the content word filters
+		if (!contentWordFilterText.getText().isEmpty()){
+			contentKeywords = getKeywords(contentWordFilterText.getText());
+		}else{
+			contentKeywords = null;
+		}
+		
+		//Get the title word filters
+		if (!titleWordFilterText.getText().isEmpty()){
+			titleKeywords = getKeywords(titleWordFilterText.getText());
+		}else{
+			titleKeywords = null;
+		}
+		
+		Job job = new Job("Typepad Crawl Job") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				try {
+					TacitFormComposite.setConsoleViewInFocus();
+					TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+					TacitFormComposite.writeConsoleHeaderBegining("TypePad Crawling Started... ");
+
+					TypePadCrawler typePadCrawler = new TypePadCrawler();
+					if (maxBlogLimit != -1){
+						monitor.beginTask("Crawling typepad..",(int)maxBlogLimit+20);
+					}else{
+						monitor.beginTask("Crawling typepad..",2000);
+					}
+					
+					
+					String corpusClassDir = ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName + File.separator + corpusName + "_class";
+					
+					if (!new File(corpusClassDir).exists()) {
+						new File(corpusClassDir).mkdirs();
+					}
+					
+					//Creating the corpus and corpus class
+					//ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
+					monitor.subTask("Creating Corpus " + corpusName + "...");
+					
+					Corpus typepadCorpus = new Corpus(corpusName, CMDataType.TYPEPAD_JSON);
+					CorpusClass typepadCorpusClass = new CorpusClass();
+					typepadCorpusClass.setClassName(corpusName + "_class");
+					typepadCorpusClass.setClassPath(corpusClassDir);
+					typepadCorpus.addClass(typepadCorpusClass);
+					
+					monitor.worked(10);
+					if (monitor.isCanceled()){
+						throw new OperationCanceledException();
+					}
+					
+					blogCount = typePadCrawler.getQueryResults(genericKeywords,contentKeywords,titleKeywords,maxBlogLimit,sortParameter,corpusClassDir,corpusName,monitor); //This method starts the crawling 
+					
+					//Do not do anything if the no blog posts are found.
+					if (blogCount == 0){
+						ConsoleView.printlInConsoleln("No blog posts found in the search result.");
+						ConsoleView.printlInConsoleln("0 blog post(s) downloaded.");
+						//ConsoleView.printlInConsoleln("Removing Corpus " + corpusName + "...");
+						
+						//Delete the corpus since nothing is stored in it.
+						File tempCorpus = new File(ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
+						if (tempCorpus.exists()){
+							deleteDir(tempCorpus);
+						}
+						
+						return Status.OK_STATUS;
+					}
+					
+					//ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
+					monitor.subTask("Saving Corpus " + corpusName + "...");
+					ManageCorpora.saveCorpus(typepadCorpus);
+					monitor.worked(10);
+					if (blogCount == 0){
+						ConsoleView.printlInConsoleln("No blog posts found in the search result.");
+					}else{
+						ConsoleView.printlInConsoleln(blogCount+" blog post(s) downloaded");
+					}
+					monitor.done();
+
+					return Status.OK_STATUS;
+				} catch (OperationCanceledException e) {
+					ConsoleView.printlInConsoleln("Operation Cancelled by the user.");
+					return Status.CANCEL_STATUS;
+				}catch (Exception e){
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
+
+			}
+		};
+		if (canProceedCrawl()) {
+			job.setUser(true);
+			job.schedule();
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> TypePad Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",IStatus.INFO, form);
+						
+						//Delete the temp corpus if the operation is cancelled or met with an exception.
+						File tempCorpus = new File(ITypePadCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName);
+						if (tempCorpus.exists()){
+							deleteDir(tempCorpus);
+						}
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> TypePad Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",IStatus.INFO, form);
+						
+						
+						if (blogCount != 0){
+							ConsoleView.printlInConsoleln("Created corpus: "+corpusName);
+						}
+						
+						ConsoleView.printlInConsoleln("TypePad crawler completed successfully.");
+						ConsoleView.printlInConsoleln("Done");
+
+					}
+				}
+			});
+		}
 	}
 
 }

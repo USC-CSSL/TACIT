@@ -29,6 +29,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -99,6 +100,17 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 	private HashMap<String, String> map;
 	private boolean limitByDateFlag = false;
 	
+	//Variables needed at runtime
+	
+	String outputDir;
+	String corpusName;	
+	String searchString;
+	String startDate;
+	String endDate;
+	String house;
+	boolean searchFlag;
+	boolean canProceed; 
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "Hansard Debates Crawler");
@@ -124,6 +136,22 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		createCrawlInputParameters(toolkit, client);
 		//outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
+		
+		Button btnRun = TacitFormComposite.createRunButton(client, toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
+		
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
@@ -603,173 +631,10 @@ bothButton.addSelectionListener(new SelectionAdapter() {
 			public String getToolTipText() {
 				return "Crawl";
 			}
-			String outputDir;
-			String corpusName;	
-			String searchString;
-			String startDate;
-			String endDate;
-			String house;
-			boolean searchFlag;
-			boolean canProceed; 
+			
 			@Override
 			public void run() {
-				final Job job = new Job("Hansard Crawler") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								searchFlag = searchButton.getSelection();
-								if(searchFlag) {
-									startDate = (fromDate.getDay()<10?"0"+fromDate.getDay():fromDate.getDay())+"/"+(fromDate.getMonth()<9?"0"+(int)(fromDate.getMonth()+1):(int)(fromDate.getMonth()+1))+"/"+fromDate.getYear();
-									endDate = (toDate.getDay()<10?"0"+toDate.getDay():toDate.getDay())+"/"+(toDate.getMonth()<9?"0"+(int)(toDate.getMonth()+1):(int)(toDate.getMonth()+1))+"/"+toDate.getYear();
-									try {
-									limitRecords = Integer.parseInt(limitTotalResults.getText());
-									}
-									catch (Exception e) {
-										limitRecords = -1;
-									}
-									limitByDateFlag = limitByDate.getSelection();	
-									searchString = keywordSearchText.getText();
-								}
-								else
-									limitRecords = Integer.parseInt(limitResultsText.getText());
-								corpusName = corpusNameTxt.getText();
-								if (bothButton.getSelection()) 
-									house = "Both";
-								else if(lordsButton.getSelection())
-									house = "Lords";
-								else
-									house = "Commons";
-								Date dateObj = new Date();
-								corpusName+= "_" + dateObj.getTime();
-								outputDir = IHansardCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
-								if(!new File(outputDir).exists()) {
-									new File(outputDir).mkdirs();									
-								}
-								
-						}
-						});
-						int progressSize = 20000;//+30
-						monitor.beginTask("Running Hansard Crawler..." , progressSize);
-						TacitFormComposite.writeConsoleHeaderBegining("Hansard Crawler started");
-						final HansardDebatesCrawler rc = new HansardDebatesCrawler(); // initialize all the common parameters	
-						
-						try{
-							monitor.worked(1000);
-							if(searchFlag)
-								filesFound = rc.crawlByKeywordSearch(outputDir, searchString.trim(), house, limitByDateFlag, startDate, endDate, limitRecords, monitor);
-							else{
-								System.out.println(selectedMPLinks);
-								
-								filesFound = rc.crawlByHouseMemberSearch(outputDir, selectedMPLinks/*new ArrayList<String>(map.values())*/, limitRecords, monitor);
-							}
-						}
-						catch(IndexOutOfBoundsException e){
-							System.out.println(e.getMessage());
-							e.printStackTrace();
-							Display.getDefault().syncExec(new Runnable() {
-								@Override
-								public void run() {
-									MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-									int result = dialog.open();
-									if (result <= 0){
-										dialog.close();
-									}
-								}
-							});
-							
-						}catch (Exception e){
-							
-							e.printStackTrace();
-						}
-						System.out.println("FILES FOUND ---- "+filesFound);
-						monitor.subTask("Initializing...");
-						monitor.worked(100);
-						if(monitor.isCanceled())
-							handledCancelRequest("Cancelled");
-						try {
-							monitor.subTask("Crawling...");
-							if(monitor.isCanceled())
-								return handledCancelRequest("Cancelled");								
-							if(monitor.isCanceled())
-								return handledCancelRequest("Cancelled");
-							
-						} catch(IndexOutOfBoundsException e){
-							
-							Display.getDefault().syncExec(new Runnable() {
-								@Override
-								public void run() {
-									MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-									int result = dialog.open();
-									if (result <= 0) {
-										dialog.close();
-									}
-								}
-							});
-								
-							} catch (Exception e) {
-								return handleException(monitor, e, "Crawling failed. Provide valid data");
-							}
-						
-						try {
-							Display.getDefault().syncExec(new Runnable() {
-								@Override
-								public void run() {
-									if(filesFound) {
-										hansardCorpus = new Corpus(corpusName, CMDataType.HANSARD_JSON);
-										CorpusClass cc = new CorpusClass("Hansard Debates", outputDir);
-										cc.setParent(hansardCorpus);
-										hansardCorpus.addClass(cc);
-									}
-								}
-							});
-						} catch (Exception e) {
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
-						}
-						
-						try {
-							ManageCorpora.saveCorpus(hansardCorpus);
-						} catch(Exception e) {
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
-						}
-						
-						
-						if(monitor.isCanceled())
-							return handledCancelRequest("Cancelled");
-						
-						monitor.worked(10);//100
-						monitor.done();
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				canProceed = canItProceed();
-				if(canProceed) {
-					job.schedule(); // schedule the job
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Hansard Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
-										IStatus.INFO, form);
-
-							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Hansard Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
-										IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("Done");
-								ConsoleView.printlInConsoleln("Hansard crawler completed successfully.");
-	
-							}
-						}
-					});
-				}				
+				runModule();
 			}
 		});
 
@@ -819,5 +684,166 @@ bothButton.addSelectionListener(new SelectionAdapter() {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		return Status.CANCEL_STATUS;
 	}	
+	
+	private void runModule() {
 
+		final Job job = new Job("Hansard Crawler") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				TacitFormComposite.setConsoleViewInFocus();
+				TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						searchFlag = searchButton.getSelection();
+						if(searchFlag) {
+							startDate = (fromDate.getDay()<10?"0"+fromDate.getDay():fromDate.getDay())+"/"+(fromDate.getMonth()<9?"0"+(int)(fromDate.getMonth()+1):(int)(fromDate.getMonth()+1))+"/"+fromDate.getYear();
+							endDate = (toDate.getDay()<10?"0"+toDate.getDay():toDate.getDay())+"/"+(toDate.getMonth()<9?"0"+(int)(toDate.getMonth()+1):(int)(toDate.getMonth()+1))+"/"+toDate.getYear();
+							try {
+							limitRecords = Integer.parseInt(limitTotalResults.getText());
+							}
+							catch (Exception e) {
+								limitRecords = -1;
+							}
+							limitByDateFlag = limitByDate.getSelection();	
+							searchString = keywordSearchText.getText();
+						}
+						else
+							limitRecords = Integer.parseInt(limitResultsText.getText());
+						corpusName = corpusNameTxt.getText();
+						if (bothButton.getSelection()) 
+							house = "Both";
+						else if(lordsButton.getSelection())
+							house = "Lords";
+						else
+							house = "Commons";
+						Date dateObj = new Date();
+						corpusName+= "_" + dateObj.getTime();
+						outputDir = IHansardCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+						if(!new File(outputDir).exists()) {
+							new File(outputDir).mkdirs();									
+						}
+						
+				}
+				});
+				int progressSize = 20000;//+30
+				monitor.beginTask("Running Hansard Crawler..." , progressSize);
+				TacitFormComposite.writeConsoleHeaderBegining("Hansard Crawler started");
+				final HansardDebatesCrawler rc = new HansardDebatesCrawler(); // initialize all the common parameters	
+				
+				try{
+					monitor.worked(1000);
+					if(searchFlag)
+						filesFound = rc.crawlByKeywordSearch(outputDir, searchString.trim(), house, limitByDateFlag, startDate, endDate, limitRecords, monitor);
+					else{
+						System.out.println(selectedMPLinks);
+						
+						filesFound = rc.crawlByHouseMemberSearch(outputDir, selectedMPLinks/*new ArrayList<String>(map.values())*/, limitRecords, monitor);
+					}
+				}
+				catch(IndexOutOfBoundsException e){
+					System.out.println(e.getMessage());
+					e.printStackTrace();
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+							int result = dialog.open();
+							if (result <= 0){
+								dialog.close();
+							}
+						}
+					});
+					
+				}catch (Exception e){
+					
+					e.printStackTrace();
+				}
+				System.out.println("FILES FOUND ---- "+filesFound);
+				monitor.subTask("Initializing...");
+				monitor.worked(100);
+				if(monitor.isCanceled())
+					handledCancelRequest("Cancelled");
+				try {
+					monitor.subTask("Crawling...");
+					if(monitor.isCanceled())
+						return handledCancelRequest("Cancelled");								
+					if(monitor.isCanceled())
+						return handledCancelRequest("Cancelled");
+					
+				} catch(IndexOutOfBoundsException e){
+					
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+							int result = dialog.open();
+							if (result <= 0) {
+								dialog.close();
+							}
+						}
+					});
+						
+					} catch (Exception e) {
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					}
+				
+				try {
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							if(filesFound) {
+								hansardCorpus = new Corpus(corpusName, CMDataType.HANSARD_JSON);
+								CorpusClass cc = new CorpusClass("Hansard Debates", outputDir);
+								cc.setParent(hansardCorpus);
+								hansardCorpus.addClass(cc);
+							}
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
+				
+				try {
+					ManageCorpora.saveCorpus(hansardCorpus);
+				} catch(Exception e) {
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
+				
+				
+				if(monitor.isCanceled())
+					return handledCancelRequest("Cancelled");
+				
+				monitor.worked(10);//100
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		canProceed = canItProceed();
+		if(canProceed) {
+			job.schedule(); // schedule the job
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Hansard Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Hansard Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln("Done");
+						ConsoleView.printlInConsoleln("Hansard crawler completed successfully.");
+
+					}
+				}
+			});
+		}				
+	
+	}
 }

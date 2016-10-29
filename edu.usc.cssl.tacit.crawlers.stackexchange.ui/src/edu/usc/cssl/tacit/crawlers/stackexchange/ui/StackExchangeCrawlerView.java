@@ -30,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -96,6 +97,21 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 	private Button dateRange;
 	private Button Creation, Activity, Votes;  
 
+	
+	//variables needed at runtime
+	
+	String outputDir;
+	String corpusName;
+	Corpus corpus;
+	int pages;
+	String tags;
+	boolean canProceed;
+	boolean isDate, goCheck;
+	int ansLimit, comLimit;
+	Long from, to;
+	String crawlOrder;
+	int counter = 0;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
@@ -364,7 +380,21 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 
 		TacitFormComposite.createEmptyRow(toolkit, client);
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
+		Button btnRun = TacitFormComposite.createRunButton(client, toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
 		addButtonsToToolBar();
 	}
 
@@ -477,175 +507,11 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 				return "Crawl";
 			}
 
-			String outputDir;
-			String corpusName;
-			Corpus corpus;
-			int pages;
-			String tags;
-			boolean canProceed;
-			boolean isDate, goCheck;
-			int ansLimit, comLimit;
-			Long from, to;
-			String crawlOrder;
-			int counter = 0;
+
 			@Override
 			public void run() {
-				final Job job = new Job("StackExchange Crawler") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								tags = queryText.getText();
-								pages = Integer.parseInt(pageText.getText());
-								corpusName = corpusNameTxt.getText();
-								isDate = dateRange.getSelection();
-								jsonFilter[0] = questionUserBtn.getSelection();
-								jsonFilter[1] = ansUserBtn.getSelection();
-								jsonFilter[2] = commentUserBtn.getSelection();
-								jsonFilter[3] = isAnsweredBtn.getSelection();
-								jsonFilter[4] = answerBodyBtn.getSelection();
-								jsonFilter[5] = commentBodyBtn.getSelection();
-								ansLimit = Integer.parseInt(answerCount.getText().trim());
-								comLimit = Integer.parseInt(commentCount.getText().trim());
-								if(Creation.getSelection())
-									crawlOrder = "creation";
-								if(Activity.getSelection())
-									crawlOrder = "activity";
-								if(Votes.getSelection())
-									crawlOrder = "votes";
-								if (isDate) {
-									System.out.print("_____________________________");
-									Calendar cal = Calendar.getInstance();
-									cal.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
-									from = cal.getTimeInMillis() / 1000;
-									cal.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
-									to = cal.getTimeInMillis() / 1000;
-									System.out.println(from + "   " + to);
-								}
-								outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
-										+ corpusName.trim();
-								if (!new File(outputDir).exists()) {
-									new File(outputDir).mkdirs();
-								}
-							}
-						});
-
-						int progressSize =selectedRepresentatives.size()*pages*30 + 30;
-						monitor.beginTask("Running StackExchange Crawler...", progressSize);
-						TacitFormComposite.writeConsoleHeaderBegining("StackExchange Crawler started");
-						crawler.setDir(outputDir);
-						monitor.subTask("Initializing...");
-						monitor.worked(10);
-						if (monitor.isCanceled())
-							handledCancelRequest("Crawling is Stopped");
-						corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
-						for (final String domain : selectedRepresentatives) {
-							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
-									+ corpusName;
-							outputDir += File.separator + domain;
-							if (!new File(outputDir).exists()) {
-								new File(outputDir).mkdirs();
-							}
-							crawler.setDir(outputDir);
-							try {
-								monitor.subTask("Crawling...");
-								if (monitor.isCanceled())
-									return handledCancelRequest("Crawling is Stopped");
-								if (!isDate)
-									crawler.search(tags, pages, corpusName, scs,
-											StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder, monitor);
-								else
-									crawler.search(tags, pages, corpusName, scs,
-											StackConstants.domainList.get(domain), from, to, jsonFilter, ansLimit,
-											comLimit, crawlOrder, monitor);
-								if (monitor.isCanceled())
-									return handledCancelRequest("Crawling is Stopped");
-							} catch (Exception e) {
-								return handleException(monitor, e, "Crawling failed. Provide valid data");
-							}
-							try {
-								Display.getDefault().syncExec(new Runnable() {
-
-									@Override
-									public void run() {
-										String[] f = new File(outputDir).list();
-										goCheck = false;
-										for(String fname: f){
-											if(fname.contains(".json"))
-											{
-												goCheck = true;
-												break;
-											}
-										}
-										if(goCheck)
-										{	CorpusClass cc = new CorpusClass(domain, outputDir);
-											cc.setParent(corpus);
-											corpus.addClass(cc);
-											counter++;
-										}
-
-									}
-								});
-							} catch (Exception e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
-						}
-						if(counter>0)
-						ManageCorpora.saveCorpus(corpus);
-						else{
-							outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
-							try {
-								FileUtils.deleteDirectory(new File(IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-							
-						if(counter>0){
-							ConsoleView.printlInConsoleln(pages*30 + " case(s) downloaded");
-							ConsoleView.printlInConsoleln("Created corpus: " + corpus.getCorpusName());
-						}
-						else{
-							ConsoleView.printlInConsoleln(0 + " case(s) downloaded");
-							ConsoleView.printlInConsoleln("No results found, No corpus created");
-						}
-						if (monitor.isCanceled())
-							return handledCancelRequest("Crawling is Stopped");
-
-						monitor.worked(100);
-						monitor.done();
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				canProceed = canItProceed();
-				if (canProceed) {
-					job.schedule(); // schedule the job
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite
-										.writeConsoleHeaderBegining("Error: <Terminated> StackExchange Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
-										IStatus.INFO, form);
-
-							} else {
-								TacitFormComposite
-										.writeConsoleHeaderBegining("Success: <Completed> StackExchange Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
-										IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("Done");
-								ConsoleView.printlInConsoleln("StackExchange crawler completed successfully.");
-
-							}
-						}
-					});
-				}
+				runModule();
+				
 			}
 		});
 
@@ -744,6 +610,168 @@ public class StackExchangeCrawlerView extends ViewPart implements IStackExchange
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(commentBodyBtn);
 		commentBodyBtn.setEnabled(true);
 
+	}
+	
+	private void runModule() {
+
+		counter = 0;
+		final Job job = new Job("StackExchange Crawler") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				TacitFormComposite.setConsoleViewInFocus();
+				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						tags = queryText.getText();
+						pages = Integer.parseInt(pageText.getText());
+						corpusName = corpusNameTxt.getText();
+						isDate = dateRange.getSelection();
+						jsonFilter[0] = questionUserBtn.getSelection();
+						jsonFilter[1] = ansUserBtn.getSelection();
+						jsonFilter[2] = commentUserBtn.getSelection();
+						jsonFilter[3] = isAnsweredBtn.getSelection();
+						jsonFilter[4] = answerBodyBtn.getSelection();
+						jsonFilter[5] = commentBodyBtn.getSelection();
+						ansLimit = Integer.parseInt(answerCount.getText().trim());
+						comLimit = Integer.parseInt(commentCount.getText().trim());
+						if(Creation.getSelection())
+							crawlOrder = "creation";
+						if(Activity.getSelection())
+							crawlOrder = "activity";
+						if(Votes.getSelection())
+							crawlOrder = "votes";
+						if (isDate) {
+							System.out.print("_____________________________");
+							Calendar cal = Calendar.getInstance();
+							cal.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
+							from = cal.getTimeInMillis() / 1000;
+							cal.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
+							to = cal.getTimeInMillis() / 1000;
+							System.out.println(from + "   " + to);
+						}
+						outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
+								+ corpusName.trim();
+						if (!new File(outputDir).exists()) {
+							new File(outputDir).mkdirs();
+						}
+					}
+				});
+
+				int progressSize =selectedRepresentatives.size()*pages*30 + 30;
+				monitor.beginTask("Running StackExchange Crawler...", progressSize);
+				TacitFormComposite.writeConsoleHeaderBegining("StackExchange Crawler started");
+				crawler.setDir(outputDir);
+				monitor.subTask("Initializing...");
+				monitor.worked(10);
+				if (monitor.isCanceled())
+					handledCancelRequest("Crawling is Stopped");
+				corpus = new Corpus(corpusName, CMDataType.STACKEXCHANGE_JSON);
+				for (final String domain : selectedRepresentatives) {
+					outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator
+							+ corpusName;
+					outputDir += File.separator + domain;
+					if (!new File(outputDir).exists()) {
+						new File(outputDir).mkdirs();
+					}
+					crawler.setDir(outputDir);
+					try {
+						monitor.subTask("Crawling...");
+						if (monitor.isCanceled())
+							return handledCancelRequest("Crawling is Stopped");
+						if (!isDate)
+							crawler.search(tags, pages, corpusName, scs,
+									StackConstants.domainList.get(domain), jsonFilter, ansLimit, comLimit, crawlOrder, monitor);
+						else
+							crawler.search(tags, pages, corpusName, scs,
+									StackConstants.domainList.get(domain), from, to, jsonFilter, ansLimit,
+									comLimit, crawlOrder, monitor);
+						if (monitor.isCanceled())
+							return handledCancelRequest("Crawling is Stopped");
+					} catch (Exception e) {
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					}
+					try {
+						Display.getDefault().syncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								String[] f = new File(outputDir).list();
+								goCheck = false;
+								for(String fname: f){
+									if(fname.contains(".json"))
+									{
+										goCheck = true;
+										break;
+									}
+								}
+								if(goCheck)
+								{	CorpusClass cc = new CorpusClass(domain, outputDir);
+									cc.setParent(corpus);
+									corpus.addClass(cc);
+									counter++;
+								}
+
+							}
+						});
+					} catch (Exception e) {
+						e.printStackTrace();
+						return Status.CANCEL_STATUS;
+					}
+				}
+				if(counter>0)
+				ManageCorpora.saveCorpus(corpus);
+				else{
+					outputDir = IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+					try {
+						FileUtils.deleteDirectory(new File(IStackExchangeCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+					
+				if(counter>0){
+					ConsoleView.printlInConsoleln(pages*30 + " case(s) downloaded");
+					ConsoleView.printlInConsoleln("Created corpus: " + corpus.getCorpusName());
+				}
+				else{
+					ConsoleView.printlInConsoleln(0 + " case(s) downloaded");
+					ConsoleView.printlInConsoleln("No results found, No corpus created");
+				}
+				if (monitor.isCanceled())
+					return handledCancelRequest("Crawling is Stopped");
+
+				monitor.worked(100);
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		canProceed = canItProceed();
+		if (canProceed) {
+			job.schedule(); // schedule the job
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite
+								.writeConsoleHeaderBegining("Error: <Terminated> StackExchange Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+
+					} else {
+						TacitFormComposite
+								.writeConsoleHeaderBegining("Success: <Completed> StackExchange Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln("Done");
+						ConsoleView.printlInConsoleln("StackExchange crawler completed successfully.");
+
+					}
+				}
+			});
+		}
+	
 	}
 
 }

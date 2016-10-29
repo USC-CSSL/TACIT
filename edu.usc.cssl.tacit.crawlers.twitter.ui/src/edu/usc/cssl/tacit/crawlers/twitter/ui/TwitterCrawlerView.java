@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -90,6 +91,8 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 	private static Button wordFilterLbl;
 	private static Button geoFilterLbl;
 	private static Button randomFilterLbl;
+	
+	private Job job;
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -133,14 +136,25 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(filler);
 
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, form.getBody(), form.getMessageManager());
+		Button btnRun = TacitFormComposite.createRunButton(form.getBody(), toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		// form.setMessage("Invalid path", IMessageProvider.ERROR);
 		this.setPartName("Twitter Crawler");
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
-
-			private Job job;
 
 			@Override
 			public ImageDescriptor getImageDescriptor() {
@@ -159,115 +173,7 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 				// Make sure input values are in valid state then launch
 				// streamer
 
-				noWordFilter = false;
-				noLocationFilter = false;
-
-				// check if the output address is correct and writable
-				Date dateObj = new Date();
-				final String corpusName = corpusNameTxt.getText();
-				final String outputDir = System.getProperty("user.dir") + System.getProperty("file.separator")
-						+ "json_corpuses" + System.getProperty("file.separator") + "twitter" + File.separator
-						+ corpusName;
-				;
-				if (!new File(outputDir).exists()) {
-					new File(outputDir).mkdir();
-				}
-				DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
-				Date dateobj = new Date();
-				final String outputFile = outputDir + File.separator + "Twitter_Stream_" + df.format(dateobj) + ".json";
-				storedAtts = new boolean[8];
-
-				// Get stored attribute values
-				storedAtts[0] = userNameBtn.getSelection();
-				storedAtts[1] = textBtn.getSelection();
-				storedAtts[2] = reTweetBtn.getSelection();
-				storedAtts[3] = geoLocBtn.getSelection();
-				storedAtts[4] = createdBtn.getSelection();
-				storedAtts[5] = favBtn.getSelection();
-				storedAtts[6] = statusIdBtn.getSelection();
-				storedAtts[7] = langBtn.getSelection();
-
-				final TwitterStreamApi ttStream = new TwitterStreamApi();
-
-				final boolean maxLimitEnabled = true;
-				final boolean timeLimit = limitRecords.getSelection();
-				job = new Job("Twitter Stream Job") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-
-						try {
-							TacitFormComposite.setConsoleViewInFocus();
-							TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-							long totalJobWork = maxTweetLimit + 20;
-							if (maxTweetLimit == 0) {
-								totalJobWork = 200;
-							}
-							monitor.beginTask("Crawling Twitter ...", (int) totalJobWork);
-							TacitFormComposite.writeConsoleHeaderBegining("Twitter Crawling Started... ");
-	
-							ttStream.stream(outputFile, maxLimitEnabled, maxTweetLimit, timeLimit, finishTime,
-									noWordFilter, keyWords, noLocationFilter, geoLocations, storedAtts, monitor, job);
-							System.out.println(outputFile);
-							System.out.println(maxLimitEnabled);
-							System.out.println(maxTweetLimit);
-							System.out.println(timeLimit);
-							System.out.println(finishTime);
-							System.out.println(noWordFilter);
-							System.out.println(keyWords);
-							System.out.println(noLocationFilter);
-							System.out.println(Arrays.toString(geoLocations));
-							System.out.println(Arrays.toString(storedAtts));
-						
-							monitor.done();
-							TacitFormComposite.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
-							TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
-									form);
-							ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
-							Corpus twitterCorpus = new Corpus(corpusName, CMDataType.TWITTER_JSON);
-							CorpusClass twitterCorpusClass = new CorpusClass();
-							twitterCorpusClass.setClassName(corpusName + "_class1");
-							twitterCorpusClass.setClassPath(outputDir);
-							List<ICorpusClass> corpusList = new ArrayList<ICorpusClass>();
-							corpusList.add(twitterCorpusClass);
-							twitterCorpus.setClasses(corpusList);
-							try {
-								ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
-								ManageCorpora.saveCorpus(twitterCorpus);
-							} catch (Exception e) {
-								e.printStackTrace();
-								return Status.CANCEL_STATUS;
-							}
-							return Status.OK_STATUS;
-						} catch (IOException e1) {
-							return Status.CANCEL_STATUS;
-						} catch (OperationCanceledException e) {
-							return Status.CANCEL_STATUS;
-						}
-
-					}
-				};
-				if (canProceedCrawl()) {
-					job.setUser(true);
-					job.schedule();
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Twitter Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
-										IStatus.INFO, form);
-
-							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Twitter Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
-										IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("Twitter crawler completed successfully.");
-								ConsoleView.printlInConsoleln("Done");
-
-							}
-						}
-					});
-				}
+				runModule();
 			}
 
 		});
@@ -769,5 +675,115 @@ public class TwitterCrawlerView extends ViewPart implements ITwitterCrawlerUICon
 		favBtn.setSelection(true);
 
 	}
+	private void runModule () {
+		noWordFilter = false;
+		noLocationFilter = false;
 
+		// check if the output address is correct and writable
+		Date dateObj = new Date();
+		final String corpusName = corpusNameTxt.getText();
+		final String outputDir = System.getProperty("user.dir") + System.getProperty("file.separator")
+				+ "json_corpuses" + System.getProperty("file.separator") + "twitter" + File.separator
+				+ corpusName;
+		;
+		if (!new File(outputDir).exists()) {
+			new File(outputDir).mkdir();
+		}
+		DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
+		Date dateobj = new Date();
+		final String outputFile = outputDir + File.separator + "Twitter_Stream_" + df.format(dateobj) + ".json";
+		storedAtts = new boolean[8];
+
+		// Get stored attribute values
+		storedAtts[0] = userNameBtn.getSelection();
+		storedAtts[1] = textBtn.getSelection();
+		storedAtts[2] = reTweetBtn.getSelection();
+		storedAtts[3] = geoLocBtn.getSelection();
+		storedAtts[4] = createdBtn.getSelection();
+		storedAtts[5] = favBtn.getSelection();
+		storedAtts[6] = statusIdBtn.getSelection();
+		storedAtts[7] = langBtn.getSelection();
+
+		final TwitterStreamApi ttStream = new TwitterStreamApi();
+
+		final boolean maxLimitEnabled = true;
+		final boolean timeLimit = limitRecords.getSelection();
+		job = new Job("Twitter Stream Job") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				try {
+					TacitFormComposite.setConsoleViewInFocus();
+					TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
+					long totalJobWork = maxTweetLimit + 20;
+					if (maxTweetLimit == 0) {
+						totalJobWork = 200;
+					}
+					monitor.beginTask("Crawling Twitter ...", (int) totalJobWork);
+					TacitFormComposite.writeConsoleHeaderBegining("Twitter Crawling Started... ");
+
+					ttStream.stream(outputFile, maxLimitEnabled, maxTweetLimit, timeLimit, finishTime,
+							noWordFilter, keyWords, noLocationFilter, geoLocations, storedAtts, monitor, job);
+					System.out.println(outputFile);
+					System.out.println(maxLimitEnabled);
+					System.out.println(maxTweetLimit);
+					System.out.println(timeLimit);
+					System.out.println(finishTime);
+					System.out.println(noWordFilter);
+					System.out.println(keyWords);
+					System.out.println(noLocationFilter);
+					System.out.println(Arrays.toString(geoLocations));
+					System.out.println(Arrays.toString(storedAtts));
+				
+					monitor.done();
+					TacitFormComposite.writeConsoleHeaderBegining("<terminated> Twitter Crawling  ");
+					TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling completed", IStatus.OK,
+							form);
+					ConsoleView.printlInConsoleln("Creating Corpus " + corpusName + "...");
+					Corpus twitterCorpus = new Corpus(corpusName, CMDataType.TWITTER_JSON);
+					CorpusClass twitterCorpusClass = new CorpusClass();
+					twitterCorpusClass.setClassName(corpusName + "_class1");
+					twitterCorpusClass.setClassPath(outputDir);
+					List<ICorpusClass> corpusList = new ArrayList<ICorpusClass>();
+					corpusList.add(twitterCorpusClass);
+					twitterCorpus.setClasses(corpusList);
+					try {
+						ConsoleView.printlInConsoleln("Saving Corpus " + corpusName + "...");
+						ManageCorpora.saveCorpus(twitterCorpus);
+					} catch (Exception e) {
+						e.printStackTrace();
+						return Status.CANCEL_STATUS;
+					}
+					return Status.OK_STATUS;
+				} catch (IOException e1) {
+					return Status.CANCEL_STATUS;
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
+				}
+
+			}
+		};
+		if (canProceedCrawl()) {
+			job.setUser(true);
+			job.schedule();
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Twitter Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Twitter Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln("Twitter crawler completed successfully.");
+						ConsoleView.printlInConsoleln("Done");
+
+					}
+				}
+			});
+		}
+	}
 }

@@ -103,6 +103,14 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	//String actualTimeFrames[] = {"All", "Hour", "Day", "Week", "Month", "Year"};
 	String labelDataTypes[] = {"Top", "Controversial"};
 	
+	
+	//variables needed at runtime 
+	String outputDir; String query; String title; String author; String site;
+	String linkId; String sortType; String trendType; String labelType; String timeFrameValue; String corpusName;			
+	int limitLinks, limitComments;
+	boolean search; boolean trendingData; boolean labeledData; boolean canProceed; 
+	
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "Reddit Crawler");
@@ -128,6 +136,22 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 		createCrawlInputParameters(toolkit, client);
 		//outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
+		
+		Button btnRun = TacitFormComposite.createRunButton(form.getBody(), toolkit);
+		btnRun.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
+		
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
@@ -744,6 +768,139 @@ public class RedditCrawlerView extends ViewPart implements IRedditCrawlerViewCon
 	    }
 
 	    return dir.delete(); // The directory is empty now and can be deleted.
+	}
+	private void runModule() {
+		final Job job = new Job("Reddit Crawler") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				TacitFormComposite.setConsoleViewInFocus();
+				TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						search = crawlSearchResultsButton.getSelection();
+						trendingData = crawlTrendingDataButton.getSelection();
+						labeledData = crawlLabeledButton.getSelection();
+						corpusName = corpusNameTxt.getText();
+						if(search) {
+							query = queryText.getText();
+							title = titleText.getText();
+							author = authorText.getText();
+							site = siteText.getText();
+							linkId = linkText.getText();
+							sortType = sortTypes[cmbSortType.getSelectionIndex()].toLowerCase();
+							timeFrameValue = timeFramesMap.get(cmbTimeFrames.getSelectionIndex()).toLowerCase();
+						} else if(trendingData) {
+							trendType = trendTypes[cmbTrendType.getSelectionIndex()].toLowerCase();								
+						} else if(labeledData) {
+							labelType = labelDataTypes[cmbLabelType.getSelectionIndex()].toLowerCase();
+							timeFrameValue = timeFramesMap.get(cmbTimeFrames.getSelectionIndex()).toLowerCase();
+						}
+						limitLinks = Integer.parseInt(numLinksText.getText());
+						limitComments = Integer.parseInt(numCommentsText.getText());						
+						//outputDir = outputLayout.getOutputLabel().getText();
+						Date dateObj = new Date();
+//						corpusName+= "_" + dateObj.getTime();
+						outputDir = IRedditCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+						if(!new File(outputDir).exists()){
+							new File(outputDir).mkdir();									
+						}
+				}
+				});
+				int progressSize = limitLinks+30;
+				if(content.size()>0)
+					progressSize = (content.size()*limitLinks)+30;
+				monitor.beginTask("Running Reddit Crawler..." , progressSize);
+				TacitFormComposite.writeConsoleHeaderBegining("Reddit Crawler started");
+				final RedditCrawler rc = new RedditCrawler(outputDir, limitLinks, limitComments, monitor); // initialize all the common parameters	
+
+				monitor.subTask("Initializing...");
+				monitor.worked(10);
+				if(monitor.isCanceled())
+					handledCancelRequest("Cancelled");
+				Corpus redditCorpus = new Corpus(corpusName, CMDataType.REDDIT_JSON);
+				if(search) {
+					try {
+						monitor.subTask("Crawling...");
+						if(monitor.isCanceled()) 
+							return handledCancelRequest("Cancelled");								
+						rc.search(query, title, author, site, linkId, timeFrameValue, sortType, content, redditCorpus, corpusName);
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");
+					} catch (Exception e) {
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					} 
+				} else if(trendingData) {
+					try {
+						monitor.subTask("Crawling...");
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");								
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");
+						rc.crawlTrendingData(trendType, redditCorpus);
+					} catch (Exception e) {
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					}
+				} else if(labeledData) {												
+					try {
+						monitor.subTask("Crawling...");
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");																
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");								
+						rc.crawlLabeledData(labelType, timeFrameValue, redditCorpus);
+					} catch (Exception e) {
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					}
+				}
+				
+				
+				try {
+					boolean manageCorpora = true;
+					
+					if (search){
+						manageCorpora = !deleteCorpusIfEmpty(outputDir,corpusName); 
+					}
+					
+					if (manageCorpora){
+						ManageCorpora.saveCorpus(redditCorpus);
+					}
+					
+				} catch(Exception e) {
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
+				if(monitor.isCanceled())
+					return handledCancelRequest("Cancelled");
+				
+				monitor.worked(100);
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		canProceed = canItProceed();
+		if(canProceed) {
+			job.schedule(); // schedule the job
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> Reddit Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> Reddit Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln("Done");
+						ConsoleView.printlInConsoleln("Reddit crawler completed successfully.");
+
+					}
+				}
+			});
+		}	
 	}
 }
 

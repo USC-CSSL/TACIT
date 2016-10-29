@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -120,6 +121,15 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		
 	}
 	
+	
+	//variables needed at runtime
+	
+	String outputDir;
+	int billTypeIndex; int currentStatusIndex; String corpusName;			
+	boolean canProceed; 
+	String query;
+	String congress;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "GovTrack Crawler");
@@ -145,6 +155,23 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		createCrawlInputParameters(toolkit, client);
 		//outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
+		
+		Button btnRun = TacitFormComposite.createRunButton(client, toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
+		
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
@@ -312,173 +339,10 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 			public String getToolTipText() {
 				return "Crawl";
 			}
-			String outputDir;
-			int billTypeIndex; int currentStatusIndex; String corpusName;			
-			boolean canProceed; 
-			String query;
-			String congress;
+			
 			@Override
 			public void run() {
-				final Job job = new Job("GovTrack Crawler") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
-						
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								
-								corpusName = corpusNameTxt.getText();
-								billTypeIndex = selectBillType.getSelectionIndex();
-								currentStatusIndex = selectCurrentStatus.getSelectionIndex();
-								query = searchText.getText();
-								congress = congressNumber.getText();
-								if(limitResults.getSelection())
-									limit = Integer.parseInt(limitResultsText.getText());
-								else
-									limit = -1;
-								
-								outputDir = IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
-								if(!new File(outputDir).exists()){
-									new File(outputDir).mkdirs();									
-
-								}
-						}
-						});
-						int progressSize = 500338;//+30
-						if(limit!=-1){
-							progressSize = limit+10;
-						}
-						monitor.beginTask("Running GovTrack Crawler..." , progressSize);
-						TacitFormComposite.writeConsoleHeaderBegining("GovTrack Crawler started");
-						final GovTrackCrawler rc = new GovTrackCrawler(); // initialize all the common parameters	
-
-						monitor.subTask("Initializing...");
-						monitor.worked(10);
-						if(monitor.isCanceled())
-						{
-							try {
-								FileUtils.deleteDirectory(new File(IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							handledCancelRequest("Cancelled");
-						}
-							try {
-								monitor.subTask("Crawling...");
-								if(monitor.isCanceled()) {
-									return handledCancelRequest("Cancelled");					
-								} 
-									filesFound = rc.crawl(outputDir, query, congress, billTypeMap.get(billTypeIndex), currentStatusMap.get(currentStatusIndex), limit, monitor);
-								if(monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
-							} catch(IndexOutOfBoundsException e){
-
-								filesFound = false;
-								
-								Display.getDefault().asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										messageDisplayed = true;
-										MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-										int result = dialog.open();
-										if (result <= 0){
-											dialog.close();
-											
-										}
-									}
-								});
-								
-							} catch (Exception e) {
-									
-								return handleException(monitor, e, "Crawling failed. Provide valid data");
-							} 
-						
-						try {
-							Display.getDefault().syncExec(new Runnable() {
-								@Override
-								public void run() {
-									if(filesFound) {
-
-										govtrackCorpus = new Corpus(corpusName, CMDataType.GOVTRACK_JSON);
-										
-										CorpusClass cc = new CorpusClass("GovTrack", outputDir);
-										cc.setParent(govtrackCorpus);
-										govtrackCorpus.addClass(cc);
-									}
-								}
-							});
-						} catch (Exception e) {
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
-						}
-
-						System.out.println("files found? "+filesFound);
-						
-						try {
-							ManageCorpora.saveCorpus(govtrackCorpus);
-
-							ConsoleView.printlInConsoleln("Created Corpus: "+ corpusName);
-						} catch(Exception e) {
-							e.printStackTrace();
-							
-							if(!messageDisplayed) {
-								Display.getDefault().syncExec(new Runnable() {
-									@Override
-									public void run() {
-										messageDisplayed = true;
-										MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-										int result = dialog.open();
-										if (result <= 0){
-											dialog.close();
-											
-										}
-									}
-								});
-								
-							}
-							
-							System.out.println(new File(IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName).exists());
-							try {
-								FileUtils.deleteDirectory(new File(IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
-							} catch (IOException e1) {
-							}
-							ConsoleView.printlInConsoleln("No corpus created");
-							return Status.CANCEL_STATUS;
-						}
-						
-						if(monitor.isCanceled())
-							return handledCancelRequest("Cancelled");
-						
-						monitor.worked(10);//100
-						monitor.done();
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				canProceed = canItProceed();
-				if(canProceed) {
-					job.schedule(); // schedule the job
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> GovTrack Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
-										IStatus.INFO, form);
-
-							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> GovTrack Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
-										IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("Done");
-								ConsoleView.printlInConsoleln("GovTrack Papers crawler completed successfully.");
-	
-							}
-						}
-					});
-				}				
+				runModule();
 			}
 		});
 
@@ -515,6 +379,170 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		form.getToolBarManager().update(true);
 	}
 
+	private void runModule() {
+
+		final Job job = new Job("GovTrack Crawler") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				TacitFormComposite.setConsoleViewInFocus();
+				TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+				
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						
+						corpusName = corpusNameTxt.getText();
+						billTypeIndex = selectBillType.getSelectionIndex();
+						currentStatusIndex = selectCurrentStatus.getSelectionIndex();
+						query = searchText.getText();
+						congress = congressNumber.getText();
+						if(limitResults.getSelection())
+							limit = Integer.parseInt(limitResultsText.getText());
+						else
+							limit = -1;
+						
+						outputDir = IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+						if(!new File(outputDir).exists()){
+							new File(outputDir).mkdirs();									
+
+						}
+				}
+				});
+				int progressSize = 500338;//+30
+				if(limit!=-1){
+					progressSize = limit+10;
+				}
+				monitor.beginTask("Running GovTrack Crawler..." , progressSize);
+				TacitFormComposite.writeConsoleHeaderBegining("GovTrack Crawler started");
+				final GovTrackCrawler rc = new GovTrackCrawler(); // initialize all the common parameters	
+
+				monitor.subTask("Initializing...");
+				monitor.worked(10);
+				if(monitor.isCanceled())
+				{
+					try {
+						FileUtils.deleteDirectory(new File(IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					handledCancelRequest("Cancelled");
+				}
+					try {
+						monitor.subTask("Crawling...");
+						if(monitor.isCanceled()) {
+							return handledCancelRequest("Cancelled");					
+						} 
+							filesFound = rc.crawl(outputDir, query, congress, billTypeMap.get(billTypeIndex), currentStatusMap.get(currentStatusIndex), limit, monitor);
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");
+					} catch(IndexOutOfBoundsException e){
+
+						filesFound = false;
+						
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								messageDisplayed = true;
+								MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+								int result = dialog.open();
+								if (result <= 0){
+									dialog.close();
+									
+								}
+							}
+						});
+						
+					} catch (Exception e) {
+							
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					} 
+				
+				try {
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							if(filesFound) {
+
+								govtrackCorpus = new Corpus(corpusName, CMDataType.GOVTRACK_JSON);
+								
+								CorpusClass cc = new CorpusClass("GovTrack", outputDir);
+								cc.setParent(govtrackCorpus);
+								govtrackCorpus.addClass(cc);
+							}
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
+
+				System.out.println("files found? "+filesFound);
+				
+				try {
+					ManageCorpora.saveCorpus(govtrackCorpus);
+
+					ConsoleView.printlInConsoleln("Created Corpus: "+ corpusName);
+				} catch(Exception e) {
+					e.printStackTrace();
+					
+					if(!messageDisplayed) {
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								messageDisplayed = true;
+								MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+								int result = dialog.open();
+								if (result <= 0){
+									dialog.close();
+									
+								}
+							}
+						});
+						
+					}
+					
+					System.out.println(new File(IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName).exists());
+					try {
+						FileUtils.deleteDirectory(new File(IGovTrackCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+					} catch (IOException e1) {
+					}
+					ConsoleView.printlInConsoleln("No corpus created");
+					return Status.CANCEL_STATUS;
+				}
+				
+				if(monitor.isCanceled())
+					return handledCancelRequest("Cancelled");
+				
+				monitor.worked(10);//100
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		canProceed = canItProceed();
+		if(canProceed) {
+			job.schedule(); // schedule the job
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> GovTrack Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> GovTrack Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln("Done");
+						ConsoleView.printlInConsoleln("GovTrack Papers crawler completed successfully.");
+
+					}
+				}
+			});
+		}				
+	
+	}
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("GovTrack crawler cancelled.");

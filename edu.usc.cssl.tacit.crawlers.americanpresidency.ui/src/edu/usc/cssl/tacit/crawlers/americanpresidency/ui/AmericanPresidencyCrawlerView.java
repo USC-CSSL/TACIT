@@ -79,6 +79,9 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 	private Combo browseYear;
 	Corpus americanPresidencyCorpus;
 	private boolean filesFound;
+	
+	
+	
 	String presidentNames[] = {"President","George Washington","John Adams","Thomas Jefferson","James Madison","James Monroe","John Quincy Adams","Andrew Jackson","Martin van Buren","William Henry Harrison","John Tyler","James K. Polk","Zachary Taylor","Millard Fillmore","Franklin Pierce","James Buchanan","Abraham Lincoln","Andrew Johnson","Ulysses S. Grant","Rutherford B. Hayes","James A. Garfield","Chester A. Arthur","Grover Cleveland","Benjamin Harrison","Grover Cleveland","William McKinley","Theodore Roosevelt","William Howard Taft","Woodrow Wilson","Warren G. Harding","Calvin Coolidge","Herbert Hoover","Franklin D. Roosevelt","Harry S. Truman","Dwight D. Eisenhower","John F. Kennedy","Lyndon B. Johnson","Richard Nixon","Gerald R. Ford","Jimmy Carter","Ronald Reagan","George Bush","William J. Clinton","George W. Bush","Barack Obama"};
 	String documentTypes[] = {"Document Category","Oral: Address - Inaugural","Oral: Address - to Congress (non SOTU)","Oral: Address - State of the Union","Oral: Address - major to the Nation","Oral: Address - Farewell","Oral: Address - Saturday Radio","Oral: Address - Fireside Chats","Oral: Address  - \"Inaugural\" (Accidental Presidents)","Oral: Address - at College Commencements","Oral: Address - to the UN General Assembly","Oral: Address - to Foreign Legislatures","Oral: Address - Nomination Acceptance","Oral: Remarks - (non categorized)","Oral: Remarks - Toasts","Oral: Remarks - Bill Signings","Oral: Remarks - Bill Vetos","Oral: News Conferences","Oral: News Conferences - Joint","Debates: General Election","Oral: Remarks - Campaign Fundraiser","Oral: Remarks - regarding Executive Nominations","Oral: Remarks - regarding Executive Appointments","Oral: Remarks - regarding Resignations","Written: Messages - (non categorized)","Written: Messages -  to Congress","Written: Messages - Annual Messages (written SOTU)","Written: Messages - Veto Messages","Written: Messages - Pocket Veto Messages","Written: Messages - Budget Messages","Written: Messages -  Farewell Addresses","Written: Memorandums","Written: Memorandums - Pocket Vetos","Written: Memorandums - Determinations","Written: Memorandums - Diplomatic - Memo of Understanding","Written: Executive Orders","Written: Proclamations","Written: Statements - (non categorized)","Written: Statements - Signing Statements","Written: Statements - Veto Statements","Written: Letters - (non categorized)","Written: Letters - to Congress","Written: Notices","Written: Telegrams - Lincoln (Civil War)","E.O.P.: Press Briefings","OMB: Statements of Administration Policy","Debates: Vice-Presidential","Debates: Primary Elections-Democratic Party","Debates: Primary Elections-Republican Party","Party Platforms"};
 	String days[]={"Day","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
@@ -187,6 +190,20 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		presidentNameMap.put(44, "44");			
 	}
 	
+	//Variables needed at runtime
+	
+		String  day, year;
+		int month;
+		String outputDir;
+		int presidentIndex; int documentIndex; String corpusName;			
+		boolean browse; boolean canProceed; 
+		String query1; String query2;
+		Calendar from = null;
+		Calendar to  = null;
+		String operator;
+		
+		
+		
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent, "UC Santa Barbara Presidential Papers Crawler");
@@ -212,6 +229,23 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		createCrawlInputParameters(toolkit, client);
 		//outputLayout = TacitFormComposite.createOutputSection(toolkit, client, form.getMessageManager());
 		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, client, form.getMessageManager());
+		
+		Button btnRun = TacitFormComposite.createRunButton(client, toolkit);
+		
+		btnRun.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				runModule();
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
+		
 		// Add run and help button on the toolbar
 		addButtonsToToolBar();	
 	}
@@ -570,210 +604,10 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 			public String getToolTipText() {
 				return "Crawl";
 			}
-			String  day, year;
-			int month;
-			String outputDir;
-			int presidentIndex; int documentIndex; String corpusName;			
-			boolean browse; boolean canProceed; 
-			String query1; String query2;
-			Calendar from = null;
-			Calendar to  = null;
-			String operator;
+			
 			@Override
-			public void run() {
-				final Job job = new Job("American Presidency Crawler") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						TacitFormComposite.setConsoleViewInFocus();
-						TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
-						
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								
-								browse = dateCheckBrowse.getSelection();
-								corpusName = corpusNameTxt.getText();
-								presidentIndex = selectPresidentSearch.getSelectionIndex();
-								documentIndex = selectDocumentSearch.getSelectionIndex();
-								if(limitResults.getSelection())
-									limit = Integer.parseInt(limitResultsText.getText());
-								else
-									limit = -1;
-								if(!browse) {
-									
-									if (andButton.getSelection())
-										operator = "AND";
-									else if(orButton.getSelection())
-										operator = "OR";
-									else
-										operator = "AND NOT";
-									query1 = searchText1.getText();
-									query2 = searchText2.getText();
-									if (dateCheckSearch.getSelection())
-									{	
-										from = Calendar.getInstance();
-										from.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
-										to = Calendar.getInstance();
-										to.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
-									}else{
-										from = null;
-										to = null;
-									}
-								} else {
-									month = browseMonth.getSelectionIndex() - 1;
-									day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
-									year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
-								}
-								outputDir = IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
-								if(!new File(outputDir).exists()){
-									new File(outputDir).mkdirs();									
-
-								}
-						}
-						});
-						int progressSize = 116317;//+30
-						if(limit!=-1){
-							progressSize = limit+10;
-						}
-						monitor.beginTask("Running American Presidency Crawler..." , progressSize);
-						TacitFormComposite.writeConsoleHeaderBegining("American Presidency Crawler started");
-						final AmericanPresidencyCrawler rc = new AmericanPresidencyCrawler(); // initialize all the common parameters	
-
-						monitor.subTask("Initializing...");
-						monitor.worked(10);
-						if(monitor.isCanceled())
-						{
-							try {
-								FileUtils.deleteDirectory(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							handledCancelRequest("Cancelled");
-						}
-						if(!browse) {
-							try {
-								monitor.subTask("Crawling...");
-								if(monitor.isCanceled()) {
-									return handledCancelRequest("Cancelled");					
-								} 
-									filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), limit, monitor);
-								if(monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
-							} catch(IndexOutOfBoundsException e){
-
-								Display.getDefault().syncExec(new Runnable() {
-									@Override
-									public void run() {
-										MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-										int result = dialog.open();
-										if (result <= 0){
-											dialog.close();
-										}
-									}
-								});
-								 
-								
-							} catch (Exception e) {
-									
-								return handleException(monitor, e, "Crawling failed. Provide valid data");
-							} 
-						} else {
-							try {
-								monitor.subTask("Crawling...");
-								if(monitor.isCanceled())
-									return handledCancelRequest("Cancelled");								
-								if(monitor.isCanceled())
-									return handledCancelRequest("Cancelled");
-								
-								filesFound = rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), limit, monitor);
-							} catch(IndexOutOfBoundsException e){
-								
-								
-								Display.getDefault().syncExec(new Runnable() {
-									@Override
-									public void run() {
-										MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-										int result = dialog.open();
-										if (result <= 0){
-											dialog.close();
-										}
-									}
-								});
-								
-								
-								
-								
-							} catch (Exception e) {
-								return handleException(monitor, e, "Crawling failed. Provide valid data");
-							}
-						}
-						
-						try {
-							Display.getDefault().syncExec(new Runnable() {
-								@Override
-								public void run() {
-									if(filesFound) {
-
-										americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
-										
-										CorpusClass cc = new CorpusClass("American Presidential Papers", outputDir);
-										cc.setParent(americanPresidencyCorpus);
-										americanPresidencyCorpus.addClass(cc);
-									}
-								}
-							});
-						} catch (Exception e) {
-							e.printStackTrace();
-							return Status.CANCEL_STATUS;
-						}
-						
-						try {
-							ManageCorpora.saveCorpus(americanPresidencyCorpus);
-
-							ConsoleView.printlInConsoleln("Created Corpus: "+ corpusName);
-						} catch(Exception e) {
-							e.printStackTrace();
-							System.out.println(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName).exists());
-							try {
-								FileUtils.deleteDirectory(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
-							} catch (IOException e1) {
-							}
-							ConsoleView.printlInConsoleln("No corpus created");
-							return Status.CANCEL_STATUS;
-						}
-						
-						
-						if(monitor.isCanceled())
-							return handledCancelRequest("Cancelled");
-						
-						monitor.worked(10);//100
-						monitor.done();
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				canProceed = canItProceed();
-				if(canProceed) {
-					job.schedule(); // schedule the job
-					job.addJobChangeListener(new JobChangeAdapter() {
-
-						public void done(IJobChangeEvent event) {
-							if (!event.getResult().isOK()) {
-								TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> American Presidency Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
-										IStatus.INFO, form);
-
-							} else {
-								TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> American Presidency Crawler  ");
-								TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
-										IStatus.INFO, form);
-								ConsoleView.printlInConsoleln("Done");
-								ConsoleView.printlInConsoleln("American Presidency Papers crawler completed successfully.");
-	
-							}
-						}
-					});
-				}				
+			public void run() { 
+				runModule();
 			}
 		});
 
@@ -810,6 +644,206 @@ public class AmericanPresidencyCrawlerView  extends ViewPart implements IAmerica
 		form.getToolBarManager().update(true);
 	}
 
+
+	private void runModule() {
+	
+		final Job job = new Job("American Presidency Crawler") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				TacitFormComposite.setConsoleViewInFocus();
+				TacitFormComposite.updateStatusMessage(getViewSite(), null,null, form);
+				
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						
+						browse = dateCheckBrowse.getSelection();
+						corpusName = corpusNameTxt.getText();
+						presidentIndex = selectPresidentSearch.getSelectionIndex();
+						documentIndex = selectDocumentSearch.getSelectionIndex();
+						if(limitResults.getSelection())
+							limit = Integer.parseInt(limitResultsText.getText());
+						else
+							limit = -1;
+						if(!browse) {
+							
+							if (andButton.getSelection())
+								operator = "AND";
+							else if(orButton.getSelection())
+								operator = "OR";
+							else
+								operator = "AND NOT";
+							query1 = searchText1.getText();
+							query2 = searchText2.getText();
+							if (dateCheckSearch.getSelection())
+							{	
+								from = Calendar.getInstance();
+								from.set(fromDate.getYear(), fromDate.getMonth(), fromDate.getDay());
+								to = Calendar.getInstance();
+								to.set(toDate.getYear(), toDate.getMonth(), toDate.getDay());
+							}else{
+								from = null;
+								to = null;
+							}
+						} else {
+							month = browseMonth.getSelectionIndex() - 1;
+							day = browseDay.getSelectionIndex() == 0 ? "" : days[browseDay.getSelectionIndex()];
+							year = browseYear.getSelectionIndex() == 0 ? "" : years[browseYear.getSelectionIndex()];
+						}
+						outputDir = IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+						if(!new File(outputDir).exists()){
+							new File(outputDir).mkdirs();									
+
+						}
+				}
+				});
+				int progressSize = 116317;//+30
+				if(limit!=-1){
+					progressSize = limit+10;
+				}
+				monitor.beginTask("Running American Presidency Crawler..." , progressSize);
+				TacitFormComposite.writeConsoleHeaderBegining("American Presidency Crawler started");
+				final AmericanPresidencyCrawler rc = new AmericanPresidencyCrawler(); // initialize all the common parameters	
+
+				monitor.subTask("Initializing...");
+				monitor.worked(10);
+				if(monitor.isCanceled())
+				{
+					try {
+						FileUtils.deleteDirectory(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					handledCancelRequest("Cancelled");
+				}
+				if(!browse) {
+					try {
+						monitor.subTask("Crawling...");
+						if(monitor.isCanceled()) {
+							return handledCancelRequest("Cancelled");					
+						} 
+							filesFound = rc.crawlSearch(outputDir, query1, query2, operator, from, to, presidentNameMap.get(presidentIndex), documentCategoryMap.get(documentIndex), limit, monitor);
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");
+					} catch(IndexOutOfBoundsException e){
+
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+								int result = dialog.open();
+								if (result <= 0){
+									dialog.close();
+								}
+							}
+						});
+						 
+						
+					} catch (Exception e) {
+							
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					} 
+				} else {
+					try {
+						monitor.subTask("Crawling...");
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");								
+						if(monitor.isCanceled())
+							return handledCancelRequest("Cancelled");
+						
+						filesFound = rc.crawlBrowse(outputDir,month,day,year,presidentNameMap.get(presidentIndex),documentCategoryMap.get(documentIndex), limit, monitor);
+					} catch(IndexOutOfBoundsException e){
+						
+						
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+								int result = dialog.open();
+								if (result <= 0){
+									dialog.close();
+								}
+							}
+						});
+						
+						
+						
+						
+					} catch (Exception e) {
+						return handleException(monitor, e, "Crawling failed. Provide valid data");
+					}
+				}
+				
+				try {
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							if(filesFound) {
+
+								americanPresidencyCorpus = new Corpus(corpusName, CMDataType.PRESIDENCY_JSON);
+								
+								CorpusClass cc = new CorpusClass("American Presidential Papers", outputDir);
+								cc.setParent(americanPresidencyCorpus);
+								americanPresidencyCorpus.addClass(cc);
+							}
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
+				
+				try {
+					ManageCorpora.saveCorpus(americanPresidencyCorpus);
+
+					ConsoleView.printlInConsoleln("Created Corpus: "+ corpusName);
+				} catch(Exception e) {
+					e.printStackTrace();
+					System.out.println(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName).exists());
+					try {
+						FileUtils.deleteDirectory(new File(IAmericanPresidencyCrawlerViewConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName));
+					} catch (IOException e1) {
+					}
+					ConsoleView.printlInConsoleln("No corpus created");
+					return Status.CANCEL_STATUS;
+				}
+				
+				
+				if(monitor.isCanceled())
+					return handledCancelRequest("Cancelled");
+				
+				monitor.worked(10);//100
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		canProceed = canItProceed();
+		if(canProceed) {
+			job.schedule(); // schedule the job
+			job.addJobChangeListener(new JobChangeAdapter() {
+
+				public void done(IJobChangeEvent event) {
+					if (!event.getResult().isOK()) {
+						TacitFormComposite.writeConsoleHeaderBegining("Error: <Terminated> American Presidency Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is stopped",
+								IStatus.INFO, form);
+
+					} else {
+						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> American Presidency Crawler  ");
+						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
+								IStatus.INFO, form);
+						ConsoleView.printlInConsoleln("Done");
+						ConsoleView.printlInConsoleln("American Presidency Papers crawler completed successfully.");
+
+					}
+				}
+			});
+		}				
+	
+		
+	}
+	
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
 		ConsoleView.printlInConsoleln("American Presidency crawler cancelled.");
