@@ -31,10 +31,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -42,6 +44,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -81,7 +85,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	ManageCorpora corpusManagement;
 	IViewSite viewSite;
 	String exportSelection;
-	
+	String corpusClassName, corpusName;
 
 	MasterDetailsPage(ScrolledForm form, IViewSite viewSite) throws IOException, ParseException {
 		corpusList = new ArrayList<ICorpus>();
@@ -174,7 +178,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 
 	String outputLoc;
 	boolean seperateFiles;
-
+	
+	
 	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -219,6 +224,9 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 		Button refresh = toolkit.createButton(buttonComposite, "Refresh", SWT.PUSH);		
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(refresh);
+		
+		final Button queryCorpus = toolkit.createButton(buttonComposite, "Query Corpus", SWT.PUSH);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(queryCorpus);
 		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
@@ -271,15 +279,163 @@ public class MasterDetailsPage extends MasterDetailsBlock {
  				corpusViewer.setInput(corpusList);		
  			}		
  		});		
+		
+		queryCorpus.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(queryCorpus.getShell(), new LabelProvider());
+				dialog.setTitle("List of corpora");
+				dialog.setMessage("Select an existing corpus");
+				dialog.setElements(corpusList.toArray());
 
+				seperateFiles = false;
+				final TacitCorpusFilterDialog filterDialog = new TacitCorpusFilterDialog(queryCorpus.getShell());
+				final CorpusClass cls = (CorpusClass) ((IStructuredSelection) corpusViewer.getSelection()).getFirstElement();
+				IQueryProcessor qp = new QueryProcesser(cls);
+				Map<String, QueryDataType> keys = null;
+				try {
+					keys = qp.getJsonKeys();
+					filterDialog.setFilterDetails(keys);
+					filterDialog.addExistingFilters(cls.getFilters());
+					// set the already existing filters
+
+				} catch (JsonSyntaxException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (JsonIOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+				IWizardData wizardDataModel = new IWizardData() {
+
+					@Override
+					public void getData(List<Filter> filter) {
+						cls.refreshFilters(filter);
+					}
+
+					@Override
+					public void getPath(String path) {
+						outputLoc = path;
+					}
+
+					@Override
+					public void getDivision(boolean seperate) {
+						seperateFiles = true;
+
+					}
+
+					@Override
+					public void getExportSelection(String selection) {
+						exportSelection = selection;
+						
+					}
+
+					@Override
+					public void getCorpusClass(String corpusClass) {
+						corpusClassName = corpusClass; 
+						
+					}
+
+					@Override
+					public void getCorpus(String corpus) {
+						corpusName = corpus;
+						
+					}
+				};
+				
+				WizardDialog wizardDialog = new WizardDialog(export.getShell(), new ExportWizard(filterDialog, wizardDataModel, dialog, true));
+				if(wizardDialog.open() == Window.OK){
+					Preprocessor ppObj = null;
+					List<String> inFiles = null;
+					List<Object> inputFiles = new ArrayList<Object>();
+					inputFiles.add(cls);
+					File delFile = null;
+					try {
+						ppObj = new Preprocessor("Liwc", false);
+						inFiles = ppObj.processData("tempData", inputFiles, seperateFiles);
+						if(!inFiles.isEmpty()){
+							delFile = new File(inFiles.get(0));
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
+					String outputDir = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_corpuses" + System.getProperty("file.separator") + "misc"+ System.getProperty("file.separator") + corpusName + System.getProperty("file.separator") + corpusClassName;
+					System.out.println(outputDir);
+					File dir = new File(outputDir);
+					if (!dir.exists()) {
+						dir.mkdir();
+					}
+					
+
+						for (String i : inFiles) {
+							if(i.contains(".csv"))
+								continue;
+							try {
+							int l = i.lastIndexOf(File.separator);
+							String export = outputDir + File.separator + i.substring(l + 1);
+							File exportFile =new File(export);
+							FileUtils.copyFile(new File(i), exportFile);
+							ConsoleView.printlInConsoleln("Successfully exported filename:<"+exportFile.getName()+"> file to " + outputDir);
+
+							} catch (FileNotFoundException e1) {
+								e1.printStackTrace();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+							
+					}
+						Corpus corpus = null;
+						boolean found = false;
+							//The list of corpus is not too large so iterate to check for existing corpus
+							int corpusIndex=0;
+							for(ICorpus c: corpusList){
+								if(c.getCorpusName().equals(corpusName)){
+									CorpusClass newClass = new CorpusClass(corpusClassName,outputDir);
+									((Corpus) c).addClass(newClass);
+									corpusList.set(corpusIndex, c);
+									corpusViewer.refresh();
+									corpusViewer.setExpandedElements(expandNewCorpus(corpusViewer.getExpandedElements(), (Corpus) corpusList.get(corpusIndex)));
+									corpusViewer.setSelection(new StructuredSelection(newClass), true);
+									ManageCorpora.saveCorpus((Corpus) c);
+									found = true;
+									break;
+								}
+								corpusIndex++;
+							}
+							if(!found){
+							corpus = new Corpus(corpusName, CMDataType.PLAIN_TEXT);
+							CorpusClass cc = new CorpusClass(corpusClassName, outputDir);
+							cc.setParent(corpus);
+							corpus.addClass(cc);
+							ManageCorpora.saveCorpus(corpus);
+							}
+
+
+				}
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		export.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				seperateFiles = false;
 				final TacitCorpusFilterDialog filterDialog = new TacitCorpusFilterDialog(export.getShell());
-				final CorpusClass cls = (CorpusClass) ((IStructuredSelection) corpusViewer.getSelection())
-						.getFirstElement();
-
+				final CorpusClass cls = (CorpusClass) ((IStructuredSelection) corpusViewer.getSelection()).getFirstElement();
 				IQueryProcessor qp = new QueryProcesser(cls);
 				Map<String, QueryDataType> keys = null;
 				try {
@@ -325,6 +481,17 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					public void getExportSelection(String selection) {
 						exportSelection = selection;
 						
+					}
+
+					@Override
+					public void getCorpusClass(String corpusClass) {
+						corpusClassName = corpusClass; 
+						
+					}
+
+					@Override
+					public void getCorpus(String corpus) {
+						corpusName = corpus;						
 					}
 				};
 
@@ -379,8 +546,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
-						String outputDir = outputLoc + File.separator + cls.getParent().getCorpusName() + "-"
-								+ cls.getClassName();
+						String outputDir = outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName();
 						System.out.println(outputDir);
 						File dir = new File(outputDir);
 						if (!dir.exists()) {
@@ -402,6 +568,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 								
 						}
 
+						
+						
 //						if(!inFiles.isEmpty()){
 //							try {
 //								FileUtils.deleteDirectory(delFile.getParentFile().getParentFile());

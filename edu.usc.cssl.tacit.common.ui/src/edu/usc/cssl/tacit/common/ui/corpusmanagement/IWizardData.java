@@ -9,4 +9,7 @@ public interface IWizardData {
 	public void getPath(String path);
 	public void getDivision(boolean seperate);
 	public void getExportSelection(String selection);
+	public void getCorpusClass(String corpusClass);
+	public void getCorpus(String corpus);
+	
 }

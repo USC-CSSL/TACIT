@@ -163,8 +163,11 @@ public class WizardPage1 extends WizardPage {
 
 	@Override
 	public IWizardPage getNextPage() {
+		if(!((ExportWizard)getWizard()).queryCorpus){
 		WizardPage2 wizardPage2 = ((ExportWizard)getWizard()).two;
 		return wizardPage2;
+		}
+		return null;
 	}
 	
 	
