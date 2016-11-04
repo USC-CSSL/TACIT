@@ -2,6 +2,7 @@ package edu.usc.cssl.tacit.crawlers.uscongress.services;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.Stack;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -140,7 +140,7 @@ public class AvailableRecords {
 				continue;
 			senators.add(senText);
 		}
-		senatorDet = SenatorDetails.getSenatorDetails();
+//		senatorDet = SenatorDetails.getSenatorDetails();
 		HashMap<String, String> senMap = new HashMap<String, String>();
 		for(String s : senators) {
 			String temp = new String();

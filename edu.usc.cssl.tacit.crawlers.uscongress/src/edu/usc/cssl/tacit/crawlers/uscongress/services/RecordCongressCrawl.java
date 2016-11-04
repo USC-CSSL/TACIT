@@ -85,6 +85,8 @@ public class RecordCongressCrawl {
 				Elements number = d.getElementsByClass("results-number");
 				String num = Jsoup.parse(number.toString()).text();
 				System.out.println(num);
+				if(num.equals(""))
+					return;
 				System.out.println("This is "+ num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
 				int results = Integer.parseInt(num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
 				System.out.println(num+"------"+results);
@@ -122,20 +124,22 @@ public class RecordCongressCrawl {
 								String title1 = (date.child(1)).toString().substring(4,date.child(1).toString().indexOf("<br"));
 								if(fields[2])
 									jsonGenerator.writeStringField("title", title1);
-								ConsoleView.printlInConsoleln("Writing record "+title1);
+								ConsoleView.printlInConsoleln("Writing record "+title1+"count "+docCount);
 							}
 							System.out.println(Jsoup.parse(docJournalAbstract.toString()).text());
 							if(fields[3])
 								jsonGenerator.writeStringField("body", Jsoup.parse(docJournalAbstract.toString()).text());
 							jsonGenerator.writeEndObject();
 						} catch (SocketTimeoutException e) {
+							docCount++;
 							continue;
 						}catch (Exception e) {
+							docCount++;
 							continue; 
 						}
 					docCount++;
 					monitor.worked(1);
-					if (limit!= -1 && docCount >= limit){					
+					if (docCount >= limit-3){					
 						break;
 					}
 				}
@@ -143,7 +147,7 @@ public class RecordCongressCrawl {
 					page = (int) (Math.random()*totalPages+1);
 				else
 					page++;
-				if (docCount >= limit)
+				if (docCount >= limit-3)
 					break;
 			}
 			ConsoleView.printlInConsoleln(docCount+ "file(s) Downloaded ");

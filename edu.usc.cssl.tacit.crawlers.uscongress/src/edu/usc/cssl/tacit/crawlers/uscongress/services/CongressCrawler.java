@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -46,7 +47,12 @@ public class CongressCrawler {
 				try {
 					d = Jsoup.connect(site).timeout(50000).get();
 					connected = true;
-				} catch (Exception e) {
+				} 
+				catch(HttpStatusException e1){
+					monitor.setCanceled(true);
+					break;
+				}
+				catch (Exception e) {
 					System.out.println(e);
 					continue;
 				}
