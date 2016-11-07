@@ -556,7 +556,7 @@ public class Preprocessor {
 			// else {
 			if (!new File(tempDir).exists())
 				new File(tempDir).mkdir();
-		if (doPreprocessing) {
+		if (!doPreprocessing) {
 			tempFile = tempPPFileLoc + "temp_json_" + System.currentTimeMillis() + ".txt";
 			}
 		FilenameFilter jsonFileFilter = new FilenameFilter() {
@@ -571,7 +571,7 @@ public class Preprocessor {
 			QueryProcesser qp = new QueryProcesser();
 			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body",false);
 			for (String str : outputs) {
-				if (doPreprocessing) {
+				if (!doPreprocessing) {
 					if(seperateFiles){
 					FileWriter fw = new FileWriter(tempFile);
 					fw.write(str);
