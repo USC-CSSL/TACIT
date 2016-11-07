@@ -538,7 +538,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						inputFiles.add(cls);
 						File delFile = null;
 						try {
-							ppObj = new Preprocessor("Liwc", false);
+							ppObj = new Preprocessor("Liwc", true);
 							inFiles = ppObj.processData("tempData", inputFiles, seperateFiles);
 							if(!inFiles.isEmpty()){
 								delFile = new File(inFiles.get(0));
