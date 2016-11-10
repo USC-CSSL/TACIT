@@ -12,12 +12,12 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 public class CorpusMangementValidation {
 	public static boolean isClassPathValid(String classPathText, String className, ScrolledForm corpusMgmtViewform) {
 		if (classPathText.isEmpty()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location for class \"" + className + "\"", null, IMessageProvider.ERROR);
+			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid directory location for class \"" + className + "\"", null, IMessageProvider.ERROR);
 			return false;
 		}
 		File tempFile = new File(classPathText);
 		if (!tempFile.exists() || !tempFile.isDirectory()) {
-			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid diretory location for class \""+ className + "\"", null, IMessageProvider.ERROR);
+			corpusMgmtViewform.getMessageManager().addMessage("classPath", "Class path must be a valid directory location for class \""+ className + "\"", null, IMessageProvider.ERROR);
 			return false;
 		} else {
 			corpusMgmtViewform.getMessageManager().removeMessage("classPath");
