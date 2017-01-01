@@ -505,19 +505,19 @@ public class WeightedWordCountView extends ViewPart implements
 			return false;
 		}
 		
-		try{
-			List<Object> dictPaths = dictLayoutData.getTypeCheckedSelectedFiles(checkType);
-			Iterator<Object> dictPathIterator  = dictPaths.iterator();
-			while(dictPathIterator.hasNext()){
-				String dictPath  = (String)dictPathIterator.next();
-				if (!dictPath.endsWith(".txt")){
-					form.getMessageManager().addMessage("dict", "Error:The dictionary is not in .txt format", null, IMessageProvider.ERROR);
-					return false;
-				}
-			}
-		}catch(Exception e){
-			return false;
-		}
+//		try{
+//			List<Object> dictPaths = dictLayoutData.getTypeCheckedSelectedFiles(checkType);
+//			Iterator<Object> dictPathIterator  = dictPaths.iterator();
+//			while(dictPathIterator.hasNext()){
+//				String dictPath  = (String)dictPathIterator.next();
+//				if (!dictPath.endsWith(".txt")){
+//					form.getMessageManager().addMessage("dict", "Error:The dictionary is not in .txt format", null, IMessageProvider.ERROR);
+//					return false;
+//				}
+//			}
+//		}catch(Exception e){
+//			return false;
+//		}
 		
 		return true;
 	}
