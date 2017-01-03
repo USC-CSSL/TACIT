@@ -227,6 +227,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 		final Button queryCorpus = toolkit.createButton(buttonComposite, "Query Corpus", SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1).applyTo(queryCorpus);
+		queryCorpus.setEnabled(false);
 		
 		section.setClient(client);
 		final SectionPart spart = new SectionPart(section);
@@ -250,13 +251,16 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 				 */
 				Object c = ((IStructuredSelection)event.getSelection()).getFirstElement();
 				if(c instanceof ICorpusClass){
+					queryCorpus.setEnabled(true);
 					if(((CorpusClass)c).getParent().getDatatype() != CMDataType.PLAIN_TEXT)
 						export.setEnabled(true);
 					else
 						export.setEnabled(false);
 				}
-				else					
+				else{					
 					export.setEnabled(false);
+					queryCorpus.setEnabled(false);
+				}
 			}
 		});
 
