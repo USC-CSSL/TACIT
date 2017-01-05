@@ -8,6 +8,8 @@ public interface ICorpusClass {
 	
 	public Long getNoOfFiles();
 	
+	public Long getNoOfCases();
+	
 	public String getClassPath();
 	
 	public void setClassPath(String path);

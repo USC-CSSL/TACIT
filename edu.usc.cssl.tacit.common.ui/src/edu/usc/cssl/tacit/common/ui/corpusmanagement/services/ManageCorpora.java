@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,6 +38,7 @@ public class ManageCorpora {
 			.getString(ICommonUiConstants.CORPUS_LOCATION) + System.getProperty("file.separator");
 	private static String oldLoc = rootDir;
 	private static Long fCount;
+	private static Long caseCount;
 
 	public static void saveCorpora(ArrayList<Corpus> corporaList) {
 		for (Corpus corpus : corporaList) {
@@ -48,6 +50,7 @@ public class ManageCorpora {
 	public static void saveCorpus(final Corpus corpus) {
 		String corpusName = corpus.getCorpusName();
 		long fileCorpusCount = 0;
+		long caseCorpusCount = 0;
 		String corpusLocation = rootDir + corpusName;
 		if (!(new File(corpusLocation).exists())) {
 			// Add code for everything
@@ -73,10 +76,13 @@ public class ManageCorpora {
 				
 				File dir = new File(currClass.getClassPath());
 				fCount = 0L;
+				caseCount = 0L;
 				fCount = getFileCount(dir);
-				
+				caseCount = getCaseCount(dir);
+				caseCorpusCount+= caseCount;
 				fileCorpusCount += fCount;
-				currClass.setNoOfFiles(fCount);					
+				currClass.setNoOfFiles(fCount);
+				currClass.setNoOfCases(caseCount);
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
 				classObj.put("original_loc", currClass.getClassPath());
@@ -85,12 +91,15 @@ public class ManageCorpora {
 				classObj.put("analysis_field", currClass.getAnalysisField());
 				classObj.put("data_key", currClass.getKeyTextFields());
 				classObj.put("no_of_files", fCount);
+				classObj.put("no_of_cases", caseCount);
 				classArray.add(classObj);
 			}
 			corpus.setNoOfFiles(fileCorpusCount);
+			corpus.setNoOfCases(caseCorpusCount);
 			System.out.println("Total files"+ fileCorpusCount);
 			jsonObj.put("class_details", classArray);
 			jsonObj.put("total_no_of_files", fileCorpusCount);
+			jsonObj.put("total_no_of_cases", caseCorpusCount);
 			jsonObj.put("num_analysis", 0);
 			JSONArray analysisArray = new JSONArray();
 			jsonObj.put("prev_analysis", analysisArray);
@@ -144,11 +153,13 @@ public class ManageCorpora {
 				
 				File dir = new File(currClass.getClassPath());
 				fCount = 0L;
+				caseCount = 0L;
 				fCount = getFileCount(dir);
-				
+				caseCount = getCaseCount(dir);
 				fileCorpusCount += fCount;
+				caseCorpusCount += caseCount;
 				currClass.setNoOfFiles(fCount);	
-				
+				currClass.setNoOfCases(caseCount);
 				JSONObject classObj = new JSONObject();
 				classObj.put("class_name", currClass.getClassName());
 				classObj.put("original_loc", currClass.getClassPath());
@@ -156,11 +167,14 @@ public class ManageCorpora {
 						corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 				classObj.put("data_key", currClass.getKeyTextFields());
 				classObj.put("no_of_files", fCount);
+				classObj.put("no_of_cases", caseCount);
 				classArray.add(classObj);
 			}
 			corpus.setNoOfFiles(fileCorpusCount);
+			corpus.setNoOfCases(caseCorpusCount);
 			System.out.println(fileCorpusCount);
 			jsonObj.put("total_no_of_files", fileCorpusCount);
+			jsonObj.put("total_no_of_cases", caseCorpusCount);
 			jsonObj.put("class_details", classArray);
 			jsonObj.put("num_analysis", numAnalysis);
 			jsonObj.put("prev_analysis", analysisArray);
@@ -204,6 +218,37 @@ public class ManageCorpora {
 		
 	}
 
+	public static Long getCaseCount(File dir){
+		File[] files = dir.listFiles();
+		if (files != null) {
+			for (File obj : files) {
+				if (!obj.isDirectory() && !obj.getName().equals(".DS_Store")){
+					try {
+						JSONParser jsonParser = new JSONParser();
+						JSONArray jsonArray;
+						jsonArray = (JSONArray) jsonParser.parse(new FileReader(obj));
+						for(Object x: jsonArray)
+							caseCount++;
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else{
+					caseCount += getCaseCount(obj);
+				}
+			}
+		}
+		return caseCount;
+		
+	}
+	
 	public static boolean isCorpusLocChanged(String newPath) {
 		if (rootDir.equals(newPath + System.getProperty("file.separator")))
 			return false;
@@ -392,18 +437,22 @@ public class ManageCorpora {
 		ArrayList<ICorpusClass> corporaClasses = (ArrayList<ICorpusClass>) corpus.getClasses();
 		JSONArray classArray = new JSONArray();
 		Long totalNum = 0L;
+		Long totalCase = 0L;
 		for (int i = 0; i < numClasses; i++) {
 			CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
 			JSONObject classObj = new JSONObject();
 			classObj.put("class_name", currClass.getClassName());
 			classObj.put("original_loc", currClass.getClassPath());
 			classObj.put("no_of_files", currClass.getNoOfFiles());
+			classObj.put("no_of_cases", currClass.getNoOfCases());
 			totalNum+=currClass.getNoOfFiles();
+			totalCase += currClass.getNoOfCases();
 			classObj.put("tacit_loc", corpusLocation + System.getProperty("file.separator") + currClass.getClassName());
 			classObj.put("data_key", currClass.getKeyTextFields());
 			classArray.add(classObj);
 		}
 		jsonObj.put("total_no_of_files", totalNum);
+		jsonObj.put("total_no_of_cases", totalCase);
 		jsonObj.put("class_details", classArray);
 		jsonObj.put("num_analysis", numAnalysis);
 		jsonObj.put("prev_analysis", analysisArray);
@@ -502,6 +551,7 @@ public class ManageCorpora {
 				if (null == jsonObject)
 					continue;
 				corpora.setNoOfFiles((Long)jsonObject.get("total_no_of_files"));
+				corpora.setNoOfCases((Long)jsonObject.get("total_no_of_cases"));
 				corpora.setCorpusName((String) jsonObject.get("corpus_name"));
 				corpora.setCorpusId((String) jsonObject.get("corpus_id"));
 				corpora.setDataType(CMDataType.get((String) jsonObject.get("data_type")));
@@ -531,6 +581,7 @@ public class ManageCorpora {
 			cc.setClassName((String) corpusClassObj.get("class_name"));
 			cc.setClassPath((String) corpusClassObj.get("original_loc"));
 			cc.setNoOfFiles((Long)corpusClassObj.get("no_of_files"));
+			cc.setNoOfCases((Long)corpusClassObj.get("no_of_cases"));
 			cc.setTacitLocation((String) corpusClassObj.get("tacit_loc"));
 			cc.setAnalysisField((String) corpusClassObj.get("analysis_field"));
 			if (corpusClassObj.containsKey("data_key")) {

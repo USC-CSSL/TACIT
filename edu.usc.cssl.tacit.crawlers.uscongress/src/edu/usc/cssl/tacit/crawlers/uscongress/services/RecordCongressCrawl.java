@@ -72,7 +72,8 @@ public class RecordCongressCrawl {
 				System.out.println(site);
 				while (!connected) {
 					try {
-						d = Jsoup.connect(site).timeout(50000).get();
+						d = Jsoup.connect(site).timeout(50000).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+							     .get();
 						connected = true;
 					}
 					catch (Exception e) {
@@ -100,8 +101,9 @@ public class RecordCongressCrawl {
 					String data = link.toString();
 					System.out.println(data);
 					int start = data.indexOf("=\"");
-					int end = data.indexOf("resultIndex=");
+					int end = data.indexOf("\">");
 					Elements docJournalAbstract = null;
+					System.out.print(data+"00000000");
 					String contentLink = data.substring(start + 2, end-1);
 					if(set.contains(contentLink))
 						continue;
@@ -110,7 +112,8 @@ public class RecordCongressCrawl {
 					String dateText;
 					Document doc;
 						try {
-							doc = Jsoup.connect(contentLink).timeout(4000).get();
+							doc = Jsoup.connect(contentLink).timeout(4000).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
+								     .get();
 							docJournalAbstract =  doc.getElementsByClass("txt-box");
 							Elements dates = doc.getElementsByClass("wrapper_std");
 							jsonGenerator.writeStartObject();
@@ -139,7 +142,7 @@ public class RecordCongressCrawl {
 						}
 					docCount++;
 					monitor.worked(1);
-					if (docCount >= limit-3){					
+					if (docCount >= limit){					
 						break;
 					}
 				}
@@ -147,7 +150,7 @@ public class RecordCongressCrawl {
 					page = (int) (Math.random()*totalPages+1);
 				else
 					page++;
-				if (docCount >= limit-3)
+				if (docCount >= limit)
 					break;
 			}
 			ConsoleView.printlInConsoleln(docCount+ "file(s) Downloaded ");

@@ -20,6 +20,16 @@ public class CorpusClass implements ICorpusClass {
 	private Corpus parent;
 	private String id;
 	private Long noOfFiles;
+	private Long noOfCases;
+	
+	public Long getNoOfCases() {
+		return noOfCases;
+	}
+
+	public void setNoOfCases(Long noOfCases) {
+		this.noOfCases = noOfCases;
+	}
+
 	public Long getNoOfFiles() {
 		return noOfFiles;
 	}
