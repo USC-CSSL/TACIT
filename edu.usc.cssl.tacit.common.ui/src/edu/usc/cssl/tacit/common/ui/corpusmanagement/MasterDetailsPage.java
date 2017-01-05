@@ -766,7 +766,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	private static void writeRObj(String outputLoc, CorpusClass cls) throws Exception{
 		
 		// Location where the R Object needs to be saved.
-		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".RData" + "\"";
+		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".RData" + "\"";
 		
 		// Location of the corpus
 		String corpusLocation = cls.getTacitLocation();
@@ -784,6 +784,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 		//Name of the corpus
 		String corpusName = cls.getClassName();
+		corpusName = corpusName.replace(" ", "_");
 		
 		// Create a Script engine manager:
 	    ScriptEngineManager manager = new ScriptEngineManager();
@@ -829,13 +830,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						String data = singleJsonObject.get(key).toString();
 						
 						//Cleaning the data before inserting in the dataframe.
-						/*data = data.toLowerCase()
+						data = data.toLowerCase()
 								.replaceAll("-", " ")
 								.replaceAll("[^a-z0-9. ]", "")
 								.replaceAll("\\s+", " ")
-								.trim();*/
+								.trim();
 						
-						data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").trim();
+						data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll("\\r", " ").trim();
 						
 						//Insert into dataframe
 						engine.eval("data <- \"" +data.toString()+"\"");
@@ -869,7 +870,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	private static void writeCSV(String outputLoc, CorpusClass cls)throws Exception{
 		
 		// Location where the CSV needs to be saved.
-		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".csv";
+		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".csv";
 		
 		FileWriter fileWriter = new FileWriter(new File(saveLocation));
 		
@@ -888,7 +889,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		}
 		
 		//Name of the corpus
-		String corpusName = cls.getClassName();
+		String corpusName = cls.getClassName().replace(" ", "_");
 	    
 	    try {
 			JSONParser jsonParser = new JSONParser();
@@ -926,13 +927,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						String data = singleJsonObject.get(key).toString();
 						
 						//Cleaning the data before inserting in the dataframe.
-						/*data = data.toLowerCase()
+						data = data.toLowerCase()
 								.replaceAll("-", " ")
 								.replaceAll("[^a-z0-9. ]", "")
 								.replaceAll("\\s+", " ")
-								.trim();*/
+								.trim();
 						
-						data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").trim();
+						data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").replaceAll("\\r", " ").trim();
 						singleCsvEntry.append(data + ",");
 
 					}else{
@@ -960,7 +961,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		RedditJsonHandler redditJsonHandler = new RedditJsonHandler();
 		
 		// Location where the CSV needs to be saved.
-		String saveLocation =outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".csv";
+		String saveLocation =outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".csv";
 		
 		FileWriter fileWriter = new FileWriter(new File(saveLocation));
 		
@@ -972,7 +973,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		String[] jsonFiles = corpusDirectory.list();
 		
 		//Name of the corpus
-		String corpusName = cls.getClassName();
+		String corpusName = cls.getClassName().replace(" ", "_");
 		
 		
 	    try {
@@ -1034,13 +1035,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 							String data = post.get(key).toString();
 							
 							//Cleaning the data before inserting in the dataframe.
-							/*data = data.toLowerCase()
+							data = data.toLowerCase()
 									.replaceAll("-", " ")
 									.replaceAll("[^a-z0-9. ]", "")
 									.replaceAll("\\s+", " ")
-									.trim();*/
+									.trim();
 							
-							data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").trim();
+							data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").replace("\\r", " ").trim();
 							singleCsvEntry.append(data + ",");
 						}else{
 							singleCsvEntry.append(",");
@@ -1060,13 +1061,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						for(String redditPostComment : redditPostComments){
 							
 							//Cleaning the data before inserting in the dataframe.
-							/*redditPostComment = redditPostComment.toLowerCase()
+							redditPostComment = redditPostComment.toLowerCase()
 									.replaceAll("-", " ")
 									.replaceAll("[^a-z0-9. ]", "")
 									.replaceAll("\\s+", " ")
-									.trim();*/
+									.trim();
 							
-							redditPostComment = redditPostComment.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").trim();
+							redditPostComment = redditPostComment.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replaceAll(",", " ").replace("\\r", " ").trim();
 							singleCsvEntry.append(redditPostComment + ",");
 							commentCountStamp++;
 						}
@@ -1108,8 +1109,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		RedditJsonHandler redditJsonHandler = new RedditJsonHandler();
 		
 		// Location where the R Object needs to be saved.
-		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName() + "-" + cls.getClassName() + ".RData" + "\"";
-		
+		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".RData" + "\"";
 		// Location of the corpus
 		String corpusLocation = cls.getTacitLocation();
 		File corpusDirectory = new File(corpusLocation);
@@ -1118,7 +1118,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		String[] jsonFiles = corpusDirectory.list();
 		
 		//Name of the corpus
-		String corpusName = cls.getClassName();
+		String corpusName = cls.getClassName().replaceAll(" ","_");
 		
 		// Create a Script engine manager:
 	    ScriptEngineManager manager = new ScriptEngineManager();
@@ -1190,13 +1190,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 							String data = post.get(key).toString();
 							
 							//Cleaning the data before inserting in the dataframe.
-							/*data = data.toLowerCase()
+							data = data.toLowerCase()
 									.replaceAll("-", " ")
 									.replaceAll("[^a-z0-9. ]", "")
 									.replaceAll("\\s+", " ")
-									.trim();*/
+									.trim();
 							
-							data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").trim();
+							data = data.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replace("\\r", " ").trim();
 							
 							//Insert into dataframe
 							engine.eval("data <- \"" +data.toString()+"\"");
@@ -1221,13 +1221,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						for(String redditPostComment : redditPostComments){
 							
 							//Cleaning the data before inserting in the dataframe.
-							/*redditPostComment = redditPostComment.toLowerCase()
+							redditPostComment = redditPostComment.toLowerCase()
 									.replaceAll("-", " ")
 									.replaceAll("[^a-z0-9. ]", "")
 									.replaceAll("\\s+", " ")
-									.trim();*/
+									.trim();
 							
-							redditPostComment = redditPostComment.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").trim();
+							redditPostComment = redditPostComment.replaceAll("\"", " ").replaceAll("\'", " ").replaceAll("\\n", " ").replace("\\r", " ").trim();
 							engine.eval("data <- \"" +redditPostComment+"\"");
 							engine.eval("comment" + commentCountStamp + " <- c(comment" + commentCountStamp + ",data)");
 							commentCountStamp++;
