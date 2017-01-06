@@ -72,8 +72,6 @@ public class ManageCorpora {
 
 			for (int i = 0; i < numClasses; i++) {
 				CorpusClass currClass = (CorpusClass) corporaClasses.get(i);
-
-				
 				File dir = new File(currClass.getClassPath());
 				fCount = 0L;
 				caseCount = 0L;
@@ -226,9 +224,15 @@ public class ManageCorpora {
 					try {
 						JSONParser jsonParser = new JSONParser();
 						JSONArray jsonArray;
-						jsonArray = (JSONArray) jsonParser.parse(new FileReader(obj));
-						for(Object x: jsonArray)
+						Object a = jsonParser.parse(new FileReader(obj));
+						if(a instanceof JSONArray){
+							jsonArray = (JSONArray) a;
+							for(Object x: jsonArray)
+								caseCount++;
+						}
+						else
 							caseCount++;
+						
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
