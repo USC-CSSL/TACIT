@@ -16,6 +16,17 @@ public class Corpus implements ICorpus {
 	private List<ICorpusClass> classes;
 	private TreeViewer viewer;
 	private Long noOfFiles;
+	private Long noOfCases;
+	
+	
+
+	public Long getNoOfCases() {
+		return noOfCases;
+	}
+
+	public void setNoOfCases(Long noOfCases) {
+		this.noOfCases = noOfCases;
+	}
 
 	public Long getNoOfFiles() {
 		return noOfFiles;

@@ -145,13 +145,13 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			if (element instanceof ICorpus)
 				if (((ICorpus) element).getNoOfFiles() != null)
 					return ((ICorpus) element).getCorpusName() + " (Total " + ((ICorpus) element).getNoOfFiles()
-							+ " files)";
+							+ " files, Total "+ ((ICorpus) element).getNoOfCases()+" cases)";
 				else
 					return ((ICorpus) element).getCorpusName();
 			else if (element instanceof ICorpusClass)
 				if (((ICorpusClass) element).getNoOfFiles() != null)
 					return ((ICorpusClass) element).getClassName() + " (" + ((ICorpusClass) element).getNoOfFiles()
-							+ " files)";
+							+ " files, Total "+ ((ICorpusClass) element).getNoOfCases()+" cases)";
 				else
 					return ((ICorpusClass) element).getClassName();
 			else if (element instanceof String) {

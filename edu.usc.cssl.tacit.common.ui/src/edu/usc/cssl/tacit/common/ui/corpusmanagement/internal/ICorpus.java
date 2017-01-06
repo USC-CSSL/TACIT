@@ -9,6 +9,8 @@ public interface ICorpus {
 	
 	public Long getNoOfFiles();
 	
+	public Long getNoOfCases();
+	
 	public CMDataType getDatatype();
 	
 	public List<ICorpusClass> getClasses();
