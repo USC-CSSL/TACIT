@@ -767,7 +767,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 		// Location where the R Object needs to be saved.
 		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".RData" + "\"";
-		
+		saveLocation = saveLocation.replace("\\", "\\\\");
 		// Location of the corpus
 		String corpusLocation = cls.getTacitLocation();
 		File corpusDirectory = new File(corpusLocation);
@@ -1110,6 +1110,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 		// Location where the R Object needs to be saved.
 		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".RData" + "\"";
+		saveLocation = saveLocation.replace("\\", "\\\\");
 		// Location of the corpus
 		String corpusLocation = cls.getTacitLocation();
 		File corpusDirectory = new File(corpusLocation);
