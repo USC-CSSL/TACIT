@@ -15,7 +15,11 @@
 						<td class = "head">Overview</td>
 					</tr>
 					<tr>
-						<td>The Govtrack Crawler collects text from <a href = "http://www.presidency.ucsb.edu/index_docs.php" target="_blank">The American Presidency Project Website</a> and writes that data into text files that are readable by automated text analysis programs.  
+						<td>The Govtrack Crawler collects text from <a href = "https://www.govtrack.us/" target="_blank">GovTrack: Tracking the U.S. Congress Website</a> 
+						and writes that data into text files that are readable by automated text analysis programs. This website’s goal is to help Americans to understand
+						 legislative changes that arise in the government and to stay up to date with politics.  This was the first website to officially publish open data 
+						 about Congress and aims to explore beyond the previously generated statistical analyses, bill summaries, and other released information by creating 
+						 a contextual place for Americans to gain a better understanding.   
 						<br><br>
 						</td>
 					</tr>
@@ -31,6 +35,26 @@
 					</tr>
 					<tr>
 						<td>
+						Govtrack data can be collected using either keyword search terms, congress number, bill type, current bill status or a combination of the four options.
+						<br>
+						<b> Keyword Search: </b> Next to the Search Term field, you may enter a term that you wish to use to crawl the GovTrack website bills for.  You may enter 
+						multiple terms by separating them by a comma and then a space “, “.  
+						<br>
+						<b> Congress Number: </b> Next to the Congress Number field, you may enter the number of the desired congress from which you would like to crawl the 
+						GovTrack website for.  If you already entered one or more key terms, this will search that specific congress number for bills created containing those terms.
+						GovTrack began recording data from the 6th Congress from 1799 and is currently in the 114th Congress as of January 3, 2017.  Thus, you may enter any 
+						number from 6-114 in this field.  A specific keyword(s) is not necessary to crawl the congress number if you are browsing an array of bills from a specified 
+						congress.  For more information on the various congresses and corresponding years and legislature, check out <a href = "https://www.govtrack.us/about" target="_blank">this helpful webpage.</a>
+						<br><br>
+						<b>Bill type: </b> You may select one of the eight types of bills from the Bill Type drop-down menu, ranging from various House, Senate, and Concurrent bills.
+						  This field is not required, but can help to limit your search.  To find more information on these bill types and subjects, refer to the <a href = "https://www.govtrack.us/congress/bills/" target="_blank">Bills and Resolutions webpage.</a>	
+						<br><br>
+						<b> Current Bill Status: </b> Browse the Current Status drop-down menu to further limit your search.  This allows you to specify the action that was taken 
+						on a specific bill (i.e. vetoed, any variation of passing or failing between the House and Senate, pocket vetoed, introduced, etc.).  To better understand 
+						the legislative process and the various statuses of a bill, refer to <a href = "https://www.senate.gov/legislative/bills.htm" target="_blank">The United States Senate Website.</a>
+						<br><br>
+						<b> Limiting Results: </b> Check the Limit the Results button to enter a number of desired bills that you would like to have form your corpus.  Enter this number in the field.  
+						
 						</td>
 					<tr>
 						<td class = "subtitle">Specifying Output Details</td>
@@ -41,7 +65,7 @@
 					</tr>			
 					
 					<tr>
-						<td class = "subtitle">Understanding Presidential Paper Crawler Output</td>
+						<td class = "subtitle">Understanding Govtrack Crawler Output</td>
 					</tr>
 					<tr>
 						<td>The <b> Console </b> panel at the bottom of the tool will provide information about the Supreme Court term/issue selected, the website url being crawled, and the names of the files being created while the crawler is running. Crawl data is saved in Corpus Management under the corpus name you provided. Data can be output into formats compatible with other programs using Corpus Management.  
