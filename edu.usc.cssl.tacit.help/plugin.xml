@@ -91,6 +91,20 @@
            file="contextDefinitionFile.xml"
            plugin="edu.usc.cssl.tacit.crawlers.typepad.ui">
      </contexts>
+     <contexts
+           file="contextDefinitionFile.xml"
+           plugin="edu.usc.cssl.tacit.crawlers.hansard.ui">
+     </contexts>
+     
+     <contexts
+           file="contextDefinitionFile.xml"
+           plugin="edu.usc.cssl.tacit.crawlers.americanpresidency.ui">
+     </contexts>
+     
+     <contexts
+           file="contextDefinitionFile.xml"
+           plugin="edu.usc.cssl.tacit.crawlers.govtrack.ui">
+     </contexts>
 </extension> 
 
 </plugin>
