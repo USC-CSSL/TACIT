@@ -766,7 +766,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	private static void writeRObj(String outputLoc, CorpusClass cls) throws Exception{
 		
 		// Location where the R Object needs to be saved.
-		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".RData" + "\"";
+		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + "-" + cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + ".RData" + "\"";
 		saveLocation = saveLocation.replace("\\", "\\\\");
 		// Location of the corpus
 		String corpusLocation = cls.getTacitLocation();
@@ -784,7 +784,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 		//Name of the corpus
 		String corpusName = cls.getClassName();
-		corpusName = corpusName.replace(" ", "_");
+		corpusName = corpusName.replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_");
 		
 		// Create a Script engine manager:
 	    ScriptEngineManager manager = new ScriptEngineManager();
@@ -870,7 +870,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	private static void writeCSV(String outputLoc, CorpusClass cls)throws Exception{
 		
 		// Location where the CSV needs to be saved.
-		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".csv";
+		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + "-" + cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + ".csv";
 		
 		FileWriter fileWriter = new FileWriter(new File(saveLocation));
 		
@@ -889,7 +889,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		}
 		
 		//Name of the corpus
-		String corpusName = cls.getClassName().replace(" ", "_");
+		String corpusName = cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_");
 	    
 	    try {
 			JSONParser jsonParser = new JSONParser();
@@ -961,7 +961,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		RedditJsonHandler redditJsonHandler = new RedditJsonHandler();
 		
 		// Location where the CSV needs to be saved.
-		String saveLocation =outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".csv";
+		String saveLocation =outputLoc + File.separator + cls.getParent().getCorpusName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + "-" + cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + ".csv";
 		
 		FileWriter fileWriter = new FileWriter(new File(saveLocation));
 		
@@ -973,7 +973,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		String[] jsonFiles = corpusDirectory.list();
 		
 		//Name of the corpus
-		String corpusName = cls.getClassName().replace(" ", "_");
+		String corpusName = cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_");
 		
 		
 	    try {
@@ -1109,7 +1109,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		RedditJsonHandler redditJsonHandler = new RedditJsonHandler();
 		
 		// Location where the R Object needs to be saved.
-		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replace(" ", "_") + "-" + cls.getClassName().replace(" ", "_") + ".RData" + "\"";
+		String saveLocation = "\"" + outputLoc + File.separator + cls.getParent().getCorpusName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + "-" + cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + ".RData" + "\"";
 		saveLocation = saveLocation.replace("\\", "\\\\");
 		// Location of the corpus
 		String corpusLocation = cls.getTacitLocation();
@@ -1119,7 +1119,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		String[] jsonFiles = corpusDirectory.list();
 		
 		//Name of the corpus
-		String corpusName = cls.getClassName().replaceAll(" ","_");
+		String corpusName = cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replaceAll(" ","_");
 		
 		// Create a Script engine manager:
 	    ScriptEngineManager manager = new ScriptEngineManager();
