@@ -1,0 +1,79 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="sample.css">
+	</head>
+	<body>
+		<center><h3>TACIT User Guide</h3></center>
+		<hr>
+		<table style = "border:0px; width:100%" class = "help-contents">
+			<tr>
+				<td class = "header">US Santa Barbara Presidential Papers Crawler</td>
+			</tr>
+			<tr>
+				<table class = "contents">
+					<tr>
+						<td class = "head">Overview</td>
+					</tr>
+					<tr>
+						<td>The UC Santa Barbara Presidential Papers Crawler collects text from <a href = "http://www.presidency.ucsb.edu/index_docs.php" target="_blank">The American Presidency Project Website</a> and writes that data into text files that are readable by automated text analysis programs.  
+						<br><br>
+						</td>
+					</tr>
+				</table>
+			</tr>
+			<tr>
+				<table class = "contents">
+					<tr>
+						<td class = "head">Basic Tutorial: Collecting data using the US Santa Barbara Presidential Papers Crawler</td>
+					</tr>
+					<tr>
+						<td class = "subtitle">Selecting Crawling Details</td>
+					</tr>
+					<tr>
+						<td>
+						The presidential crawler can collect data using either a keyword search, or when no keyword is selected, using other filtering features such as the President or time frame.
+						<br><br> 
+						<b> Keyword Search: </b> Presidential papers can be crawled based on a single keyword or a combination of two keywords. To search and collect papers including one keyword, supply the keyword in the keyword 1 box. 
+						If you are interested in two keywords, you can provide a second keyword in the Keyword 2 box. If using two keywords, you can select (<b>and</b>) to only collect documents with both terms present, (<b>or</b>)to select
+						 documents with at least one of the keywords present, or (<b>not</b>)to select documents that include the first keyword but not the second keyword.
+						<br><br> 
+						<b>Additional Crawler Filters: </b> Regardless of whether or not a keyword is supplied, you may also select from the following additional filters and restrictions to tailor the results crawled from the presidential papers.
+						<br>
+						<b>Specify Date Range and Specify Date: </b> By default, neither a date range or a date is specified when neither of the boxes are checked, regardless of the “From:” and “To:” fields being filled.  Checking the Specify Date
+						 Range box allows you to enter in a start and end date for desired articles.  You may either type in the date in the format MM/DD/YYYY, or use the drop down button to select start and end dates.  Checking the Specify Date box allows you to enter one specific date for crawling.
+						<br>
+						<b>Select President: </b> The Select President field allows you to select the president that you would like to crawl for.  You may also choose to select the “President” option (the default), which will crawl all papers from all presidents.
+						<br>
+						<b>Select Document Category: </b> The Select Document Category allows you to specify the type of document you would like to crawl for.  This includes various types of oral documentation, writings, debates, and more. 
+						</td>
+					<tr>
+					<tr>
+						<td class = "subtitle">Selecting Crawling Limits</td>
+					</tr>
+					<tr>
+						<td>
+						You may opt to check the box to Limit the Results.  Selecting this option then allows you to type in the maximum number of papers that you would like to download.  
+						</td>
+					<tr>
+					
+					
+						<td class = "subtitle">Specifying Output Details</td>
+					</tr>
+					<tr>
+					<td>By default, all collected text in TACIT is saved as a corpus in Corpus Management. Specify the name you would like to assign this corpus in the <b>Corpus Name</b> box under <b> Output Details </b>.
+					</td>
+					</tr>			
+					
+					<tr>
+						<td class = "subtitle">Understanding Presidential Paper Crawler Output</td>
+					</tr>
+					<tr>
+						<td>The <b> Console </b> panel at the bottom of the tool will provide information about the presidential paper selected, the website url being crawled, and the names of the files being created while the crawler is running. Crawl data is saved in Corpus Management under the corpus name you provided. Data can be output into formats compatible with other programs using Corpus Management.  
+						
+						</td>
+					</tr>					
+				</table>
+			</tr>	
+		</table>
+	</body>
+</html>

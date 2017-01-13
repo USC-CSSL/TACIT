@@ -61,7 +61,18 @@
      <description>Check here for help with StackExchange Crawler.</description>
      <topic href="html/Crawlers/stackexchange.html" label="StackExchange Crawler"/>
       </context>
-      
+     <context id="americanpresidency">
+     <description>Check here for help with UC Santa Barbara Debates Crawler.</description>
+     <topic href="html/Crawlers/presidential.html" label="UC Santa Barbara Debates Crawler"/>
+      </context>
+      <context id="govtrack">
+     <description>Check here for help with GovTrack Crawler.</description>
+     <topic href="html/Crawlers/govtrack.html" label="Govtrack Crawler"/>
+      </context>
+      <context id="hansard">
+     <description>Check here for help with Hansard Crawler.</description>
+     <topic href="html/Crawlers/hansard.html" label="Hansard Crawler"/>
+      </context>
       <context id="frontier">
      <description>Check here for help with Frontiers Crawler.</description>
      <topic href="html/Crawlers/frontierscrawler.html" label="Frontiers Crawler"/>
