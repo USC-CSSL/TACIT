@@ -33,6 +33,8 @@ public class ZlabelTopicModelAnalysis {
 	private void runLDA(File dir, File preSeedFile, int numTopics, int noOfSamples, double alphaval, double betaval,
 			double confidenceValue, String outputdir, Date dateObj) {
 
+
+		monitor.beginTask("TACIT started analyzing...", 70);
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 		File[] listOfFiles = dir.listFiles();
 		List<File> inputFiles = new ArrayList<File>();
