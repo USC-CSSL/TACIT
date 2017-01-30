@@ -35,7 +35,7 @@ public class RecordCongressCrawl {
 // }
 // 
  public void crawl(String outputDir, int limit, String member, String search, String chamber, String congress, boolean random, IProgressMonitor monitor, boolean[] fields) throws IOException{
-			first =true;
+	 		first =true;
 	 		File streamFile = new File(outputDir+File.separator+"crawl.json"); 
 			jsonfactory = new JsonFactory();
 			jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
@@ -69,6 +69,7 @@ public class RecordCongressCrawl {
 				if(random)
 					page = (int) (Math.random()*25);
 				String site = "https://www.congress.gov/search?q={\"source\":\"congrecord\",\"congress\":\"" + congress + "\""+ houseRemark + query + chamberTxt+"}&pageSize=25&page=" + page;
+
 				System.out.println(site);
 				while (!connected) {
 					try {
@@ -104,6 +105,8 @@ public class RecordCongressCrawl {
 					int end = data.indexOf("\">");
 					Elements docJournalAbstract = null;
 					System.out.print(data+"00000000");
+					if(data.contains("house-bill"))
+						break tag;
 					String contentLink = data.substring(start + 2, end-1);
 					if(set.contains(contentLink))
 						continue;

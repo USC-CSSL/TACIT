@@ -15,7 +15,8 @@ public class SearchSenators {
 //	}
 
 	public static LinkedHashSet<String> crawl(boolean house, String congress, String keyword){
-		 LinkedHashSet<String> senatorList = new LinkedHashSet<String>();
+		LinkedHashSet<String> senatorList = new LinkedHashSet<String>();
+		senatorList.add("All");
 		String[] letters = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
 				"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 		String chamberTxt ="";

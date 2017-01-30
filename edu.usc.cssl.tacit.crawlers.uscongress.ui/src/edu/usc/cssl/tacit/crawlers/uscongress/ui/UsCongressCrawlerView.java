@@ -455,15 +455,20 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		if (selectedSenators == null) {
 			selectedSenators = new ArrayList<String>();
 		}
-
-		for (Object object : result) {
+		if(result[0].equals("All")){
+			for(Object obj: senatorList)
+				selectedSenators.add((String) obj);
+			selectedSenators.remove("All");
+		}else{
+			for (Object object : result) {
 			selectedSenators.add((String) object);
+			}
 		}
 		//Collections.sort(selectedSenators);
 		senatorTable.removeAll();
-		for (String itemName : selectedSenators) {
+		for (Object itemName : result) {
 			TableItem item = new TableItem(senatorTable, 0);
-			item.setText(itemName);
+			item.setText((String)itemName);
 			if(!removeSenatorButton.isEnabled()) {
 				removeSenatorButton.setEnabled(true);
 			}
