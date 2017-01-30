@@ -81,8 +81,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 	private Button dateRange;
 	String[] sLoading = { "All (1989-2016)", "114 (2015-2016)", "113 (2013-2014)", "112 (2011-2012)",
 			"111 (2009-2010)", "110 (2007-2008)", "109 (2005-2006)", "108 (2003-2004)", "107 (2001-2002)",
-			"106 (1999-2000)", "105 (1997-1998)", "104 (1995-1996)", "103 (1993-1994)", "102 (1991-1992)",
-			"101 (1989-1990)" };
+			"106 (1999-2000)", "105 (1997-1998)", "104 (1995-1996)" };
 	private DateTime toDate;
 	private DateTime fromDate;
 	private Button limitRecords;
