@@ -534,7 +534,22 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 						}
 						
 						
-					}else if (exportSelection.equals(ExportSelectionConstants.EXPORT_TXT_FORMAT)){
+					}else if (exportSelection.equals(ExportSelectionConstants.EXPORT_PJSON_FORMAT)){
+						System.out.println("Python-compatible JSON format selected");
+						
+						try {
+							//Separate export for reddit
+							if (cls.getParent().getDatatype() == CMDataType.REDDIT_JSON){
+								writePJsonforReddit(outputLoc, cls);
+							}else{
+								writePJson(outputLoc, cls);
+							}
+							
+						} catch (Exception e1) {
+							ConsoleView.printlInConsoleln("Could not create Python-compatible JSON.");
+							e1.printStackTrace();
+							}
+						} else if (exportSelection.equals(ExportSelectionConstants.EXPORT_TXT_FORMAT)){
 						
 						Preprocessor ppObj = null;
 						List<String> inFiles = null;
@@ -1262,4 +1277,38 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	    ConsoleView.printlInConsoleln("R Dataframe successfully exported.");
 	    ConsoleView.printlInConsoleln("R Dataframe saved at : " + saveLocation);
 	}
+	
+	private static void writePJson(String outputLoc, CorpusClass cls)throws Exception{
+		String saveLocation = outputLoc + File.separator + cls.getParent().getCorpusName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + "-" + cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + ".json";
+		
+		File destFile = new File(saveLocation);
+		
+		// Location of the corpus
+		String corpusLocation = cls.getTacitLocation();
+		File corpusDirectory = new File(corpusLocation);
+		
+		
+		String corpusClassLocation = "" ; 
+		String[] jsonFiles = corpusDirectory.list();
+		for(int i=0; i<jsonFiles.length ;i++){
+			if(jsonFiles[i].endsWith(".json")){
+				corpusClassLocation = corpusLocation + File.separator + jsonFiles[i]; 
+				break;
+			}
+		}
+		
+		File srcFile = new File(corpusClassLocation);
+		
+		FileUtils.copyFile(srcFile, destFile);
+		
+	    ConsoleView.printlInConsoleln("Python-compatible JSON successfully exported.");
+	    ConsoleView.printlInConsoleln("Python-compatible JSON saved at : " + saveLocation);
+		
+	}
+	
+	private static void writePJsonforReddit(String outputLoc, CorpusClass cls)throws Exception{
+		
+	}
+
+
 }

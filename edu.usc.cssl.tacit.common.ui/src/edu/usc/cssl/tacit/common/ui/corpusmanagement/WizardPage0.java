@@ -11,7 +11,7 @@ import edu.usc.cssl.tacit.common.ui.TacitCorpusFilterDialog;
 
 public class WizardPage0 extends WizardPage {
 	Composite container;
-	Button txtSelectionBtn, robjSelectionBtn, csvSelectionBtn;
+	Button txtSelectionBtn, robjSelectionBtn, csvSelectionBtn, pJsonSelectionBtn;
 	TacitCorpusFilterDialog filterDialog;
 	IWizardData data;
 	WizardPage1 wizardPage1;
@@ -47,6 +47,11 @@ public class WizardPage0 extends WizardPage {
 		robjSelectionBtn = new Button(container, SWT.RADIO);
 		robjSelectionBtn.setText("R Dataframe Format");
 		robjSelectionBtn.setSelection(false);
+		
+		//Python JSON
+		pJsonSelectionBtn = new Button(container, SWT.RADIO);
+		pJsonSelectionBtn.setText("Python-compatible JSON");
+		pJsonSelectionBtn.setSelection(false);
 
 		setControl(container);
 		setPageComplete(true);
@@ -65,6 +70,10 @@ public class WizardPage0 extends WizardPage {
 			return wizardPage2;
 		}else if (robjSelectionBtn.getSelection()){
 			data.getExportSelection(ExportSelectionConstants.EXPORT_ROBJ_FORMAT);
+			wizardPage2 = ((ExportWizard)getWizard()).two;
+			return wizardPage2;	
+		}else if (pJsonSelectionBtn.getSelection()){
+			data.getExportSelection(ExportSelectionConstants.EXPORT_PJSON_FORMAT);
 			wizardPage2 = ((ExportWizard)getWizard()).two;
 			return wizardPage2;	
 		}else{

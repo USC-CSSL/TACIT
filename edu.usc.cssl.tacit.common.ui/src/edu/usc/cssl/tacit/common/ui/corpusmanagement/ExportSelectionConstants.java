@@ -11,4 +11,6 @@ public class ExportSelectionConstants {
 	public final static String EXPORT_ROBJ_FORMAT = "robj";
 	
 	public final static String EXPORT_CSV_FORMAT = "csv";
+	
+	public final static String EXPORT_PJSON_FORMAT = "pjson"; 
 }
