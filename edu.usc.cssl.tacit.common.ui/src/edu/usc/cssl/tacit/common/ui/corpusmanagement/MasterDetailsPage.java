@@ -1117,7 +1117,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		
 	}
 	
-	//TODO: To be tested
+
 	private static void writeRObjforReddit(String outputLoc, CorpusClass cls)throws Exception{
 		
 		JSONParser jsonParser = new JSONParser();
@@ -1307,7 +1307,38 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 	}
 	
 	private static void writePJsonforReddit(String outputLoc, CorpusClass cls)throws Exception{
+		JSONParser jsonParser = new JSONParser();
 		
+		String saveLocation =outputLoc + File.separator + cls.getParent().getCorpusName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + "-" + cls.getClassName().replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_") + ".json";
+	
+		FileWriter fileWriter = new FileWriter(new File(saveLocation));
+		
+		// Location of the corpus
+		String corpusLocation = cls.getTacitLocation();
+		File corpusDirectory = new File(corpusLocation);
+		
+		//List of JSON Reddit Post
+		String[] jsonFiles = corpusDirectory.list();
+		
+		String singleRedditLocation = "" ; 
+		JSONObject singleReddit = null;
+		JSONArray resultArray =  new JSONArray();
+		for(int i=0; i<jsonFiles.length ;i++){
+			if(jsonFiles[i].endsWith(".json")){
+				singleRedditLocation = corpusLocation + File.separator + jsonFiles[i]; 
+				singleReddit = (JSONObject)jsonParser.parse(new FileReader(new File(singleRedditLocation)));
+				resultArray.add(singleReddit);
+
+			}
+		}
+		
+		fileWriter.write(resultArray.toJSONString());
+		fileWriter.close();
+		
+		ConsoleView.printlInConsoleln("Python-compatible JSON successfully exported.");
+	    ConsoleView.printlInConsoleln("Python-compatible JSON saved at : " + saveLocation);
+
+	
 	}
 
 
