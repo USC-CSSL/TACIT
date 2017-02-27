@@ -38,6 +38,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Text delimeters;
 	private Text output;
 	private Text LatinStemmerLocation;
+	private Button spellCheck;
 
 	public PrepocessorSettings() {
 	}
@@ -73,7 +74,7 @@ public class PrepocessorSettings extends PreferencePage implements
 
 		stemming = createStemmingSection(sectionClient);
 		lowerCase = createCheckBox(sectionClient, "Convert to Lowercase");
-
+		spellCheck = createCheckBox(sectionClient,"Spell Check");
 		output = createOutputPathLocation(sectionClient);
 		cleanup = createCheckBox(sectionClient, "Clean up Pre-Processed Files ");
 		initializeDefaultValues();
@@ -142,6 +143,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		getPreferenceStore().setDefault(DELIMETERS, ".,;'\\\"!-()[]{}:?/@");
 		getPreferenceStore().setDefault(STOP_PATH, "");
 		getPreferenceStore().setDefault(REMOVE_STOPS, "false");
+		getPreferenceStore().setDefault(SPELL_CHECK, "false");
 		getPreferenceStore().setDefault(LOWER_CASE, "true");
 		getPreferenceStore().setDefault(LANGUAGE,
 				ELanguageType.EN.toString()); //changed autodetect
@@ -159,6 +161,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		location.setText(getPreferenceStore().getDefaultString(STOP_PATH));
 		lowerCase.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(LOWER_CASE)));
+		spellCheck.setSelection(Boolean.valueOf(getPreferenceStore().getDefaultString(SPELL_CHECK)));
 		stemming.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(STEMMING)));
 		removeStopWords.setSelection(Boolean.valueOf(getPreferenceStore()
@@ -176,6 +179,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		delimeters.setText(load(DELIMETERS));
 		location.setText(load(STOP_PATH));
 		lowerCase.setSelection(Boolean.valueOf(load(LOWER_CASE)));
+		spellCheck.setSelection(Boolean.valueOf(load(SPELL_CHECK)));
 		stemming.setSelection(Boolean.valueOf(load(STEMMING)));
 		removeStopWords.setSelection(Boolean.valueOf(load(REMOVE_STOPS)));
 		language.setText(load(LANGUAGE));
@@ -378,6 +382,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(REMOVE_STOPS, Boolean.toString(removeStopWords.getSelection()));
 
 		store(LOWER_CASE, Boolean.toString(lowerCase.getSelection()));
+		store(SPELL_CHECK, Boolean.toString(spellCheck.getSelection()));
 		store(STEMMING, Boolean.toString(stemming.getSelection()));
 		store(LANGUAGE, language.getText());
 		store(OUTPUT_PATH, output.getText());

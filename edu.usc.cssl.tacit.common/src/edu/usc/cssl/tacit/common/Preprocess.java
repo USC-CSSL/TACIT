@@ -48,6 +48,7 @@ public class Preprocess {
 	private boolean doLangDetect = false;
 	private boolean doCleanUp = false;
 	private boolean latinStem = false;
+	private boolean doSpellCheck = false;
 	private String delimiters = " .,;'\"!-()[]{}:?";
 	// private String[] inputFiles;
 	private String outputPath;

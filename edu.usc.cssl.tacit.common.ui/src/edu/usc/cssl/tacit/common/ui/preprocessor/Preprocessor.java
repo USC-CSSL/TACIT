@@ -57,6 +57,7 @@ public class Preprocessor {
 	protected String ppDir = "";
 	protected String ppFilesLoc = "";
 	protected boolean doLowercase = false;
+	protected boolean doSpellCheck = false;
 	protected boolean doStemming = false;
 	protected boolean doStopWords = false;
 	protected boolean doCleanUp = true;
@@ -74,6 +75,8 @@ public class Preprocessor {
 	private String tempPPFileLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
 			+ "tacit_temp_files" + System.getProperty("file.separator");
 	protected boolean doPreprocessing;
+	Spelling2 sp=new Spelling2("C:\\Users\\RESHMA BHATIA\\workspace\\Preprocessing\\src\\big.txt");
+	
 
 	public Preprocessor(String ppDirLocation, boolean doPreprocessing) throws IOException {
 		createppDir(ppDirLocation);
@@ -276,7 +279,10 @@ public class Preprocessor {
 					if (doLowercase) {
 						currLine = currLine.toLowerCase();
 					}
-
+					
+					if (doSpellCheck) {
+						currLine = sp.SpellCorrector(currLine);
+					}
 					for (char c : delimiters.toCharArray()) {
 						currLine = currLine.replace(c, ' ');
 					}
