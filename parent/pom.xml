@@ -7,6 +7,9 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		
+		<module>../edu.usc.cssl.tacit.webview.ui</module>
+		
 		<module>../edu.usc.cssl.tacit.feature</module>
 		<module>../edu.usc.cssl.tacit.repository</module>
 

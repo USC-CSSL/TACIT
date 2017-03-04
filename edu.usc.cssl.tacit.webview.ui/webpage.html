@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      
+      margin: 0.625em auto;
+	  background-color: #ffffff;
+    }
+
+    #phylocanvas {
+      width: 80%;
+      height: 40em;
+	  background-color: #dddddd;
+      margin: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="phylocanvas"></div>
+  <script type="application/javascript" src="https://cdn.rawgit.com/phylocanvas/phylocanvas-quickstart/v2.7.2/phylocanvas-quickstart.js"></script>
+ 
+  <script>
+      var rawFile = new XMLHttpRequest();
+      var data;
+      rawFile.open("GET", "test.txt", false);
+
+    
+
+      rawFile.onreadystatechange = function ()
+      {
+
+          if(rawFile.readyState == 4)
+          {
+
+              if(rawFile.status == 200 || rawFile.status == 0)
+              {
+                  var allText = rawFile.responseText;
+                  data = allText;
+                 (function (Phylocanvas) {
+                                var tree = Phylocanvas.createTree('phylocanvas');
+                                tree.setTreeType('rectangular');
+                                tree.load(data);
+                              })(window.Phylocanvas);
+               
+              }
+          }
+      }
+      rawFile.send(null);
+
+  </script>
+
+</body>
+</html>

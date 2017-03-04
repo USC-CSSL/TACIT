@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.webview.ui.WebView"
+            icon="icons/WebViewIcon.png"
+            id="edu.usc.cssl.tacit.webview.ui.view"
+            name="Web View">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.webview.ui.command1"
+            name="Web View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.webview.ui.handlers.WebViewHandler"
+            commandId="edu.usc.cssl.tacit.webview.ui.command1">
+      </handler>
+   </extension>
+
+</plugin>

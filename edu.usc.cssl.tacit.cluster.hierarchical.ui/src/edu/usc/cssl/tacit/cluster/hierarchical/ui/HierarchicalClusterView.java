@@ -61,7 +61,7 @@ public class HierarchicalClusterView extends ViewPart implements
 	private Button preprocessEnabled;
 	private TableLayoutData layoutData;
 	private OutputLayoutData layoutOutputData;
-	private Button saveImage;
+	private Button openResults;
 	protected Job performCluster;
 
 	private boolean checkType = false;
@@ -176,9 +176,9 @@ public class HierarchicalClusterView extends ViewPart implements
 				.applyTo(clientLink);
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 1)
 				.applyTo(clientLink);
-		saveImage = toolkit.createButton(clientLink, "Save Dendogram as Image",
+		openResults = toolkit.createButton(clientLink, "Open results in web view",
 				SWT.CHECK);
-		GridDataFactory.fillDefaults().grab(false, false).applyTo(saveImage);
+		GridDataFactory.fillDefaults().grab(false, false).applyTo(openResults);
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -231,7 +231,7 @@ public class HierarchicalClusterView extends ViewPart implements
 				}
 				tacitHelper.writeSummaryFile(outputPath);
 
-				final boolean isSaveImage = saveImage.getSelection();
+				final boolean openResultsFlag = openResults.getSelection();
 
 				performCluster = new Job("Clustering...") {
 					private Preprocess preprocessTask;
@@ -274,7 +274,7 @@ public class HierarchicalClusterView extends ViewPart implements
 						long startTime = System.currentTimeMillis();
 						boolean isSuccessful = HierarchicalClusterAnalysis
 								.runClustering(inputFiles, outputPath,
-										isSaveImage, new SubProgressMonitor(
+										openResultsFlag, new SubProgressMonitor(
 												monitor, 50), dateObj, false);
 
 						if (!isSuccessful)

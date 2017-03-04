@@ -2,11 +2,14 @@ package edu.usc.cssl.tacit.wordcount.cooccurrence.ui;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -60,14 +63,15 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private OutputLayoutData layoutData;
 	private Button buildMAtrix;
 	private Button fAddFileButton;
+	private Button splitInputFileLines;
 	private TableLayoutData inputLayoutData;
 	private Button preprocessEnabled;
 	private Text seedFile;
 	private Text windowSize;
 	private Text thresholdValue;
 	private Job cooccurrenceAnalysisJob;
-private List<Object> selectedFiles;
-private boolean checkType = true;
+	private List<Object> selectedFiles;
+	private boolean checkType = true;
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -128,6 +132,11 @@ private boolean checkType = true;
 
 		buildCooccurrenceMatrix(form.getBody());
 
+		splitInputFileLines = toolkit.createButton(form.getBody(),
+				"Create a new file for each line of the input files", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(splitInputFileLines);
+		
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter());
 		addButtonsToToolBar();
 		toolkit.paintBordersFor(form.getBody());
@@ -145,6 +154,7 @@ private boolean checkType = true;
 		numTxt.setText(defaultValue);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0)
 				.applyTo(numTxt);
+		
 		return numTxt;
 	}
 
@@ -278,6 +288,7 @@ private boolean checkType = true;
 				final boolean isBuildMatrix = buildMAtrix.getSelection();
 				final String windowSizeStr = windowSize.getText();
 				final String thresholdLimit = thresholdValue.getText();
+				final boolean splitFiles = splitInputFileLines.getSelection();
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Co-occurrence Analysis started  ");
 				cooccurrenceAnalysisJob = new Job("Co-occurrence Analysis...") {
@@ -298,8 +309,14 @@ private boolean checkType = true;
 						try {
 							ppObj = new Preprocessor("Cooccurence",
 									isPreprocess);
+							
+							
+							
 							inFiles = ppObj.processData("ppFiles",
 									selectedFiles);
+							if(splitFiles) {
+								inFiles = splitFiles("Cooccurrence", inFiles);
+							}
 							List<Object> seedObjs = new ArrayList<Object>();
 							seedObjs.add(seedFilePath);
 							seedList = ppObj
@@ -316,6 +333,15 @@ private boolean checkType = true;
 								.invokeCooccurrence(inFiles, seedList.get(0),
 										outputPath, windowSizeStr,
 										thresholdLimit, isBuildMatrix, monitor);
+						
+						if (splitFiles) {
+							File toDel = new File("Cooccurrence");
+							try {
+								FileUtils.deleteDirectory(toDel);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 						ppObj.clean();
 						monitor.worked(5);
 
@@ -542,4 +568,37 @@ private boolean checkType = true;
 		form.setFocus();
 	}
 
+	List<String> splitFiles(String outputdir, List<String> files) {
+		File dir = new File(outputdir);
+		dir.mkdir();
+		FileReader fr = null;
+		int count = 0;
+		List<String> outputFiles = new ArrayList<String>();
+		for (String strFile:files) {
+			try {
+				fr = new FileReader(new File(strFile));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			BufferedReader br = new BufferedReader(fr);
+		
+			String line;
+			try {
+				while((line = br.readLine())!=null) {
+					String outputFile = outputdir + System.getProperty("file.separator") +"file_"+count;
+					outputFiles.add(outputFile);
+					File file = new File(outputFile);
+					FileWriter fw = new FileWriter(file);
+					fw.write(line);
+					fw.close();
+					count+=1;
+				}
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return outputFiles;
+		
+	  }
 }

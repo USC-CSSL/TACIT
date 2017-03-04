@@ -1,6 +1,10 @@
 package edu.usc.cssl.tacit.wordcount.weighted.ui;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -66,6 +71,7 @@ public class WeightedWordCountView extends ViewPart implements
 	private TableLayoutData dictLayoutData;
 	private Button spssRawFile;
 	private Button wordDistributionFile;
+	private Button splitInputFileLines;
 	private WordCountApi wordCountController;
 	private Button weightedWordCountButton;
 	private Button standardWordCountButton;
@@ -263,6 +269,10 @@ public class WeightedWordCountView extends ViewPart implements
 				"Create category-wise word distribution files", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(wordDistributionFile);
+		splitInputFileLines = toolkit.createButton(output,
+				"Create a new file for each line of the input files", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(splitInputFileLines);
 	}
 
 	private FormToolkit createFormBodySection(Composite parent) {
@@ -338,6 +348,8 @@ public class WeightedWordCountView extends ViewPart implements
 				final boolean isWdist = wordDistributionFile.getSelection();
 				final boolean isStemDic = false; // stemEnabled.getSelection();
 				final boolean isPreprocess = false;// preprocessButton.getSelection();
+				
+				final boolean splitFiles = splitInputFileLines.getSelection();
 				wordCountJob = new Job("Analyzing...") {
 					private String dirPath;
 
@@ -373,17 +385,23 @@ public class WeightedWordCountView extends ViewPart implements
 								}
 							});
 
-							for (String f : inFiles) {
-								selectedFiles.add(new File(f));
+							if (!splitFiles) {
+								for (String f : inFiles) {
+									selectedFiles.add(new File(f));
+								}
+							} else {
+								selectedFiles = splitFiles("LIWCWordCount", inFiles);
 							}
-
 							wordCountController.wordCount(monitor,
 									selectedFiles, dictionaryFiles,
 									isPreprocess ? stopWordPath : "",
 									outputPath, "", true, isLiwcStemming,
 									isSnowBall, isSpss, isWdist, isStemDic,
 									oFile, sFile, dateobj, fileCorpusMap);
-
+							if(splitFiles){
+								File toDel = new File("LIWCWordCount");
+								FileUtils.deleteDirectory(toDel);
+							}
 							ppObj.clean();
 						}catch (OperationCanceledException e){
 							e.printStackTrace();
@@ -533,4 +551,38 @@ public class WeightedWordCountView extends ViewPart implements
 		form.setFocus();
 	}
 
+	List<File> splitFiles(String outputdir, List<String> files) {
+		File dir = new File(outputdir);
+		dir.mkdir();
+		FileReader fr = null;
+		int count = 0;
+		List<File> outputFiles = new ArrayList<File>();
+		for (String strFile:files) {
+			try {
+				fr = new FileReader(new File(strFile));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			BufferedReader br = new BufferedReader(fr);
+		
+			String line;
+			try {
+				while((line = br.readLine())!=null) {
+					String outputFile = outputdir + System.getProperty("file.separator") +"file_"+count;
+					
+					File file = new File(outputFile);
+					FileWriter fw = new FileWriter(file);
+					fw.write(line);
+					fw.close();
+					outputFiles.add(file);
+					count+=1;
+				}
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return outputFiles;
+		
+	  }
 }

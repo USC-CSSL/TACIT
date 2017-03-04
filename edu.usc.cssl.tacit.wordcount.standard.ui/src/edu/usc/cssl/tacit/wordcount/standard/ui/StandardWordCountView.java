@@ -1,10 +1,17 @@
 package edu.usc.cssl.tacit.wordcount.standard.ui;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -65,6 +72,7 @@ public class StandardWordCountView extends ViewPart implements
 	private Button weightedWordCountButton;
 	private Button defaultTags;
 	private Button wordDistribution;
+	private Button splitInputFileLines;
 	private Button createDATFile;
 	private Button createPOSTags;
 	protected Job wordCountJob;
@@ -171,6 +179,10 @@ public class StandardWordCountView extends ViewPart implements
 				"Create category-wise word distribution files", SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(wordDistribution);
+		splitInputFileLines = toolkit.createButton(output,
+				"Create a new file for each line of the input files", SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
+				.applyTo(splitInputFileLines);
 
 	}
 
@@ -314,7 +326,7 @@ public class StandardWordCountView extends ViewPart implements
 				final boolean datFile = createDATFile.getSelection();
 				final boolean doPOSTags = createPOSTags.getSelection();
 				final Date dateObj = new Date();
-
+				final boolean splitFiles = splitInputFileLines.getSelection();
 				// Creating a new Job to do Word Count so that the UI will not
 				// freeze
 				wordCountJob = new Job("Word Count Plugin Job") {
@@ -339,7 +351,14 @@ public class StandardWordCountView extends ViewPart implements
 							List<String> inputFiles = ppObj.processData(
 									"wc_files", inputObjs);
 							monitor.worked(5);
+							if(splitFiles) {
+								inputFiles = splitFiles("StandardWordCount", inputFiles);
+							}
 							wc.countWords(inputFiles, dictionaryFiles);
+							if(splitFiles){
+								File toDel = new File("StandardWordCount");
+								FileUtils.deleteDirectory(toDel);
+							}
 							ppObj.clean();
 							monitor.worked(1);
 						} catch (IOException e) {
@@ -485,5 +504,39 @@ public class StandardWordCountView extends ViewPart implements
 	public void setFocus() {
 		form.setFocus();
 	}
+
+	List<String> splitFiles(String outputdir, List<String> files) {
+		File dir = new File(outputdir);
+		dir.mkdir();
+		FileReader fr = null;
+		int count = 0;
+		List<String> outputFiles = new ArrayList<String>();
+		for (String strFile:files) {
+			try {
+				fr = new FileReader(new File(strFile));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			BufferedReader br = new BufferedReader(fr);
+		
+			String line;
+			try {
+				while((line = br.readLine())!=null) {
+					String outputFile = outputdir + System.getProperty("file.separator") +"file_"+count;
+					outputFiles.add(outputFile);
+					File file = new File(outputFile);
+					FileWriter fw = new FileWriter(file);
+					fw.write(line);
+					fw.close();
+					count+=1;
+				}
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return outputFiles;
+		
+	  }
 
 }

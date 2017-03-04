@@ -274,6 +274,14 @@
              relative="org.eclipse.ui.editorss"
              visible="false">
        </view>
+       
+       <view
+             id="edu.usc.cssl.tacit.webview.ui.view"
+             minimized="true"
+             relationship="stack"
+             relative="org.eclipse.ui.editorss"
+             visible="false">
+       </view>
         
     </perspectiveExtension>
  </extension>

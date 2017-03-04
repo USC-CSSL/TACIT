@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,8 +20,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -35,8 +43,12 @@ import weka.gui.hierarchyvisualizer.HierarchyVisualizer;
 
 
 public class HierarchicalClusterAnalysis {
+	static boolean showGraph = false;
+	static List<File> inputFiles;
 	public static String doClustering(List<File> inputFiles, String outputPath,
-			boolean saveImg, SubProgressMonitor subProgressMonitor, Date dateObj, boolean junitTest) {
+			boolean openResults, SubProgressMonitor subProgressMonitor, Date dateObj, boolean junitTest) {
+		showGraph = openResults;
+		HierarchicalClusterAnalysis.inputFiles = inputFiles;
 		try {
 			DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
 			StringToWordVector filter = new StringToWordVector();
@@ -79,7 +91,9 @@ public class HierarchicalClusterAnalysis {
 			aggHierarchical.linkTypeTipText();
 
 			subProgressMonitor.worked(15);
-			HierarchyVisualizer tv = new HierarchyVisualizer(output);
+
+/*		
+	  		HierarchyVisualizer tv = new HierarchyVisualizer(output);
 
 			tv.setSize(1024, 1024);
 			JFrame f;
@@ -116,6 +130,9 @@ public class HierarchicalClusterAnalysis {
 									+ e);
 				}
 			}
+			
+*/
+			
 			File outputFile = null;
 			if (junitTest)
 				outputFile = new File(outputPath + File.separator + "GeneratedHierarchicalClustersOutput.txt");
@@ -175,7 +192,7 @@ public class HierarchicalClusterAnalysis {
 	}
 
 	public static boolean runClustering(List<File> listOfFiles,
-			String fOutputDir, boolean fSaveImg,
+			String fOutputDir, boolean openResults,
 			SubProgressMonitor subProgressMonitor, Date dateObj, boolean junitTest) {
 
 		DateFormat df = new SimpleDateFormat("MM-dd-yy-HH-mm-ss");
@@ -189,7 +206,7 @@ public class HierarchicalClusterAnalysis {
 		subProgressMonitor.beginTask("Running CLustering", 50);
 		subProgressMonitor.subTask("Running Hierarchical Clustering...");
 		ConsoleView.printlInConsoleln("Running Hierarchical Clustering...");
-		String clusters = doClustering(inputFiles, fOutputDir, fSaveImg,
+		String clusters = doClustering(inputFiles, fOutputDir, openResults,
 				new SubProgressMonitor(subProgressMonitor, 45), dateObj, junitTest);
 		if (subProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -214,6 +231,77 @@ public class HierarchicalClusterAnalysis {
 			TacitUtility.createRunReport(fOutputDir, "Hierarchical Clustering",dateObj,null);
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
+		if(clusters!=null)
+			writeToWebView(buildGraphString(clusters.substring(7)));	//clip the "Newick:" portion out
+		
 		return true;
 	}
+	
+	
+	static	void writeToWebView(String cluster) {
+		Bundle bundle = Platform.getBundle("edu.usc.cssl.tacit.webview.ui");
+		URL fileURL = bundle.getEntry("test.txt");
+		File file = null;
+		try {
+			file = new File(FileLocator.resolve(fileURL).toURI());
+		
+			FileWriter fw = new FileWriter(file);
+			fw.write(cluster);
+			fw.close();
+			
+			if(showGraph) {
+				Display.getDefault().asyncExec(new Runnable() {
+				    @Override
+				    public void run() {
+				    	try {
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("edu.usc.cssl.tacit.webview.ui.view");
+						} catch (PartInitException e) {
+							e.printStackTrace();
+						}
+				    }
+				});
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	static String buildGraphString(String cluster) {
+		int i2 = cluster.length();
+		String str = "";
+		boolean flag = false;
+		for (int i = cluster.length()-1; i >=0; i--){
+			if (cluster.charAt(i)==':') {
+				str = cluster.substring(i, i2) + str;
+				i2 = i;
+				flag = true;
+
+			}
+			if(flag && (cluster.charAt(i)==','||cluster.charAt(i)=='(')) {
+				flag = false;
+				str = inputFiles.get(Integer.parseInt(cluster.substring(i+1, i2))-1).getName() + str;
+
+				i2 = i+1;
+
+			}
+		}
+
+		str = cluster.substring(0, i2) + str;
+		return str;
+	}
 }
+
+
+
+
+/*
+
+	THINGS TO DO:
+	
+	Refresh the webview after loading it from Heirarchical cluster - Not needed?
+	Create icon for web view
+	Beautify webview
+	Put message for internet
+
+*/
