@@ -48,7 +48,7 @@ class Spelling2 {
 		     
 		     String b = arr[i];
 		     if (b.matches("\\w+")){
-		    	 String c = new Spelling2("big.txt").correct(b);
+		    	 String c = new Spelling2("big1.txt").correct(b);
 		 		list.add(c);
 		     }
 		     
