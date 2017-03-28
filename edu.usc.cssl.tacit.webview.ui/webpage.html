@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,34 +22,21 @@
 
   <div id="phylocanvas"></div>
   <script type="application/javascript" src="https://cdn.rawgit.com/phylocanvas/phylocanvas-quickstart/v2.7.2/phylocanvas-quickstart.js"></script>
- 
+  
   <script>
-      var rawFile = new XMLHttpRequest();
-      var data;
-      rawFile.open("GET", "test.txt", false);
 
-    
 
-      rawFile.onreadystatechange = function ()
-      {
 
-          if(rawFile.readyState == 4)
-          {
+         (function (Phylocanvas) {
+                        var tree = Phylocanvas.createTree('phylocanvas');
+                        tree.setTreeType('rectangular');
+                        tree.load(getFiles());
+                      })(window.Phylocanvas);
+       
+      
+          
+      
 
-              if(rawFile.status == 200 || rawFile.status == 0)
-              {
-                  var allText = rawFile.responseText;
-                  data = allText;
-                 (function (Phylocanvas) {
-                                var tree = Phylocanvas.createTree('phylocanvas');
-                                tree.setTreeType('rectangular');
-                                tree.load(data);
-                              })(window.Phylocanvas);
-               
-              }
-          }
-      }
-      rawFile.send(null);
 
   </script>
 

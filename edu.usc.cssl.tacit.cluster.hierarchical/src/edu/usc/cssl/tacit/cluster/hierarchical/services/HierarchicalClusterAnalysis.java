@@ -240,7 +240,7 @@ public class HierarchicalClusterAnalysis {
 	
 	static	void writeToWebView(String cluster) {
 		Bundle bundle = Platform.getBundle("edu.usc.cssl.tacit.webview.ui");
-		URL fileURL = bundle.getEntry("test.txt");
+		URL fileURL = bundle.getEntry("test");
 		File file = null;
 		try {
 			file = new File(FileLocator.resolve(fileURL).toURI());
@@ -293,15 +293,3 @@ public class HierarchicalClusterAnalysis {
 }
 
 
-
-
-/*
-
-	THINGS TO DO:
-	
-	Refresh the webview after loading it from Heirarchical cluster - Not needed?
-	Create icon for web view
-	Beautify webview
-	Put message for internet
-
-*/

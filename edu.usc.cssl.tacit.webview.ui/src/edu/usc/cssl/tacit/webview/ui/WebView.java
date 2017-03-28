@@ -116,6 +116,8 @@ public class WebView extends ViewPart {
 
 
 		browser = new Browser(parent, SWT.NONE);
+		new CustomFunction(browser, "getFiles");
+		
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.FILL;
