@@ -2,27 +2,104 @@
 <introContent>
 	<extensionContent id="eduusccssltacitcommonui-introExtension"
 		style="css/sample.css" name="Sample Extension" path="whatsnew/@">
-		<group style-id="content-group" id="eduusccssltacitcommonui-introLink-group">
-
-			<link label="TACIT Stack Exchange Crawler" url="http://cssl.usc.edu/wiki/index.php/TACIT_Stack_Exchange_Crawler"
-				id="eduusccssltacitstack" style-id="content-link">
-				<text>Find out more details about Stack Exchange Crawler</text>
-			</link>
-			<link label="Export Corpus" url="http://cssl.usc.edu/wiki/index.php/ExportCorpus"
-				id="eduusccssltacitexport" style-id="content-link">
-				<text>Find out more details on how to export corpus into text files
+		<link style-id="content-link">
+			<text>Plugins and features added in v1.12</text>
+		</link>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="Stack Exchange Crawler"
+				url="http://cssl.usc.edu/wiki/index.php/TACIT_Stack_Exchange_Crawler"
+				style-id="content-link">
+				<text>The StackExchange Crawler provides full access to all data
+					available on stackexchange.com, a question and answer website
+					covering topics in various fields
 				</text>
 			</link>
-			<link label="New Features" url="http://cssl.usc.edu/wiki/index.php/New_Features"
-				id="eduusccssltacitcommonui-introLink" style-id="content-link">
-				<text>This site provides you helpful information on new features
-					implemented in TACIT compared to previous version</text>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/398"></link>
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="UC Santa Barbara Presidential Papers Crawler"
+				style-id="content-link">
+				<text>The UC Santa Barbara Presidential Papers Crawler collects text
+					from The American Presidency Project Website and writes that data
+					into text files that are readable by automated text analysis
+					programs
+				</text>
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/491"></link>
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="Hansard Crawler" style-id="content-link">
+				<text>The Hansard United Kingdom Parliament Crawler collects text
+					from The Hansard Parliament Website, which contains the official
+					report of all parliamentary debates
+				</text>
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/501"></link>
+
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="PLOS Crawler" style-id="content-link">
+				<text>The PLOS Crawler tool collects text from the PLOS ONE journal
+					website
+				</text>
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/494"></link>
+
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="TypePad Crawler" style-id="content-link">
+				<text>The Typepad Blog Crawler tool collects text from the Typepad
+					website
+				</text>
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/490"></link>
+
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="Frontiers Journal Crawler" style-id="content-link">
+				<text>The Frontiers Journal Crawler tool collects text from the
+					Frontiers in Psychology website, a site that provides an Open
+					Science platform and publishes many widely known open-access
+					journals
+				</text>
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/495"></link>
+
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="HDP Topic Modelling" style-id="content-link">
+
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/509"></link>
+
+		</group>
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="Online LDA Topic Modelling" style-id="content-link">
+
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/450"></link>
+
+		</group>
+
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="TurboTopics Topic Modelling" style-id="content-link">
+
+			</link>
+			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/451"></link>
+
+		</group>
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="HLDA Topic Modelling" style-id="content-link">
+
 			</link>
 
-			<link label="Latest News" url="http://cssl.usc.edu/wiki/index.php/Latest_News"
-				id="eduusccssltacitnews" style-id="content-link">
-				<text>This site provides you Latest News related to Tacit Features
-					and Updates</text>
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link label="SLDA Topic Modelling" style-id="content-link">
+
 			</link>
 
 		</group>
