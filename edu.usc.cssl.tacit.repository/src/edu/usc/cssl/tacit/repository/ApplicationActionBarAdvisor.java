@@ -27,7 +27,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	private IWorkbenchAction helpSearch;
 	private IWorkbenchAction dynamicHelpAction;
 	private IWorkbenchAction preferenceAction;
-	//private IWorkbenchAction exitAction;
+	private IWorkbenchAction exitAction;
 	private IWorkbenchAction aboutAction;
 
 	// Actions - important to allocate these only in makeActions, and then use
@@ -61,13 +61,13 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		aboutAction = ActionFactory.ABOUT.create(window);
 		register(aboutAction);
 
-		/*
-		exitAction = ActionFactory.QUIT.create(window);
-		exitAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
-				"/icons/ExitIcon.png"));
-	
-		register(exitAction);
-		*/
+		if (System.getProperty("os.name").startsWith("Windows")) {
+			exitAction = ActionFactory.QUIT.create(window);
+			exitAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
+					"/icons/ExitIcon.png"));
+		
+			register(exitAction);
+		}
 
 	}
 
@@ -77,37 +77,33 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 				IWorkbenchActionConstants.M_HELP);
 		MenuManager viewMenu = new MenuManager("&View", "view");
 
-		/*
-		 * For issue #359, the File menu is to be removeD. Hence the below code is commented.
-		 *
-			MenuManager fileMenu = new MenuManager("&File",
-					IWorkbenchActionConstants.M_FILE);
-			menuBar.add(fileMenu);
-		*/
+
 		
 		// Add a group marker indicating where action set menus will appear.
 		menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menuBar.add(viewMenu);
 		menuBar.add(helpMenu);
 
-		/*
-		 * For issue #359, the File menu is to be removeD. Hence the below code is commented.
-		 *
-		// File
-
-		Action restartAction = new Action("Restart") {
-
-			@Override
-			public void run() {
-				PlatformUI.getWorkbench().restart();
-			}
-		};
-		restartAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
-			"/icons/RestartIcon.png"));
+		if (System.getProperty("os.name").startsWith("Windows")) {
 			
-		fileMenu.add(restartAction);
-		fileMenu.add(exitAction);
-		*/
+			
+			MenuManager fileMenu = new MenuManager("&File",
+					IWorkbenchActionConstants.M_FILE);
+			menuBar.add(fileMenu);
+			
+			Action restartAction = new Action("Restart") {
+	
+				@Override
+				public void run() {
+					PlatformUI.getWorkbench().restart();
+				}
+			};
+			restartAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
+				"/icons/RestartIcon.png"));
+				
+			fileMenu.add(restartAction);
+			fileMenu.add(exitAction);
+		}
 		
 		// Help
 		helpMenu.add(introAction);
