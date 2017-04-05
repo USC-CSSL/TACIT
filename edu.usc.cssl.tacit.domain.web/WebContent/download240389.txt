@@ -145,6 +145,7 @@
 					<li>At least 512 MB of free space on the hard drive for
 						extraction</li>
 					<li>JRE version 7 (or later)</li>
+					<li> For macOS Sierra and newer: Alternate Zip archive program (such as <a href ="http://www.kekaosx.com/en/">Keka</a>) </li>
 				</ul>
 
 				<h2>
@@ -156,7 +157,12 @@
 							Installation Guide.</a></li>
 					<li>Make sure to install 32-bit JRE for 32-bit TACIT and
 						64-bit JRE for 64-bit TACIT.</li>
-					<li>Download the TACIT zip file and unzip it.</li>
+					<li>Download the TACIT zip file and
+					<ul>
+						<li>For Windows & Linux: unzip it</li>
+						<li> For macOS Sierra and newer: unzip only using <a href ="http://www.kekaosx.com/en/">Keka</a> (or similar third-party software). Unzipping using the default Mac Archive program will result in errors.</li>
+					</ul>
+					</li>
 					<li>To run TACIT:
 						<ul>
 							<li>For Windows & Linux: Double click the TACIT.exe file in
