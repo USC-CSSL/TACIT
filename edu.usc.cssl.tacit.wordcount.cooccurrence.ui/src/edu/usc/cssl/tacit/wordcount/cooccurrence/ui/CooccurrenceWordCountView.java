@@ -72,6 +72,8 @@ public class CooccurrenceWordCountView extends ViewPart implements
 	private Job cooccurrenceAnalysisJob;
 	private List<Object> selectedFiles;
 	private boolean checkType = true;
+	private String stemmedFilesLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
+	+ "tacit_temp_files" + System.getProperty("file.separator") + "stemmedFiles";
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -307,9 +309,14 @@ public class CooccurrenceWordCountView extends ViewPart implements
 						List<String> inFiles = null;
 						List<String> seedList = null;
 						try {
-							ppObj = new Preprocessor("Cooccurence",
-									isPreprocess);
+							List<String> dictionaryFiles = new ArrayList();
+							dictionaryFiles.add(seedFilePath);
+							ppObj = new Preprocessor("Cooccurence",dictionaryFiles,isPreprocess);
+							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles();
 							
+							if (!dictionaryFiles.get(0).equals(stemmedDictionaryFiles.get(0))){ //If stemming is performed, then chose the stemmed seed file.
+								seedFilePath = stemmedDictionaryFiles.get(0);
+							}
 							
 							
 							inFiles = ppObj.processData("ppFiles",
@@ -321,6 +328,12 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							seedObjs.add(seedFilePath);
 							seedList = ppObj
 									.processData("seed_files", seedObjs);
+							
+							File stemmedFileDir = new File(stemmedFilesLoc);
+							
+							if (stemmedFileDir.exists()){
+								FileUtils.deleteDirectory(stemmedFileDir);
+							}
 						} catch (IOException e) {
 							return Status.CANCEL_STATUS;
 						} catch (Exception e) {

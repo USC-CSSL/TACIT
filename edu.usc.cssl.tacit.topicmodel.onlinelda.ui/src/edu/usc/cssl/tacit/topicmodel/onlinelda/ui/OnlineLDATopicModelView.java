@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -69,6 +71,8 @@ public class OnlineLDATopicModelView extends ViewPart implements
 	protected Job job;
 	private List<Object> selectedFiles;
 	private boolean checkType = true;
+	private String stemmedFilesLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
+	+ "tacit_temp_files" + System.getProperty("file.separator") + "stemmedFiles";
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -265,10 +269,11 @@ public class OnlineLDATopicModelView extends ViewPart implements
 				}
 				tacitHelper.writeSummaryFile(outputPath);
 
-				final String seedFilePath = seedFileText.getText();
+				
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Topic Modelling  started ");
 				job = new Job("Analyzing...") {
+					private String seedFilePath = seedFileText.getText();
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
@@ -280,8 +285,18 @@ public class OnlineLDATopicModelView extends ViewPart implements
 
 						List<String> inFiles = null;
 						try {
-							monitor.subTask("Preprocessing documents...");;
-							ppObj = new Preprocessor("Online_LDA", isPreprocess);
+							monitor.subTask("Preprocessing documents...");
+							List<String> dictionaryFiles = new ArrayList();
+							dictionaryFiles.add(seedFilePath);
+							
+							ppObj = new Preprocessor("Online_LDA", dictionaryFiles,isPreprocess);
+							
+							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles();
+							
+							if (!dictionaryFiles.get(0).equals(stemmedDictionaryFiles.get(0))){ //If stemming is performed, then chose the stemmed seed file.
+								seedFilePath = stemmedDictionaryFiles.get(0);
+							}
+							
 							inFiles = ppObj.processData("Online_LDA",selectedFiles,true);
 							monitor.worked(50);
 						} catch (IOException e1) {
@@ -304,6 +319,13 @@ public class OnlineLDATopicModelView extends ViewPart implements
 							//zlda.invokeLDA(topicModelDirPath, seedFilePath,
 									//noOfTopics, outputPath, dateObj);
 							onlineLDA.invokeOnlineLDA(monitor);
+							
+							File stemmedFileDir = new File(stemmedFilesLoc);
+							
+							if (stemmedFileDir.exists()){
+								FileUtils.deleteDirectory(stemmedFileDir);
+							}
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 							monitor.done();

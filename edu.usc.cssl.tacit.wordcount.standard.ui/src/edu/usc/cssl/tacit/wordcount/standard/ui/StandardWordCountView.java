@@ -66,7 +66,6 @@ public class StandardWordCountView extends ViewPart implements
 	private OutputLayoutData layoutData;
 	private TableLayoutData inputLayoutData;
 	private TableLayoutData dictLayoutData;
-	private Button stemEnabled;
 	private Button preprocessButton;
 	private Button standardWordCountButton;
 	private Button weightedWordCountButton;
@@ -78,6 +77,8 @@ public class StandardWordCountView extends ViewPart implements
 	protected Job wordCountJob;
 	private List<Object> inputObjs;
 	private boolean checkType = true;
+	private String stemmedFilesLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
+									+ "tacit_temp_files" + System.getProperty("file.separator") + "stemmedFiles";
 	@Override
 	public Image getTitleImage() {
 		return StandardWordCountImageRegistry.getImageIconFactory().getImage(
@@ -136,8 +137,6 @@ public class StandardWordCountView extends ViewPart implements
 		layout.numColumns = 2;
 
 		createPreprocessLink(compInput);
-
-		createStemmingOptions(compInput);
 
 		// createAdditionalOptions(toolkit, form.getBody());
 
@@ -249,20 +248,6 @@ public class StandardWordCountView extends ViewPart implements
 
 	}
 
-	private void createStemmingOptions(Composite body) {
-		Composite downloadGroup = toolkit.createComposite(body, SWT.NONE);
-		downloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		downloadGroup.setLayout(layout);
-
-		stemEnabled = toolkit.createButton(downloadGroup,
-				"Stem Dictionary (Porter)", SWT.CHECK);
-		stemEnabled.pack();
-		stemEnabled.setEnabled(true);
-
-	}
-
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Job.class) {
@@ -314,7 +299,6 @@ public class StandardWordCountView extends ViewPart implements
 				tacitHelper.writeSummaryFile(outputPath);
 				final List<String> dictionaryFiles = dictLayoutData
 						.getSelectedFiles(false);
-				final boolean isStemDic = stemEnabled.getSelection();
 				final boolean doPennCounts = defaultTags.getSelection();
 				final boolean doWordDistribution = wordDistribution
 						.getSelection();
@@ -335,7 +319,7 @@ public class StandardWordCountView extends ViewPart implements
 						monitor.beginTask("TACIT Word Count",
 								(inputObjs.size() * 15) + 15);
 						WordCountPlugin wc = new WordCountPlugin(wcType,
-								dateObj, isStemDic, doPennCounts,
+								dateObj, doPennCounts,
 								doWordDistribution, datFile, doPOSTags,
 								outputPath, monitor);
 
@@ -345,20 +329,26 @@ public class StandardWordCountView extends ViewPart implements
 
 						Preprocessor ppObj;
 						try {
-							ppObj = new Preprocessor("TACIT_word_count",
-									ppValue);
-
+							ppObj = new Preprocessor("TACIT_word_count",dictionaryFiles,ppValue);
+							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles(); //Will be stemmed only if selected in preprocessor settings else will return unchanged files 
+							
 							List<String> inputFiles = ppObj.processData(
 									"wc_files", inputObjs);
 							monitor.worked(5);
 							if(splitFiles) {
 								inputFiles = splitFiles("StandardWordCount", inputFiles);
 							}
-							wc.countWords(inputFiles, dictionaryFiles);
+							wc.countWords(inputFiles, stemmedDictionaryFiles);
 							if(splitFiles){
 								File toDel = new File("StandardWordCount");
 								FileUtils.deleteDirectory(toDel);
 							}
+							File stemmedFileDir = new File(stemmedFilesLoc);
+							
+							if (stemmedFileDir.exists()){
+								FileUtils.deleteDirectory(stemmedFileDir);
+							}
+							
 							ppObj.clean();
 							monitor.worked(1);
 						} catch (IOException e) {

@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,9 +61,12 @@ public class Preprocessor {
 	protected boolean doLowercase = false;
 	protected boolean doSpellCheck = false;
 	protected boolean doStemming = false;
+	protected boolean doDictStem = false;
 	protected boolean doStopWords = false;
 	protected boolean doCleanUp = true;
 	protected boolean isLatin = false;
+	protected List<String> stemmedDictionaryFiles;
+	protected List<String> dictionaryFiles;
 	protected String delimiters = " .,;'\"!-()[]{}:?";
 	private String ppOutputPath;
 	protected HashSet<String> stopWordsSet = new HashSet<String>();
@@ -70,6 +74,7 @@ public class Preprocessor {
 	protected SnowballStemmer stemmer = null;
 	LatinStemFilter latinStemmer = null;
 	protected String stemLang;
+	protected String inputDictStemLang;
 	DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
 	protected String currTime = df.format(new Date());
 	private String latinStemLocation;
@@ -82,6 +87,13 @@ public class Preprocessor {
 	public Preprocessor(String ppDirLocation, boolean doPreprocessing) throws IOException {
 		createppDir(ppDirLocation);
 		this.doPreprocessing = doPreprocessing;
+		setupParams();
+	}
+	
+	public Preprocessor(String ppDirLocation, List<String> dictionaryFiles,boolean doPreprocessing) throws IOException {
+		createppDir(ppDirLocation);
+		this.doPreprocessing = doPreprocessing;
+		this.dictionaryFiles = dictionaryFiles; 
 		setupParams();
 	}
 
@@ -876,10 +888,12 @@ public class Preprocessor {
 			String stopwordsFile = CommonUiActivator.getDefault().getPreferenceStore().getString("stop_words_path");
 			delimiters = CommonUiActivator.getDefault().getPreferenceStore().getString("delimeters");
 			stemLang = CommonUiActivator.getDefault().getPreferenceStore().getString("language");
+			inputDictStemLang = CommonUiActivator.getDefault().getPreferenceStore().getString("input_dict_language");
 			doLowercase = Boolean
 					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("islower_case"));
 			doStemming = Boolean
 					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("isStemming"));
+			doDictStem = Boolean.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("stem_dictionary"));
 			doStopWords = Boolean
 					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("removeStopWords"));
 			doSpellCheck = Boolean
@@ -929,6 +943,17 @@ public class Preprocessor {
 					stemmer = stemSelect(stemLang);
 				}
 			}
+			
+			
+			//Stemming the dictionary
+			if (doDictStem && !inputDictStemLang.equals("")){
+				stemmedDictionaryFiles = stemDictionary(dictionaryFiles,inputDictStemLang);
+			}else{
+				stemmedDictionaryFiles = dictionaryFiles;
+			}
+			
+		}else{
+			stemmedDictionaryFiles = dictionaryFiles;
 		}
 	}
 
@@ -984,6 +1009,63 @@ public class Preprocessor {
 		}
 		return null;
 	}
+	
+	public List<String> stemDictionary(List<String> dictionaryFiles,String dictStemLang) throws IOException{
+		List<String> result = new ArrayList<String>();
+		SnowballStemmer langStemmer = stemSelect(dictStemLang);
+		
+		String opDirLoc = tempPPFileLoc + "stemmedFiles";
+		File opDir = new File(opDirLoc);
+		if (!opDir.exists()){
+			opDir.mkdirs();
+		}
+		
+		for (String dictionaryFile : dictionaryFiles){
+			
+			String outFile = tempPPFileLoc + "stemmedFiles" + System.getProperty("file.separator") + (new File(dictionaryFile).getName());
+			BufferedReader br = new BufferedReader(new FileReader(new File(dictionaryFile)));
+			PrintWriter pw = new PrintWriter(outFile);
+			
+			String line  = "";
+			StringBuilder resultString;
+			while((line = br.readLine()) != null){
+				line = line.trim();
+				if (line.equals("")){
+					pw.println("");
+					continue;
+				}
+				resultString = new StringBuilder();
+				String[] wordArray = line.split("\\s");
+				
+				for (String word : wordArray) {
+					if (!word.equals("")){
+						langStemmer.setCurrent(word);
+						String stemmedWord = "";
+						if (langStemmer.stem())
+							stemmedWord = langStemmer.getCurrent();
+						resultString.append(stemmedWord);
+						resultString.append(" ");
+						
+					}else{
+						resultString.append(" ");
+					}
+				}
+				
+				pw.write(resultString.substring(0,resultString.length()-1).toString() + "\n");
+			}
+			
+			pw.close();
+			br.close();		
+			
+			result.add(outFile);
+		}
+
+		return result;
+	}	
+	
+	public List<String> getStemmedDictionaryFiles(){
+		return stemmedDictionaryFiles;
+	}	
 
 	/**
 	 * Clean up the temporary preprocessed files if the appropriate option in

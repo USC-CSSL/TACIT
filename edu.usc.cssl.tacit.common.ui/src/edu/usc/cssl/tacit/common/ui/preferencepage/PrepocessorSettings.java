@@ -32,6 +32,8 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Button stemming;
 
 	private Combo language;
+	private Combo stemInputDictLanguage;
+	private Combo dictLanguage;
 	private Button cleanup;
 	private Button removeStopWords;
 	private Text location;
@@ -40,6 +42,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Text LatinStemmerLocation;
 	private Button spellCheck;
 	private Text dictionaryLocation;
+	private Button stemDictionary;
 
 	public PrepocessorSettings() {
 	}
@@ -78,6 +81,8 @@ public class PrepocessorSettings extends PreferencePage implements
 		//spellCheck = createCheckBox(sectionClient,"Spell Check");
 		output = createOutputPathLocation(sectionClient);
 		cleanup = createCheckBox(sectionClient, "Clean up Pre-Processed Files ");
+		stemDictionary = createDictStemmingSection(sectionClient);
+		
 		initializeDefaultValues();
 		loadValues();
 		if (Boolean.valueOf(load(INITIAL))) {
@@ -139,7 +144,10 @@ public class PrepocessorSettings extends PreferencePage implements
 		setDefaultValues();
 		super.performDefaults();
 	}
-
+	
+	/*
+	 * This method initializes the default values in the preference store. Has to be called atleast once. 
+	 */
 	private void initializeDefaultValues() {
 		getPreferenceStore().setDefault(DELIMETERS, ".,;'\\\"!-()[]{}:?/@");
 		getPreferenceStore().setDefault(STOP_PATH, "");
@@ -147,16 +155,19 @@ public class PrepocessorSettings extends PreferencePage implements
 		getPreferenceStore().setDefault(REMOVE_STOPS, "false");
 		getPreferenceStore().setDefault(SPELL_CHECK, "false");
 		getPreferenceStore().setDefault(LOWER_CASE, "true");
-		getPreferenceStore().setDefault(LANGUAGE,
-				ELanguageType.EN.toString()); //changed autodetect
+		getPreferenceStore().setDefault(LANGUAGE,ELanguageType.EN.toString()); //changed autodetect
+		getPreferenceStore().setDefault(INPUT_DICT_LANGUAGE, ELanguageType.EN.toString());
 		getPreferenceStore().setDefault(STEMMING, "false");
+		getPreferenceStore().setDefault(STEM_DICTIONARY, "false");
 		getPreferenceStore().setDefault(PRE_PROCESSED, "false");
 		getPreferenceStore().setDefault(INITIAL, "true");
-		getPreferenceStore().setDefault(OUTPUT_PATH,
-				System.getProperty("user.dir"));
+		getPreferenceStore().setDefault(OUTPUT_PATH,System.getProperty("user.dir"));
 		getPreferenceStore().setDefault(LATIN_STEMMER, "");
 	}
 
+	/*
+	 * This methods loads the default values from the preference store and sets it on the UI.
+	 */
 	private void setDefaultValues() {
 
 		delimeters.setText(getPreferenceStore().getDefaultString(DELIMETERS));
@@ -167,16 +178,22 @@ public class PrepocessorSettings extends PreferencePage implements
 		spellCheck.setSelection(Boolean.valueOf(getPreferenceStore().getDefaultString(SPELL_CHECK)));
 		stemming.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(STEMMING)));
+		stemDictionary.setSelection(Boolean.valueOf(getPreferenceStore().getDefaultString(STEM_DICTIONARY)));
 		removeStopWords.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(REMOVE_STOPS)));
 		language.setText(getPreferenceStore().getDefaultString(LANGUAGE));
+		stemInputDictLanguage.setText(getPreferenceStore().getDefaultString(INPUT_DICT_LANGUAGE));
 		cleanup.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(PRE_PROCESSED)));
 		output.setText(getPreferenceStore().getDefaultString(OUTPUT_PATH));
 		LatinStemmerLocation.setText(getPreferenceStore().getDefaultString(LATIN_STEMMER));
 		language.setEnabled(false);
+		
 	}
 
+	/*
+	 * This method loads the actual values from the preference store and sets it on the UI.
+	 */
 	private void loadValues() {
 
 		delimeters.setText(load(DELIMETERS));
@@ -184,17 +201,23 @@ public class PrepocessorSettings extends PreferencePage implements
 		lowerCase.setSelection(Boolean.valueOf(load(LOWER_CASE)));
 		spellCheck.setSelection(Boolean.valueOf(load(SPELL_CHECK)));
 		stemming.setSelection(Boolean.valueOf(load(STEMMING)));
+		stemDictionary.setSelection(Boolean.valueOf(load(STEM_DICTIONARY)));
 		removeStopWords.setSelection(Boolean.valueOf(load(REMOVE_STOPS)));
 		language.setText(load(LANGUAGE));
+		stemInputDictLanguage.setText(load(INPUT_DICT_LANGUAGE));
 		cleanup.setSelection(Boolean.valueOf(load(PRE_PROCESSED)));
 		if (stemming.getSelection()) {
 			language.setEnabled(true);
+		}
+		if (stemDictionary.getSelection()){
+			stemInputDictLanguage.setEnabled(true);
 		}
 		output.setText(load(OUTPUT_PATH));
 		LatinStemmerLocation.setText(load(LATIN_STEMMER));
 		dictionaryLocation.setText(load(DICTIONARY_PATH));
 	}
 
+	
 	private Button createStemmingSection(Composite sectionClient) {
 
 		final Button stemming = new Button(sectionClient, SWT.CHECK);
@@ -261,6 +284,45 @@ public class PrepocessorSettings extends PreferencePage implements
 		});
 		
 		return stemming;
+	}
+	
+	
+	private Button createDictStemmingSection(Composite sectionClient) {
+		
+		final Button stemming = new Button(sectionClient, SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(stemming);
+		stemming.setText("Stem Input Dictionary");
+
+		stemInputDictLanguage = new Combo(sectionClient, SWT.BORDER | SWT.SINGLE);
+		List<String> langs = new ArrayList<String>();
+		String disp = "";
+		for (ELanguageType enumVal : ELanguageType.values()) {
+			disp = enumVal.toString();
+			if (enumVal.getText().length() > 0) {
+				disp = disp + " ( " + enumVal.getText() + " )";
+			}
+			langs.add(disp);
+		}
+		langs.remove("LATIN");
+		stemInputDictLanguage.setEnabled(false);
+		stemInputDictLanguage.setItems(langs.toArray(new String[0]));
+		stemInputDictLanguage.select(0);
+		GridDataFactory.fillDefaults().grab(false, false).span(2, 0).applyTo(stemInputDictLanguage);
+		stemming.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (stemming.getSelection()) {
+					stemInputDictLanguage.setEnabled(true);
+					stemInputDictLanguage.select(0);
+				} else {
+					stemInputDictLanguage.setEnabled(false);
+				}
+			}
+		});
+		
+		return stemming;
+		
 	}
 
 	private Button createCheckBox(Composite sectionClient, String description) {
@@ -430,6 +492,9 @@ public class PrepocessorSettings extends PreferencePage implements
 		return delimetersTxt;
 	}
 
+	/*
+	 * This method is called once the user selects apply/ok. It stores the user selected values on the UI in to the preference store.
+	 */
 	@Override
 	public boolean performOk() {
 
@@ -442,19 +507,28 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(SPELL_CHECK, Boolean.toString(spellCheck.getSelection()));
 		store(STEMMING, Boolean.toString(stemming.getSelection()));
 		store(LANGUAGE, language.getText());
+		String tep =  stemInputDictLanguage.getText(); 
+		store(INPUT_DICT_LANGUAGE, stemInputDictLanguage.getText());
 		store(OUTPUT_PATH, output.getText());
 		store(LATIN_STEMMER,LatinStemmerLocation.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
+		store(STEM_DICTIONARY, Boolean.toString(stemDictionary.getSelection()));
 		//super.performApply();
 		store(DICTIONARY_PATH, dictionaryLocation.getText());
 		return super.performOk();
 	}
 
+	/*
+	 * This method stores the values in the preference store.
+	 */
 	private void store(String name, String value) {
 		getPreferenceStore().setValue(name, value);
 
 	}
 
+	/*
+	 * This method loads the values from the preference store.
+	 */
 	private String load(String name) {
 		return getPreferenceStore().getString(name);
 

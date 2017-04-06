@@ -2,6 +2,7 @@ package edu.usc.cssl.tacit.topicmodel.zlda.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +68,9 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 	protected Job job;
 	private List<Object> selectedFiles;
 	private boolean checkType = true;
+	private String stemmedFilesLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
+	+ "tacit_temp_files" + System.getProperty("file.separator") + "stemmedFiles";
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -260,10 +264,12 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 				}
 				tacitHelper.writeSummaryFile(outputPath);
 
-				final String seedFilePath = seedFileText.getText();
+				
 				TacitFormComposite
 						.writeConsoleHeaderBegining("Topic Modelling  started ");
 				job = new Job("Analyzing...") {
+					
+					private String seedFilePath = seedFileText.getText();
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						TacitFormComposite.setConsoleViewInFocus();
@@ -280,9 +286,20 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 
 						List<String> inFiles = null;
 						try {
-							ppObj = new Preprocessor("ZLabel_LDA", isPreprocess);
+							List<String> dictionaryFiles = new ArrayList();
+							dictionaryFiles.add(seedFilePath);							
+							ppObj = new Preprocessor("ZLabel_LDA", dictionaryFiles ,isPreprocess);
+							
+							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles();
+							
+							if (!dictionaryFiles.get(0).equals(stemmedDictionaryFiles.get(0))){ //If stemming is performed, then chose the stemmed seed file.
+								seedFilePath = stemmedDictionaryFiles.get(0);
+							}
+							
 							inFiles = ppObj.processData("ZLabel_LDA",
 									selectedFiles);
+							
+							
 						} catch (IOException e1) {
 							e1.printStackTrace();
 							return Status.CANCEL_STATUS;
@@ -313,11 +330,20 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 						try {
 							zlda.invokeLDA(topicModelDirPath, seedFilePath,
 									noOfTopics, outputPath, dateObj);
+							
+							File stemmedFileDir = new File(stemmedFilesLoc);
+							
+							if (stemmedFileDir.exists()){
+								FileUtils.deleteDirectory(stemmedFileDir);
+							}
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 							monitor.done();
 							return Status.CANCEL_STATUS;
 						}
+						
+						
 
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;

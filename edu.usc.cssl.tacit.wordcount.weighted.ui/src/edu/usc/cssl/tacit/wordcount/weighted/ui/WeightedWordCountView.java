@@ -78,6 +78,8 @@ public class WeightedWordCountView extends ViewPart implements
 	private Job wordCountJob;
 	private boolean checkType = true;
 	private List<Object> inputFiles;
+	private String stemmedFilesLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
+	+ "tacit_temp_files" + System.getProperty("file.separator") + "stemmedFiles";
 	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = createFormBodySection(parent);
@@ -367,7 +369,8 @@ public class WeightedWordCountView extends ViewPart implements
 						Preprocessor ppObj = null;
 						List<String> inFiles;
 						try {
-							ppObj = new Preprocessor("Liwc", isPreprocess);
+							ppObj = new Preprocessor("Liwc", dictionaryFiles,isPreprocess);
+							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles();
 							inFiles = ppObj.processData("ppFiles", inputFiles);
 
 							Display.getDefault().syncExec(new Runnable() {
@@ -393,7 +396,7 @@ public class WeightedWordCountView extends ViewPart implements
 								selectedFiles = splitFiles("LIWCWordCount", inFiles);
 							}
 							wordCountController.wordCount(monitor,
-									selectedFiles, dictionaryFiles,
+									selectedFiles, stemmedDictionaryFiles,
 									isPreprocess ? stopWordPath : "",
 									outputPath, "", true, isLiwcStemming,
 									isSnowBall, isSpss, isWdist, isStemDic,
@@ -402,6 +405,13 @@ public class WeightedWordCountView extends ViewPart implements
 								File toDel = new File("LIWCWordCount");
 								FileUtils.deleteDirectory(toDel);
 							}
+							
+							File stemmedFileDir = new File(stemmedFilesLoc);
+							
+							if (stemmedFileDir.exists()){
+								FileUtils.deleteDirectory(stemmedFileDir);
+							}
+							
 							ppObj.clean();
 						}catch (OperationCanceledException e){
 							e.printStackTrace();

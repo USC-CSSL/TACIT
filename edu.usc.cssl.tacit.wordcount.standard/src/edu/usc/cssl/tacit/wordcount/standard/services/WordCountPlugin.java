@@ -84,13 +84,11 @@ public class WordCountPlugin {
 	private int numSentences = 0;
 	private IProgressMonitor monitor;
 
-	public WordCountPlugin(boolean weighted, Date dateObj,
-			boolean stemDictionary, boolean doPennCounts,
+	public WordCountPlugin(boolean weighted, Date dateObj, boolean doPennCounts,
 			boolean doWordDistribution, boolean createDATFile,
 			boolean createPOSTags, String outputPath, IProgressMonitor monitor) {
 		this.weighted = weighted;
 		this.dateObj = dateObj;
-		this.stemDictionary = stemDictionary;
 		this.doPennCounts = doPennCounts;
 		this.doWordDistribution = doWordDistribution;
 		this.createDATFile = createDATFile;
@@ -768,15 +766,6 @@ public class WordCountPlugin {
 					// If word not in the maps, add it
 					if (!wordDictionary.containsKey(words[0])) {
 
-						// Handle stemming
-						if (stemDictionary) {
-							stemmer.setCurrent(words[0]);
-							String stemmedWord = "";
-							if (stemmer.stem())
-								stemmedWord = stemmer.getCurrent();
-							if (!stemmedWord.equals(""))
-								words[0] = stemmedWord;
-						}
 
 						wordDictionary.put(words[0],
 								new HashMap<Integer, Double>());
