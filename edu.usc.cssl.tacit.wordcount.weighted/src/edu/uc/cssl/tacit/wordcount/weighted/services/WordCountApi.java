@@ -125,9 +125,9 @@ public class WordCountApi {
 		}
 		monitor.subTask("Building Category...");
 		buildCategorizer(dictionaryFile);
-		logger.info("Finished building the dictionary trie in " + (System.currentTimeMillis() - startTime)
+		logger.info("Finished building the dictionary tree in " + (System.currentTimeMillis() - startTime)
 				+ " milliseconds.");
-		appendLog("Finished building the dictionary trie in " + (System.currentTimeMillis() - startTime)
+		appendLog("Finished building the dictionary tree in " + (System.currentTimeMillis() - startTime)
 				+ " milliseconds.");
 		monitor.worked(10);
 		if (monitor.isCanceled()) {
