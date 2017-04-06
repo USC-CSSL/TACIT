@@ -3,11 +3,12 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-class Spelling2 {
+public class Spelling2 {
 
 	private final HashMap<String, Integer> nWords = new HashMap<String, Integer>();
-
+	String dict;
 	public Spelling2(String file) throws IOException {
+		dict=file;
 		BufferedReader in = new BufferedReader(new FileReader(new File(file)));
 		Pattern p = Pattern.compile("\\w+");
 		for(String temp = ""; temp != null; temp = in.readLine()){
@@ -48,7 +49,7 @@ class Spelling2 {
 		     
 		     String b = arr[i];
 		     if (b.matches("\\w+")){
-		    	 String c = new Spelling2("big1.txt").correct(b);
+		    	 String c = new Spelling2(dict).correct(b);
 		 		list.add(c);
 		     }
 		     
@@ -66,10 +67,12 @@ class Spelling2 {
 		{
 			finalop.append(op[i]);
 		}
-	    System.out.println("Final" + finalop.toString());
+	    System.out.println("Final " + finalop.toString());
 	    return finalop.toString();
 	}
 	
 
+
+
+
 }
-	

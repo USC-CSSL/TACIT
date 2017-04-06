@@ -50,6 +50,7 @@ import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+import edu.usc.cssl.tacit.common.ui.preprocessor.Spelling2;
 
 public class Preprocessor {
 
@@ -58,6 +59,7 @@ public class Preprocessor {
 	protected boolean doLowercase = false;
 	protected boolean doStemming = false;
 	protected boolean doStopWords = false;
+	protected boolean doSpellCheck = false;
 	protected boolean doCleanUp = true;
 	protected boolean isLatin = false;
 	protected String delimiters = " .,;'\"!-()[]{}:?";
@@ -73,6 +75,7 @@ public class Preprocessor {
 	private String tempPPFileLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
 			+ "tacit_temp_files" + System.getProperty("file.separator");
 	protected boolean doPreprocessing;
+	Spelling2 sp;
 
 	public Preprocessor(String ppDirLocation, boolean doPreprocessing) throws IOException {
 		createppDir(ppDirLocation);
@@ -272,6 +275,10 @@ public class Preprocessor {
 
 					if (doStopWords) {
 						currLine = removeStopWords(currLine);
+					}
+					
+					if (doSpellCheck) {
+						currLine = sp.SpellCorrector(currLine);
 					}
 
 					if (doStemming) {
@@ -773,10 +780,12 @@ public class Preprocessor {
 					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("isStemming"));
 			doStopWords = Boolean
 					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("removeStopWords"));
+			doSpellCheck = Boolean
+					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("spell_check"));
 			doCleanUp = Boolean
 					.parseBoolean(CommonUiActivator.getDefault().getPreferenceStore().getString("ispreprocessed"));
 			latinStemLocation = CommonUiActivator.getDefault().getPreferenceStore().getString("latin_stemmer");
-
+			String dictionaryFile = CommonUiActivator.getDefault().getPreferenceStore().getString("dictionary_path");
 			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 			Date now = new Date();
 			this.currTime = sdfDate.format(now);
@@ -794,6 +803,18 @@ public class Preprocessor {
 					stopWordsSet.add(currentLine.trim().toLowerCase());
 				}
 				br.close();
+			}
+			
+			if (doSpellCheck) {
+				File dfile = new File(dictionaryFile);
+				if (!dfile.exists() || dfile.isDirectory())
+				{
+					ConsoleView
+					.printlInConsoleln("Dictionary file is not valid. Please provide a correct file path");
+					throw new IOException();
+					
+				}
+				sp=new Spelling2(dictionaryFile);
 			}
 
 			// Setup Stemmer

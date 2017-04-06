@@ -39,6 +39,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private Text output;
 	private Text LatinStemmerLocation;
 	private Button spellCheck;
+	private Text dictionaryLocation;
 
 	public PrepocessorSettings() {
 	}
@@ -69,12 +70,12 @@ public class PrepocessorSettings extends PreferencePage implements
 		GridDataFactory.fillDefaults().grab(false, false).span(3, 0)
 				.applyTo(dummy);
 		location = createStopWordPathLocation(sectionClient);
-
+		dictionaryLocation=createSpellCheckPathLocation(sectionClient);
 		delimeters = createDelimeterSection(sectionClient);
-
+		
 		stemming = createStemmingSection(sectionClient);
 		lowerCase = createCheckBox(sectionClient, "Convert to Lowercase");
-		spellCheck = createCheckBox(sectionClient,"Spell Check");
+		//spellCheck = createCheckBox(sectionClient,"Spell Check");
 		output = createOutputPathLocation(sectionClient);
 		cleanup = createCheckBox(sectionClient, "Clean up Pre-Processed Files ");
 		initializeDefaultValues();
@@ -142,6 +143,7 @@ public class PrepocessorSettings extends PreferencePage implements
 	private void initializeDefaultValues() {
 		getPreferenceStore().setDefault(DELIMETERS, ".,;'\\\"!-()[]{}:?/@");
 		getPreferenceStore().setDefault(STOP_PATH, "");
+		getPreferenceStore().setDefault(DICTIONARY_PATH, "");
 		getPreferenceStore().setDefault(REMOVE_STOPS, "false");
 		getPreferenceStore().setDefault(SPELL_CHECK, "false");
 		getPreferenceStore().setDefault(LOWER_CASE, "true");
@@ -159,6 +161,7 @@ public class PrepocessorSettings extends PreferencePage implements
 
 		delimeters.setText(getPreferenceStore().getDefaultString(DELIMETERS));
 		location.setText(getPreferenceStore().getDefaultString(STOP_PATH));
+		dictionaryLocation.setText(getPreferenceStore().getDefaultString(DICTIONARY_PATH));
 		lowerCase.setSelection(Boolean.valueOf(getPreferenceStore()
 				.getDefaultString(LOWER_CASE)));
 		spellCheck.setSelection(Boolean.valueOf(getPreferenceStore().getDefaultString(SPELL_CHECK)));
@@ -189,7 +192,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		}
 		output.setText(load(OUTPUT_PATH));
 		LatinStemmerLocation.setText(load(LATIN_STEMMER));
-
+		dictionaryLocation.setText(load(DICTIONARY_PATH));
 	}
 
 	private Button createStemmingSection(Composite sectionClient) {
@@ -324,6 +327,60 @@ public class PrepocessorSettings extends PreferencePage implements
 		return outputLocationTxt;
 	}
 
+	private Text createSpellCheckPathLocation(Composite sectionClient) {
+		spellCheck = createCheckBox(sectionClient, "Spell Correction");
+
+		Label locationLb2 = new Label(sectionClient, SWT.NONE);
+		locationLb2.setText("Dictionary Location:");
+		GridDataFactory.fillDefaults().grab(false, false).span(1, 0)
+				.applyTo(locationLb2);
+
+		final Text outputLocationTxt1 = new Text(sectionClient, SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0)
+				.applyTo(outputLocationTxt1);
+		outputLocationTxt1.setEditable(false);
+		outputLocationTxt1.setEnabled(false);
+
+		final Button browseBtn = new Button(sectionClient, SWT.PUSH);
+		browseBtn.setText("Browse...");
+		browseBtn.setEnabled(false);
+		browseBtn.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dlg = new FileDialog(browseBtn.getShell(), SWT.OPEN);
+				dlg.setText("Open");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				outputLocationTxt1.setText(path);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		spellCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (spellCheck.getSelection()) {
+					outputLocationTxt1.setEnabled(true);
+					browseBtn.setEnabled(true);
+
+				} else {
+					outputLocationTxt1.setEnabled(false);
+					browseBtn.setEnabled(false);
+				}
+			}
+		});
+
+		return outputLocationTxt1;
+	}
+
+	
+	
+	
 	private Text createOutputPathLocation(Composite sectionClient) {
 		Label locationLbl = new Label(sectionClient, SWT.NONE);
 		locationLbl.setText("Pre-Processed Files Location:");
@@ -389,6 +446,7 @@ public class PrepocessorSettings extends PreferencePage implements
 		store(LATIN_STEMMER,LatinStemmerLocation.getText());
 		store(PRE_PROCESSED, Boolean.toString(cleanup.getSelection()));
 		//super.performApply();
+		store(DICTIONARY_PATH, dictionaryLocation.getText());
 		return super.performOk();
 	}
 

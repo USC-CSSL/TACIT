@@ -13,4 +13,5 @@ public interface IPreprocessorSettingsConstant {
 	public static String OUTPUT_PATH = "pp_output_path";
 	public static String LATIN_STEMMER = "latin_stemmer";
 	public static String SPELL_CHECK = "spell_check";
+	public static String DICTIONARY_PATH="dictionary_path";
 }

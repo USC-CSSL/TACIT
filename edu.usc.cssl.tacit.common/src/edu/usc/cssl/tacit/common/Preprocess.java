@@ -39,6 +39,7 @@ import edu.usc.cssl.tacit.common.snowballstemmer.SnowballStemmer;
 import edu.usc.cssl.tacit.common.snowballstemmer.TurkishStemmer;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.IPreprocessorSettingsConstant;
+import edu.usc.cssl.tacit.common.ui.preprocessor.Spelling2;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 public class Preprocess {
@@ -53,6 +54,7 @@ public class Preprocess {
 	// private String[] inputFiles;
 	private String outputPath;
 	private String stopwordsFile;
+	private String dictionaryFile;
 	private HashSet<String> stopWordsSet = new HashSet<String>();
 	SnowballStemmer stemmer = null;
 	private String stemLang;
@@ -60,10 +62,13 @@ public class Preprocess {
 	private String currTime;
 	private String preprocessingParentFolder;
 	private String latinStemLocation;
+	Spelling2 sp;
 
 	public Preprocess(String caller) {
 		this.stopwordsFile = CommonUiActivator.getDefault()
 				.getPreferenceStore().getString("stop_words_path");
+		this.dictionaryFile = CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("dictionary_path");
 		this.delimiters = CommonUiActivator.getDefault().getPreferenceStore()
 				.getString("delimeters");
 		this.stemLang = CommonUiActivator.getDefault().getPreferenceStore()
@@ -80,6 +85,9 @@ public class Preprocess {
 				.getString("pp_output_path");
 		this.latinStemLocation = CommonUiActivator.getDefault().getPreferenceStore()
 				.getString("latin_stemmer");
+		this.doSpellCheck = Boolean.parseBoolean(CommonUiActivator.getDefault()
+				.getPreferenceStore().getString("spell_check"));
+
 		this.callingPlugin = caller;
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 	    Date now = new Date();
@@ -141,7 +149,19 @@ public class Preprocess {
 			}
 			br.close();
 		}
-
+		
+		if (doSpellCheck) {
+			File dfile = new File(dictionaryFile);
+			if (!dfile.exists() || dfile.isDirectory())
+			{
+				ConsoleView
+				.printlInConsoleln("Dictionary file is not valid. Please provide a correct file path");
+				throw new IOException();
+				
+			}
+			sp=new Spelling2(dictionaryFile);
+		}
+		
 		if (doStemming) { // If stemming has to be performed, find the
 							// appropriate stemmer.
 			if (stemLang.equals("AUTODETECT")) {
@@ -234,6 +254,8 @@ public class Preprocess {
 						linear = linear.replace(c, ' ');
 					if (doStopWords)
 						linear = removeStopWords(linear);
+					if (doSpellCheck)
+						linear = sp.SpellCorrector(linear);
 					if (doStemming && stemmer != null)
 						linear = stem(linear);
 					if (doStemming && latinStem) {
@@ -333,26 +355,7 @@ public class Preprocess {
 		}
 		return returnString.toString();
 	}
-
-	public void clean() {
-		final Boolean cleanUp = Boolean.valueOf(CommonUiActivator.getDefault()
-				.getPreferenceStore()
-				.getString(IPreprocessorSettingsConstant.PRE_PROCESSED));
-		if (!cleanUp) {
-			return;
-		}
-		File toDel = new File(this.outputPath
-				+ System.getProperty("file.separator") + this.callingPlugin
-				+ "_" + this.currTime);
-		try {
-			if (toDel.exists())
-				FileUtils.deleteDirectory(toDel);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
+	
 	public boolean doCleanUp() {
 		return doCleanUp;
 	}
