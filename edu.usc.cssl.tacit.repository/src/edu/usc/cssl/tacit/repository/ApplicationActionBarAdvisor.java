@@ -61,7 +61,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		aboutAction = ActionFactory.ABOUT.create(window);
 		register(aboutAction);
 
-		if (System.getProperty("os.name").startsWith("Windows")) {
+		//if (System.getProperty("os.name").startsWith("Windows")) 
+		{
 			exitAction = ActionFactory.QUIT.create(window);
 			exitAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
 					"/icons/ExitIcon.png"));
@@ -76,20 +77,23 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		MenuManager helpMenu = new MenuManager("&Help",
 				IWorkbenchActionConstants.M_HELP);
 		MenuManager viewMenu = new MenuManager("&View", "view");
-
-
+		MenuManager fileMenu = null;
+		if (System.getProperty("os.name").startsWith("Windows")) {
+			fileMenu = new MenuManager("&File",
+					IWorkbenchActionConstants.M_FILE);
+			menuBar.add(fileMenu);
+		}
 		
 		// Add a group marker indicating where action set menus will appear.
 		menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menuBar.add(viewMenu);
 		menuBar.add(helpMenu);
 
-		if (System.getProperty("os.name").startsWith("Windows")) {
+		if (System.getProperty("os.name").startsWith("Windows")) 
+		{
 			
 			
-			MenuManager fileMenu = new MenuManager("&File",
-					IWorkbenchActionConstants.M_FILE);
-			menuBar.add(fileMenu);
+			
 			
 			Action restartAction = new Action("Restart") {
 	
