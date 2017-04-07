@@ -61,7 +61,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		aboutAction = ActionFactory.ABOUT.create(window);
 		register(aboutAction);
 
-		//if (System.getProperty("os.name").startsWith("Windows")) 
+		if (System.getProperty("os.name").startsWith("Windows")) 
 		{
 			exitAction = ActionFactory.QUIT.create(window);
 			exitAction.setImageDescriptor(ImageDescriptor.createFromFile(CorpusManagementUIViewImageRegistry.class ,
@@ -91,9 +91,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 		if (System.getProperty("os.name").startsWith("Windows")) 
 		{
-			
-			
-			
 			
 			Action restartAction = new Action("Restart") {
 	
