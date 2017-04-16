@@ -23,16 +23,23 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+import edu.usc.cssl.tacit.crawlers.latin.ILatinCrawlerConstants;
 
 public class LatinCrawler {
 	private StringBuilder readMe = new StringBuilder();
 	String outputDir;
 	private Map<String, String> authorNames;
 	Set<String> skipBooks;
+	JsonGenerator jsonGenerator;
+	JsonFactory jsonfactory;
 	private IProgressMonitor monitor;
 	private int work;
-
+	File streamFile;
 	public LatinCrawler() {
 		authorNames = new HashMap<String, String>();
 		// authorUrl = new HashSet<String>();
@@ -125,7 +132,18 @@ public class LatinCrawler {
        this.monitor = monitor2;
 		String authDir = outputDir + File.separator + author;
 		createIfMissing(authDir);
-
+		
+		String output = authDir + File.separator + author+".json";
+		streamFile = new File(output);
+		jsonfactory = new JsonFactory();
+		try {
+			jsonGenerator = jsonfactory.createGenerator(streamFile, JsonEncoding.UTF8);
+			jsonGenerator.useDefaultPrettyPrinter();
+			jsonGenerator.writeStartArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		Map<String, BookData> myBooks = new HashMap<String, BookData>();
 		try {
 			Document doc = retrieveDocumentFromUrl(url);// Jsoup.connect(url).timeout(10*1000).get();
@@ -282,7 +300,8 @@ public class LatinCrawler {
 	}
 
 	public void initialize(String outputDir) {
-		this.outputDir = outputDir;
+		this.outputDir = ILatinCrawlerConstants.DEFAULT_CORPUS_LOCATION + File.separator
+				+ outputDir.trim();
 	}
 
 	public Map<String, String> getAuthorNames() throws IOException {

@@ -10,5 +10,5 @@ public interface ILatinCrawlerUIConstants {
 	public static final String IMAGE_CRAWL = "crawl";
 	public static final String IMAGE_CRAWL_TITLE = "crawl_tle";
 	public static final String IMAGE_LATIN = "latin";
-
+	String DEFAULT_CORPUS_LOCATION = System.getProperty("user.dir") + System.getProperty("file.separator") + "json_corpuses" + System.getProperty("file.separator") + "latin";
 }

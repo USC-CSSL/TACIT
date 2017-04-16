@@ -1,5 +1,6 @@
 package edu.usc.cssl.tacit.crawlers.latin.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -51,7 +53,6 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
-import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.latin.services.LatinCrawler;
 import edu.usc.cssl.tacit.crawlers.latin.ui.internal.ILatinCrawlerUIConstants;
@@ -63,6 +64,7 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 	private AuthorListDialog dialog;
 	private SortedSet<String> authors;
 	private Table authorTable;
+	private Text corpusNameTxt;
 	private List<String> selectedAuthors;
 	private Set<String> authorListFromWeb;
 	private OutputLayoutData layoutData;
@@ -155,8 +157,10 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 		});
 		TacitFormComposite.createEmptyRow(toolkit, form.getBody());
 
-		layoutData = TacitFormComposite.createOutputSection(toolkit, form.getBody(), form.getMessageManager());
-
+//		layoutData = TacitFormComposite.createOutputSection(toolkit, form.getBody(), form.getMessageManager());
+		corpusNameTxt = TacitFormComposite.createCorpusSection(toolkit, form.getBody(), form.getMessageManager());
+		
+		
 		Button btnRun = TacitFormComposite.createRunButton(form.getBody(), toolkit);
 		
 		btnRun.addSelectionListener(new SelectionListener() {
@@ -191,7 +195,7 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 			public void run() {
 				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-				latinCrawler.initialize(layoutData.getOutputLabel().getText());
+				latinCrawler.initialize(corpusNameTxt.getText());
 				runModule();
 
 			};
@@ -233,20 +237,27 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 		boolean canProceed = true;
 		form.getMessageManager().removeMessage("location");
 		form.getMessageManager().removeMessage("author");
-		String message = OutputPathValidation.getInstance()
-				.validateOutputDirectory(layoutData.getOutputLabel().getText(), "Output");
-		if (message != null) {
-
-			message = layoutData.getOutputLabel().getText() + " " + message;
-			form.getMessageManager().addMessage("location", message, null, IMessageProvider.ERROR);
-			canProceed = false;
-		}
 		if (selectedAuthors == null || selectedAuthors.size() < 1) {
 			form.getMessageManager().addMessage("author", "Author details cannot be empty", null,
 					IMessageProvider.ERROR);
-			canProceed = false;
+			return false;
 		}
-		return canProceed;
+		// Validate corpus name
+		String corpusName = corpusNameTxt.getText();
+		if (null == corpusName || corpusName.isEmpty()) {
+			form.getMessageManager().addMessage("corpusName", "Provide corpus name", null, IMessageProvider.ERROR);
+			return false;
+		} else {
+			String outputDir = ILatinCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator + corpusName;
+			if (new File(outputDir).exists()) {
+				form.getMessageManager().addMessage("corpusName", "Corpus already exists", null,
+						IMessageProvider.ERROR);
+				return false;
+			} else {
+				form.getMessageManager().removeMessage("corpusName");
+				return true;
+			}
+		}
 	}
 
 	private void handleAdd(Shell shell) {
