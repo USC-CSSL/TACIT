@@ -11,5 +11,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.crawlers.latin.services
-Bundle-ClassPath: jsoup-1.7.3.jar,
+Bundle-ClassPath: jackson-core-2.5.0.jar,
+ jsoup-1.7.3.jar,
  .
