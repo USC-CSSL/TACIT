@@ -157,8 +157,8 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 			else if (element instanceof ICorpusClass)
 				if (((ICorpusClass) element).getNoOfFiles() != null) {
 					Long cases = 0l;
-					if(((ICorpus) element).getNoOfCases()!=null) {
-						cases = ((ICorpus) element).getNoOfCases();
+					if(((ICorpusClass) element).getNoOfCases()!=null) {
+						cases = ((ICorpusClass) element).getNoOfCases();
 					}
 					return ((ICorpusClass) element).getClassName() + " (" + ((ICorpusClass) element).getNoOfFiles()
 							+ " files, Total "+ cases +" cases)";
