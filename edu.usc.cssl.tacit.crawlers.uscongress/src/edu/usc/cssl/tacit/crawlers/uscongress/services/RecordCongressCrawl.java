@@ -23,6 +23,7 @@ public class RecordCongressCrawl {
 	 JsonGenerator jsonGenerator;
 	 JsonFactory jsonfactory;
 	 int docCount;
+	 int totalCount = 0;
 	 boolean first =true;
 //	
 //	public static void main(String args[]){
@@ -131,6 +132,7 @@ public class RecordCongressCrawl {
 								if(fields[2])
 									jsonGenerator.writeStringField("title", title1);
 								ConsoleView.printlInConsoleln("Writing record "+title1+"count "+docCount);
+								monitor.subTask("Writing record "+title1+", total count is "+totalCount);
 							}
 							System.out.println(Jsoup.parse(docJournalAbstract.toString()).text());
 							if(fields[3])
@@ -138,13 +140,17 @@ public class RecordCongressCrawl {
 							jsonGenerator.writeEndObject();
 						} catch (SocketTimeoutException e) {
 							docCount++;
+							totalCount++;
 							continue;
 						}catch (Exception e) {
 							docCount++;
+							totalCount++;
 							continue; 
 						}
 					docCount++;
+					totalCount++;
 					monitor.worked(1);
+					
 					if (docCount >= limit){					
 						break;
 					}
