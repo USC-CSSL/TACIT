@@ -81,11 +81,13 @@ public class Preprocessor {
 	private String tempPPFileLoc = System.getProperty("user.dir") + System.getProperty("file.separator")
 			+ "tacit_temp_files" + System.getProperty("file.separator");
 	protected boolean doPreprocessing;
+	protected boolean ignoreStemming; ///Some plugins dont use dictionary files so stemming cannot be done on them, so its a check
 	Spelling2 sp;
 
 	public Preprocessor(String ppDirLocation, boolean doPreprocessing) throws IOException {
 		createppDir(ppDirLocation);
 		this.doPreprocessing = doPreprocessing;
+		ignoreStemming = true;
 		setupParams();
 	}
 	
@@ -93,6 +95,7 @@ public class Preprocessor {
 		createppDir(ppDirLocation);
 		this.doPreprocessing = doPreprocessing;
 		this.dictionaryFiles = dictionaryFiles; 
+		ignoreStemming =false;
 		setupParams();
 	}
 
@@ -843,7 +846,7 @@ public class Preprocessor {
 			}
 			
 			//Stemming the dictionary
-			if (doDictStem && !inputDictStemLang.equals("")){
+			if (doDictStem && !inputDictStemLang.equals("") && !ignoreStemming){
 				stemmedDictionaryFiles = stemDictionary(dictionaryFiles,inputDictStemLang);
 			}else{
 				stemmedDictionaryFiles = dictionaryFiles;
@@ -925,28 +928,43 @@ public class Preprocessor {
 			String line  = "";
 			StringBuilder resultString;
 			while((line = br.readLine()) != null){
-				line = line.trim();
 				if (line.equals("")){
 					pw.println("");
 					continue;
 				}
 				resultString = new StringBuilder();
-				String[] wordArray = line.split("\\s");
+				//Split with spaces
+				String[] wordArray = line.split(" ",-1);
 				
 				for (String word : wordArray) {
 					if (!word.equals("")){
-						langStemmer.setCurrent(word);
-						String stemmedWord = "";
-						if (langStemmer.stem())
-							stemmedWord = langStemmer.getCurrent();
-						resultString.append(stemmedWord);
-						resultString.append(" ");
+						if (word.equals("\\t")){
+							resultString.append("\\t");
+							continue;
+						}
 						
+						//Split again with tabs
+						String[] tabbedWords = word.split("\\t",-1);
+						for (String tabbedWord : tabbedWords){
+							if (!tabbedWord.equals("")){
+								langStemmer.setCurrent(tabbedWord);
+								String stemmedWord = "";
+								if (langStemmer.stem())
+									stemmedWord = langStemmer.getCurrent();
+								resultString.append(stemmedWord);
+								resultString.append('\t');
+							}else{
+								resultString.append('\t');
+							}
+						}
+						
+						resultString.delete(resultString.length()-1, resultString.length());
+						resultString.append(" ");
 					}else{
 						resultString.append(" ");
 					}
 				}
-				
+				String aasddd = resultString.substring(0,resultString.length()-1).toString(); 
 				pw.write(resultString.substring(0,resultString.length()-1).toString() + "\n");
 			}
 			
