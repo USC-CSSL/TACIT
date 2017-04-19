@@ -754,7 +754,8 @@ public static int corpusClass;
 						.getFirstElement()).getCorpusClass() != null)) {
 			CMDataType corpusDataType = ((TreeParent) sel.getFirstElement())
 					.getCorpusClass().getParent().getDatatype();
-			if (corpusDataType == CMDataType.JSON
+			if (corpusDataType == CMDataType.JSON ||
+					corpusDataType == CMDataType.IMPORTED_CSV
 					|| corpusDataType == CMDataType.TWITTER_JSON
 					|| corpusDataType == CMDataType.REDDIT_JSON
 					|| corpusDataType == CMDataType.STACKEXCHANGE_JSON
