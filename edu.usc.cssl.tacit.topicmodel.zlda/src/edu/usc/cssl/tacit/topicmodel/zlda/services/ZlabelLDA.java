@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Random;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
@@ -574,7 +575,7 @@ public class ZlabelLDA {
 		
 	}
 	
-	public boolean zLDA(){
+	public boolean zLDA(SubProgressMonitor monitor){
 	
 		if(validateInput() != true){
 			ConsoleView.printlInConsoleln("Invalid Input");
@@ -595,6 +596,7 @@ public class ZlabelLDA {
 		currentTime = System.currentTimeMillis();
 		for(int si=1; si<=numsamp; si++){
 			gibbsChain();
+			monitor.subTask("Calculating Z label ... Ran Gibbs Sampler "+si+ " time(s)");
 		}
 		
 		estPhi();

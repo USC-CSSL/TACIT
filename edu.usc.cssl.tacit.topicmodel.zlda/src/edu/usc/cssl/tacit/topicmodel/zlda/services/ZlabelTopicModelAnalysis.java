@@ -76,7 +76,7 @@ public class ZlabelTopicModelAnalysis {
 
 		ZlabelLDA zelda = new ZlabelLDA(docs, zlabels, confidenceValue, alpha, beta, noOfSamples);
 		this.monitor.subTask("Calculating Z label ...");
-		boolean retVal = zelda.zLDA();
+		boolean retVal = zelda.zLDA(this.monitor);
 		if (!retVal) {
 			System.out.println("Sorry, something is wrong with the input - please check format and try again");
 			return;
