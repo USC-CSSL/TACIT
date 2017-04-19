@@ -22,8 +22,9 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class RecordCongressCrawl {
 	 JsonGenerator jsonGenerator;
 	 JsonFactory jsonfactory;
-	 int docCount;
-	 int totalCount = 0;
+	 int docCount; //this is used for parsing the web site links while crawling
+	 int docsSavedCount; //this is used to maintain the counts of successful crawls of texts
+	 int totalCount = 0; //same as docsSavedCount, but stores the total count
 	 boolean first =true;
 //	
 //	public static void main(String args[]){
@@ -59,8 +60,12 @@ public class RecordCongressCrawl {
 				chamberTxt = ",\"chamber\":\""+chamber+"\"";
 			}
 			docCount= 0;
+			docsSavedCount = 0;
 			int page = 1;
-			int totalPages = 0;
+			int totalPages = 0;//used only when random is selected
+			int totalDatedPages = 0;//used when sort by date is selected
+			
+			
 			BufferedWriter bw;
 			Document d = null;
 			boolean connected = false;
@@ -85,6 +90,7 @@ public class RecordCongressCrawl {
 				}
 				
 				if(first){
+					
 				Elements number = d.getElementsByClass("results-number");
 				String num = Jsoup.parse(number.toString()).text();
 				System.out.println(num);
@@ -97,6 +103,11 @@ public class RecordCongressCrawl {
 					limit = results;
 				first = false;
 				}
+				Element t = d.getElementsByClass("results-number").get(0);
+				String s = t.text().trim();
+				String st[] = s.split(" ");
+				totalDatedPages = Integer.parseInt(st[st.length-1]);
+				
 				Elements title = d.getElementsByClass("result-heading");
 				for (Element links : title) {
 					Elements link = links.select("a");
@@ -140,14 +151,15 @@ public class RecordCongressCrawl {
 							jsonGenerator.writeEndObject();
 						} catch (SocketTimeoutException e) {
 							docCount++;
-							totalCount++;
+							//totalCount++;
 							continue;
 						}catch (Exception e) {
 							docCount++;
-							totalCount++;
+							//totalCount++;
 							continue; 
 						}
 					docCount++;
+					docsSavedCount++;
 					totalCount++;
 					monitor.worked(1);
 					
@@ -157,9 +169,12 @@ public class RecordCongressCrawl {
 				}
 				if(random)
 					page = (int) (Math.random()*totalPages+1);
-				else
+				else {
 					page++;
-				if (docCount >= limit)
+					if(page>totalDatedPages)
+						break;
+				}
+				if (docsSavedCount >= limit)
 					break;
 			}
 			ConsoleView.printlInConsoleln(docCount+ "file(s) Downloaded ");
