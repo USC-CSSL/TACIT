@@ -52,6 +52,10 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.usc.cssl.tacit.common.ui.CommonUiActivator;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CMDataType;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.Corpus;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
+import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.latin.services.LatinCrawler;
@@ -61,6 +65,7 @@ import edu.usc.cssl.tacit.crawlers.latin.ui.internal.LatinCrawlerImageRegistry;
 public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstants {
 	public static final String ID = "edu.usc.cssl.tacit.crawlers.latin.ui.view1";
 	private ScrolledForm form;
+	Corpus corpus;
 	private AuthorListDialog dialog;
 	private SortedSet<String> authors;
 	private Table authorTable;
@@ -333,11 +338,23 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 	}
 
+	String corpusName;
 	private void runModule() {
 		Job job = new Job("Crawling...") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				Display.getDefault().syncExec(new Runnable() {
 
+					@Override
+					public void run() {
+						corpusName = corpusNameTxt.getText();
+						
+					}
+					
+				});
+				
+				
+				corpus = new Corpus(corpusName, CMDataType.LATIN_JSON);
 				final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy, HH:mm:ss aaa");
 				final Calendar cal = Calendar.getInstance();
 				ConsoleView
@@ -350,6 +367,7 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 					totalWork = selectedAuthors.size();
 					monitor.beginTask("TACIT started crawling...", totalWork);
 					int totalFilesCreated = 0;
+					
 					while (authorItr.hasNext()) {
 						if (monitor.isCanceled()) {
 							monitor.subTask("Crawling is cancelled...");
@@ -361,6 +379,11 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 						totalFilesCreated += latinCrawler.getBooksByAuthor(author,
 								latinCrawler.getAuthorNames().get(author), monitor);
 						monitor.worked(1);
+						
+						CorpusClass cc = new CorpusClass(author, ILatinCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName+ File.separator+ author);
+						cc.setParent(corpus);
+						corpus.addClass(cc);
+						
 					}
 					ConsoleView.printlInConsole("Total number of files downloaded : " + totalFilesCreated);
 
@@ -379,6 +402,7 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 					return Status.CANCEL_STATUS;
 				}
+				ManageCorpora.saveCorpus(corpus);
 				monitor.done();
 				return Status.OK_STATUS;
 			}

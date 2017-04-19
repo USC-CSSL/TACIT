@@ -165,6 +165,7 @@ public class LatinCrawler {
 			String bookDir = entry.getValue().getBookDir();
 			totalFilesCreated += getBookContent(bookUrl, bookName, bookDir);
 		}
+		jsonGenerator.writeEndArray();
 		return totalFilesCreated;
 	}
 
@@ -571,35 +572,42 @@ public class LatinCrawler {
 
 	private int getBookContent(String bookUri, String bookName, String bookDir)
 			throws IOException {
-		BufferedWriter csvWriter = null;
+//		BufferedWriter csvWriter = null;
 		try {
 			Document doc = retrieveDocumentFromUrl(bookUri);// Jsoup.connect(bookUri).timeout(10*10000).get();
 			// bookName = getBookNameFromDoc(doc, bookName);
 			bookName = bookName.replaceAll(
 					"[.,;\"!-()\\[\\]{}:?'/\\`~$%#@&*_=+<>*$]", "");
 			createIfMissing(bookDir);
-			File fName = new File(bookDir
-					+ System.getProperty("file.separator") + bookName
-					+ ".txt");
-			csvWriter = new BufferedWriter(
-					new FileWriter(fName));
+			StringBuilder sb = new StringBuilder();
+			jsonGenerator.writeStartObject();
+			jsonGenerator.writeStringField("bookname", bookName);
+//			File fName = new File(bookDir
+//					+ System.getProperty("file.separator") + bookName
+//					+ ".txt");
+//			csvWriter = new BufferedWriter(
+//					new FileWriter(fName));
 			Elements content = doc.getElementsByTag("p");
 			if (content.size() == 0) {
-				if (csvWriter != null)
-					csvWriter.close();
+//				if (csvWriter != null)
+//					csvWriter.close();
 				return getBookContent2(bookUri, bookName, bookDir);
 				
 			}
 			for (Element c : content) {
-				csvWriter.write(c.text() + "\n");
+//				csvWriter.write(c.text() + "\n");
+				sb.append(c.text() + "\n");
 			}
-			ConsoleView.printlInConsoleln("Writing Content at"+fName.getAbsolutePath());
+			jsonGenerator.writeStringField("body", sb.toString());
+			jsonGenerator.writeEndObject();
+//			ConsoleView.printlInConsoleln("Writing Content at"+fName.getAbsolutePath());
 		} catch (Exception e) {
 			return getBookContent2(bookUri, bookName, bookDir);
-		} finally {
-			if (csvWriter != null)
-				csvWriter.close();
-		}
+		} 
+//		finally {
+//			if (csvWriter != null)
+//				csvWriter.close();
+//		}
 		return 1;
 	}
 
