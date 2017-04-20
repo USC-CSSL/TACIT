@@ -189,6 +189,9 @@ public class SVMClassify {
 		return weights;
 	}
 
+	
+	
+	
 	public int cross_train(String kVal, String label1, File[] trainFiles1,
 			String label2, File[] trainFiles2, boolean doPredictiveWeights, Date dateObj)
 			throws IOException {
@@ -217,8 +220,7 @@ public class SVMClassify {
 				buildDfMap(file);
 			}
 			// ConsoleView.writeInConsole("dfmap -"+dfMap);
-			ConsoleView
-					.printlInConsoleln("Finished building document frequency map.");
+			ConsoleView.printlInConsoleln("Finished building document frequency map.");
 		}
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(trainFile));
@@ -302,10 +304,21 @@ public class SVMClassify {
 
 		return ret;
 	}
+	
+	
+	
+	
+	
 	protected String createSVMWeightFileName(DateFormat df, String kVal, String intermediatePath, Date dateObj){
 		return intermediatePath + "-weights" + "-"
 				+ kVal +"-"+df.format(dateObj)+".csv";
 	}
+	
+	
+	
+	
+	
+	
 	public double[] cross_predict(String kVal, String label1, File[] testFiles1,
 			String label2, File[] testFiles2) throws IOException {
 		
@@ -328,8 +341,7 @@ public class SVMClassify {
 				buildDfMap(file);
 			}
 			// ConsoleView.writeInConsole("dfmap -"+dfMap);
-			ConsoleView
-					.printlInConsoleln("Finished building document frequency map.");
+			ConsoleView.printlInConsoleln("Finished building document frequency map.");
 		}
 
 		// Create a test file just like the training file was created.
@@ -366,8 +378,31 @@ public class SVMClassify {
 		double pvalue = btest.binomialTest(total, correct, p,
 				AlternativeHypothesis.TWO_SIDED);
 		// ConsoleView.printlInConsoleln("Created SVM output file - "+intermediatePath+"_"+kVal+".out");
-		ConsoleView.printlInConsoleln("Accuracy = " + (double) correct / total
-				* 100 + "% (" + correct + "/" + total + ") (classification)\n");
+		
+		double precision  = result[5]/(result[5]+result[7]);
+		double recall = result[5]/(result[5]+result[6]);
+		double f1 = 2*precision*recall/(precision + recall);
+		
+		//Print Error Statistics
+		ConsoleView.printlInConsoleln("Correctly classified Instances\t"+ correct + "\t" + correct*1.0 / total +"%" );
+		ConsoleView.printlInConsoleln("Incorrectly classified Instances\t"+ (total - correct) + "\t" + (total - correct) * 1.0 / total +"%" );
+		ConsoleView.printlInConsoleln("Total Number of Instances\t" + total);
+		//Error statistics shall be included in future
+		//ConsoleView.printlInConsoleln("Mean absolute error\t"+ result[3]);
+		//ConsoleView.printlInConsoleln("Root mean squared error\t"+ result[4]);
+		//ConsoleView.printlInConsoleln("Relative absolute error\t"+ result[9]);
+		//ConsoleView.printlInConsoleln("Root relative squared error\t"+ result[10]);
+		
+		ConsoleView.printlInConsoleln("Confusion matrix:");
+		ConsoleView.printlInConsoleln("\t\t\tPredicted Labels");
+		ConsoleView.printlInConsoleln("\t\t\t+1\t-1");
+		ConsoleView.printlInConsoleln("  True\t+1\t"+(int)result[5] + "\t" + (int)result[6]);
+		ConsoleView.printlInConsoleln("Labels\t-1\t"+(int)result[7] + "\t" + (int)result[8]);
+		ConsoleView.printlInConsoleln("Accuracy = " + correct*1.0 / total* 100 + "% (" + correct + "/" + total + ") (classification)");
+		ConsoleView.printlInConsoleln("Precision = " + precision );
+		ConsoleView.printlInConsoleln("Recall = " + recall );
+		ConsoleView.printlInConsoleln("F1 = " + f1 );
+		ConsoleView.printlInConsoleln("Kappa statistic\t"+getKappa((int)result[5], (int)result[6], (int)result[7], (int)result[8]));
 		
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(Integer.MAX_VALUE);
@@ -376,7 +411,7 @@ public class SVMClassify {
 			if (pvalue > 1)
 				pvalue = Math.abs(pvalue - 1);
 		}
-		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue);
+		ConsoleView.printlInConsoleln("Binomial Test P value  = " + pvalue +"\n");
 		double accuracy = (double) correct / total * 100;
 		returnValues[0] = accuracy;
 		returnValues[1] = pvalue;
@@ -385,5 +420,18 @@ public class SVMClassify {
 		
 		return returnValues;
 	}
+	
+	public double getKappa(int tp, int fn, int fp, int tn ){
+		double total = tp + fn+ fp + tn;
+		double po = (tp+tn)*1.0/total;
+		double ppos = (tp+fn)*(tp+fp)*1.0/(total * total);
+		double pneg = (fn+tn)*(fp + tn)*1.0/(total*total);
+		double pe = ppos + pneg;
+		
+		double kappa = (po - pe)/(1- pe); 
+		return kappa;
+		
+	}
+	
 
 }

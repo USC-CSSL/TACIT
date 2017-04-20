@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import libsvm.svm;
@@ -54,9 +56,17 @@ public class SVMPredict {
 	{
 		int correct = 0;
 		int total = 0;
-		double error = 0, pvalue = 0;
+		double error = 0, pvalue = 0, absolute_error = 0;
 		double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
+		double tp = 0, fn = 0, fp =0, tn = 0;
+		//class 1 is considered as + and class 2 is considered -
+		//			Predicted Label
+		//True		|	+	|	-
+		//label	+	|	tp	|	fn
+		//		-	|	fp	|	tn
 
+		List<Double> targetCollection = new ArrayList();
+		
 		int svm_type=svm.svm_get_svm_type(model);
 		int nr_class=svm.svm_get_nr_class(model);
 		double[] prob_estimates=null;
@@ -110,10 +120,26 @@ public class SVMPredict {
 				v = svm.svm_predict(model,x);
 				output.writeBytes(v+"\n");
 			}
-
+			
+			if (v == 1){
+				if (target == v){
+					tp++;
+				}else{
+					fp++;
+				}
+			}else{
+				if(target == v){
+					tn++;
+				}else{
+					fn++;
+				}
+				
+			}
+			targetCollection.add(target);
 			if(v == target)
 				++correct;
 			error += (v-target)*(v-target);
+			absolute_error  += Math.abs(v-target);
 			sumv += v;
 			sumy += target;
 			sumvv += v*v;
@@ -131,13 +157,27 @@ public class SVMPredict {
 				 " (regression)\n");
 		}
 		else{
-			SVMPredict.info("Accuracy = "+(double)correct/total*100+
-					"% ("+correct+"/"+total+") (classification)\n");
+			SVMPredict.info("Accuracy = "+(double)correct/total*100+"% ("+correct+"/"+total+") (classification)\n");
 			//ConsoleView.printlInConsoleln(total + " " + correct + " " + (double)1/nr_class + " ");
 			BinomialTest btest = new BinomialTest();
 			pvalue = btest.binomialTest(total, correct, (double)0.5, AlternativeHypothesis.TWO_SIDED);
 		}
-		return new double[]{correct,total, pvalue};
+		
+		//Here we are calculating the various error statistics, considering the misclassification cost as 2(since the classes are 1/-1), 
+		//This shall be confirmed in case to be implemented in future.  
+		double abar= sumy/total;
+		double relative_absolute_error = 0.0;
+		double root_relative_squared_error = 0.0;
+		for (double a: targetCollection){
+			relative_absolute_error  += Math.abs(abar- a);
+			root_relative_squared_error += (abar - a)*(abar - a);
+		}
+		relative_absolute_error = absolute_error/relative_absolute_error;
+		root_relative_squared_error = error/root_relative_squared_error;
+		
+		double mean_absolute_error = absolute_error/total;
+		double rms_error = Math.sqrt(error/total);
+		return new double[]{correct,total, pvalue,mean_absolute_error,rms_error,tp,fn,fp,tn,relative_absolute_error,root_relative_squared_error};
 	}
 
 	private static void exit_with_help()
