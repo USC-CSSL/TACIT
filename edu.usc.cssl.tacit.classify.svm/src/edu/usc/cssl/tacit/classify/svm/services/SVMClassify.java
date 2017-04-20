@@ -398,10 +398,10 @@ public class SVMClassify {
 		ConsoleView.printlInConsoleln("\t\t\t+1\t-1");
 		ConsoleView.printlInConsoleln("  True\t+1\t"+(int)result[5] + "\t" + (int)result[6]);
 		ConsoleView.printlInConsoleln("Labels\t-1\t"+(int)result[7] + "\t" + (int)result[8]);
-		ConsoleView.printlInConsoleln("Accuracy = " + correct*1.0 / total* 100 + "% (" + correct + "/" + total + ") (classification)");
-		ConsoleView.printlInConsoleln("Precision = " + precision );
-		ConsoleView.printlInConsoleln("Recall = " + recall );
-		ConsoleView.printlInConsoleln("F1 = " + f1 );
+		ConsoleView.printlInConsoleln("Accuracy\t" + correct*1.0 / total* 100 + "% (" + correct + "/" + total + ") (classification)");
+		ConsoleView.printlInConsoleln("Precision\t" + precision );
+		ConsoleView.printlInConsoleln("Recall\t" + recall );
+		ConsoleView.printlInConsoleln("F1\t" + f1 );
 		ConsoleView.printlInConsoleln("Kappa statistic\t"+getKappa((int)result[5], (int)result[6], (int)result[7], (int)result[8]));
 		
 		NumberFormat nf = NumberFormat.getInstance();
