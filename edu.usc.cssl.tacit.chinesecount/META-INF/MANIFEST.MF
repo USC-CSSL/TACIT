@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Chinesecount
+Bundle-SymbolicName: edu.usc.cssl.tacit.chinesecount
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.chinesecount.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.tacit.chinesecount,
+ edu.usc.cssl.tacit.chinesecount.service
+Bundle-ClassPath: stanford-segmenter-3.7.0-javadoc.jar,
+ stanford-segmenter-3.7.0-sources.jar,
+ stanford-segmenter-3.7.0.jar,
+ .

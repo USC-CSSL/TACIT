@@ -5,10 +5,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import opennlp.tools.postag.POSModel;
@@ -32,6 +38,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.usc.cssl.tacit.chinesecount.service.SegDemo;
 import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -84,7 +93,11 @@ public class WordCountPlugin {
 	private int numSentences = 0;
 	private IProgressMonitor monitor;
 
-	public WordCountPlugin(boolean weighted, Date dateObj, boolean doPennCounts,
+	
+	private static final String basedir = System.getProperty("SegDemo", "data");
+	
+	public WordCountPlugin(boolean weighted, Date dateObj,
+			boolean stemDictionary, boolean doPennCounts,
 			boolean doWordDistribution, boolean createDATFile,
 			boolean createPOSTags, String outputPath, IProgressMonitor monitor) {
 		this.weighted = weighted;
@@ -314,6 +327,10 @@ public class WordCountPlugin {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
 					inputFile)));
+			BufferedReader br1 = new BufferedReader(new FileReader(new File(
+					inputFile)));
+			boolean isChinese = isCJK(br1.readLine());
+			br1.close();
 			String currentLine;
 			int numWords = 0;
 			int numDictWords = 0;
@@ -324,18 +341,43 @@ public class WordCountPlugin {
 			if (createPOSTags) {
 				posBW = createPosTagsFile(inputFile);
 			}
-
+			SegDemo sd = null;
+			if(isChinese)
+				sd = new SegDemo();
 			while ((currentLine = br.readLine()) != null) {
-				String[] sentences = sentDetector.sentDetect(currentLine);
+				String[] sentences = null;
+				if(isChinese){
+					if(currentLine.equals(""))
+						continue;
+					sentences = sd.sentDetect(currentLine);
+				}else{
+					sentences = sentDetector.sentDetect(currentLine);
+				}
+				
 				numSentences = numSentences + sentences.length;
 				this.numSentences = this.numSentences + sentences.length;
 				StringBuilder toWrite = new StringBuilder();
 
 				for (int i = 0; i < sentences.length; i++) {
-					String[] words = tokenize.tokenize(sentences[i]);
-					String[] posTags = posTagger.tag(words);
-
-					if (createPOSTags) {
+					String[] words =null;
+					String[] posTags=null;
+					if(isChinese){
+						try {				 
+						    List<String> s = sd.chineseCount(sentences[i]);
+						    words = s.toArray(new String[s.size()]);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else{
+						words = tokenize.tokenize(sentences[i]);
+						posTags = posTagger.tag(words);
+					}
+//				String[] words = tokenize.tokenize(sentences[i]);
+//				String[] words = new String[] {"面对", "新", "世纪", "，", "世界", "各", "国", "人民", "的", "共同", "愿望", "是", "：", "继续", "发展", "人类", "以往", "创造", "的", "一切", "文明", "成果", "，", "克服", "20", "世纪", "困扰", "着", "人类", "的", "战争", "和", "贫困", "问题", "，", "推进", "和平", "与", "发展", "的", "崇高", "事业", "，", "创造", "一", "个", "美好", "的", "世界", "面对"}  ;
+				
+				
+				if (isChinese) {
 						for (int k = 0; k < words.length; k++) {
 							toWrite.append(words[k] + "/" + posTags[k] + " ");
 						}
@@ -364,7 +406,7 @@ public class WordCountPlugin {
 										userOverallCount.get(words[j]).get(cat)
 												+ wordWeight);
 							}
-
+							if (createPOSTags) {
 							// Increment count of Penn Treebank POS tags
 							if (pennFileCount.get(words[j]).containsKey(
 									posTags[j])) {
@@ -386,16 +428,18 @@ public class WordCountPlugin {
 								pennOverallCount.get(words[j]).put(posTags[j],
 										1.0);
 							}
+							}
 						}
 					}
 
-				}
-				if (createPOSTags) {
+				} //for ka brackets
+				if (isChinese) {
 					posBW.write(toWrite.toString());
 					posBW.newLine();
 				}
-			}
-			if (createPOSTags) {
+			}	//while ka loop
+//			if (createPOSTags)
+			if (isChinese){
 				posBW.close();
 			}
 			br.close();
@@ -426,6 +470,19 @@ public class WordCountPlugin {
 		return outputPath + System.getProperty("file.separator") + type + df.format(dateObj) + ".dat";
 		
 	}
+	
+	public static boolean isCJK(String str){
+	        char ch = str.charAt(0);
+	        Character.UnicodeBlock block = Character.UnicodeBlock.of(ch);
+	        if (Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS.equals(block)|| 
+	            Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS.equals(block)|| 
+	            Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A.equals(block)){
+	            return true;
+	        }
+	    
+	    return false;
+	}
+	
 	/**
 	 * Add a line to CSV with the counts for the given input file
 	 * 
@@ -461,8 +518,11 @@ public class WordCountPlugin {
 						+ System.getProperty("file.separator") + type
 						+ df.format(dateObj)
 						+ ".csv for storing counts for user tags.");
-				resultCSVbw = new BufferedWriter(new FileWriter(filePath));
-
+				
+				Writer fstream = null;
+				fstream = new OutputStreamWriter(new FileOutputStream(filePath), StandardCharsets.UTF_8);
+				resultCSVbw = new BufferedWriter(fstream);
+				
 				if (createDATFile) {
 					ConsoleView.printlInConsoleln("Created file " + outputPath
 							+ System.getProperty("file.separator") + type
