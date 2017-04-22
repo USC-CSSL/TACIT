@@ -8,6 +8,6 @@
     <relativePath>../parent</relativePath>
   </parent>
 	<groupId>edu.usc.tacit.tools</groupId>
-	<artifactId>edu.usc.cssl.tacit.classify.naivebayes</artifactId>
+	<artifactId>edu.usc.cssl.tacit.chinesecount</artifactId>
 	<packaging>eclipse-plugin</packaging>
 </project>
