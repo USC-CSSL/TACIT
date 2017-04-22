@@ -111,6 +111,7 @@
 		<module>../edu.usc.cssl.tacit.help</module>
 		<module>../product</module>
 		<module>../updatesite</module>
+		<module>../edu.usc.cssl.tacit.chinesecount</module>
 
 	</modules>
 	<properties>
