@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.common,
  org.jsoup;bundle-version="1.7.2",
  edu.usc.cssl.tacit.common.ui,
- system.bundle
+ system.bundle,
+ edu.usc.cssl.tacit.chinesecount;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.wordcount.standard.services;
