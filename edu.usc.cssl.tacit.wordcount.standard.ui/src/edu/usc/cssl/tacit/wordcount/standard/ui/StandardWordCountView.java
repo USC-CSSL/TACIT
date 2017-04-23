@@ -318,8 +318,9 @@ public class StandardWordCountView extends ViewPart implements
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("TACIT Word Count",
 								(inputObjs.size() * 15) + 15);
+						//added false for stem dict
 						WordCountPlugin wc = new WordCountPlugin(wcType,
-								dateObj, doPennCounts,
+								dateObj, false, doPennCounts,
 								doWordDistribution, datFile, doPOSTags,
 								outputPath, monitor);
 
@@ -467,6 +468,7 @@ public class StandardWordCountView extends ViewPart implements
 			return false;
 		}
 		
+
 //		try{
 //			List<Object> dictPaths = dictLayoutData.getTypeCheckedSelectedFiles(checkType);
 //			Iterator<Object> dictPathIterator  = dictPaths.iterator();
