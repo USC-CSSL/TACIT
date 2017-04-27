@@ -334,7 +334,7 @@ public class StandardWordCountView extends ViewPart implements
 							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles(); //Will be stemmed only if selected in preprocessor settings else will return unchanged files 
 							
 							List<String> inputFiles = ppObj.processData(
-									"wc_files", inputObjs);
+									"wc_files", inputObjs, monitor);
 							monitor.worked(5);
 							if(splitFiles) {
 								inputFiles = splitFiles("StandardWordCount", inputFiles);
@@ -347,7 +347,7 @@ public class StandardWordCountView extends ViewPart implements
 							File stemmedFileDir = new File(stemmedFilesLoc);
 							
 							if (stemmedFileDir.exists()){
-								FileUtils.deleteDirectory(stemmedFileDir);
+							//	FileUtils.deleteDirectory(stemmedFileDir);
 							}
 							
 							ppObj.clean();

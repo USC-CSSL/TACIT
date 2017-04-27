@@ -297,7 +297,7 @@ public class ZlabelLdaTopicModelView extends ViewPart implements
 							}
 							
 							inFiles = ppObj.processData("ZLabel_LDA",
-									selectedFiles);
+									selectedFiles, monitor);
 							
 							
 						} catch (IOException e1) {

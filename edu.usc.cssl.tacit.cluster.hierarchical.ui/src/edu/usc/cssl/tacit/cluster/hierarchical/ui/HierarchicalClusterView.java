@@ -255,7 +255,7 @@ public class HierarchicalClusterView extends ViewPart implements
 
 							
 							inFiles = ppObj.processData(
-									"Hierarchical_Clustering", selectedFiles);
+									"Hierarchical_Clustering", selectedFiles, monitor);
 							
 							
 							for (String f : inFiles) {

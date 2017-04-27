@@ -528,7 +528,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 									tempFiles.addAll(allSelectedClassFiles);
 
 									List<String> preprocessedFilePaths = preprocessTask
-											.processData(new File(dirPath).getName(), tempFiles);
+											.processData(new File(dirPath).getName(), tempFiles, monitor);
 									
 									String preProcessedClassDir = null;
 
@@ -549,7 +549,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 									List<Object> files = new ArrayList<Object>();
 									nbc.selectAllFiles(classificationInputDir, files);
 									List<String> preprocessedFilePaths = preprocessTask
-											.processData(new File(classificationInputDir).getName(), files);
+											.processData(new File(classificationInputDir).getName(), files, monitor);
 
 									if (!preprocessedFilePaths.isEmpty())
 										classificationInputDir = new File(preprocessedFilePaths.get(0)).getParent();
@@ -576,7 +576,7 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 										if (i instanceof CorpusClass) {
 											List<Object> tempSelection = new ArrayList<Object>();
 											tempSelection.add(i);
-											inFiles = ppObj.processData("Hierarchical_Clustering", tempSelection);
+											inFiles = ppObj.processData("Hierarchical_Clustering", tempSelection, monitor);
 											
 											CorpusClass j = (CorpusClass) i;
 											classPaths.put(j.getClassName(), inFiles);

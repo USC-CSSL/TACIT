@@ -320,14 +320,14 @@ public class CooccurrenceWordCountView extends ViewPart implements
 							
 							
 							inFiles = ppObj.processData("ppFiles",
-									selectedFiles);
+									selectedFiles, monitor);
 							if(splitFiles) {
 								inFiles = splitFiles("Cooccurrence", inFiles);
 							}
 							List<Object> seedObjs = new ArrayList<Object>();
 							seedObjs.add(seedFilePath);
 							seedList = ppObj
-									.processData("seed_files", seedObjs);
+									.processData("seed_files", seedObjs, monitor);
 							
 							File stemmedFileDir = new File(stemmedFilesLoc);
 							

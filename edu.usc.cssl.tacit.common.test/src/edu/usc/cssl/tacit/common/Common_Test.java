@@ -82,7 +82,7 @@ public class Common_Test{
 				}
 			};
 			inFiles = ppObj.processData("tempdata",
-					selectedFiles);
+					selectedFiles, null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

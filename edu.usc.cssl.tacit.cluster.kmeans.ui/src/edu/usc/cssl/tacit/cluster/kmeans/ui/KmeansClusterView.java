@@ -216,7 +216,7 @@ public class KmeansClusterView extends ViewPart implements
 						try {
 							ppObj = new Preprocessor("Kmeans", isPreprocess);
 							inFiles = ppObj.processData("ppFiles",
-									selectedFiles);
+									selectedFiles, monitor);
 							for (String string : inFiles) {
 								inputFiles.add(new File(string));
 							}

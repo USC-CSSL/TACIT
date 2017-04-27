@@ -414,7 +414,7 @@ public class SLDATopicModelView extends ViewPart implements
 				List<String> inFiles;
 				try {
 					ppObj = new Preprocessor("LDA", isPreprocess);
-					inFiles = ppObj.processData("LDA", selectedFiles);
+					inFiles = ppObj.processData("LDA", selectedFiles, null);
 					
 					//inFiles will be run if unsupported files are given as input
 					if (inFiles == null){

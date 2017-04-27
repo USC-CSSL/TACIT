@@ -220,9 +220,9 @@ public class SVMView extends ViewPart implements ISVMViewConstants {
 									"SVM_Classifier", ppValue);
 
 							List<String> c1Files = ppObj.processData(
-									class1NameStr, class1Files);
+									class1NameStr, class1Files, monitor);
 							List<String> c2Files = ppObj.processData(
-									class2NameStr, class2Files);
+									class2NameStr, class2Files, monitor);
 							class1FilesL = new File[c1Files.size()];
 							class2FilesL = new File[c2Files.size()];
 							for (int k = 0; k < c1Files.size(); k++) {

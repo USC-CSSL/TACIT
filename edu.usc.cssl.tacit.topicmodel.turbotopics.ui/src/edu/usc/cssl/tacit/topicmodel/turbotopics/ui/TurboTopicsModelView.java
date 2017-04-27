@@ -296,7 +296,7 @@ public class TurboTopicsModelView extends ViewPart implements
 						List<String> inFiles;
 						try {
 							ppObj = new Preprocessor("LDA", isPreprocess);
-							inFiles = ppObj.processData("LDA", selectedFiles);
+							inFiles = ppObj.processData("LDA", selectedFiles, monitor);
 
 							for (String filename : inFiles) {
 								File srcFile = new File(filename);

@@ -251,7 +251,7 @@ public class LdaTopicModelView extends ViewPart implements
 						List<String> inFiles;
 						try {
 							ppObj = new Preprocessor("LDA", isPreprocess);
-							inFiles = ppObj.processData("LDA", selectedFiles);
+							inFiles = ppObj.processData("LDA", selectedFiles, monitor);
 							
 							//inFiles will be null if the input files have unsupported formats
 							

@@ -222,7 +222,7 @@ public class HDPTopicModelView extends ViewPart implements
 							List<String> inFiles = null;
 							try {
 								ppObj = new Preprocessor("HDP", isPreprocess);
-								inFiles = ppObj.processData("HDP", selectedFiles);
+								inFiles = ppObj.processData("HDP", selectedFiles, monitor);
 								
 								for (String filename : inFiles) {
 									File srcFile = new File(filename);

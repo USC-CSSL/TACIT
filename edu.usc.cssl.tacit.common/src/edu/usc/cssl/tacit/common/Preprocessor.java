@@ -27,6 +27,7 @@ import org.annolab.tt4j.TreeTaggerException;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -165,7 +166,7 @@ public class Preprocessor {
 	 *         analysis
 	 * @throws Exception
 	 */
-	public ArrayList<String> processData(String subFolder, List<Object> inData) throws Exception {
+	public ArrayList<String> processData(String subFolder, List<Object> inData, IProgressMonitor monitor) throws Exception {
 		outputFiles = new ArrayList<String>();
 		ppFilesLoc = ppDir + System.getProperty("file.separator") + subFolder;
 		new File(ppFilesLoc).mkdir();
@@ -182,7 +183,7 @@ public class Preprocessor {
 						continue;
 
 					if (doPreprocessing) {
-						String ppFile = processFile(inputFile.getAbsolutePath(), "");
+						String ppFile = processFile(inputFile.getAbsolutePath(), "", monitor);
 						if (ppFile != "")
 							outputFiles.add(ppFile);
 					} else {
@@ -215,7 +216,7 @@ public class Preprocessor {
 				if (file.isDirectory()) {
 					processDirectory(file.getAbsolutePath());
 				} else {
-					String ppFile = processFile(file.getAbsolutePath(), "");
+					String ppFile = processFile(file.getAbsolutePath(), "", null);
 					if (ppFile != "")
 						outputFiles.add(ppFile);
 				}
@@ -256,12 +257,13 @@ public class Preprocessor {
 	 * @return
 	 * @throws TikaException
 	 */
-	private String processFile(String inFileBefore, String outName) {
+	private String processFile(String inFileBefore, String outName, IProgressMonitor monitor)  {
 
 		String inFile = checkfiletype(inFileBefore);
 		
 		String outFile = generateProcessedFileName(inFileBefore, outName);
 
+		int line = 1;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(inFile));
 			if (new File(outFile).exists()) {
@@ -280,6 +282,8 @@ public class Preprocessor {
 			String currLine = "";
 
 			while ((currLine = br.readLine()) != null) {
+				if(monitor!=null)
+					monitor.subTask("Preprocessing file "+inFileBefore);
 				if (currLine.trim().length() != 0) {
 					if (doLowercase) {
 						currLine = currLine.toLowerCase();
@@ -294,12 +298,16 @@ public class Preprocessor {
 					}
 					
 					if (doSpellCheck) {
+						if(monitor!=null)
+							monitor.subTask("Preprocessing file "+inFileBefore+ ", line "+line+":spell correction");
 						currLine = sp.SpellCorrector(currLine);
 					}
 
 					if (doStemming) {
 						if (isLatin) {
 							try {
+								if(monitor!=null)
+									monitor.subTask("Preprocessing file "+inFileBefore+ ", line "+line+":latin stemming");
 								currLine = latinStemmer.doStemming(currLine);
 							} catch (TreeTaggerException e) {
 								ConsoleView.printlInConsole("Error stemming the line: " + currLine);
@@ -312,6 +320,7 @@ public class Preprocessor {
 					}
 					bw.write(currLine + "\n");
 				}
+				line+=1;
 			}
 
 			bw.close();
@@ -569,7 +578,7 @@ public class Preprocessor {
 					fw.write(str);
 					fw.close();
 
-					outputFiles.add(processFile(tempFile, "json_file_" + k + ".txt"));
+					outputFiles.add(processFile(tempFile, "json_file_" + k + ".txt", null));
 					k++;
 					new File(tempFile).delete();
 				} else {
@@ -644,7 +653,7 @@ public class Preprocessor {
 	
 						if (doPreprocessing) {
 							outputFiles.add(processFile(tempFile, corpusClass.getClassName() + j + "-"
-									+ df.format(dateobj)));
+									+ df.format(dateobj), null));
 						} else {
 							 outputFiles.add(checkfiletype(file.getAbsolutePath()));
 						}
@@ -730,7 +739,7 @@ public class Preprocessor {
 				if (doPreprocessing)
 					outputFiles.add(
 							processFile(tempFile, postTitle.substring(0, 20).replaceAll(invalidFilenameCharacters, "")
-									+ "-" + dateObj.getTime() + ".txt"));
+									+ "-" + dateObj.getTime() + ".txt", null));
 				else
 //					outputFiles.add(file.getAbsolutePath());
 				 outputFiles.add(checkfiletype(file.getAbsolutePath()));

@@ -249,7 +249,7 @@ public class HeirarchicalLDAView  extends ViewPart implements
 						List<String> inFiles;
 						try {
 							ppObj = new Preprocessor("HLDA", isPreprocess);
-							inFiles = ppObj.processData("HLDA", selectedFiles);
+							inFiles = ppObj.processData("HLDA", selectedFiles, monitor);
 
 							for (String filename : inFiles) {
 								File srcFile = new File(filename);

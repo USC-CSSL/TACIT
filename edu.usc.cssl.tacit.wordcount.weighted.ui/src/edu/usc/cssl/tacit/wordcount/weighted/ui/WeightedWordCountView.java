@@ -371,7 +371,7 @@ public class WeightedWordCountView extends ViewPart implements
 						try {
 							ppObj = new Preprocessor("Liwc", dictionaryFiles,isPreprocess);
 							List<String> stemmedDictionaryFiles = ppObj.getStemmedDictionaryFiles();
-							inFiles = ppObj.processData("ppFiles", inputFiles);
+							inFiles = ppObj.processData("ppFiles", inputFiles, monitor);
 
 							Display.getDefault().syncExec(new Runnable() {
 
