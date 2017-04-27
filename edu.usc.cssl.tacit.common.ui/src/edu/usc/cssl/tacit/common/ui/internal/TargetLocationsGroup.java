@@ -758,6 +758,7 @@ public static int corpusClass;
 					corpusDataType == CMDataType.IMPORTED_CSV
 					|| corpusDataType == CMDataType.TWITTER_JSON
 					|| corpusDataType == CMDataType.REDDIT_JSON
+					|| corpusDataType == CMDataType.LATIN_JSON
 					|| corpusDataType == CMDataType.STACKEXCHANGE_JSON
 					|| corpusDataType == CMDataType.CONGRESS_JSON) {
 				filterEnabled = true;

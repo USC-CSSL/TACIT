@@ -414,6 +414,10 @@ public class Preprocessor {
 			processJSONArray(corpus, seperateFiles);
 			break;
 			
+		case LATIN_JSON:
+			processJSONArray(corpus, seperateFiles);
+			break;
+			
 		case IMPORTED_CSV:
 			String analysis = corpus.getAnalysisField();
 			if(analysis == null)
@@ -473,6 +477,11 @@ public class Preprocessor {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Text", true);
+			}
+			if(corpusType == CMDataType.LATIN_JSON){
+				writer.write("{\"data\":" + obj.toJSONString() + "}");
+				writer.close();
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.body", true);
 			}
 			if (corpusType == CMDataType.CONGRESS_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
