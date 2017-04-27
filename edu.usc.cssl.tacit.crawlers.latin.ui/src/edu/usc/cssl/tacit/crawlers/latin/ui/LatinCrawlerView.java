@@ -200,7 +200,6 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 			public void run() {
 				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
-				latinCrawler.initialize(corpusNameTxt.getText());
 				runModule();
 
 			};
@@ -340,6 +339,9 @@ public class LatinCrawlerView extends ViewPart implements ILatinCrawlerUIConstan
 
 	String corpusName;
 	private void runModule() {
+
+		latinCrawler.initialize(corpusNameTxt.getText());
+		
 		Job job = new Job("Crawling...") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
