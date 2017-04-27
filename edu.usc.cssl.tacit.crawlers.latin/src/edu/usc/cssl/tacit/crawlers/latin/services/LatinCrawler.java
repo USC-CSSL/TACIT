@@ -166,6 +166,7 @@ public class LatinCrawler {
 			totalFilesCreated += getBookContent(bookUrl, bookName, bookDir);
 		}
 		jsonGenerator.writeEndArray();
+		jsonGenerator.close();
 		return totalFilesCreated;
 	}
 
