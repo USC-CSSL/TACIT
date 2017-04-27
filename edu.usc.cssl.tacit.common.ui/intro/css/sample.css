@@ -7,15 +7,115 @@ a#tacitintro-wizardLink:hover img { background-image : url(graphics/sample_hov.g
 
 
 a#eduusccssltacitcommonui-introLink img { background-image : url(graphics/newicon.png); }
-a#eduusccssltacitcommonui-introLink:hover img { background-image : url(graphics/newicon.png); }
-
-a#eduusccssltacitnews img { background-image : url(graphics/news.png); }
-a#eduusccssltacitnews:hover img { background-image : url(graphics/news.png); }
+a#eduusccssltacitcommonui-introLink:hover img { background-image : url(graphics/newicon.png);}
 
 a#eduusccssltacitstack img { background-image : url(graphics/stack.png); }
-a#eduusccssltacitstack:hover img { background-image : url(graphics/stack.png); }
+a#eduusccssltacitstack:hover img { background-image : url(graphics/stack.png);}
 
-a#eduusccssltacitexport img { background-image : url(graphics/export.png); }
-a#eduusccssltacitexport:hover img { background-image : url(graphics/export.png); }
+
+a#eduusccssltacitucsb img { background-image : url(graphics/americanpresidency.png);}
+a#eduusccssltacitucsb:hover img { background-image : url(graphics/americanpresidency.png); }
+
+a#eduusccssltacithansard img { background-image : url(graphics/hansard.png); }
+a#eduusccssltacithansard:hover img { background-image : url(graphics/hansard.png);}
+
+a#eduusccssltacitplos img { background-image : url(graphics/plos.png); }
+a#eduusccssltacitplos:hover img { background-image : url(graphics/plos.png);}
+
+a#eduusccssltacittypepad img { background-image : url(graphics/typepad.png);}
+a#eduusccssltacittypepad:hover img { background-image : url(graphics/typepad.png);}
+
+a#eduusccssltacitfrontiers img { background-image : url(graphics/frontiers.png);}
+a#eduusccssltacitfrontiers:hover img { background-image : url(graphics/frontiers.png);}
+
+a#eduusccssltacitlda img { background-image : url(graphics/lda.png);}
+a#eduusccssltacitlda:hover img { background-image : url(graphics/lda.png); }
+
+a#eduusccssltacithdp img { background-image : url(graphics/hdp.png); }
+a#eduusccssltacithdp:hover img { background-image : url(graphics/hdp.png); }
+
+a#eduusccssltacithlda img { background-image : url(graphics/hlda.png); }
+a#eduusccssltacithlda:hover img { background-image : url(graphics/hlda.png); }
+
+a#eduusccssltacitonlinelda img { background-image : url(graphics/onlinelda.png); }
+a#eduusccssltacitonlinelda:hover img { background-image : url(graphics/onlinelda.png);}
+
+a#eduusccssltacitslda img { background-image : url(graphics/slda.png); }
+a#eduusccssltacitslda:hover img { background-image : url(graphics/slda.png);}
+
+a#eduusccssltacitturbotopics img { background-image : url(graphics/turbotopics.png); }
+a#eduusccssltacitturbotopics:hover img { background-image : url(graphics/turbotopics.png); }
+
+a#eduusccssltacitexport img { background-image : url(graphics/export.png);}
+a#eduusccssltacitexport:hover img { background-image : url(graphics/export.png);}
+
+a#eduusccssltacitcorpus img { background-image : url(graphics/corpus.png);  }
+a#eduusccssltacitcorpus:hover img { background-image : url(graphics/corpus.png);  }
+
+a#eduusccssltacitcooccur img { background-image : url(graphics/cooccur.png);}
+a#eduusccssltacitcooccur:hover img { background-image : url(graphics/cooccur.png);}
+
+a#eduusccssltacitwordcount img { background-image : url(graphics/tacitwordcount.png);}
+a#eduusccssltacitwordcount:hover img { background-image : url(graphics/tacitwordcount.png);}
+
+a#eduusccssltacitliwcwordcount img { background-image : url(graphics/liwcwordcount.png);}
+a#eduusccssltacitliwcwordcount:hover img { background-image : url(graphics/liwcwordcount.png);}
+
+a#eduusccssltacitexport img { background-image : url(graphics/export.png);}
+a#eduusccssltacitexport:hover img { background-image : url(graphics/export.png);}
+
+a#eduusccssltacitreddit img { background-image : url(graphics/reddit.png);}
+a#eduusccssltacitreddit:hover img { background-image : url(graphics/reddit.png);}
+
+a#eduusccssltacittwitter img { background-image : url(graphics/twitter.png);}
+a#eduusccssltacittwitter:hover img { background-image : url(graphics/twitter.png);}
+
+a#eduusccssltacituscongress img { background-image : url(graphics/uscongress.png);}
+a#eduusccssltacituscongress:hover img { background-image : url(graphics/twitter.png);}
+
+a#eduusccssltacituscongress img { background-image : url(graphics/uscongress.png);}
+a#eduusccssltacituscongress:hover img { background-image : url(graphics/uscongress.png);}
+
+a#eduusccssltacitlatin img { background-image : url(graphics/latin.png);}
+a#eduusccssltacitlatin:hover img { background-image : url(graphics/latin.png);}
+
+a#eduusccssltacitsvm img { background-image : url(graphics/svm.png);}
+a#eduusccssltacitsvm:hover img { background-image : url(graphics/svm.png);}
+
+a#eduusccssltacitnaive img { background-image : url(graphics/naive.png);}
+a#eduusccssltacitnaive:hover img { background-image : url(graphics/naive.png);}
+
+a#eduusccssltacitzlda img { background-image : url(graphics/zlda.png);}
+a#eduusccssltacitzlda:hover img { background-image : url(graphics/zlda.png);}
+
+a#eduusccssltacitkmeans img { background-image : url(graphics/kmeans.png);}
+a#eduusccssltacitkmeans:hover img { background-image : url(graphics/kmeans.png);}
+
+a#eduusccssltacitheirarchical img { background-image : url(graphics/heirarchical.png);}
+a#eduusccssltacitheirarchical:hover img { background-image : url(graphics/heirarchical.png);}
+
+a#feature img { background-image : url(graphics/feature.png);}
+a#feature:hover img { background-image : url(graphics/feature.png);}
+
+
+a#resources img { background-image : url(graphics/resources.png);}
+a#resources:hover img { background-image : url(graphics/resources.png);}
+
+#tacitintro-introLink-group{ background-color:#eeeeee; margin: 10px 20px 0px; padding: 30px 20px 5px 20px }
+
+
+#hello{
+	
+	color: #000000;
+	text-decoration:underline;
+	font: 25px sans-serif;
+	margin: 50px 0px 40px 75px;
+}
+
+#underline{
+	
+	text-decoration:underline;
+	margin:0px;
+}
 
 

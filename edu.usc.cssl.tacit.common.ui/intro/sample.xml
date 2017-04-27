@@ -2,11 +2,10 @@
 <introContent>
 	<extensionContent id="eduusccssltacitcommonui-introExtension"
 		style="css/sample.css" name="Sample Extension" path="whatsnew/@">
-		<link style-id="content-link">
-			<text>Plugins and features added in v1.12</text>
-		</link>
+		<text id="hello">Plugins added in v1.12</text>
+		
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Stack Exchange Crawler"
+			<link id="eduusccssltacitstack" label="Stack Exchange Crawler"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Stack_Exchange_Crawler"
 				style-id="content-link">
 				<text>The StackExchange Crawler provides full access to all data
@@ -14,10 +13,11 @@
 					covering topics in various fields
 				</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/398"></link>
+			<link id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/398"></link>
 		</group>
+		<br />
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="UC Santa Barbara Presidential Papers Crawler"
+			<link id="eduusccssltacitucsb" label="UC Santa Barbara Presidential Papers Crawler"
 				style-id="content-link">
 				<text>The UC Santa Barbara Presidential Papers Crawler collects text
 					from The American Presidency Project Website and writes that data
@@ -25,83 +25,117 @@
 					programs
 				</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/491"></link>
+			<link id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/491"></link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Hansard Crawler" style-id="content-link">
+			<link id="eduusccssltacithansard" label="Hansard Crawler" style-id="content-link">
 				<text>The Hansard United Kingdom Parliament Crawler collects text
 					from The Hansard Parliament Website, which contains the official
 					report of all parliamentary debates
 				</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/501"></link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/501"></link>
 
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="PLOS Crawler" style-id="content-link">
+			<link id="eduusccssltacitplos" label="PLOS Crawler" style-id="content-link">
 				<text>The PLOS Crawler tool collects text from the PLOS ONE journal
 					website
 				</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/494"></link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/494"></link>
 
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="TypePad Crawler" style-id="content-link">
+			<link id="eduusccssltacittypepad" label="TypePad Crawler" style-id="content-link">
 				<text>The Typepad Blog Crawler tool collects text from the Typepad
 					website
 				</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/490"></link>
+			<link id = "underline"  label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/490"></link>
 
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Frontiers Journal Crawler" style-id="content-link">
+			<link id="eduusccssltacitfrontiers" label="Frontiers Journal Crawler" style-id="content-link">
 				<text>The Frontiers Journal Crawler tool collects text from the
 					Frontiers in Psychology website, a site that provides an Open
 					Science platform and publishes many widely known open-access
 					journals
 				</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/495"></link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/495"></link>
 
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="HDP Topic Modelling" style-id="content-link">
-
+			<link id="eduusccssltacithdp" label="HDP Topic Modeling" style-id="content-link">
+				<text>Performs HDP topic modeling.</text>
 			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/509"></link>
-
-		</group>
-
-		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Online LDA Topic Modelling" style-id="content-link">
-
-			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/450"></link>
-
-		</group>
-
-
-		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="TurboTopics Topic Modelling" style-id="content-link">
-
-			</link>
-			<link label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/451"></link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/509"></link>
 
 		</group>
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="HLDA Topic Modelling" style-id="content-link">
-
+			<link id="eduusccssltacitonlinelda" label="Online LDA Topic Modeling" style-id="content-link">
+				<text>Performs Online LDA topic modeling.</text>
 			</link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/450"></link>
+
+		</group>
+
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link id="eduusccssltacitturbotopics" label="TurboTopics Topic Modeling" style-id="content-link">
+				<text>Performs Turbo Topics topic modeling.</text>
+			</link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/451"></link>
+
+		</group>
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link id="eduusccssltacithlda" label="HLDA Topic Modeling" style-id="content-link">
+				<text>Performs HLDA topic modeling.</text>
+			</link>
+			<link  id = "underline" label="Link to this feature's GitHub issue" ></link>
 
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="SLDA Topic Modelling" style-id="content-link">
-
+			<link id="eduusccssltacitslda" label="SLDA Topic Modeling" style-id="content-link">
+				<text>Performs SLDA topic modeling.</text>
 			</link>
 
+			<link  id = "underline" label="Link to this feature's GitHub issue" ></link>
 		</group>
+		<text></text>
+		<text id = "hello">Additional features and bug fixes in v1.12</text>
+	
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link id="feature" label="Chinese language word count supported" style-id="content-link">
+				<text>Support for Chinese language has been added. TACIT word count module now automatically detects if the language in the text is Chinese and performs an appropriate word count.
+				</text>
+			</link>
+			<link id = "underline" label="Link to the GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/585"></link>
+
+		</group>
+
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link id="feature" label="Spell checker added" style-id="content-link">
+				<text>Spell correction option is added in the preprocessor settings. The erroneous spellings will be corrected by comparison with a user provided dictionary.
+				</text>
+			</link>
+			<link id = "underline" label="Link to the GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/419"></link>
+
+		</group>
+		<group style-id="content-group" id="tacitintro-introLink-group">
+			<link
+				label="Graph Viewer added for viewing Heirarchical Clustering module output"
+				id="feature" style-id="content-link">>
+				<text>The output of heirarchical clustering obtained in Newick format can now be viewed in the graph viewer with zoom in feature.
+				</text>
+			</link>
+			<link id = "underline" label="Link to the GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/151"></link>
+
+		</group>
+
 	</extensionContent>
 </introContent>

@@ -4,7 +4,7 @@
 		style="css/sample.css" name="Sample Extension" path="webresources/@">
 		
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="TACIT resources" style-id="content-link" url = "http://tacit.usc.edu/resources.html">
+			<link id = "resources" label="TACIT resources" style-id="content-link" url = "http://tacit.usc.edu/resources.html">
 				<text>All the TACIT resources are available here</text>
 			</link>
 		</group>
