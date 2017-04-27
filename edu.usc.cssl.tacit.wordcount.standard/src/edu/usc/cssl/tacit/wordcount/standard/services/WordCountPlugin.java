@@ -329,7 +329,10 @@ public class WordCountPlugin {
 					inputFile)));
 			BufferedReader br1 = new BufferedReader(new FileReader(new File(
 					inputFile)));
-			boolean isChinese = isCJK(br1.readLine());
+			String temp;
+			boolean isChinese = false;
+			while((temp = br1.readLine())!=null&&temp.length()!=0)
+				isChinese = isCJK(temp);
 			br1.close();
 			String currentLine;
 			int numWords = 0;
