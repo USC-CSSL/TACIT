@@ -187,6 +187,7 @@ public class Preprocessor {
 						if (ppFile != "")
 							outputFiles.add(ppFile);
 					} else {
+						monitor.subTask("Preprocessing file "+inputFile);
 						outputFiles.add(checkfiletype(inputFile.getAbsolutePath()));
 					}
 				}
