@@ -111,12 +111,16 @@ public class CorpusDetailsPage implements IDetailsPage {
 		if (null != selectedCorpus)
 			corpusNameTxt.setText(selectedCorpus.getCorpusName());
 
+		
+
+		/*
 		Group dataTypes = new Group(sectionClient, SWT.LEFT);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(true).applyTo(dataTypes);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(dataTypes);
 		dataTypes.setText("Data Type");
-
 		createDataTypeOptions(dataTypes);
+		*/
+		
 		if (null != selectedCorpus) {
 			corpusNameTxt.setText(selectedCorpus.getCorpusName());
 		}
@@ -287,7 +291,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		wordData.setEnabled(false);
 
 	}
-
+	/** Not required since the section in corpus management is removed*/ 
 	private void setDataTypeOption(CMDataType type) {
 		plainText.setSelection(false);
 		generalJSON.setSelection(false);
@@ -368,13 +372,19 @@ public class CorpusDetailsPage implements IDetailsPage {
 
 	}
 
+	/** Not required since the section in corpus management is removed*/ 
+	
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		corpusMgmtViewform.getMessageManager().removeAllMessages();
+		
+	
+//		corpusMgmtViewform.getMessageManager().removeAllMessages();
 		selectedCorpus = (Corpus) ((IStructuredSelection) selection).getFirstElement();
 		corpusNameTxt.setText(selectedCorpus.getCorpusName());
-		setDataTypeOption(selectedCorpus.getDatatype());
+		/*setDataTypeOption(selectedCorpus.getDatatype());*/
 		CorpusMangementValidation.validateCorpus(selectedCorpus, false, corpusMgmtViewform, corpusManagement);
+		
 	}
+	
 
 }
