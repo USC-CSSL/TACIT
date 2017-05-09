@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
 
@@ -26,24 +28,50 @@ import edu.stanford.nlp.ling.CoreLabel;
 
 public class SegDemo {
 	CRFClassifier<CoreLabel> segmenter;
-  public SegDemo(){
-	  try {
-			System.setOut(new PrintStream(System.out, true, "utf-8"));
-		} catch (UnsupportedEncodingException e) {
+	
+	public void addDict(String sourceFile){
+		File source = new File(sourceFile);
+		File dest = new File(".");
+		try {
+			FileUtils.copyFileToDirectory(source , dest);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	  public SegDemo(){
+		  try {
+				System.setOut(new PrintStream(System.out, true, "utf-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-	    Properties props = new Properties();
-	    props.setProperty("sighanCorporaDict", basedir);
-	    props.setProperty("serDictionary", basedir + "/dict-chris6.ser.gz");
-	    props.setProperty("testFile", "test.simp.utf8");
-	    props.setProperty("inputEncoding", "UTF-8");
-	    props.setProperty("sighanPostProcessing", "true");
+		    Properties props = new Properties();
+		    props.setProperty("sighanCorporaDict", basedir);
+		    props.setProperty("serDictionary", basedir + "/dict-chris6.ser.gz");
+		    props.setProperty("testFile", "test.simp.utf8");
+		    props.setProperty("inputEncoding", "UTF-8");
+		    props.setProperty("sighanPostProcessing", "true");
 
-	    segmenter = new CRFClassifier<>(props);
-	    segmenter.loadClassifierNoExceptions(basedir + "/ctb.gz", props);
-  }
+		    segmenter = new CRFClassifier<>(props);
+		    segmenter.loadClassifierNoExceptions(basedir + "/ctb.gz", props);
+	  }
+	  
+	  public SegDemo(boolean val){
+		  
+	  }
+	  
+public boolean dictExists(){
+	
+	File f = new File("ctb.gz");
+	if(f.exists())
+		return true;
+	else
+		return false;
+}
+
+
   
   private static final String basedir = System.getProperty("SegDemo", "data");
 

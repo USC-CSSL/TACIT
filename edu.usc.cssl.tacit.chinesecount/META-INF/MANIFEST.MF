@@ -10,7 +10,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.chinesecount,
  edu.usc.cssl.tacit.chinesecount.service
-Bundle-ClassPath: stanford-segmenter-3.7.0-javadoc.jar,
+Bundle-ClassPath: commons-io-2.4.jar,
+ stanford-segmenter-3.7.0-javadoc.jar,
  stanford-segmenter-3.7.0-sources.jar,
  stanford-segmenter-3.7.0.jar,
  .

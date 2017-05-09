@@ -374,17 +374,18 @@ public class WordCountPlugin {
 						}
 					}else{
 						words = tokenize.tokenize(sentences[i]);
-						posTags = posTagger.tag(words);
 					}
+					posTags = posTagger.tag(words);
 //				String[] words = tokenize.tokenize(sentences[i]);
 //				String[] words = new String[] {"面对", "新", "世纪", "，", "世界", "各", "国", "人民", "的", "共同", "愿望", "是", "：", "继续", "发展", "人类", "以往", "创造", "的", "一切", "文明", "成果", "，", "克服", "20", "世纪", "困扰", "着", "人类", "的", "战争", "和", "贫困", "问题", "，", "推进", "和平", "与", "发展", "的", "崇高", "事业", "，", "创造", "一", "个", "美好", "的", "世界", "面对"}  ;
 				
 				
-				if (isChinese) {
+				if (createPOSTags) {
 						for (int k = 0; k < words.length; k++) {
 							toWrite.append(words[k] + "/" + posTags[k] + " ");
 						}
 					}
+				
 					numWords = numWords + words.length;
 					this.numWords = this.numWords + words.length;
 
@@ -436,13 +437,13 @@ public class WordCountPlugin {
 					}
 
 				} //for ka brackets
-				if (isChinese) {
+				if (createPOSTags) {
 					posBW.write(toWrite.toString());
 					posBW.newLine();
 				}
 			}	//while ka loop
 //			if (createPOSTags)
-			if (isChinese){
+			if (createPOSTags){
 				posBW.close();
 			}
 			br.close();
