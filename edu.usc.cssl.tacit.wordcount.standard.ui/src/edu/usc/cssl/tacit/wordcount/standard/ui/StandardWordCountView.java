@@ -32,8 +32,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
@@ -47,6 +50,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.usc.cssl.tacit.chinesecount.service.SegDemo;
 import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
@@ -315,7 +319,7 @@ public class StandardWordCountView extends ViewPart implements
 				// freeze
 				wordCountJob = new Job("Word Count Plugin Job") {
 					@Override
-					protected IStatus run(IProgressMonitor monitor) {
+					protected IStatus run(final IProgressMonitor monitor) {
 						monitor.beginTask("TACIT Word Count",
 								(inputObjs.size() * 15) + 15);
 						//added false for stem dict
@@ -339,7 +343,57 @@ public class StandardWordCountView extends ViewPart implements
 							if(splitFiles) {
 								inputFiles = splitFiles("StandardWordCount", inputFiles);
 							}
-							wc.countWords(inputFiles, stemmedDictionaryFiles);
+							
+							
+							
+							
+							BufferedReader br1 = new BufferedReader(new FileReader(new File(
+									inputFiles.get(0))));
+							String temp;
+							boolean isChinese = false;
+							while((temp = br1.readLine())!=null && temp.length()!=0)
+								isChinese = isCJK(temp);
+							br1.close();
+							if(isChinese){
+								final SegDemo sd = new SegDemo(true);
+								if(sd.dictExists()){
+									wc.countWords(inputFiles, stemmedDictionaryFiles);
+								}else{
+									
+									Display.getDefault().syncExec(new Runnable() {
+
+										@Override
+										public void run() {
+											MessageBox mdialog =
+											        new MessageBox(form.getShell(), SWT.ICON_QUESTION | SWT.OK| SWT.CANCEL);
+											mdialog.setText("CJK Dictionary not present");
+											mdialog.setMessage("Do you want to add the location of the CJK dictionary in TACIT");
+
+											// open dialog and await user selection
+											int returnCode = mdialog.open();
+											if(returnCode == SWT.OK){
+											monitor.subTask("Add dictionary for CJK in the dialog" );
+											FileDialog dialog = new FileDialog(form.getShell() , SWT.OPEN);
+											dialog.setFilterPath("c:\\temp");
+											String result = dialog.open();
+											sd.addDict(result);
+											boolean val = 	sd.dictExists();
+											
+												
+											}
+											
+										}
+									});
+									if(sd.dictExists())
+										wc.countWords(inputFiles, stemmedDictionaryFiles);
+								}
+							}else{
+								wc.countWords(inputFiles, stemmedDictionaryFiles);
+							}
+							
+							
+							
+							
 							if(splitFiles){
 								File toDel = new File("StandardWordCount");
 								FileUtils.deleteDirectory(toDel);
@@ -430,6 +484,18 @@ public class StandardWordCountView extends ViewPart implements
 						"edu.usc.cssl.tacit.wordcount.standard.ui.standard");
 		form.getToolBarManager().update(true);
 	}
+	
+	public static boolean isCJK(String str){
+        char ch = str.charAt(0);
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(ch);
+        if (Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS.equals(block)|| 
+            Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS.equals(block)|| 
+            Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A.equals(block)){
+            return true;
+        }
+    
+    return false;
+}
 
 	private boolean canProceed() {
 		TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);
