@@ -17,3 +17,4 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Import-Package: edu.usc.cssl.tacit.chinesecount.service
