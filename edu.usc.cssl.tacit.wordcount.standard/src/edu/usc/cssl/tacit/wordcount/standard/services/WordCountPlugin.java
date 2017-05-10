@@ -346,8 +346,10 @@ public class WordCountPlugin {
 				posBW = createPosTagsFile(inputFile);
 			}
 			SegDemo sd = null;
+			ConsoleView.printlInConsoleln("Code was here");
 			if(isChinese)
 				sd = new SegDemo();
+			ConsoleView.printlInConsoleln("Loaded SegDemo");
 			while ((currentLine = br.readLine()) != null) {
 				String[] sentences = null;
 				if(isChinese){
