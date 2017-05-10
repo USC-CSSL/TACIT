@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -325,10 +326,10 @@ public class WordCountPlugin {
 	 */
 	private void do_countWords(String inputFile) {
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(new File(
-					inputFile)));
-			BufferedReader br1 = new BufferedReader(new FileReader(new File(
-					inputFile)));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF8"));
+			BufferedReader br1 = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF8"));
+					
+//					new BufferedReader(new FileReader(new File(inputFile)));
 			String temp;
 			boolean isChinese = false;
 			while((temp = br1.readLine())!=null&&temp.length()!=0)

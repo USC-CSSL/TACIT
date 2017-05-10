@@ -2,10 +2,12 @@ package edu.usc.cssl.tacit.wordcount.standard.ui;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -347,8 +349,8 @@ public class StandardWordCountView extends ViewPart implements
 							
 							
 							
-							BufferedReader br1 = new BufferedReader(new FileReader(new File(
-									inputFiles.get(0))));
+							BufferedReader br1 = new BufferedReader(new InputStreamReader(new FileInputStream(inputFiles.get(0)), "UTF8"));
+									
 							String temp;
 							boolean isChinese = false;
 							while((temp = br1.readLine())!=null && temp.length()!=0)

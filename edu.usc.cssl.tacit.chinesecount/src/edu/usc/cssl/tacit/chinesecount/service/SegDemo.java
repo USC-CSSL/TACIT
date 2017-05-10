@@ -28,10 +28,18 @@ import edu.stanford.nlp.ling.CoreLabel;
 
 public class SegDemo {
 	CRFClassifier<CoreLabel> segmenter;
+	String DEFAULT_CORPUS_LOCATION = System.getProperty("user.dir");
+//	public static void main(String args[])throws IOException{
+//		File f = new File("ctb.gz");
+//		if(f.exists())
+//			System.out.println("Yes, exists!");
+//		else
+//			System.out.println("No,does not exist!");
+//	}
 	
 	public void addDict(String sourceFile){
 		File source = new File(sourceFile);
-		File dest = new File(".");
+		File dest = new File(DEFAULT_CORPUS_LOCATION);
 		try {
 			FileUtils.copyFileToDirectory(source , dest);
 		} catch (IOException e) {
@@ -55,7 +63,7 @@ public class SegDemo {
 		    props.setProperty("sighanPostProcessing", "true");
 
 		    segmenter = new CRFClassifier<>(props);
-		    segmenter.loadClassifierNoExceptions(basedir + "/ctb.gz", props);
+		    segmenter.loadClassifierNoExceptions(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz", props);
 	  }
 	  
 	  public SegDemo(boolean val){
@@ -63,12 +71,12 @@ public class SegDemo {
 	  }
 	  
 public boolean dictExists(){
-	
-	File f = new File("ctb.gz");
-	if(f.exists())
+	File f = new File(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz");
+	if(f.isFile())
 		return true;
 	else
 		return false;
+
 }
 
 
@@ -98,8 +106,8 @@ public boolean dictExists(){
 ////      segmenter.classifyAndWriteAnswers(filename);
 ////    }
 //
-//    String sample = "面对新世纪，世界各国人民的共同愿望是：继续发展人类以往创造的一切文明成果";
-//    String sample3 = "，克服20世纪困扰着人类的战争和贫困问题，推进和平与发展的崇高事业，创造一个美好的世界 面对";
+//    String sample = "é�¢å¯¹æ–°ä¸–çºªï¼Œä¸–ç•Œå�„å›½äººæ°‘çš„å…±å�Œæ„¿æœ›æ˜¯ï¼šç»§ç»­å�‘å±•äººç±»ä»¥å¾€åˆ›é€ çš„ä¸€åˆ‡æ–‡æ˜Žæˆ�æžœ";
+//    String sample3 = "ï¼Œå…‹æœ�20ä¸–çºªå›°æ‰°ç�€äººç±»çš„æˆ˜äº‰å’Œè´«å›°é—®é¢˜ï¼ŒæŽ¨è¿›å’Œå¹³ä¸Žå�‘å±•çš„å´‡é«˜äº‹ä¸šï¼Œåˆ›é€ ä¸€ä¸ªç¾Žå¥½çš„ä¸–ç•Œ é�¢å¯¹";
 //    List<String> segmented = segmenter.segmentString(sample);
 //    System.out.println(segmented);
 //    System.out.println(segmented.size());
@@ -110,7 +118,7 @@ public boolean dictExists(){
 
 
 //public static void main(String args[]){
-//	String str = "面对新";
+//	String str = "é�¢å¯¹æ–°";
 //        int length = str.length();
 //        for (int i = 0; i < length; i++){
 //            char ch = str.charAt(i);
@@ -153,7 +161,7 @@ public String[] sentDetect(String currentLine){
 
 public List<String> chineseCount(String sentence) {
    
-//    String sample = "面对新世纪，世界各国人民的共同愿望是：继续发展人类以往创造的一切文明成果，克服20世纪困扰着人类的战争和贫困问题，推进和平与发展的崇高事业，创造一个美好的世界 面对";
+//    String sample = "é�¢å¯¹æ–°ä¸–çºªï¼Œä¸–ç•Œå�„å›½äººæ°‘çš„å…±å�Œæ„¿æœ›æ˜¯ï¼šç»§ç»­å�‘å±•äººç±»ä»¥å¾€åˆ›é€ çš„ä¸€åˆ‡æ–‡æ˜Žæˆ�æžœï¼Œå…‹æœ�20ä¸–çºªå›°æ‰°ç�€äººç±»çš„æˆ˜äº‰å’Œè´«å›°é—®é¢˜ï¼ŒæŽ¨è¿›å’Œå¹³ä¸Žå�‘å±•çš„å´‡é«˜äº‹ä¸šï¼Œåˆ›é€ ä¸€ä¸ªç¾Žå¥½çš„ä¸–ç•Œ é�¢å¯¹";
     List<String> segmented =  segmenter.segmentString(sentence);
     System.out.println(segmented);
     System.out.println(segmented.size());
