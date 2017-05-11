@@ -82,6 +82,8 @@
 
 		<module>../edu.usc.cssl.tacit.classify.naivebayes.ui</module>
 		<module>../edu.usc.cssl.tacit.classify.naivebayes</module>
+		
+		<module>edu.usc.cssl.tacit.classify.id3.ui</module>
 
 		<!-- Topic Model -->
 		<module>../edu.usc.cssl.tacit.topicmodel.lda.ui</module>
