@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: edu.usc.cssl.tacit.classify.id3.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.classify.id3.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0",
+ edu.usc.cssl.tacit.help;bundle-version="1.0.0",
+ edu.usc.cssl.tacit.common;bundle-version="1.0.0",
+ org.eclipse.ui.forms;bundle-version="3.6.200"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: USC

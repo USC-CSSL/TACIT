@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.classify.id3.ui.Id3View"
+            id="edu.usc.cssl.tacit.classify.id3.ui.view1"
+            name="ID3 Decision Tress">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.classify.id3.ui.handlers.Id3ViewHandler"
+            commandId="edu.usc.cssl.tacit.classify.id3.ui.command1">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:classify">
+         <command
+               commandId="edu.usc.cssl.tacit.classify.id3.ui.command1"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.classify.id3.ui.command1"
+            name="ID3 Decision Trees">
+      </command>
+   </extension>
+
+</plugin>
