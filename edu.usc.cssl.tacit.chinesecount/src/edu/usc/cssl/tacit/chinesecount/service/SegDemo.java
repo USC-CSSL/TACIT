@@ -39,7 +39,7 @@ public class SegDemo {
 	
 	public void addDict(String sourceFile){
 		File source = new File(sourceFile);
-		File dest = new File(DEFAULT_CORPUS_LOCATION);
+		File dest = new File(".");
 		try {
 			FileUtils.copyFileToDirectory(source , dest);
 		} catch (IOException e) {
@@ -63,7 +63,7 @@ public class SegDemo {
 		    props.setProperty("sighanPostProcessing", "true");
 
 		    segmenter = new CRFClassifier<>(props);
-		    segmenter.loadClassifierNoExceptions(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz", props);
+		    segmenter.loadClassifierNoExceptions("ctb.gz", props);
 	  }
 	  
 	  public SegDemo(boolean val){
@@ -71,7 +71,8 @@ public class SegDemo {
 	  }
 	  
 public boolean dictExists(){
-	File f = new File(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz");
+//	File f = new File(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz");
+	File f = new File("ctb.gz");
 	if(f.isFile())
 		return true;
 	else
