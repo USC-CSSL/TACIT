@@ -2,7 +2,7 @@
 <introContent>
 	<extensionContent id="eduusccssltacitcommonui-introExtension"
 		style="css/sample.css" name="Sample Extension" path="whatsnew/@">
-		<text id="hello">Plugins added in v1.12</text>
+		<text id="hello">Plugins added in Beta 4</text>
 		
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitstack" label="Stack Exchange Crawler"
@@ -20,7 +20,7 @@
 			<link id="eduusccssltacitucsb" label="UC Santa Barbara Presidential Papers Crawler"
 				style-id="content-link">
 				<text>The UC Santa Barbara Presidential Papers Crawler collects text
-					from The American Presidency Project Website and writes that data
+					from The American Presidency Project website and writes that data
 					into text files that are readable by automated text analysis
 					programs
 				</text>
@@ -30,7 +30,7 @@
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacithansard" label="Hansard Crawler" style-id="content-link">
 				<text>The Hansard United Kingdom Parliament Crawler collects text
-					from The Hansard Parliament Website, which contains the official
+					from The Hansard Parliament website, which contains the official
 					report of all parliamentary debates
 				</text>
 			</link>
@@ -68,7 +68,12 @@
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacithdp" label="HDP Topic Modeling" style-id="content-link">
-				<text>Performs HDP topic modeling.</text>
+				<text>Performs hierarchical Dirichlet process (HDP), a
+					non-parametric
+					Bayesian model for clustering problems involving
+					multiple groups of
+					data
+				</text>
 			</link>
 			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/509"></link>
 
@@ -76,7 +81,8 @@
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitonlinelda" label="Online LDA Topic Modeling" style-id="content-link">
-				<text>Performs Online LDA topic modeling.</text>
+				<text>Performs online variational Bayes (VB) algorithm for Latent
+					Dirichlet Allocation (LDA)</text>
 			</link>
 			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/450"></link>
 
@@ -85,7 +91,8 @@
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitturbotopics" label="TurboTopics Topic Modeling" style-id="content-link">
-				<text>Performs Turbo Topics topic modeling.</text>
+				<text>TurboTopics plugin finds significant multiword phrases in
+					topics</text>
 			</link>
 			<link  id = "underline" label="Link to this feature's GitHub issue" url="https://github.com/USC-CSSL/TACIT/issues/451"></link>
 
@@ -93,14 +100,17 @@
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacithlda" label="HLDA Topic Modeling" style-id="content-link">
-				<text>Performs HLDA topic modeling.</text>
+				<text>HLDA plugin implements a topic model that finds a hierarchy of
+					topics such that the structure of the hierarchy is determined by the data
+				</text>
 			</link>
 			<link  id = "underline" label="Link to this feature's GitHub issue" ></link>
 
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitslda" label="SLDA Topic Modeling" style-id="content-link">
-				<text>Performs SLDA topic modeling.</text>
+				<text>Performs supervised latent Dirichlet allocation (sLDA), a
+					statistical model of labelled documents</text>
 			</link>
 
 			<link  id = "underline" label="Link to this feature's GitHub issue" ></link>

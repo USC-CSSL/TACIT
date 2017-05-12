@@ -12,16 +12,18 @@
 				style-id="content-link">
 				<text>TACIT's Corpus Management tool aims to provide a simple user
 					interface to provide an easy and efficient way to manage different
-					types of corpora (or sets of documents/text)</text>
+					types of corpora (or sets of documents/text)
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link id = "eduusccssltacitreddit" label="Reddit Crawler"
+			<link id="eduusccssltacitreddit" label="Reddit Crawler"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Reddit_Crawler"
 				style-id="content-link">
 				<text>The Reddit Crawler provides full access to all data available
-					on Reddit.com</text>
+					on Reddit.com
+				</text>
 
 			</link>
 		</group>
@@ -31,17 +33,19 @@
 				style-id="content-link">
 				<text>The Twitter Crawler tool collects text from the Twitter
 					website and writes that data into text files that are readable by
-					automated text analysis programs</text>
+					automated text analysis programs
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link id = "eduusccssltacituscongress" label="United States Senate Speech Crawler"
+			<link id="eduusccssltacituscongress" label="United States Senate Speech Crawler"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Senate_Crawler"
 				style-id="content-link">
 				<text>The US Congress Crawler collects speech transcription data
 					from the Library of Congress THOMAS Website for present day
-					speeches to as far back as the 101st Congress</text>
+					speeches to as far back as the 101st Congress
+				</text>
 
 			</link>
 		</group>
@@ -51,7 +55,8 @@
 				style-id="content-link">
 				<text>The Latin Crawler tool collects text from The Latin Library
 					Website and writes that data into text files that are readable by
-					automated text analysis programs</text>
+					automated text analysis programs
+				</text>
 
 			</link>
 		</group>
@@ -61,7 +66,8 @@
 				style-id="content-link">
 				<text>The StackExchange Crawler provides full access to all data
 					available on stackexchange.com, a question and answer website
-					covering topics in various fields</text>
+					covering topics in various fields
+				</text>
 
 			</link>
 		</group>
@@ -71,7 +77,8 @@
 				<text>The UC Santa Barbara Presidential Papers Crawler collects text
 					from The American Presidency Project Website and writes that data
 					into text files that are readable by automated text analysis
-					programs</text>
+					programs
+				</text>
 
 			</link>
 		</group>
@@ -80,14 +87,16 @@
 				style-id="content-link">
 				<text>The Hansard United Kingdom Parliament Crawler collects text
 					from The Hansard Parliament Website, which contains the official
-					report of all parliamentary debates</text>
+					report of all parliamentary debates
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitplos" label="PLOS Crawler" style-id="content-link">
 				<text>The PLOS Crawler tool collects text from the PLOS ONE journal
-					website</text>
+					website
+				</text>
 
 			</link>
 		</group>
@@ -95,7 +104,8 @@
 			<link id="eduusccssltacittypepad" label="TypePad Crawler"
 				style-id="content-link">
 				<text>The Typepad Blog Crawler tool collects text from the Typepad
-					website</text>
+					website
+				</text>
 
 			</link>
 		</group>
@@ -105,7 +115,8 @@
 				<text>The Frontiers Journal Crawler tool collects text from the
 					Frontiers in Psychology website, a site that provides an Open
 					Science platform and publishes many widely known open-access
-					journals</text>
+					journals
+				</text>
 
 			</link>
 		</group>
@@ -115,87 +126,91 @@
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Cooccurrence"
 				style-id="content-link">
 				<text>Co-occurrence analysis gives insights into the interconnection
-					between terms or entities within any given text</text>
+					between terms or entities within any given text
+				</text>
 
 			</link>
 		</group>
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link id="eduusccssltacitwordcount" label="TACIT Word Count" url="http://cssl.usc.edu/wiki/index.php/TACIT_WordCount"
-				style-id="content-link">
+			<link id="eduusccssltacitwordcount" label="TACIT Word Count"
+				url="http://cssl.usc.edu/wiki/index.php/TACIT_WordCount" style-id="content-link">
 				<text>The TACIT Word Count plugin was developed exclusively for the
 					TACIT tool as a more comprehensive approach to word count
-					techniques</text>
+					techniques
+				</text>
 
 			</link>
 		</group>
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link id="eduusccssltacitliwcwordcount" label="LIWC-style Word Count" url="http://cssl.usc.edu/wiki/index.php/TACIT_LIWC"
-				style-id="content-link">
+			<link id="eduusccssltacitliwcwordcount" label="LIWC-style Word Count"
+				url="http://cssl.usc.edu/wiki/index.php/TACIT_LIWC" style-id="content-link">
 				<text>The LIWC-style word count plugin was developed using LIWC
 					documentation and reverse engineering of the program to understand
-					and implement the algorithm</text>
+					and implement the algorithm
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Hierarchical Clustering"
-			id="eduusccssltacitheirarchical"
+			<link label="Hierarchical Clustering" id="eduusccssltacitheirarchical"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Hierarchical_Cluster"
 				style-id="content-link">
 				<text>The Hierarchical Clustering tool allows you to visualize the
 					clusters in a dendrogram, which presents a hierarchical view of the
-					clusters (from the input dataset) and their relations</text>
+					clusters (from the input dataset) and their relations
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="K-Means Clustering"
-			id="eduusccssltacitkmeans"
+			<link label="K-Means Clustering" id="eduusccssltacitkmeans"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Kmeans_Cluster"
 				style-id="content-link">
 				<text>The K-means clustering plugin aims to cluster texts into a
 					user-specified number of groups such that the texts included in
 					each cluster are the nearest to the cluster's centroid, and have
-					the farthest distance from other clusters' centroids</text>
+					the farthest distance from other clusters' centroids
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Naive Bayes Classifier" id ="eduusccssltacitnaive"
+			<link label="Naive Bayes Classifier" id="eduusccssltacitnaive"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Naive_Bayes_Classifier"
 				style-id="content-link">
 				<text>This tool performs Naive Bayes classification which is a
 					supervised learning algorithm that is used to assess the uniqueness
 					of text files belonging to user-determined set of two or more
-					distinct groups</text>
+					distinct groups
+				</text>
 
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Support Vector Machine Classifier" id ="eduusccssltacitsvm"
+			<link label="Support Vector Machine Classifier" id="eduusccssltacitsvm"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Support_Vector_Machine_Classifier"
 				style-id="content-link">
 				<text>TACIT's SVM classification plugin can be used to investigate
 					the degree to which two classes can be separated based on the
-					provided data</text>
+					provided data
+				</text>
 			</link>
 		</group>
-		
+
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitlda" label="LDA Topic Modelling"
 				style-id="content-link">
-				<text>TACIT's SVM classification plugin can be used to investigate
-					the degree to which two classes can be separated based on the
-					provided data</text>
+				<text>TACIT's LDA plugin allows you to explore the structure of
+					topics within a set of documents and the relations between them
+				</text>
 
 			</link>
 		</group>
-		
+
 		<group style-id="content-group" id="tacitintro-introLink-group">
-			<link label="Z-Labelled LDA Topic Modelling"
-			id="eduusccssltacitzlda"
+			<link label="Z-Labelled LDA Topic Modelling" id="eduusccssltacitzlda"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_zlabel_Topic_Modelling"
 				style-id="content-link">
 				<text> TACIT's seeded z-label LDA plugin expands upon the
@@ -203,11 +218,16 @@
 				</text>
 			</link>
 		</group>
-		
+
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacithdp" label="HDP Topic Modelling"
 				style-id="content-link">
-			<text>Performs HDP topic modeling.</text>
+				<text>Performs hierarchical Dirichlet process (HDP), a
+					non-parametric
+					Bayesian model for clustering problems involving
+					multiple groups of
+					data
+				</text>
 			</link>
 		</group>
 
@@ -215,26 +235,31 @@
 			<link id="eduusccssltacitonlinelda" label="Online LDA Topic Modelling"
 				url="http://cssl.usc.edu/wiki/index.php/TACIT_Support_Vector_Machine_Classifier"
 				style-id="content-link">
-			<text>Performs Online LDA topic modeling.</text>
+				<text>Performs online variational Bayes (VB) algorithm for Latent
+					Dirichlet Allocation (LDA)</text>
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitslda" label="SLDA Topic Modelling"
 				style-id="content-link">
-			<text>Performs SLDA topic modeling.</text>
+				<text>Performs supervised latent Dirichlet allocation (sLDA), a
+					statistical model of labelled documents</text>
 			</link>
 		</group>
 
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacitturbotopics" label="TurboTopics Topic Modelling"
 				style-id="content-link">
-			<text>Performs Turbo Topics topic modeling.</text>
+				<text>TurboTopics plugin finds significant multiword phrases in
+					topics</text>
 			</link>
 		</group>
 		<group style-id="content-group" id="tacitintro-introLink-group">
 			<link id="eduusccssltacithlda" label="HLDA Topic Modelling"
 				style-id="content-link">
-			<text>Performs HLDA topic modeling.</text>
+				<text>HLDA plugin implements a topic model that finds a hierarchy of
+					topics such that the structure of the hierarchy is determined by the data
+				</text>
 			</link>
 		</group>
 	</extensionContent>
