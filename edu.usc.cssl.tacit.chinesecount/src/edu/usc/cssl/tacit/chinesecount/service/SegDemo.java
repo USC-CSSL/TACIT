@@ -39,7 +39,7 @@ public class SegDemo {
 	
 	public void addDict(String sourceFile){
 		File source = new File(sourceFile);
-		File dest = new File(".");
+		File dest = new File("."+File.separator+"data");
 		try {
 			FileUtils.copyFileToDirectory(source , dest);
 		} catch (IOException e) {
@@ -57,13 +57,13 @@ public class SegDemo {
 
 		    Properties props = new Properties();
 		    props.setProperty("sighanCorporaDict", basedir);
-		    props.setProperty("serDictionary", basedir + "/dict-chris6.ser.gz");
+		    props.setProperty("serDictionary", basedir + File.separator+ "dict-chris6.ser.gz");
 		    props.setProperty("testFile", "test.simp.utf8");
 		    props.setProperty("inputEncoding", "UTF-8");
 		    props.setProperty("sighanPostProcessing", "true");
 
 		    segmenter = new CRFClassifier<>(props);
-		    segmenter.loadClassifierNoExceptions("ctb.gz", props);
+		    segmenter.loadClassifierNoExceptions(basedir + File.separator+ "ctb.gz", props);
 	  }
 	  
 	  public SegDemo(boolean val){
@@ -72,7 +72,7 @@ public class SegDemo {
 	  
 public boolean dictExists(){
 //	File f = new File(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz");
-	File f = new File("ctb.gz");
+	File f = new File(basedir + File.separator+ "ctb.gz");
 	if(f.isFile())
 		return true;
 	else
