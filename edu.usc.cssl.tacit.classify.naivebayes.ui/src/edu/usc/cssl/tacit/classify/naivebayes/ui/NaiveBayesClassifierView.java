@@ -761,12 +761,24 @@ public class NaiveBayesClassifierView extends ViewPart implements INaiveBayesCla
 	 */
 	private boolean canItProceed(Map<String, List<String>> classPaths) {
 		
+		
+		int tem = classLayoutData.getTree().getItemCount();
+		int te = TargetLocationsGroup.corpusClass;
+		int temp = classPaths.size();
+		int condition = 0;
+		if(TargetLocationsGroup.corpusClass==0) {	//When a folder is selected instead of a corpus or a corpus class
+													//Will result in an error, if the user explicitly deletes the corpus file from
+													//file system (this operation is not allowed to be performed within Tacit)
+			condition = classPaths.size();	
+		} else {
+			condition = TargetLocationsGroup.corpusClass;	//When a corpus or corpus class is selected
+		}
 		// Class paths
-		if (TargetLocationsGroup.corpusClass < 2 && classLayoutData.getTree().getItemCount() < 2) {
+		if (condition < 2 && classLayoutData.getTree().getItemCount() < 2) {
 			form.getMessageManager().addMessage("classes", "Provide at least 2 valid class paths", null,
 					IMessageProvider.ERROR);
 			return false;
-		} else if (classLayoutData.getTree().getItemCount() > 1 && TargetLocationsGroup.corpusClass < 2) {
+		} else if (classLayoutData.getTree().getItemCount() > 1 && condition < 2) {
 			form.getMessageManager().addMessage("classes", "Select the required classes", null, IMessageProvider.ERROR);
 			return false;
 		} else {
