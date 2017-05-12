@@ -173,7 +173,7 @@ public class Preprocessor {
 
 		for (Object obj : inData) {
 			if (obj instanceof CorpusClass) {
-				processCorpus((CorpusClass) obj);
+				processCorpus((CorpusClass) obj, monitor);
 			} else if (obj instanceof String) {
 				File inputFile = new File((String) obj);
 				if (inputFile.isDirectory()) {
@@ -206,7 +206,7 @@ public class Preprocessor {
 	 * @param dirpath
 	 * @throws TikaException
 	 */
-	private void processDirectory(String dirpath) {
+	private void processDirectory(String dirpath, IProgressMonitor monitor) {
 		File[] files = new File(dirpath).listFiles();
 
 		if (doPreprocessing) {
@@ -215,9 +215,9 @@ public class Preprocessor {
 					continue;
 
 				if (file.isDirectory()) {
-					processDirectory(file.getAbsolutePath());
+					processDirectory(file.getAbsolutePath(), monitor);
 				} else {
-					String ppFile = processFile(file.getAbsolutePath(), "", null);
+					String ppFile = processFile(file.getAbsolutePath(), "", monitor);
 					if (ppFile != "")
 						outputFiles.add(ppFile);
 				}
@@ -228,7 +228,7 @@ public class Preprocessor {
 					continue;
 
 				if (file.isDirectory())
-					processDirectory(file.getAbsolutePath());
+					processDirectory(file.getAbsolutePath(), monitor);
 				else {
 					File file2 = new File(checkfiletype(file.getAbsolutePath()));
 					outputFiles.add(file2.getAbsolutePath());
@@ -387,50 +387,50 @@ public class Preprocessor {
 	 *            Input CorpusClass object
 	 * @throws Exception
 	 */
-	private void processCorpus(CorpusClass corpus) throws Exception {
+	private void processCorpus(CorpusClass corpus, IProgressMonitor monitor) throws Exception {
 		String corpusClassPath = corpus.getTacitLocation();
 		CMDataType corpusType = corpus.getParent().getDatatype();
 
 		switch (corpusType) {
 		case PLAIN_TEXT:
-			processDirectory(corpusClassPath);
+			processDirectory(corpusClassPath, monitor);
 			break;
 
 		case REDDIT_JSON:
-			processGenericJSON(corpus);
+			processGenericJSON(corpus, monitor);
 			break;
 
 		case TWITTER_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 
 		case CONGRESS_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 
 		case STACKEXCHANGE_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 			
 		case FRONTIER_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 			
 		case TYPEPAD_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 			
 		case PLOSONE_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 		case PRESIDENCY_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 		case HANSARD_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 		case GOVTRACK_JSON:
-			processTwitter(corpus);
+			processTwitter(corpus, monitor);
 			break;
 		default:
 			break;
@@ -550,7 +550,7 @@ public class Preprocessor {
 	 *            Input CorpusClass for processing
 	 * @throws Exception
 	 */
-	private void processGenericJSON(CorpusClass corpusClass) throws Exception {
+	private void processGenericJSON(CorpusClass corpusClass, IProgressMonitor monitor) throws Exception {
 		String corpusClassPath = corpusClass.getTacitLocation();
 		String tempDir = "";
 		String tempFile = "";
@@ -570,6 +570,10 @@ public class Preprocessor {
 		File[] fileList = new File(corpusClassPath).listFiles(jsonFileFilter);
 		int k = 0;
 		for (File f : fileList) {
+			
+
+			monitor.subTask("Preprocessing file "+f.getAbsolutePath());
+			
 			QueryProcesser qp = new QueryProcesser();
 
 			List<String> outputs = qp.processJson(corpusClass, f.getAbsolutePath(), "post.selftext,comments.body", false);
@@ -602,7 +606,7 @@ public class Preprocessor {
 	 * @param corpusClass
 	 * @throws TikaException
 	 */
-	private void processTwitter(CorpusClass corpusClass) {
+	private void processTwitter(CorpusClass corpusClass, IProgressMonitor monitor) {
 		/*** read from file ***/
 		JSONParser jParser;
 		String corpusClassPath = corpusClass.getTacitLocation();
@@ -624,8 +628,11 @@ public class Preprocessor {
 
 		File[] fileList = new File(corpusClassPath).listFiles();
 		for (int i = 0; i < fileList.length; i++) {
+			
 			try {
 					String fileName = fileList[i].getAbsolutePath();
+
+					monitor.subTask("Preprocessing file "+fileName);
 					if (!fileList[i].getAbsolutePath().endsWith(".json"))
 						continue;
 					JSONArray objects = (JSONArray) jParser.parse(new FileReader(fileName));
