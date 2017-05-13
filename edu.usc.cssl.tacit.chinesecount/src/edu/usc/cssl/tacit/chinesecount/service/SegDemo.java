@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 
 
 /** This is a very simple demo of calling the Chinese Word Segmenter
@@ -29,6 +30,8 @@ import edu.stanford.nlp.ling.CoreLabel;
 public class SegDemo {
 	CRFClassifier<CoreLabel> segmenter;
 	String DEFAULT_CORPUS_LOCATION = System.getProperty("user.dir");
+	
+	
 //	public static void main(String args[])throws IOException{
 //		File f = new File("ctb.gz");
 //		if(f.exists())
@@ -39,7 +42,7 @@ public class SegDemo {
 	
 	public void addDict(String sourceFile){
 		File source = new File(sourceFile);
-		File dest = new File("."+File.separator+"data");
+		File dest = new File(DEFAULT_CORPUS_LOCATION);
 		try {
 			FileUtils.copyFileToDirectory(source , dest);
 		} catch (IOException e) {
@@ -61,9 +64,23 @@ public class SegDemo {
 		    props.setProperty("testFile", "test.simp.utf8");
 		    props.setProperty("inputEncoding", "UTF-8");
 		    props.setProperty("sighanPostProcessing", "true");
-
 		    segmenter = new CRFClassifier<>(props);
-		    segmenter.loadClassifierNoExceptions(basedir + File.separator+ "ctb.gz", props);
+		    try {
+		    	ConsoleView.printlInConsoleln("Loading chinese model");
+				segmenter.loadClassifier(DEFAULT_CORPUS_LOCATION + File.separator+ "ctb.gz", props);
+			} catch (ClassCastException e) {
+				// TODO Auto-generated catch block
+				ConsoleView.printlInConsoleln(e.getMessage());
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				ConsoleView.printlInConsoleln(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				ConsoleView.printlInConsoleln(e.getMessage());
+				e.printStackTrace();
+			}
 	  }
 	  
 	  public SegDemo(boolean val){
@@ -72,7 +89,7 @@ public class SegDemo {
 	  
 public boolean dictExists(){
 //	File f = new File(DEFAULT_CORPUS_LOCATION+File.separator+"ctb.gz");
-	File f = new File(basedir + File.separator+ "ctb.gz");
+	File f = new File(DEFAULT_CORPUS_LOCATION + File.separator+ "ctb.gz");
 	if(f.isFile())
 		return true;
 	else
@@ -84,55 +101,6 @@ public boolean dictExists(){
   
   private static final String basedir = System.getProperty("SegDemo", "data");
 
-//  public static void main(String[] args) throws Exception {
-////	  chineseCount();
-//    System.setOut(new PrintStream(System.out, true, "utf-8"));
-//
-//    Properties props = new Properties();
-//    props.setProperty("sighanCorporaDict", basedir);
-//    // props.setProperty("NormalizationTable", "data/norm.simp.utf8");
-//    // props.setProperty("normTableEncoding", "UTF-8");
-//    // below is needed because CTBSegDocumentIteratorFactory accesses it
-////    props.setProperty("serDictionary", basedir + "/dict-chris6.ser.gz");
-//     props.setProperty("serDictionary", "dict-chris6.ser.gz");
-////    if (args.length > 0) {
-//      props.setProperty("testFile", "test.simp.utf8");
-////    }
-//    props.setProperty("inputEncoding", "UTF-8");
-//    props.setProperty("sighanPostProcessing", "true");
-//
-//    CRFClassifier<CoreLabel> segmenter = new CRFClassifier<>(props);
-//    segmenter.loadClassifierNoExceptions("ctb.gz", props);
-////    for (String filename : args) {
-////      segmenter.classifyAndWriteAnswers(filename);
-////    }
-//
-//    String sample = "é�¢å¯¹æ–°ä¸–çºªï¼Œä¸–ç•Œå�„å›½äººæ°‘çš„å…±å�Œæ„¿æœ›æ˜¯ï¼šç»§ç»­å�‘å±•äººç±»ä»¥å¾€åˆ›é€ çš„ä¸€åˆ‡æ–‡æ˜Žæˆ�æžœ";
-//    String sample3 = "ï¼Œå…‹æœ�20ä¸–çºªå›°æ‰°ç�€äººç±»çš„æˆ˜äº‰å’Œè´«å›°é—®é¢˜ï¼ŒæŽ¨è¿›å’Œå¹³ä¸Žå�‘å±•çš„å´‡é«˜äº‹ä¸šï¼Œåˆ›é€ ä¸€ä¸ªç¾Žå¥½çš„ä¸–ç•Œ é�¢å¯¹";
-//    List<String> segmented = segmenter.segmentString(sample);
-//    System.out.println(segmented);
-//    System.out.println(segmented.size());
-//    segmented = segmenter.segmentString(sample3);
-//    System.out.println(segmented);
-//    System.out.println(segmented.size());
-//  }
-
-
-//public static void main(String args[]){
-//	String str = "é�¢å¯¹æ–°";
-//        int length = str.length();
-//        for (int i = 0; i < length; i++){
-//            char ch = str.charAt(i);
-//            Character.UnicodeBlock block = Character.UnicodeBlock.of(ch);
-//            if (Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS.equals(block)|| 
-//                Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS.equals(block)|| 
-//                Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A.equals(block)){
-//                System.out.println("True");
-//            }
-//        }
-//        System.out.println("False");
-//		
-//}
 
 
 
