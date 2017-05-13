@@ -83,6 +83,7 @@ public class SegDemo {
 				ConsoleView.printlInConsoleln(e.getMessage());
 				e.printStackTrace();
 			}
+		    ConsoleView.printlInConsoleln("Done and Dusted");
 	  }
 	  
 	  public SegDemo(boolean val){
