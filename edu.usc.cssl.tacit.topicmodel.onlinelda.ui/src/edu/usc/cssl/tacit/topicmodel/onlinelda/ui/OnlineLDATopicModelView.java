@@ -46,7 +46,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
-import edu.usc.cssl.tacit.common.ui.preprocessor.Preprocessor;
+import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.utility.TacitUtil;
 import edu.usc.cssl.tacit.common.ui.validation.OutputPathValidation;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
@@ -297,7 +297,7 @@ public class OnlineLDATopicModelView extends ViewPart implements
 								seedFilePath = stemmedDictionaryFiles.get(0);
 							}
 							
-							inFiles = ppObj.processData("Online_LDA",selectedFiles,true);
+							inFiles = ppObj.processData("Online_LDA",selectedFiles,monitor);
 							monitor.worked(50);
 						} catch (IOException e1) {
 							e1.printStackTrace();

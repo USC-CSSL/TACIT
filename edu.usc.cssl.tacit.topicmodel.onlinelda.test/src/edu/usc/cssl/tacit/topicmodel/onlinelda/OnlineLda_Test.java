@@ -17,7 +17,7 @@ public class OnlineLda_Test {
 	Exception exceptionObj = null;
 	@Test
 	public void doOnlineLdaTest() {
-		String dictionaryLocation = directoryPath + File.separator + "OnlineLDADictionary.txt";
+		String dictionaryLocation = directoryPath + File.separator + "OnlineLDADictionary";
 		String outputLocation =  directoryPath + File.separator + "TestOutputFiles";
 		File outputFolder = new File(outputLocation);
 		
@@ -36,7 +36,7 @@ public class OnlineLda_Test {
 		try{
 			OnlineLDA onlineLDA = new OnlineLDA(documentList, dictionaryLocation, outputLocation, 10, 5);
 			onlineLDA.invokeOnlineLDA(new NullProgressMonitor());
-			//FileUtils.deleteDirectory(outputFolder);
+			FileUtils.deleteDirectory(outputFolder);
 		}catch(Exception e){
 			exceptionObj = e; 
 		}
