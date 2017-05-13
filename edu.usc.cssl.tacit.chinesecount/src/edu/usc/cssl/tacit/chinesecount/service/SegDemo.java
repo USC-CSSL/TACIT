@@ -51,19 +51,21 @@ public class SegDemo {
 		}
 	}
 	  public SegDemo(){
-		  try {
+		  try { 
+			    ConsoleView.printlInConsoleln("1");
 				System.setOut(new PrintStream(System.out, true, "utf-8"));
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+		  	ConsoleView.printlInConsoleln("2");
 		    Properties props = new Properties();
 		    props.setProperty("sighanCorporaDict", basedir);
 		    props.setProperty("serDictionary", basedir + File.separator+ "dict-chris6.ser.gz");
 		    props.setProperty("testFile", "test.simp.utf8");
 		    props.setProperty("inputEncoding", "UTF-8");
 		    props.setProperty("sighanPostProcessing", "true");
+		    ConsoleView.printlInConsoleln("3");
 		    segmenter = new CRFClassifier<>(props);
 		    try {
 		    	ConsoleView.printlInConsoleln("Loading chinese model");
