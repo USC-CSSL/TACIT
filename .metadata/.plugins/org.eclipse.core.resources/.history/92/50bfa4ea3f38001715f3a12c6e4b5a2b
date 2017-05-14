@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.jsoup;bundle-version="1.7.2",
  edu.usc.cssl.tacit.common.ui,
  system.bundle
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: edu.usc.cssl.tacit.wordcount.standard.services;
   uses:="org.jsoup.nodes,
