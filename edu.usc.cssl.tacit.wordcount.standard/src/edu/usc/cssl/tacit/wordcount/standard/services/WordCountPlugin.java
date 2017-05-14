@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.Platform;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.usc.cssl.tacit.chinesecount.service.SegDemo;
 import edu.usc.cssl.tacit.common.TacitUtility;
 import edu.usc.cssl.tacit.common.snowballstemmer.PorterStemmer;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;

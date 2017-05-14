@@ -14,8 +14,6 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.wordcount.standard,
  edu.usc.cssl.tacit.help,
  org.eclipse.help,
- edu.usc.cssl.tacit.common,
- edu.usc.cssl.tacit.chinesecount;bundle-version="1.0.0"
+ edu.usc.cssl.tacit.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: edu.usc.cssl.tacit.chinesecount.service

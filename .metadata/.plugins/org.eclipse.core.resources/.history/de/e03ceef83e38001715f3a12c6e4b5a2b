@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="TACIT" uid="tacit" id="edu.usc.cssl.tacit.repository.product" application="edu.usc.cssl.tacit.repository.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="/edu.usc.cssl.tacit.repository/icons/icon128.png"/>
+      <text>
+         (c) Copyright 2015, University of Southern California. All Rights Reserved.
+
+This software is experimental in nature and is provided on an AS-IS basis only. The University SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS AND IMPLIED, INCLUDING WITHOUT LIMITATION ANY WARRANTY AS TO MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+This software may be reproduced and used for non-commercial purposes only, so long as this copyright notice is reproduces with each such copy made.
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgs>-Xms100m
+         <argsX86>-Xmx1g</argsX86>
+         <argsX86_64>-Xmx4g</argsX86_64>
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+-Xdock:icon=tacit.icns
+-XstartOnFirstThread
+-Dorg.eclipse.swt.internal.carbon.smallFonts
+-Dorg.eclipse.swt.internal.carbon.noFocusRing
+      </vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="/edu.usc.cssl.tacit.repository/icons/icon16.png" i32="/edu.usc.cssl.tacit.repository/icons/icon32.png" i48="/edu.usc.cssl.tacit.repository/icons/icon48.png" i64="/edu.usc.cssl.tacit.repository/icons/icon64.png" i128="/edu.usc.cssl.tacit.repository/icons/icon128.png" i256="/edu.usc.cssl.tacit.repository/icons/icon256.png"/>
+
+   <splash
+      location="edu.usc.cssl.tacit.repository"
+      startupProgressRect="5,325,502,10"
+      startupMessageRect="5,305,502,20"
+      startupForegroundColor="FBFFFE" />
+   <launcher name="tacit">
+      <linux icon="icon256.xpm"/>
+      <macosx icon="tacit.icns"/>
+      <solaris/>
+      <win useIco="true">
+         <ico path="icon256.ico"/>
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <license>
+        <text>
+   (c) Copyright 2015, University of Southern California. All Rights Reserved.
+
+This software is experimental in nature and is provided on an AS-IS basis only. The University SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS AND IMPLIED, INCLUDING WITHOUT LIMITATION ANY WARRANTY AS TO MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+This software may be reproduced and used for non-commercial purposes only, so long as this copyright notice is reproduces with each such copy made.
+         </text>
+   </license>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.rcp"/>
+      <feature id="org.eclipse.emf.ecore"/>
+      <feature id="org.eclipse.emf.common"/>
+      <feature id="org.eclipse.e4.rcp"/>
+      <feature id="org.eclipse.help"/>
+      <feature id="edu.usc.cssl.tacit.feature"/>
+      <feature id="org.eclipse.equinox.p2.core.feature"/>
+      <feature id="org.eclipse.equinox.p2.user.ui"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature"/>
+      <feature id="org.eclipse.ecf.core.feature"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.feature"/>
+      <feature id="org.eclipse.ecf.core.ssl.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
+   </features>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="tacit" autoStart="false" startLevel="5" />
+   </configurations>
+
+   <repositories>
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
+   </repositories>
+
+</product>

@@ -10,11 +10,9 @@ Require-Bundle: org.eclipse.ui,
  edu.usc.cssl.tacit.common,
  org.jsoup;bundle-version="1.7.2",
  edu.usc.cssl.tacit.common.ui,
- system.bundle,
- edu.usc.cssl.tacit.chinesecount;bundle-version="1.0.0"
+ system.bundle
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: edu.usc.cssl.tacit.chinesecount.service
 Export-Package: edu.usc.cssl.tacit.wordcount.standard.services;
   uses:="org.jsoup.nodes,
    org.eclipse.core.runtime,
@@ -22,9 +20,12 @@ Export-Package: edu.usc.cssl.tacit.wordcount.standard.services;
    edu.usc.tacit.common.crawlers,
    snowballstemmer"
 Bundle-ClassPath: .,
- stanford-corenlp-3.2.0.jar,
  jwnl-1.3.3.jar,
  opennlp-maxent-3.0.3.jar,
  opennlp-tools-1.5.3.jar,
  opennlp-uima-1.5.3.jar,
- commons-lang3-3.3.2.jar
+ commons-lang3-3.3.2.jar,
+ stanford-segmenter-3.7.0-javadoc.jar,
+ stanford-segmenter-3.7.0-sources.jar,
+ stanford-segmenter-3.7.0.jar,
+ commons-io-2.4.jar

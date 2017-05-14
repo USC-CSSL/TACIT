@@ -51,8 +51,6 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
-
-import edu.usc.cssl.tacit.chinesecount.service.SegDemo;
 import edu.usc.cssl.tacit.common.Preprocessor;
 import edu.usc.cssl.tacit.common.ui.composite.from.TacitFormComposite;
 import edu.usc.cssl.tacit.common.ui.outputdata.OutputLayoutData;
@@ -66,6 +64,7 @@ import edu.usc.cssl.tacit.wordcount.standard.ui.internal.StandardWordCountImageR
 
 public class StandardWordCountView extends ViewPart implements
 		IStandardWordCountViewConstants {
+	String DEFAULT_CORPUS_LOCATION = System.getProperty("user.dir");
 	public static String ID = "edu.usc.cssl.tacit.wordcount.standard.ui.view1";
 	private ScrolledForm form;
 	private FormToolkit toolkit;
@@ -272,7 +271,26 @@ public class StandardWordCountView extends ViewPart implements
 				.applyTo(form.getBody());
 		return toolkit;
 	}
-
+	
+	 boolean dictExists(){
+			File f = new File(DEFAULT_CORPUS_LOCATION + File.separator+ "ctb.gz");
+			if(f.isFile())
+				return true;
+			else
+				return false;
+	 }
+ 
+	public void addDict(String sourceFile){
+		File source = new File(sourceFile);
+		File dest = new File(DEFAULT_CORPUS_LOCATION);
+		try {
+			FileUtils.copyFileToDirectory(source , dest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private void addButtonsToToolBar() {
 		IToolBarManager mgr = form.getToolBarManager();
 		mgr.add(new Action() {
@@ -357,8 +375,7 @@ public class StandardWordCountView extends ViewPart implements
 								isChinese = isCJK(temp);
 							br1.close();
 							if(isChinese){
-								final SegDemo sd = new SegDemo(true);
-								if(sd.dictExists()){
+								if(dictExists()){
 									wc.countWords(inputFiles, stemmedDictionaryFiles);
 								}else{
 									
@@ -378,15 +395,17 @@ public class StandardWordCountView extends ViewPart implements
 											FileDialog dialog = new FileDialog(form.getShell() , SWT.OPEN);
 											dialog.setFilterPath("c:\\temp");
 											String result = dialog.open();
-											sd.addDict(result);
-											boolean val = 	sd.dictExists();
+											addDict(result);
+											boolean val = 	dictExists();
 											
 												
 											}
 											
 										}
+
+										
 									});
-									if(sd.dictExists())
+									if(dictExists())
 										wc.countWords(inputFiles, stemmedDictionaryFiles);
 								}
 							}else{
