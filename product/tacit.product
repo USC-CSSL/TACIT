@@ -18,7 +18,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xms100m
+      <vmArgs>-mx1g
          <argsX86>-Xmx1g</argsX86>
          <argsX86_64>-Xmx4g</argsX86_64>
       </vmArgs>
@@ -46,6 +46,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
@@ -91,6 +92,15 @@ This software may be reproduced and used for non-commercial purposes only, so lo
 
    <repositories>
       <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
    </repositories>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

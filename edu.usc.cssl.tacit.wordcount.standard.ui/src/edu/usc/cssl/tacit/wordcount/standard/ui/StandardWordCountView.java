@@ -443,29 +443,29 @@ public class StandardWordCountView extends ViewPart implements
 				};
 				wordCountJob.setUser(true);
 				if (canProceed()) {
-					wordCountJob.schedule();		
-//					wordCountJob.addJobChangeListener(new JobChangeAdapter() {
-//
-//						@Override
-//						public void done(IJobChangeEvent event) {
-//							if (!event.getResult().isOK()) {
-//								TacitFormComposite
-//										.writeConsoleHeaderBegining("Error: <Terminated> Word count analysis");
-//								ConsoleView
-//										.printlInConsoleln("Word count analysis met with error.");
-//								ConsoleView
-//										.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
-//							} else {
-//								TacitFormComposite.updateStatusMessage(
-//										getViewSite(),
-//										"Word count analysis completed",
-//										IStatus.OK, form);
-//								TacitFormComposite
-//										.writeConsoleHeaderBegining("Success: <Completed> Word count analysis");
-//
-//							}
-//						}
-//					});
+					wordCountJob.schedule();	
+					wordCountJob.addJobChangeListener(new JobChangeAdapter() {
+
+						@Override
+						public void done(IJobChangeEvent event) {
+							if (!event.getResult().isOK()) {
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Error: <Terminated> Word count analysis");
+								ConsoleView
+										.printlInConsoleln("Word count analysis met with error.");
+								ConsoleView
+										.printlInConsoleln("Take appropriate action to resolve the issues and try again.");
+							} else {
+								TacitFormComposite.updateStatusMessage(
+										getViewSite(),
+										"Word count analysis completed",
+										IStatus.OK, form);
+								TacitFormComposite
+										.writeConsoleHeaderBegining("Success: <Completed> Word count analysis");
+
+							}
+						}
+					});
 
 				}
 
