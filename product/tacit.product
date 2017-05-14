@@ -18,7 +18,8 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-mx1g
+      <vmArgs>-Xms100m
+-Xmx4g
          <argsX86>-Xmx1g</argsX86>
          <argsX86_64>-Xmx4g</argsX86_64>
       </vmArgs>
