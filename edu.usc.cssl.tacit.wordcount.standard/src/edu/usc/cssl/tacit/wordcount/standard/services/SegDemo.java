@@ -3,6 +3,7 @@ package edu.usc.cssl.tacit.wordcount.standard.services;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -69,7 +70,8 @@ public class SegDemo {
 		    segmenter = new CRFClassifier<>(props);
 		    try {
 		    	ConsoleView.printlInConsoleln("Loading chinese model");
-				segmenter.loadClassifier("ctb.gz", props);
+		    	String env = "/Users/nishant/Desktop/ctb.gz";
+				segmenter.loadClassifier(env, props);
 			} catch (ClassCastException e) {
 				// TODO Auto-generated catch block
 				ConsoleView.printlInConsoleln(e.getMessage());
