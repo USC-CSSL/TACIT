@@ -99,7 +99,7 @@
              category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
              class="edu.usc.cssl.tacit.common.ui.preferencepage.PrepocessorSettings"
              id="edu.usc.cssl.tacit.common.ui.prepocessorsettings"
-             name="Prepocessor Settings">
+             name="Preprocessor Settings">
        </page>
        <page
              category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
