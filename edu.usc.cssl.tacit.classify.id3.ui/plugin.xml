@@ -6,7 +6,15 @@
       <view
             class="edu.usc.cssl.tacit.classify.id3.ui.Id3View"
             id="edu.usc.cssl.tacit.classify.id3.ui.view1"
-            name="ID3 Decision Tress">
+            name="C4.5 Decision Trees">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.classify.id3.ui.treevisualization.TreeVisualization"
+            id="edu.usc.cssl.tacit.classify.id3.ui.treevisuals"
+            name="Tree View">
       </view>
    </extension>
    <extension
@@ -20,8 +28,22 @@
          point="org.eclipse.ui.commands">
       <command
             id="edu.usc.cssl.tacit.classify.id3.ui.command1"
-            name="ID3 Decision Trees">
+            name="C4.5 Decision Trees">
       </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:classify">
+         <command
+               commandId="edu.usc.cssl.tacit.classify.id3.ui.command1"
+               icon="icons/TACITId3Icon.png"
+               label="C4.5  Decision Tree Classifier"
+               style="push"
+               tooltip="ID3 Classifier">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

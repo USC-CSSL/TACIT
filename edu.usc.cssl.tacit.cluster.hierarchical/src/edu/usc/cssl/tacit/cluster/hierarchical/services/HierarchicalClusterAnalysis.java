@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -232,6 +234,7 @@ public class HierarchicalClusterAnalysis {
 		subProgressMonitor.worked(5);
 		subProgressMonitor.done();
 		if(clusters!=null)
+			System.out.println(clusters);
 			writeToWebView(buildGraphString(clusters.substring(7)));	//clip the "Newick:" portion out
 		
 		return true;
@@ -243,8 +246,9 @@ public class HierarchicalClusterAnalysis {
 		URL fileURL = bundle.getEntry("test");
 		File file = null;
 		try {
-			file = new File(FileLocator.resolve(fileURL).toURI());
-		
+			//file = new File(FileLocator.resolve(fileURL).toURI());
+			URI fileURI= new URI(FileLocator.resolve(fileURL).toString().replaceAll(" ", "%20"));
+			file = new File(fileURI);
 			FileWriter fw = new FileWriter(file);
 			fw.write(cluster);
 			fw.close();
@@ -288,6 +292,7 @@ public class HierarchicalClusterAnalysis {
 		}
 
 		str = cluster.substring(0, i2) + str;
+		System.out.println(str);
 		return str;
 	}
 }

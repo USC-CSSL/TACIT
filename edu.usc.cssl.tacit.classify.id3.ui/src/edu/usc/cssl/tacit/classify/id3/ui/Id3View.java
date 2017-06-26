@@ -62,6 +62,11 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.internal.TargetLocationsGroup;
 import edu.usc.cssl.tacit.common.ui.outputdata.TableLayoutData;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
+import edu.usc.cssl.tacit.classify.id3.services.Id3DecisionTrees;
+import edu.usc.cssl.tacit.classify.id3.weka.DirectoryToArffId3;
+import edu.usc.cssl.tacit.classify.id3.weka.Id3Weka;
+
+
 
 /**
  * Naive Bayes Classifier View
@@ -75,6 +80,7 @@ public class Id3View extends ViewPart {
 
 	// Classification parameters
 	private Text kValueText;
+	private Button openResults;
 	private Text classifyInputText;
 	private Text outputPath;
 	private Button preprocessEnabled;
@@ -83,6 +89,7 @@ public class Id3View extends ViewPart {
 	private boolean isClassificationEnabled = false;
 	private boolean canProceed = false;
 	private Button classificationEnabled;
+	private boolean isopenResults = false;
 	Map<String, List<String>> classPaths;
 	protected Job job;
 
@@ -95,7 +102,7 @@ public class Id3View extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		// Creates toolkit and form
-		toolkit = createFormBodySection(parent, "ID3 DECISION TREES");
+		toolkit = createFormBodySection(parent, "C4.5 DECISION TREES");
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(3, 1).applyTo(section);
 		section.setExpanded(true);
@@ -320,6 +327,9 @@ public class Id3View extends ViewPart {
 			}
 		});
 
+		openResults = toolkit.createButton(sectionClient, "Generate Tree",
+				SWT.CHECK);
+		GridDataFactory.fillDefaults().grab(false, false).applyTo(openResults);
 	}
 
 	/**
@@ -455,6 +465,244 @@ public class Id3View extends ViewPart {
 			String outputDir;
 			String tempkValue;
 			List<Object> selectedFiles;
+			
+			@Override				
+			public void run() {					
+				final ArrayList<String> trainingDataPaths = new ArrayList<String>();		
+				final HashMap<String, List<String>> tempClassPaths = new HashMap<String, List<String>>();		
+				final Id3DecisionTrees nbc = new Id3DecisionTrees();		
+				classPaths = new HashMap<String, List<String>>();		
+				consolidateSelectedFiles(classLayoutData, classPaths);		
+				TacitFormComposite.writeConsoleHeaderBegining("C4.5 Decision Tree Classification started ");		
+				TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);		
+				job = new Job("C4.5 Decision Trees Classification") {		
+					@Override		
+					protected IStatus run(final IProgressMonitor monitor) {		
+						TacitFormComposite.setConsoleViewInFocus();		
+						TacitFormComposite.updateStatusMessage(getViewSite(), null, null, form);		
+						monitor.beginTask("Running C4.5 Decision Trees Classification...", 100);		
+						Date dateObj = new Date();		
+						Display.getDefault().syncExec(new Runnable() {		
+							@Override		
+							public void run() {		
+								// Classification i/p and o/p paths		
+								outputDir = outputPath.getText();		
+								classificationInputDir = classifyInputText.getText();		
+								tempkValue = kValueText.getText();		
+								isPreprocessEnabled = preprocessEnabled.getSelection();	
+								isopenResults=openResults.getSelection();
+								if(isPreprocessEnabled)		
+									checkType = false;	//Because file type check is already being performed in the PreprocessorView class 		
+										
+								isClassificationEnabled = classificationEnabled.getSelection();		
+								try{		
+									selectedFiles = classLayoutData.getTypeCheckedSelectedFiles(checkType);		
+								}		
+								catch(Exception e){		
+									if(e.getMessage().equals("User has requested cancel"))		
+										breakFlag = true;		
+									else handleException(monitor, e, "Some error occurred");		
+								}		
+							}		
+						});		
+						if(breakFlag){		
+							return Status.CANCEL_STATUS;		
+						}		
+								
+						HashMap<Integer, String> perf;		
+						if (monitor.isCanceled()) {		
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+							return handledCancelRequest("Cancelled");		
+						}		
+						Id3Weka cv;		
+						int kValue = Integer.parseInt(tempkValue);		
+						monitor.worked(1); // done with the validation		
+						if (isPreprocessEnabled) {		
+							// New Pre-processing!		
+							monitor.subTask("Preprocessing...");		
+							try {		
+								preprocessTask = new Preprocessor("NB_Classifier", isPreprocessEnabled);		
+								for (String dirPath : classPaths.keySet()) {		
+									if (monitor.isCanceled()) {		
+										TacitFormComposite		
+												.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+										return handledCancelRequest("Cancelled");		
+									}		
+									List<String> allSelectedClassFiles = classPaths.get(dirPath);		
+									List<Object> tempFiles = new ArrayList<Object>();		
+									tempFiles.addAll(allSelectedClassFiles);		
+									List<String> preprocessedFilePaths = preprocessTask		
+											.processData(new File(dirPath).getName(), tempFiles, monitor);		
+											
+									String preProcessedClassDir = null;		
+									if (!preprocessedFilePaths.isEmpty())		
+										preProcessedClassDir = new File(preprocessedFilePaths.get(0)).getParent();		
+									trainingDataPaths.add(preProcessedClassDir);		
+									tempClassPaths.put(preProcessedClassDir, preprocessedFilePaths);		
+									monitor.worked(1);		
+								}		
+								if (monitor.isCanceled()) {		
+									TacitFormComposite		
+											.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+									return handledCancelRequest("Cancelled");		
+								}		
+								if (isClassificationEnabled) {		
+									List<Object> files = new ArrayList<Object>();		
+									nbc.selectAllFiles(classificationInputDir, files);		
+									List<String> preprocessedFilePaths = preprocessTask		
+											.processData(new File(classificationInputDir).getName(), files, monitor);		
+									if (!preprocessedFilePaths.isEmpty())		
+										classificationInputDir = new File(preprocessedFilePaths.get(0)).getParent();		
+									monitor.worked(1);		
+								}		
+							} catch(Exception e){		
+								if (e.getMessage().equals("User has requested cancel"))		
+									return Status.CANCEL_STATUS;		
+								else		
+									return handleException(monitor, e, "Preprocessing failed. Provide valid data");		
+							}		
+							monitor.worked(10);		
+						} else {		
+							try {		
+								preprocessTask = null;		
+								Preprocessor ppObj = null;		
+								try {		
+									ppObj = new Preprocessor("Hierarchical_Clustering", true);		
+									List<String> inFiles;		
+									// classPaths.clear();		
+									for (Object i : selectedFiles) {		
+										if (i instanceof CorpusClass) {		
+											List<Object> tempSelection = new ArrayList<Object>();		
+											tempSelection.add(i);		
+											inFiles = ppObj.processData("Hierarchical_Clustering", tempSelection, monitor);		
+													
+											CorpusClass j = (CorpusClass) i;		
+											classPaths.put(j.getClassName(), inFiles);		
+											if (classPaths.containsKey(((CorpusClass) i).getParent().getCorpusName())) {		
+												classPaths.remove(((CorpusClass) i).getParent().getCorpusName());		
+											}		
+										}		
+									}		
+								} catch (IOException e) {		
+									e.printStackTrace();		
+									return Status.CANCEL_STATUS;		
+								} catch (Exception e) {		
+									e.printStackTrace();		
+									return Status.CANCEL_STATUS;		
+								}		
+								// classPaths		
+								// export data here		
+								nbc.createTempDirectories(classPaths, trainingDataPaths, monitor);		
+							} catch (Exception e) {		
+								return handleException(monitor, e, "C4.5 Decision Trees Classifier failed. Provide valid data");		
+							}		
+							monitor.worked(10);		
+							if (monitor.isCanceled()) {		
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+								return handledCancelRequest("Cancelled");		
+							}		
+						}		
+						try {		
+							if (monitor.isCanceled()) {		
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+								return handledCancelRequest("Cancelled");		
+							}		
+							monitor.subTask("Cross validating...");		
+							if (!isPreprocessEnabled) {		
+							     cv = new Id3Weka(classPaths);		
+							} else {		
+								 cv = new Id3Weka(tempClassPaths);		
+							}		
+							try {		
+								cv.initializeInstances();		
+								cv.doCrossValidate(kValue, monitor, dateObj);
+								if(isopenResults){
+									cv.generateTree();
+								}
+							} catch (IllegalArgumentException iae) {		
+								TacitFormComposite		
+										.writeConsoleHeaderBegining("Error: <Terminated> C4.5 Decision Trees Classifier ");		
+								return handleException(monitor, iae,		
+										"C4.5 Decision Trees Classifier failed. Provide valid data.");		
+							}		
+							monitor.worked(40);		
+							if (monitor.isCanceled()) {		
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+								return handledCancelRequest("Cancelled");		
+							}		
+							// perform cross validation		
+							if (isClassificationEnabled) {		
+								monitor.subTask("Classifying...");		
+								try {		
+									cv.doClassify(classificationInputDir,classPaths, outputDir, monitor, dateObj);		
+								} catch (IllegalArgumentException iae) {		
+									TacitFormComposite		
+											.writeConsoleHeaderBegining("Error: <Terminated> C4.5 Decision Trees Classifier ");		
+									return handleException(monitor, iae,		
+											"C4.5 Decision Trees Classifier failed. Provide valid data.");		
+								}		
+							}		
+							monitor.worked(15);		
+							if (monitor.isCanceled()) {		
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+								return handledCancelRequest("Cancelled");		
+							}		
+							if (monitor.isCanceled()) {		
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+								return handledCancelRequest("Cancelled");		
+							}		
+							if (!isPreprocessEnabled)		
+								nbc.deleteTempDirectories(trainingDataPaths);		
+							monitor.worked(10);		
+							if (monitor.isCanceled()) {		
+								TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+								return handledCancelRequest("Cancelled");		
+							}		
+						} //catch (IOException e) {		
+							//TacitFormComposite		
+								//	.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");		
+							//return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");		
+						//} //catch (EvalError e) {		
+							//TacitFormComposite		
+								//	.writeConsoleHeaderBegining("Error: <Terminated> Naive Bayes Classifier ");		
+							//return handleException(monitor, e, "Naive Bayes Classifier failed. Provide valid data");		
+						//}
+					catch (Exception e) {		
+							// TODO Auto-generated catch block		
+							e.printStackTrace();		
+						}		
+						if (monitor.isCanceled()) {		
+							TacitFormComposite.writeConsoleHeaderBegining("<terminated> C4.5 Decision Trees Classifier ");		
+							return handledCancelRequest("Cancelled");		
+						}		
+						if (isPreprocessEnabled) {		
+							preprocessTask.clean();		
+						}		
+						monitor.worked(100);		
+						monitor.done();		
+						return Status.OK_STATUS;		
+					}		
+				};		
+				job.setUser(true);		
+				canProceed = canItProceed(classPaths);		
+				if (canProceed) {		
+					job.schedule(); // schedule the job		
+					job.addJobChangeListener(new JobChangeAdapter() {		
+						public void done(IJobChangeEvent event) {		
+							if (!event.getResult().isOK()) {		
+								TacitFormComposite		
+										.writeConsoleHeaderBegining("Error: <Terminated> C4.5 Decision Trees Classifier");		
+							} else {		
+								TacitFormComposite.updateStatusMessage(getViewSite(),		
+										"C4.5 Decision Trees classification completed", IStatus.OK, form);		
+								ConsoleView.printlInConsoleln("C4.5 Decision Trees classifier completed successfully.");		
+								TacitFormComposite		
+										.writeConsoleHeaderBegining("Success: <Completed> C4.5 Decision Trees Classification ");		
+							}		
+						}		
+					});		
+				}		
+			};
 
 		
 			
@@ -493,7 +741,7 @@ public class Id3View extends ViewPart {
 	 */
 	private IStatus handledCancelRequest(String message) {
 		TacitFormComposite.updateStatusMessage(getViewSite(), message, IStatus.ERROR, form);
-		ConsoleView.printlInConsoleln("Naive Bayes classifier cancelled.");
+		ConsoleView.printlInConsoleln("C4.5 Decision Trees classifier cancelled.");
 		if (isPreprocessEnabled) {
 			preprocessTask.clean();
 		}
@@ -509,12 +757,24 @@ public class Id3View extends ViewPart {
 	 */
 	private boolean canItProceed(Map<String, List<String>> classPaths) {
 		
+		int tem = classLayoutData.getTree().getItemCount();		
+		int te = TargetLocationsGroup.corpusClass;		
+		int temp = classPaths.size();		
+		int condition = 0;		
+		if(TargetLocationsGroup.corpusClass==0) {	//When a folder is selected instead of a corpus or a corpus class		
+													//Will result in an error, if the user explicitly deletes the corpus file from		
+													//file system (this operation is not allowed to be performed within Tacit)		
+			condition = classPaths.size();			
+		} else {		
+			condition = TargetLocationsGroup.corpusClass;	//When a corpus or corpus class is selected		
+		}
+		
 		// Class paths
-		if (TargetLocationsGroup.corpusClass < 2 && classLayoutData.getTree().getItemCount() < 2) {
+		if (condition < 2 && classLayoutData.getTree().getItemCount() < 2) {
 			form.getMessageManager().addMessage("classes", "Provide at least 2 valid class paths", null,
 					IMessageProvider.ERROR);
 			return false;
-		} else if (classLayoutData.getTree().getItemCount() > 1 && TargetLocationsGroup.corpusClass < 2) {
+		} else if (classLayoutData.getTree().getItemCount() > 1 && condition < 2) {
 			form.getMessageManager().addMessage("classes", "Select the required classes", null, IMessageProvider.ERROR);
 			return false;
 		} else {
