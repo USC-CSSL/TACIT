@@ -28,13 +28,11 @@ public class CustomFunction extends BrowserFunction {
 		Bundle bundle = Platform.getBundle("edu.usc.cssl.tacit.webview.ui");
 		URL fileURL = bundle.getEntry("test");
 		try {
-			
-			fileURL = new URL(FileLocator.resolve(fileURL).toString().replace(" ", "%20"));
+			fileURL = new URL(FileLocator.resolve(fileURL).toString());
 		} catch (Exception e) {
 			
 		}
 			
-		//System.out.println(fileURL.toString());
 		File file = new File(fileURL.toString().substring(5));
 
 		FileReader fr = null;

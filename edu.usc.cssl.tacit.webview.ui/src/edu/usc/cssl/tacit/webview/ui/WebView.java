@@ -1,8 +1,10 @@
 package edu.usc.cssl.tacit.webview.ui;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -85,9 +87,12 @@ public class WebView extends ViewPart {
 		
 		Bundle bundle = Platform.getBundle("edu.usc.cssl.tacit.webview.ui");
 		URL fileURL = bundle.getEntry("webpage.html");
+		//File fileURI=null;
 		try {
-			file = new File(FileLocator.resolve(fileURL).toURI());
-		} catch (URISyntaxException e) {
+			URI fileURI= new URI(FileLocator.resolve(fileURL).toString().replaceAll(" ", "%20"));
+			file = new File(fileURI);
+			//file = new File(FileLocator.resolve(fileURL).toURI());
+			} catch (URISyntaxException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
