@@ -271,9 +271,8 @@ public class FrontierCrawlerView extends ViewPart{
 									jsonFilter[1] = abstractBody.getSelection();
 									jsonFilter[2] = journalBody.getSelection();
 									jsonFilter[3] = reference.getSelection();
-									
 									corpusName = corpusNameTxt.getText();
-									isDate = dateRange.getSelection();
+									//isDate = dateRange.getSelection();
 									outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
 									if (!new File(outputDir).exists()) {
 										new File(outputDir).mkdirs();
@@ -493,7 +492,7 @@ public class FrontierCrawlerView extends ViewPart{
 									jsonFilter[2] = journalBody.getSelection();
 									jsonFilter[3] = reference.getSelection();
 									corpusName = corpusNameTxt.getText();
-									isDate = dateRange.getSelection();
+									//isDate = dateRange.getSelection();
 									outputDir = IFrontierCrawlerUIConstants.DEFAULT_CORPUS_LOCATION + File.separator+ corpusName.trim();
 									if (!new File(outputDir).exists()) {
 										new File(outputDir).mkdirs();

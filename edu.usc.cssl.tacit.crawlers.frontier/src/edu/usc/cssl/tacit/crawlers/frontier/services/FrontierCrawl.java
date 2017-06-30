@@ -49,7 +49,8 @@ public class FrontierCrawl {
 				f = new File(dir+File.separator+name+".txt");
 				String site = IFrontierConstants.BASE_URL+name+"/full";
 				Document d = Jsoup.connect(site).get();
-				Document docJournalAbstract = Jsoup.parse(d.body().child(2).child(4).child(0).child(1).child(1).child(0).child(0).child(0).child(1).toString());
+				//Document docJournalAbstract = Jsoup.parse(d.body().child(2).child(4).child(0).child(1).child(1).child(0).child(0).child(0).child(1).toString());
+				Elements docJournalAbstract = d.select("div.JournalAbstract");
 				Elements title = docJournalAbstract.select("h1");
 				Elements abs = docJournalAbstract.select("p");
 				ConsoleView.printlInConsoleln("Writing topic: "+ Jsoup.parse(title.toString()).text());
@@ -58,7 +59,8 @@ public class FrontierCrawl {
 					jsonGenerator.writeObjectField("title", Jsoup.parse(title.toString()).text());
 				if(jsonFilter[1])
 					jsonGenerator.writeObjectField("abstract_body", Jsoup.parse(abs.toString()).text());
-				String abstractBody = d.body().child(2).child(4).child(0).child(1).child(1).child(0).child(0).child(0).child(2).toString();
+				//String abstractBody = d.body().child(2).child(4).child(0).child(1).child(1).child(0).child(0).child(0).child(2).toString();
+				String abstractBody = d.select("div.JournalFullText").toString();
 				int i = abstractBody.indexOf("References");
 				if(i != -1){
 				String journalBody = abstractBody.substring(0, i);
