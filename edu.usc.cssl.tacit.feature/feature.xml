@@ -534,5 +534,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+        
+   <plugin
+         id="edu.usc.cssl.tacit.classify.id3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
 
 </feature>
