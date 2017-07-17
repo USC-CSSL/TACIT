@@ -214,6 +214,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(houseBtn);
 		houseBtn.setSelection(true);
 		
+		
 		houseBtn.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -261,6 +262,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(keywordLabel);
 		keywordTxt = toolkit.createText(senatorComposite, "", SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(keywordTxt);
+		
 		
 		keywordTxt.addModifyListener(new ModifyListener() {
 			
@@ -442,18 +444,20 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		int num = sCmbCongress.getSelectionIndex();
 		String congress = sLoading[num].substring(0,sLoading[num].indexOf("(")-1).toLowerCase();
 		senatorList = SearchSenators.crawl(houseBtn.getSelection(), congress, keywordTxt.getText());
-		listDialog.setElements(senatorList.toArray());
 		listDialog.setMultipleSelection(true);
+		listDialog.setElements(senatorList.toArray());
 		if (listDialog.open() == Window.OK) {
 			updateSenatorTable(listDialog.getResult());
 		}
 
 	}
 
+	
 	private void updateSenatorTable(Object[] result) {
 		if (selectedSenators == null) {
 			selectedSenators = new ArrayList<String>();
 		}
+		
 		if(result[0].equals("All")){
 			for(Object obj: senatorList)
 				selectedSenators.add((String) obj);
@@ -465,7 +469,7 @@ public class UsCongressCrawlerView extends ViewPart implements IUsCongressCrawle
 		}
 		//Collections.sort(selectedSenators);
 		senatorTable.removeAll();
-		for (Object itemName : result) {
+		for (Object itemName : selectedSenators) {
 			TableItem item = new TableItem(senatorTable, 0);
 			item.setText((String)itemName);
 			if(!removeSenatorButton.isEnabled()) {
