@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Gutenberg
+Bundle-SymbolicName: edu.usc.cssl.tacit.crawlers.gutenberg
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.usc.cssl.tacit.crawlers.gutenberg.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.jsoup;bundle-version="1.7.2",
+ edu.usc.cssl.tacit.common.ui;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.usc.cssl.tacit.crawlers.gutenberg.services
+Bundle-ClassPath: jackson-core-2.5.0.jar,
+ .

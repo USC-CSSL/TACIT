@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="edu.usc.cssl.tacit.crawlers.gutenberg.ui.GutenbergCrawlerView"
+            icon="icons/GutenbergCrawlerIcon.png"
+            id="edu.usc.cssl.tacit.crawlers.gutenberg.ui.view1"
+            name="Gutenberg Crawler"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:crawl">
+         <command
+               commandId="edu.usc.cssl.tacit.crawlers.gutenberg.ui.command2"
+               icon="icons/GutenbergCrawlerIcon.png"
+               label="Gutenberg Crawler">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="crawler.gutenberg"
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.usc.cssl.tacit.crawlers.gutenberg.ui.command2"
+            name="Gutenberg Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.usc.cssl.tacit.crawlers.gutenberg.ui.handlers.GutenbergCrawlerViewHandler"
+            commandId="edu.usc.cssl.tacit.crawlers.gutenberg.ui.command2">
+      </handler>
+   </extension>
+
+</plugin>
