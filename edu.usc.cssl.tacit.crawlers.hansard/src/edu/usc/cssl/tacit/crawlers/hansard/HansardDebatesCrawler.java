@@ -362,7 +362,7 @@ public class HansardDebatesCrawler {
 		return true;
 	}
 	public static HashMap<String, String> crawlMPs(String searchTerm, String house, String currentFormerFilter) throws IOException{
-		
+		try{
 		HashMap<String, String> map = new HashMap<String, String>();
 		if(house.contains("Both"))
 			house = "0";
@@ -406,6 +406,10 @@ public class HansardDebatesCrawler {
 		}
 		
 		return map;
+	}catch(IndexOutOfBoundsException m)
+		{
+		return null;
+		}
 	}
 	
 }

@@ -228,7 +228,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		
 		keywordSearchText = new Text(searchFilterComposite, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(keywordSearchText);	
-		keywordSearchText.setMessage("Enter a search term");
+		keywordSearchText.setMessage("Search a House Member Eg. John");
 		
 		limitByDate  = new Button(searchFilterComposite, SWT.CHECK);
 		limitByDate.setText("Limit by date");
@@ -425,7 +425,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		addSenatorBtn.setEnabled(false);
 		removeSenatorButton.setEnabled(false);
 
-bothButton.addSelectionListener(new SelectionAdapter() {
+		bothButton.addSelectionListener(new SelectionAdapter() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -540,11 +540,24 @@ bothButton.addSelectionListener(new SelectionAdapter() {
 					map.remove(element);
 				}
 			}
+		if(map==null)
+		{
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results found for the specified House Member.Kindly try again.", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+					int result = dialog.open();
+					if (result <= 0){
+						dialog.close();
+					}
+				}
+			});
+		}else{
 		listDialog.setElements(map.keySet().toArray());
 		listDialog.setMultipleSelection(true);
 		if (listDialog.open() == Window.OK) {
 			updateSenatorTable(listDialog.getResult());
-		}
+		}}
 
 	}
 	
