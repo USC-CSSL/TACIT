@@ -232,6 +232,8 @@ public class HansardDebatesCrawler {
 					extractInfo();
 					ConsoleView.printlInConsoleln("Writing Debate: "+strTitle);
 					number +=1;
+					if (number==limitRecords)
+						break;
 				} catch(Exception exception){
 					System.out.println("Exception occurred");
 				}
@@ -312,16 +314,19 @@ public class HansardDebatesCrawler {
 			String finalLink = link;
 
 			for(int i = 2; i <= numberOfPages && count<limitRecords; i++) {
+				
 
 				finalLink = "https://hansard.parliament.uk" + link + "&page="+i;
 				
 				conn = Jsoup.connect(finalLink);
 				e = conn.timeout(120000).get().body().child(1).child(1).child(0).child(0).child(3).child(2).child(0);
 				
+				
 				for(Element xx: e.child(2).children()) {
 					
 					strTitle = xx.child(0).child(0).child(0).text();
-					strDate = xx.child(2).text();
+					//strDate = xx.child(2).text();
+					strDate = xx.child(0).child(0).child(1).child(0).text();
 					String line = xx.child(0).attr("href");
 					conn = Jsoup.connect("https://hansard.parliament.uk"+line);
 					Element et = conn.timeout(12000).get().body();
@@ -345,8 +350,14 @@ public class HansardDebatesCrawler {
 						jsonGenerator.writeEndObject();
 						
 						count+=1;
+						System.out.println("Counting =====" + count );
+						
+						if(count==limitRecords)
+							break;
 					}
 				}
+				
+				System.out.println("Count--------------------------" + count);
 				monitor.subTask("Page "+i+" of " + numberOfPages+" pages crawled");
 				monitor.worked(progressMonitorIncrement);
 			}

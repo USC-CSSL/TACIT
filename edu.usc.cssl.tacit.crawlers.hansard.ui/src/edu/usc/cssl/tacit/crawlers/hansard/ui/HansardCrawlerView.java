@@ -228,7 +228,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		
 		keywordSearchText = new Text(searchFilterComposite, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(keywordSearchText);	
-		keywordSearchText.setMessage("Search a House Member Eg. John");
+		keywordSearchText.setMessage("Enter a search term");
 		
 		limitByDate  = new Button(searchFilterComposite, SWT.CHECK);
 		limitByDate.setText("Limit by date");
@@ -356,7 +356,7 @@ public class HansardCrawlerView  extends ViewPart implements IHansardCrawlerView
 		
 		houseMemberSearchText = new Text(houseMemberFilterComposite, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).indent(1,10).span(2, 0).applyTo(houseMemberSearchText);	
-		houseMemberSearchText.setMessage("Enter a search term");
+		houseMemberSearchText.setMessage("Search a House Member Eg. John");
 		houseMemberSearchText.addModifyListener(new ModifyListener() {
 			
 			@Override
