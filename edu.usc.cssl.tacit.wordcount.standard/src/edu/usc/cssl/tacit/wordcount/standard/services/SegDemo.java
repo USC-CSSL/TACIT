@@ -70,7 +70,7 @@ public class SegDemo {
 		    segmenter = new CRFClassifier<>(props);
 		    try {
 		    	ConsoleView.printlInConsoleln("Loading chinese model");
-		    	String env = "/Users/nishant/Desktop/ctb.gz";
+		    	String env = DEFAULT_CORPUS_LOCATION+"/ctb.gz";
 				segmenter.loadClassifier(env, props);
 			} catch (ClassCastException e) {
 				// TODO Auto-generated catch block
