@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Test;
 
-import edu.usc.cssl.tacit.crawlers.uscongress.services.AvailableRecords;
-import edu.usc.cssl.tacit.crawlers.uscongress.services.UsCongressCrawler;
+//import edu.usc.cssl.tacit.crawlers.uscongress.services.AvailableRecords;
+//import edu.usc.cssl.tacit.crawlers.uscongress.services.UsCongressCrawler;
 
 public class Us_Congress_Crawler_Test {
 	final String directoryPath = new File("TestData").getAbsolutePath();
@@ -35,7 +35,7 @@ public class Us_Congress_Crawler_Test {
 		allCongresses.add(102);
 		allCongresses.add(101);
 		String corpusName = "Test";
-		UsCongressCrawler sc = new UsCongressCrawler();
+		//UsCongressCrawler sc = new UsCongressCrawler();
 		String outputDir = directoryPath + System.getProperty("file.separator") + corpusName;
 		File temp = new File(outputDir);
 		temp.mkdir();
@@ -43,10 +43,10 @@ public class Us_Congress_Crawler_Test {
 		try {
 			String s[] = { "All", "114", "113", "112", "111", "110", "109", "108", "107", "106", "105", "104", "103",
 					"102", "101" };
-			AvailableRecords.getAllSenators(s);
-			sc.initialize("Date", 1, 114, congressMemberDetails, "", "", outputDir, allCongresses,
-					new NullProgressMonitor(), 40, true, true, false, true, true);
-			sc.crawl();
+			//AvailableRecords.getAllSenators(s);
+			//sc.initialize("Date", 1, 114, congressMemberDetails, "", "", outputDir, allCongresses,
+			//		new NullProgressMonitor(), 40, true, true, false, true, true);
+			//sc.crawl();
 			FileUtils.deleteDirectory(new File(outputDir));
 		} catch (Exception e) {
 			exceptionObj = e;
