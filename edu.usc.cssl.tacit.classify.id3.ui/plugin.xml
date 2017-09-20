@@ -33,17 +33,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:classify">
-         <command
-               commandId="edu.usc.cssl.tacit.classify.id3.ui.command1"
-               icon="icons/TACITId3Icon.png"
-               label="C4.5  Decision Tree Classifier"
-               style="push"
-               tooltip="ID3 Classifier">
-         </command>
-      </menuContribution>
    </extension>
 
 </plugin>
