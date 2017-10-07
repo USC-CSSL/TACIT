@@ -51,7 +51,7 @@
   			
   			<products>
     				<product>
-      				<id><<group.id>>.<<artifact.id>></id>
+      				<id>edu.usc.tacit.tools.parent</id>
 					<rootFolders>
         					<macosx>tacit.app</macosx>
 					</rootFolders>
