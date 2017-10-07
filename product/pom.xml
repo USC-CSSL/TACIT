@@ -18,9 +18,6 @@
         <version>${tycho.version}</version>
         <configuration>
           <includeAllDependencies>true</includeAllDependencies>
-              <profileProperties>
-      			<macosx-bundled>true</macosx-bundled>
-    			</profileProperties>
         </configuration>
       </plugin>
       <plugin>
@@ -41,27 +38,6 @@
             </goals>
           </execution>
         </executions>
-        
-        <configuration>
-        		<formats>
-    				<win32>zip</win32>
-    				<linux>tar.gz</linux>
-    				<macosx>tar.gz</macosx>
-  			</formats>
-  			
-  			<products>
-    				<product>
-      				<id>edu.usc.tacit.tools.product</id>
-					<rootFolders>
-        					<macosx>tacit.app</macosx>
-					</rootFolders>
-    				</product>
-  			</products>
-  			
-        </configuration>
-        
-        
-        
       </plugin>
     </plugins>
   <!--  <plugin>
