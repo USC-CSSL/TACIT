@@ -63,7 +63,7 @@ public class RecordCongressCrawl {
 			docsSavedCount = 0;
 			int page = 1;
 			int totalPages = 0;//used only when random is selected
-			int totalDatedPages = 0;//used when sort by date is selected
+			int totalDatedFiles = 0;//used when sort by date is selected
 			
 			
 			BufferedWriter bw;
@@ -106,7 +106,7 @@ public class RecordCongressCrawl {
 				Element t = d.getElementsByClass("results-number").get(0);
 				String s = t.text().trim();
 				String st[] = s.split(" ");
-				totalDatedPages = Integer.parseInt(st[st.length-1]);
+				totalDatedFiles = Integer.parseInt(st[st.length-1].replaceAll(",",""));
 				
 				Elements title = d.getElementsByClass("result-heading");
 				for (Element links : title) {
@@ -143,7 +143,7 @@ public class RecordCongressCrawl {
 								if(fields[2])
 									jsonGenerator.writeStringField("title", title1);
 								ConsoleView.printlInConsoleln("Writing record "+title1+"count "+docCount);
-								monitor.subTask("Writing record "+title1+", total count is "+totalCount);
+								monitor.subTask("Writing record "+title1+", total count: "+totalCount);
 							}
 							System.out.println(Jsoup.parse(docJournalAbstract.toString()).text());
 							if(fields[3])
@@ -171,7 +171,7 @@ public class RecordCongressCrawl {
 					page = (int) (Math.random()*totalPages+1);
 				else {
 					page++;
-					if(page>totalDatedPages)
+					if(totalCount>=totalDatedFiles-2)
 						break;
 				}
 				if (docsSavedCount >= limit)
