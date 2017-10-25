@@ -63,17 +63,17 @@ public class RecordCongressCrawl {
 			docsSavedCount = 0;
 			int page = 1;
 			int totalPages = 0;//used only when random is selected
-			int totalDatedFiles = 0;//used when sort by date is selected
+			//int totalDatedFiles = 0;//used when sort by date is selected
 			
 			
 			BufferedWriter bw;
 			Document d = null;
 			boolean connected = false;
 			HashSet<String> set = new HashSet<String>();
+			int results = 0;
 			tag: while (true) {
 				connected = false;
-				if(random)
-					page = (int) (Math.random()*25);
+
 				String site = "https://www.congress.gov/search?q={\"source\":\"congrecord\",\"congress\":\"" + congress + "\""+ houseRemark + query + chamberTxt+"}&pageSize=25&page=" + page;
 
 				System.out.println(site);
@@ -89,6 +89,7 @@ public class RecordCongressCrawl {
 					}
 				}
 				
+				
 				if(first){
 					
 				Elements number = d.getElementsByClass("results-number");
@@ -97,16 +98,24 @@ public class RecordCongressCrawl {
 				if(num.equals(""))
 					return;
 				System.out.println("This is "+ num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
-				int results = Integer.parseInt(num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
+				results = Integer.parseInt(num.substring(num.lastIndexOf("of")+3).replaceAll(",", ""));
 				System.out.println(num+"------"+results);
 				if(limit == -1)
 					limit = results;
+				limit = Math.min(limit, results);
+				if (results%25 == 0) {
+					totalPages = results/25;
+				}else {
+					totalPages = (results/25) + 1;
+				}
+				
+				
 				first = false;
 				}
-				Element t = d.getElementsByClass("results-number").get(0);
-				String s = t.text().trim();
-				String st[] = s.split(" ");
-				totalDatedFiles = Integer.parseInt(st[st.length-1].replaceAll(",",""));
+				//Element t = d.getElementsByClass("results-number").get(0);
+				//String s = t.text().trim();
+				//String st[] = s.split(" ");
+				//totalDatedFiles = Integer.parseInt(st[st.length-1].replaceAll(",",""));
 				
 				Elements title = d.getElementsByClass("result-heading");
 				for (Element links : title) {
@@ -142,7 +151,7 @@ public class RecordCongressCrawl {
 								String title1 = (date.child(1)).toString().substring(4,date.child(1).toString().indexOf("<br"));
 								if(fields[2])
 									jsonGenerator.writeStringField("title", title1);
-								ConsoleView.printlInConsoleln("Writing record "+title1+"count "+docCount);
+								ConsoleView.printlInConsoleln("Writing record "+title1+" ("+docsSavedCount+")");
 								monitor.subTask("Writing record "+title1+", total count: "+totalCount);
 							}
 							System.out.println(Jsoup.parse(docJournalAbstract.toString()).text());
@@ -163,24 +172,35 @@ public class RecordCongressCrawl {
 					totalCount++;
 					monitor.worked(1);
 					
-					if (docCount >= limit){					
-						break;
-					}
+					if (docsSavedCount >= limit)
+						break tag;
+					
+					
 				}
+				
+				if (docCount >= results){					
+					break tag;
+				}
+				
 				if(random)
 					page = (int) (Math.random()*totalPages+1);
 				else {
 					page++;
-					if(totalCount>=totalDatedFiles-2)
-						break;
+					//if(totalCount>=totalDatedFiles-2)
+						//break;
 				}
-				if (docsSavedCount >= limit)
-					break;
+				
+				
+				
 			}
-			ConsoleView.printlInConsoleln(docCount+ "file(s) Downloaded ");
+			ConsoleView.printlInConsoleln(docsSavedCount+ "file(s) Downloaded for " + member + "\n");
 			jsonGenerator.writeEndArray();
 			jsonGenerator.flush();
 			jsonGenerator.close();
 		
  }
+ 
+ 
+
+ 
 }
