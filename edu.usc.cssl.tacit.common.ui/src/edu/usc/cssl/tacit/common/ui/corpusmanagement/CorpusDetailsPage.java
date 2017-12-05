@@ -332,7 +332,7 @@ public class CorpusDetailsPage implements IDetailsPage {
 		case HANSARD_JSON:
 			generalJSON.setSelection(true);
 			break;
-		case GOVTRACK_JSON:
+		case PROPUBLICA_JSON:
 			generalJSON.setSelection(true);
 		}
 	}

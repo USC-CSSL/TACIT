@@ -429,7 +429,7 @@ public class Preprocessor {
 		case HANSARD_JSON:
 			processTwitter(corpus, monitor);
 			break;
-		case GOVTRACK_JSON:
+		case PROPUBLICA_JSON:
 			processTwitter(corpus, monitor);
 			break;
 		default:
@@ -487,7 +487,7 @@ public class Preprocessor {
 					ans = qp.processJson(corpusClass, f.getAbsolutePath(), "data.Body", true);
 				}
 			}
-			if (corpusType == CMDataType.GOVTRACK_JSON) {
+			if (corpusType == CMDataType.PROPUBLICA_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
 				ans = qp.processJson(corpusClass, f.getAbsolutePath(),"data.Bill_Name,data.Introduced_Date,data.Congress,data.Bill_Type,data.Bill_Resolution_Type,data.Sponsor_Name,data.Sponsor_Party", true);

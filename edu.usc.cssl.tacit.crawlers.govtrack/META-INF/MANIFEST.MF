@@ -11,5 +11,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  jackson-all-1.9.0.jar,
- jackson-core-2.5.0.jar
+ jackson-core-2.5.0.jar,
+ commons-logging-1.2.jar,
+ httpclient-4.5.3.jar,
+ httpcore-4.4.6.jar,
+ json-20160212.jar
 Export-Package: edu.usc.cssl.tacit.crawlers.govtrack.services

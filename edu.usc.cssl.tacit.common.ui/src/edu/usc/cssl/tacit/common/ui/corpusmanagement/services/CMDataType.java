@@ -1,7 +1,7 @@
 package edu.usc.cssl.tacit.common.ui.corpusmanagement.services;
 
 public enum CMDataType {
-	JSON,REDDIT_JSON, TWITTER_JSON, STACKEXCHANGE_JSON, FRONTIER_JSON, TYPEPAD_JSON, CONGRESS_JSON, PLAIN_TEXT, XML, MICROSOFT_WORD, PRESIDENCY_JSON, HANSARD_JSON, IMPORTED_CSV, PLOSONE_JSON, GOVTRACK_JSON, LATIN_JSON, GUTENBERG_JSON;
+	JSON,REDDIT_JSON, TWITTER_JSON, STACKEXCHANGE_JSON, FRONTIER_JSON, TYPEPAD_JSON, CONGRESS_JSON, PLAIN_TEXT, XML, MICROSOFT_WORD, PRESIDENCY_JSON, HANSARD_JSON, IMPORTED_CSV, PLOSONE_JSON, PROPUBLICA_JSON, LATIN_JSON, GUTENBERG_JSON;
 
 	public static CMDataType get(String dataType) {
 		if(dataType.equals("PLAIN_TEXT")) return CMDataType.PLAIN_TEXT;
@@ -18,7 +18,7 @@ public enum CMDataType {
 		else if(dataType.equals("PRESIDENCY_JSON")) return CMDataType.PRESIDENCY_JSON;
 		else if(dataType.equals("HANSARD_JSON")) return CMDataType.HANSARD_JSON;
 		else if(dataType.equals("PLOSONE_JSON")) return CMDataType.PLOSONE_JSON;
-		else if(dataType.equals("GOVTRACK_JSON")) return CMDataType.GOVTRACK_JSON;
+		else if(dataType.equals("PROPUBLICA_JSON")) return CMDataType.PROPUBLICA_JSON;
 		else if(dataType.equals("LATIN_JSON")) return CMDataType.LATIN_JSON;
 		else if(dataType.equals("GUTENBERG_JSON")) return CMDataType.GUTENBERG_JSON;
 		return null;

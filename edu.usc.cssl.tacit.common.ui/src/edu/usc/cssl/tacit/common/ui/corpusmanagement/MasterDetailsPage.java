@@ -733,7 +733,7 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 		}else if(type == CMDataType.HANSARD_JSON){
 			File f = new File(location+"hansard"+File.separator+corpus.getCorpusName());
 			FileUtils.deleteDirectory(f);
-		}else if(type == CMDataType.GOVTRACK_JSON){
+		}else if(type == CMDataType.PROPUBLICA_JSON){
 			File f = new File(location+"govtrack"+File.separator+corpus.getCorpusName());
 			FileUtils.deleteDirectory(f);
 		}

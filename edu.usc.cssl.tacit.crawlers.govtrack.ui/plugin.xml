@@ -38,5 +38,14 @@
             commandId="edu.usc.cssl.tacit.crawlers.govtrack.ui.command1">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="edu.usc.cssl.tacit.common.ui.preferencepage.tacit"
+            class="edu.usc.cssl.tacit.crawlers.govtrack.ui.preferencepage.ProPublicaConfiguration"
+            id="edu.usc.cssl.tacit.crawlers.govtrack.ui.configuration"
+            name="ProPublica Configuration">
+      </page>
+   </extension>
 
 </plugin>
