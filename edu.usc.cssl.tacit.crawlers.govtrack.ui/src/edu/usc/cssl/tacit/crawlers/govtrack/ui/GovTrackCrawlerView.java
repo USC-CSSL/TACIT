@@ -43,6 +43,7 @@ import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.CorpusClass;
 import edu.usc.cssl.tacit.common.ui.corpusmanagement.services.ManageCorpora;
 import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 import edu.usc.cssl.tacit.crawlers.govtrack.services.GovTrackCrawler;
+import edu.usc.cssl.tacit.crawlers.govtrack.services.ProPublicaCrawler;
 import edu.usc.cssl.tacit.crawlers.govtrack.ui.internal.GovTrackCrawlerViewImageRegistry;
 import edu.usc.cssl.tacit.crawlers.govtrack.ui.internal.IGovTrackCrawlerViewConstants;
 
@@ -57,78 +58,63 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 	private Composite searchComposite;
 
 	private Text searchText;
-	private Text congressNumber;
+	private Combo selectCongressNumber;
 	private Text limitResultsText;
 	private Composite commonsearchComposite;
+	private Combo selectChamberType;	
 	private Combo selectBillType;	
-	private Combo selectCurrentStatus;	
 	private Text corpusNameTxt;
 	Corpus govtrackCorpus;
 	private boolean filesFound;
 	private boolean messageDisplayed;
-	String chamberTypes[] = {"","House simple resolutions","Senate bills","Senate joint resolution","House bills","Concurrent resolutions originating in the House","Concurrent resolutions originating in the Senate","Joint resolutions originating in the House","Senate simple resolutions"};
-	String statusTypes[] = {"","Vetoed (No Override Attempt)","Passed House, Failed Senate ","Passed House & Senate","Agreed To (Constitutional Amendment Proposal)","Passed Senate with Changes","Vetoed & Override Passed Senate, Failed in House","Failed House","Passed Senate, Failed House","Vetoed & House Overrides (Senate Next)","Vetoed & Senate Overrides (House Next)","Passed House with Changes","Failed Cloture","Enacted — Veto Overridden","Agreed To (Concurrent Resolution)","Failed Under Suspension","Agreed To (Simple Resolution)","Pocket Vetoed","Vetoed & Override Failed in House","Conference Report Agreed to by Senate","Failed Senate","Passed Senate","Failed to Resolve Differences","Enacted — Signed by the President","Passed House","Conference Report Agreed to by House","Reported by Committee","Vetoed & Override Passed House, Failed in Senate","Vetoed & Override Failed in Senate","Enacted — By 10 Day Rule","Introduced","Enacted (Unknown Final Step)","Referred to Committee"};
+	String chamberTypes[] = {"house", "senate","both"};
+	String billTypes[] = {"introduced", "updated", "active", "passed", "enacted", "vetoed"};
+	String congressNumbers[] = {"all","105","106","107","108","109","110","111","112","113","114","115"};
+	
+	ProPublicaCrawler proPublicaCrawler ;
 	
 	int limit;
-	HashMap<Integer, String> currentStatusMap = new HashMap<Integer, String>();
+	HashMap<Integer, String> chamberMap = new HashMap<Integer, String>();
 	{
-		currentStatusMap.put(0, "");
-		currentStatusMap.put(1, "prov_kill_veto");
-		currentStatusMap.put(2, "fail_second_senate");
-		currentStatusMap.put(3, "passed_bill");
-		currentStatusMap.put(4, "passed_constamend");
-		currentStatusMap.put(5, "pass_back_senate");	
-		currentStatusMap.put(6, "vetoed_override_fail_second_house");	
-		currentStatusMap.put(7, "fail_originating_house");	
-		currentStatusMap.put(8, "fail_second_house");	
-		currentStatusMap.put(9, "override_pass_over_house");	
-		currentStatusMap.put(10, "override_pass_over_senate");	
-		currentStatusMap.put(11, "pass_back_house");	
-		currentStatusMap.put(12, "prov_kill_cloturefailed");	
-		currentStatusMap.put(13, "enacted_veto_override");	
-		currentStatusMap.put(14, "passed_concurrentres");	
-		currentStatusMap.put(15, "prov_kill_suspensionfailed");	
-		currentStatusMap.put(16, "passed_simpleres");	
-		currentStatusMap.put(17, "vetoed_pocket");	
-		currentStatusMap.put(18, "vetoed_override_fail_originating_house");
-		currentStatusMap.put(19, "conference_passed_senate");	
-		currentStatusMap.put(20, "fail_originating_senate");	
-		currentStatusMap.put(21, "pass_over_senate");
-		currentStatusMap.put(22, "prov_kill_pingpongfail");	
-		currentStatusMap.put(23, "enacted_signed");	
-		currentStatusMap.put(24, "pass_over_house");	
-		currentStatusMap.put(25, "conference_passed_house");	
-		currentStatusMap.put(26, "reported");	
-		currentStatusMap.put(27, "vetoed_override_fail_second_senate");	
-		currentStatusMap.put(28, "vetoed_override_fail_originating_senate");	
-		currentStatusMap.put(29, "enacted_tendayrule");	
-		currentStatusMap.put(30, "introduced");	
-		currentStatusMap.put(31, "enacted_unknown");	
-		currentStatusMap.put(32, "referred");	
-		
+		chamberMap.put(0, "house");
+		chamberMap.put(1, "senate");
+		chamberMap.put(2, "both");
+
 	}
 	HashMap<Integer, String> billTypeMap = new HashMap<Integer, String>();
 	{
-		billTypeMap.put(0, "");
-		billTypeMap.put(1, "house_resolution");
-		billTypeMap.put(2, "senate_bill");
-		billTypeMap.put(3, "senate_joint_resolution");
-		billTypeMap.put(4, "house_bill");
-		billTypeMap.put(5, "house_concurrent_resolution");	
-		billTypeMap.put(6, "senate_concurrent_resolution");	
-		billTypeMap.put(7, "house_joint_resolution");	
-		billTypeMap.put(8, "senate_resolution");	
-		
+		billTypeMap.put(0, "introduced");
+		billTypeMap.put(1, "updated");
+		billTypeMap.put(2, "active");
+		billTypeMap.put(3, "passed");
+		billTypeMap.put(4, "enacted");
+		billTypeMap.put(5, "vetoed");			
 	}
 	
+	HashMap<Integer, String> congressNumbersMap = new HashMap<Integer, String>();
+	{
+		congressNumbersMap.put(0, "all");
+		congressNumbersMap.put(1, "105");
+		congressNumbersMap.put(2, "106");
+		congressNumbersMap.put(3, "107");
+		congressNumbersMap.put(4, "108");
+		congressNumbersMap.put(5, "109");
+		congressNumbersMap.put(6, "110");
+		congressNumbersMap.put(7, "111");
+		congressNumbersMap.put(8, "112");
+		congressNumbersMap.put(9, "113");
+		congressNumbersMap.put(10, "114");
+		congressNumbersMap.put(11, "115");
+
+	}
 	
 	//variables needed at runtime
 	
 	String outputDir;
-	int billTypeIndex; int currentStatusIndex; String corpusName;			
+	int chamberIndex; int billTypeIndex; String corpusName;	int congressNumberIndex;		
 	boolean canProceed; 
 	String query;
-	String congress;
+	
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -219,23 +205,27 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(searchText);	
 		searchText.setMessage("Enter a search term");
 		
-		final Label searchLabel2 = new Label(commonsearchComposite, SWT.NONE);
-		searchLabel2.setText("Congress number:");
-		GridDataFactory.fillDefaults().grab(false, false).span(1, 0).applyTo(searchLabel2);
-		congressNumber = new Text(commonsearchComposite, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 0).applyTo(congressNumber);	
-		congressNumber.setMessage("Enter a Congress number");
 
+		Composite comboComposite0 = new Composite(commonsearchComposite, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(comboComposite0);
+		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(comboComposite0);
+		Label selectCongressNumberLabel = new Label(comboComposite0, SWT.NONE);
+		selectCongressNumberLabel.setText("Congress number:");
+		selectCongressNumber = new Combo(comboComposite0, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(selectCongressNumber);
+		selectCongressNumber.setItems(congressNumbers);
+		selectCongressNumber.select(0);
+		
 		
 		Composite comboComposite1 = new Composite(commonsearchComposite, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false).applyTo(comboComposite1);
 		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(comboComposite1);
 		Label selectPresidentSearchLabel = new Label(comboComposite1, SWT.NONE);
 		selectPresidentSearchLabel.setText("Bill Type:");
-		selectBillType = new Combo(comboComposite1, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(selectBillType);
-		selectBillType.setItems(chamberTypes);
-		selectBillType.select(0);
+		selectChamberType = new Combo(comboComposite1, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(selectChamberType);
+		selectChamberType.setItems(chamberTypes);
+		selectChamberType.select(0);
 		
 		
 		Composite comboComposite2 = new Composite(commonsearchComposite, SWT.NONE);
@@ -243,10 +233,10 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		GridDataFactory.fillDefaults().grab(true, false).indent(0,10).span(2, 0).applyTo(comboComposite2);
 		Label documentCategory = new Label(comboComposite2, SWT.NONE);
 		documentCategory.setText("Current status:");
-		selectCurrentStatus = new Combo(comboComposite2, SWT.FLAT | SWT.READ_ONLY);
-		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(selectCurrentStatus);
-		selectCurrentStatus.setItems(statusTypes);
-		selectCurrentStatus.select(0);
+		selectBillType = new Combo(comboComposite2, SWT.FLAT | SWT.READ_ONLY);
+		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(selectBillType);
+		selectBillType.setItems(billTypes);
+		selectBillType.select(0);
 		TacitFormComposite.createEmptyRow(toolkit, commonsearchComposite);
 		
 		
@@ -300,15 +290,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 
 	private boolean canItProceed() {
 		form.getMessageManager().removeAllMessages();
-		//Validate congress number
-		try {
-			if(!congressNumber.getText().isEmpty())
-				Integer.parseInt(congressNumber.getText());
-		} catch(Exception e) {
-			form.getMessageManager().addMessage("congressName", "Provide proper congress number", null, IMessageProvider.ERROR);
-			return false;
-		}
-		
+
 		//Validate corpus name
 		String corpusName = corpusNameTxt.getText();
 		if(null == corpusName || corpusName.isEmpty()) {
@@ -392,10 +374,10 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 					public void run() {
 						
 						corpusName = corpusNameTxt.getText();
+						chamberIndex = selectChamberType.getSelectionIndex();
 						billTypeIndex = selectBillType.getSelectionIndex();
-						currentStatusIndex = selectCurrentStatus.getSelectionIndex();
 						query = searchText.getText();
-						congress = congressNumber.getText();
+						congressNumberIndex = selectCongressNumber.getSelectionIndex();
 						if(limitResults.getSelection())
 							limit = Integer.parseInt(limitResultsText.getText());
 						else
@@ -408,14 +390,14 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 						}
 				}
 				});
-				int progressSize = 500338;//+30
+				int progressSize = 10000;//+30
 				if(limit!=-1){
 					progressSize = limit+10;
 				}
-				monitor.beginTask("Running GovTrack Crawler..." , progressSize);
-				TacitFormComposite.writeConsoleHeaderBegining("GovTrack Crawler started");
-				final GovTrackCrawler rc = new GovTrackCrawler(); // initialize all the common parameters	
-
+				monitor.beginTask("Running ProPublica Crawler..." , progressSize);
+				TacitFormComposite.writeConsoleHeaderBegining("ProPublica Crawler started");
+				proPublicaCrawler = new ProPublicaCrawler("");
+				
 				monitor.subTask("Initializing...");
 				monitor.worked(10);
 				if(monitor.isCanceled())
@@ -427,35 +409,47 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 					}
 					handledCancelRequest("Cancelled");
 				}
-					try {
-						monitor.subTask("Crawling...");
-						if(monitor.isCanceled()) {
-							return handledCancelRequest("Cancelled");					
-						} 
-							filesFound = rc.crawl(outputDir, query, congress, billTypeMap.get(billTypeIndex), currentStatusMap.get(currentStatusIndex), limit, monitor);
-						if(monitor.isCanceled())
-							return handledCancelRequest("Cancelled");
-					} catch(IndexOutOfBoundsException e){
+				try {
+					monitor.subTask("Crawling...");
+					if(monitor.isCanceled()) {
+						return handledCancelRequest("Cancelled");					
+					} 
+					
+					if (query.equals("")) {
+						if (congressNumberIndex == 0) {
+							proPublicaCrawler.crawlBillsForAllCongress(chamberMap.get(chamberIndex), billTypeMap.get(billTypeIndex), outputDir);
+						}else {
+							proPublicaCrawler.crawlBillsForSingleCongress(congressNumbersMap.get(congressNumberIndex), chamberMap.get(chamberIndex), billTypeMap.get(billTypeIndex), outputDir);
+						}
+					}else {
+						proPublicaCrawler.searchBillsForAllCongress(query, outputDir);
+					}
 
-						filesFound = false;
-						
-						Display.getDefault().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								messageDisplayed = true;
-								MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
-								int result = dialog.open();
-								if (result <= 0){
-									dialog.close();
-									
-								}
+					if(monitor.isCanceled()) {
+						return handledCancelRequest("Cancelled");
+					}
+							
+				} catch(IndexOutOfBoundsException e){
+
+					filesFound = false;
+					
+					Display.getDefault().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							messageDisplayed = true;
+							MessageDialog dialog = new MessageDialog(null, "Alert", null, "No results were found", MessageDialog.INFORMATION, new String[]{"OK"}, 1);
+							int result = dialog.open();
+							if (result <= 0){
+								dialog.close();
+								
 							}
-						});
+						}
+					});
 						
-					} catch (Exception e) {
+				} catch (Exception e) {
 							
 						return handleException(monitor, e, "Crawling failed. Provide valid data");
-					} 
+				} 
 				
 				try {
 					Display.getDefault().syncExec(new Runnable() {
