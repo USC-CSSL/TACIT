@@ -66,7 +66,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 	Corpus govtrackCorpus;
 	private boolean filesFound;
 	private boolean messageDisplayed;
-	String billTypes[] = {"","House simple resolutions","Senate bills","Senate joint resolution","House bills","Concurrent resolutions originating in the House","Concurrent resolutions originating in the Senate","Joint resolutions originating in the House","Senate simple resolutions"};
+	String chamberTypes[] = {"","House simple resolutions","Senate bills","Senate joint resolution","House bills","Concurrent resolutions originating in the House","Concurrent resolutions originating in the Senate","Joint resolutions originating in the House","Senate simple resolutions"};
 	String statusTypes[] = {"","Vetoed (No Override Attempt)","Passed House, Failed Senate ","Passed House & Senate","Agreed To (Constitutional Amendment Proposal)","Passed Senate with Changes","Vetoed & Override Passed Senate, Failed in House","Failed House","Passed Senate, Failed House","Vetoed & House Overrides (Senate Next)","Vetoed & Senate Overrides (House Next)","Passed House with Changes","Failed Cloture","Enacted — Veto Overridden","Agreed To (Concurrent Resolution)","Failed Under Suspension","Agreed To (Simple Resolution)","Pocket Vetoed","Vetoed & Override Failed in House","Conference Report Agreed to by Senate","Failed Senate","Passed Senate","Failed to Resolve Differences","Enacted — Signed by the President","Passed House","Conference Report Agreed to by House","Reported by Committee","Vetoed & Override Passed House, Failed in Senate","Vetoed & Override Failed in Senate","Enacted — By 10 Day Rule","Introduced","Enacted (Unknown Final Step)","Referred to Committee"};
 	
 	int limit;
@@ -234,7 +234,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		selectPresidentSearchLabel.setText("Bill Type:");
 		selectBillType = new Combo(comboComposite1, SWT.FLAT | SWT.READ_ONLY);
 		GridDataFactory.fillDefaults().grab(true, false).span(1, 0).applyTo(selectBillType);
-		selectBillType.setItems(billTypes);
+		selectBillType.setItems(chamberTypes);
 		selectBillType.select(0);
 		
 		
