@@ -497,7 +497,7 @@ public class Preprocessor {
 			if (corpusType == CMDataType.PROPUBLICA_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
 				writer.close();
-				ans = qp.processJson(corpusClass, f.getAbsolutePath(),"data.Bill_Name,data.Introduced_Date,data.Congress,data.Bill_Type,data.Bill_Resolution_Type,data.Sponsor_Name,data.Sponsor_Party", true);
+				ans = qp.processJson(corpusClass, f.getAbsolutePath(),"data.title,data.summary", true);
 			}
 			if (corpusType == CMDataType.FRONTIER_JSON) {
 				writer.write("{\"data\":" + obj.toJSONString() + "}");
@@ -699,6 +699,9 @@ public class Preprocessor {
 						for(Object keys: twitterStream.keySet()){
 							String key = (String) keys;
 							Object val = twitterStream.get(key);
+							if (val == null) {
+								val = " ";
+							}
 							if(lineCheck){
 								System.out.println("\""+val.toString()+"\"");
 								bWriter.write("\""+val.toString()+"\"");

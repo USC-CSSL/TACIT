@@ -79,7 +79,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 	
 	ProPublicaCrawler proPublicaCrawler ;
 	
-	int limit;
+	long limit;
 	HashMap<Integer, String> chamberMap = new HashMap<Integer, String>();
 	{
 		chamberMap.put(0, "house");
@@ -124,7 +124,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		toolkit = createFormBodySection(parent, "GovTrack Crawler");
+		toolkit = createFormBodySection(parent, "ProPublica Crawler");
 		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR | Section.EXPANDED);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(section);
 		section.setExpanded(true);
@@ -360,7 +360,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 		query = searchText.getText();
 		congressNumberIndex = selectCongressNumber.getSelectionIndex();
 		if(limitResults.getSelection())
-			limit = Integer.parseInt(limitResultsText.getText());
+			limit = Long.parseLong(limitResultsText.getText());
 		else
 			limit = -1;
 
@@ -377,6 +377,10 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 					String apiKey = CommonUiActivator.getDefault().getPreferenceStore().getString(IProPublicaConstants.PROPUBLICA_API_KEY);
 					proPublicaCrawler = new ProPublicaCrawler(apiKey);
 					
+					if (!proPublicaCrawler.isAPIKeyValid()) {
+						ConsoleView.printlInConsoleln("There seems to be either something wrong with the server or API key is incorrect.");
+						throw new Exception();
+					}
 					
 					monitor.beginTask("Crawling ProPublica...",7000);
 					
@@ -404,12 +408,12 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 					
 					if (query.equals("")) {
 						if (congressNumberIndex == 0) {
-							proPublicaCrawler.crawlBillsForAllCongress(chamberMap.get(chamberIndex), billTypeMap.get(billTypeIndex), corpusClassDir + File.separator + corpusName + ".json",monitor);
+							proPublicaCrawler.crawlBillsForAllCongress(chamberMap.get(chamberIndex), billTypeMap.get(billTypeIndex), corpusClassDir + File.separator + corpusName + ".json",monitor,limit);
 						}else {
-							proPublicaCrawler.crawlBillsForSingleCongress(congressNumbersMap.get(congressNumberIndex), chamberMap.get(chamberIndex), billTypeMap.get(billTypeIndex),  corpusClassDir + File.separator + corpusName + ".json", monitor);
+							proPublicaCrawler.crawlBillsForSingleCongress(congressNumbersMap.get(congressNumberIndex), chamberMap.get(chamberIndex), billTypeMap.get(billTypeIndex),  corpusClassDir + File.separator + corpusName + ".json", monitor,limit);
 						}
 					}else {
-						proPublicaCrawler.searchBillsForAllCongress(query, corpusClassDir + File.separator + corpusName + ".json",monitor);
+						proPublicaCrawler.searchBillsForAllCongress(query, corpusClassDir + File.separator + corpusName + ".json",monitor,limit);
 					}
 						
 
@@ -464,7 +468,7 @@ public class GovTrackCrawlerView  extends ViewPart implements IGovTrackCrawlerVi
 						TacitFormComposite.writeConsoleHeaderBegining("Success: <Completed> ProPublica Crawler  ");
 						TacitFormComposite.updateStatusMessage(getViewSite(), "Crawling is completed",
 								IStatus.INFO, form);
-						int numResults = proPublicaCrawler.getLastCrawlCount();
+						long numResults = proPublicaCrawler.getLastCrawlCount();
 						ConsoleView.printlInConsoleln(numResults + " bills downloaded.");
 						
 						if (numResults != 0){

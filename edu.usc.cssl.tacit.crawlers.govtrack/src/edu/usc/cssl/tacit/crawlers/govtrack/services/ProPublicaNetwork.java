@@ -41,5 +41,15 @@ public class ProPublicaNetwork {
         return body.toString();
 		
 	}
+	
+	public int getResponseCode(String endpoint) throws Exception{
+		httpGet = new HttpGet(endpoint);
+		httpGet.setHeader("X-API-Key", apiKey);
+		
+		HttpResponse response = client.execute(httpGet); // execute httpGet
+        StatusLine statusLine = response.getStatusLine();
+        
+        return statusLine.getStatusCode();
+	}
 
 }

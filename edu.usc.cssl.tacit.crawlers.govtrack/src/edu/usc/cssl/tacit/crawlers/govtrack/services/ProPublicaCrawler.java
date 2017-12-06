@@ -14,23 +14,35 @@ import edu.usc.cssl.tacit.common.ui.views.ConsoleView;
 public class ProPublicaCrawler {
 	
 	ProPublicaNetwork network;
-	private int offset = 0;
+	private long offset = 0;
+	private long billCount = 0;
 	
 	public ProPublicaCrawler(String apiKey) {
 		network = new ProPublicaNetwork(apiKey);
 	}
 	
-	private void crawlBills(String congress, String chamber, String type, FileWriter fileWriter, IProgressMonitor monitor) throws Exception {
+	private long crawlBills(String congress, String chamber, String type, long billCountStartValue, FileWriter fileWriter, IProgressMonitor monitor, Long limit) throws Exception {
 
 		String response = null;
 		String endpoint = ProPublicaEnpoints.getAllBillsForCongressEndpoint(congress, chamber, type,"0");
 		boolean first = true;
 		
 		offset = 0;
+		
+		//Initialize bill count with a start value. This is used only when we have to crawl all the congresses. For single congress, we can have start value of 0
+		billCount = billCountStartValue;
+		int monitorInc = 0;
 		while(true) {
+			monitorInc = 0;
 			if (monitor.isCanceled()){
 				throw new OperationCanceledException();
 			}
+			
+			if (billCount >= limit) {
+				break;
+			}
+			
+			
 			endpoint = ProPublicaEnpoints.getAllBillsForCongressEndpoint(congress, chamber, type,offset+"");
 			System.out.println(endpoint);
 			response = network.sendGETRequest(endpoint);
@@ -44,11 +56,21 @@ public class ProPublicaCrawler {
 			JSONArray results = (JSONArray)responseJSON.get("results");
 			
 			if (results.getJSONObject(0).getInt("num_results") == 0) {
-				offset -= 20;
 				break;
 			}
 			
 			results = results.getJSONObject(0).getJSONArray("bills");
+			
+			
+			Iterator<Object> iterator =  results.iterator();
+			while(iterator.hasNext()) {
+				JSONObject obj = (JSONObject)iterator.next();
+				obj.put("congress", congress);
+				billCount++;
+				monitorInc++;
+				monitor.subTask("Bill " + billCount + ":\t" + obj.getString("title"));
+				ConsoleView.printlInConsoleln("Bill " + billCount + ":\t" + obj.getString("title"));
+			}
 			
 			String bills =  results.toString();
 			
@@ -56,30 +78,38 @@ public class ProPublicaCrawler {
 				fileWriter.write(",");
 			}
 			
-			
-			monitor.subTask("Documents Downloaded: " + offset);
-			monitor.worked(offset);
-			ConsoleView.printlInConsoleln("Documents Downloaded: " + offset);
+			monitor.worked(monitorInc);
 			
 			fileWriter.write(bills.substring(bills.indexOf("[")+1,bills.lastIndexOf("]")).trim());
 			offset += 20;
 			first = false;
+			//Thread.sleep(100);
 		}
+		
+		return billCount;
 		
 	}
 	
 	
-	private void searchBills(String query, FileWriter fileWriter, IProgressMonitor monitor) throws Exception {
+	private void searchBills(String query, FileWriter fileWriter, IProgressMonitor monitor, long limit) throws Exception {
 
 		String response = null;
 		String endpoint = ProPublicaEnpoints.getSearchBillsEndpoint(query, "0");
 		boolean first = true;
 		
 		offset = 0;
+		billCount = 0;
+		int monitorInc = 0;
 		while(true) {
+			monitorInc = 0;
 			if (monitor.isCanceled()){
 				throw new OperationCanceledException();
 			}
+			
+			if (billCount >= limit) {
+				break;
+			}
+			
 			
 			endpoint = ProPublicaEnpoints.getSearchBillsEndpoint(query, offset + "");;
 			System.out.println(endpoint);
@@ -94,11 +124,20 @@ public class ProPublicaCrawler {
 			JSONArray results = (JSONArray)responseJSON.get("results");
 			
 			if (results.getJSONObject(0).getInt("num_results") == 0) { 
-				offset -= 20;
 				break;
 			}
 			
 			results = results.getJSONObject(0).getJSONArray("bills");
+			
+			Iterator<Object> iterator =  results.iterator();
+			while(iterator.hasNext()) {
+				JSONObject obj = (JSONObject)iterator.next();
+				billCount++;
+				monitorInc++;
+				monitor.subTask("Bill " + billCount + ":\t" + obj.getString("title"));
+				ConsoleView.printlInConsoleln("Bill " + billCount + ":\t" + obj.getString("title"));
+			}
+			
 			
 			String bills =  results.toString();
 			
@@ -106,55 +145,67 @@ public class ProPublicaCrawler {
 				fileWriter.write(",");
 			}
 			
-			monitor.subTask("Documents Downloaded: " + offset);
-			monitor.worked(offset);
-			ConsoleView.printlInConsoleln("Documents Downloaded: " + offset);
+			monitor.worked(monitorInc);
 			
 			fileWriter.write(bills.substring(bills.indexOf("[")+1,bills.lastIndexOf("]")).trim());
 			offset += 20;
 			first = false;
-			Thread.sleep(200);
+			//Thread.sleep(100);
 			
 		}
 		
 	}
 	
-	public int getLastCrawlCount() {
-		return offset;
+	public long getLastCrawlCount() {
+		return billCount;
 	}
 	
 	
-	public void crawlBillsForSingleCongress(String congress, String chamber, String type, String location, IProgressMonitor monitor) throws Exception {
-		
+	public void crawlBillsForSingleCongress(String congress, String chamber, String type, String location, IProgressMonitor monitor,long limit) throws Exception {
+		if (limit == -1) {
+			limit = Long.MAX_VALUE;
+		}
 		FileWriter fileWriter = new FileWriter(new File(location));
 		fileWriter.write("[");
-		crawlBills(congress, chamber, type, fileWriter,monitor);
+		crawlBills(congress, chamber, type,0,fileWriter,monitor, limit);
 		fileWriter.write("]");
 		fileWriter.close();
 		
 	}
 	
-	public void crawlBillsForAllCongress(String chamber, String type, String location, IProgressMonitor monitor) throws Exception {
+	public void crawlBillsForAllCongress(String chamber, String type, String location, IProgressMonitor monitor, long limit) throws Exception {
 		FileWriter fileWriter = new FileWriter(new File(location));
 		fileWriter.write("[");
+		long billCountStart = 0;
 		for (int i = ProPublicaConstants.START_CONGRESS ; i <= ProPublicaConstants.END_CONGRESS ; i++){
 			if (monitor.isCanceled()){
 				throw new OperationCanceledException();
 			}
-			crawlBills(i+"", chamber, type, fileWriter,monitor);
+			billCountStart = crawlBills(i+"", chamber, type, billCountStart, fileWriter,monitor, limit);
 			if (i<115)fileWriter.write(",");
 		}
 		fileWriter.write("]");
 		fileWriter.close();
 	}
 	
-	public void searchBillsForAllCongress(String query, String location, IProgressMonitor monitor) throws Exception {
+	public void searchBillsForAllCongress(String query, String location, IProgressMonitor monitor, long limit) throws Exception {
+		if (limit == -1) {
+			limit = Long.MAX_VALUE;
+		}
 		FileWriter fileWriter = new FileWriter(new File(location));
 		fileWriter.write("[");
 		query = query.replace(" ", "%20"); 
-		searchBills(query, fileWriter,monitor);
+		searchBills(query, fileWriter,monitor, limit);
 		fileWriter.write("]");
 		fileWriter.close();	
+	}
+	
+	public boolean isAPIKeyValid() throws Exception{
+		String checkerEnpoint = "https://api.propublica.org/congress/v1/105/house/bills/introduced.json?offset=0";
+		int statusCode = network.getResponseCode(checkerEnpoint);
+		
+		return statusCode<400;
+		
 	}
 	
 

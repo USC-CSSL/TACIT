@@ -853,7 +853,10 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					key = keyIterator.next();
 					
 					if(singleJsonObject.containsKey(key)){
-						String data = singleJsonObject.get(key).toString();
+						String data = "";
+						if (singleJsonObject.get(key) != null) {
+							data = singleJsonObject.get(key).toString();
+						}
 						
 						//Cleaning the data before inserting in the dataframe.
 						data = data.toLowerCase()
@@ -950,7 +953,12 @@ public class MasterDetailsPage extends MasterDetailsBlock {
 					key = keyIterator.next();
 					
 					if(singleJsonObject.containsKey(key)){
-						String data = singleJsonObject.get(key).toString();
+						
+						String data = "";
+						if (singleJsonObject.get(key) != null) {
+							data = singleJsonObject.get(key).toString();
+						}
+						
 						
 						//Cleaning the data before inserting in the dataframe.
 						data = data.toLowerCase()
