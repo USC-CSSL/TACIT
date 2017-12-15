@@ -7,7 +7,7 @@
             class="edu.usc.cssl.tacit.crawlers.govtrack.ui.GovTrackCrawlerView"
             icon="icons/govtrack_icon.png"
             id="edu.usc.cssl.tacit.crawlers.govtrack.ui.view1"
-            name="GovTrack Crawler"
+            name="ProPublica Crawler"
             restorable="true">
       </view>
    </extension>
@@ -19,7 +19,7 @@
          <command
                commandId="edu.usc.cssl.tacit.crawlers.govtrack.ui.command1"
                icon="icons/govtrack_icon.png"
-               label="GovTrack Crawler"
+               label="ProPublica Crawler"
                style="push">
          </command>
       </menuContribution>
@@ -28,7 +28,7 @@
          point="org.eclipse.ui.commands">
       <command
             id="edu.usc.cssl.tacit.crawlers.govtrack.ui.command1"
-            name="GovTrack Crawler">
+            name="ProPublica Crawler">
       </command>
    </extension>
    <extension
