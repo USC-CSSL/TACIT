@@ -173,7 +173,7 @@ public class RedditCrawler {
 	private String constructSearchQueryString(String query, String title, String author, String site, String linkId, String subreddit) throws UnsupportedEncodingException {
 		String queryString = "";		
 		if(null != query && !query.isEmpty())
-			queryString="text:"+query;
+			queryString+=query;
 		if(null != title && !title.isEmpty()) {
 			if(queryString.isEmpty())
 				queryString+="title:"+title;
