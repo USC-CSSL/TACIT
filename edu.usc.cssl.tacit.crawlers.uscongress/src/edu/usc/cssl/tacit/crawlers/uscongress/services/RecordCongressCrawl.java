@@ -152,7 +152,7 @@ public class RecordCongressCrawl {
 								if(fields[2])
 									jsonGenerator.writeStringField("title", title1);
 								ConsoleView.printlInConsoleln("Writing record "+title1+" ("+docsSavedCount+")");
-								monitor.subTask("Writing record "+title1+", total count: "+totalCount);
+								monitor.subTask("Writing record "+title1+");
 							}
 							System.out.println(Jsoup.parse(docJournalAbstract.toString()).text());
 							if(fields[3])
