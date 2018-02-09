@@ -139,7 +139,8 @@ public class RecordCongressCrawl {
 							doc = Jsoup.connect(contentLink).timeout(4000).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
 								     .get();
 							docJournalAbstract =  doc.getElementsByClass("txt-box");
-							Elements dates = doc.getElementsByClass("wrapper_std");
+							//Elements dates = doc.getElementsByClass("wrapper_std");
+							Elements dates = doc.select(".main-wrapper > h2");
 							jsonGenerator.writeStartObject();
 							for(Element date: dates){
 								dateText = Jsoup.parse(date.child(1).select("span").toString()).text();
@@ -148,7 +149,8 @@ public class RecordCongressCrawl {
 									jsonGenerator.writeStringField("house", dateText.substring(1, endIndex-1));
 								if(fields[1])
 									jsonGenerator.writeStringField("date", dateText.substring(endIndex+1,dateText.length()-1));
-								String title1 = (date.child(1)).toString().substring(4,date.child(1).toString().indexOf("<br"));
+								String title1 = (date.toString().substring(4,date.toString().indexOf("<br")));
+									//(date.child(1)).toString().substring(4,date.child(1).toString().indexOf("<br"));
 								if(fields[2])
 									jsonGenerator.writeStringField("title", title1);
 								ConsoleView.printlInConsoleln("Writing record "+title1+" ("+docsSavedCount+")");
