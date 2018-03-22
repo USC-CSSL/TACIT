@@ -202,6 +202,7 @@ public class LdaAnalysis {
 			bw.write(currentLine);
 			bw.newLine();
 			while ((currentLine = br.readLine()) != null) {
+				currentLine = currentLine.replaceAll(",", "");
 				currentLine = currentLine.replace('\t', ',');
 				List<String> wordList = Arrays.asList(currentLine.split(","));
 
