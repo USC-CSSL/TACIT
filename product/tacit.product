@@ -90,7 +90,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </configurations>
 
    <repositories>
-      <repository location="http://tacit.usc.edu/tacit/updates" enabled="true" />
+      <repository location="http://tacit.usc.edu/tacit/beta2/updates" enabled="true" />
    </repositories>
 
    <preferencesInfo>
