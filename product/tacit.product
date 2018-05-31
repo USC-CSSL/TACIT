@@ -48,6 +48,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
    </launcher>
 
    <vm>
+      <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
    </vm>
 
    <license>
