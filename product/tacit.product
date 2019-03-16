@@ -38,7 +38,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
       startupProgressRect="5,325,502,10"
       startupMessageRect="5,305,502,20"
       startupForegroundColor="FBFFFE" />
-   <launcher name="tacit">
+   <launcher name="Tacit">
       <linux icon="icon256.xpm"/>
       <macosx icon="tacit.icns"/>
       <win useIco="true">
@@ -46,6 +46,7 @@ This software may be reproduced and used for non-commercial purposes only, so lo
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
