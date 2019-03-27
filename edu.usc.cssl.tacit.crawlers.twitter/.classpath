@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="twitter4j-core-4.0.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="twitter4j-stream-4.0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="jackson-core-2.5.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="json-path-2.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="json-path-assert-2.0.0.jar"/>
@@ -12,5 +10,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/edu.usc.cssl.tacit.common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/edu.usc.cssl.tacit.common.ui"/>
+	<classpathentry exported="true" kind="lib" path="twitter4j-core-4.0.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="twitter4j-stream-4.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

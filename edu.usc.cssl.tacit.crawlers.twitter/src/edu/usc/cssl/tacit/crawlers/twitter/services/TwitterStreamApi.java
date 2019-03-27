@@ -52,8 +52,12 @@ public class TwitterStreamApi {
 		accessToken = CommonUiActivator.getDefault().getPreferenceStore().getString("accesstoken");
 		accessTokenSecret = CommonUiActivator.getDefault().getPreferenceStore().getString("atokensecret");
 
-		cb.setDebugEnabled(true).setOAuthConsumerKey(consumerKey).setOAuthConsumerSecret(consumerSecret)
-				.setOAuthAccessToken(accessToken).setOAuthAccessTokenSecret(accessTokenSecret);
+		cb.setDebugEnabled(true)
+		  .setOAuthConsumerKey(consumerKey)
+		  .setOAuthConsumerSecret(consumerSecret)
+		  .setOAuthAccessToken(accessToken)
+		  .setOAuthAccessTokenSecret(accessTokenSecret)
+		  .setTweetModeExtended(true);
 		return cb.build();
 	}
 	public void stream(String fileName, final boolean isNum, final long numTweet, final boolean isTime,
@@ -108,7 +112,14 @@ public class TwitterStreamApi {
 
 					}
 					if (att[1]) {
-						jsonGenerator.writeStringField("Text", status.getText());
+						if(status.getRetweetedStatus() == null) {
+							//ConsoleView.printlInConsoleln("getRetweetedStatus : "+ status.getText());
+							jsonGenerator.writeStringField("Text", status.getText());
+						}
+						else {
+							//ConsoleView.printlInConsoleln("getRetweetedStatus : "+ status.getRetweetedStatus().getText());
+							jsonGenerator.writeStringField("Text", status.getRetweetedStatus().getText());
+						}
 
 					}
 					if (att[2]) {
